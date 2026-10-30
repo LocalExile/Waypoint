@@ -24,9 +24,8 @@
           </Border>
           <TextBlock x:Name="BrandName" FontSize="24" FontWeight="SemiBold"/>
           <TextBlock x:Name="BrandSubtitle" Style="{StaticResource Caption}" Margin="0,6,0,28"/>
-          <TextBlock Text="LOCAL WORKSPACE" FontSize="10" Foreground="{StaticResource Muted}"/>
-          <TextBlock Text="LocalExile" FontSize="16" Margin="0,8,0,6"/>
-          <TextBlock x:Name="SidebarBranch" Text="No checkout selected" Style="{StaticResource Caption}"/>
+          <TextBlock Text="CURRENT BRANCH" FontSize="10" Foreground="{StaticResource Muted}"/>
+          <TextBlock x:Name="SidebarBranch" Text="No checkout selected" FontSize="16" Margin="0,8,0,0"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
           <TextBlock Text="Your checkout. Your saves." Foreground="{StaticResource Accent}" FontSize="12"/>
@@ -48,7 +47,7 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <TextBlock Text="LocalExile" FontSize="27" FontWeight="SemiBold"/>
+          <TextBlock Text="Workspace" FontSize="27" FontWeight="SemiBold"/>
           <TextBlock x:Name="CheckoutLabel" Text="Select a LocalExile checkout in Settings." Style="{StaticResource Caption}" Margin="0,8,16,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="Change location" Click="ChangeLocation_Click"/><Button Content="Refresh" Click="Refresh_Click" Margin="0"/></StackPanel>
