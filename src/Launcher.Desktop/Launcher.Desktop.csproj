@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>../../branding/app.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Launcher.Core/Launcher.Core.csproj" />
+    <Content Include="../../branding/brand.json" Link="brand.json" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="../../branding/app.ico" Link="app.ico" />
+  </ItemGroup>
+</Project>
