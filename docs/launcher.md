@@ -14,6 +14,10 @@ dotnet publish src/GameServer.Launcher -o .     # one LocalExileLauncher.exe in 
 dotnet run --project src/GameServer.Launcher    # while working on it
 ```
 
+To update it after a pull or a change, close the launcher first (a running `LocalExileLauncher.exe` is locked and the
+publish fails to replace it; answer "No" to keep the servers and the game running), run the same `dotnet publish`, and
+start it again.
+
 The launcher works only from the repository root: its working directory or its own folder must hold `GameServer.slnx`
 and `scripts/dev/live.ps1`. It never searches parent folders. It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK
 installs on Windows. Its own settings (the switches, pinned console lines, the history) are per Windows user in
