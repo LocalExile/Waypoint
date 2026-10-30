@@ -3,6 +3,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <RootNamespace>Launcher.Desktop</RootNamespace>
+    <AssemblyName Condition="'$(LauncherExecutableName)' != ''">$(LauncherExecutableName)</AssemblyName>
+    <Product Condition="'$(LauncherExecutableName)' != ''">$(LauncherExecutableName)</Product>
     <ApplicationIcon>../../branding/app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>

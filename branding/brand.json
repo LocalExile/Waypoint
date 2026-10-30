@@ -1,5 +1,6 @@
 {
-  "displayName": "Launcher",
-  "subtitle": "",
+  "displayName": "Waypoint",
+  "executableName": "Waypoint",
+  "subtitle": "Workspace Manager for LocalExile",
   "version": "0.3.0"
 }

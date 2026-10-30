@@ -41,10 +41,10 @@ confirmed native game-data override reload. Standard client/build paths are reus
   and allocations between environments. No inferred pathfinding/combat timing from process measurements.
 - Broader account management beyond first account creation, including separately designed recovery workflows.
 - Native console through `client_control.py --stdio`; represent submission, timeout and no-reply outcomes correctly.
-- Bounded on-disk operation-log retention, optional light/system themes and packaging.
+- Bounded on-disk operation-log retention, optional light/system themes, installer/signing and release automation.
 
 ## Product decisions still open
 
-Product name/artwork, license, release distribution, installer identity and supported platform expansion.
+Artwork, license, release distribution, installer identity and supported platform expansion. The current product name is Waypoint.
 WPF is currently Windows-only. Public upstream PR discovery is implemented; private GitHub authentication remains separate.
 Public server directories, mod marketplaces and official-server modes are not part of this milestone.

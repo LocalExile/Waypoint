@@ -1,7 +1,9 @@
-# Launcher
+# Waypoint
+
+**Workspace Manager for LocalExile**
 
 A separate Windows desktop launcher for a local LocalExile source checkout.
-The product name is provisional. This repository has no dependency on a LocalExile project assembly.
+This repository has no dependency on a LocalExile project assembly.
 
 ## Run on this machine
 
@@ -145,6 +147,7 @@ Repository discovery behavior and its validation are in [repository discovery](d
 ## Rename the product
 
 Edit `branding/brand.json` to change the display name and subtitle, then rebuild.
+Its `executableName` controls the portable release EXE/folder name; the release README is generated from these values.
 Replace `branding/app.ico` for a new window/taskbar/executable icon.
 `scripts/New-Icon.ps1` regenerates the current geometric icon.
 
@@ -152,6 +155,35 @@ The window name, sidebar name and version label read `brand.json`.
 The internal `Launcher.*` project/assembly names can stay unchanged.
 Settings remain under `%LOCALAPPDATA%\EmulatorWorkspaceLauncher`, independent of branding, so renaming does not lose them.
 Installer identity is deferred until an installer exists.
+
+## Build a portable Release ZIP locally
+
+From the repository folder in PowerShell, with the .NET 10 SDK and Git installed:
+
+```powershell
+.\Build-Release.ps1
+```
+
+This creates a self-contained Windows x64 **Release** build, `Waypoint.exe`, its support files and a portable ZIP
+under `.local/releases/<commit-and-build-id>/`. It does not upload or publish anything. Commit changes first;
+`-AllowDirty` is available only for development packages explicitly marked as modified. `-OutputDirectory <folder>`
+selects a different output parent. Every build uses a new directory and preserves previous artifacts.
+
+The ZIP contains the complete Waypoint folder, a quick-start README and a manifest recording source commit, SDK,
+configuration, architecture and SHA-256 hashes of every payload file. A separate `.zip.sha256` file checks the archive.
+The .NET Desktop runtime is bundled; the launcher itself needs no .NET installation. LocalExile's SDK, Python, Node,
+Git and supported-client prerequisites still apply. Keep all extracted files together; the EXE alone is insufficient.
+
+Validate and extract an actual ZIP to a **new**, separate folder before running it:
+
+```powershell
+.\tests\Package.Tests.ps1 -ZipPath '<full path to the ZIP>' -ExtractTo '<new external folder>'
+```
+
+This checks the ZIP checksum, contained paths, every extracted file hash/size, clean Release metadata, branding and
+x64 executable header. It rejects private game/save/key files and unexpected payload files. Open the extracted
+`Waypoint\Waypoint.exe` to test the packaged UI/runtime integration. Development builds continue to use the stable
+internal `Launcher.Desktop.exe` name. Portable and development builds share the same stable settings/backup identity.
 
 ## Local state
 
