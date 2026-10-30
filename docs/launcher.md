@@ -23,7 +23,7 @@ installs on Windows. Its own settings (the switches, pinned console lines, the h
 
 | Tab | What it does | How |
 |---|---|---|
-| Control | Play, Start servers, Start game, Stop all, Stop game, Restart Gateway/Auth/Patch; the Walk maps, Skip build and Skip data check switches; the services' state; the setup checks; the script's output | `live.ps1`, `-NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`; Stop game ends the client's process |
+| Control | Servers: Start, Stop, Restart Gateway/Auth/Patch and the Walk maps, Skip build and Skip data check switches; Game: Play, Start game only, Close game; Stop all; the services' state; the setup checks; the script's output | `live.ps1`, `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`; Close game ends the client's process, Stop all also the dev host |
 | Performance | CPU and memory of every service; for the chosen server, GC heap, allocation rate, collections, time in GC, thread pool, lock contention and exceptions | the processes once a second; the runtime's `System.Runtime` counters through its diagnostics port (what `dotnet-counters` reads), with nothing changed in the servers |
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters; registering an account; creating a character | reads `data/saves.db` (read only); writes through the dev account service (`GameServer.Host`, [dev-server](../dev-server.md)), which it builds and starts when needed |
@@ -31,12 +31,16 @@ installs on Windows. Its own settings (the switches, pinned console lines, the h
 
 ### Control
 
+- The buttons sit in three cards, coloured by what they do (green starts, red stops, blue is Play): **Servers**,
+  **Game** and **Everything**. Each card's lamp says how many servers listen and whether the game runs.
 - **Play** is plain `live.ps1`: it builds, restarts the servers and starts the client. It asks first if a client is
   running, because `live.ps1` closes it.
-- **Start game** is `live.ps1 -ClientOnly`, with the unreachable proxy the control bridge also sets for it. It needs the
-  servers running, and `live.ps1` refuses a second client.
-- **Stop all** is `live.ps1 -Stop`: the client, the walk-map recorder and the three servers, then it waits until their
-  ports are free.
+- **Start servers** is `live.ps1 -NoClient`, **Stop servers** `live.ps1 -Stop -NoClient`: the servers and the walk-map
+  recorder, the client staying (it drops to the login screen).
+- **Start game only** is `live.ps1 -ClientOnly`, with the unreachable proxy the control bridge also sets for it. It
+  needs the servers running, and `live.ps1` refuses a second client.
+- **Stop all** is `live.ps1 -Stop` (the client, the walk-map recorder and the three servers, then it waits until their
+  ports are free) and the dev host the Accounts tab started. The tray's Stop all and closing with "Yes" do the same.
 - **Restart** is `live.ps1 -Only <server>`. With Walk maps on, the restarted Gateway announces area loads to the recorder
   that is already running.
 - Only one `live.ps1` runs at a time; the buttons wait while one does. The launcher runs it with Windows PowerShell and

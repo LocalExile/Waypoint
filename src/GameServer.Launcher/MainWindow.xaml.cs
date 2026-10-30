@@ -23,7 +23,7 @@ public partial class MainWindow : Window
         ConsoleView.Attach(_shared);
 
         _tray.ShowRequested += ShowFromTray;
-        _tray.StopAllRequested += async () => await _shared.RunLiveAsync(new LiveRequest(LiveMode.Stop), _ => { });
+        _tray.StopAllRequested += async () => await _shared.StopAllAsync(_ => { });
         _tray.ExitRequested += () => { ShowFromTray(); Close(); };
         _shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() =>
             ClientSeen(samples.Any(s => s.Service == Service.Client && s.Running)));
@@ -79,8 +79,7 @@ public partial class MainWindow : Window
                 }
                 IsEnabled = false;
                 Title = "LocalExile Launcher: stopping …";
-                _shared.StopDevHost();
-                await _shared.RunLiveAsync(new LiveRequest(LiveMode.Stop), _ => { });
+                await _shared.StopAllAsync(_ => { });
                 _closing = true;
                 Close();
                 return;

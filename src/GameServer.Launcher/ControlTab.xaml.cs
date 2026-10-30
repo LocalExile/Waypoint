@@ -51,6 +51,14 @@ public partial class ControlTab : UserControl
                 s.Running ? $"{(int)s.Uptime.TotalHours}:{s.Uptime:mm\\:ss}" : "",
                 s.Running ? $"{s.CpuPercent:0.0}%" : "", s.Running ? $"{s.MemoryMb:0} MB" : "");
         }).ToList();
+
+        // The cards' lamps: how many of the three servers listen, and whether the game runs.
+        int up = samples.Count(s => s.Service.Kind == ServiceKind.Server && s.Running && s.Listening);
+        int servers = samples.Count(s => s.Service.Kind == ServiceKind.Server);
+        (ServersLamp.Text, ServersLamp.Foreground) = up == servers ? ("● running", Brushes.SeaGreen)
+            : up == 0 ? ("● stopped", Brushes.Gray) : ($"● {up} of {servers} up", Brushes.DarkOrange);
+        bool game = samples.Any(s => s.Service == Service.Client && s.Running);
+        (GameLamp.Text, GameLamp.Foreground) = game ? ("● running", Brushes.SeaGreen) : ("● not running", Brushes.Gray);
     }
 
     LiveRequest Request(LiveMode mode, string? server = null)
@@ -72,12 +80,14 @@ public partial class ControlTab : UserControl
 
     bool ClientRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Client && s.Running);
 
-    async Task Run(LiveRequest request)
+    Task Run(LiveRequest request) => Run(request, _shared.RunLiveAsync);
+
+    async Task Run(LiveRequest request, Func<LiveRequest, Action<string>, Task<int?>> run)
     {
         Append($"> {request.Describe()}");
         RunState.Text = $"Running {request.Describe()} …";
         var started = Stopwatch.StartNew();
-        int? code = await _shared.RunLiveAsync(request, line => Dispatcher.BeginInvoke(() => Append(line)));
+        int? code = await run(request, line => Dispatcher.BeginInvoke(() => Append(line)));
         RunState.Text = code switch
         {
             null => "live.ps1 is already running.",
@@ -106,7 +116,11 @@ public partial class ControlTab : UserControl
         await Run(Request(LiveMode.Client));
     }
 
-    async void StopAll(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.Stop));
+    /// <summary>The client, the recorder, the servers and the dev host.</summary>
+    async void StopAll(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.Stop), (_, output) => _shared.StopAllAsync(output));
+
+    /// <summary>The servers and the recorder; the client stays (it drops to the login screen).</summary>
+    async void StopServers(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.StopServers));
 
     async void Restart(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.Restart, (string)((Button)sender).Tag));
 

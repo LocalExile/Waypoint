@@ -35,6 +35,7 @@ public class LiveRequestTests
         Assert.Equal(["-Stop"], new LiveRequest(LiveMode.Stop, Walkmaps: true, NoBuild: true).Arguments());
         Assert.Equal(["-Stop", "-Only", "Patch"], new LiveRequest(LiveMode.Stop, "Patch").Arguments());
         Assert.Equal("live.ps1 -Stop", new LiveRequest(LiveMode.Stop).Describe());
+        Assert.Equal(["-Stop", "-NoClient"], new LiveRequest(LiveMode.StopServers, Walkmaps: true).Arguments());
     }
 
     [Fact]

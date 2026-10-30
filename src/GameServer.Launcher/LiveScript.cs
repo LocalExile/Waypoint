@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace GameServer.Launcher;
 
-enum LiveMode { All, Servers, Client, Restart, Stop }
+enum LiveMode { All, Servers, Client, Restart, Stop, StopServers }
 
 /// <summary>One run of scripts/dev/live.ps1. The launcher never starts a server or the client itself: every button is a
 /// live.ps1 switch (Agents/GettingStarted.md, "Play"), so the script's checks and the patching-server argument apply.</summary>
@@ -22,6 +22,7 @@ sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = 
                 args.Add("-Stop");
                 if (Server is not null) args.AddRange(["-Only", CheckedServer]);
                 return args;
+            case LiveMode.StopServers: return ["-Stop", "-NoClient"];
             case LiveMode.Servers: args.Add("-NoClient"); break;
             case LiveMode.Restart: args.AddRange(["-Only", CheckedServer]); break;
         }

@@ -20,5 +20,64 @@
         <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
+
+        <!-- The Control tab's buttons: flat, coloured by what they do (start, stop, the main action, the rest). -->
+        <Style x:Key="Action" TargetType="Button">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#607D8B" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Body" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Body" Property="Opacity" Value="0.87" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Body" Property="Opacity" Value="0.72" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Body" Property="Opacity" Value="0.38" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="Go" TargetType="Button" BasedOn="{StaticResource Action}">
+            <Setter Property="Background" Value="#2E7D32" />
+        </Style>
+        <Style x:Key="Halt" TargetType="Button" BasedOn="{StaticResource Action}">
+            <Setter Property="Background" Value="#C62828" />
+        </Style>
+        <Style x:Key="Main" TargetType="Button" BasedOn="{StaticResource Action}">
+            <Setter Property="Background" Value="#1565C0" />
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+        <Style x:Key="Quiet" TargetType="Button" BasedOn="{StaticResource Action}">
+            <Setter Property="Background" Value="#78909C" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="#F4F6F9" />
+            <Setter Property="BorderBrush" Value="#D9DFE6" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="7" />
+            <Setter Property="Padding" Value="14,10,14,8" />
+            <Setter Property="Margin" Value="0,0,10,10" />
+        </Style>
+        <Style x:Key="CardTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
     </Application.Resources>
 </Application>

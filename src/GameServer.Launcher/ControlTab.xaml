@@ -2,28 +2,117 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DockPanel Margin="10">
-        <StackPanel DockPanel.Dock="Top">
-            <WrapPanel x:Name="Actions">
-                <Button x:Name="PlayButton" Style="{StaticResource Primary}" Content="▶ Play (servers + game)" Click="Play"
-                        ToolTip="live.ps1: builds and restarts the servers, then starts the client (closes a running one)" />
-                <Button Content="Start servers" Click="StartServers" ToolTip="live.ps1 -NoClient: restarts the servers, keeps a running client" />
-                <Button Content="Start game" Click="StartGame" ToolTip="live.ps1 -ClientOnly: only the client, against the running servers; refuses a second client" />
-                <Button Content="■ Stop all" Click="StopAll" ToolTip="live.ps1 -Stop: the client, the walk-map recorder and the servers" />
-                <Button Content="Stop game" Click="StopGame" ToolTip="Closes the client; the servers keep running" />
-            </WrapPanel>
-            <WrapPanel>
-                <TextBlock Text="Restart:" VerticalAlignment="Center" Margin="0,0,8,6" />
-                <Button Content="Gateway" Click="Restart" Tag="Gateway" ToolTip="live.ps1 -Only Gateway: the client drops to the login screen; log in and Play again" />
-                <Button Content="Auth" Click="Restart" Tag="Auth" ToolTip="live.ps1 -Only Auth" />
-                <Button Content="Patch" Click="Restart" Tag="Patch" ToolTip="live.ps1 -Only Patch" />
-                <Separator Width="16" Visibility="Hidden" />
-                <CheckBox x:Name="Walkmaps" Content="Walk maps (-Walkmaps)" ToolTip="Capture each area's walk map with Frida (GettingStarted step 9)" />
-                <CheckBox x:Name="NoBuild" Content="Skip build (-NoBuild)" />
-                <CheckBox x:Name="NoExtract" Content="Skip data check (-NoExtract)" />
-                <CheckBox x:Name="TrayWhileGame" Content="Tray while the game runs" Checked="TrayChanged" Unchecked="TrayChanged"
-                          ToolTip="Hide the launcher in the tray when the game client starts, and bring it back when the client closes" />
-            </WrapPanel>
-        </StackPanel>
+        <!-- Servers on the left, the game in the middle, stopping everything on the right. Disabled while live.ps1 runs. -->
+        <Grid x:Name="Actions" DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="180" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Every card has the same grid: its title, a 40 px row and a 32 px row of buttons (80 px with the gap), then
+                 its switches at the bottom, so the buttons line up across the cards. -->
+            <Border Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="*" MinHeight="8" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DockPanel>
+                        <TextBlock x:Name="ServersLamp" DockPanel.Dock="Right" Text="● stopped" Foreground="Gray" FontWeight="SemiBold" />
+                        <TextBlock Text="Servers" Style="{StaticResource CardTitle}" />
+                    </DockPanel>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Style="{StaticResource Go}" Content="▶  Start servers" Click="StartServers"
+                                ToolTip="live.ps1 -NoClient: builds and restarts Patch, Auth and Gateway; a running client stays" />
+                        <Button Grid.Column="2" Style="{StaticResource Halt}" Content="■  Stop servers" Click="StopServers"
+                                ToolTip="live.ps1 -Stop -NoClient: the servers and the walk-map recorder; the client stays (back at the login screen)" />
+                    </Grid>
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="6" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="6" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Restart" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#546E7A" />
+                        <Button Grid.Column="1" Style="{StaticResource Quiet}" Content="Gateway" Click="Restart" Tag="Gateway"
+                                ToolTip="live.ps1 -Only Gateway: rebuilt and restarted; the client drops to the login screen, log in and Play again" />
+                        <Button Grid.Column="3" Style="{StaticResource Quiet}" Content="Auth" Click="Restart" Tag="Auth" ToolTip="live.ps1 -Only Auth" />
+                        <Button Grid.Column="5" Style="{StaticResource Quiet}" Content="Patch" Click="Restart" Tag="Patch" ToolTip="live.ps1 -Only Patch" />
+                    </Grid>
+                    <WrapPanel Grid.Row="5">
+                        <CheckBox x:Name="Walkmaps" Content="Walk maps" ToolTip="-Walkmaps: capture each area's walk map with Frida (GettingStarted step 9)" />
+                        <CheckBox x:Name="NoBuild" Content="Skip build" ToolTip="-NoBuild" />
+                        <CheckBox x:Name="NoExtract" Content="Skip data check" ToolTip="-NoExtract" />
+                    </WrapPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="*" MinHeight="8" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Grid.ColumnSpan="3">
+                        <TextBlock x:Name="GameLamp" DockPanel.Dock="Right" Text="● not running" Foreground="Gray" FontWeight="SemiBold" />
+                        <TextBlock Text="Game" Style="{StaticResource CardTitle}" />
+                    </DockPanel>
+                    <Button x:Name="PlayButton" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource Main}" Click="Play"
+                            ToolTip="live.ps1: builds and restarts the servers, then starts the game (closes a running one)">
+                        <StackPanel>
+                            <TextBlock Text="▶  PLAY" HorizontalAlignment="Center" />
+                            <TextBlock Text="servers + game" FontSize="11" FontWeight="Normal" HorizontalAlignment="Center" Opacity="0.85" />
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource Go}" Content="Start game only" Click="StartGame"
+                            ToolTip="live.ps1 -ClientOnly: only the client, against the running servers; refuses a second client" />
+                    <Button Grid.Row="3" Grid.Column="2" Style="{StaticResource Halt}" Content="■  Close game" Click="StopGame"
+                            ToolTip="Closes the client; the servers keep running" />
+                    <CheckBox x:Name="TrayWhileGame" Grid.Row="5" Grid.ColumnSpan="3" Content="Tray while the game runs" Checked="TrayChanged" Unchecked="TrayChanged"
+                              ToolTip="Hide the launcher in the tray when the game starts, and bring it back when the game closes" />
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource Card}" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="80" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Everything" Style="{StaticResource CardTitle}" />
+                    <Button Grid.Row="1" Style="{StaticResource Halt}" Click="StopAll"
+                            ToolTip="live.ps1 -Stop and the dev host: the game, the walk-map recorder, the servers and the account service">
+                        <StackPanel>
+                            <TextBlock Text="■  Stop all" FontSize="15" HorizontalAlignment="Center" />
+                            <TextBlock Text="game, servers, dev host" FontSize="11" FontWeight="Normal" HorizontalAlignment="Center" Opacity="0.85" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
 
         <Grid>
             <Grid.RowDefinitions>

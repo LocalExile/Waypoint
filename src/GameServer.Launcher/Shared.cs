@@ -71,6 +71,15 @@ sealed class Shared : IDisposable
         catch (Exception e) when (e is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { }
     }
 
+    /// <summary>Everything the launcher runs or started: live.ps1 -Stop (the client, the recorder, the servers) and the
+    /// dev host. Null when a live.ps1 run is already going on (the dev host is stopped all the same).</summary>
+    public Task<int?> StopAllAsync(Action<string> output)
+    {
+        if (Monitor.Latest.Any(s => s.Service == Service.DevHost && s.Running)) output("stopping the dev host");
+        StopDevHost();
+        return RunLiveAsync(new LiveRequest(LiveMode.Stop), output);
+    }
+
     public void Dispose()
     {
         Settings.Save();
