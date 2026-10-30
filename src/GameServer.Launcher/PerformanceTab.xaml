@@ -1,0 +1,36 @@
+<UserControl x:Class="GameServer.Launcher.PerformanceTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:GameServer.Launcher">
+    <DockPanel Margin="10">
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <TextBlock Text="Window" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox x:Name="WindowPicker" Width="90" SelectionChanged="WindowChanged" Margin="0,0,20,0">
+                <ComboBoxItem Content="1 min" Tag="60" />
+                <ComboBoxItem Content="5 min" Tag="300" IsSelected="True" />
+                <ComboBoxItem Content="15 min" Tag="900" />
+                <ComboBoxItem Content="60 min" Tag="3600" />
+            </ComboBox>
+            <TextBlock Text=".NET counters of" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox x:Name="Server" Width="110" SelectionChanged="ServerChanged" Margin="0,0,12,0" />
+            <TextBlock x:Name="CounterState" VerticalAlignment="Center" Foreground="Gray" />
+        </WrapPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <l:LineChart x:Name="CpuChart" Title="CPU" Unit="% of the machine" Margin="4" />
+            <l:LineChart x:Name="MemoryChart" Grid.Column="1" Title="Memory" Unit="MB, working set" Format="0" Margin="4" />
+            <l:LineChart x:Name="HeapChart" Grid.Row="1" Title="GC heap and allocation" Unit="MB, MB/s" Margin="4" />
+            <l:LineChart x:Name="GcChart" Grid.Row="1" Grid.Column="1" Title="GC" Unit="collections/s, % time" Margin="4" />
+            <l:LineChart x:Name="PoolChart" Grid.Row="2" Title="Thread pool" Unit="threads, queued work items" Format="0" Margin="4" />
+            <l:LineChart x:Name="ContentionChart" Grid.Row="2" Grid.Column="1" Title="Contention and exceptions" Unit="per s" Format="0" Margin="4" />
+        </Grid>
+    </DockPanel>
+</UserControl>

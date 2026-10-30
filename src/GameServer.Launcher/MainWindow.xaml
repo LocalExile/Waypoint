@@ -1,0 +1,14 @@
+<Window x:Class="GameServer.Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:GameServer.Launcher"
+        Title="LocalExile Launcher" Width="1180" Height="780" MinWidth="820" MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+    <TabControl x:Name="Tabs" Margin="6">
+        <TabItem Header="Control"><l:ControlTab x:Name="Control" /></TabItem>
+        <TabItem Header="Performance"><l:PerformanceTab x:Name="Performance" /></TabItem>
+        <TabItem Header="Logs"><l:LogsTab x:Name="LogsView" /></TabItem>
+        <TabItem Header="Accounts"><l:AccountsTab x:Name="Accounts" /></TabItem>
+        <TabItem Header="Console"><l:ConsoleTab x:Name="ConsoleView" /></TabItem>
+    </TabControl>
+</Window>

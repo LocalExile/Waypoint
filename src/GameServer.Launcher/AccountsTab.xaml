@@ -1,0 +1,94 @@
+<UserControl x:Class="GameServer.Launcher.AccountsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <Button DockPanel.Dock="Left" Content="Refresh" Click="Refresh" />
+            <Button DockPanel.Dock="Right" x:Name="StopHost" Content="Stop dev host" Click="StopDevHost"
+                    ToolTip="GameServer.Host, which the launcher starts to register accounts and create characters" />
+            <TextBlock x:Name="HostState" VerticalAlignment="Center" Margin="8,0,8,6" Foreground="Gray" />
+        </DockPanel>
+
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Register an account" Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Name" Margin="0,4,8,4" />
+                    <TextBox x:Name="NewAccount" Grid.Column="1" Margin="0,2" ToolTip="3–32 letters, digits, _ or -" />
+                    <TextBlock Text="Password" Grid.Row="1" Margin="0,4,8,4" />
+                    <PasswordBox x:Name="NewPassword" Grid.Row="1" Grid.Column="1" Margin="0,2" ToolTip="at least 4 characters" />
+                    <Button Content="Register" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0" Click="Register" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Create a character" Grid.Column="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Account" Margin="0,4,8,4" />
+                    <TextBlock x:Name="ForAccount" Grid.Column="1" Margin="0,4" FontWeight="SemiBold" Text="(select an account above)" />
+                    <TextBlock Text="Password" Grid.Row="1" Margin="0,4,8,4" />
+                    <PasswordBox x:Name="AccountPassword" Grid.Row="1" Grid.Column="1" Margin="0,2"
+                                 ToolTip="The account's password: the dev host logs in with it" />
+                    <TextBlock Text="Name" Grid.Row="2" Margin="0,4,8,4" />
+                    <TextBox x:Name="CharacterName" Grid.Row="2" Grid.Column="1" Margin="0,2" />
+                    <TextBlock Text="Class" Grid.Row="3" Margin="0,4,8,4" />
+                    <ComboBox x:Name="CharacterClass" Grid.Row="3" Grid.Column="1" Margin="0,2" />
+                    <Button Content="Create" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0" Click="Create"
+                            ToolTip="In the Standard league; the game's own creation screen offers the other leagues" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <TextBlock x:Name="Status" DockPanel.Dock="Bottom" Margin="0,4,0,8" TextWrapping="Wrap" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="AccountGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                      SelectionChanged="AccountSelected" HeadersVisibility="Column" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Account" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="Created" Binding="{Binding Created}" Width="Auto" />
+                    <DataGridTextColumn Header="Characters" Binding="{Binding Characters}" Width="Auto" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid x:Name="CharacterGrid" Grid.Column="2" AutoGenerateColumns="False" IsReadOnly="True"
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Character" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="Class" Binding="{Binding Class}" Width="Auto" />
+                    <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="Auto" />
+                    <DataGridTextColumn Header="League" Binding="{Binding League}" Width="Auto" />
+                    <DataGridTextColumn Header="Last town" Binding="{Binding LastTown}" Width="Auto" />
+                    <DataGridTextColumn Header="Last played" Binding="{Binding LastPlayed}" Width="Auto" />
+                    <DataGridTextColumn Header="" Binding="{Binding State}" Width="Auto" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </DockPanel>
+</UserControl>

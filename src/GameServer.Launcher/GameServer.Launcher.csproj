@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The desktop launcher: buttons over scripts/dev/live.ps1, logs, performance, accounts and dev commands
+       (Agents/docs/dev/launcher.md). `dotnet publish src/GameServer.Launcher -o .` puts one LocalExileLauncher.exe in the
+       repository root, where it runs. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- Only for the tray icon (NotifyIcon); its namespaces stay out of the implicit usings, where they clash with WPF's. -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>LocalExileLauncher</AssemblyName>
+    <RootNamespace>GameServer.Launcher</RootNamespace>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>embedded</DebugType>
+    <!-- WPF formats bindings with the UI culture; the solution-wide invariant mode (Directory.Build.props) has none. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <!-- Published, the launcher is the one file in the repository root: no symbol files of the referenced projects beside it. -->
+  <PropertyGroup Condition="'$(_IsPublishing)' == 'true'">
+    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GameServer.Launcher.Tests" />
+    <!-- WPF leaves System.IO out of the implicit usings (its Path clashes with System.Windows.Shapes.Path, unused here). -->
+    <Using Include="System.IO" />
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameServer.Storage\GameServer.Storage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.745401" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.8" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
+  </ItemGroup>
+
+</Project>

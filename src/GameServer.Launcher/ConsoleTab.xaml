@@ -1,0 +1,69 @@
+<UserControl x:Class="GameServer.Launcher.ConsoleTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <Button DockPanel.Dock="Left" Content="Game status" Click="GameStatus" ToolTip="client_control.py game:status" />
+            <Button DockPanel.Dock="Left" Content="Reload commands" Click="ReloadCommands" ToolTip="GameServer.Gateway commands: the built Gateway's list" />
+            <TextBlock x:Name="State" VerticalAlignment="Center" Margin="6,0,0,6" Foreground="Gray" TextTrimming="CharacterEllipsis"
+                       Text="Commands go through the game client (scripts/dev/client_control.py): start the game and enter an area first." />
+        </DockPanel>
+
+        <!-- The input row: the line, its usage under it, the pinned lines above it. -->
+        <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+            <DockPanel Margin="0,0,0,4">
+                <TextBlock Text="Pinned:" VerticalAlignment="Center" Margin="0,0,8,6" Foreground="Gray" />
+                <WrapPanel x:Name="Favorites" />
+            </DockPanel>
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="★ Pin" Click="Pin" ToolTip="Pin this line as a button (right-click a pinned button to remove it)" Margin="6,0,0,0" />
+                <Button DockPanel.Dock="Right" x:Name="SendButton" Style="{StaticResource Primary}" Content="Send" Click="SendClicked" Margin="6,0,0,0" />
+                <TextBox x:Name="Input" FontFamily="{StaticResource Mono}" FontSize="13" Padding="4,3"
+                         PreviewKeyDown="InputKey" TextChanged="InputChanged" LostKeyboardFocus="InputLostFocus"
+                         ToolTip="/ lists the commands: ↑↓ choose, Tab or Enter take one. Without a popup ↑↓ go through the history. Text without / is a chat line." />
+            </DockPanel>
+            <TextBlock x:Name="Hint" Margin="2,4,0,0" Foreground="Gray" TextWrapping="Wrap" FontFamily="{StaticResource Mono}" />
+            <Popup x:Name="SuggestionPopup" PlacementTarget="{Binding ElementName=Input}" Placement="Top" StaysOpen="True" AllowsTransparency="True">
+                <Border BorderBrush="Gray" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                    <ListBox x:Name="Suggestions" MaxHeight="260" MinWidth="420" BorderThickness="0" Focusable="False"
+                             PreviewMouseLeftButtonUp="SuggestionClicked">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name, StringFormat=/{0}}" FontFamily="{StaticResource Mono}" FontWeight="SemiBold" MinWidth="140" />
+                                    <TextBlock Text="{Binding Short}" FontFamily="{StaticResource Mono}" Foreground="Gray" Margin="10,0,0,0" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Popup>
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="330" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="Output" IsReadOnly="True" FontFamily="{StaticResource Mono}" FontSize="12"
+                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap" />
+            <DockPanel Grid.Column="2">
+                <TextBox x:Name="CommandFilter" DockPanel.Dock="Top" Margin="0,0,0,4" TextChanged="CommandFilterChanged"
+                         ToolTip="Filter the commands by name or description" />
+                <TextBlock DockPanel.Dock="Bottom" Foreground="Gray" Margin="0,4,0,0" TextWrapping="Wrap"
+                           Text="Double-click a command to put it in the line." />
+                <ListBox x:Name="CommandList" MouseDoubleClick="CommandPicked">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel ToolTip="{Binding Usage}">
+                                <TextBlock Text="{Binding Short}" FontFamily="{StaticResource Mono}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Explanation}" Foreground="Gray" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>
