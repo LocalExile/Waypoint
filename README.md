@@ -185,6 +185,9 @@ x64 executable header. It rejects private game/save/key files and unexpected pay
 `Waypoint\Waypoint.exe` to test the packaged UI/runtime integration. Development builds continue to use the stable
 internal `Launcher.Desktop.exe` name. Portable and development builds share the same stable settings/backup identity.
 
+The first local package's checksum, external-folder runtime tests and preservation results are recorded in
+[portable release validation](docs/portable-release-validation.md).
+
 ## Local state
 
 - Launcher preferences: `%LOCALAPPDATA%\EmulatorWorkspaceLauncher\settings.json`.
