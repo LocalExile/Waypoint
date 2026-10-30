@@ -23,4 +23,4 @@ For local UI validation, start the app with `--repo <checkout>`, inspect every c
 window size, and exercise both blocked and ready states. Source control cleanliness does not prove the running DLLs
 match source; record built informational versions too.
 
-No publishing is authorized for the initial local work. License, hosting and release/installer policy remain owner decisions.
+No publishing is authorized for the initial local work. Waypoint is MIT licensed; hosting and release/installer policy remain owner decisions.

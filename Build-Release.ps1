@@ -73,6 +73,8 @@ try {
     $readme = Get-Content -LiteralPath (Join-Path $root 'packaging/PORTABLE-README.txt') -Raw
     $readme = $readme.Replace('{{PRODUCT}}', [string]$brand.displayName).Replace('{{SUBTITLE}}', [string]$brand.subtitle).Replace('{{EXECUTABLE}}', ($name + '.exe'))
     $readme | Set-Content -LiteralPath (Join-Path $package 'README.txt') -Encoding UTF8
+    Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination (Join-Path $package 'LICENSE.txt')
+    Copy-Item -LiteralPath (Join-Path $root "docs/releases/$version.md") -Destination (Join-Path $package 'RELEASE-NOTES.md')
     $files = @(Get-ChildItem -LiteralPath $package -File -Recurse | Sort-Object FullName | ForEach-Object {
         [ordered]@{ Path=$_.FullName.Substring($package.Length + 1).Replace('\','/'); Bytes=$_.Length;
             Sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() }

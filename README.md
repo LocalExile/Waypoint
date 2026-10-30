@@ -5,17 +5,49 @@
 A separate Windows desktop launcher for a local LocalExile source checkout.
 This repository has no dependency on a LocalExile project assembly.
 
-## Run on this machine
+Waypoint is an early alpha for local development and testing. It manages your checkout, builds, servers and save
+backups. It does not download Path of Exile, bundle LocalExile or provide a remote/public server service.
 
-Open PowerShell and enter:
+## Download and run
+
+1. Open this repository's **Releases** page and download `Waypoint-<version>-win-x64.zip`.
+2. In File Explorer, right-click the ZIP, select **Extract All…** and extract it into a new folder.
+3. Open the extracted `Waypoint` folder and double-click **Waypoint.exe**. Keep all files/subfolders together;
+   opening just the EXE from inside the ZIP or moving it by itself will not work.
+4. Select your LocalExile checkout in Settings, then follow **First setup** below.
+
+No installer is required. The portable launcher includes its .NET Desktop runtime. It does not start LocalExile until
+you press a runtime action. To upgrade, close Waypoint and extract the newer ZIP into a separate folder; your settings
+and backups are retained. This alpha has no automatic update service.
+
+For release changes and current limits, see [0.3.0 release notes](docs/releases/0.3.0.md).
+
+## Requirements
+
+| Requirement | Used for |
+| --- | --- |
+| Windows x64 | Running the Waypoint desktop app |
+| A [LocalExile](https://github.com/LocalExile/LocalExile) source checkout | The server implementation Waypoint manages; select its folder containing `GameServer.slnx` |
+| [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) | Building/running LocalExile; the launcher bundles only its own runtime |
+| [Git](https://git-scm.com/downloads/win) | Branch/PR management and checking upstream/local commits |
+| [Python 3.9+](https://www.python.org/downloads/windows/) | LocalExile extraction and consistent SQLite save backups |
+| [Node.js](https://nodejs.org/en/download) | LocalExile's bundle-decompression dependency |
+| Your own standalone PoE **3.29.3b** client | A complete, separate client copy in the checkout's `Client` folder; Steam layout and newer client versions are unsupported |
+
+Frida is optional. It is needed only for native game-data reload through LocalExile's client-control helper, not
+ordinary play. See the [LocalExile setup guide](https://github.com/LocalExile/LocalExile/blob/main/Agents/GettingStarted.md)
+for its environment and client requirements.
+
+## First setup
+
+If you do not have a LocalExile checkout, first install Git. In File Explorer, open the parent folder where you want
+to keep LocalExile, right-click its empty background, choose **Open in Terminal**, and run:
 
 ```powershell
-Set-Location 'F:\evry\evryPath\Launcher'
-.\Start-Launcher.ps1
+git clone https://github.com/LocalExile/LocalExile.git
 ```
 
-The script builds the launcher and opens its window. It does not start LocalExile until you press a runtime action.
-Alternatively, open `src\Launcher.Desktop\bin\Debug\net10.0-windows\Launcher.Desktop.exe` after building.
+Select the newly created `LocalExile` folder in Waypoint. If you already have a checkout, use that location instead.
 
 On first use, **Settings → Find your LocalExile checkout** opens automatically. Lookup starts in the background,
 but **Browse for a different location…** is available immediately. Git queries the current HEAD of the upstream
@@ -35,17 +67,17 @@ Offline lookup, missing Git, no match and bounded searches still allow manual se
    File Explorer, then click **Prepare local client**. Preparation retains existing keys and executables, creates
    missing files, and sets the copied archive's gateway to localhost. **Install extraction dependency** installs
    the checkout's locked Node dependency. The setup dialogs explain each change before it runs.
-4. On **Play**, use **Start servers** to run servers without the game, or **Play** for both.
-5. Use **Close game** before **Stop servers** or a service restart. Closing the launcher leaves the game and services running.
-6. If this installation needs its first account, close the game, stop services, open **Setup**, scroll to **First local
+4. If this installation needs its first account, keep the game and servers stopped, open **Setup**, scroll to **First local
    account**, and click **Create local account**. Enter an account name and password. After creation, press **Play**
    and sign in inside the game; create your character there. The launcher does not save the password.
+5. On **Play**, use **Start servers** to run servers without the game, or **Play** for both.
+6. Use **Close game** before **Stop servers** or a service restart. Closing Waypoint leaves the game and services running.
 
 The supported client is standalone **3.29.3b**. The launcher can prepare a separate copy already placed in `Client`;
 it does not download the game. Branch/PR activation reuses that copy and the standard build/data folders.
 It checks structural prerequisites; the upstream preparation tools enforce the supported client signatures.
 
-## Included in 0.2
+## Features
 
 - Dark WPF desktop interface, keyboard focus indication, scalable text, and an original geometric application icon.
 - Checkout selection and persistent settings; local runtime profile support without executing profile code on inspection.
@@ -57,6 +89,7 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 - CPU, working-set memory and uptime per process; stopped processes show no fabricated measurements.
 - Readable live service logs, errors, operation output and links to their local folders.
 - Build the selected LocalExile solution; launcher and emulator build independently.
+- Searchable branch/PR selection, Gateway hot-reload monitoring and save backup management.
 - Setup guidance with prerequisite actions, client preparation, extraction dependency installation and first account creation.
 - Named operation stages and elapsed time; a failed operation retains its stage and offers log/output links and retry.
   Account creation requires re-entering details rather than retaining the password for retry.
@@ -118,6 +151,17 @@ need additional adapter support. See [the runtime contract](docs/runtime-contrac
 
 ## Build and check
 
+These steps are for contributors building Waypoint from source. Download users can run the portable EXE directly.
+Open PowerShell, replace the example path with the folder where you cloned Waypoint, and enter:
+
+```powershell
+Set-Location 'C:\Projects\Waypoint'
+.\Start-Launcher.ps1
+```
+
+The script builds and opens the development app. Its internal executable is
+`src\Launcher.Desktop\bin\Debug\net10.0-windows\Launcher.Desktop.exe`.
+
 Requirements: Windows 10/11 x64 and the **.NET 10 SDK**. The UI uses WPF, which is Windows-only.
 There are no third-party NuGet dependencies in the launcher.
 Git on PATH enables upstream/local commit discovery and is required for the Git-fixture automated checks;
@@ -135,8 +179,10 @@ Discovery checks use private temporary Git repositories and worktrees; they do n
 Ownership checks use fake process inventories. For a read-only real checkout inspection:
 
 ```powershell
-dotnet run --project tests/Launcher.Checks --no-build -- --inspect 'F:\evry\evryPath\evryPath'
+dotnet run --project tests/Launcher.Checks --no-build -- --inspect 'C:\Projects\LocalExile'
 ```
+
+Replace the inspection path with your own LocalExile checkout.
 
 Real lifecycle validation, observations and test limits are recorded in [validation](docs/validation.md).
 The source review is in [LocalExile build and launch](docs/localexile-build-and-launch.md).
@@ -169,7 +215,7 @@ under `.local/releases/<commit-and-build-id>/`. It does not upload or publish an
 `-AllowDirty` is available only for development packages explicitly marked as modified. `-OutputDirectory <folder>`
 selects a different output parent. Every build uses a new directory and preserves previous artifacts.
 
-The ZIP contains the complete Waypoint folder, a quick-start README and a manifest recording source commit, SDK,
+The ZIP contains the complete Waypoint folder, a quick-start README, MIT license, release notes and a manifest recording source commit, SDK,
 configuration, architecture and SHA-256 hashes of every payload file. A separate `.zip.sha256` file checks the archive.
 The .NET Desktop runtime is bundled; the launcher itself needs no .NET installation. LocalExile's SDK, Python, Node,
 Git and supported-client prerequisites still apply. Keep all extracted files together; the EXE alone is insufficient.
@@ -202,8 +248,34 @@ Diagnostic preview includes only bounded operation output and the selected log, 
 not collect databases, key files, credential files or client archives. Account/character names can be added to its removal field.
 No telemetry, automatic updates or upload feature is included.
 
+## Troubleshooting and bug reports
+
+| What you see | What to do |
+| --- | --- |
+| No checkout found, lookup offline, or multiple matches | In Settings choose **Browse for a different location…** and select the folder containing `GameServer.slnx` |
+| Play disabled or setup missing | Open **Setup** and follow the instruction/action beside each missing requirement, then **Recheck setup** |
+| Port occupied or another client/server detected | If you started them in Waypoint, select that checkout, use **Close game** then **Stop servers**, and return to your intended checkout; services started elsewhere need that tool's normal shutdown. Then **Refresh** |
+| Branch switch refused due to local changes | Choose another clean checkout through **Change location**, or save the edits with your Git client's **Commit** action before retrying; Waypoint will not discard or stash your work |
+| Build or startup failed | Use **Open failed stage log** or **View operation output**, correct the reported problem, then **Retry operation** |
+| Hot-reload compile failure | Fix the reported source error and save again; the old code keeps running |
+| Need to undo a save change | Close the game, open **Backups**, select the intended snapshot and choose **Restore selected…**; source selection is separate |
+| Native game-data reload unavailable | Follow the LocalExile native-helper setup, or enter `/game_data reload` in game on a revision that supports it |
+
+For other problems, use this repository's **Issues** tab. Include the Waypoint version, LocalExile commit, what you
+clicked and the actual result. **Logs → Diagnostic report…** offers a local preview you can review and copy. Remove
+any remaining private details before sharing; do not attach client archives, save databases, signing keys or passwords.
+
+## License and related projects
+
+Waypoint is licensed under the [MIT License](LICENSE). Copyright and license notices for the bundled Microsoft .NET
+runtime are included in the portable package's `licenses` folder and keep their own terms.
+
+Waypoint is a separate companion project for [LocalExile](https://github.com/LocalExile/LocalExile). Its MIT license
+applies to Waypoint's code, not LocalExile or Path of Exile. Neither LocalExile nor any game assets are bundled.
+Waypoint is not affiliated with or endorsed by Grinding Gear Games.
+
 ## Next work
 
-See [ROADMAP.md](ROADMAP.md) for isolated branch/PR environments, consistent backup/restore, Gateway phase timing,
+See [ROADMAP.md](ROADMAP.md) for isolated branch/PR environments, expanded recovery, Gateway phase timing,
 recorded comparisons, broader account management and the native development console.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for implementation boundaries and checks.

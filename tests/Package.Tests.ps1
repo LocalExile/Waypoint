@@ -34,6 +34,9 @@ if (@($actual | Where-Object { $_.Extension -in @('.pdb','.db','.ggpk','.pfx') -
     throw 'Development/private game data must not be included in the portable package.'
 }
 $brand = Get-Content -LiteralPath (Join-Path $package 'brand.json') -Raw | ConvertFrom-Json
+if (-not (Test-Path -LiteralPath (Join-Path $package 'LICENSE.txt')) -or
+    -not (Get-Content -LiteralPath (Join-Path $package 'LICENSE.txt') -Raw).StartsWith('MIT License') -or
+    -not (Test-Path -LiteralPath (Join-Path $package 'RELEASE-NOTES.md'))) { throw 'Application license or release notes are missing.' }
 if (-not (Test-Path -LiteralPath (Join-Path $package 'licenses/Microsoft.NETCore.App-LICENSE.TXT')) -or
     -not (Test-Path -LiteralPath (Join-Path $package 'licenses/Microsoft.WindowsDesktop.App-LICENSE.txt'))) { throw 'Bundled runtime license files are missing.' }
 if ($brand.displayName -ne $manifest.Product -or ($brand.executableName + '.exe') -ne $manifest.Executable -or $brand.version -ne $manifest.Version) { throw 'Branding and executable metadata do not agree.' }

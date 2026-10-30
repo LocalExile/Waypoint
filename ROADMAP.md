@@ -38,7 +38,7 @@ confirmed native game-data override reload. Standard client/build paths are reus
 Waypoint branding, self-contained Windows x64 Release ZIP, generated quick-start README, bundled runtime notices,
 source/runtime/file-hash manifest and archive checksum. The extracted release was tested outside the development
 workspace through first use, backup, Play/world entry, data reload, graceful shutdown and reopen. No public release
-has been made; installer, signing, application license and distribution remain separate decisions.
+has been made. Waypoint is MIT licensed; installer, signing and distribution remain separate decisions.
 
 ## Then: measurements and contributor tools
 
@@ -52,6 +52,6 @@ has been made; installer, signing, application license and distribution remain s
 
 ## Product decisions still open
 
-Artwork, license, release distribution, installer identity and supported platform expansion. The current product name is Waypoint.
+Artwork, release distribution, installer identity and supported platform expansion. The current product name is Waypoint; its application license is MIT.
 WPF is currently Windows-only. Public upstream PR discovery is implemented; private GitHub authentication remains separate.
 Public server directories, mod marketplaces and official-server modes are not part of this milestone.
