@@ -25,6 +25,20 @@
       <Setter Property="Padding" Value="20"/>
       <Setter Property="Margin" Value="0,0,0,16"/>
     </Style>
+    <Style x:Key="CommitBadge" TargetType="Border">
+      <Setter Property="Background" Value="#26364A"/>
+      <Setter Property="BorderBrush" Value="#3A506B"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Padding" Value="6,2"/>
+      <Setter Property="Margin" Value="3,0"/>
+    </Style>
+    <Style x:Key="CommitHashText" TargetType="TextBlock">
+      <Setter Property="FontFamily" Value="Cascadia Mono,Consolas"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Foreground" Value="#C7DBF4"/>
+      <Setter Property="TextWrapping" Value="NoWrap"/>
+    </Style>
     <Style TargetType="Button">
       <Setter Property="Background" Value="#273347"/>
       <Setter Property="Foreground" Value="#ECF1F8"/>

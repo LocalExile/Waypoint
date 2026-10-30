@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Launcher.Desktop.MainWindow" Title="Launcher" Icon="app.ico" Style="{StaticResource {x:Type Window}}" Width="1240" Height="900" MinWidth="1020" MinHeight="730" WindowStartupLocation="CenterScreen">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Launcher.Desktop" x:Class="Launcher.Desktop.MainWindow" Title="Launcher" Icon="app.ico" Style="{StaticResource {x:Type Window}}" Width="1240" Height="900" MinWidth="1020" MinHeight="730" WindowStartupLocation="CenterScreen">
   <Window.Resources>
     <DataTemplate x:Key="SetupRequirementTemplate">
       <Grid Margin="0,0,0,12">
@@ -157,9 +157,9 @@
                   <TextBlock Text="Know what you’re running" FontSize="21" FontWeight="SemiBold"/>
                   <TextBlock Text="Build the selected checkout without switching or modifying its Git branch." Foreground="{StaticResource Muted}" Margin="0,8,0,20"/>
                   <TextBlock Text="SELECTED SOURCE" Style="{StaticResource Caption}"/>
-                  <TextBox x:Name="SourceIdentity" IsReadOnly="True" Margin="0,8,0,18"/>
+                  <local:CommitText x:Name="SourceIdentity" Margin="0,8,0,18"/>
                   <TextBlock Text="BUILT COMPONENTS · DEBUG" Style="{StaticResource Caption}"/>
-                  <TextBox x:Name="BuildIdentity" IsReadOnly="True" TextWrapping="Wrap" Margin="0,8,0,18"/>
+                  <local:CommitText x:Name="BuildIdentity" TextWrapping="Wrap" Margin="0,8,0,18"/>
                   <WrapPanel>
                     <Button Content="Build checkout" Style="{StaticResource Primary}" Click="Build_Click"/>
                     <Button Content="Open checkout folder" Click="OpenCheckout_Click"/>
@@ -233,12 +233,13 @@
                 <TextBlock Text="We check the latest upstream commit and look in common local folders. You can always choose a different location. Your saved checkout stays selected." Foreground="{StaticResource Muted}" Margin="0,8,0,14"/>
                 <WrapPanel><Button x:Name="FindRepositoryButton" Content="Find LocalExile" Click="FindRepository_Click"/><Button Content="Browse for a different location…" Click="Browse_Click"/></WrapPanel>
                 <TextBlock x:Name="DiscoveryStatus" Text="Automatic lookup runs on first use. You can also search again here." Margin="0,14,0,0"/>
+                <local:CommitText x:Name="UpstreamIdentity" Visibility="Collapsed" Margin="0,8,0,0"/>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250" Margin="0,12,0,0">
                   <ItemsControl x:Name="DiscoveredRepositories"><ItemsControl.ItemTemplate><DataTemplate>
                     <Border BorderBrush="#354254" BorderThickness="0,0,0,1" Padding="0,12"><StackPanel>
                       <TextBlock Text="{Binding Summary}" Foreground="{StaticResource Accent}"/>
                       <TextBlock Text="{Binding Root}" Margin="0,6,0,6" TextWrapping="Wrap"/>
-                      <TextBlock Text="{Binding CommitLabel}" Style="{StaticResource Caption}"/>
+                      <local:CommitText Value="{Binding CommitLabel}" Style="{StaticResource Caption}"/>
                       <Button Content="Use this checkout" Tag="{Binding}" Click="UseDiscoveredRepository_Click" HorizontalAlignment="Left" Margin="0,10,0,0" Padding="12,7"/>
                     </StackPanel></Border>
                   </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>

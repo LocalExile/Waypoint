@@ -48,6 +48,8 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 - Play, start/stop servers, individual service controls, service restart, and graceful game close.
 - Process ownership checks and readiness based on the verified process owning every required listener.
 - Source commit and built Auth/Patch/Gateway informational versions displayed separately.
+- Commit labels use seven-character inline code badges; hover to see the full hash. Comparisons and diagnostic
+  reports retain full identities.
 - CPU, working-set memory and uptime per process; stopped processes show no fabricated measurements.
 - Readable live service logs, errors, operation output and links to their local folders.
 - Build the selected LocalExile solution; launcher and emulator build independently.

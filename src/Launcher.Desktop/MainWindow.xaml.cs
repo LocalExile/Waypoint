@@ -112,8 +112,8 @@ public partial class MainWindow : Window
     {
         CheckoutLabel.Text = state.Root;
         SidebarBranch.Text = string.IsNullOrWhiteSpace(state.SourceBranch) ? "Detached source" : state.SourceBranch;
-        SourceIdentity.Text = $"{state.SourceBranch}  ·  {state.SourceCommit}";
-        BuildIdentity.Text = state.BuildCommit.Replace("; ", Environment.NewLine);
+        SourceIdentity.Value = $"{state.SourceBranch}  ·  {state.SourceCommit}";
+        BuildIdentity.Value = state.BuildCommit.Replace("; ", Environment.NewLine);
         EnvironmentIdentity.Text = $"Launch profile: {state.Profile}\nSave database: {state.SaveDatabase}\nClient: {Path.Combine(state.Root, "Client", "Game.patched.exe")}";
         ReadinessLabel.Text = state.Conflicts.Length > 0 ? string.Join("\n", state.Conflicts)
             : !state.SetupReady ? "Setup needs attention. See the checks below."
@@ -355,18 +355,20 @@ public partial class MainWindow : Window
             string upstream = result.Upstream is { } tip
                 ? $"Upstream {tip.Branch}: {tip.Commit} (checked {tip.CheckedAt.ToLocalTime():t})."
                 : result.UpstreamError ?? "Upstream HEAD unavailable.";
+            UpstreamIdentity.Value = result.Upstream is not null ? upstream : "";
+            UpstreamIdentity.Visibility = result.Upstream is not null ? Visibility.Visible : Visibility.Collapsed;
             int matches = result.Repositories.Count(r => r.MatchesUpstream);
             string choices = matches > 1 ? $"{matches} checkouts match upstream HEAD. Choose one below, or Browse elsewhere."
                 : matches == 1 ? "One checkout matches upstream HEAD. You can use it below or Browse elsewhere."
                 : result.Repositories.Length > 0 ? "No matching upstream HEAD found. Other LocalExile checkouts are listed below; you can use any of them or Browse elsewhere."
                 : "No LocalExile checkout found in the searched locations. Browse to your checkout instead.";
-            DiscoveryStatus.Text = upstream + "\n" + choices +
+            DiscoveryStatus.Text = (result.Upstream is null ? upstream + "\n" : "") + choices +
                 (result.Limited ? "\nSearch limits reached; other checkouts may exist. Browse to any location." : "");
             // Only a fresh, untouched choice can be adopted automatically. Never replace a saved or manual selection.
             if (result.SingleMatch is { } match && string.IsNullOrWhiteSpace(settings.RepositoryPath) &&
                 string.IsNullOrWhiteSpace(RepositoryPathBox.Text) && locationRevision == revision && lastError is null && !busy)
             {
-                if (await SelectRepositoryAsync(match.Root) && settings.RepositoryPath == match.Root) DiscoveryStatus.Text = "Found and using: " + match.Root + "\n" + upstream + "\nChange location above to choose somewhere else." +
+                if (await SelectRepositoryAsync(match.Root) && settings.RepositoryPath == match.Root) DiscoveryStatus.Text = "Found and using: " + match.Root + "\nChange location above to choose somewhere else." +
                     (match.Head.HasTrackedChanges == true ? "\nThis checkout has modified tracked files." : "");
             }
         }
@@ -404,7 +406,7 @@ public partial class MainWindow : Window
             PlayButton.IsEnabled = false;
             CheckoutLabel.Text = path;
             SidebarBranch.Text = "Checking checkout…";
-            SourceIdentity.Text = BuildIdentity.Text = EnvironmentIdentity.Text = "";
+            SourceIdentity.Value = BuildIdentity.Value = EnvironmentIdentity.Text = "";
             ReadinessLabel.Text = "Checking the selected installation…";
             lastError = null;
             OperationDetail.Visibility = FailureActions.Visibility = Visibility.Collapsed;

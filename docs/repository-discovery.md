@@ -53,3 +53,14 @@ solution build passed with zero warnings/errors. No runtime service or game was 
 Desktop validation builds reported informational version `1.0.0+3b398e7977c56eaf36904c6c08594554e9c3f771`, compiled
 from working changes on that base. Final source was rebuilt after validation. Launcher settings were backed up for
 the first-run checks and restored afterward. No game/server was started by discovery and nothing was published.
+
+## Commit display follow-up, 30 October 2026
+
+Source/build identities, upstream identity and discovery result HEADs now render seven-character monospace code
+badges. Each badge retains its full hash in a tooltip. Branches, versions, explanatory text and filesystem paths keep
+normal text styling. Full identities remain in Core, comparisons, logs and exported diagnostic reports.
+
+Builds and Settings were inspected at the 1020 × 730 minimum size, including a prepared installation, an unbuilt
+source checkout and discovery entries with no readable Git HEAD. UI validation builds reported informational version
+`1.0.0+218a67cebc00439801ad5cbd1a99619d7a02b8ee`, compiled from the working display changes. The solution built with
+zero warnings/errors; all 43 launcher and 9 ownership checks passed. No LocalExile source/runtime changes were needed.
