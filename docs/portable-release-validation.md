@@ -64,5 +64,25 @@ The solution build passed with zero warnings/errors. The unchanged runtime/sourc
 64 core checks, 18 ownership/start-command checks and 21 source/save integration checks before packaging.
 Failure messages from the deliberately broken compile/database fixtures are expected assertions, not build failures.
 
-The package is a portable preview. An installer, signing, application license decision and public distribution remain
-separate work; no publication was performed for this validation.
+The package is a portable preview. An installer, signing and public distribution remain separate work;
+no publication was performed for this validation.
+
+## License and first-publication candidate
+
+The owner subsequently chose MIT for Waypoint independently. The repository now contains `LICENSE`, a download-first
+user README and versioned release notes. The quick-start guide also covers first account creation, backup behavior,
+troubleshooting and licensing. This choice does not license LocalExile or any game assets.
+
+A new clean-source candidate includes `LICENSE.txt` and `RELEASE-NOTES.md` in addition to the earlier payload:
+
+- Source: `fac211e28461769b3d17aebba659d1ceb96a280f`.
+- ZIP: `Waypoint-0.3.0-win-x64.zip`, 63,263,842 bytes.
+- SHA-256: `f2613b825cf5fa9e6588c01030e7badda6357d23700f7786e7f549723b567f09`.
+- Extracted to `F:\Waypoint Release Validation\20261030-publish-ready-47494e35\Waypoint`.
+- All 410 payload hashes/sizes, ZIP checksum, x64 header, runtime/application licenses, release notes and branding passed.
+- The new extracted executable was opened from an unrelated temporary working directory and checked against the
+  independent standard installation. Application behavior is unchanged from the full lifecycle test above.
+
+This candidate supersedes the first ZIP for publication. The 103 source/runtime checks passed again, all local README
+links resolve, and the public quick-start/release instructions contain no developer-specific installation paths.
+No repository, release or package was published.
