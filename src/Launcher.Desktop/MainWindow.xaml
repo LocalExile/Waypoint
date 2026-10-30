@@ -48,7 +48,7 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <TextBlock Text="Make room for the next run." FontSize="27" FontWeight="SemiBold"/>
+          <TextBlock Text="LocalExile" FontSize="27" FontWeight="SemiBold"/>
           <TextBlock x:Name="CheckoutLabel" Text="Select a LocalExile checkout in Settings." Style="{StaticResource Caption}" Margin="0,8,16,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="Change location" Click="ChangeLocation_Click"/><Button Content="Refresh" Click="Refresh_Click" Margin="0"/></StackPanel>
