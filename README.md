@@ -63,6 +63,7 @@ dotnet run --project tests/Launcher.Checks --no-build -- --inspect 'F:\evry\evry
 
 Real lifecycle validation, observations and test limits are recorded in [validation](docs/validation.md).
 The source review is in [LocalExile build and launch](docs/localexile-build-and-launch.md).
+The fresh, default-path upstream installation test is in [standard installation validation](docs/standard-install-validation.md).
 
 ## Rename the product
 
