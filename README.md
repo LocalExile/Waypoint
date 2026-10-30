@@ -20,6 +20,8 @@ but **Browse for a different location…** is available immediately. Git queries
 default branch, then compares local checkout HEADs. One verified match is selected and remembered as **Found and
 using…**; multiple matches offer **Use this checkout** choices. Saved/manual selections are never silently replaced.
 **Change location** stays visible at the top of every page. Browse selects and checks a folder immediately.
+The heading starts as **Workspace** and changes to the selected repository's name from its local Git origin URL,
+falling back to the folder name when Git metadata is unavailable. The full selected path remains underneath.
 Offline lookup, missing Git, no match and bounded searches still allow manual selection or use of an older checkout.
 
 1. Use the discovered checkout, select **Use this checkout** from the list, or click **Change location** to choose

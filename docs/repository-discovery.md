@@ -32,6 +32,12 @@ available. Location changes wait for inspection to finish and are refused during
 clears stale runtime/build information before checking the new installation. Discovery cannot replace a location
 chosen while lookup was in progress. Closing the launcher cancels its disposable discovery/Git queries.
 
+The workspace heading shows **Workspace** with no valid selection. Selecting a checkout immediately displays its
+folder name, then resolves the repository name from the locally configured Git origin. This name lookup is offline,
+supports HTTPS/SSH origins and worktrees, and excludes remote credentials and query strings. A missing Git/origin
+falls back to the folder name. Results from an earlier selection cannot replace the current heading; long names
+are truncated visually with the complete name in a tooltip. The full selected path stays underneath.
+
 ## Validation, 30 October 2026
 
 The executable checks cover renamed/nested folders, overlapping roots, generated-directory exclusion, depth/count
@@ -70,3 +76,11 @@ component name and commit badge (or not built / commit unavailable). Raw binary 
 runtime adapter. This display was checked with built and unbuilt installations and at minimum window size; the
 same 43 launcher and 9 ownership checks passed, with a clean build. The inspected launcher binary reported
 `1.0.0+accbb01b59db9ba95746bf94188a5bca68836e9c`, compiled from this display correction on that base.
+
+The dynamic repository heading was checked from no selection (Workspace) through manual selection of the prepared
+standard checkout (LocalExile), including the 1020 × 730 layout. Automated naming checks cover renamed folders,
+missing Git/origin, HTTPS/SSH names and excluding URL credentials/query details. All 49 launcher checks and 9
+ownership checks passed. The final build had zero warnings/errors after closing a preview that initially held a
+DLL open. UI validation used informational version `1.0.0+bb7e6517a29a8c8bfbb0f53d53eb9c8fcd0d87f1`, compiled
+from the working heading changes on that base. The built version is also recorded in the ignored local validation
+artifact. Saved preferences were restored.

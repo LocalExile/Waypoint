@@ -163,6 +163,16 @@ try
         "upstream lookup resolves the advertised default branch and validates the HEAD hash");
     var noGit = await GitRepositoryProbe.ReadLocalAsync(checkoutB);
     Check(noGit.Commit == "" && noGit.HasTrackedChanges is null, "source folders without Git remain selectable with unknown commit status");
+    Check(RepositoryNaming.FolderName("") == "Workspace" && RepositoryNaming.FolderName(checkoutB + Path.DirectorySeparatorChar) == "another name",
+        "workspace naming handles no selection and trailing folder separators");
+    Check(RepositoryNaming.NameFromRemote("https://github.com/LocalExile/LocalExile.git") == "LocalExile" &&
+        RepositoryNaming.NameFromRemote("git@github.com:Owner/RenamedFork.git") == "RenamedFork" &&
+        RepositoryNaming.NameFromRemote("ssh://git@github.com/Owner/OtherFork.git") == "OtherFork",
+        "repository titles use the actual HTTPS or SSH repository name");
+    Check(RepositoryNaming.NameFromRemote("https://private-user:private-token@example.invalid/Owner/VisibleName.git?access_token=secret#private-fragment") == "VisibleName" &&
+        RepositoryNaming.NameFromRemote("https://example.invalid/") == "",
+        "repository titles exclude remote credentials, hosts and query/fragment details");
+    Check(await RepositoryNaming.ResolveAsync(checkoutB) == "another name", "source folders without Git use their folder name as the heading");
 
     async Task Git(params string[] arguments)
     {
@@ -176,6 +186,9 @@ try
         if (process.ExitCode != 0) throw new Exception("Git fixture: " + await error);
     }
     await Git("init", "--initial-branch=fixture");
+    Check(await RepositoryNaming.ResolveAsync(checkoutA) == "renamed fork", "a repository with no origin uses its local folder name");
+    await Git("config", "remote.origin.url", "https://example.invalid/Owner/LocalExile.git");
+    Check(await RepositoryNaming.ResolveAsync(checkoutA) == "LocalExile", "repository name is resolved from local Git metadata without needing the remote host");
     await Git("add", ".");
     await Git("-c", "user.name=Launcher checks", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "-m", "Fixture");
     await Git("pack-refs", "--all");

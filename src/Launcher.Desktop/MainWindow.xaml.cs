@@ -29,6 +29,8 @@ public partial class MainWindow : Window
     bool closing;
     bool discovering;
     int locationRevision;
+    string? headingRoot;
+    int headingRevision;
     string? lastError;
     string currentStage = "";
     string stageDetail = "";
@@ -58,6 +60,7 @@ public partial class MainWindow : Window
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         Loaded += async (_, _) =>
         {
+            UpdateWorkspaceHeading(settings.RepositoryPath);
             if (string.IsNullOrWhiteSpace(settings.RepositoryPath))
             {
                 Pages.SelectedItem = SettingsPage;
@@ -118,9 +121,30 @@ public partial class MainWindow : Window
             return $"{parts[0]} · {(commit.Length > 0 ? commit : metadata == "not built" ? "not built" : "commit unavailable")}";
         }));
 
+    void UpdateWorkspaceHeading(string path)
+    {
+        CheckoutLabel.Text = string.IsNullOrWhiteSpace(path) ? "Select a LocalExile checkout in Settings." : path;
+        string root = RepositoryDiscovery.IsLocalExile(path) ? path : "";
+        if (string.Equals(root, headingRoot, StringComparison.OrdinalIgnoreCase)) return;
+        headingRoot = root;
+        int revision = ++headingRevision;
+        WorkspaceTitle.Text = RepositoryNaming.FolderName(root);
+        if (root.Length > 0) _ = ResolveWorkspaceHeadingAsync(root, revision);
+    }
+
+    async Task ResolveWorkspaceHeadingAsync(string root, int revision)
+    {
+        try
+        {
+            string name = await RepositoryNaming.ResolveAsync(root, discoveryCancellation.Token);
+            if (!closing && revision == headingRevision) WorkspaceTitle.Text = name;
+        }
+        catch (OperationCanceledException) when (discoveryCancellation.IsCancellationRequested) { }
+    }
+
     void Render(RuntimeSnapshot state)
     {
-        CheckoutLabel.Text = state.Root;
+        UpdateWorkspaceHeading(state.Root);
         SidebarBranch.Text = string.IsNullOrWhiteSpace(state.SourceBranch) ? "Detached source" : state.SourceBranch;
         SourceIdentity.Value = $"{state.SourceBranch}  ·  {state.SourceCommit}";
         BuildIdentity.Value = BuildCommitLabels(state.BuildCommit);
@@ -409,12 +433,12 @@ public partial class MainWindow : Window
             var selected = new LauncherSettings(path, UseProfileBox.IsChecked == true);
             SettingsStore.Save(selected);
             settings = selected;
+            UpdateWorkspaceHeading(path);
             RepositoryPathBox.Text = path;
             samples.Clear();
             snapshot = null;
             ServiceList.ItemsSource = PerformanceList.ItemsSource = RequirementList.ItemsSource = SetupRequirementList.ItemsSource = null;
             PlayButton.IsEnabled = false;
-            CheckoutLabel.Text = path;
             SidebarBranch.Text = "Checking checkout…";
             SourceIdentity.Value = BuildIdentity.Value = EnvironmentIdentity.Text = "";
             ReadinessLabel.Text = "Checking the selected installation…";
