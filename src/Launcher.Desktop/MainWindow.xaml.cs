@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -108,12 +109,21 @@ public partial class MainWindow : Window
         finally { gate.Release(); }
     }
 
+    static string BuildCommitLabels(string components) => string.Join(Environment.NewLine,
+        components.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(component =>
+        {
+            var parts = component.Split('=', 2);
+            string metadata = parts.Length == 2 ? parts[1] : "";
+            string commit = Regex.Match(metadata, @"\b(?:[a-fA-F0-9]{64}|[a-fA-F0-9]{40})\b").Value;
+            return $"{parts[0]} · {(commit.Length > 0 ? commit : metadata == "not built" ? "not built" : "commit unavailable")}";
+        }));
+
     void Render(RuntimeSnapshot state)
     {
         CheckoutLabel.Text = state.Root;
         SidebarBranch.Text = string.IsNullOrWhiteSpace(state.SourceBranch) ? "Detached source" : state.SourceBranch;
         SourceIdentity.Value = $"{state.SourceBranch}  ·  {state.SourceCommit}";
-        BuildIdentity.Value = state.BuildCommit.Replace("; ", Environment.NewLine);
+        BuildIdentity.Value = BuildCommitLabels(state.BuildCommit);
         EnvironmentIdentity.Text = $"Launch profile: {state.Profile}\nSave database: {state.SaveDatabase}\nClient: {Path.Combine(state.Root, "Client", "Game.patched.exe")}";
         ReadinessLabel.Text = state.Conflicts.Length > 0 ? string.Join("\n", state.Conflicts)
             : !state.SetupReady ? "Setup needs attention. See the checks below."

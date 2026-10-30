@@ -64,3 +64,9 @@ Builds and Settings were inspected at the 1020 × 730 minimum size, including a 
 source checkout and discovery entries with no readable Git HEAD. UI validation builds reported informational version
 `1.0.0+218a67cebc00439801ad5cbd1a99619d7a02b8ee`, compiled from the working display changes. The solution built with
 zero warnings/errors; all 43 launcher and 9 ownership checks passed. No LocalExile source/runtime changes were needed.
+
+The subsequent Builds display correction removes the .NET-generated version prefix: component rows show only the
+component name and commit badge (or not built / commit unavailable). Raw binary metadata stays available to the
+runtime adapter. This display was checked with built and unbuilt installations and at minimum window size; the
+same 43 launcher and 9 ownership checks passed, with a clean build. The inspected launcher binary reported
+`1.0.0+accbb01b59db9ba95746bf94188a5bca68836e9c`, compiled from this display correction on that base.
