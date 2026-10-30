@@ -6,6 +6,12 @@ Checkout settings, dark UI/icon, structural prerequisite checks, normal/local-wr
 service ownership/readiness, service start/stop/restart, Play/game close, source/build identities, process measurements,
 service/operation logs, and local automated safety checks.
 
+## Complete: setup and troubleshooting
+
+Actionable prerequisite guidance, explicit client-copy preparation, locked extraction dependency installation,
+first local account creation, named operation stages/elapsed time, failed-stage log links/retry, game logs/search,
+and a redacted diagnostic preview with explicit copy. Standard upstream source and client/build paths remain the contract.
+
 ## Next: environments and recovery
 
 1. Introduce persisted environment manifests separating repository/ref/commit, built package, prepared client,
@@ -26,9 +32,9 @@ service/operation logs, and local automated safety checks.
   measurement window, sample counts, durations and waiting separately from process CPU.
 - Record repeatable workloads with area, seed, build hash and scenario metadata; compare duration distributions
   and allocations between environments. No inferred pathfinding/combat timing from process measurements.
-- Accounts through the existing Host JSON-lines service, with local credentials kept out of logs and shell arguments.
+- Broader account management beyond first account creation, including separately designed recovery workflows.
 - Native console through `client_control.py --stdio`; represent submission, timeout and no-reply outcomes correctly.
-- Redacted diagnostic export with a local preview, bounded log retention, optional light/system themes and packaging.
+- Bounded on-disk operation-log retention, optional light/system themes and packaging.
 
 ## Product decisions still open
 

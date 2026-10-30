@@ -109,3 +109,6 @@ Both the original fork and fresh upstream checkout retained clean tracked workin
 
 The validation game and services were left stopped. The temporary installation/profile are retained for review.
 No repository was pushed, no pull request was created, and nothing was published or deployed.
+
+The later [setup and diagnostics feature validation](setup-and-diagnostics-validation.md) reused this independent
+installation and explicitly added a second disposable test account. Counts and checks above describe the original pass.

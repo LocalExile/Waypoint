@@ -18,16 +18,22 @@ Alternatively, open `src\Launcher.Desktop\bin\Debug\net10.0-windows\Launcher.Des
 1. Open **Settings**. Choose the LocalExile folder containing `GameServer.slnx`.
 2. Leave **Use this checkout's local runtime wrapper when present** checked if your checkout has
    `scripts/dev/live.local.ps1` and `config/runtime.local.ps1`. This preserves that installation's existing save path.
-3. Click **Save and check**. Resolve failed checks before pressing **Play**. **Open setup guide** opens the checkout's
-   `Agents/GettingStarted.md` in Notepad with the concrete client-preparation instructions.
+3. Click **Save and check**. Open **Setup** for instructions and an action beside each prerequisite. For a fresh
+   installation, copy the complete supported standalone client into the selected checkout's `Client` folder using
+   File Explorer, then click **Prepare local client**. Preparation retains existing keys and executables, creates
+   missing files, and sets the copied archive's gateway to localhost. **Install extraction dependency** installs
+   the checkout's locked Node dependency. The setup dialogs explain each change before it runs.
 4. On **Play**, use **Start servers** to run servers without the game, or **Play** for both.
 5. Use **Close game** before **Stop servers** or a service restart. Closing the launcher leaves the game and services running.
+6. If this installation needs its first account, close the game, stop services, open **Setup**, scroll to **First local
+   account**, and click **Create local account**. Enter an account name and password. After creation, press **Play**
+   and sign in inside the game; create your character there. The launcher does not save the password.
 
-The checkout must already contain its prepared standalone **3.29.3b** client, matching local login keys, and extraction
-dependencies. This version does not install the game, generate keys, copy saves, or change branches for you.
+The supported client is standalone **3.29.3b**. The launcher can prepare a separate copy already placed in `Client`;
+it does not download the game, copy saves, or change branches for you.
 It checks structural prerequisites; the upstream preparation tools enforce the supported client signatures.
 
-## Included in 0.1
+## Included in 0.2
 
 - Dark WPF desktop interface, keyboard focus indication, scalable text, and an original geometric application icon.
 - Checkout selection and persistent settings; local runtime profile support without executing profile code on inspection.
@@ -37,6 +43,12 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 - CPU, working-set memory and uptime per process; stopped processes show no fabricated measurements.
 - Readable live service logs, errors, operation output and links to their local folders.
 - Build the selected LocalExile solution; launcher and emulator build independently.
+- Setup guidance with prerequisite actions, client preparation, extraction dependency installation and first account creation.
+- Named operation stages and elapsed time; a failed operation retains its stage and offers log/output links and retry.
+  Account creation requires re-entering details rather than retaining the password for retry.
+- Game logs, case-insensitive search and a warnings/errors filter, alongside service and operation logs.
+- A bounded diagnostic report with redaction, local preview, optional extra names to remove and an explicit Copy button.
+  Review the preview for details the pattern-based redaction may miss. Nothing is automatically shared.
 
 The launcher uses Windows PowerShell 5.1, .NET 10, the standard Debug output layout and standard local ports.
 Existing servers from other build folders are shown as port conflicts and are not adopted or stopped.
@@ -64,6 +76,7 @@ dotnet run --project tests/Launcher.Checks --no-build -- --inspect 'F:\evry\evry
 Real lifecycle validation, observations and test limits are recorded in [validation](docs/validation.md).
 The source review is in [LocalExile build and launch](docs/localexile-build-and-launch.md).
 The fresh, default-path upstream installation test is in [standard installation validation](docs/standard-install-validation.md).
+The setup/progress/logging feature checks are in [setup and diagnostics validation](docs/setup-and-diagnostics-validation.md).
 
 ## Rename the product
 
@@ -85,10 +98,13 @@ Installer identity is deferred until an installer exists.
 - `.local/` is ignored and holds this machine's development/validation artifacts only.
 
 Operation logs contain PowerShell transcript metadata and local paths. They are local diagnostics, not redacted shareable reports.
-No telemetry, account integration, automatic updates or upload feature is included.
+Account creation has no transcript: its request travels through stdin and localhost, never command arguments or a request file.
+Diagnostic preview includes only bounded operation output and the selected log, plus setup/service/build metadata; it does
+not collect databases, key files, credential files or client archives. Account/character names can be added to its removal field.
+No telemetry, automatic updates or upload feature is included.
 
 ## Next work
 
 See [ROADMAP.md](ROADMAP.md) for isolated branch/PR environments, consistent backup/restore, Gateway phase timing,
-recorded comparisons, account management and the native development console.
+recorded comparisons, broader account management and the native development console.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for implementation boundaries and checks.

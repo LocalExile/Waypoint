@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -12,6 +12,7 @@ $result = $null
 $transcribing = $false
 $mutex = $null
 $hasLock = $false
+$script:stage = 'Checking setup'
 $names = @('Patch','Gateway','Auth')
 $portMap = @{ Patch = @(12995,8080); Gateway = @(6112); Auth = @(20493,20495) }
 
@@ -20,6 +21,14 @@ function Write-Result($value) {
 }
 function Require($condition, [string]$message) { if (-not $condition) { throw $message } }
 function At([string]$relative) { Join-Path $script:root $relative }
+function Set-Stage([string]$stage, [string]$detail = '') {
+    $script:stage = $stage
+    if ($Action -eq 'Inspect') { return }
+    $progress = @{ Stage=$stage; Detail=$detail; LogPath=(Join-Path (Split-Path $ResultPath) $(if ($Action -eq 'Register') { 'account-service.log' } else { 'operation.log' })) }
+    $path = Join-Path (Split-Path $ResultPath) 'progress.json'
+    $progress | ConvertTo-Json | Set-Content -LiteralPath ($path + '.tmp') -Encoding UTF8
+    Move-Item -LiteralPath ($path + '.tmp') -Destination $path -Force
+}
 function Same-Path([string]$a, [string]$b) {
     if (-not $a -or -not $b) { return $false }
     try { return [IO.Path]::GetFullPath($a).TrimEnd('\') -ieq [IO.Path]::GetFullPath($b).TrimEnd('\') } catch { return $false }
@@ -164,7 +173,6 @@ function Start-Services($snapshot, [string[]]$selected) {
     if ($running.Count) {
         # A selected service that is alive but not ready should not be silently restarted.
         Require (-not @($running | Where-Object { $_.Name -in $missing }).Count) 'A selected service is still starting or unhealthy. Inspect its log, then stop it explicitly.'
-        $argsForLive = @{ NoClient=$true; NoBuild=$true; Only=$missing }
         foreach ($n in $missing) {
             $dll = At "src/GameServer.$n/bin/Debug/net10.0/GameServer.$n.dll"
             Require (Test-Path -LiteralPath $dll) "Build $n first: stop servers, then click Build checkout."
@@ -172,9 +180,24 @@ function Start-Services($snapshot, [string[]]$selected) {
         }
         & git -C $script:root diff --quiet HEAD --
         Require ($LASTEXITCODE -eq 0) 'The checkout has uncommitted changes. Stop servers and build before starting additional services.'
-    } else { $argsForLive = @{ NoClient=$true; Only=$missing } }
+    }
+    Set-Stage 'Extracting data' 'Checking the upstream extraction manifest; missing or outdated data will be generated.'
+    & (At 'scripts/dev/extract-data.ps1')
+    if (-not $running.Count) {
+        Set-Stage 'Building services' ($missing -join ', ')
+        foreach ($name in $missing) {
+            & dotnet build (At "src/GameServer.$name") --nologo -v minimal
+            Require ($LASTEXITCODE -eq 0) "Build failed for $name. Open this operation's log."
+        }
+    }
+    $latest = Get-Snapshot
+    Require (-not $latest.Conflicts.Count) ($latest.Conflicts -join "`n")
+    Require (-not @($latest.Services | Where-Object { $_.Name -in $missing -and $_.ProcessId }).Count) 'A selected service started during preparation. Refresh and retry without restarting it.'
+    Set-Stage 'Starting services' ($missing -join ', ')
+    $argsForLive = @{ NoClient=$true; NoBuild=$true; NoExtract=$true; Only=$missing }
     $entry = if ($script:profile -eq 'Local runtime wrapper') { At 'scripts/dev/live.local.ps1' } else { At 'scripts/dev/live.ps1' }
     & $entry @argsForLive
+    Set-Stage 'Waiting for services' 'Verifying ownership of every required listening port.'
     $deadline = (Get-Date).AddSeconds(60)
     do {
         $latest = Get-Snapshot
@@ -192,6 +215,7 @@ function Stop-Services($snapshot, [string[]]$selected) {
         Get-Inventory
         $targets = @($script:processes | Where-Object { Owned-Server $_ $name })
         foreach ($target in $targets) {
+            Set-Stage 'Stopping services' $name
             # Attach only to the dedicated cmd console verified by Owned-Server. Ctrl+C lets Gateway save.
             # Console attachment must happen in a disposable helper: detaching this PowerShell would invalidate
             # its host handles and break transcript/output handling for the remainder of this operation.
@@ -209,6 +233,116 @@ function Stop-Services($snapshot, [string[]]$selected) {
             Write-Host "$name stopped."
         }
     }
+}
+
+function Assert-SetupStopped($snapshot) {
+    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    Require (-not @($snapshot.Services | Where-Object ProcessId -gt 0).Count) 'Close the game and stop services before preparing the installation or creating an account.'
+}
+function Prepare-Client($snapshot) {
+    Assert-SetupStopped $snapshot
+    Require (Test-Sdk) 'Install .NET 10 SDK first.'
+    $client = Get-Item -LiteralPath (At 'Client') -ErrorAction SilentlyContinue
+    Require ($client -and -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) 'Client must be a separate physical copy in this checkout; preparation refuses a redirected Client folder.'
+    Require (Test-Path -LiteralPath (At 'Client/Content.ggpk')) 'Copy the complete standalone 3.29.3b client into Client first.'
+    foreach ($relative in @('Client/Content.ggpk','Client/Game.exe','Client/PathOfExile.exe','Client/Game.patched.exe','data','data/login-keys.json')) {
+        $item = Get-Item -LiteralPath (At $relative) -ErrorAction SilentlyContinue
+        Require (-not $item -or -not ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) "Preparation refuses redirected files or folders: $relative"
+    }
+    $keys = Test-Path -LiteralPath (At 'data/login-keys.json')
+    $patched = Test-Path -LiteralPath (At 'Client/Game.patched.exe')
+    Require ($keys -or -not $patched) 'A prepared executable exists without keys. Preserve it and recover its matching keys, or prepare a new client copy.'
+    if (-not (Test-Path -LiteralPath (At 'Client/Game.exe'))) {
+        Require (Test-Path -LiteralPath (At 'Client/PathOfExile.exe')) 'Client/PathOfExile.exe or Client/Game.exe is required.'
+        Copy-Item -LiteralPath (At 'Client/PathOfExile.exe') -Destination (At 'Client/Game.exe')
+    }
+    Set-Stage 'Building preparation tools' 'Auth and Patch'
+    foreach ($name in @('Auth','Patch')) {
+        & dotnet build (At "src/GameServer.$name") --nologo -v minimal
+        Require ($LASTEXITCODE -eq 0) "Build failed for $name."
+    }
+    Set-Stage 'Preparing client' 'Retaining existing keys and prepared executable; creating only missing files.'
+    $auth = At 'src/GameServer.Auth/bin/Debug/net10.0/GameServer.Auth.dll'
+    if (-not $keys) {
+        & dotnet $auth keygen (At 'Client/Game.exe')
+        Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3b.'
+    }
+    if (-not $patched) {
+        & dotnet $auth patch (At 'Client/Game.exe') (At 'Client/Game.patched.exe')
+        Require ($LASTEXITCODE -eq 0) 'Client preparation failed. Existing keys were preserved.'
+    }
+    Set-Stage 'Selecting local gateway' 'Only the copied client archive is updated.'
+    & dotnet (At 'src/GameServer.Patch/bin/Debug/net10.0/GameServer.Patch.dll') gateway (At 'Client/Content.ggpk') --login '127.0.0.1:20493'
+    Require ($LASTEXITCODE -eq 0) 'Local gateway setup failed. Close all clients and inspect the operation log.'
+}
+function Register-Account($snapshot) {
+    Assert-SetupStopped $snapshot
+    Require (Test-Sdk) 'Install .NET 10 SDK first.'
+    Require (-not ($ResultPath -match '[&|<>^%!"\r\n]')) 'Account setup needs a launcher data path without command-shell metacharacters.'
+    Require ((-not $env:Game_DEV_PORT -or $env:Game_DEV_PORT -eq '7000') -and (-not $env:Game_DEV_BIND -or $env:Game_DEV_BIND -eq '127.0.0.1')) 'Account setup requires the default localhost account-service address.'
+    Require (-not @($script:listeners | Where-Object LocalPort -eq 7000).Count) 'Port 7000 is in use. Stop the existing account service first; it will not be adopted.'
+    # This request arrives through stdin, never a command argument or file. Do not transcribe this action.
+    try { $request = [Console]::In.ReadLine() | ConvertFrom-Json } catch { throw 'Could not read local account request.' }
+    Require ($request.Name -is [string] -and $request.Name -match '^[A-Za-z0-9_-]{3,32}$') 'Account name must be 3-32 letters, digits, underscores or hyphens.'
+    Require ($request.Password -is [string] -and $request.Password.Length -ge 4 -and $request.Password.Length -le 1024) 'Password must contain 4-1024 characters.'
+    Set-Stage 'Building account service' 'Preparing the local account service for this checkout.'
+    & dotnet build (At 'src/GameServer.Host') --nologo -v minimal | Out-Null
+    Require ($LASTEXITCODE -eq 0) 'Account service build failed. Run Build checkout to inspect compiler output.'
+    $log = Join-Path (Split-Path $ResultPath) 'account-service.log'
+    $err = Join-Path (Split-Path $ResultPath) 'account-service.err'
+    $line = '/c dotnet src\GameServer.Host\bin\Debug\net10.0\GameServer.Host.dll 1>"' + $log + '" 2>"' + $err + '"'
+    $parent = Start-Process cmd.exe -ArgumentList $line -WorkingDirectory $script:root -WindowStyle Hidden -PassThru
+    $target = $null; $client = $null; $registered = $false; $failureStage = $null
+    try {
+        Set-Stage 'Creating local account' 'Using this installation only. Credentials are not saved by the launcher.'
+        $deadline = (Get-Date).AddSeconds(20)
+        do {
+            Start-Sleep -Milliseconds 200
+            Get-Inventory
+            $targets = @($script:processes | Where-Object { $_.Name -ieq 'dotnet.exe' -and $_.ParentProcessId -eq $parent.Id -and $_.CommandLine -match '^dotnet\s+src\\GameServer.Host\\bin\\Debug\\net10.0\\GameServer.Host.dll\s*$' })
+            if ($targets.Count -eq 1) { $target = $targets[0] }
+            $listeners = @($script:listeners | Where-Object LocalPort -eq 7000)
+            Require (-not @($listeners | Where-Object { -not $target -or $_.OwningProcess -ne $target.ProcessId }).Count) 'Another process took account-service port 7000.'
+            if ($target -and $listeners.Count) { break }
+        } while ((Get-Date) -lt $deadline)
+        Require ($target -and $listeners.Count) 'The temporary account service did not become ready.'
+        $client = [Net.Sockets.TcpClient]::new()
+        $client.ReceiveTimeout = 15000; $client.SendTimeout = 15000
+        $client.Connect('127.0.0.1',7000)
+        $stream = $client.GetStream()
+        $writer = [IO.StreamWriter]::new($stream, [Text.UTF8Encoding]::new($false), 4096, $true)
+        $writer.AutoFlush = $true
+        $reader = [IO.StreamReader]::new($stream, [Text.Encoding]::UTF8, $false, 4096, $true)
+        try {
+            $payload = @{op='register';name=$request.Name;password=$request.Password} | ConvertTo-Json -Compress
+            $writer.WriteLine($payload)
+            $reply = $reader.ReadLine() | ConvertFrom-Json
+            Require ($reply.ok -eq $true) 'The account could not be created. The name may already exist, or it may not meet the server rules. No password was changed.'
+            $registered = $true
+        } finally { $reader.Dispose(); $writer.Dispose(); $payload = $null }
+    } catch {
+        $failureStage = $script:stage
+        throw
+    } finally {
+        $request = $null
+        if ($client) { $client.Dispose() }
+        # Always stop this action's dedicated account service, including failed registrations.
+        if (-not $target) {
+            $target = Get-CimInstance Win32_Process | Where-Object { $_.Name -ieq 'dotnet.exe' -and $_.ParentProcessId -eq $parent.Id -and $_.CommandLine -match '^dotnet\s+src\\GameServer.Host\\bin\\Debug\\net10.0\\GameServer.Host.dll\s*$' } | Select-Object -First 1
+        }
+        if ($target) {
+            Set-Stage 'Closing account service' 'Allowing the temporary local service to shut down.'
+            $signalArgs = @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',('"' + (Join-Path $PSScriptRoot 'ConsoleSignal.ps1') + '"'),'-TargetId',[string]$target.ProcessId,'-ParentId',[string]$parent.Id,'-StartedUtc',$target.CreationDate.ToUniversalTime().ToString('o'))
+            $signal = Start-Process (Join-Path $PSHOME 'powershell.exe') -ArgumentList $signalArgs -WindowStyle Hidden -PassThru
+            $null = $signal.Handle; $signal.WaitForExit()
+            Require ($signal.ExitCode -eq 0) "Account setup could not stop its temporary service (PID $($target.ProcessId)). No force termination was attempted."
+            $deadline = (Get-Date).AddSeconds(20)
+            while ((Get-Process -Id $target.ProcessId -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 200 }
+            Require (-not (Get-Process -Id $target.ProcessId -ErrorAction SilentlyContinue)) "The temporary account service (PID $($target.ProcessId)) is still running."
+        }
+        if ($failureStage) { $script:stage = $failureStage }
+    }
+    Require $registered 'Account registration did not finish.'
 }
 
 try {
@@ -256,15 +390,30 @@ public static class NativeRuntime {
         $mutex = [Threading.Mutex]::new($false, 'Local\EmulatorWorkspaceLauncher.Runtime.v1')
         try { $hasLock = $mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $hasLock = $true }
         Require $hasLock 'Another launcher operation is in progress. Wait for it to finish.'
-        Start-Transcript -LiteralPath (Join-Path (Split-Path $ResultPath) 'operation.log') -Force | Out-Null
-        $transcribing = $true
+        if ($Action -ne 'Register') {
+            Start-Transcript -LiteralPath (Join-Path (Split-Path $ResultPath) 'operation.log') -Force | Out-Null
+            $transcribing = $true
+        }
     }
+    Set-Stage 'Checking setup' 'Checking prerequisites, process ownership and selected installation.'
     $snapshot = Get-Snapshot
     $selected = if ($Service -eq 'All') { $names } else { @($Service) }
     switch ($Action) {
+        'PrepareClient' { Prepare-Client $snapshot }
+        'Dependencies' {
+            Assert-SetupStopped $snapshot
+            Require ([bool](Get-Command npm.cmd -ErrorAction SilentlyContinue)) 'Install Node.js first, then reopen the launcher.'
+            Require (Test-Path -LiteralPath (At 'Tools/ooz/package-lock.json')) 'The checkout has no locked extraction dependency.'
+            Set-Stage 'Installing extraction dependency' 'npm ci in this checkout''s Tools/ooz directory'
+            Push-Location -LiteralPath (At 'Tools/ooz')
+            try { & npm.cmd ci --ignore-scripts --no-audit --no-fund; Require ($LASTEXITCODE -eq 0) 'Dependency installation failed. Read the operation log.' }
+            finally { Pop-Location }
+        }
+        'Register' { Register-Account $snapshot }
         'Build' {
             Require (-not @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and $_.ProcessId }).Count) 'Stop this checkout''s services before rebuilding their assemblies.'
             Require (Test-Sdk) 'Install the .NET 10 SDK first.'
+            Set-Stage 'Building checkout' 'Building the selected LocalExile solution.'
             & dotnet build (At 'GameServer.slnx') --nologo
             Require ($LASTEXITCODE -eq 0) 'LocalExile build failed. Read the operation output.'
         }
@@ -274,6 +423,7 @@ public static class NativeRuntime {
             if (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) {
                 Start-Services $snapshot $names
                 $entry = if ($script:profile -eq 'Local runtime wrapper') { At 'scripts/dev/live.local.ps1' } else { At 'scripts/dev/live.ps1' }
+                Set-Stage 'Opening game' 'Launching the prepared client through live.ps1 -ClientOnly.'
                 & $entry -ClientOnly
                 Start-Sleep -Milliseconds 700
                 $after = Get-Snapshot
@@ -285,6 +435,7 @@ public static class NativeRuntime {
         'CloseGame' {
             $game = $snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }
             if ($game) {
+                Set-Stage 'Closing game' 'Waiting for the game window to close without force termination.'
                 $p = Get-Process -Id $game.ProcessId
                 Require (Same-Path $p.Path (At 'Client/Game.patched.exe')) 'Game identity changed. Refresh before closing it.'
                 $null = $p.Handle
@@ -296,9 +447,10 @@ public static class NativeRuntime {
         }
     }
     if ($Action -ne 'Inspect') { $snapshot = Get-Snapshot }
-    $result = @{ Ok=$true; Message=$(if ($Action -eq 'Inspect') { 'Environment checked.' } else { "$Action completed." }); Snapshot=$snapshot }
+    Set-Stage 'Completed' "$Action completed."
+    $result = @{ Ok=$true; Message=$(if ($Action -eq 'Inspect') { 'Environment checked.' } elseif ($Action -eq 'Register') { 'Local account created. Sign in inside the game, then create a character there.' } else { "$Action completed." }); Snapshot=$snapshot }
 } catch {
-    $result = @{ Ok=$false; Message=$_.Exception.Message; Snapshot=$null }
+    $result = @{ Ok=$false; Message=$_.Exception.Message; Snapshot=$null; FailedStage=$script:stage }
 } finally {
     if ($transcribing) { Stop-Transcript | Out-Null }
     if ($hasLock -and $mutex) { $mutex.ReleaseMutex() }

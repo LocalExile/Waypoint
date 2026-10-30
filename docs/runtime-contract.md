@@ -7,11 +7,16 @@ account/storage formats and game behavior. The repositories are independent; no 
 No command is assembled from user text for a shell. The upstream script does assemble cmd strings, so the adapter
 refuses checkout paths containing cmd metacharacters; ordinary spaces are supported.
 
-Actions: Inspect, Build, Start, Play, Stop, Restart, CloseGame. Service selection: All, Auth, Patch, Gateway.
+Actions: Inspect, Build, Start, Play, Stop, Restart, CloseGame, PrepareClient, Dependencies, Register.
+Service selection: All, Auth, Patch, Gateway.
 Each invocation writes a JSON result containing `Ok`, `Message`, and a typed snapshot. Mutation operations also write
-a local transcript. Read-only inspection never creates data/log directories inside the source checkout.
+a local transcript except Register. Failures include `FailedStage`. Mutations replace a `progress.json` containing
+the current named stage, detail and log path. Core also interprets upstream extraction messages into named subtasks.
+Elapsed time is measured locally; no estimated percentage or remaining time is fabricated.
+Read-only inspection never creates data/log directories inside the source checkout.
 
-The helper receives no redirected streams. This preserves live.ps1's no-pipeline requirement.
+The helper receives no redirected stdout/stderr. Register alone receives a JSON request through redirected stdin;
+it never invokes live.ps1. This preserves live.ps1's no-pipeline requirement.
 A Windows named mutex serializes mutations across all launcher instances and checkouts, since this adapter uses fixed ports.
 The desktop also serializes refresh/operations and waits for an active operation to finish before it closes.
 The Core API's cancellation token only cancels read-only waiting, not an in-progress runtime mutation.
@@ -46,7 +51,10 @@ the verified dedicated console, requires that console to contain exactly the ser
 sends Ctrl+C, then exits. The adapter waits up to 20 seconds and reports failure without forcing termination.
 The game is closed by its window and checked process identity; service shutdown requires the game to be closed first.
 
-Start builds missing selected services using live.ps1 when no owned services are running. Starting another service
+Start runs the upstream extraction script, builds missing selected services when no owned services are running,
+then calls live.ps1 with NoBuild/NoExtract/NoClient and the selected missing services. Splitting the preparation
+from launch makes those stages observable without replacing upstream extraction or process-launch semantics.
+Starting another service
 beside live services reuses existing binaries only when the selected source commit matches and tracked source is clean.
 Stop all services and Build checkout after changing source. V1 does not attest all untracked/ignored build inputs.
 The Builds page shows source and disk-binary identities separately; it is not a full immutable running-build manifest.
@@ -54,6 +62,26 @@ Failed/partial startup stays visible for diagnosis; it does not silently tear do
 
 Game launch is two steps: start/wait for required servers, then live.ps1 -ClientOnly. Running is distinct from a native
 menu being ready, a successful authentication or entry into a playable area.
+
+## Setup and diagnostics
+
+Setup writes require the selected installation's game/services to be stopped and no listener conflicts.
+PrepareClient refuses redirected client folders and relevant files, retains existing keys/prepared executable,
+refuses an unpaired prepared executable before writing, and uses the checkout's Auth and Patch commands for
+missing key/executable preparation and the copied archive's gateway list. Users supply the complete client copy.
+Dependencies runs `npm ci --ignore-scripts --no-audit --no-fund` in Tools/ooz with the checkout's lockfile.
+
+Register builds the checkout's Host service, starts a dedicated temporary localhost:7000 console with operation-local
+logs, verifies its process and listener, sends the upstream JSON-lines registration request, and shuts it down with
+the same verified graceful console mechanism on success or failure. It refuses an occupied port and nonstandard
+Host bind/port configuration. Credentials never enter command arguments, a request file or a transcript.
+Registration does not perform native login or character creation, change existing passwords, or retain a retry request.
+
+Log reads use fixed service/game filenames and bounded tails. Search and warning/error filtering are local.
+Diagnostic reports include limited operation/selected-log lines and structural metadata; no recursive file collection.
+Redaction covers common labelled credentials, long hex values, home/installation paths, email addresses and detected
+or explicitly supplied names. Validated public source/build identifiers are retained separately. The user reviews
+the preview and explicitly copies it; arbitrary private details can still require manual review. No upload exists.
 
 ## Future contract
 

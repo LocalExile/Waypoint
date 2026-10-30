@@ -15,7 +15,7 @@ public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDat
     public bool SafeToLaunch => SetupReady && Conflicts.Length == 0;
 }
 
-public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot);
+public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null);
 public sealed record LauncherSettings(string RepositoryPath = "", bool UseLocalProfile = true);
 
 public static class SettingsStore

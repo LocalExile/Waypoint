@@ -15,6 +15,9 @@ public partial class MainWindow : Window
     readonly RuntimeClient runtime = new();
     readonly SemaphoreSlim gate = new(1, 1);
     readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromSeconds(5) };
+    readonly DispatcherTimer operationTimer = new() { Interval = TimeSpan.FromSeconds(1) };
+    readonly Stopwatch operationClock = new();
+    readonly HashSet<string> privateNames = new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string, (int Pid, string Started, double Cpu, DateTime Time)> samples = new();
     LauncherSettings settings = new();
     RuntimeSnapshot? snapshot;
@@ -23,6 +26,13 @@ public partial class MainWindow : Window
     bool busy;
     bool closing;
     string? lastError;
+    string currentStage = "";
+    string stageDetail = "";
+    string operationLogPath = "";
+    string stageLogPath = "";
+    string selectedLogText = "";
+    (string Action, string Service)? retry;
+    string ElapsedText => $"{(int)operationClock.Elapsed.TotalHours:00}:{operationClock.Elapsed.Minutes:00}:{operationClock.Elapsed.Seconds:00}";
 
     public MainWindow()
     {
@@ -50,6 +60,7 @@ public partial class MainWindow : Window
             timer.Start();
         };
         timer.Tick += async (_, _) => { if (!closing && !busy) await RefreshAsync(); };
+        operationTimer.Tick += (_, _) => UpdateOperationLabel();
         Closing += OnClosing;
     }
 
@@ -72,6 +83,7 @@ public partial class MainWindow : Window
             ServiceList.ItemsSource = null;
             PerformanceList.ItemsSource = null;
             RequirementList.ItemsSource = null;
+            SetupRequirementList.ItemsSource = null;
             PlayButton.IsEnabled = false;
             StatusLabel.Text = "Check failed: " + ex.Message;
             ReadinessLabel.Text = "Resolve the check failure in Settings, then refresh.";
@@ -93,7 +105,9 @@ public partial class MainWindow : Window
             : "Play prepares and starts the servers, then opens the game.";
         PlayButton.IsEnabled = !busy && state.SafeToLaunch;
         PlayButton.Content = state.GameRunning ? "✓  Game running" : "▶  Play";
-        RequirementList.ItemsSource = state.Requirements.Select(r => new { r.Name, r.Detail, Symbol = r.Ready ? "✓" : "!", Color = r.Ready ? "#A4E7C4" : "#FFCB87" }).ToArray();
+        var steps = state.Requirements.Select(r => SetupGuidance.Describe(r, state.Root)).ToArray();
+        RequirementList.ItemsSource = steps;
+        SetupRequirementList.ItemsSource = steps;
         var rows = new List<ServiceRow>();
         DateTime now = DateTime.UtcNow;
         foreach (var service in state.Services)
@@ -121,20 +135,42 @@ public partial class MainWindow : Window
         RefreshLog();
     }
 
-    async Task OperateAsync(string action, string service = "All")
+    async Task OperateAsync(string action, string service = "All", AccountRequest? account = null)
     {
         if (busy) return;
         if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) { Pages.SelectedItem = SettingsPage; return; }
-        await gate.WaitAsync();
         busy = true;
+        await gate.WaitAsync();
         lastError = null;
+        retry = action == "Register" ? null : (action, service);
+        FailureActions.Visibility = Visibility.Collapsed;
+        operationLogPath = stageLogPath = "";
+        currentStage = "Checking setup";
+        stageDetail = "Checking prerequisites and the selected installation.";
+        operationClock.Restart();
+        operationTimer.Start();
         BusyProgress.Visibility = Visibility.Visible;
-        StatusLabel.Text = action == "Start" || action == "Play" ? "Preparing environment · extraction and builds may take several minutes…" : action + " in progress…";
+        UpdateOperationLabel();
         if (snapshot is not null) Render(snapshot);
         try
         {
-            var result = await runtime.RunAsync(settings, action, service, text => Dispatcher.Invoke(() => AppendLog(text)));
-            if (!result.Ok) throw new IOException(result.Message);
+            var result = await runtime.RunAsync(settings, action, service, text => Dispatcher.Invoke(() => AppendLog(text)),
+                progress: update => Dispatcher.Invoke(() =>
+                {
+                    currentStage = update.Stage;
+                    stageDetail = update.Detail;
+                    if (!string.IsNullOrEmpty(update.LogPath))
+                    {
+                        stageLogPath = update.LogPath;
+                        if (Path.GetFileName(update.LogPath) == "operation.log") operationLogPath = update.LogPath;
+                    }
+                    UpdateOperationLabel();
+                }), account: account);
+            if (!result.Ok)
+            {
+                currentStage = result.FailedStage ?? currentStage;
+                throw new IOException(result.Message);
+            }
             snapshot = result.Snapshot;
             StatusLabel.Text = result.Message;
             AppendLog(result.Message);
@@ -142,18 +178,22 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             lastError = ex.Message;
-            StatusLabel.Text = "Operation failed: " + ex.Message;
-            AppendLog("ERROR: " + ex.Message);
+            StatusLabel.Text = currentStage + " failed: " + ex.Message;
+            AppendLog("ERROR in " + currentStage + ": " + ex.Message);
+            FailureActions.Visibility = Visibility.Visible;
             logSource = "Operations";
             RefreshLog();
         }
         finally
         {
             busy = false;
+            operationClock.Stop();
+            operationTimer.Stop();
+            OperationDetail.Text = $"{currentStage} · elapsed {ElapsedText}";
             BusyProgress.Visibility = Visibility.Collapsed;
             gate.Release();
             await RefreshAsync();
-            if (lastError is not null) StatusLabel.Text = "Operation failed: " + lastError;
+            if (lastError is not null) StatusLabel.Text = currentStage + " failed: " + lastError;
         }
     }
 
@@ -161,25 +201,98 @@ public partial class MainWindow : Window
     {
         operationText += $"[{DateTime.Now:T}] {text}{Environment.NewLine}";
         if (operationText.Length > 150_000) operationText = operationText[^100_000..];
-        if (logSource == "Operations") { LogText.Text = operationText; LogText.ScrollToEnd(); }
+        if (logSource == "Operations") { selectedLogText = operationText; ApplyLogFilter(); }
     }
     void RefreshLog()
     {
-        if (logSource == "Operations") { LogText.Text = operationText; return; }
-        string stem = Path.Combine(settings.RepositoryPath, "logs", "live-" + logSource.ToLowerInvariant());
-        LogText.Text = $"{logSource} output (latest 64 KB per file)\n\n" + Tail(stem + ".log") + "\n\nSTANDARD ERROR\n\n" + Tail(stem + ".err");
-    }
-    static string Tail(string path)
-    {
-        if (!File.Exists(path)) return "No log file yet.";
-        try
+        if (logSource == "Operations") selectedLogText = operationText;
+        else if (logSource == "Game") selectedLogText = LogReader.Tail(LogReader.GameLog(settings.RepositoryPath));
+        else
         {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-            stream.Seek(Math.Max(0, stream.Length - 65_536), SeekOrigin.Begin);
-            using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
+            string stem = Path.Combine(settings.RepositoryPath, "logs", "live-" + logSource.ToLowerInvariant());
+            selectedLogText = $"{logSource} output (latest 64 KB per file)\n\n" + LogReader.Tail(stem + ".log") + "\n\nSTANDARD ERROR\n\n" + LogReader.Tail(stem + ".err");
         }
-        catch (IOException ex) { return "Could not read log: " + ex.Message; }
+        ApplyLogFilter();
+    }
+    void ApplyLogFilter()
+    {
+        if (LogText is null || LogSearchBox is null || WarningsOnlyBox is null) return;
+        string filtered = LogReader.Filter(selectedLogText, LogSearchBox.Text, WarningsOnlyBox.IsChecked == true);
+        if (LogText.Text != filtered) LogText.Text = filtered;
+    }
+
+    void UpdateOperationLabel()
+    {
+        if (!busy) return;
+        StatusLabel.Text = currentStage + "…";
+        OperationDetail.Visibility = Visibility.Visible;
+        OperationDetail.Text = $"{stageDetail} · elapsed {ElapsedText}";
+    }
+    void LogSearch_Changed(object sender, TextChangedEventArgs e) => ApplyLogFilter();
+    void LogFilter_Changed(object sender, RoutedEventArgs e) => ApplyLogFilter();
+    void DiagnosticReport_Click(object sender, RoutedEventArgs e)
+    {
+        RefreshLog();
+        var state = snapshot ?? new RuntimeSnapshot(settings.RepositoryPath, "Unavailable", "", "", "", "",
+            [new("Installation inspection", false, "Select and check a valid checkout first.")], [], []);
+        new DiagnosticPreviewDialog(this, additional => DiagnosticReport.Create(state, VersionLabel.Text, operationText,
+            lastError, logSource, selectedLogText, privateNames.Concat(additional))).ShowDialog();
+    }
+    void ShowSetup_Click(object sender, RoutedEventArgs e) => Pages.SelectedItem = SetupPage;
+    void ShowSettings_Click(object sender, RoutedEventArgs e) => Pages.SelectedItem = SettingsPage;
+    void OpenClient_Click(object sender, RoutedEventArgs e)
+    {
+        string path = Path.Combine(settings.RepositoryPath, "Client");
+        OpenFolder(Directory.Exists(path) ? path : settings.RepositoryPath);
+    }
+    async void SetupStep_Click(object sender, RoutedEventArgs e)
+    {
+        if (((Button)sender).Tag is SetupStep step) await RunSetupStep(step);
+    }
+    async Task RunSetupStep(SetupStep step)
+    {
+        if (busy) return;
+        if (new SetupInstructionsDialog(this, step, settings.RepositoryPath).ShowDialog() != true) return;
+        switch (step.Action)
+        {
+            case "PrepareClient": await OperateAsync("PrepareClient"); break;
+            case "Dependencies": await OperateAsync("Dependencies"); break;
+            case "Dotnet": OpenDownload("https://dotnet.microsoft.com/en-us/download/dotnet/10.0"); break;
+            case "Python": OpenDownload("https://www.python.org/downloads/windows/"); break;
+            case "Node": OpenDownload("https://nodejs.org/en/download"); break;
+            default: OpenGuide_Click(this, new RoutedEventArgs()); break;
+        }
+    }
+    async void Prepare_Click(object sender, RoutedEventArgs e) => await RunSetupStep(SetupGuidance.Describe(new("Prepared client", false, ""), settings.RepositoryPath));
+    async void Dependencies_Click(object sender, RoutedEventArgs e) => await RunSetupStep(SetupGuidance.Describe(new("Bundle decompressor", false, ""), settings.RepositoryPath));
+    async void CreateAccount_Click(object sender, RoutedEventArgs e)
+    {
+        if (busy) return;
+        if (snapshot is null) { StatusLabel.Text = "Select and check an installation first."; return; }
+        var dialog = new CreateAccountDialog(this, snapshot.SaveDatabase);
+        if (dialog.ShowDialog() == true && dialog.Request is { } request)
+        {
+            privateNames.Add(request.Name);
+            await OperateAsync("Register", account: request);
+        }
+    }
+    void OpenDownload(string url)
+    {
+        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch (Exception ex) { StatusLabel.Text = "Could not open download page: " + ex.Message; }
+    }
+    void OpenOperationLog_Click(object sender, RoutedEventArgs e)
+    {
+        string path = File.Exists(stageLogPath) ? stageLogPath : operationLogPath;
+        if (File.Exists(path + ".err") && new FileInfo(path + ".err").Length > 0) path += ".err";
+        if (File.Exists(path)) Process.Start(new ProcessStartInfo("notepad.exe") { ArgumentList = { path }, UseShellExecute = false });
+        else ViewOperations_Click(sender, e);
+    }
+    void ViewOperations_Click(object sender, RoutedEventArgs e) { logSource = "Operations"; RefreshLog(); Pages.SelectedItem = LogsPage; }
+    async void Retry_Click(object sender, RoutedEventArgs e)
+    {
+        if (retry is { } operation) await OperateAsync(operation.Action, operation.Service);
+        else StatusLabel.Text = "For account creation, open Create local account again; passwords are never kept for retry.";
     }
 
     async void Play_Click(object sender, RoutedEventArgs e) => await OperateAsync("Play");
@@ -240,6 +353,7 @@ public partial class MainWindow : Window
         if (busy) { e.Cancel = true; StatusLabel.Text = "Wait for the current build or runtime operation to finish before closing."; return; }
         closing = true;
         timer.Stop();
+        operationTimer.Stop();
     }
 }
 
