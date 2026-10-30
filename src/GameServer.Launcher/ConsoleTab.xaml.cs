@@ -14,6 +14,10 @@ public partial class ConsoleTab : UserControl
 {
     Shared _shared = null!;
     CommandCatalog _catalog = new([]);
+    // Argument values by kind, loaded from the Gateway the first time a line needs them.
+    readonly Dictionary<string, IReadOnlyList<ArgumentValue>> _values = [];
+    readonly HashSet<string> _loading = [];
+    CompletionResult _completion = CompletionResult.None;
     int _historyIndex;
     const int OutputMax = 300_000;
 
@@ -27,18 +31,24 @@ public partial class ConsoleTab : UserControl
         _ = LoadCommands();
     }
 
+    bool _reloading;
+
     async Task LoadCommands()
     {
+        _reloading = true;
         try
         {
             _catalog = await CommandCatalog.LoadAsync();
+            _values.Clear();
             CommandFilterChanged(this, null!);
+            Suggest();
         }
         catch (Exception e) when (e is IOException or InvalidOperationException or TimeoutException
             or System.ComponentModel.Win32Exception or System.Text.Json.JsonException or KeyNotFoundException)
         {
             Append($"! commands not loaded: {e.Message}");
         }
+        finally { _reloading = false; }
     }
 
     async void ReloadCommands(object sender, RoutedEventArgs e) => await LoadCommands();
@@ -47,11 +57,43 @@ public partial class ConsoleTab : UserControl
 
     void InputChanged(object sender, TextChangedEventArgs e)
     {
-        var suggestions = _catalog.Suggest(Input.Text);
-        Suggestions.ItemsSource = suggestions;
-        SuggestionPopup.IsOpen = suggestions.Count > 0 && Input.IsKeyboardFocused;
-        if (suggestions.Count > 0) Suggestions.SelectedIndex = 0;
+        // A list from a Gateway built before the last Play or Restart Gateway is read again.
+        if (Input.Text.StartsWith('/') && !_reloading && _catalog.Stale) _ = LoadCommands();
+        Suggest();
+    }
+
+    /// <summary>The suggestions for the line as it is: a command's name, then its arguments' values.</summary>
+    void Suggest()
+    {
+        _completion = Completion.For(Input.Text, _catalog, kind => _values.GetValueOrDefault(kind));
+        IReadOnlyList<Suggestion> items = _completion.Items;
+        if (_completion.Loading is { } kind)
+        {
+            items = [new Suggestion("", $"loading {kind} values …", "")];
+            _ = LoadValues(kind);
+        }
+        Suggestions.ItemsSource = items;
+        SuggestionPopup.IsOpen = items.Count > 0 && Input.IsKeyboardFocused;
+        if (items.Count > 0) Suggestions.SelectedIndex = 0;
         Hint.Text = _catalog.Of(Input.Text)?.Usage ?? "";
+    }
+
+    async Task LoadValues(string kind)
+    {
+        if (!_loading.Add(kind)) return;
+        try
+        {
+            _values[kind] = await CommandCatalog.ValuesAsync(kind);
+            Suggest();
+        }
+        catch (Exception e) when (e is IOException or InvalidOperationException or TimeoutException
+            or System.ComponentModel.Win32Exception or System.Text.Json.JsonException or KeyNotFoundException)
+        {
+            // Without values the argument is typed by hand; the reason goes to the output once.
+            _values[kind] = [];
+            Append($"! no {kind} suggestions: {e.Message}");
+        }
+        finally { _loading.Remove(kind); }
     }
 
     void InputLostFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -70,8 +112,8 @@ public partial class ConsoleTab : UserControl
                 case Key.Up: Move(-1); e.Handled = true; return;
                 case Key.Escape: SuggestionPopup.IsOpen = false; e.Handled = true; return;
                 case Key.Tab:
-                case Key.Enter when Suggestions.SelectedItem is ChatCommand c && !Input.Text.Equals($"/{c.Name}", StringComparison.OrdinalIgnoreCase):
-                    Accept(Suggestions.SelectedItem as ChatCommand);
+                case Key.Enter when Suggestions.SelectedItem is Suggestion s && !Typed().Equals(s.Insert, StringComparison.OrdinalIgnoreCase):
+                    Accept(Suggestions.SelectedItem as Suggestion);
                     e.Handled = true;
                     return;
             }
@@ -90,14 +132,18 @@ public partial class ConsoleTab : UserControl
         Suggestions.ScrollIntoView(Suggestions.SelectedItem);
     }
 
-    void Accept(ChatCommand? command)
+    /// <summary>What is being completed: the line from the suggestions' start.</summary>
+    string Typed() => _completion.From <= Input.Text.Length ? Input.Text[_completion.From..].Trim() : "";
+
+    /// <summary>Puts the suggestion in place of what is being completed, with a space for the next argument (whose
+    /// suggestions then open).</summary>
+    void Accept(Suggestion? suggestion)
     {
-        if (command is null) return;
-        Put($"/{command.Name} ");
-        SuggestionPopup.IsOpen = false;
+        if (suggestion is not { Insert.Length: > 0 }) return;
+        Put($"{Input.Text[..Math.Min(_completion.From, Input.Text.Length)]}{suggestion.Insert} ");
     }
 
-    void SuggestionClicked(object sender, MouseButtonEventArgs e) => Accept(Suggestions.SelectedItem as ChatCommand);
+    void SuggestionClicked(object sender, MouseButtonEventArgs e) => Accept(Suggestions.SelectedItem as Suggestion);
 
     void Put(string text)
     {
@@ -184,13 +230,20 @@ public partial class ConsoleTab : UserControl
 
     // --- Pinned lines and the command list ---
 
+    /// <summary>The pinned lines as buttons. A button only puts its line in the box: Enter or Send still sends it, so
+    /// a command that can take the client down (an area change) is never one click away.</summary>
     void ShowFavorites()
     {
         Favorites.Children.Clear();
         foreach (string line in _shared.Settings.Favorites)
         {
-            var button = new Button { Content = line, ToolTip = _catalog.Of(line)?.Usage ?? line, FontFamily = (System.Windows.Media.FontFamily)FindResource("Mono") };
-            button.Click += async (_, _) => await Send(line);
+            var button = new Button
+            {
+                Content = line,
+                ToolTip = $"{_catalog.Of(line)?.Usage ?? line}\nPuts the line in the box; Enter or Send sends it.",
+                FontFamily = (System.Windows.Media.FontFamily)FindResource("Mono"),
+            };
+            button.Click += (_, _) => Put(line);
             var remove = new MenuItem { Header = "Remove" };
             remove.Click += (_, _) => { _shared.Settings.Favorites.Remove(line); _shared.Settings.Save(); ShowFavorites(); };
             button.ContextMenu = new ContextMenu { Items = { remove } };

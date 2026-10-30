@@ -67,11 +67,21 @@ launcher's log and in "All errors"; a client closed by its player is not.
 ### Console
 
 - Typing `/` opens the command list: the commands whose name starts with what is typed, then those that contain it.
-  ↑/↓ choose, Tab or Enter take one, and Enter on a complete command name sends it.
+  ↑/↓ choose, Tab or Enter take one, and Enter on what the list already shows sends the line.
+- After the command, each argument has its own list. An argument the Gateway names a kind for comes from the Gateway's
+  catalogs (`GameServer.Gateway values <kind>`, loaded once per kind): `/goto` the areas, marked server-built,
+  captured or client-only; `/spawn_mob` the monsters; `/item` the item types and uniques; `/gem` every creatable gem
+  variant; `/set_stat` the stats; `/npc` the NPCs; `/quest_flag` the flags. A name several rows share (Hillock, Small
+  Life Flask) is listed once per row, by the name with the row's Id beside it, and taking one puts the Id in the line.
+  A value of several words counts as given once it and a space are typed, the shared name too; `/spawn_mob`'s `@level`
+  belongs to the monster. Every other argument is suggested from the usage's own choices (`[normal|magic|rare]`,
+  `[all | <id>]`, "/cosmetic list | /cosmetic off"); a value to supply (`<area id or name>`, `[seed]`) is not one.
 - The usage of the command being typed shows under the line. Without the list, ↑/↓ go through the history.
 - A line without `/` is a chat line.
 - The list on the right has every command with its explanation. Double-click puts it in the line.
 - **★ Pin** makes the line a button; right-click a button to remove it.
+  A pinned button only puts its line in the box, and Enter or Send sends it: a command that can take the client down
+  is never one click away.
 - Commands go to the client as typed chat, so the character must be in game. Without a client the bridge answers
   "Client is not running".
 
@@ -90,14 +100,19 @@ closing the launcher with "Yes" does too. Its output is `logs\launcher-host.log`
 | `ServiceMonitor.cs` | the services, found by WMI every two seconds, sampled every second |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
-| `CommandCatalog.cs`, `ClientBridge.cs` | the Gateway's command list, the bridge process |
+| `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |
 | `DevHost.cs`, `AccountList.cs` | the dev host, the account list |
 | `SetupChecks.cs`, `Settings.cs`, `Repo.cs` | the setup checks, the per-user settings, the repository paths |
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon, the game's icon from the local client copy) |
 
 Tests: `tests/GameServer.Launcher.Tests` (the `live.ps1` command lines, the repository root, following logs, severities,
-command suggestions, counter payloads, chart scales). `GameServer.Gateway commands` has `ChatCommandCatalogTests` in the
-Gateway tests.
+command and argument suggestions, counter payloads, chart scales). `GameServer.Gateway commands` and `values` have
+`ChatCommandCatalogTests` in the Gateway tests.
+
+The console's lists come from the Gateway the launcher's servers run (`src/GameServer.Gateway/bin/Debug`). When that
+build changes (Play or Restart Gateway after a pull), the next `/` reads the commands and their values again; **Reload
+commands** does it at once. The Gateway's catalogs write their own log lines beside the values ("[gateway] atlas: …"),
+which the launcher skips.
 
 The solution sets `InvariantGlobalization` for every project; the launcher turns it off, because WPF formats bindings
 with the UI culture and fails without one.

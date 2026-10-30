@@ -20,7 +20,7 @@
                 <Button DockPanel.Dock="Right" x:Name="SendButton" Style="{StaticResource Primary}" Content="Send" Click="SendClicked" Margin="6,0,0,0" />
                 <TextBox x:Name="Input" FontFamily="{StaticResource Mono}" FontSize="13" Padding="4,3"
                          PreviewKeyDown="InputKey" TextChanged="InputChanged" LostKeyboardFocus="InputLostFocus"
-                         ToolTip="/ lists the commands: ↑↓ choose, Tab or Enter take one. Without a popup ↑↓ go through the history. Text without / is a chat line." />
+                         ToolTip="/ lists the commands, then each argument's values (areas, monsters, items, gems …): ↑↓ choose, Tab or Enter take one. Without a list ↑↓ go through the history. Text without / is a chat line." />
             </DockPanel>
             <TextBlock x:Name="Hint" Margin="2,4,0,0" Foreground="Gray" TextWrapping="Wrap" FontFamily="{StaticResource Mono}" />
             <Popup x:Name="SuggestionPopup" PlacementTarget="{Binding ElementName=Input}" Placement="Top" StaysOpen="True" AllowsTransparency="True">
@@ -30,8 +30,8 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name, StringFormat=/{0}}" FontFamily="{StaticResource Mono}" FontWeight="SemiBold" MinWidth="140" />
-                                    <TextBlock Text="{Binding Short}" FontFamily="{StaticResource Mono}" Foreground="Gray" Margin="10,0,0,0" />
+                                    <TextBlock Text="{Binding Label}" FontFamily="{StaticResource Mono}" FontWeight="SemiBold" MinWidth="140" />
+                                    <TextBlock Text="{Binding Detail}" FontFamily="{StaticResource Mono}" Foreground="Gray" Margin="10,0,0,0" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
