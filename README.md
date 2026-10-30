@@ -9,13 +9,21 @@ Open PowerShell and enter:
 
 ```powershell
 Set-Location 'F:\evry\evryPath\Launcher'
-.\Start-Launcher.ps1 -RepositoryPath 'F:\evry\evryPath\evryPath'
+.\Start-Launcher.ps1
 ```
 
 The script builds the launcher and opens its window. It does not start LocalExile until you press a runtime action.
 Alternatively, open `src\Launcher.Desktop\bin\Debug\net10.0-windows\Launcher.Desktop.exe` after building.
 
-1. Open **Settings**. Choose the LocalExile folder containing `GameServer.slnx`.
+On first use, **Settings → Find your LocalExile checkout** opens automatically. Lookup starts in the background,
+but **Browse for a different location…** is available immediately. Git queries the current HEAD of the upstream
+default branch, then compares local checkout HEADs. One verified match is selected and remembered as **Found and
+using…**; multiple matches offer **Use this checkout** choices. Saved/manual selections are never silently replaced.
+**Change location** stays visible at the top of every page. Browse selects and checks a folder immediately.
+Offline lookup, missing Git, no match and bounded searches still allow manual selection or use of an older checkout.
+
+1. Use the discovered checkout, select **Use this checkout** from the list, or click **Change location** to choose
+   your LocalExile folder. You can also type its path in Settings and click **Save and check**.
 2. Leave **Use this checkout's local runtime wrapper when present** checked if your checkout has
    `scripts/dev/live.local.ps1` and `config/runtime.local.ps1`. This preserves that installation's existing save path.
 3. Click **Save and check**. Open **Setup** for instructions and an action beside each prerequisite. For a fresh
@@ -59,6 +67,8 @@ need additional adapter support. See [the runtime contract](docs/runtime-contrac
 
 Requirements: Windows 10/11 x64 and the **.NET 10 SDK**. The UI uses WPF, which is Windows-only.
 There are no third-party NuGet dependencies in the launcher.
+Git on PATH enables upstream/local commit discovery and is required for the Git-fixture automated checks;
+manual folder selection remains available without Git. No GitHub sign-in is required for the public upstream query.
 
 ```powershell
 dotnet build Launcher.slnx
@@ -67,6 +77,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tests/Bridge.Tests.ps1
 ```
 
 The executable checks use private temporary fixtures and never start the real game or servers.
+Discovery checks use private temporary Git repositories and worktrees; they do not access GitHub.
 Ownership checks use fake process inventories. For a read-only real checkout inspection:
 
 ```powershell
@@ -77,6 +88,7 @@ Real lifecycle validation, observations and test limits are recorded in [validat
 The source review is in [LocalExile build and launch](docs/localexile-build-and-launch.md).
 The fresh, default-path upstream installation test is in [standard installation validation](docs/standard-install-validation.md).
 The setup/progress/logging feature checks are in [setup and diagnostics validation](docs/setup-and-diagnostics-validation.md).
+Repository discovery behavior and its validation are in [repository discovery](docs/repository-discovery.md).
 
 ## Rename the product
 

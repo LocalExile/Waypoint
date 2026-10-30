@@ -18,6 +18,7 @@ public partial class MainWindow : Window
     readonly DispatcherTimer operationTimer = new() { Interval = TimeSpan.FromSeconds(1) };
     readonly Stopwatch operationClock = new();
     readonly HashSet<string> privateNames = new(StringComparer.OrdinalIgnoreCase);
+    readonly CancellationTokenSource discoveryCancellation = new();
     readonly Dictionary<string, (int Pid, string Started, double Cpu, DateTime Time)> samples = new();
     LauncherSettings settings = new();
     RuntimeSnapshot? snapshot;
@@ -25,6 +26,8 @@ public partial class MainWindow : Window
     string logSource = "Operations";
     bool busy;
     bool closing;
+    bool discovering;
+    int locationRevision;
     string? lastError;
     string currentStage = "";
     string stageDetail = "";
@@ -54,8 +57,21 @@ public partial class MainWindow : Window
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         Loaded += async (_, _) =>
         {
-            if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) Pages.SelectedItem = SettingsPage;
-            else await RefreshAsync();
+            if (string.IsNullOrWhiteSpace(settings.RepositoryPath))
+            {
+                Pages.SelectedItem = SettingsPage;
+                _ = FindRepositoriesAsync();
+            }
+            else
+            {
+                DiscoveryStatus.Text = "Using your selected checkout. Change location or search again at any time.";
+                await RefreshAsync();
+                if (!RepositoryDiscovery.IsLocalExile(settings.RepositoryPath))
+                {
+                    Pages.SelectedItem = SettingsPage;
+                    _ = FindRepositoriesAsync();
+                }
+            }
             if (lastError is not null) StatusLabel.Text = lastError;
             timer.Start();
         };
@@ -69,8 +85,9 @@ public partial class MainWindow : Window
         if (string.IsNullOrWhiteSpace(settings.RepositoryPath) || !await gate.WaitAsync(0)) return;
         try
         {
-            var result = await runtime.RunAsync(settings, "Inspect");
-            if (closing) return;
+            var inspectedSettings = settings;
+            var result = await runtime.RunAsync(inspectedSettings, "Inspect");
+            if (closing || inspectedSettings != settings) return;
             if (!result.Ok || result.Snapshot is null) throw new IOException(result.Message);
             snapshot = result.Snapshot;
             Render(snapshot);
@@ -309,25 +326,100 @@ public partial class MainWindow : Window
         else await OperateAsync(state?.ProcessId > 0 ? "Stop" : "Start", name);
     }
     async void Restart_Click(object sender, RoutedEventArgs e) => await OperateAsync("Restart", (string)((Button)sender).Tag);
-    void Browse_Click(object sender, RoutedEventArgs e)
+    async void Browse_Click(object sender, RoutedEventArgs e)
     {
+        locationRevision++; // Opening manual selection takes priority over an in-flight automatic result.
         var dialog = new OpenFolderDialog { Title = "Choose the LocalExile folder containing GameServer.slnx" };
-        if (dialog.ShowDialog(this) == true) RepositoryPathBox.Text = dialog.FolderName;
+        if (dialog.ShowDialog(this) == true) await SelectRepositoryAsync(dialog.FolderName);
+    }
+    void ChangeLocation_Click(object sender, RoutedEventArgs e) { Pages.SelectedItem = SettingsPage; Browse_Click(sender, e); }
+    void RepositoryPath_Changed(object sender, TextChangedEventArgs e) => locationRevision++;
+    async void FindRepository_Click(object sender, RoutedEventArgs e)
+    {
+        Pages.SelectedItem = SettingsPage;
+        await FindRepositoriesAsync();
+    }
+    async Task FindRepositoriesAsync()
+    {
+        if (discovering || closing) return;
+        discovering = true;
+        int revision = locationRevision;
+        FindRepositoryButton.IsEnabled = false;
+        DiscoveryStatus.Text = "Checking upstream HEAD and searching common local folders… You can still Browse to choose a location.";
+        try
+        {
+            var roots = RepositoryDiscovery.DefaultRoots(AppContext.BaseDirectory, Environment.CurrentDirectory, settings.RepositoryPath);
+            var result = await RepositoryLocator.FindAsync(roots, discoveryCancellation.Token);
+            if (closing) return;
+            DiscoveredRepositories.ItemsSource = result.Repositories;
+            string upstream = result.Upstream is { } tip
+                ? $"Upstream {tip.Branch}: {tip.Commit} (checked {tip.CheckedAt.ToLocalTime():t})."
+                : result.UpstreamError ?? "Upstream HEAD unavailable.";
+            int matches = result.Repositories.Count(r => r.MatchesUpstream);
+            string choices = matches > 1 ? $"{matches} checkouts match upstream HEAD. Choose one below, or Browse elsewhere."
+                : matches == 1 ? "One checkout matches upstream HEAD. You can use it below or Browse elsewhere."
+                : result.Repositories.Length > 0 ? "No matching upstream HEAD found. Other LocalExile checkouts are listed below; you can use any of them or Browse elsewhere."
+                : "No LocalExile checkout found in the searched locations. Browse to your checkout instead.";
+            DiscoveryStatus.Text = upstream + "\n" + choices +
+                (result.Limited ? "\nSearch limits reached; other checkouts may exist. Browse to any location." : "");
+            // Only a fresh, untouched choice can be adopted automatically. Never replace a saved or manual selection.
+            if (result.SingleMatch is { } match && string.IsNullOrWhiteSpace(settings.RepositoryPath) &&
+                string.IsNullOrWhiteSpace(RepositoryPathBox.Text) && locationRevision == revision && lastError is null && !busy)
+            {
+                if (await SelectRepositoryAsync(match.Root) && settings.RepositoryPath == match.Root) DiscoveryStatus.Text = "Found and using: " + match.Root + "\n" + upstream + "\nChange location above to choose somewhere else." +
+                    (match.Head.HasTrackedChanges == true ? "\nThis checkout has modified tracked files." : "");
+            }
+        }
+        catch (OperationCanceledException) when (discoveryCancellation.IsCancellationRequested) { }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
+        { if (!closing) DiscoveryStatus.Text = "Automatic lookup could not finish. Browse to your checkout instead. " + ex.Message; }
+        finally
+        {
+            discovering = false;
+            if (!closing) FindRepositoryButton.IsEnabled = true;
+        }
+    }
+    async void UseDiscoveredRepository_Click(object sender, RoutedEventArgs e)
+    {
+        if (((Button)sender).Tag is not DiscoveredRepository repository) return;
+        await SelectRepositoryAsync(repository.Root);
+    }
+    async Task<bool> SelectRepositoryAsync(string path)
+    {
+        if (busy) { StatusLabel.Text = "Wait for the current operation before changing checkout."; return false; }
+        busy = true;
+        await gate.WaitAsync();
+        try
+        {
+            if (closing) return false;
+            path = Path.GetFullPath(path.Trim());
+            if (!RepositoryDiscovery.IsLocalExile(path)) throw new IOException("Choose the LocalExile folder containing GameServer.slnx, its Core/Gateway projects and scripts/dev/live.ps1.");
+            var selected = new LauncherSettings(path, UseProfileBox.IsChecked == true);
+            SettingsStore.Save(selected);
+            settings = selected;
+            RepositoryPathBox.Text = path;
+            samples.Clear();
+            snapshot = null;
+            ServiceList.ItemsSource = PerformanceList.ItemsSource = RequirementList.ItemsSource = SetupRequirementList.ItemsSource = null;
+            PlayButton.IsEnabled = false;
+            CheckoutLabel.Text = path;
+            SidebarBranch.Text = "Checking checkout…";
+            SourceIdentity.Text = BuildIdentity.Text = EnvironmentIdentity.Text = "";
+            ReadinessLabel.Text = "Checking the selected installation…";
+            lastError = null;
+            OperationDetail.Visibility = FailureActions.Visibility = Visibility.Collapsed;
+            retry = null;
+            DiscoveryStatus.Text = "Using: " + path + "\nChange location above to choose somewhere else.";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        { StatusLabel.Text = "Could not select checkout: " + ex.Message; return false; }
+        finally { busy = false; gate.Release(); }
+        await RefreshAsync();
+        return true;
     }
     async void Save_Click(object sender, RoutedEventArgs e)
     {
-        if (busy) { StatusLabel.Text = "Wait for the current operation before changing checkout."; return; }
-        try
-        {
-            string path = Path.GetFullPath(RepositoryPathBox.Text.Trim());
-            if (!File.Exists(Path.Combine(path, "GameServer.slnx"))) throw new IOException("Choose the repository folder containing GameServer.slnx.");
-            settings = new(path, UseProfileBox.IsChecked == true);
-            SettingsStore.Save(settings);
-            samples.Clear();
-            lastError = null;
-            await RefreshAsync();
-        }
-        catch (Exception ex) { StatusLabel.Text = "Could not save settings: " + ex.Message; }
+        await SelectRepositoryAsync(RepositoryPathBox.Text);
     }
     void LogSource_Click(object sender, RoutedEventArgs e) { logSource = (string)((Button)sender).Tag; RefreshLog(); }
     void OpenLogs_Click(object sender, RoutedEventArgs e) => OpenFolder(Path.Combine(settings.RepositoryPath, "logs"));
@@ -352,6 +444,7 @@ public partial class MainWindow : Window
     {
         if (busy) { e.Cancel = true; StatusLabel.Text = "Wait for the current build or runtime operation to finish before closing."; return; }
         closing = true;
+        discoveryCancellation.Cancel();
         timer.Stop();
         operationTimer.Stop();
     }

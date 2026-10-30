@@ -51,7 +51,7 @@
           <TextBlock Text="Make room for the next run." FontSize="27" FontWeight="SemiBold"/>
           <TextBlock x:Name="CheckoutLabel" Text="Select a LocalExile checkout in Settings." Style="{StaticResource Caption}" Margin="0,8,16,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
         </StackPanel>
-        <Button Grid.Column="1" Content="Refresh" Click="Refresh_Click" VerticalAlignment="Center" Margin="0"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="Change location" Click="ChangeLocation_Click"/><Button Content="Refresh" Click="Refresh_Click" Margin="0"/></StackPanel>
       </Grid>
       <Border Grid.Row="1" Background="#202D39" CornerRadius="7" Padding="14,10" Margin="0,0,0,18">
         <DockPanel>
@@ -134,7 +134,7 @@
             <Border Style="{StaticResource Card}"><StackPanel>
               <TextBlock Text="Choose how to get ready" FontSize="21"/>
               <TextBlock Text="Use an existing prepared checkout, or prepare a separate client copy in the selected checkout. The supported client is standalone PoE 3.29.3b." Foreground="{StaticResource Muted}" Margin="0,10,0,16"/>
-              <WrapPanel><Button Content="Use prepared installation" Click="ShowSettings_Click"/><Button Content="Open client folder" Click="OpenClient_Click"/><Button Content="Open setup guide" Click="OpenGuide_Click"/></WrapPanel>
+              <WrapPanel><Button Content="Find LocalExile" Click="FindRepository_Click"/><Button Content="Choose installation" Click="ShowSettings_Click"/><Button Content="Open client folder" Click="OpenClient_Click"/><Button Content="Open setup guide" Click="OpenGuide_Click"/></WrapPanel>
             </StackPanel></Border>
             <Border Style="{StaticResource Card}"><StackPanel>
               <TextBlock Text="Prepare this checkout" FontSize="18"/>
@@ -228,6 +228,22 @@
         <TabItem Header="Settings" x:Name="SettingsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
+              <Border Style="{StaticResource Card}"><StackPanel>
+                <TextBlock Text="Find your LocalExile checkout" FontSize="21"/>
+                <TextBlock Text="We check the latest upstream commit and look in common local folders. You can always choose a different location. Your saved checkout stays selected." Foreground="{StaticResource Muted}" Margin="0,8,0,14"/>
+                <WrapPanel><Button x:Name="FindRepositoryButton" Content="Find LocalExile" Click="FindRepository_Click"/><Button Content="Browse for a different location…" Click="Browse_Click"/></WrapPanel>
+                <TextBlock x:Name="DiscoveryStatus" Text="Automatic lookup runs on first use. You can also search again here." Margin="0,14,0,0"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250" Margin="0,12,0,0">
+                  <ItemsControl x:Name="DiscoveredRepositories"><ItemsControl.ItemTemplate><DataTemplate>
+                    <Border BorderBrush="#354254" BorderThickness="0,0,0,1" Padding="0,12"><StackPanel>
+                      <TextBlock Text="{Binding Summary}" Foreground="{StaticResource Accent}"/>
+                      <TextBlock Text="{Binding Root}" Margin="0,6,0,6" TextWrapping="Wrap"/>
+                      <TextBlock Text="{Binding CommitLabel}" Style="{StaticResource Caption}"/>
+                      <Button Content="Use this checkout" Tag="{Binding}" Click="UseDiscoveredRepository_Click" HorizontalAlignment="Left" Margin="0,10,0,0" Padding="12,7"/>
+                    </StackPanel></Border>
+                  </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                </ScrollViewer>
+              </StackPanel></Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
                   <TextBlock Text="Connect your checkout" FontSize="21" FontWeight="SemiBold"/>
@@ -235,7 +251,7 @@
                   <TextBlock Text="LocalExile repository folder" Margin="0,0,0,8"/>
                   <DockPanel>
                     <Button Content="Browse…" DockPanel.Dock="Right" Click="Browse_Click" Margin="10,0,0,0"/>
-                    <TextBox x:Name="RepositoryPathBox" AutomationProperties.Name="LocalExile repository folder"/>
+                    <TextBox x:Name="RepositoryPathBox" AutomationProperties.Name="LocalExile repository folder" TextChanged="RepositoryPath_Changed"/>
                   </DockPanel>
                   <CheckBox x:Name="UseProfileBox" Content="Use this checkout’s local runtime wrapper when present"/>
                   <TextBlock Text="Preserves the existing saves and runtime settings from config/runtime.local.ps1. Adapter v1 supports literal Game_* assignments and standard local ports. Unsupported profiles fail with an explanation." Style="{StaticResource Caption}" Margin="0,0,0,18"/>

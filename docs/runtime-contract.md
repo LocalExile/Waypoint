@@ -23,6 +23,12 @@ The Core API's cancellation token only cancels read-only waiting, not an in-prog
 
 ## Configuration
 
+Repository discovery is a separate read-only Core capability. It queries the public upstream's advertised default
+branch HEAD and compares actual local Git HEADs; it does not fetch, update branches or require GitHub authentication.
+Only a sole verified match from a completed first-run lookup can populate an untouched selection automatically.
+Saved/manual choices take priority; manual browsing is available before, during and after lookup. Candidate detection
+does not imply setup/runtime readiness. See [repository discovery](repository-discovery.md) for bounds and validation.
+
 Game_* variables inherited from the launcher host are cleared in the child process.
 When the local wrapper is enabled and exists, inspect `config/runtime.local.ps1` as an AST, accepting only literal
 Game_* string assignments. Do not execute configuration while inspecting. Complex profiles fail with an explanation.

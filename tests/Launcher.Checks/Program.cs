@@ -1,7 +1,15 @@
+using System.Diagnostics;
 using System.Text.Json;
 using Launcher.Core;
 
 var client = new RuntimeClient();
+if (args.Length > 0 && args[0] == "--discover")
+{
+    var roots = args.Length > 1 ? new[] { new RepositorySearchRoot(args[1], 4) }
+        : RepositoryDiscovery.DefaultRoots(AppContext.BaseDirectory, Environment.CurrentDirectory);
+    Console.WriteLine(JsonSerializer.Serialize(await RepositoryLocator.FindAsync(roots), SettingsStore.JsonOptions));
+    return 0;
+}
 if (args.Length >= 2 && args[0] == "--inspect")
 {
     var result = await client.RunAsync(new(args[1]), "Inspect");
@@ -121,11 +129,92 @@ try
         "failed", "Game", sensitive, ["KnownPlayer"]);
     Check(report.Contains("Source commit: " + commit) && report.Contains("Built Auth: 1.0.0+" + commit) && report.Contains("OP_299") && !report.Contains("OP_0\n") && !report.Contains("private phrase"),
         "diagnostic reports bound output, redact secrets and retain validated source identity");
+
+    string discoveryRoot = Path.Combine(fixture, "discovery");
+    string MakeCheckout(string relative)
+    {
+        string path = Path.GetFullPath(Path.Combine(discoveryRoot, relative));
+        foreach (string marker in new[] { "GameServer.slnx", "scripts/dev/live.ps1", "src/GameServer.Core/GameServer.Core.csproj", "src/GameServer.Gateway/GameServer.Gateway.csproj" })
+        {
+            string target = Path.Combine(path, marker);
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.WriteAllText(target, marker.EndsWith(".ps1") ? "throw 'Discovery must not execute scripts.'" : "fixture");
+        }
+        return path;
+    }
+    string checkoutA = MakeCheckout("renamed fork");
+    string checkoutB = MakeCheckout("projects/nested/another name");
+    MakeCheckout("Client/must not scan");
+    MakeCheckout("data/must not scan");
+    MakeCheckout(".git/must not scan");
+    MakeCheckout("node_modules/must not scan");
+    Directory.CreateDirectory(Path.Combine(discoveryRoot, "lookalike"));
+    File.WriteAllText(Path.Combine(discoveryRoot, "lookalike", "GameServer.slnx"), "not LocalExile");
+    var discovered = RepositoryDiscovery.Find([new(discoveryRoot, 3), new(discoveryRoot, 2)]);
+    Check(discovered.Paths.Length == 2 && discovered.Paths.Contains(checkoutA) && discovered.Paths.Contains(checkoutB),
+        "discovery recognizes renamed/nested checkouts, deduplicates roots and skips game/generated/Git directories");
+    Check(!RepositoryDiscovery.Find([new(discoveryRoot, 0)]).Paths.Any() && RepositoryDiscovery.Find([new(discoveryRoot, 3)], maximumDirectories: 1).Limited,
+        "discovery respects depth and directory budgets");
+    bool cancelled = false;
+    try { RepositoryDiscovery.Find([new(discoveryRoot, 3)], new CancellationToken(true)); } catch (OperationCanceledException) { cancelled = true; }
+    Check(cancelled, "discovery can be cancelled without touching repositories");
+    var tip = GitRepositoryProbe.ParseUpstream("ref: refs/heads/default-branch\tHEAD\r\n" + commit + "\tHEAD\r\n");
+    Check(tip?.Branch == "default-branch" && tip.Commit == commit && GitRepositoryProbe.ParseUpstream("untrusted incomplete output") is null,
+        "upstream lookup resolves the advertised default branch and validates the HEAD hash");
+    var noGit = await GitRepositoryProbe.ReadLocalAsync(checkoutB);
+    Check(noGit.Commit == "" && noGit.HasTrackedChanges is null, "source folders without Git remain selectable with unknown commit status");
+
+    async Task Git(params string[] arguments)
+    {
+        var start = new ProcessStartInfo("git") { WorkingDirectory = checkoutA, UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+        foreach (string key in start.Environment.Keys.Where(k => k.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray()) start.Environment.Remove(key);
+        start.ArgumentList.Add("-c"); start.ArgumentList.Add("core.hooksPath=" + Path.Combine(fixture, "no-hooks"));
+        foreach (string argument in arguments) start.ArgumentList.Add(argument);
+        using var process = Process.Start(start)!;
+        var output = process.StandardOutput.ReadToEndAsync(); var error = process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync(); await output;
+        if (process.ExitCode != 0) throw new Exception("Git fixture: " + await error);
+    }
+    await Git("init", "--initial-branch=fixture");
+    await Git("add", ".");
+    await Git("-c", "user.name=Launcher checks", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "-m", "Fixture");
+    await Git("pack-refs", "--all");
+    var localHead = await GitRepositoryProbe.ReadLocalAsync(checkoutA);
+    Check(localHead.Commit.Length == 40 && localHead.Branch == "fixture" && localHead.HasTrackedChanges == false,
+        "local HEAD lookup reads packed refs and identifies clean tracked files");
+    File.AppendAllText(Path.Combine(checkoutA, "GameServer.slnx"), " modified");
+    var changedHead = await GitRepositoryProbe.ReadLocalAsync(checkoutA);
+    Check(changedHead.Commit == localHead.Commit && changedHead.HasTrackedChanges == true,
+        "matching HEAD does not hide modified working files");
+    await Git("checkout", "--detach");
+    var detachedHead = await GitRepositoryProbe.ReadLocalAsync(checkoutA);
+    Check(detachedHead.Commit == localHead.Commit && detachedHead.Branch == "Detached HEAD", "detached HEAD checkouts can be compared accurately");
+    string worktreePath = Path.Combine(fixture, "linked-worktree");
+    await Git("worktree", "add", "--detach", worktreePath, "HEAD");
+    Check((await GitRepositoryProbe.ReadLocalAsync(worktreePath)).Commit == localHead.Commit,
+        "local HEAD lookup supports Git worktrees with a .git file");
+    var match = new DiscoveredRepository(checkoutA, localHead, true, false);
+    var lookup = new RepositoryLookupResult(new("fixture", localHead.Commit, DateTimeOffset.UtcNow), [match], 1, false, null);
+    Check(lookup.SingleMatch == match && (lookup with { Repositories = [match, match with { Root = checkoutB }] }).SingleMatch is null &&
+        (lookup with { Repositories = [match with { MatchesUpstream = false }] }).SingleMatch is null && (lookup with { Limited = true }).SingleMatch is null,
+        "only a single verified upstream HEAD match is eligible for automatic selection");
+    var offlineLookup = await RepositoryLocator.FindAsync([new(discoveryRoot, 3)], upstreamReader: _ => Task.FromResult<UpstreamHead?>(null));
+    Check(offlineLookup.Upstream is null && offlineLookup.UpstreamError is not null && offlineLookup.Repositories.Length == 2 && offlineLookup.SingleMatch is null,
+        "offline lookup retains local choices and does not claim an upstream match");
+    var matchedLookup = await RepositoryLocator.FindAsync([new(discoveryRoot, 3)], upstreamReader: _ => Task.FromResult<UpstreamHead?>(lookup.Upstream));
+    Check(matchedLookup.SingleMatch?.Root == checkoutA && matchedLookup.Repositories[0].MatchesUpstream && matchedLookup.Repositories[0].Head.HasTrackedChanges == true,
+        "lookup ranks verified matches first while preserving the modified-files warning");
     Console.WriteLine($"{passed} checks passed.");
     return 0;
 }
 finally
 {
     // Fixture is created above with a fresh GUID; never accept an external cleanup target.
-    if (Directory.Exists(fixture)) Directory.Delete(fixture, true);
+    if (Directory.Exists(fixture))
+    {
+        if (!Path.GetFullPath(fixture).StartsWith(Path.GetFullPath(Path.GetTempPath()), StringComparison.OrdinalIgnoreCase)) throw new IOException("Fixture cleanup escaped the temporary directory.");
+        // Git marks object files read-only on Windows, including this test's private packed refs/objects.
+        foreach (string file in Directory.EnumerateFiles(fixture, "*", SearchOption.AllDirectories)) File.SetAttributes(file, FileAttributes.Normal);
+        Directory.Delete(fixture, true);
+    }
 }
