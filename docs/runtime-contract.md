@@ -32,7 +32,8 @@ does not imply setup/runtime readiness. See [repository discovery](repository-di
 Game_* variables inherited from the launcher host are cleared in the child process.
 When the local wrapper is enabled and exists, inspect `config/runtime.local.ps1` as an AST, accepting only literal
 Game_* string assignments. Do not execute configuration while inspecting. Complex profiles fail with an explanation.
-The actual launch uses `scripts/dev/live.local.ps1`, which ultimately calls the supported live.ps1.
+Literal profile environment settings apply to server commands. Game launch uses `scripts/dev/live.local.ps1`
+when enabled, which ultimately calls the supported live.ps1.
 Existing-profile databases must exist; never silently fall back to a new empty database.
 
 Only standard local listener, client and archive paths are supported. Custom TLS/CDN settings fail preflight.
@@ -52,19 +53,33 @@ Do not adopt unrelated absolute build folders, identical relative DLL paths in a
 sessions or orphaned relative commands. Conflicting listeners block start/play; failed inventory queries fail closed.
 This is a compatibility/ownership guard, not an isolation boundary against malicious same-user code forging command lines.
 
+Gateway may instead be a verified `dotnet watch run --project src\GameServer.Gateway --non-interactive --` root,
+with the same dedicated cmd and absolute checkout log destinations. Its app executable must have the exact Debug
+path and a live, timestamp-ordered ancestry to that root. Watch ownership persists during child restart/build gaps;
+such a service is Starting, not Stopped. Foreign matching server/watcher processes also block launch, even when they
+do not hold a port, because upstream launch scripts may otherwise terminate them by name.
+
 Graceful shutdown runs `ConsoleSignal.ps1`, which rechecks PID, parent and creation timestamp. It attaches only to
-the verified dedicated console, requires that console to contain exactly the server, parent cmd and signal helper,
-sends Ctrl+C, then exits. The adapter waits up to 20 seconds and reports failure without forcing termination.
+the verified dedicated console. Every console peer must be the cmd, signal helper or a verified descendant of that
+server/watch root. Unknown peers fail closed. It sends Ctrl+C, then exits. The adapter waits up to 20 seconds for the
+captured server/watch subtree to exit and reports failure without forcing termination.
 The game is closed by its window and checked process identity; service shutdown requires the game to be closed first.
 
 Start runs the upstream extraction script, builds missing selected services when no owned services are running,
-then calls live.ps1 with NoBuild/NoExtract/NoClient and the selected missing services. Splitting the preparation
-from launch makes those stages observable without replacing upstream extraction or process-launch semantics.
+then starts only verified missing services using upstream's standard Debug commands, root working directory,
+dedicated cmd consoles and checkout-specific logs. It sets the upstream Gateway-enter, packet-dump, watch-log
+and disabled-walkmaps environment defaults. Old logs for those services are archived without touching live services.
+The launcher does not invoke live.ps1's broad name/port cleanup, which force-terminates matching processes across
+checkouts. It never needs that cleanup to start a missing service. Normal and watched startup share the same ownership
+and graceful-stop checks. Upstream extraction and the game/client-only launch workflow remain unchanged.
 Starting another service
 beside live services reuses existing binaries only when the selected source commit matches and tracked source is clean.
 Stop all services and Build checkout after changing source. V1 does not attest all untracked/ignored build inputs.
 The Builds page shows source and disk-binary identities separately; it is not a full immutable running-build manifest.
 Failed/partial startup stays visible for diagnosis; it does not silently tear down processes that did successfully start.
+
+Upstream 5fc27fa also has a scalar-array Auth argument join (`$command + $serverArgs[$s]`) that generates `Auth.dllserve`.
+The explicit standard service commands preserve the intended Auth argument boundary. No LocalExile file is patched.
 
 Game launch is two steps: start/wait for required servers, then live.ps1 -ClientOnly. Running is distinct from a native
 menu being ready, a successful authentication or entry into a playable area.
@@ -93,4 +108,39 @@ the preview and explicitly copies it; arbitrary private details can still requir
 
 Prefer an explicit versioned LocalExile control interface with runtime IDs, actual loaded build identity, working
 directory, readiness and save-safe shutdown. Keep v1 assumptions isolated here so the UI need not change with that interface.
-Environment manifests, consistent backup/copy/restore, release builds, PR discovery and metrics sessions are separate capabilities.
+Immutable environment manifests, separate source/build paths, release builds and metrics sessions remain separate capabilities.
+
+## Source activation, hot reload and save recovery
+
+Core queries local refs with read-only Git and public upstream PR metadata with bounded unauthenticated GitHub GETs,
+conditional ETags and a two-minute cache. Local refs are usable before GitHub finishes. Fetch/activation/backup/restore
+run under the existing global runtime mutation mutex. Git uses argument boundaries, no prompts, disabled hooks for
+launcher mutations, and no force checkout/reset/clean/stash. PR fetch refs are positive integers under `refs/launcher/pr/`;
+PR/remote activation detaches at a verified full commit. Local branches use normal switch. Target source must contain
+the supported solution, Gateway and launch markers. Tracked runtime-profile changes are refused.
+
+Activation rejects tracked/untracked edits (ignored runtime files are reused), requires the game closed, stops owned
+services, backs up saves by default, switches source and builds. It does not automatically start afterward. Build failure
+preserves saves and leaves explicit selected source/stopped services. This is not an atomic hot branch replacement.
+Hot reload launch preference is passed as `-NoHotReload` only where supported. Gateway's explicit log confirmations
+drive pending/applied/failed status; a successful build is not proof of application. Watcher health and child presence
+remain separate from historical log events. Auth/Patch, static initializers and extracted data have no generic reload guarantee.
+
+Save backups use Python's SQLite online backup API, including committed WAL pages, then `PRAGMA integrity_check`.
+They are keyed by canonical database path under the launcher's stable local data directory. Metadata records source
+commit/branch at backup, requested source/fresh choice, time, and last Gateway build recorded at a successful launcher
+start. That build hash is not an attestation of later hot edits or external launches. Unknown history remains unknown.
+Automatic backups default on for current/fresh activation, build, Gateway startup/restart, data reload and restore;
+users may disable them in either relevant UI page. Manual backup bypasses that preference. No backup occurs per
+externally saved edit or watcher-triggered restart. Backup failure blocks the subsequent requested change.
+
+Restore validates the chosen backup and its save-store association, requires stopped owned runtime, backs up current
+saves when enabled, and replaces only saves. Fresh saves are created only after successful build. Replaced SQLite
+database/WAL/SHM files are moved to operation-local recovery even with automatic copying off. Redirected save/backup
+paths are refused. Deletion accepts only a validated backup ID in the selected store and its two known files; no broad
+recursive deletion occurs. Client, keys, source and game-data overrides are outside a save snapshot.
+
+Explicit game-data reload uses upstream's optional native client helper for the owned client and ready Gateway. Only
+that disposable helper has captured streams (never live.ps1). The adapter waits for `Game data reloaded: revision N`
+in the helper's new Gateway replies. A timeout, missing dependency or missing confirmation reports failure/uncertainty;
+the launcher never assumes submission means application. The helper never starts a game for this operation.

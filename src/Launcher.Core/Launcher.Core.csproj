@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
   <ItemGroup><None Include="../../scripts/*.ps1" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Exclude="../../scripts/New-Icon.ps1" /></ItemGroup>
+  <ItemGroup><None Include="../../scripts/SaveBackup.py" Link="SaveBackup.py" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

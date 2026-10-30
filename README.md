@@ -40,7 +40,7 @@ Offline lookup, missing Git, no match and bounded searches still allow manual se
    and sign in inside the game; create your character there. The launcher does not save the password.
 
 The supported client is standalone **3.29.3b**. The launcher can prepare a separate copy already placed in `Client`;
-it does not download the game, copy saves, or change branches for you.
+it does not download the game. Branch/PR activation reuses that copy and the standard build/data folders.
 It checks structural prerequisites; the upstream preparation tools enforce the supported client signatures.
 
 ## Included in 0.2
@@ -62,7 +62,54 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 - A bounded diagnostic report with redaction, local preview, optional extra names to remove and an explicit Copy button.
   Review the preview for details the pattern-based redaction may miss. Nothing is automatically shared.
 
+## Branches, hot reload and backups
+
+Open **Builds** to browse local branches, fetched remote branches and public open PRs from LocalExile/LocalExile.
+Local choices appear before the GitHub request finishes. Search by name, title, author or commit. **Fetch remote branches**
+refreshes configured remotes without switching source; **Load / refresh list** refreshes PR metadata. Enter an upstream
+PR number and choose **Use PR number** to preview a closed/unlisted PR, then **Switch and build** to activate it.
+Remote branches and PRs use detached source so local branches are not reset. All operations are local; nothing is pushed.
+The sidebar keeps the selected remote/PR label when its recorded commit still matches HEAD, including after reopening.
+
+Close the game before **Switch and build**. The launcher refuses local tracked/untracked source changes, gracefully
+stops owned servers, makes a consistent SQLite save backup, switches source and builds it. It never forces checkout,
+cleans or stashes your work. A failed build leaves the selected source visible and services stopped; existing saves are
+preserved. Press **Play** after a successful switch. This workflow uses the current standard LocalExile layout and
+does not depend on the unmerged external client/build path PR. Branches changing tracked local runtime profiles are
+refused until that profile change is handled separately.
+
+Current accounts/characters are the default. **Start fresh** initializes an empty save database after a successful build;
+create a new local account afterward. This is a one-switch choice and is cleared on success. **Automatic save backups**
+is on by default for both choices and can be toggled directly in Builds or Backups. The preference also applies to
+builds, service restarts, explicit game-data reload and save restore. **Back up now** always makes a manual backup.
+Automatic backups do not run for each externally saved code edit or a restart performed internally by dotnet watch.
+Starting Gateway also backs up an existing save database before startup can migrate it.
+
+**Backups** lists date, size, source branch, source commit at backup and the last Gateway build this launcher recorded
+launching with that database. Hashes use seven-character code badges with full hashes on hover. Older/outside launches
+show **unknown**; hot edits do not become fictional Git commits. Select a backup and choose **Restore selected…** or
+**Delete selected…**. Restore requires the game closed, stops owned services, validates the snapshot and automatically
+backs up current saves when enabled. It changes only the selected save database; choose the matching source yourself
+when restoring an older save. Backups stay in `%LOCALAPPDATA%\EmulatorWorkspaceLauncher\backups` until deleted.
+Fresh/restore operations also move the replaced SQLite file set into that operation's `previous-saves` recovery folder,
+including when automatic copying is off. Source/client/keys/game-data overrides are not restored from a save backup.
+
+See [branch, hot reload and backup validation](docs/branch-reload-backup-validation.md) for the current-upstream
+runtime, PR-switching, preservation and automated-check evidence.
+
+**Watch Gateway code while playing** applies to the next Gateway start on revisions supporting hot reload. The hot
+reload panel shows pending/applied/compile-failure events confirmed by Gateway, plus watcher/build/restart state.
+Compatible code edits can keep the player in game. Incompatible edits may restart Gateway and return to login;
+compile failures leave old code running. Auth/Patch and static initialization/data changes may need a full restart.
+Branch/PR activation is a controlled stop/build workflow, not an atomic live multi-file source replacement.
+
+**Reload game-data overrides** uses the selected checkout's optional `client_control.py` helper (Python with Frida,
+supported client in game). It sends `/game_data reload` and requires a confirmed revision reply; submitting a command
+alone is not reported as success. This reloads SQLite overrides, not extracted files or arbitrary C# static caches.
+
 The launcher uses Windows PowerShell 5.1, .NET 10, the standard Debug output layout and standard local ports.
+It starts only verified missing services with the standard upstream commands; it does not invoke upstream's broad
+process cleanup. Game launch still uses `live.ps1 -ClientOnly`.
 Existing servers from other build folders are shown as port conflicts and are not adopted or stopped.
 Custom ports, custom TLS/CDN settings, complex runtime scripts, remote servers and multiple simultaneous environments
 need additional adapter support. See [the runtime contract](docs/runtime-contract.md).
@@ -78,6 +125,7 @@ manual folder selection remains available without Git. No GitHub sign-in is requ
 dotnet build Launcher.slnx
 dotnet run --project tests/Launcher.Checks --no-build
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Bridge.Tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/Source.Tests.ps1
 ```
 
 The executable checks use private temporary fixtures and never start the real game or servers.

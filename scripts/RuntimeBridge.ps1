@@ -1,11 +1,17 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','DeleteBackup')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
-    [switch]$UseLocalProfile
+    [switch]$UseLocalProfile,
+    [switch]$NoHotReload,
+    [switch]$NoBackup,
+    [switch]$StartFresh,
+    [ValidateSet('Branch','Remote','PR')][string]$SourceKind = 'Branch',
+    [string]$SourceValue = '',
+    [string]$BackupId = ''
 )
 $ErrorActionPreference = 'Stop'
 $result = $null
@@ -89,12 +95,42 @@ function Owned-Server($process, [string]$name) {
     return $parent.CommandLine.TrimEnd() -imatch ('/c\s+' + [regex]::Escape($tail) + '$')
 }
 function Split-Arguments([string]$line) { [NativeRuntime]::Arguments($line) }
+function Owned-Watcher($process) {
+    if (-not $process -or $process.Name -ine 'dotnet.exe') { return $false }
+    $args = @(Split-Arguments $process.CommandLine)
+    if ($args.Count -ne 7 -or ($args[1..6] -join ' ') -cne 'watch run --project src\GameServer.Gateway --non-interactive --') { return $false }
+    $parent = $script:byId[[int]$process.ParentProcessId]
+    if (-not $parent -or $parent.Name -ine 'cmd.exe' -or $parent.CreationDate -gt $process.CreationDate) { return $false }
+    $tail = 'dotnet watch run --project src\GameServer.Gateway --non-interactive -- 1>"' + (At 'logs\live-gateway.log') + '" 2>"' + (At 'logs\live-gateway.err') + '"'
+    return $parent.CommandLine.TrimEnd() -imatch ('/c\s+' + [regex]::Escape($tail) + '$')
+}
+function Descends-From($process, $ancestor) {
+    if (-not $process -or -not $ancestor) { return $false }
+    $current = $process
+    for ($i=0; $i -lt 8; $i++) {
+        if ($current.ProcessId -eq $ancestor.ProcessId) { return $current.CreationDate -eq $ancestor.CreationDate }
+        $parent = $script:byId[[int]$current.ParentProcessId]
+        if (-not $parent -or $parent.CreationDate -gt $current.CreationDate) { return $false }
+        $current = $parent
+    }
+    return $false
+}
+function Owned-WatchedGateway($process, $watcher) {
+    return $process -and (Same-Path $process.ExecutablePath (At 'src\GameServer.Gateway\bin\Debug\net10.0\GameServer.Gateway.exe')) -and (Descends-From $process $watcher)
+}
 function Get-Snapshot {
     Get-Inventory
     $conflicts = [Collections.Generic.List[string]]::new()
     $services = @()
+    $watchers = @($script:processes | Where-Object { Owned-Watcher $_ })
+    if ($watchers.Count -gt 1) { $conflicts.Add('Multiple Gateway watchers belong to this checkout.') }
     foreach ($name in $names) {
         $owned = @($script:processes | Where-Object { Owned-Server $_ $name })
+        $watcher = $null
+        if ($name -eq 'Gateway' -and $watchers.Count) {
+            $watcher = $watchers[0]
+            $owned += @($script:processes | Where-Object { Owned-WatchedGateway $_ $watcher })
+        }
         if ($owned.Count -gt 1) { $conflicts.Add("Multiple $name processes belong to this checkout.") }
         $process = $owned | Select-Object -First 1
         $ready = $null -ne $process
@@ -108,9 +144,25 @@ function Get-Snapshot {
                 }
             }
         }
-        $status = if ($ready) { 'Ready' } elseif ($process) { 'Starting' } else { 'Stopped' }
-        $detail = if ($ready) { 'Owned process; all required ports listening' } elseif ($process) { 'Process exists; required listeners are missing' } else { 'No verified process for this checkout' }
-        $services += New-Service $name $status $process $detail $portMap[$name]
+        $status = if ($ready) { 'Ready' } elseif ($process -or $watcher) { 'Starting' } else { 'Stopped' }
+        $detail = if ($ready) { 'Owned process; all required ports listening' } elseif ($process -or $watcher) { 'Starting, rebuilding or restarting; inspect Gateway output for errors' } else { 'No verified process for this checkout' }
+        if ($watcher) { $detail += " | hot reload watcher PID $($watcher.ProcessId)" }
+        $row = New-Service $name $status $process $detail $portMap[$name]
+        $row.WatchProcessId = if ($watcher) { [int]$watcher.ProcessId } else { 0 }
+        $services += $row
+    }
+    # Upstream live.ps1 stops processes by name before launch, even before they hold a port.
+    # Block foreign server/watch processes as well as foreign listeners so upstream cannot kill them.
+    foreach ($p in $script:processes) {
+        if ($p.Name -notin @('dotnet.exe','cmd.exe','GameServer.Gateway.exe','GameServer.Auth.exe','GameServer.Patch.exe')) { continue }
+        if ($p.CommandLine -notmatch 'GameServer\.(Gateway|Auth|Patch)(\.dll|\.exe|[\\\s"]|$)' -or $p.CommandLine -match '\s(build|test)\s|GameServer\.(Gateway|Auth|Patch)\.Tests') { continue }
+        $ownedProcess = $false
+        foreach ($s in $services) {
+            if ($p.ProcessId -eq $s.ProcessId) { $ownedProcess = $true }
+            if ($s.ProcessId -and $script:byId[$s.ProcessId].ParentProcessId -eq $p.ProcessId) { $ownedProcess = $true }
+        }
+        foreach ($w in $watchers) { if ((Descends-From $p $w) -or $p.ProcessId -eq $w.ParentProcessId) { $ownedProcess = $true } }
+        if (-not $ownedProcess) { $conflicts.Add("Another server or watcher is running (PID $($p.ProcessId)). Stop it from its own installation before launching here.") }
     }
     $gamePath = At 'Client/Game.patched.exe'
     $games = @($script:processes | Where-Object { $_.Name -ieq 'Game.patched.exe' -or $_.Name -like 'PathOfExile*.exe' -or $_.Name -ieq 'Game.exe' })
@@ -141,8 +193,26 @@ function Get-Snapshot {
         $dll = At "src/GameServer.$_/bin/Debug/net10.0/GameServer.$_.dll"
         if (Test-Path -LiteralPath $dll) { "$_=" + (Get-Item -LiteralPath $dll).VersionInfo.ProductVersion } else { "$_=not built" }
     })
+    $sourceLabel = $branch
+    $selectionPath = Get-SourceSelectionPath
+    if (-not $branch -and (Test-Path -LiteralPath $selectionPath)) {
+        Assert-Physical $selectionPath
+        try {
+            if ((Get-Item -LiteralPath $selectionPath).Length -lt 32768) {
+                $selection = Get-Content -LiteralPath $selectionPath -Raw | ConvertFrom-Json
+                if ($selection.Commit -eq $commit -and $selection.Kind -eq 'PR' -and $selection.Value -match '^[1-9][0-9]{0,8}$') { $sourceLabel = "PR #$($selection.Value)" }
+                elseif ($selection.Commit -eq $commit -and $selection.Kind -eq 'Remote' -and $selection.Value.StartsWith('refs/remotes/')) { $sourceLabel = $selection.Value.Substring('refs/remotes/'.Length) }
+            }
+        } catch { $sourceLabel = '' }
+    }
     @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; SourceCommit=$commit; SourceBranch=$branch;
-       BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()) }
+       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()) }
+}
+function Get-SourceSelectionPath {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try { $key = ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($script:root.ToLowerInvariant())))).Replace('-','') }
+    finally { $sha.Dispose() }
+    return Join-Path (Join-Path $env:LOCALAPPDATA 'EmulatorWorkspaceLauncher/source-selections') ($key + '.json')
 }
 function Test-Sdk {
     if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { return $false }
@@ -168,8 +238,9 @@ function Start-Services($snapshot, [string[]]$selected) {
     Assert-CanStart $snapshot
     $missing = @($selected | Where-Object { $n = $_; -not ($snapshot.Services | Where-Object { $_.Name -eq $n -and $_.Status -eq 'Ready' }) })
     if (-not $missing.Count) { return }
+    if ('Gateway' -in $missing) { Backup-Saves $snapshot }
     # live.ps1 rebuilds dependencies. Do not overwrite assemblies while any owned server is running.
-    $running = @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and $_.ProcessId -ne 0 })
+    $running = @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and ($_.ProcessId -or $_.WatchProcessId) })
     if ($running.Count) {
         # A selected service that is alive but not ready should not be silently restarted.
         Require (-not @($running | Where-Object { $_.Name -in $missing }).Count) 'A selected service is still starting or unhealthy. Inspect its log, then stop it explicitly.'
@@ -192,11 +263,41 @@ function Start-Services($snapshot, [string[]]$selected) {
     }
     $latest = Get-Snapshot
     Require (-not $latest.Conflicts.Count) ($latest.Conflicts -join "`n")
-    Require (-not @($latest.Services | Where-Object { $_.Name -in $missing -and $_.ProcessId }).Count) 'A selected service started during preparation. Refresh and retry without restarting it.'
+    Require (-not @($latest.Services | Where-Object { $_.Name -in $missing -and ($_.ProcessId -or $_.WatchProcessId) }).Count) 'A selected service started during preparation. Refresh and retry without restarting it.'
     Set-Stage 'Starting services' ($missing -join ', ')
-    $argsForLive = @{ NoClient=$true; NoBuild=$true; NoExtract=$true; Only=$missing }
-    $entry = if ($script:profile -eq 'Local runtime wrapper') { At 'scripts/dev/live.local.ps1' } else { At 'scripts/dev/live.ps1' }
-    & $entry @argsForLive
+    $liveText = Get-Content -LiteralPath (At 'scripts/dev/live.ps1') -Raw
+    $watched = -not $NoHotReload -and $liveText.Contains('$NoHotReload') -and $liveText.Contains('watch')
+    # Start only verified missing services, using upstream's standard commands and dedicated consoles.
+    # Do not invoke live.ps1's broad name/port cleanup: it can force-kill a different checkout or a
+    # restarting watch tree. Client launch still goes exclusively through its -ClientOnly workflow.
+    $before = @{}
+    foreach ($key in @('Game_GATEWAY_ENTER','Game_PACKET_DUMPS','Game_HOT_RELOAD_LOG','Game_WALKMAPS')) { $before[$key] = [Environment]::GetEnvironmentVariable($key) }
+    try {
+        if (-not $env:Game_GATEWAY_ENTER) { $env:Game_GATEWAY_ENTER = '1' }
+        if (-not $env:Game_PACKET_DUMPS) { $env:Game_PACKET_DUMPS = 'logs\packets' }
+        $env:Game_WALKMAPS = '0'
+        $env:Game_HOT_RELOAD_LOG = if ($watched) { At 'logs\live-gateway.err' } else { $null }
+        $archive = At ('logs/archive/' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-launcher-' + [guid]::NewGuid().ToString('N').Substring(0,8))
+        New-Item -ItemType Directory -Force -Path (At 'logs') | Out-Null
+        foreach ($name in $missing) {
+            $latest = Get-Snapshot
+            Require (-not $latest.Conflicts.Count) ($latest.Conflicts -join "`n")
+            Require (-not @($latest.Services | Where-Object { $_.Name -eq $name -and ($_.ProcessId -or $_.WatchProcessId) }).Count) "$name started during preparation. Refresh before retrying."
+            foreach ($extension in @('log','err')) {
+                $oldLog = At "logs/live-$($name.ToLower()).$extension"
+                if (Test-Path -LiteralPath $oldLog) {
+                    New-Item -ItemType Directory -Force -Path $archive | Out-Null
+                    Move-Item -LiteralPath $oldLog -Destination (Join-Path $archive "live-$($name.ToLower()).$extension")
+                }
+            }
+            Set-Stage 'Starting services' $name
+            $command = Server-Command $name ($watched -and $name -eq 'Gateway')
+            $line = '/c ' + $command + ' 1>"' + (At "logs\live-$($name.ToLower()).log") + '" 2>"' + (At "logs\live-$($name.ToLower()).err") + '"'
+            Start-Process cmd.exe -ArgumentList $line -WorkingDirectory $script:root -WindowStyle Hidden
+        }
+    } finally {
+        foreach ($key in $before.Keys) { [Environment]::SetEnvironmentVariable($key, $before[$key]) }
+    }
     Set-Stage 'Waiting for services' 'Verifying ownership of every required listening port.'
     $deadline = (Get-Date).AddSeconds(60)
     do {
@@ -208,14 +309,21 @@ function Start-Services($snapshot, [string[]]$selected) {
     } while ((Get-Date) -lt $deadline)
     throw 'Servers did not become ready within 60 seconds. Review logs/live-*.log and logs/live-*.err. Partial starts remain visible; use Stop servers to clean up.'
 }
+function Server-Command([string]$name, [bool]$watched) {
+    Require ($name -in @('Patch','Gateway','Auth')) 'Unknown service command.'
+    if ($name -eq 'Gateway' -and $watched) { return 'dotnet watch run --project src\GameServer.Gateway --non-interactive --' }
+    return "dotnet src\GameServer.$name\bin\Debug\net10.0\GameServer.$name.dll" + $(if ($name -eq 'Auth') { ' serve' })
+}
 function Stop-Services($snapshot, [string[]]$selected) {
     Require (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Close the game first using Close game, then stop or restart services.'
     foreach ($name in @('Gateway','Auth','Patch')) {
         if ($name -notin $selected) { continue }
         Get-Inventory
         $targets = @($script:processes | Where-Object { Owned-Server $_ $name })
+        if ($name -eq 'Gateway') { $targets += @($script:processes | Where-Object { Owned-Watcher $_ }) }
         foreach ($target in $targets) {
             Set-Stage 'Stopping services' $name
+            $tree = @($script:processes | Where-Object { Descends-From $_ $target })
             # Attach only to the dedicated cmd console verified by Owned-Server. Ctrl+C lets Gateway save.
             # Console attachment must happen in a disposable helper: detaching this PowerShell would invalidate
             # its host handles and break transcript/output handling for the remainder of this operation.
@@ -228,8 +336,15 @@ function Stop-Services($snapshot, [string[]]$selected) {
             $signal.WaitForExit()
             Require ($signal.ExitCode -eq 0) "Could not signal $name gracefully. No force termination was attempted."
             $deadline = (Get-Date).AddSeconds(20)
-            while ((Get-Process -Id $target.ProcessId -ErrorAction SilentlyContinue) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 250 }
-            Require (-not (Get-Process -Id $target.ProcessId -ErrorAction SilentlyContinue)) "$name did not stop in 20 seconds. No force termination was attempted."
+            do {
+                $remaining = @($tree | Where-Object {
+                    $p = Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue
+                    $p -and [math]::Abs(($p.StartTime.ToUniversalTime() - $_.CreationDate.ToUniversalTime()).TotalMilliseconds) -lt 1
+                })
+                if (-not $remaining.Count) { break }
+                Start-Sleep -Milliseconds 250
+            } while ((Get-Date) -lt $deadline)
+            Require (-not $remaining.Count) "$name's process tree did not stop in 20 seconds. No force termination was attempted."
             Write-Host "$name stopped."
         }
     }
@@ -237,7 +352,192 @@ function Stop-Services($snapshot, [string[]]$selected) {
 
 function Assert-SetupStopped($snapshot) {
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
-    Require (-not @($snapshot.Services | Where-Object ProcessId -gt 0).Count) 'Close the game and stop services before preparing the installation or creating an account.'
+    Require (-not @($snapshot.Services | Where-Object { $_.ProcessId -or $_.WatchProcessId }).Count) 'Close the game and stop services before preparing the installation or creating an account.'
+}
+function Assert-Physical([string]$path) {
+    $current = [IO.Path]::GetFullPath($path)
+    while ($current) {
+        $item = Get-Item -LiteralPath $current -Force -ErrorAction SilentlyContinue
+        Require (-not $item -or -not ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) "Refusing a redirected save/backup path: $current"
+        $current = Split-Path -Parent $current
+    }
+}
+function Get-Python {
+    $venv = At '.venv/Scripts/python.exe'
+    if (Test-Path -LiteralPath $venv) { return $venv }
+    $command = Get-Command python.exe -ErrorAction SilentlyContinue
+    Require ([bool]$command) 'Python is required to make a consistent save backup. Install Python or disable automatic backups explicitly.'
+    return $command.Source
+}
+function Backup-Saves($snapshot) {
+    if ($NoBackup -and $Action -ne 'Backup') { Write-Host 'Automatic save backup is disabled.'; return }
+    if (-not (Test-Path -LiteralPath $script:savePath)) { Write-Host 'No save database exists yet; nothing to back up.'; return }
+    Assert-Physical $script:savePath
+    $destination = Join-Path (Get-BackupDirectory) ((Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8))
+    Assert-Physical $destination
+    New-Item -ItemType Directory -Path $destination -Force | Out-Null
+    Set-Stage 'Backing up saves' 'Creating a consistent SQLite snapshot and checking its integrity.'
+    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') $script:savePath (Join-Path $destination 'saves.db')
+    Require ($LASTEXITCODE -eq 0) 'Save backup failed. The requested change was not started. Read the operation log.'
+    $lastBuild = ''
+    $historyPath = Join-Path (Get-BackupDirectory) 'last-launch.json'
+    if (Test-Path -LiteralPath $historyPath) {
+        Assert-Physical $historyPath
+        try { $lastBuild = (Get-Content -LiteralPath $historyPath -Raw | ConvertFrom-Json).GatewayCommit } catch {}
+    }
+    @{ Repository=$script:root; SaveDatabase=$script:savePath; SourceCommit=$snapshot.SourceCommit; SourceBranch=$snapshot.SourceBranch; SourceLabel=$snapshot.SourceLabel;
+       LastBuildCommit=$lastBuild; RequestedKind=$SourceKind; RequestedSource=$SourceValue; StartFresh=[bool]$StartFresh; CreatedUtc=[datetime]::UtcNow.ToString('o') } |
+        ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'backup.json') -Encoding UTF8
+    Write-Host "Save backup verified: $destination"
+}
+function Get-BackupDirectory {
+    $base = Join-Path $env:LOCALAPPDATA 'EmulatorWorkspaceLauncher/backups'
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try { $key = ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($script:savePath.ToLowerInvariant())))).Replace('-','').Substring(0,16) }
+    finally { $sha.Dispose() }
+    return Join-Path $base $key
+}
+function Record-SaveLaunch($snapshot) {
+    $dll = At 'src/GameServer.Gateway/bin/Debug/net10.0/GameServer.Gateway.dll'
+    $commit = ''
+    if ((Test-Path -LiteralPath $dll) -and (Get-Item -LiteralPath $dll).VersionInfo.ProductVersion -match '\b([0-9a-f]{40}([0-9a-f]{24})?)\b') { $commit = $Matches[1] }
+    $directory = Get-BackupDirectory
+    Assert-Physical $directory
+    New-Item -ItemType Directory -Force -Path $directory | Out-Null
+    $path = Join-Path $directory 'last-launch.json'
+    Assert-Physical $path
+    @{ GatewayCommit=$commit; SourceCommit=$snapshot.SourceCommit; LaunchedUtc=[datetime]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath $path -Encoding UTF8
+}
+function Get-SelectedBackup {
+    Require ($BackupId -match '^\d{8}-\d{6}-[0-9a-f]{8}$') 'Select a backup from this installation.'
+    $path = Join-Path (Get-BackupDirectory) $BackupId
+    Assert-Physical $path
+    Assert-Physical (Join-Path $path 'backup.json')
+    Assert-Physical (Join-Path $path 'saves.db')
+    Require (Test-Path -LiteralPath (Join-Path $path 'backup.json')) 'Backup metadata is missing.'
+    $meta = Get-Content -LiteralPath (Join-Path $path 'backup.json') -Raw | ConvertFrom-Json
+    Require (Same-Path $meta.SaveDatabase $script:savePath) 'This backup belongs to a different save database.'
+    Require (Test-Path -LiteralPath (Join-Path $path 'saves.db')) 'Backup database is missing.'
+    return $path
+}
+function Restore-SaveBackup($snapshot) {
+    $path = Get-SelectedBackup
+    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    Require (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Close the game before restoring saves. Owned servers will be stopped gracefully.'
+    Stop-Services $snapshot $names
+    Assert-SetupStopped (Get-Snapshot)
+    # Stage and validate the selected snapshot before touching current saves.
+    Set-Stage 'Checking restore' 'Verifying the selected SQLite backup.'
+    $staged = Join-Path (Split-Path $ResultPath) 'restore.db'
+    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') (Join-Path $path 'saves.db') $staged
+    Require ($LASTEXITCODE -eq 0) 'The selected backup could not be validated. Current saves were not changed.'
+    Backup-Saves $snapshot
+    Set-Stage 'Restoring saves' 'Replacing only this installation''s saves; source, client and keys are unchanged.'
+    Move-PreviousSaves
+    New-Item -ItemType Directory -Force -Path (Split-Path $script:savePath) | Out-Null
+    Copy-Item -LiteralPath $staged -Destination $script:savePath
+    # This database has not yet been launched with the currently selected build.
+    $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
+    Assert-Physical $history
+    if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
+    Write-Host 'Save restored. Source was not changed; choose the matching branch/PR before Play if needed.'
+}
+function Move-PreviousSaves {
+    $recovery = Join-Path (Split-Path $ResultPath) 'previous-saves'
+    New-Item -ItemType Directory -Path $recovery | Out-Null
+    foreach ($suffix in @('','-wal','-shm')) { Assert-Physical ($script:savePath + $suffix) }
+    foreach ($suffix in @('','-wal','-shm')) {
+        $source = $script:savePath + $suffix
+        if (Test-Path -LiteralPath $source) { Move-Item -LiteralPath $source -Destination (Join-Path $recovery ('saves.db' + $suffix)) }
+    }
+    Write-Host "Previous database retained for recovery: $recovery"
+}
+function Reload-GameData($snapshot) {
+    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    Require ([bool]@($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Enter the game with this installation before reloading game-data overrides.'
+    Require ([bool]@($snapshot.Services | Where-Object { $_.Name -eq 'Gateway' -and $_.Status -eq 'Ready' }).Count) 'Gateway must be ready before reloading game data.'
+    Require (Test-Path -LiteralPath (At 'scripts/dev/client_control.py')) 'This revision has no supported native client-control helper. Use /game_data reload in game if supported.'
+    Backup-Saves $snapshot
+    Set-Stage 'Reloading game-data overrides' 'Sending /game_data reload through the selected checkout''s native client helper; waiting for Gateway confirmation.'
+    $info = [Diagnostics.ProcessStartInfo]::new()
+    $info.FileName = Get-Python
+    $info.Arguments = '"' + (At 'scripts/dev/client_control.py') + '" command "/game_data reload"'
+    $info.WorkingDirectory = $script:root; $info.UseShellExecute = $false; $info.CreateNoWindow = $true
+    $info.RedirectStandardOutput = $true; $info.RedirectStandardError = $true
+    $p = [Diagnostics.Process]::Start($info)
+    try {
+        $output = $p.StandardOutput.ReadToEndAsync(); $errorOutput = $p.StandardError.ReadToEndAsync()
+        if (-not $p.WaitForExit(30000)) { $p.Kill(); throw 'Native helper timed out; only the disposable helper was stopped. Check Gateway logs to see whether the command applied.' }
+        Require ($p.ExitCode -eq 0) 'Native client helper failed. Check that this checkout''s Python has Frida installed, the supported client is in game, and native control is available. You can enter /game_data reload in game.'
+        $reply = $output.Result | ConvertFrom-Json
+        $confirmed = @($reply.result.replies | Where-Object { $_ -match '^Game data reloaded: revision [0-9]+\.?$' })
+        Require ($reply.ok -eq $true -and $confirmed.Count -gt 0) 'Command sent, but Gateway did not confirm a game-data revision. Check Gateway logs; no success was assumed.'
+        Write-Host ($confirmed -join "`n")
+    } finally { $p.Dispose() }
+}
+function Invoke-Git([string[]]$arguments) {
+    & git -c core.hooksPath=NUL -c core.fsmonitor=false -c submodule.recurse=false -C $script:root @arguments
+    Require ($LASTEXITCODE -eq 0) 'Git operation failed. Nothing was forced or discarded. Read the operation output.'
+}
+function Switch-Source($snapshot) {
+    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    Require (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Close the game before switching source. The launcher will stop owned servers gracefully.'
+    Require (Test-Sdk) 'Install .NET 10 SDK first.'
+    # Refuse tracked edits and untracked source. Never force checkout, reset, clean or stash owner work.
+    $dirty = @(& git -c core.fsmonitor=false -C $script:root status --porcelain --untracked-files=normal)
+    Require ($LASTEXITCODE -eq 0 -and -not $dirty.Count) 'This checkout has local changes. Commit or move them before switching; the launcher will not discard or stash them.'
+    $target = ''
+    if ($SourceKind -eq 'PR') {
+        Require ($SourceValue -match '^[1-9][0-9]{0,8}$') 'Enter a positive PR number.'
+        Set-Stage 'Fetching pull request' "PR #$SourceValue from LocalExile/LocalExile"
+        Invoke-Git @('-c','credential.helper=','fetch','--no-tags','--no-recurse-submodules','https://github.com/LocalExile/LocalExile.git',("+refs/pull/$SourceValue/head:refs/launcher/pr/$SourceValue"))
+        $target = "refs/launcher/pr/$SourceValue"
+    } else {
+        $prefix = if ($SourceKind -eq 'Branch') { 'refs/heads/' } else { 'refs/remotes/' }
+        Require ($SourceValue.StartsWith($prefix) -and -not $SourceValue.EndsWith('/HEAD')) 'Select a local or fetched remote branch from the list.'
+        $null = & git check-ref-format $SourceValue
+        Require ($LASTEXITCODE -eq 0) 'Invalid Git branch reference.'
+        $target = $SourceValue
+    }
+    $commit = [string](& git -C $script:root rev-parse --verify ($target + '^{commit}') 2>$null)
+    Require ($LASTEXITCODE -eq 0 -and $commit -match '^[0-9a-f]{40}([0-9a-f]{24})?$') 'The selected revision is unavailable. Refresh branches first.'
+    # Reject unrelated repositories before stopping services or altering saves/source.
+    foreach ($path in @('GameServer.slnx','scripts/dev/live.ps1','src/GameServer.Gateway/GameServer.Gateway.csproj')) {
+        $null = & git -C $script:root cat-file -e ($commit + ':' + $path) 2>$null
+        Require ($LASTEXITCODE -eq 0) 'The selected revision is not a supported LocalExile source tree.'
+    }
+    $profileChanges = @(& git -C $script:root diff --name-only --no-ext-diff --no-textconv HEAD $commit -- 'config/runtime.local.ps1' 'scripts/dev/live.local.ps1')
+    Require ($LASTEXITCODE -eq 0 -and -not $profileChanges.Count) 'This revision changes runtime-profile files. Review/select that profile separately before activation; save/profile migration is not automatic.'
+    Stop-Services $snapshot $names
+    $stopped = Get-Snapshot
+    Assert-SetupStopped $stopped
+    Backup-Saves $stopped
+    Set-Stage 'Switching source' "$SourceKind $SourceValue"
+    if ($SourceKind -eq 'Branch') { Invoke-Git @('switch','--no-guess','--', $SourceValue.Substring('refs/heads/'.Length)) }
+    else { Invoke-Git @('switch','--detach',$commit) }
+    # A local branch may move externally between selection and checkout. Show failure rather than build the wrong revision.
+    $actual = [string](& git -C $script:root rev-parse HEAD)
+    Require ($LASTEXITCODE -eq 0 -and $actual -eq $commit) 'The branch changed during activation. Refresh and retry; source is switched but services remain stopped.'
+    $selectionPath = Get-SourceSelectionPath
+    Assert-Physical $selectionPath
+    Assert-Physical ($selectionPath + '.tmp')
+    New-Item -ItemType Directory -Force -Path (Split-Path $selectionPath) | Out-Null
+    @{ Kind=$SourceKind; Value=$SourceValue; Commit=$commit } | ConvertTo-Json | Set-Content -LiteralPath ($selectionPath + '.tmp') -Encoding UTF8
+    Move-Item -LiteralPath ($selectionPath + '.tmp') -Destination $selectionPath -Force
+    Set-Stage 'Building selected revision' 'Services remain stopped. A failed build preserves the save database.'
+    & dotnet build (At 'GameServer.slnx') --nologo -v minimal
+    Require ($LASTEXITCODE -eq 0) 'Source switched, but the new revision did not build. Saves were preserved and services remain stopped. Review the build output or switch back.'
+    if ($StartFresh -and (Test-Path -LiteralPath $script:savePath)) {
+        # A stopped SQLite database can still have committed WAL pages. Move the complete set aside together;
+        # recovery files are retained locally even when automatic backup was disabled. No owner data is deleted.
+        Move-PreviousSaves
+        & (Get-Python) -c 'import sqlite3,sys; sqlite3.connect(sys.argv[1]).close()' $script:savePath
+        Require ($LASTEXITCODE -eq 0) 'Could not create the fresh save database. Previous saves remain in the recovery folder shown above.'
+        $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
+        Assert-Physical $history
+        if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
+    }
+    Write-Host 'Revision prepared. Press Play when ready. Existing client files and login keys were reused.'
 }
 function Prepare-Client($snapshot) {
     Assert-SetupStopped $snapshot
@@ -372,12 +672,15 @@ public static class NativeRuntime {
     try { var args = new string[count]; for (int i=0;i<count;i++) args[i]=Marshal.PtrToStringUni(Marshal.ReadIntPtr(memory,i*IntPtr.Size)); return args; }
     finally { LocalFree(memory); }
   }
-  public static bool Interrupt(int pid, int parent) {
+  public static bool Interrupt(int pid, int parent) { return Interrupt(pid, parent, new int[] { pid, parent }); }
+  public static bool Interrupt(int pid, int parent, int[] allowed) {
     FreeConsole(); if (!AttachConsole((uint)pid)) return false;
     try {
       // A dedicated upstream console contains cmd + dotnet + this helper. Do not broadcast into a shared terminal.
-      var ids = new uint[8]; uint count = GetConsoleProcessList(ids, (uint)ids.Length);
-      if (count != 3 || Array.IndexOf(ids,(uint)pid)<0 || Array.IndexOf(ids,(uint)parent)<0 || Array.IndexOf(ids,(uint)System.Diagnostics.Process.GetCurrentProcess().Id)<0) return false;
+      var ids = new uint[256]; uint count = GetConsoleProcessList(ids, (uint)ids.Length);
+      uint helper = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+      if (count < 3 || count > ids.Length || Array.IndexOf(ids,(uint)pid)<0 || Array.IndexOf(ids,(uint)parent)<0 || Array.IndexOf(ids,helper)<0) return false;
+      for (int i=0; i<count; i++) if (ids[i]!=helper && Array.IndexOf(allowed,(int)ids[i])<0) return false;
       SetConsoleCtrlHandler(IntPtr.Zero, true);
       bool sent = GenerateConsoleCtrlEvent(0,0); Thread.Sleep(300); return sent;
     } finally { FreeConsole(); }
@@ -399,6 +702,25 @@ public static class NativeRuntime {
     $snapshot = Get-Snapshot
     $selected = if ($Service -eq 'All') { $names } else { @($Service) }
     switch ($Action) {
+        'Switch' { Switch-Source $snapshot }
+        'Fetch' {
+            Set-Stage 'Refreshing remote branches' 'Fetching Git objects only; source files, saves and running services are unchanged.'
+            $remotes = @(& git -C $script:root remote)
+            Require ($LASTEXITCODE -eq 0 -and $remotes.Count) 'No Git remotes are configured.'
+            foreach ($remote in $remotes) { Invoke-Git @('fetch','--no-tags','--no-recurse-submodules','--',$remote) }
+        }
+        'ReloadData' { Reload-GameData $snapshot }
+        'Backup' { Backup-Saves $snapshot }
+        'RestoreBackup' { Restore-SaveBackup $snapshot }
+        'DeleteBackup' {
+            $path = Get-SelectedBackup
+            Set-Stage 'Deleting backup' $BackupId
+            Require (@(Get-ChildItem -LiteralPath $path -Force).Count -eq 2) 'The backup folder contains extra files. Open the folder and review them before deleting this backup.'
+            # Only the two known files and an empty, physically verified backup directory are removed.
+            Remove-Item -LiteralPath (Join-Path $path 'saves.db')
+            Remove-Item -LiteralPath (Join-Path $path 'backup.json')
+            Remove-Item -LiteralPath $path
+        }
         'PrepareClient' { Prepare-Client $snapshot }
         'Dependencies' {
             Assert-SetupStopped $snapshot
@@ -411,17 +733,19 @@ public static class NativeRuntime {
         }
         'Register' { Register-Account $snapshot }
         'Build' {
-            Require (-not @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and $_.ProcessId }).Count) 'Stop this checkout''s services before rebuilding their assemblies.'
+            Require (-not @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and ($_.ProcessId -or $_.WatchProcessId) }).Count) 'Stop this checkout''s services before rebuilding their assemblies.'
             Require (Test-Sdk) 'Install the .NET 10 SDK first.'
+            Backup-Saves $snapshot
             Set-Stage 'Building checkout' 'Building the selected LocalExile solution.'
             & dotnet build (At 'GameServer.slnx') --nologo
             Require ($LASTEXITCODE -eq 0) 'LocalExile build failed. Read the operation output.'
         }
-        'Start' { Start-Services $snapshot $selected }
+        'Start' { Start-Services $snapshot $selected; if ('Gateway' -in $selected) { Record-SaveLaunch (Get-Snapshot) } }
         'Play' {
             Assert-CanStart $snapshot
             if (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) {
                 Start-Services $snapshot $names
+                if (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Gateway' -and ($_.ProcessId -or $_.WatchProcessId) }).Count) { Record-SaveLaunch (Get-Snapshot) }
                 $entry = if ($script:profile -eq 'Local runtime wrapper') { At 'scripts/dev/live.local.ps1' } else { At 'scripts/dev/live.ps1' }
                 Set-Stage 'Opening game' 'Launching the prepared client through live.ps1 -ClientOnly.'
                 & $entry -ClientOnly
@@ -431,7 +755,7 @@ public static class NativeRuntime {
             }
         }
         'Stop' { Stop-Services $snapshot $selected }
-        'Restart' { Stop-Services $snapshot $selected; Start-Services (Get-Snapshot) $selected }
+        'Restart' { Stop-Services $snapshot $selected; Start-Services (Get-Snapshot) $selected; if ('Gateway' -in $selected) { Record-SaveLaunch (Get-Snapshot) } }
         'CloseGame' {
             $game = $snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }
             if ($game) {

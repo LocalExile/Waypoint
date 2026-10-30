@@ -10,14 +10,16 @@ public sealed class RuntimeClient
 
     public async Task<BridgeResult> RunAsync(LauncherSettings settings, string action, string service = "All",
         Action<string>? log = null, CancellationToken cancellation = default,
-        Action<OperationProgress>? progress = null, AccountRequest? account = null)
+        Action<OperationProgress>? progress = null, AccountRequest? account = null,
+        SourceSwitchRequest? source = null, string? backupId = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "Switch", "Fetch", "ReloadData", "Backup", "RestoreBackup", "DeleteBackup" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));
         if (action == "Register" && account is null)
             throw new ArgumentException("Local account details are required.", nameof(account));
+        if (action == "Switch" && source is null) throw new ArgumentException("Select a source first.", nameof(source));
         string directory = Path.Combine(SettingsStore.DataDirectory, "operations", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         string resultFile = Path.Combine(directory, "result.json");
@@ -32,9 +34,20 @@ public sealed class RuntimeClient
                      "-Action", action, "-RepoRoot", settings.RepositoryPath, "-Service", service, "-ResultPath", resultFile })
             start.ArgumentList.Add(argument);
         if (settings.UseLocalProfile) start.ArgumentList.Add("-UseLocalProfile");
+        if (!settings.HotReload) start.ArgumentList.Add("-NoHotReload");
+        if (!settings.AutomaticBackups) start.ArgumentList.Add("-NoBackup");
+        if (source is not null)
+        {
+            foreach (string argument in new[] { "-SourceKind", source.Kind, "-SourceValue", source.Value }) start.ArgumentList.Add(argument);
+            if (source.StartFresh) start.ArgumentList.Add("-StartFresh");
+        }
+        if (backupId is not null) { start.ArgumentList.Add("-BackupId"); start.ArgumentList.Add(backupId); }
         // Never inherit a developer shell's Game_* overrides into an unrelated checkout.
         foreach (string key in start.Environment.Keys.Where(k => k.StartsWith("Game_", StringComparison.OrdinalIgnoreCase)).ToArray())
             start.Environment.Remove(key);
+        foreach (string key in start.Environment.Keys.Where(k => k.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray()) start.Environment.Remove(key);
+        start.Environment["GIT_TERMINAL_PROMPT"] = "0";
+        start.Environment["GCM_INTERACTIVE"] = "never";
         if (action != "Inspect") log?.Invoke($"{action} {service} · operation log: {Path.Combine(directory, action == "Register" ? "account-service.log" : "operation.log")}");
         using var process = Process.Start(start) ?? throw new IOException("Could not start the LocalExile adapter.");
         if (action == "Register")

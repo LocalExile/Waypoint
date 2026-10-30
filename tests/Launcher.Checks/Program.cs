@@ -46,6 +46,30 @@ try
 {
     string settingsPath = Path.Combine(fixture, "settings.json");
     Check(SettingsStore.Load(settingsPath).RepositoryPath == "", "first run has no machine-specific path");
+    Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "backups and Gateway watch default on for every save choice");
+    File.WriteAllText(settingsPath, "{\"RepositoryPath\":\"older-settings\",\"UseLocalProfile\":false}");
+    Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "older settings inherit backup and watch defaults");
+    var branches = SourceCatalog.ParseBranches("refs/heads/main\t" + new string('a',40) + "\nrefs/remotes/origin/HEAD\t" + new string('a',40) + "\nrefs/remotes/origin/test\t" + new string('b',40) + "\nrefs/tags/v1\t" + new string('a',40));
+    Check(branches.Length == 2 && branches[0].Kind == "Branch" && branches[1].Kind == "Remote", "branch picker retains full unambiguous refs and excludes symbolic remote HEAD/tags");
+    Check(SourceCatalog.ParsePullRequests("[{\"number\":12,\"title\":\"Fix portals\",\"head\":{\"sha\":\"" + new string('a',40) + "\",\"label\":\"author:feature\"}}]")[0].Value == "12", "PR picker keeps upstream number, title, author and full head identity");
+    Check(HotReloadStatus.Read("[gateway] hot reload: File.cs saved\n", true, true).State == "Pending", "a source save reports pending without claiming application");
+    Check(HotReloadStatus.Read("[gateway] hot reload #2 applied in 0.42 seconds (types: X)\n[gateway] hot reload failed: 1 compile error(s): broken", true, true).State == "Compile failed", "latest explicit Gateway event takes precedence over an older applied edit");
+    Check(HotReloadStatus.Read("dotnet watch Build succeeded", true, true).State == "Watching", "successful builds alone do not prove a hot edit applied");
+    Check(HotReloadStatus.Read("15:00:00.123 [gateway] 127.0.0.1 chat \"[gateway] hot reload #1 applied\"", true, true).State == "Watching", "chat text cannot masquerade as a confirmed Gateway reload event");
+    Check(HotReloadStatus.Read("[gateway] hot reload #1 applied", false, false).State == "Stopped", "stale log success cannot override a stopped process");
+    Check(HotReloadStatus.Read("[gateway] hot reload: File.cs saved\n[gateway] listening on 127.0.0.1:6112\n", true, true).State == "Gateway restarted", "startup after a pending edit is reported as a restart even when the launcher opens afterward");
+    Check(new ServiceStatus("Gateway", "Starting", 0, "", "", [6112], 0, 0, "", 123).IsRunning, "watcher stays owned/running during child restart gaps");
+    var tracker = new HotReloadTracker();
+    var gatewayGeneration = new ServiceStatus("Gateway", "Ready", 10, "first", "", [6112], 0, 0, "", 123);
+    string savedEvent = "15:00:00.123 [gateway] hot reload: File.cs saved\n";
+    Check(tracker.Update(gatewayGeneration, savedEvent).State == "Pending", "first watched process retains explicit pending event");
+    tracker.Update(gatewayGeneration with { ProcessId = 0 }, savedEvent);
+    Check(tracker.Update(gatewayGeneration with { ProcessId = 11, StartedUtc = "second" }, savedEvent).State == "Gateway restarted",
+        "child restart gaps produce a verified restart even when the old log ended pending");
+    Check(tracker.Update(gatewayGeneration with { ProcessId = 11, StartedUtc = "second" }, savedEvent).State == "Gateway restarted",
+        "stale pending output cannot overwrite the observed restart on the next poll");
+    Check(tracker.Update(gatewayGeneration with { ProcessId = 11, StartedUtc = "second" }, savedEvent + "15:01:00.123 [gateway] hot reload #1 applied\n").State == "Applied",
+        "new Gateway events supersede the previous restart state");
     var original = new LauncherSettings(@"C:\A checkout with spaces\LocalExile", false);
     SettingsStore.Save(original, settingsPath);
     Check(SettingsStore.Load(settingsPath) == original, "settings round-trip paths with spaces and runtime selection");

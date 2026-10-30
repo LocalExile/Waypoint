@@ -58,6 +58,13 @@ public partial class MainWindow : Window
         if (repoArg >= 0 && repoArg + 1 < args.Length) settings = settings with { RepositoryPath = args[repoArg + 1] };
         RepositoryPathBox.Text = settings.RepositoryPath;
         UseProfileBox.IsChecked = settings.UseLocalProfile;
+        LoadDevelopmentPreferences();
+        Pages.SelectionChanged += async (sender, e) =>
+        {
+            if (e.Source != Pages || !IsLoaded) return;
+            if (Pages.SelectedItem == BackupsPage) RefreshBackups();
+            if (Pages.SelectedItem == BuildsPage) await LoadSourcesAsync(false);
+        };
         Loaded += async (_, _) =>
         {
             UpdateWorkspaceHeading(settings.RepositoryPath);
@@ -101,6 +108,10 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             snapshot = null;
+            UpdateSourceSelection();
+            UpdateBackupSelection();
+            HotReloadStateLabel.Text = "Unavailable";
+            HotReloadDetail.Text = "Refresh after resolving the installation check failure.";
             ServiceList.ItemsSource = null;
             PerformanceList.ItemsSource = null;
             RequirementList.ItemsSource = null;
@@ -144,9 +155,10 @@ public partial class MainWindow : Window
 
     void Render(RuntimeSnapshot state)
     {
+        RenderDevelopment(state);
         UpdateWorkspaceHeading(state.Root);
-        SidebarBranch.Text = string.IsNullOrWhiteSpace(state.SourceBranch) ? "Detached source" : state.SourceBranch;
-        SourceIdentity.Value = $"{state.SourceBranch}  ·  {state.SourceCommit}";
+        SidebarBranch.Text = !string.IsNullOrWhiteSpace(state.SourceBranch) ? state.SourceBranch : !string.IsNullOrWhiteSpace(state.SourceLabel) ? state.SourceLabel : "Detached source";
+        SourceIdentity.Value = $"{SidebarBranch.Text}  ·  {state.SourceCommit}";
         BuildIdentity.Value = BuildCommitLabels(state.BuildCommit);
         EnvironmentIdentity.Text = $"Launch profile: {state.Profile}\nSave database: {state.SaveDatabase}\nClient: {Path.Combine(state.Root, "Client", "Game.patched.exe")}";
         ReadinessLabel.Text = state.Conflicts.Length > 0 ? string.Join("\n", state.Conflicts)
@@ -174,11 +186,11 @@ public partial class MainWindow : Window
             else samples.Remove(service.Name);
             rows.Add(new(service.Name, service.Status, service.Ports.Length == 0 ? "Client" : string.Join(" / ", service.Ports),
                 service.ProcessId > 0 ? $"PID {service.ProcessId} · {service.MemoryMb:N0} MB · {cpu}" : "—",
-                service.Detail, service.ProcessId > 0 ? service.Name == "Game" ? "Close" : "Stop" : service.Name == "Game" ? "Play" : "Start",
-                !busy && (service.ProcessId > 0 || state.SafeToLaunch),
-                !busy && service.Name != "Game" && service.ProcessId > 0 && !state.GameRunning,
+                service.Detail, service.IsRunning ? service.Name == "Game" ? "Close" : "Stop" : service.Name == "Game" ? "Play" : "Start",
+                !busy && (service.IsRunning || state.SafeToLaunch),
+                !busy && service.Name != "Game" && service.IsRunning && !state.GameRunning,
                 service.ProcessId > 0 ? "#A4E7C4" : "#9DABBE", cpu,
-                service.ProcessId > 0 ? $"{service.MemoryMb:N0} MB" : "—", service.ProcessId > 0 ? service.Uptime : "Stopped"));
+                service.ProcessId > 0 ? $"{service.MemoryMb:N0} MB" : "—", service.ProcessId > 0 ? service.Uptime : service.IsRunning ? "Waiting for process" : "Stopped"));
         }
         ServiceList.ItemsSource = rows;
         PerformanceList.ItemsSource = rows;
@@ -186,14 +198,15 @@ public partial class MainWindow : Window
         RefreshLog();
     }
 
-    async Task OperateAsync(string action, string service = "All", AccountRequest? account = null)
+    async Task OperateAsync(string action, string service = "All", AccountRequest? account = null,
+        SourceSwitchRequest? source = null, string? backupId = null)
     {
         if (busy) return;
         if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) { Pages.SelectedItem = SettingsPage; return; }
         busy = true;
         await gate.WaitAsync();
         lastError = null;
-        retry = action == "Register" ? null : (action, service);
+        retry = action is "Register" or "Switch" or "RestoreBackup" or "DeleteBackup" ? null : (action, service);
         FailureActions.Visibility = Visibility.Collapsed;
         operationLogPath = stageLogPath = "";
         currentStage = "Checking setup";
@@ -216,13 +229,14 @@ public partial class MainWindow : Window
                         if (Path.GetFileName(update.LogPath) == "operation.log") operationLogPath = update.LogPath;
                     }
                     UpdateOperationLabel();
-                }), account: account);
+                }), account: account, source: source, backupId: backupId);
             if (!result.Ok)
             {
                 currentStage = result.FailedStage ?? currentStage;
                 throw new IOException(result.Message);
             }
             snapshot = result.Snapshot;
+            if (action == "Switch") FreshSavesBox.IsChecked = false;
             StatusLabel.Text = result.Message;
             AppendLog(result.Message);
         }
@@ -244,6 +258,8 @@ public partial class MainWindow : Window
             BusyProgress.Visibility = Visibility.Collapsed;
             gate.Release();
             await RefreshAsync();
+            if (action is "Switch" or "Fetch") await LoadSourcesAsync(false);
+            RefreshBackups();
             if (lastError is not null) StatusLabel.Text = currentStage + " failed: " + lastError;
         }
     }
@@ -343,7 +359,7 @@ public partial class MainWindow : Window
     async void Retry_Click(object sender, RoutedEventArgs e)
     {
         if (retry is { } operation) await OperateAsync(operation.Action, operation.Service);
-        else StatusLabel.Text = "For account creation, open Create local account again; passwords are never kept for retry.";
+        else StatusLabel.Text = "Select the account, revision or backup action again to review its current options.";
     }
 
     async void Play_Click(object sender, RoutedEventArgs e) => await OperateAsync("Play");
@@ -357,7 +373,7 @@ public partial class MainWindow : Window
         string name = (string)((Button)sender).Tag;
         var state = snapshot?.Services.FirstOrDefault(s => s.Name == name);
         if (name == "Game") await OperateAsync(state?.ProcessId > 0 ? "CloseGame" : "Play");
-        else await OperateAsync(state?.ProcessId > 0 ? "Stop" : "Start", name);
+        else await OperateAsync(state?.IsRunning == true ? "Stop" : "Start", name);
     }
     async void Restart_Click(object sender, RoutedEventArgs e) => await OperateAsync("Restart", (string)((Button)sender).Tag);
     async void Browse_Click(object sender, RoutedEventArgs e)
@@ -430,13 +446,17 @@ public partial class MainWindow : Window
             if (closing) return false;
             path = Path.GetFullPath(path.Trim());
             if (!RepositoryDiscovery.IsLocalExile(path)) throw new IOException("Choose the LocalExile folder containing GameServer.slnx, its Core/Gateway projects and scripts/dev/live.ps1.");
-            var selected = new LauncherSettings(path, UseProfileBox.IsChecked == true);
+            var selected = settings with { RepositoryPath = path, UseLocalProfile = UseProfileBox.IsChecked == true };
             SettingsStore.Save(selected);
             settings = selected;
             UpdateWorkspaceHeading(path);
             RepositoryPathBox.Text = path;
             samples.Clear();
             snapshot = null;
+            sourceChoices = [];
+            SourcesList.ItemsSource = null;
+            BackupsList.ItemsSource = null;
+            SourcesStatus.Text = "Load the list for the selected checkout.";
             ServiceList.ItemsSource = PerformanceList.ItemsSource = RequirementList.ItemsSource = SetupRequirementList.ItemsSource = null;
             PlayButton.IsEnabled = false;
             SidebarBranch.Text = "Checking checkout…";

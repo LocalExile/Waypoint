@@ -1,6 +1,6 @@
 # Contributing
 
-Build and run the two check commands in README before committing.
+Build and run the check commands in README before committing.
 Use English commit messages. Keep each change focused and record material compatibility changes in docs/runtime-contract.md.
 
 The desktop project owns presentation only. Core owns settings, operation invocation and typed state.

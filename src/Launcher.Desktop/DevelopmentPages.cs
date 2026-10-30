@@ -1,0 +1,162 @@
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using Launcher.Core;
+
+namespace Launcher.Desktop;
+
+public partial class MainWindow
+{
+    SourceChoice[] sourceChoices = [];
+    HotReloadTracker hotReloadTracker = new();
+    string? hotReloadRoot;
+    bool loadingSources, updatingPreferences;
+
+    void LoadDevelopmentPreferences()
+    {
+        updatingPreferences = true;
+        AutoBackupBox.IsChecked = ManagerAutoBackupBox.IsChecked = settings.AutomaticBackups;
+        HotReloadBox.IsChecked = settings.HotReload;
+        updatingPreferences = false;
+        BackupModeDetail.Text = settings.AutomaticBackups ? "Backups are on for both current-character and fresh starts. Manage them on Backups." : "Automatic backups are off. Back up manually on Backups before changes you may want to undo.";
+    }
+
+    void SaveDevelopmentPreferences(bool backups, bool hotReload)
+    {
+        if (updatingPreferences) return;
+        if (busy) { LoadDevelopmentPreferences(); StatusLabel.Text = "Wait for the current operation before changing these options."; return; }
+        try
+        {
+            var selected = settings with { AutomaticBackups = backups, HotReload = hotReload };
+            SettingsStore.Save(selected);
+            settings = selected;
+            LoadDevelopmentPreferences();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { LoadDevelopmentPreferences(); StatusLabel.Text = "Could not save preferences: " + ex.Message; }
+    }
+    void BackupPreference_Changed(object sender, RoutedEventArgs e) { if (IsLoaded) SaveDevelopmentPreferences(AutoBackupBox.IsChecked == true, settings.HotReload); }
+    void ManagerBackupPreference_Changed(object sender, RoutedEventArgs e) { if (IsLoaded) SaveDevelopmentPreferences(ManagerAutoBackupBox.IsChecked == true, settings.HotReload); }
+    void HotReloadPreference_Changed(object sender, RoutedEventArgs e) { if (IsLoaded) SaveDevelopmentPreferences(settings.AutomaticBackups, HotReloadBox.IsChecked == true); }
+
+    void RenderDevelopment(RuntimeSnapshot state)
+    {
+        var gateway = state.Services.FirstOrDefault(s => s.Name == "Gateway");
+        if (hotReloadRoot != state.Root) { hotReloadRoot = state.Root; hotReloadTracker = new(); }
+        var status = hotReloadTracker.Update(gateway, LogReader.Tail(Path.Combine(state.Root, "logs", "live-gateway.log")));
+        if (gateway is { WatchProcessId: > 0, ProcessId: 0 })
+        {
+            string errors = LogReader.Tail(Path.Combine(state.Root, "logs", "live-gateway.err"));
+            status = errors.Contains(": error ", StringComparison.Ordinal) ? new("Build failed / waiting", "Watcher is alive but Gateway has no running child. Open Gateway output to inspect the build errors.")
+                : new("Building / restarting", "Watcher is alive; waiting for its Gateway child. Open Gateway output if this persists.");
+        }
+        HotReloadStateLabel.Text = status.State + (gateway?.WatchProcessId > 0 ? " · watcher active" : "");
+        HotReloadDetail.Text = status.Detail + "\nLast reported Gateway event. Open Gateway output for details.";
+        AutoBackupBox.IsEnabled = ManagerAutoBackupBox.IsEnabled = HotReloadBox.IsEnabled = !busy;
+        UpdateSourceSelection();
+        UpdateBackupSelection();
+    }
+
+    async Task LoadSourcesAsync(bool refresh)
+    {
+        if (loadingSources || string.IsNullOrWhiteSpace(settings.RepositoryPath) || closing) return;
+        loadingSources = true;
+        string root = settings.RepositoryPath;
+        SourcesStatus.Text = "Reading local branches and GitHub PR metadata…";
+        try
+        {
+            var result = await SourceCatalog.LoadAsync(root, refresh, discoveryCancellation.Token, local =>
+            {
+                if (closing || root != settings.RepositoryPath) return;
+                sourceChoices = local; ApplySourceFilter();
+                SourcesStatus.Text = $"{local.Length} local/fetched branches ready. Loading GitHub PRs…";
+            });
+            if (closing || root != settings.RepositoryPath) return;
+            sourceChoices = result.Sources;
+            ApplySourceFilter();
+            SourcesStatus.Text = $"{sourceChoices.Length} choices. Remote branches reflect the last fetch. " + result.Warning;
+        }
+        catch (OperationCanceledException) when (discoveryCancellation.IsCancellationRequested) { }
+        catch (Exception ex) { if (!closing && root == settings.RepositoryPath) SourcesStatus.Text = "Could not load source choices: " + ex.Message; }
+        finally { loadingSources = false; }
+    }
+    void ApplySourceFilter()
+    {
+        if (SourcesList is null || SourceSearch is null) return;
+        string filter = SourceSearch.Text.Trim();
+        var selected = SourcesList.SelectedItem as SourceChoice;
+        SourcesList.ItemsSource = sourceChoices.Where(s => s.SearchText.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToArray();
+        if (selected is not null) SourcesList.SelectedItem = sourceChoices.FirstOrDefault(s => s.Kind == selected.Kind && s.Value == selected.Value);
+    }
+    void SourceSearch_Changed(object sender, TextChangedEventArgs e) => ApplySourceFilter();
+    void SourceSelection_Changed(object sender, SelectionChangedEventArgs e) => UpdateSourceSelection();
+    void UpdateSourceSelection()
+    {
+        if (SwitchSourceButton is null) return;
+        var selected = SourcesList.SelectedItem as SourceChoice;
+        SelectedSourceIdentity.Value = selected is null ? "Select a revision above." : $"{selected.Kind} · {selected.Label} · {selected.Commit}";
+        SwitchSourceButton.IsEnabled = !busy && selected is not null && snapshot is { GameRunning: false };
+    }
+    async void RefreshSources_Click(object sender, RoutedEventArgs e) => await LoadSourcesAsync(true);
+    async void FetchSources_Click(object sender, RoutedEventArgs e) => await OperateAsync("Fetch");
+    async void SwitchSource_Click(object sender, RoutedEventArgs e)
+    {
+        if (SourcesList.SelectedItem is SourceChoice source) await OperateAsync("Switch", source: new(source.Kind, source.Value, FreshSavesBox.IsChecked == true));
+    }
+    async void SwitchPrNumber_Click(object sender, RoutedEventArgs e)
+    {
+        if (!int.TryParse(PrNumberBox.Text.Trim().TrimStart('#'), out int number) || number <= 0 || number > 999999999)
+        { SourcesStatus.Text = "Enter a positive upstream PR number."; return; }
+        // Selecting a number previews it first; switching uses the same reviewed options as any other entry.
+        var item = sourceChoices.FirstOrDefault(s => s.Kind == "PR" && s.Value == number.ToString())
+            ?? new SourceChoice("PR", number.ToString(), $"PR #{number} (fetched when activated)", "", "Upstream LocalExile PR head; may be closed or unmerged");
+        sourceChoices = sourceChoices.Where(s => s.Kind != "PR" || s.Value != item.Value).Append(item).ToArray();
+        SourceSearch.Text = "";
+        ApplySourceFilter(); SourcesList.SelectedItem = item; SourcesList.ScrollIntoView(item);
+        await Task.CompletedTask;
+    }
+    void ShowBackups_Click(object sender, RoutedEventArgs e) { Pages.SelectedItem = BackupsPage; RefreshBackups(); }
+    void RefreshBackups_Click(object sender, RoutedEventArgs e) => RefreshBackups();
+    void RefreshBackups()
+    {
+        if (snapshot is null) { BackupsStatus.Text = "Select and check an installation to view its backups."; return; }
+        try
+        {
+            var selected = BackupsList.SelectedItem as SaveBackup;
+            var backups = BackupCatalog.Read(snapshot.SaveDatabase);
+            BackupsList.ItemsSource = backups;
+            if (selected is not null) BackupsList.SelectedItem = backups.FirstOrDefault(b => b.Id == selected.Id);
+            BackupsStatus.Text = $"{backups.Length} backups for {snapshot.SaveDatabase}";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException) { BackupsStatus.Text = "Could not read backups: " + ex.Message; }
+        UpdateBackupSelection();
+    }
+    void BackupSelection_Changed(object sender, SelectionChangedEventArgs e) => UpdateBackupSelection();
+    void UpdateBackupSelection()
+    {
+        if (RestoreBackupButton is null) return;
+        var selected = BackupsList.SelectedItem as SaveBackup;
+        BackupDetails.Value = selected?.Identity ?? "Select a backup to restore or delete it.";
+        RestoreBackupButton.IsEnabled = !busy && selected is not null && snapshot is { GameRunning: false };
+        DeleteBackupButton.IsEnabled = !busy && selected is not null;
+    }
+    async void BackupNow_Click(object sender, RoutedEventArgs e) => await OperateAsync("Backup");
+    void OpenBackupFolder_Click(object sender, RoutedEventArgs e)
+    {
+        if (snapshot is not null) OpenFolder(BackupCatalog.DirectoryFor(snapshot.SaveDatabase));
+    }
+    async void RestoreBackup_Click(object sender, RoutedEventArgs e)
+    {
+        if (busy || BackupsList.SelectedItem is not SaveBackup selected) return;
+        if (MessageBox.Show(this, $"Restore saves from {selected.CreatedUtc.ToLocalTime():g}?\n\n{selected.Identity}\n\nOwned servers will stop. Automatic backup is {(settings.AutomaticBackups ? "on" : "OFF")}. Source, client and login keys stay as selected; an older save may need its original revision.", "Restore selected save backup", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+            await OperateAsync("RestoreBackup", backupId: selected.Id);
+    }
+    async void DeleteBackup_Click(object sender, RoutedEventArgs e)
+    {
+        if (busy || BackupsList.SelectedItem is not SaveBackup selected) return;
+        if (MessageBox.Show(this, $"Delete only the backup from {selected.CreatedUtc.ToLocalTime():g}?\n\nCurrent saves are unchanged. This backup will no longer be available to restore.", "Delete selected backup", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+            await OperateAsync("DeleteBackup", backupId: selected.Id);
+    }
+    void GatewayLog_Click(object sender, RoutedEventArgs e) { logSource = "Gateway"; RefreshLog(); Pages.SelectedItem = LogsPage; }
+    async void RestartGateway_Click(object sender, RoutedEventArgs e) => await OperateAsync("Restart", "Gateway");
+    async void ReloadData_Click(object sender, RoutedEventArgs e) => await OperateAsync("ReloadData");
+}

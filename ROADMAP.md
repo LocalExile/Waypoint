@@ -12,14 +12,21 @@ Actionable prerequisite guidance, explicit client-copy preparation, locked extra
 first local account creation, named operation stages/elapsed time, failed-stage log links/retry, game logs/search,
 and a redacted diagnostic preview with explicit copy. Standard upstream source and client/build paths remain the contract.
 
-## Next: environments and recovery
+## Complete: source switching, hot reload and save recovery
+
+Searchable local/remote branch and upstream PR picker, serialized fetch/activation, controlled stop/build workflow,
+current characters by default with one-time fresh start, configurable automatic consistent SQLite backups, commit
+metadata, manual backup/restore/delete, watched Gateway ownership/graceful shutdown, explicit hot-reload events and
+confirmed native game-data override reload. Standard client/build paths are reused; no emulator changes are required.
+
+## Next: isolated environments
 
 1. Introduce persisted environment manifests separating repository/ref/commit, built package, prepared client,
    generated data, keys, configuration, logs and saves. Keep the launcher's own installation independent.
 2. Prepare separate source checkouts and builds for a chosen branch/PR, with immutable build metadata including
    dirty-tree status and artifact hashes. Selecting source must never be confused with selecting a built binary.
-3. Fresh saves or a consistent SQLite backup copied into a test environment. Handle WAL correctly. Never share a
-   writable production database with an unverified test build. Include instance keys and client trust in the boundary.
+3. Extend the current backup/fresh workflow to independent test environments with separate keys and client trust.
+   Current branch activation intentionally uses the selected installation and its saves when the owner chooses that mode.
 4. Keep the last working environment. Add verified readiness, rollback, resumable preparation, disk-space reporting,
    and explicit restore with a safety backup.
 5. Replace the v1 launch-script assumptions with a versioned upstream control protocol when available, including
@@ -39,5 +46,5 @@ and a redacted diagnostic preview with explicit copy. Standard upstream source a
 ## Product decisions still open
 
 Product name/artwork, license, release distribution, installer identity and supported platform expansion.
-WPF is currently Windows-only. PR discovery and any GitHub authentication need a separately designed integration.
+WPF is currently Windows-only. Public upstream PR discovery is implemented; private GitHub authentication remains separate.
 Public server directories, mod marketplaces and official-server modes are not part of this milestone.

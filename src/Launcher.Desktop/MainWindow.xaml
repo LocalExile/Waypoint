@@ -24,7 +24,7 @@
           </Border>
           <TextBlock x:Name="BrandName" FontSize="24" FontWeight="SemiBold"/>
           <TextBlock x:Name="BrandSubtitle" Style="{StaticResource Caption}" Margin="0,6,0,28"/>
-          <TextBlock Text="CURRENT BRANCH" FontSize="10" Foreground="{StaticResource Muted}"/>
+          <TextBlock Text="CURRENT SOURCE" FontSize="10" Foreground="{StaticResource Muted}"/>
           <TextBlock x:Name="SidebarBranch" Text="No checkout selected" FontSize="16" Margin="0,8,0,0"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
@@ -148,13 +148,40 @@
             </StackPanel></Border>
           </StackPanel></ScrollViewer>
         </TabItem>
-        <TabItem Header="Builds">
+        <TabItem Header="Builds" x:Name="BuildsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
+              <Border Style="{StaticResource Card}"><StackPanel>
+                <TextBlock Text="Branches and pull requests" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="Choose a local branch, a fetched remote branch or an upstream PR. Switching stops owned servers, backs up saves and builds the revision. Close the game first; press Play afterward." Foreground="{StaticResource Muted}" Margin="0,8,0,12"/>
+                <WrapPanel Margin="0,0,0,12"><Button Content="Load / refresh list" Click="RefreshSources_Click"/><Button Content="Fetch remote branches" Click="FetchSources_Click"/></WrapPanel>
+                <TextBlock x:Name="SourcesStatus" Text="Load the list to browse branches and open LocalExile PRs. Switching reuses the existing client copy." Style="{StaticResource Caption}" Margin="0,0,0,10"/>
+                <TextBlock Text="Search branches and PRs" Style="{StaticResource Caption}" Margin="0,0,0,5"/>
+                <TextBox x:Name="SourceSearch" AutomationProperties.Name="Search branches and pull requests" ToolTip="Search branch names, PR titles, authors or commit hashes" TextChanged="SourceSearch_Changed" Margin="0,0,0,8"/>
+                <ListBox x:Name="SourcesList" Height="200" Background="#10151E" Foreground="#ECF1F8" BorderBrush="#38465B" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="SourceSelection_Changed">
+                  <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8"/><Setter Property="Foreground" Value="#ECF1F8"/><Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#354A63"/></Trigger></Style.Triggers></Style></ListBox.ItemContainerStyle>
+                  <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Label}" FontWeight="SemiBold"/><TextBlock Text="{Binding Detail}" Style="{StaticResource Caption}"/><local:CommitText Value="{Binding Commit}" Margin="0,4,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <local:CommitText x:Name="SelectedSourceIdentity" Margin="0,10,0,0"/>
+                <CheckBox x:Name="FreshSavesBox" Content="Start fresh (replace accounts and characters)"/>
+                <CheckBox x:Name="AutoBackupBox" Content="Automatic save backups" Checked="BackupPreference_Changed" Unchecked="BackupPreference_Changed" Margin="0,0,0,10"/>
+                <TextBlock x:Name="BackupModeDetail" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
+                <WrapPanel><Button x:Name="SwitchSourceButton" Content="Switch and build" Style="{StaticResource Primary}" Click="SwitchSource_Click" IsEnabled="False"/><Button Content="Manage backups" Click="ShowBackups_Click"/></WrapPanel>
+                <DockPanel Margin="0,16,0,0"><Button Content="Use PR number" DockPanel.Dock="Right" Click="SwitchPrNumber_Click" Margin="10,0,0,0"/><TextBox x:Name="PrNumberBox" AutomationProperties.Name="Upstream PR number" ToolTip="Enter a positive LocalExile PR number, including closed PRs"/></DockPanel>
+              </StackPanel></Border>
+              <Border Style="{StaticResource Card}"><StackPanel>
+                <TextBlock Text="Hot reload" FontSize="21" FontWeight="SemiBold"/>
+                <CheckBox x:Name="HotReloadBox" Content="Watch Gateway code while playing" Checked="HotReloadPreference_Changed" Unchecked="HotReloadPreference_Changed"/>
+                <TextBlock x:Name="HotReloadStateLabel" FontSize="16" Foreground="{StaticResource Accent}"/>
+                <TextBlock x:Name="HotReloadDetail" Style="{StaticResource Caption}" Margin="0,8,0,12"/>
+                <TextBlock Text="Compatible saved code edits apply in game. Compile errors keep old code running. Incompatible edits restart Gateway and return you to login. Static data and Auth/Patch changes can need a restart. Branch/PR switching always stops services first." Foreground="{StaticResource Muted}"/>
+                <WrapPanel Margin="0,14,0,0"><Button Content="Gateway output" Click="GatewayLog_Click"/><Button Content="Restart Gateway" Click="RestartGateway_Click"/><Button Content="Reload game-data overrides" Click="ReloadData_Click"/></WrapPanel>
+                <TextBlock Text="Game-data reload uses /game_data reload through the checkout’s optional native helper (Python + Frida, client in game). It reloads SQLite overrides; it does not reload extracted files or rebuild source. The launcher waits for a revision confirmation." Style="{StaticResource Caption}" Margin="0,10,0,0"/>
+              </StackPanel></Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
                   <TextBlock Text="Know what you’re running" FontSize="21" FontWeight="SemiBold"/>
-                  <TextBlock Text="Build the selected checkout without switching or modifying its Git branch." Foreground="{StaticResource Muted}" Margin="0,8,0,20"/>
+                  <TextBlock Text="Source and built component identities are separate. Hot reload can apply uncommitted code edits; a build hash identifies the original compiled revision." Foreground="{StaticResource Muted}" Margin="0,8,0,20"/>
                   <TextBlock Text="SELECTED SOURCE" Style="{StaticResource Caption}"/>
                   <local:CommitText x:Name="SourceIdentity" Margin="0,8,0,18"/>
                   <TextBlock Text="BUILT COMPONENTS · DEBUG" Style="{StaticResource Caption}"/>
@@ -163,7 +190,7 @@
                     <Button Content="Build checkout" Style="{StaticResource Primary}" Click="Build_Click"/>
                     <Button Content="Open checkout folder" Click="OpenCheckout_Click"/>
                   </WrapPanel>
-                  <TextBlock Text="Stop services before rebuilding. Start uses the supported launch script; adding a stopped service beside running services reuses its existing build. Stop all services and build first after changing source." Foreground="{StaticResource Muted}" Margin="0,16,0,0"/>
+                  <TextBlock Text="Stop services before rebuilding. Starting a stopped service beside running services reuses its existing build. Stop all services and build first after changing source. Game launch uses the supported upstream script." Foreground="{StaticResource Muted}" Margin="0,16,0,0"/>
                 </StackPanel>
               </Border>
               <Border Style="{StaticResource Card}">
@@ -174,6 +201,24 @@
               </Border>
             </StackPanel>
           </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Backups" x:Name="BackupsPage">
+          <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+            <Border Style="{StaticResource Card}"><StackPanel>
+              <TextBlock Text="Save backups" FontSize="21" FontWeight="SemiBold"/>
+              <TextBlock Text="Backups belong to the selected save database. They include accounts, characters and other saved progress. Restoring does not switch source, client files, login keys or game-data overrides." Foreground="{StaticResource Muted}" Margin="0,8,0,12"/>
+              <CheckBox x:Name="ManagerAutoBackupBox" Content="Automatic save backups" Checked="ManagerBackupPreference_Changed" Unchecked="ManagerBackupPreference_Changed"/>
+              <WrapPanel Margin="0,0,0,12"><Button Content="Back up now" Click="BackupNow_Click"/><Button Content="Refresh backups" Click="RefreshBackups_Click"/><Button Content="Open backup folder" Click="OpenBackupFolder_Click"/></WrapPanel>
+              <TextBlock x:Name="BackupsStatus" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
+              <ListBox x:Name="BackupsList" Height="230" Background="#10151E" Foreground="#ECF1F8" BorderBrush="#38465B" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="BackupSelection_Changed">
+                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8"/><Setter Property="Foreground" Value="#ECF1F8"/></Style></ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/><local:CommitText Value="{Binding Identity}" Margin="0,5,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+              </ListBox>
+              <local:CommitText x:Name="BackupDetails" Margin="0,12,0,12"/>
+              <WrapPanel><Button x:Name="RestoreBackupButton" Content="Restore selected…" Click="RestoreBackup_Click" IsEnabled="False"/><Button x:Name="DeleteBackupButton" Content="Delete selected…" Click="DeleteBackup_Click" IsEnabled="False"/></WrapPanel>
+              <TextBlock Text="Automatic backups run before branch/PR activation, builds, Gateway startup/restart, game-data reload and save restore. Failed backups block those changes. Backups stay local until you delete them. Last launched Gateway is recorded by this launcher; it does not track every code edit or launches made elsewhere." Style="{StaticResource Caption}" Margin="0,14,0,0"/>
+            </StackPanel></Border>
+          </StackPanel></ScrollViewer>
         </TabItem>
         <TabItem Header="Performance">
           <StackPanel>
