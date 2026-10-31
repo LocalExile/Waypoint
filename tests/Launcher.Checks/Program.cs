@@ -3,6 +3,11 @@ using System.Text.Json;
 using Launcher.Core;
 
 var client = new RuntimeClient();
+if (OperatingSystem.IsWindows() && args.Length == 2 && args[0] == "--instance-host")
+{
+    InstanceChecks.Host(args[1]);
+    return 0;
+}
 if (args.Length == 2 && args[0] == "--accounts")
 {
     var result = await client.RunAsync(new(args[1], UseLocalProfile: false), "QueryAccounts");
@@ -59,6 +64,7 @@ Directory.CreateDirectory(fixture);
 File.WriteAllText(Path.Combine(fixture, ".waypoint-test-fixture"), "disposable checks only");
 try
 {
+    if (OperatingSystem.IsWindows()) await InstanceChecks.RunAsync(Check);
     ModChecks.Run(fixture, Check);
     LocalizationChecks.Run(Check);
     string settingsPath = Path.Combine(fixture, "settings.json");

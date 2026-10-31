@@ -1,5 +1,24 @@
 # External runtime contract, adapter v1
 
+## Desktop instance coordination (0.6.2, local review)
+
+The desktop owns one normal workspace per Windows user/logon session, independent of executable name, branding
+or installation folder. Core supplies a kernel mutex lifetime and a bounded, same-user/session named-pipe activation
+protocol. Ownership is held on a dedicated thread so async startup/disposal cannot release a mutex on the wrong
+thread. Process exit/crash releases kernel ownership; no persistent marker file controls startup.
+
+Activation carries only build identity and an optional normalized checkout path. It cannot execute runtime actions,
+save preferences or change the active checkout. The owner reports focus, build/checkout conflict, starting or closing,
+plus its current checkout and busy state. Named pipes require the current user/elevation level and verify peer process
+IDs; packets and connection lifetimes are bounded. Unreachable owners fail closed. A later launch may claim ownership
+only after the original owner releases it. Exact build identity includes the compiled Desktop/Core assembly bytes.
+
+This UI gate does not replace `Local\EmulatorWorkspaceLauncher.Runtime.v1`. That existing operation lock still
+serializes changes when a developer explicitly uses `--allow-multiple` or an older launcher is present. The override
+is a visible testing mode, not separate settings/save isolation. Legacy detection is best effort for the known/current
+executable names, verifying the same user/session, executable metadata, branding and managed assembly identity without
+loading code. Old builds launched after a newer app cannot be forced to participate; no processes are auto-terminated.
+
 ## Account data operations (0.6.0, local review)
 
 `QueryAccounts` returns an optional typed `AccountData` inventory and never initializes/migrates storage. Browsing uses
