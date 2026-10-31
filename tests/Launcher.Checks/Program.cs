@@ -74,7 +74,7 @@ try
     File.WriteAllText(settingsPath, "{\"RepositoryPath\":\"older-settings\",\"UseLocalProfile\":false}");
     Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "older settings inherit backup and watch defaults");
     Check(SettingsStore.Load(settingsPath).Language == "en", "older settings default to English without changing the selected checkout");
-    Check(SettingsStore.Load(settingsPath) is { CloseToTray: false, CloseBehaviorConfirmed: false, StopServicesOnExit: false }, "older settings leave tray mode and service stopping off and offer a first-close choice");
+    Check(SettingsStore.Load(settingsPath) is { CloseToTray: false, CloseBehaviorConfirmed: false, StopServicesOnExit: false, AlwaysAskOnClose: false }, "older settings leave new close preferences off and offer a first-close choice");
     var closeSettings = new LauncherSettings();
     Check(WindowClosePolicy.Decide(closeSettings, false, false, false) == WindowCloseAction.Ask, "first close asks without enabling tray mode");
     Check(WindowClosePolicy.Decide(closeSettings, true, false, false) == WindowCloseAction.Ask, "first close can offer to keep an operation running in the tray");
@@ -85,6 +85,11 @@ try
     Check(WindowClosePolicy.Decide(traySettings, false, true, false) == WindowCloseAction.Exit, "explicit tray exit bypasses the hide preference");
     Check(WindowClosePolicy.Decide(traySettings, true, true, false) == WindowCloseAction.Wait, "explicit exit still protects active operations");
     Check(WindowClosePolicy.Decide(closeSettings, true, false, true) == WindowCloseAction.Exit, "Windows session ending never opens a close prompt or hides instead");
+    var alwaysAsk = traySettings with { AlwaysAskOnClose = true };
+    Check(WindowClosePolicy.Decide(alwaysAsk, false, false, false) == WindowCloseAction.Ask && WindowClosePolicy.Decide(alwaysAsk, true, false, false) == WindowCloseAction.Ask, "always ask overrides a remembered close mode, including while work is active");
+    Check(WindowClosePolicy.Decide(alwaysAsk, false, true, false) == WindowCloseAction.Exit, "explicit tray Exit remains a direct exit even with always ask enabled");
+    SettingsStore.Save(alwaysAsk, settingsPath);
+    Check(SettingsStore.Load(settingsPath) is { AlwaysAskOnClose: true, CloseBehaviorConfirmed: true, CloseToTray: true }, "always ask persists independently of the remembered default action");
     SettingsStore.Save(traySettings with { RepositoryPath = "preserved-checkout", Language = "ru" }, settingsPath);
     Check(SettingsStore.Load(settingsPath) is { CloseToTray: true, CloseBehaviorConfirmed: true, RepositoryPath: "preserved-checkout", Language: "ru" }, "tray preferences round-trip alongside workspace and language");
     SettingsStore.Save(traySettings with { StopServicesOnExit = true }, settingsPath);

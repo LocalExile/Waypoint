@@ -8,7 +8,7 @@ public static class WindowClosePolicy
     public static WindowCloseAction Decide(LauncherSettings settings, bool busy, bool explicitExit, bool sessionEnding)
     {
         if (sessionEnding) return WindowCloseAction.Exit;
-        if (!explicitExit && !settings.CloseBehaviorConfirmed) return WindowCloseAction.Ask;
+        if (!explicitExit && (settings.AlwaysAskOnClose || !settings.CloseBehaviorConfirmed)) return WindowCloseAction.Ask;
         if (!explicitExit && settings.CloseToTray) return WindowCloseAction.Hide;
         return busy ? WindowCloseAction.Wait : WindowCloseAction.Exit;
     }
