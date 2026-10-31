@@ -63,3 +63,25 @@ bridge and 19 Python account-data checks. The solution builds with zero warnings
 Real Windows sign-out and Explorer restart are intentionally not performed during a working desktop session.
 Mixed-monitor tray-menu placement and a screen-reader session remain manual checks. Layout scaling checks use WPF
 layout/text transforms and do not claim an actual Windows DPI-setting or monitor change.
+
+## Clean portable review build
+
+- Package source: `d9bfd7c6efff45e487b618268f2ea718baacc1e9`.
+- Local ZIP: `.local/releases/d9bfd7c-20261031-003251-592d582d/Waypoint-0.6.3-win-x64.zip`.
+- ZIP SHA-256: `a0b5488976c4953417e472666fb2d09e6e5b4426307f2dd84886236d16c759a3`.
+- Extracted review EXE: `F:\Waypoint Release Validation\0.6.3-review-d9bfd7c\Waypoint\Waypoint.exe`.
+- Package checks passed for all 415 payload sizes/hashes, clean-source manifest, branding/version, Russian satellite,
+  Windows x64 EXE and bundled runtime/licenses, with no extra/private game files.
+- In the running external package, clicking title-bar X showed both choices with keep-running selected. Clicking
+  Stop and then Keep changed the radio selection and explanatory text. Remembered tray mode hid the window while
+  retaining process 43428; a second launch exited with code zero and restored that same process/window, with one
+  instance remaining. Settings' Ask again reset the prompt, and Exit closed the process completely.
+- The owner's original settings were restored byte-for-byte afterward (SHA-256
+  `abc218bd7570e3027e0628b135774d372ddeaad4ac5037623e9a914695c9da79`) and the package was reopened for review.
+  Tray mode/service stopping remain off and the first-close prompt is pending. No real service-stop operation was
+  performed during interactive checks. Prompt screenshot: `.local/tray-review/first-close-0.6.3.png`.
+- The desktop automation tool targets the owner when sending modal keyboard input, so the attempted live radio-arrow
+  navigation did not exercise the dialog. Radio mutual exclusion/accessibility/defaults were checked in-process;
+  physical modal arrow navigation and notification-area overflow clicking remain manual review items.
+
+Nothing was pushed, uploaded or published. This documentation commit does not alter the packaged executable.
