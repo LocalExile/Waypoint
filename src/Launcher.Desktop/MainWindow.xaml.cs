@@ -61,6 +61,7 @@ public partial class MainWindow : Window
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         LoadDevelopmentPreferences();
         InitializeInteraction();
+        InitializeWindowFrame();
         Pages.SelectionChanged += async (sender, e) =>
         {
             if (e.Source != Pages || !IsLoaded) return;

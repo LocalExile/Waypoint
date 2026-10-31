@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shell;
 using Launcher.Core;
 using Launcher.Desktop;
 
@@ -50,6 +51,23 @@ static class Program
         var window = new MainWindow();
         var pages = Element<PageHost>(window, "Pages");
         var nav = Element<ListBox>(window, "Navigation");
+        static nint Packed(short x, short y) => unchecked((nint)((ushort)x | ((uint)(ushort)y << 16)));
+        Check(SnapCaption.ScreenPoint(Packed(-1920, -200)) == new Point(-1920, -200), "Native caption coordinates must preserve negative monitor origins.");
+        Check(SnapCaption.ScreenPoint(Packed(1800, 500)) == new Point(1800, 500), "Native caption coordinates must decode positive screen positions.");
+        var captionBounds = new Rect(-100, -40, 46, 32);
+        Check(SnapCaption.Contains(captionBounds, new Point(-99, -39)), "Native maximize hit must work above/left of the primary monitor.");
+        Check(!SnapCaption.Contains(captionBounds, new Point(-54, -20)), "Right edge belongs to the neighboring close control.");
+        Check(!SnapCaption.Contains(captionBounds, new Point(-80, -8)), "Bottom edge must remain ordinary client input.");
+        Check(!SnapCaption.Contains(Rect.Empty, new Point()), "Unarranged caption must not claim native hits.");
+        Check(SnapCaption.Contains(new Rect(1500, 9, 69, 39), new Point(1520, 25)), "Physical caption bounds must accept scaled monitor coordinates.");
+        var chrome = WindowChrome.GetWindowChrome(window);
+        Check(window.WindowStyle == WindowStyle.None && chrome is not null && chrome.CaptionHeight == 32 && chrome.ResizeBorderThickness.Left > 0, "Custom frame must retain native caption and resize regions.");
+        Check(chrome!.GlassFrameThickness == new Thickness(0) && !chrome.UseAeroCaptionButtons, "Native caption visuals must be replaced.");
+        foreach (string name in new[] { "MinimizeWindowButton", "MaximizeWindowButton", "CloseWindowButton" })
+        {
+            var button = Element<Button>(window, name);
+            Check(button.Command is not null && AutomationProperties.GetName(button).Contains("Waypoint"), "Caption controls need routed commands and accessible names.");
+        }
         Check(pages.SelectedIndex == 0 && nav.SelectedIndex == 0, "Startup must select Play, not an empty page.");
         Check(nav.Items.Count == 8 && pages.Items.Count == 8, "Every page must be reachable from navigation.");
         Check(UIElementAutomationPeer.CreatePeerForElement(pages)!.GetAutomationControlType() == AutomationControlType.Pane, "Content-only page host must expose a pane, not hidden tab headers.");
@@ -95,7 +113,7 @@ static class Program
         UiCollection.Reconcile(items, new[] { new NavigationPage("B", ""), new("C", "") }, p => p.Label);
         Check(items.Select(p => p.Label).SequenceEqual(["B", "C"]), "Reconciliation must handle move, add and delete.");
         foreach (double scale in new[] { 1d, 1.25, 1.5, 2 })
-        foreach (var size in new[] { new Size(1006, 691), new Size(1226, 861) })
+        foreach (var size in new[] { new Size(960, 730), new Size(1006, 691), new Size(1226, 861) })
         {
             // DPI equivalent DIPs: more physical pixels, same usable logical workspace. Actual monitor changes are a separate manual check.
             ((FrameworkElement)window.Content).LayoutTransform = new ScaleTransform(scale, scale);

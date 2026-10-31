@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Launcher.Desktop" x:Class="Launcher.Desktop.MainWindow" Title="Launcher" Icon="app.ico" Style="{StaticResource {x:Type Window}}" Width="1240" Height="900" MinWidth="1020" MinHeight="730" WindowStartupLocation="CenterScreen">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Launcher.Desktop" x:Class="Launcher.Desktop.MainWindow" Title="Launcher" Icon="app.ico" Style="{StaticResource {x:Type Window}}" Width="1240" Height="900" MinWidth="960" MinHeight="730" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize">
+  <WindowChrome.WindowChrome>
+    <WindowChrome CaptionHeight="32" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+  </WindowChrome.WindowChrome>
   <Window.Resources>
     <DataTemplate x:Key="SetupRequirementTemplate">
       <Grid Margin="0,0,0,12">
@@ -11,12 +14,13 @@
       </Grid>
     </DataTemplate>
   </Window.Resources>
-  <Grid>
+  <Grid x:Name="WindowLayout">
+    <Grid.RowDefinitions><RowDefinition Height="32"/><RowDefinition Height="*"/></Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="196"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
-    <Border Background="{DynamicResource Sidebar}" Padding="14,22,14,16">
+    <Border Grid.RowSpan="2" Background="{DynamicResource Sidebar}" Padding="14,22,14,16">
       <DockPanel>
         <StackPanel DockPanel.Dock="Top" Margin="8,0,8,18">
           <DockPanel Margin="0,0,0,8">
@@ -44,7 +48,16 @@
         </ScrollViewer>
       </DockPanel>
     </Border>
-    <Grid Grid.Column="1" Margin="24,22,24,16">
+    <!-- WindowChrome supplies native caption dragging, double-click and resize hit testing.
+         Only these controls opt into client input. Branding stays in the sidebar once. -->
+    <Grid Grid.Column="1" Background="{DynamicResource Background}">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+        <Button x:Name="MinimizeWindowButton" Content="&#xE921;" AutomationProperties.Name="Minimize Waypoint" ToolTip="Minimize" Style="{StaticResource CaptionButton}" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+        <Button x:Name="MaximizeWindowButton" Content="&#xE922;" AutomationProperties.Name="Maximize Waypoint" ToolTip="Maximize" Style="{StaticResource CaptionButton}" Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
+        <Button x:Name="CloseWindowButton" Content="&#xE8BB;" AutomationProperties.Name="Close Waypoint" ToolTip="Close Waypoint" Style="{StaticResource CaptionCloseButton}" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+      </StackPanel>
+    </Grid>
+    <Grid Grid.Row="1" Grid.Column="1" Margin="24,8,24,16">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
