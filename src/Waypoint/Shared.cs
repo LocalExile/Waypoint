@@ -101,9 +101,27 @@ sealed class Shared : IDisposable
     /// dev host. Null when a live.ps1 run is already going on (the dev host is stopped all the same).</summary>
     public Task<int?> StopAllAsync(Action<string> output)
     {
+        if (Repo.IsInstall) return StopInstallAsync(output);
         if (Monitor.Latest.Any(s => s.Service == Service.DevHost && s.Running)) output("stopping the dev host");
         StopDevHost();
         return RunLiveAsync(new LiveRequest(LiveMode.Stop), output);
+    }
+
+    /// <summary>A release install's own stop. It needs no lock: it is also how a run that holds one ends.</summary>
+    async Task<int?> StopInstallAsync(Action<string> output)
+    {
+        _quietUntil = DateTime.UtcNow.AddSeconds(3);
+        try
+        {
+            var result = await LocalExileTool.RunAsync(Environment.CurrentDirectory, ["stop"], e => { if (e.Message is { } message) { Logs.Write($"LocalExile: {message}"); output(message); } });
+            return result.Code;
+        }
+        catch (Exception e) when (e is System.ComponentModel.Win32Exception or InvalidOperationException or IOException)
+        {
+            Logs.Write($"LocalExile.exe could not run: {e.Message}", Severity.Error);
+            output(e.Message);
+            return -1;
+        }
     }
 
     public void Dispose()

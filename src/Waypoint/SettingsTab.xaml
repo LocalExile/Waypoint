@@ -49,6 +49,14 @@
                 </DockPanel>
             </GroupBox>
 
+            <GroupBox x:Name="DeveloperGroup" Header="{l:Loc 'Developer'}">
+                <StackPanel>
+                    <CheckBox x:Name="DeveloperMode" Content="{l:Loc 'Developer Mode'}" Checked="DeveloperModeClicked" Unchecked="DeveloperModeClicked" />
+                    <TextBlock x:Name="DeveloperNote"
+                               Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" />
+                </StackPanel>
+            </GroupBox>
+
             <GroupBox x:Name="CheckoutGroup" Header="{l:Loc 'Server checkout'}">
                 <StackPanel>
                     <TextBlock x:Name="ServerFolder" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,0,0,6" />

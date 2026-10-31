@@ -25,6 +25,8 @@ public partial class ModsTab : UserControl
     {
         _shared = shared;
         OutputView.Attach(shared);
+        // A release cannot build, and live control needs the client bridge it does not have.
+        if (Repo.IsInstall) BuildAllButton.Visibility = BuildButton.Visibility = ReloadButton.Visibility = CheckModsButton.Visibility = Visibility.Collapsed;
         shared.Workspace.Changed += () => Dispatcher.BeginInvoke(Render);
         shared.LiveRunning += running => Dispatcher.BeginInvoke(() =>
         {
@@ -97,7 +99,7 @@ public partial class ModsTab : UserControl
         var gateway = state?.Services.FirstOrDefault(s => s.Name == "Gateway");
         bool supported = state?.ModEnvironment is { Supported: true };
         bool canUse = !_busy && supported && state!.Conflicts.Length == 0 && selected is not null;
-        bool live = supported && gateway?.Status == "Ready" && state?.GameRunning == true && state.ModEnvironment?.Enabled == true;
+        bool live = !Repo.IsInstall && supported && gateway?.Status == "Ready" && state?.GameRunning == true && state.ModEnvironment?.Enabled == true;
         ToggleButton.Content = selected?.Enabled == true ? L.Text("Disable mod") : L.Text("Enable mod");
         ToggleButton.IsEnabled = canUse && selected!.Fingerprint.Length > 0 && (gateway?.IsRunning != true || live);
         BuildButton.IsEnabled = canUse && selected!.Project.Length > 0;
@@ -106,6 +108,7 @@ public partial class ModsTab : UserControl
         Selected.Text = selected?.Id ?? L.Text("Mod details");
         Hint.Text = selected is null ? L.Text("Choose a mod from the list.")
             : _busy ? L.Text("A workspace operation is in progress.")
+            : Repo.IsInstall ? L.Text(gateway?.IsRunning == true ? "Close the game to change mods." : "Enable choices apply the next time you press Play.")
             : gateway?.IsRunning == true && !live ? L.Text("Enter a playable area for live controls, or stop Gateway to save enable choices.")
             : live ? L.Text("Live changes affect every character on this Gateway. Reload resets mod state.")
             : L.Text("Enable choices apply at the next Gateway start. Build selected compiles this mod’s source.");

@@ -95,7 +95,7 @@ function Get-ModInventoryStamp {
     finally { $sha.Dispose() }
 }
 function Get-ModEnvironment($services) {
-    $supported = (Test-Path -LiteralPath (At 'src/GameServer.Modding/GameServer.Modding.csproj')) -and (Test-Path -LiteralPath (At 'src/GameServer.Gateway/Program.Mods.cs'))
+    $supported = ($script:isRelease -and (Test-Path -LiteralPath (Get-ModFolder))) -or ((Test-Path -LiteralPath (At 'src/GameServer.Modding/GameServer.Modding.csproj')) -and (Test-Path -LiteralPath (At 'src/GameServer.Gateway/Program.Mods.cs')))
     $result = @{ Supported=[bool]$supported; Folder=(Get-ModFolder); Enabled=($env:Game_MODS -ne '0'); RuntimeReport=''; CheckedUtc='' }
     if (-not $supported) { return $result }
     $gateway = $services | Where-Object { $_.Name -eq 'Gateway' -and $_.Status -eq 'Ready' }

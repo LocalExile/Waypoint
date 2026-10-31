@@ -7,12 +7,14 @@
         <StackPanel Margin="20,16,20,16">
             <TextBlock Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left"
                        Text="{l:Loc 'Tools for the game itself. Each opens in its own window and works with the character in game through the client control bridge (Python with Frida).'}" />
+            <TextBlock x:Name="ReleaseNote" Visibility="Collapsed" TextWrapping="Wrap" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left"
+                       Text="{l:Loc 'The item crafter needs a source checkout: this LocalExile release has no crafter in its server, and releases do not include the client control bridge that gives the item.'}" />
             <WrapPanel>
                 <!-- One card per tool. -->
                 <Border Width="340" Margin="0,0,14,14" Padding="18,16" CornerRadius="8" BorderThickness="1"
                         Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
                     <DockPanel>
-                        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Style="{StaticResource Shell.PrimaryButton}" Click="OpenItemCrafter"
+                        <Button x:Name="CrafterButton" DockPanel.Dock="Bottom" HorizontalAlignment="Left" Style="{StaticResource Shell.PrimaryButton}" Click="OpenItemCrafter"
                                 Content="{l:Loc 'Open item crafter'}" Margin="0,12,0,0" />
                         <md:PackIcon DockPanel.Dock="Left" Kind="Anvil" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
                                      Foreground="{DynamicResource Shell.Accent}" />

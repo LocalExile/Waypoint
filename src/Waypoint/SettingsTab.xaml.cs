@@ -13,6 +13,8 @@ public partial class SettingsTab : UserControl
 
     /// <summary>Check for updates: the window has the update card.</summary>
     internal event Action? CheckUpdatesRequested;
+    /// <summary>Developer Mode changed: the window shows the sections and the switch again.</summary>
+    internal event Action? DeveloperModeChanged;
 
     public SettingsTab() => InitializeComponent();
 
@@ -40,8 +42,11 @@ public partial class SettingsTab : UserControl
         CheckAtStart.IsChecked = S.CheckForUpdates;
         KeepUpToDate.IsChecked = S.KeepUpToDate;
         UseProfile.IsChecked = S.UseLocalProfile;
-        KeepUpToDate.Visibility = S.Advanced ? Visibility.Collapsed : Visibility.Visible;
-        CheckoutGroup.Visibility = S.Advanced ? Visibility.Visible : Visibility.Collapsed;
+        DeveloperMode.IsChecked = S.Developer;
+        DeveloperNote.Text = L.Text("Adds a Simple | Advanced switch to the sidebar. Advanced replaces Play with Control, and adds Versions, performance and server timings.");
+        KeepUpToDate.Visibility = S.Advanced && !Repo.IsInstall ? Visibility.Collapsed : Visibility.Visible;
+        if (Repo.IsInstall) KeepUpToDate.ToolTip = L.Text("When Waypoint starts, look for a newer LocalExile release and offer to install it.");
+        CheckoutGroup.Visibility = S.Advanced && !Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
         _loading = false;
     }
 
@@ -110,6 +115,16 @@ public partial class SettingsTab : UserControl
     internal void ShowMode()
     {
         if (_shared is not null) Show();
+    }
+
+    /// <summary>On, the sidebar gets its switch and Simple mode stays until it is used. Off, Waypoint goes back to Simple mode.</summary>
+    void DeveloperModeClicked(object sender, RoutedEventArgs e)
+    {
+        if (_loading || _shared is null) return;
+        S.DeveloperMode = DeveloperMode.IsChecked == true;
+        if (!S.Developer) S.AdvancedMode = false;
+        S.Save();
+        DeveloperModeChanged?.Invoke();
     }
 
     void CheckUpdates(object sender, RoutedEventArgs e) => CheckUpdatesRequested?.Invoke();

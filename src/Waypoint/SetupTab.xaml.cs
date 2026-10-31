@@ -61,14 +61,22 @@ public partial class SetupTab : UserControl
     /// <summary>Simple mode's way to the guide.</summary>
     internal void OpenSetupGuide() => RunGuide(this, new RoutedEventArgs());
 
+    /// <summary>The guide on the source route: clones LocalExile into a chosen folder and sets it up.</summary>
+    internal void SetUpNewCopy() => Guide(newCopy: true);
+
+    /// <summary>Another checkout or release install; Waypoint starts again on it.</summary>
+    internal void ChangeFolder() => ChangeCheckout(this, new RoutedEventArgs());
+
     /// <summary>The guide holds the checkout while it is open, as a live.ps1 run does. Choosing another checkout in it starts
     /// Waypoint again on that one.</summary>
-    async void RunGuide(object sender, RoutedEventArgs e)
+    void RunGuide(object sender, RoutedEventArgs e) => Guide(newCopy: false);
+
+    async void Guide(bool newCopy)
     {
         if (Busy()) return;
         var owner = Window.GetWindow(this);
         string current = Environment.CurrentDirectory;
-        var guide = new SetupWizard(_shared.Settings, owner, current);
+        var guide = new SetupWizard(_shared.Settings, owner, current, newCopy);
         await _shared.RunExclusiveAsync(L.Text("Setup guide"), () => { guide.ShowDialog(); return Task.CompletedTask; });
         if (guide.Checkout is { } checkout && !checkout.Equals(current, StringComparison.OrdinalIgnoreCase))
         {

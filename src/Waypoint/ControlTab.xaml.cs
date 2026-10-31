@@ -31,7 +31,9 @@ sealed class ServiceRow(Service service, Func<string> description, PackIconKind 
 
     /// <summary>The recorder starts only with a live.ps1 run (Walk maps); the rest start alone.</summary>
     public bool CanAct => !_live && (Running || Service.Kind != ServiceKind.Recorder);
-    public bool CanRestart => !_live && Service.Kind == ServiceKind.Server;
+    public bool CanRestart => !_live && Service.Kind == ServiceKind.Server && !Repo.IsInstall;
+    /// <summary>A release starts and stops everything together, with one LocalExile.exe.</summary>
+    public Visibility ActionShown => Repo.IsInstall ? Visibility.Collapsed : Visibility.Visible;
     public string ActionText => L.Text(Running ? "Stop" : "Start");
     public PackIconKind ActionIcon => Running ? PackIconKind.Stop : PackIconKind.Play;
     public Brush ActionBrush => Theme.Brush(Running ? "Shell.Error" : "Shell.Good");
@@ -113,6 +115,12 @@ public partial class ControlTab : UserControl
     internal event Action<string>? ShowLogRequested;
     /// <summary>Guided setup: the window opens the Setup section.</summary>
     internal event Action? ShowSetupRequested;
+    /// <summary>The player wants a new git copy set up.</summary>
+    internal event Action? NewCopyRequested;
+    /// <summary>Play on a release install: the Play view runs it, with its steps.</summary>
+    internal event Action? InstallPlayRequested;
+    /// <summary>Start servers on a release install.</summary>
+    internal event Action? InstallServersRequested;
 
     public ControlTab() => InitializeComponent();
 
@@ -125,7 +133,9 @@ public partial class ControlTab : UserControl
         HotReload.IsChecked = shared.Settings.HotReload;
         ServerFolder.Text = Environment.CurrentDirectory;
         ServerFolder.ToolTip = Environment.CurrentDirectory;
-        ServiceList.ItemsSource = _rows;
+        ServiceList.ItemsSource = Repo.IsInstall ? _rows.Where(r => r.Service.Kind is ServiceKind.Server or ServiceKind.Client).ToList() : _rows;
+        if (Repo.IsInstall)
+            foreach (var element in new FrameworkElement[] { StopServersButton, RunOptions, CheckAgainButton, GameDataButton }) element.Visibility = Visibility.Collapsed;
         shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() => ShowServices(samples));
         shared.LiveRunning += running => Dispatcher.BeginInvoke(() =>
         {
@@ -151,6 +161,16 @@ public partial class ControlTab : UserControl
             row.Update(samples.FirstOrDefault(s => s.Service == row.Service) ?? new(row.Service, null, false, 0, 0, 0, 0, TimeSpan.Zero), _live);
         // With servers up the same live.ps1 run restarts them: what is needed after edits hot reload does not cover.
         bool anyUp = samples.Any(s => s.Service.Kind == ServiceKind.Server && s.Running);
+        if (Repo.IsInstall)
+        {
+            bool anything = samples.Any(s => s.Running);
+            StartServersText.Text = L.Text("Start servers");
+            StartServersIcon.Kind = PackIconKind.Play;
+            StartServersButton.IsEnabled = PlayButton.IsEnabled = !anything;
+            StartServersButton.ToolTip = L.Text("Patch, Auth and Gateway without the game. To play, stop them and press Play: one LocalExile.exe runs an install at a time.");
+            PlayButton.ToolTip = L.Text("LocalExile.exe: starts the servers, then the game");
+            return;
+        }
         StartServersText.Text = L.Text(anyUp ? "Restart servers" : "Start servers");
         StartServersIcon.Kind = anyUp ? PackIconKind.Refresh : PackIconKind.Play;
         StartServersButton.ToolTip = anyUp
@@ -225,7 +245,11 @@ public partial class ControlTab : UserControl
         return code;
     }
 
-    async void Play(object sender, RoutedEventArgs e) => await PlayAsync();
+    async void Play(object sender, RoutedEventArgs e)
+    {
+        if (Repo.IsInstall) InstallPlayRequested?.Invoke();
+        else await PlayAsync();
+    }
 
     /// <summary>Play: also what the Versions section starts after a switch, and Simple mode's Play. The exit code of the run;
     /// null when none ran.</summary>
@@ -286,10 +310,18 @@ public partial class ControlTab : UserControl
         }
     }
 
-    async void StartServers(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.Servers));
+    async void StartServers(object sender, RoutedEventArgs e)
+    {
+        if (Repo.IsInstall) InstallServersRequested?.Invoke();
+        else await Run(Request(LiveMode.Servers));
+    }
 
     /// <summary>The client, the recorder, the servers and the dev host.</summary>
-    async void StopAll(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.Stop), (_, output) => _shared.StopAllAsync(output));
+    async void StopAll(object sender, RoutedEventArgs e)
+    {
+        if (Repo.IsInstall) await _shared.StopAllAsync(line => Dispatcher.BeginInvoke(() => Append(line)));
+        else await Run(Request(LiveMode.Stop), (_, output) => _shared.StopAllAsync(output));
+    }
 
     /// <summary>The servers and the recorder; the client stays (it drops to the login screen).</summary>
     async void StopServers(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.StopServers));
@@ -389,9 +421,12 @@ public partial class ControlTab : UserControl
 
     void OpenGuidedSetup(object sender, RoutedEventArgs e) => ShowSetupRequested?.Invoke();
 
+    void NewCopyClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
     /// <summary>The setup checks again (also after the Versions section switched the checkout).</summary>
     internal async Task RefreshSetup()
     {
+        if (Repo.IsInstall) return;
         SetupList.ItemsSource = new[] { new SetupCheck(null, L.Text("checking …")) };
         SetupList.ItemsSource = await Task.Run(SetupChecks.Run);
     }

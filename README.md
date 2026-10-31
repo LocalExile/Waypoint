@@ -16,11 +16,16 @@ unchanged. It does not download Path of Exile, bundle LocalExile or offer a publ
 
 ## Install
 
-Requirements: Windows 10/11 x64, the .NET 10 SDK (the server needs it anyway; it brings the Desktop Runtime Waypoint runs
-on), and a LocalExile server checkout. The **Setup** section walks through what the checkout still needs; the server's
-[GettingStarted](https://github.com/LocalExile/LocalExile/blob/main/Agents/GettingStarted.md) is the full guide.
+Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, and your own standalone PoE **3.29.3b** client. The setup guide
+offers two ways to get LocalExile:
 
-| Requirement | Used for |
+- **The ready-to-play release** (recommended). Nothing else to install: Waypoint downloads the release, checks its SHA-256, and
+  runs its `LocalExile.exe` to prepare your client and create your account.
+- **The source code**, for working on LocalExile, which also needs the tools below. The **Setup** section walks through what
+  the checkout still needs; the server's
+  [GettingStarted](https://github.com/LocalExile/LocalExile/blob/main/Agents/GettingStarted.md) is the full guide.
+
+| A source checkout's requirement | Used for |
 | --- | --- |
 | A [LocalExile](https://github.com/LocalExile/LocalExile) source checkout | The server Waypoint manages: the folder with `GameServer.slnx` |
 | [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) | Building and running LocalExile |
@@ -33,9 +38,9 @@ Frida (`pip install frida`) is optional: it is needed for walk maps, the console
 
 1. Download `Waypoint.exe` from the latest release on this repository's **Releases** page.
 2. Put it anywhere and start it.
-3. On its first start the **setup guide** opens. It checks the tools you need, finds LocalExile on your PC or downloads it to
-   a folder you choose, finds your game client, copies and prepares it, and builds everything. You can skip it, and you can
-   stop it at any point: what is finished stays finished, and **Setup → Run setup guide** continues from there later.
+3. On its first start the **setup guide** opens. It gets LocalExile to a folder you choose or finds the copy you have, finds
+   your game client, copies and prepares it. You can skip it, and you can stop it at any point: what is finished stays
+   finished, and the guide continues from there later (**Play → Finish setup**, or **Setup → Run setup guide** on a checkout).
 
 The exe is not code-signed, so Windows SmartScreen may say "Windows protected your PC" the first time: **More info** →
 **Run anyway**.
@@ -45,15 +50,21 @@ where they are. Neither old file is changed.
 
 ## Simple and Advanced modes
 
-A new player starts in **Simple mode**: **Play**, **Mods**, **Accounts** and **Settings**. **Play** does everything. It backs up
-your saves, gets the newest LocalExile at most once a day, builds it and starts the game. If an update doesn't start, Waypoint
-goes back to the version you had and starts that. **Go back to the version you had** stays for a week after an update, and
-**Settings → Keep LocalExile up to date** turns updates off. LocalExile has no releases yet, so an update is its latest
-code; a bug inside the game is what the way back is for.
+On a release install some sections do less, because a release has no source, Frida or per-service control: **Console** copies
+commands for you to paste into the game's chat, **Mods** enables and disables built mods only, **Control** starts and stops
+everything together, and **Tools** needs a source checkout. When a newer LocalExile release is out, a green card offers to install it.
+Nothing changes until you accept and the game is closed. Your saves are copied first, and `data\` and `Client\` are kept.
+**Settings → Keep LocalExile up to date** turns the prompt off.
+
+A new player starts in **Simple mode**: **Play**, **Mods**, **Backups**, **Accounts**, **Logs**, **Console**, **Tools** and **Settings**. On a source checkout **Play** does
+everything. It backs up your saves, gets the newest code at most once a day, builds it and starts the game. If an update doesn't
+start, Waypoint goes back to the version you had and starts that. **Go back to the version you had** stays for a week after an
+update, and **Settings → Keep LocalExile up to date** turns updates off. An update is the latest code, not a release; a bug
+inside the game is what the way back is for.
 
 A copy with anything of your own (another branch, a fork as `origin`, changes, your own commits) is never updated by itself.
 
-The **Simple | Advanced** switch at the bottom of the sidebar is always there: **Advanced** gives every section below, with
+**Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
 full control over branches and pull requests. Someone coming from an earlier launcher starts there.
 
 ## Sections

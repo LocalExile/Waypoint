@@ -90,6 +90,8 @@ public partial class MainWindow : Window
         InitializeWindowFrame();
         Control.Attach(_shared);
         PlayView.Attach(_shared, Control);
+        InstallView.Attach(_shared);
+        ReleasesView.Attach(_shared);
         Setup.Attach(_shared);
         Versions.Attach(_shared);
         Mods.Attach(_shared);
@@ -123,9 +125,11 @@ public partial class MainWindow : Window
         _sections =
         [
             new("Play", PackIconKind.Play, PlayView),
+            new("Play", PackIconKind.Play, InstallView),
             new("Control", PackIconKind.ViewDashboardOutline, Control),
             new("Setup", PackIconKind.ClipboardCheckOutline, Setup),
             new("Versions", PackIconKind.SourceBranch, Versions),
+            new("Versions", PackIconKind.SourceBranch, ReleasesView),
             new("Mods", PackIconKind.PuzzleOutline, Mods),
             new("Backups", PackIconKind.BackupRestore, Backups),
             new("Accounts", PackIconKind.AccountMultipleOutline, Accounts),
@@ -141,6 +145,26 @@ public partial class MainWindow : Window
         PlayView.CheckoutChanged += CheckoutMoved;
         PlayView.SetupRequested += Setup.OpenSetupGuide;
         PlayView.DetailsRequested += () => ShowSection(LogsView);
+        InstallView.SetupRequested += Setup.OpenSetupGuide;
+        InstallView.DetailsRequested += () => ShowSection(LogsView);
+        ReleasesView.CheckRequested += () => _ = CheckForUpdates(manual: true);
+        PlayView.ChangeFolderRequested += Setup.ChangeFolder;
+        InstallView.ChangeFolderRequested += Setup.ChangeFolder;
+        ReleasesView.ChangeFolderRequested += Setup.ChangeFolder;
+        PlayView.NewCopyRequested += Setup.SetUpNewCopy;
+        InstallView.NewCopyRequested += Setup.SetUpNewCopy;
+        ReleasesView.NewCopyRequested += Setup.SetUpNewCopy;
+        Control.NewCopyRequested += Setup.SetUpNewCopy;
+        Control.InstallPlayRequested += () =>
+        {
+            ShowSection(InstallView);
+            _ = InstallView.PlayAsync();
+        };
+        Control.InstallServersRequested += () =>
+        {
+            ShowSection(InstallView);
+            _ = InstallView.StartServersAsync();
+        };
         Versions.PlayRequested += () =>
         {
             ShowSection(Control);
@@ -151,15 +175,24 @@ public partial class MainWindow : Window
             LogsView.Show(source);
             OpenLogsSection(this, null!);
         };
-        Control.ShowSetupRequested += () => ShowSection(Setup);
+        Control.ShowSetupRequested += () =>
+        {
+            if (Repo.IsInstall) Setup.OpenSetupGuide();
+            else ShowSection(Setup);
+        };
         Mods.ShowGatewayLog += () =>
         {
             LogsView.Show("Gateway");
             OpenLogsSection(this, null!);
         };
         Setup.CreateAccountRequested += CreateFirstAccount;
-        Setup.SetupFinished += () => _ = Control.RefreshSetup();
+        Setup.SetupFinished += () =>
+        {
+            _ = Control.RefreshSetup();
+            InstallView.InstallChanged();
+        };
         SettingsView.CheckUpdatesRequested += () => _ = CheckForUpdates(manual: true);
+        SettingsView.DeveloperModeChanged += ShowMode;
         L.Current.PropertyChanged += (_, _) => ShowLanguage();
         Theme.Changed += () =>
         {
@@ -174,6 +207,7 @@ public partial class MainWindow : Window
 
         Updates.CleanUp();
         if (_shared.Settings.CheckForUpdates && Updates.IsReleaseBuild) Loaded += (_, _) => _ = CheckForUpdates(manual: false);
+        if (Repo.IsInstall && _shared.Settings.KeepUpToDate) Loaded += (_, _) => _ = CheckLocalExile();
         Loaded += (_, _) => _ = _shared.Workspace.RefreshAsync();
     }
 
@@ -184,11 +218,18 @@ public partial class MainWindow : Window
     void ShowMode()
     {
         bool advanced = _shared.Settings.Advanced;
-        var sections = _sections.Where(s => advanced ? s.View != PlayView : s.View is PlayTab or ModsTab or ToolsTab or AccountsTab or SettingsTab).ToArray();
+        // Play and Versions each have a checkout's view and a release install's.
+        FrameworkElement[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
+        var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
+            ? s.View is ControlTab or VersionsTab or ReleasesTab or ModsTab or BackupsTab or AccountsTab or PerformanceTab or TimingsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab
+            : s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
+        // Developer Mode (Settings) unlocks the switch.
+        ModeSwitch.Visibility = _shared.Settings.Developer ? Visibility.Visible : Visibility.Collapsed;
         var shown = Sections.SelectedItem as Section;
         Sections.ItemsSource = sections;
         Sections.SelectedItem = sections.Contains(shown) ? shown : sections[0];
-        BranchChip.Visibility = StatusStrip.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+        StatusStrip.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+        BranchChip.Visibility = advanced && !Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
         SettingsView.ShowMode();
@@ -275,6 +316,12 @@ public partial class MainWindow : Window
         Language = System.Windows.Markup.XmlLanguage.GetLanguage(L.Current.Culture.Name);
         _tray.ShowLanguage();
         ShowRelease();
+        ShowExileRelease();
+        if (Repo.IsInstall)
+        {
+            SimpleMode.ToolTip = L.Text("Play, mods, backups, accounts, logs, the console and tools.");
+            AdvancedMode.ToolTip = L.Text("Replaces Play with Control, and adds Versions, performance and server timings.");
+        }
         UpdateWindowFrame();
         ShowTheme();
         ShowStatus(_shared.Monitor.Latest);
@@ -326,6 +373,7 @@ public partial class MainWindow : Window
     {
         try
         {
+            bool exile = Repo.IsInstall && manual && await CheckLocalExile(manual: true);
             _release = await Updates.CheckAsync();
             if (_release is not null)
             {
@@ -333,9 +381,10 @@ public partial class MainWindow : Window
                 UpdateNow.IsEnabled = Updates.RunningExe is not null;
                 UpdateBar.Visibility = Visibility.Visible;
             }
-            else if (manual)
+            else if (manual && !exile)
                 Dialog.Tell(this, DialogKind.Info, L.Text("No update"),
-                    L.Text("No newer release than {0}.", Updates.IsReleaseBuild ? Updates.Current.ToString() : L.Text("this build from source")));
+                    L.Text("No newer release than {0}.", Updates.IsReleaseBuild ? Updates.Current.ToString() : L.Text("this build from source"))
+                    + (Repo.IsInstall ? "\n" + L.Text("LocalExile {0} is the newest release.", LocalExileReleases.Installed(Environment.CurrentDirectory)?.ToString() ?? "") : ""));
         }
         catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
         {
@@ -382,6 +431,96 @@ public partial class MainWindow : Window
     }
 
     void LaterClicked(object sender, RoutedEventArgs e) => UpdateBar.Visibility = Visibility.Collapsed;
+
+    LocalExileRelease? _exileRelease;
+
+    /// <summary>Asks GitHub for LocalExile's latest release, and shows its card when it is newer than this install. True when
+    /// it is. Quiet at startup: no network is nothing to say.</summary>
+    async Task<bool> CheckLocalExile(bool manual = false)
+    {
+        try
+        {
+            using var client = Updates.Client();
+            var latest = await LocalExileReleases.LatestAsync(client);
+            var installed = LocalExileReleases.Installed(Environment.CurrentDirectory);
+            if (latest is null || (installed is not null && !latest.Version.IsNewerThan(installed))) return false;
+            _exileRelease = latest;
+            ShowExileRelease();
+            ExileUpdateBar.Visibility = Visibility.Visible;
+            return true;
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+        {
+            _shared.Logs.Write($"LocalExile update check failed: {ex.Message}", Severity.Warning);
+            if (manual) Dialog.Tell(this, DialogKind.Warning, L.Text("Update check failed"), ex.Message);
+            return true;
+        }
+    }
+
+    void ShowExileRelease()
+    {
+        if (_exileRelease is null) return;
+        ExileUpdateText.Text = L.Text("LocalExile {0} is out; you have {1}. Your characters, keys and game client are kept.", _exileRelease.Version,
+            LocalExileReleases.Installed(Environment.CurrentDirectory)?.ToString() ?? L.Text("an unknown version"));
+    }
+
+    /// <summary>Puts the new release over this install, as its README says, once the game is closed. Nothing is force-stopped
+    /// for it: a Gateway needs the chance to save.</summary>
+    async void ExileUpdateClicked(object sender, RoutedEventArgs e)
+    {
+        if (_exileRelease is not { } release) return;
+        if (_shared.IsLiveRunning || _shared.Monitor.Latest.Any(s => s.Running))
+        {
+            Dialog.Tell(this, DialogKind.Info, L.Text("Close the game first"), L.Text("LocalExile can only be updated while the game and its servers are closed. Close the game, wait for the servers to stop, then press Update now again."));
+            return;
+        }
+        if (!Dialog.Ask(this, DialogKind.Question, L.Text("Update LocalExile to {0}?", release.Version),
+                L.Text("Waypoint downloads {0:0} MB, checks it, and puts it over this install. Your characters, keys and game client are kept, and your saves are copied first when Automatic backups is on. The next Play may extract game data again.", release.ZipBytes / 1e6),
+                L.Text("Update"))) return;
+        ExileUpdateNow.IsEnabled = ExileLater.IsEnabled = false;
+        string folder = Environment.CurrentDirectory;
+        void Say(string text) => Dispatcher.BeginInvoke(() => ExileUpdateText.Text = text);
+        try
+        {
+            bool ran = await _shared.RunExclusiveAsync(L.Text("LocalExile update"), async () =>
+            {
+                if (_shared.Settings.AutomaticBackups)
+                {
+                    Say(L.Text("Copying your saves …"));
+                    if (LocalExileReleases.BackUpSaves(folder, LocalExileReleases.Installed(folder), DateTime.Now) is { } backup) _shared.Logs.Write($"saves copied to {backup}");
+                }
+                using var client = Updates.Client();
+                bool extracting = false;
+                await LocalExileReleases.InstallAsync(client, release, folder,
+                    (done, total) => Say(extracting ? L.Text("Installing: {0:0} of {1:0} MB", done / 1e6, total / 1e6) : L.Text("Downloading: {0:0} of {1:0} MB", done / 1e6, total / 1e6)),
+                    () => extracting = true, CancellationToken.None);
+            });
+            if (!ran)
+            {
+                Say(L.Text("Something else is using LocalExile. Try again when it is done."));
+                return;
+            }
+            _shared.Logs.Write($"LocalExile updated to {release.Version}", Severity.Info);
+            _exileRelease = null;
+            ExileUpdateBar.Visibility = Visibility.Collapsed;
+            InstallView.InstallChanged(() => L.Text("LocalExile was updated."));
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or IOException
+            or UnauthorizedAccessException or InvalidOperationException or InvalidDataException)
+        {
+            Say(L.Text("The update failed: {0}", ex.Message));
+            _shared.Logs.Write($"LocalExile update failed: {ex.Message}", Severity.Error);
+        }
+        finally { ExileUpdateNow.IsEnabled = ExileLater.IsEnabled = true; }
+    }
+
+    void ExilePageClicked(object sender, RoutedEventArgs e)
+    {
+        if (_exileRelease?.Page is { Length: > 0 } page)
+            Process.Start(new ProcessStartInfo(page) { UseShellExecute = true })?.Dispose();
+    }
+
+    void ExileLaterClicked(object sender, RoutedEventArgs e) => ExileUpdateBar.Visibility = Visibility.Collapsed;
 
     /// <summary>A client that starts sends the window to the tray; when no client is left it comes back. A client that
     /// Play closes and starts again (one live.ps1 run) keeps it in the tray, and a window opened while the game already

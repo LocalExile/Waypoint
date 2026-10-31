@@ -38,10 +38,12 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
     /// the question, whatever it was doing.</summary>
     internal static async Task<string> AskGateway(TimeSpan timeout, params string[] arguments)
     {
-        if (!Repo.HasLauncherHooks())
+        if (!Repo.IsInstall && !Repo.HasLauncherHooks())
             throw new InvalidOperationException(L.Text("This checkout is older than the launcher hooks, so its Gateway cannot list commands: pull the server's main branch."));
-        var info = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };
-        foreach (string a in arguments) info.ArgumentList.Add(a);
+        // A release's Gateway is its own executable.
+        bool program = arguments[0].EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+        var info = new ProcessStartInfo(program ? Path.GetFullPath(arguments[0]) : "dotnet") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };
+        foreach (string a in program ? arguments.Skip(1) : arguments) info.ArgumentList.Add(a);
         using var process = Process.Start(info)!;
         try
         {

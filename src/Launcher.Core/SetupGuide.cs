@@ -9,9 +9,12 @@ namespace Launcher.Core;
 /// pipe open.</summary>
 public static class ToolProcess
 {
-    public static async Task<int> RunAsync(string file, IEnumerable<string> arguments, string? directory, Action<string> output, CancellationToken stop)
+    /// <param name="input">A line for the tool's standard input, which then closes.</param>
+    /// <param name="utf8">The tool writes UTF-8 whatever the console's code page.</param>
+    public static async Task<int> RunAsync(string file, IEnumerable<string> arguments, string? directory, Action<string> output, CancellationToken stop, string? input = null, bool utf8 = false)
     {
-        var info = new ProcessStartInfo(file) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+        var info = new ProcessStartInfo(file) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, RedirectStandardInput = input is not null };
+        if (utf8) info.StandardOutputEncoding = info.StandardErrorEncoding = System.Text.Encoding.UTF8;
         if (directory is not null) info.WorkingDirectory = directory;
         foreach (string argument in arguments) info.ArgumentList.Add(argument);
         foreach (string key in info.Environment.Keys.Where(k => k.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray()) info.Environment.Remove(key);
@@ -29,6 +32,16 @@ public static class ToolProcess
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
+        if (input is not null)
+        {
+            // A tool that needs no input may have ended already.
+            try
+            {
+                await process.StandardInput.WriteLineAsync(input);
+                process.StandardInput.Close();
+            }
+            catch (IOException) { }
+        }
         using (stop.Register(() =>
         {
             try { if (!process.HasExited) process.Kill(entireProcessTree: true); }

@@ -4,8 +4,8 @@ namespace Waypoint;
 sealed record CheckoutUpdate(string Commit, string? Backup, DateTimeOffset At);
 
 /// <summary>
-/// When Simple mode's Play may update the checkout. LocalExile has no releases, so an update is its default branch as it is
-/// now. Only a plain copy of LocalExile is ever moved: anything of the player's own (another branch, a fork as origin,
+/// When Simple mode's Play may update the checkout. A checkout follows no release, so an update is its default branch as it is
+/// now (a release install has its own: <see cref="LocalExileReleases"/>). Only a plain copy of LocalExile is ever moved: anything of the player's own (another branch, a fork as origin,
 /// uncommitted changes, commits of their own) keeps the checkout as it is, in either mode.
 /// </summary>
 static class CheckoutUpdates

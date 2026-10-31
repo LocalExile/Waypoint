@@ -50,6 +50,53 @@ version shows a green card floating over the bottom of the window. **Update now*
 Only the published single-file exe updates itself; under `dotnet run` the bar offers the release page only. A transferred
 repository's old name keeps answering, so builds made before a transfer still find the releases.
 
+## Release installs
+
+LocalExile publishes player releases: a zip with `LocalExile.exe`, `release.json` and everything else already built (the
+server's `Agents/docs/dev/releases.md`). Such a folder (`LocalExileReleases.IsInstall`) is the other kind of root Waypoint can
+work from, beside a source checkout. It has no `live.ps1`, source or git, so `Repo.IsInstall` changes what the sections do:
+
+- **Play** (`InstallTab`) and **Versions** (`ReleasesTab`: the installed version and every release's notes) have views of their own.
+  Branches and pull requests need git, so that Versions page leads to another folder or a new copy.
+- **Control** starts and stops everything together, because one `LocalExile.exe` holds an install: no per-service actions, and
+  the game cannot join servers started alone.
+- **Backups, Accounts, Mods** use the adapter, which recognises a release (`$script:isRelease`): its servers in `app\`, the bundled
+  Python. Create account goes through `LocalExile.exe account create`; the dev host's tools are hidden. Mods are the built ones,
+  enabled or disabled while the game is closed.
+- **Console** lists the release Gateway's commands and copies a line to paste into the game's chat, because a release has no
+  client control bridge or Frida. Nothing can read the replies.
+- **Tools** explains why it is unavailable. v0.1.0-beta's Gateway has no `crafter` mode, and asking a Gateway for a mode it lacks
+  starts it serving, so a release's is never asked. Giving an item would need the bridge as well.
+
+Waypoint drives it only through `LocalExile.exe --json` (`LocalExileTool`), one JSON event per line:
+
+- **Play** is `run --no-update-check`. Below its button it shows the run: a row per stage with its latest message, the time so far,
+  and the output with timestamps; these stay after the run, so a failure can be read there. It holds the install's lock until the `ready` event, so the window can close or go to the
+  tray while the game runs; ending the process ends the servers and the client (the release's job object). A `needs-input`
+  answer sends the player to the setup guide.
+- **Stop playing** and **Settings'** stop on exit run `LocalExile.exe stop`. That ends the install's processes outright, so it is
+  hidden during a step that writes the client or the keys (`MustFinish`). An update never uses it.
+- A password goes to `--password-stdin` and nowhere else, never to a command line or a log. Standard input uses the console's
+  code page, so the guide accepts only printable ASCII passwords: anything else could arrive as a different password.
+- An event with a `schema` above `LocalExileEvent.KnownSchema` ends the run and asks for a newer Waypoint.
+
+### Its updates
+
+At start (**Keep LocalExile up to date**) and on **Check for updates**, Waypoint compares GitHub's latest release with
+`release.json` in SemVer's order (`ReleaseVersion`: 0.1.0 is newer than 0.1.0-beta, which the release's own check, comparing
+numbers only, cannot see). A newer one shows a green card beside Waypoint's own. **Update now** refuses while anything runs,
+since nothing is force-stopped for an update, and after a confirmation:
+
+1. copies `data\saves.db` and its journal to `backups\before-update-<version>-<time>\` (unless **Automatic backups** is off);
+   a failed copy means no update;
+2. downloads the zip into `.waypoint-update\` and checks it against the release's `.sha256`;
+3. refuses a zip with a path outside its `LocalExile/` folder, or one naming `Client\` or `data\` (other than `data\schema\`);
+4. extracts it into staging, then moves the files into place, the launcher and `release.json` last, so a cut-short update still
+   reads as the old version and is offered again.
+
+As with the release's own instructions, the new zip goes over the old one: a file a newer release dropped stays, and there is no
+way back beyond the saves' copy. The next Play extracts whatever game data the new version needs.
+
 ## Build and run
 
 ```powershell
@@ -69,6 +116,10 @@ fight over one checkout's services.
 It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK installs on Windows.
 
 ### The server folder
+
+**Change folder…** on Play and on a release's Versions, and **Change…** on Control, take a checkout or a release install, and Waypoint
+starts again on it. **Set up a new copy…** there and on Control opens the setup guide on its source route, which clones LocalExile
+with git into a chosen new or empty folder and sets it up.
 
 On its first start Waypoint asks for the server checkout: the folder with `GameServer.slnx` and
 `scripts\dev\live.ps1`. It searches the usual folders and lists what it finds, marking those at the upstream's HEAD
@@ -134,9 +185,10 @@ question (a fork's pull request) has Cancel as its default.
 ## Simple and Advanced modes
 
 A new player starts in **Simple mode**, with five sections (Play, Mods, Tools, Accounts, Settings) and no status strip or branch
-chip: nothing to choose before playing. The **Simple | Advanced** switch at the bottom of the sidebar is always there:
-Advanced gives every section and takes Play away, as the Control section has it. Someone who used an earlier launcher, or
-Waypoint before the modes, starts in Advanced mode (`Settings.Load`).
+chip: nothing to choose before playing. **Settings → Developer → Developer Mode**, off by default, adds the **Simple | Advanced** switch at the bottom of the sidebar:
+**Simple** has Play, Mods, Backups, Accounts, Logs, Console, Tools and Settings. **Advanced** replaces Play with Control, as that section has it, and adds Versions, Performance and Server timings. Setup is reached from Control. Turning Developer Mode off goes back to Simple
+mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer Mode on
+(`Settings.Load`).
 
 **Play** in Simple mode (`PlayTab`) is the Control section's Play with an update before it:
 
@@ -151,8 +203,9 @@ Waypoint before the modes, starts in Advanced mode (`Settings.Load`).
    (`git reset --keep`) and starts again, and says so.
 
 **Go back to the version you had** stays for a week after an update: the same way back, on request, and updates pause for a
-week. Restoring keeps a copy of the current saves first. LocalExile has no releases or tags and `main` has no test
-results, so an update is `main` as it is: the way back catches a build or start that fails, not a bug in the game.
+week. Restoring keeps a copy of the current saves first. A checkout follows `main`, which has no test results, so an update is
+`main` as it is: the way back catches a build or start that fails, not a bug in the game. A release install is different: see
+[Release installs](#release-installs).
 
 A link to a section Simple mode's list lacks (a log, from a failure) shows that section without selecting anything.
 
@@ -279,8 +332,15 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 
 ### The setup guide
 
-With no checkout, the first start opens the guide (`SetupWizard.xaml`); **Run setup guide…** on the Setup section opens it any
-time. **Skip setup** leaves it: with no checkout, Waypoint still needs one to open on, so the plain chooser follows.
+With no checkout or release install, the first start opens the guide (`SetupWizard.xaml`); **Run setup guide…** on the Setup
+section, or **Finish setup** on a release install's Play, opens it any time. **Skip setup** leaves it: with nothing to open on,
+Waypoint still needs a checkout, so the plain chooser follows.
+
+Its second page chooses the route. **The ready-to-play release**, the default, asks for a new or empty folder (or an existing
+install), the client, and an account when the install has no saves. Its run is two steps: the zip, as an update does it, then
+`LocalExile.exe setup --json`, shown by its events' stage and progress. The client is copied unless the player chooses to use the
+folder itself. A stop waits out a step that writes the client or the keys. A `needs-input` answer returns to the page that gives
+that option, and the run starts again from where it was. **The source code** is everything below.
 
 Until **Start setup** it only looks. It checks .NET 10, Git, Python and Node (a missing one has a button for its download page,
 and **Check again** reads the PATH again, so Waypoint need not restart). It lists the LocalExile checkouts it finds, or offers to
@@ -462,6 +522,7 @@ adapter does not know can be browsed but not changed.
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |
 | `branding\` | the emblem: `waypoint-master.png`, the reviewed source and how it was made (`waypoint-artwork.json`); `app.ico` of the exe, the window and the tray (16 to 256 px) and the 192 px image of the sidebar, both from `scripts\New-Icon.ps1` |
 | `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update strip |
+| `InstallTab.xaml`, `LocalExileRelease.cs` (Launcher.Core) | a release install's home; its versions, download, safe extraction, saves copy and `--json` runner |
 
 Tests: `tests/Launcher.Checks` and `tests/*.Tests.ps1` run the core and the adapter on throwaway fixtures (mods, backups,
 accounts, settings, discovery, the catalogs, the single instance). `tests/Waypoint.Tests` (the palettes, the `live.ps1` command lines, the server folder, following logs, severities,

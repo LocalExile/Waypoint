@@ -12,9 +12,15 @@ sealed class Settings
     /// <summary>Every section, or Simple mode's few. A new player starts in Simple mode; someone who used an earlier launcher,
     /// or this one before the modes, stays with every section (<see cref="Load"/>).</summary>
     public bool? AdvancedMode { get; set; }
+    /// <summary>Settings' Developer Mode, which unlocks the Simple | Advanced switch. Someone already in Advanced mode has it on
+    /// (<see cref="Load"/>).</summary>
+    public bool? DeveloperMode { get; set; }
     [JsonIgnore]
-    public bool Advanced => AdvancedMode == true;
-    /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>).</summary>
+    public bool Developer => DeveloperMode == true;
+    [JsonIgnore]
+    public bool Advanced => Developer && AdvancedMode == true;
+    /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>); on a release install, a
+    /// newer release shows the update card.</summary>
     public bool KeepUpToDate { get; set; } = true;
     /// <summary>When Play last looked for an update of LocalExile.</summary>
     public DateTimeOffset? LastUpdateCheck { get; set; }
@@ -74,10 +80,11 @@ sealed class Settings
             {
                 var saved = JsonSerializer.Deserialize<Settings>(System.IO.File.ReadAllText(File), Options) ?? new();
                 saved.AdvancedMode ??= true;
+                saved.DeveloperMode ??= saved.AdvancedMode == true;
                 return saved;
             }
         }
-        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true }; }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true, DeveloperMode = true }; }
         return Imported();
     }
 
@@ -121,6 +128,7 @@ sealed class Settings
         }
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException or InvalidDataException) { }
         settings.AdvancedMode ??= false;
+        settings.DeveloperMode ??= settings.AdvancedMode == true;
         return settings;
     }
 
