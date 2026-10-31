@@ -117,3 +117,16 @@ Remember off. A one-time Exit left `AlwaysAskOnClose=true` persisted. Original o
 same SHA-256 recorded above. Screenshots are in `.local/close-ux-review/`: `dialog-tray.png`, `dialog-exit.png`, `settings.png`.
 No real game/server stop was requested. Explorer restart, sign-out, physical notification-area overflow interaction,
 screen-reader narration and mixed-monitor placement remain outside these checks.
+
+### Updated portable review package
+
+- Clean package source: `29325dfd631088a80e01cc188b71fd73ccce7f0f`.
+- ZIP: `.local/releases/29325df-20261031-005539-ceceebf7/Waypoint-0.6.3-win-x64.zip`.
+- SHA-256: `d169646c502d53dc00323f6c865f9a1cc33a669fa2075647dfb49e0768a19a1d`.
+- External EXE: `F:\Waypoint Release Validation\0.6.3-review-29325df\Waypoint\Waypoint.exe`.
+- The actual ZIP passed all 415 payload size/hash, branding/version, platform/runtime/license, Russian satellite and
+  no-extra/private-files checks. Settings and the prompt were inspected in this extracted build.
+- Always ask opened the prompt with Remember unchecked. Explicitly checking Remember and applying Exit wrote
+  `AlwaysAskOnClose=false`, `CloseBehaviorConfirmed=true`, and preserved Exit/leave-services defaults. The process
+  exited normally. Original owner settings were restored byte-for-byte and the updated package reopened for review.
+- This supersedes the initial 0.6.3 review package above. No push, publication or real service shutdown was performed.
