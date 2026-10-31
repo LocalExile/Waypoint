@@ -30,6 +30,7 @@ public partial class ControlTab : UserControl
         NoExtract.IsChecked = shared.Settings.NoExtract;
         HotReload.IsChecked = shared.Settings.HotReload;
         TrayWhileGame.IsChecked = shared.Settings.TrayWhileGameRuns;
+        CheckAtStart.IsChecked = shared.Settings.CheckForUpdates;
         ServerFolder.Text = Environment.CurrentDirectory;
         ServerFolder.ToolTip = Environment.CurrentDirectory;
         shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() => ShowServices(samples));
@@ -187,5 +188,17 @@ public partial class ControlTab : UserControl
     {
         if (_shared.IsLiveRunning) { RunState.Text = "live.ps1 is running; change the server when it is done."; return; }
         App.SwitchServer(Window.GetWindow(this), _shared.Settings);
+    }
+
+    /// <summary>The window looks for a release (MainWindow, Updates.cs).</summary>
+    internal event Action? CheckForUpdatesRequested;
+
+    void CheckUpdates(object sender, RoutedEventArgs e) => CheckForUpdatesRequested?.Invoke();
+
+    void CheckAtStartChanged(object sender, RoutedEventArgs e)
+    {
+        if (_shared is null) return;
+        _shared.Settings.CheckForUpdates = CheckAtStart.IsChecked == true;
+        _shared.Settings.Save();
     }
 }

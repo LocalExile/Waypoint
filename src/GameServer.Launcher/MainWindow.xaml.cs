@@ -27,7 +27,68 @@ public partial class MainWindow : Window
         _tray.ExitRequested += () => { ShowFromTray(); Close(); };
         _shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() =>
             ClientSeen(samples.Any(s => s.Service == Service.Client && s.Running)));
+
+        Title = Updates.IsReleaseBuild ? $"LocalExile Launcher {Updates.Current}" : "LocalExile Launcher (built from source)";
+        Updates.CleanUp();
+        Control.CheckForUpdatesRequested += () => _ = CheckForUpdates(manual: true);
+        if (_shared.Settings.CheckForUpdates && Updates.IsReleaseBuild) Loaded += (_, _) => _ = CheckForUpdates(manual: false);
     }
+
+    Release? _release;
+
+    /// <summary>Looks for a newer release and shows the bar when there is one. At startup quietly (no network, no
+    /// release: nothing to say); asked for, it says what it found.</summary>
+    async Task CheckForUpdates(bool manual)
+    {
+        try
+        {
+            _release = await Updates.CheckAsync();
+            if (_release is not null)
+            {
+                UpdateText.Text = $"LocalExile Launcher {_release.Version} is available (this is {(Updates.IsReleaseBuild ? Updates.Current.ToString() : "a build from source")}).";
+                UpdateNow.IsEnabled = Updates.RunningExe is not null;
+                UpdateNow.ToolTip = Updates.RunningExe is null ? "Only the published LocalExileLauncher.exe updates itself" : null;
+                UpdateBar.Visibility = Visibility.Visible;
+            }
+            else if (manual)
+                MessageBox.Show(this, $"No newer release than {(Updates.IsReleaseBuild ? Updates.Current.ToString() : "this build from source")}.", "LocalExile Launcher");
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+        {
+            _shared.Logs.Write($"update check failed: {ex.Message}", Severity.Warning);
+            if (manual) MessageBox.Show(this, $"Could not check for updates: {ex.Message}", "LocalExile Launcher");
+        }
+    }
+
+    async void UpdateClicked(object sender, RoutedEventArgs e)
+    {
+        if (_release is null) return;
+        if (MessageBox.Show(this, $"Download and install LocalExile Launcher {_release.Version}? The launcher restarts; the servers and the game keep running.",
+            "LocalExile Launcher", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
+        UpdateNow.IsEnabled = false;
+        try
+        {
+            await Updates.ApplyAsync(_release, new Progress<string>(text => UpdateText.Text = text));
+            // The new launcher runs: this one closes without asking about the servers.
+            _closing = true;
+            Close();
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or IOException
+            or UnauthorizedAccessException or InvalidOperationException)
+        {
+            UpdateNow.IsEnabled = true;
+            UpdateText.Text = $"The update failed: {ex.Message}";
+            _shared.Logs.Write($"update failed: {ex.Message}", Severity.Error);
+        }
+    }
+
+    void ReleasePageClicked(object sender, RoutedEventArgs e)
+    {
+        if (_release?.Page is { Length: > 0 } page)
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(page) { UseShellExecute = true })?.Dispose();
+    }
+
+    void LaterClicked(object sender, RoutedEventArgs e) => UpdateBar.Visibility = Visibility.Collapsed;
 
     /// <summary>A client that starts sends the launcher to the tray; when no client is left it comes back. A client that
     /// Play closes and starts again (one live.ps1 run) keeps it in the tray, and a launcher opened while the game already

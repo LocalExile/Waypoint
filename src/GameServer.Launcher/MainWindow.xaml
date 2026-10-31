@@ -4,11 +4,25 @@
         xmlns:l="clr-namespace:GameServer.Launcher"
         Title="LocalExile Launcher" Width="1180" Height="780" MinWidth="820" MinHeight="520"
         WindowStartupLocation="CenterScreen">
-    <TabControl x:Name="Tabs" Margin="6">
-        <TabItem Header="Control"><l:ControlTab x:Name="Control" /></TabItem>
-        <TabItem Header="Performance"><l:PerformanceTab x:Name="Performance" /></TabItem>
-        <TabItem Header="Logs"><l:LogsTab x:Name="LogsView" /></TabItem>
-        <TabItem Header="Accounts"><l:AccountsTab x:Name="Accounts" /></TabItem>
-        <TabItem Header="Console"><l:ConsoleTab x:Name="ConsoleView" /></TabItem>
-    </TabControl>
+    <DockPanel>
+        <!-- A newer release: shown when the check finds one (Updates.cs). -->
+        <Border x:Name="UpdateBar" DockPanel.Dock="Top" Visibility="Collapsed" Background="#E3F2FD" BorderBrush="#90CAF9"
+                BorderThickness="0,0,0,1" Padding="12,7">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button x:Name="UpdateNow" Style="{StaticResource Go}" Content="Update now" Click="UpdateClicked" Margin="0,0,6,0" />
+                    <Button Style="{StaticResource Quiet}" Content="What's new" Click="ReleasePageClicked" Margin="0,0,6,0" />
+                    <Button Style="{StaticResource Quiet}" Content="Later" Click="LaterClicked" />
+                </StackPanel>
+                <TextBlock x:Name="UpdateText" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#0D47A1" TextWrapping="Wrap" />
+            </DockPanel>
+        </Border>
+        <TabControl x:Name="Tabs" Margin="6">
+            <TabItem Header="Control"><l:ControlTab x:Name="Control" /></TabItem>
+            <TabItem Header="Performance"><l:PerformanceTab x:Name="Performance" /></TabItem>
+            <TabItem Header="Logs"><l:LogsTab x:Name="LogsView" /></TabItem>
+            <TabItem Header="Accounts"><l:AccountsTab x:Name="Accounts" /></TabItem>
+            <TabItem Header="Console"><l:ConsoleTab x:Name="ConsoleView" /></TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>

@@ -12,6 +12,35 @@ The launcher references no server project. It drives the checkout through what t
 (`accounts`, `register`, `create_character`), the client control bridge and the server's logs. A checkout without them
 (older than the server's launcher hooks) shows as too old in the Setup list.
 
+## Releases and updates
+
+A release is a git tag `v<major>.<minor>.<patch>` pushed to GitHub. The release workflow
+(`.github/workflows/release.yml`) runs the tests, publishes `LocalExileLauncher.exe` with the tag's version
+(`-p:Version`), writes its SHA-256 to `LocalExileLauncher.exe.sha256`, and attaches both to a GitHub release of the tag
+with generated notes. A tag that is not `v1.2.3` fails the workflow. The CI workflow (`ci.yml`) builds and tests every
+push to `main` and every pull request.
+
+```powershell
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The version shows in the window's title. A build from source is 0.0.0 ("built from source") and never offers updates.
+
+A release build asks GitHub's public API for the latest release of `Updates.Repository` when it starts (the Control
+tab's **at start**; **Check for updates** asks at once and says what it found). A newer version shows a bar at the
+top of the window. **Update now**, after a confirmation:
+
+1. downloads the release's `.sha256`, then its exe beside the running one (`LocalExileLauncher.exe.new`);
+2. refuses an exe whose SHA-256 differs, changing nothing;
+3. renames the running exe to `.old` (Windows lets a running exe be renamed, not replaced) and gives the new one its
+   name, renaming the old one back if that fails;
+4. starts the new launcher and closes this one without asking about the servers, which keep running;
+5. the new launcher deletes the `.old` when it starts.
+
+Only the published single-file exe updates itself; under `dotnet run` the bar offers the release page only. A transferred
+repository's old name keeps answering, so builds made before a transfer still find the releases.
+
 ## Build and run
 
 ```powershell
@@ -142,7 +171,9 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `DevHost.cs`, `AccountList.cs` | the dev host and its account list |
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon, the game's icon from the checkout's client copy) |
+| `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update bar |
 
 Tests: `tests/GameServer.Launcher.Tests` (the `live.ps1` command lines, the server folder, following logs, severities,
-command and argument suggestions, the dev host's account list, finding the services, counter payloads, chart scales).
+command and argument suggestions, the dev host's account list, finding the services, versions and releases, counter
+payloads, chart scales).
 The server's side of these hooks has its own tests there (`ChatCommandCatalogTests`, `HostTests`).

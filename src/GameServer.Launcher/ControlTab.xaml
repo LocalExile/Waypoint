@@ -160,6 +160,9 @@
                         <Button Content="Check again" Click="CheckSetup" />
                         <Button Content="Game data" Click="CheckData" ToolTip="extract-data.ps1 -List: which extracted files are missing or stale" />
                         <Button Content="Open logs folder" Click="OpenLogs" />
+                        <Button Content="Check for updates" Click="CheckUpdates" ToolTip="Look for a newer launcher release on GitHub" />
+                        <CheckBox x:Name="CheckAtStart" Content="at start" Checked="CheckAtStartChanged" Unchecked="CheckAtStartChanged"
+                                  ToolTip="Look for a newer launcher release whenever the launcher starts (release builds)" />
                     </WrapPanel>
                     <ItemsControl x:Name="SetupList">
                         <ItemsControl.ItemTemplate>

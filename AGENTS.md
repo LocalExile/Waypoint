@@ -26,3 +26,5 @@ git history and rules: the server's are in its `AGENTS.md`.
 - **Keep `dotnet build LocalExileLauncher.slnx` warning-free and `dotnet test LocalExileLauncher.slnx` passing**, and
   check a change in the running launcher against a real checkout before calling it done.
 - **Keep [docs/launcher.md](docs/launcher.md) current** in the same change: what a button or tab does and how.
+- **Releases come only from a `v<major>.<minor>.<patch>` tag** (the release workflow builds and publishes them). Never
+  attach a locally built exe to a release: the launcher's self-update trusts the published SHA-256 next to it.

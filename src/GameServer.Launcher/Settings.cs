@@ -13,6 +13,8 @@ sealed class Settings
     public bool NoExtract { get; set; }
     /// <summary>The Gateway under `dotnet watch` (live.ps1's default); off passes -NoHotReload.</summary>
     public bool HotReload { get; set; } = true;
+    /// <summary>Look for a newer release at startup (a release build only).</summary>
+    public bool CheckForUpdates { get; set; } = true;
     /// <summary>Hide in the tray while the game client runs, and come back when it closes.</summary>
     public bool TrayWhileGameRuns { get; set; } = true;
     /// <summary>Pinned console lines, shown as buttons.</summary>
