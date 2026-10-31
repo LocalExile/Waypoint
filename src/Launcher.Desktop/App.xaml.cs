@@ -1,49 +1,62 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
+using Launcher.Core;
+using Microsoft.Win32;
 
 namespace Launcher.Desktop;
 
 public partial class App : Application
 {
-    readonly Dictionary<string, Brush> darkBrushes = [];
+    public AppearanceSettings Appearance { get; private set; } = new();
+    bool contrast;
+    public bool SystemLight { get; private set; }
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        ApplyContrast(SystemParameters.HighContrast);
+        contrast = SystemParameters.HighContrast;
+        SystemLight = ReadSystemLight();
+        ApplyAppearance(Appearance);
         SystemParameters.StaticPropertyChanged += SystemSettingChanged;
+        SystemEvents.UserPreferenceChanged += UserPreferenceChanged;
         base.OnStartup(e);
         // Explicit startup also lets in-process checks supply an unshown fixture window
         // before pumping bindings, without starting a second window and its runtime timers.
         if (MainWindow is null) new MainWindow().Show();
     }
 
+    public static bool ReadSystemLight()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+            return key?.GetValue("AppsUseLightTheme") is not int value || value != 0;
+        }
+        catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or System.IO.IOException) { return false; }
+    }
+    void UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e) => Dispatcher.BeginInvoke(new Action(RefreshSystemAppearance));
     void SystemSettingChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SystemParameters.HighContrast))
-            Dispatcher.Invoke(() => ApplyContrast(SystemParameters.HighContrast));
+        if (e.PropertyName is nameof(SystemParameters.HighContrast) or nameof(SystemParameters.ClientAreaAnimation))
+            Dispatcher.BeginInvoke(new Action(RefreshSystemAppearance));
     }
-
-    public void ApplyContrast(bool enabled)
+    void RefreshSystemAppearance()
     {
-        if (darkBrushes.Count == 0)
-            foreach (var key in Resources.Keys.OfType<string>())
-                if (Resources[key] is Brush brush) darkBrushes[key] = brush;
-        if (!enabled)
-        {
-            foreach (var pair in darkBrushes) Resources[pair.Key] = pair.Value;
-            return;
-        }
-        foreach (string key in new[] { "Background", "Sidebar", "Surface", "StatusSurface", "AccentSurface" }) Resources[key] = SystemColors.WindowBrush;
-        foreach (string key in new[] { "Text", "Muted", "Outline", "Error", "BadgeText" }) Resources[key] = SystemColors.WindowTextBrush;
-        foreach (string key in new[] { "ControlSurface", "BadgeSurface" }) Resources[key] = SystemColors.ControlBrush;
-        foreach (string key in new[] { "Accent", "SelectedSurface", "HoverSurface" }) Resources[key] = SystemColors.HighlightBrush;
-        foreach (string key in new[] { "AccentText", "SelectedText" }) Resources[key] = SystemColors.HighlightTextBrush;
+        SystemLight = ReadSystemLight();
+        contrast = SystemParameters.HighContrast;
+        ApplyAppearance(Appearance);
     }
+    public void ApplyAppearance(AppearanceSettings? settings)
+    {
+        Appearance = ThemePalette.Normalize(settings);
+        ThemeResources.Apply(Resources, Appearance, SystemLight, contrast);
+    }
+    public void ApplyContrast(bool enabled) { contrast = enabled; ApplyAppearance(Appearance); }
 
     protected override void OnExit(ExitEventArgs e)
     {
         SystemParameters.StaticPropertyChanged -= SystemSettingChanged;
+        SystemEvents.UserPreferenceChanged -= UserPreferenceChanged;
         base.OnExit(e);
     }
 }

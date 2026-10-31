@@ -27,7 +27,7 @@ public sealed class ConfirmationDialog : Window
     {
         DialogLayout.Configure(this, owner, title);
         var panel = new StackPanel { Margin = new Thickness(24) };
-        panel.Children.Add(new TextBlock { Text = title, FontSize = 22 });
+        panel.Children.Add(new TextBlock { Text = title, FontSize = ThemeResources.Font(22) });
         panel.Children.Add(new TextBlock { Text = message, Margin = new Thickness(0, 16, 0, 20) });
         var buttons = new WrapPanel();
         var proceed = new Button { Content = L.Text("Continue") };
@@ -47,7 +47,7 @@ public sealed class SetupInstructionsDialog : Window
     {
         DialogLayout.Configure(this, owner, step.DisplayName);
         var panel = new StackPanel { Margin = new Thickness(24) };
-        panel.Children.Add(new TextBlock { Text = step.DisplayName, FontSize = 22 });
+        panel.Children.Add(new TextBlock { Text = step.DisplayName, FontSize = ThemeResources.Font(22) });
         panel.Children.Add(new TextBlock { Text = step.Instructions, Margin = new Thickness(0, 16, 0, 16) });
         panel.Children.Add(new TextBlock { Text = L.Text("Selected checkout: ") + root, Margin = new Thickness(0, 0, 0, 18) });
         var buttons = new WrapPanel();
@@ -66,7 +66,7 @@ public sealed class CreateAccountDialog : Window
     {
         DialogLayout.Configure(this, owner, L.Text("Create a LocalExile account"));
         var panel = new StackPanel { Margin = new Thickness(24) };
-        panel.Children.Add(new TextBlock { Text = L.Text("Create a local game account"), FontSize = 22 });
+        panel.Children.Add(new TextBlock { Text = L.Text("Create a local game account"), FontSize = ThemeResources.Font(22) });
         panel.Children.Add(new TextBlock { Text = L.Text("Close the game and stop services first. This uses a temporary local account service and the database below. Sign in inside the game after creation, then create your character there."), Margin = new Thickness(0, 12, 0, 12) });
         panel.Children.Add(new TextBlock { Text = database, Margin = new Thickness(0, 0, 0, 16) });
         panel.Children.Add(new TextBlock { Text = L.Text("Account name (3–32 letters, digits, _ or -)") });
@@ -111,7 +111,7 @@ public sealed class DiagnosticPreviewDialog : Window
         namesPanel.Children.Add(names);
         Grid.SetRow(namesPanel, 1); grid.Children.Add(namesPanel);
         var preview = new TextBox { IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.NoWrap,
-            FontFamily = new System.Windows.Media.FontFamily("Consolas"), FontSize = 12,
+            FontFamily = new System.Windows.Media.FontFamily("Consolas"), FontSize = ThemeResources.Font(12),
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto };
         preview.Text = create([]);
         names.TextChanged += (_, _) => preview.Text = create(names.Text.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));

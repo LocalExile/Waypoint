@@ -64,6 +64,7 @@ public partial class MainWindow : Window
         LoadDevelopmentPreferences();
         InitializeInteraction();
         InitializeWindowFrame();
+        InitializeAppearance();
         ApplyLanguage();
         Pages.SelectionChanged += async (sender, e) =>
         {

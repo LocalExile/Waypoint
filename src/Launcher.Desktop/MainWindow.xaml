@@ -7,10 +7,10 @@
     <DataTemplate x:Key="SetupRequirementTemplate">
       <Grid Margin="0,0,0,12">
         <Grid.ColumnDefinitions><ColumnDefinition Width="25"/><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding Symbol}" Foreground="{DynamicResource Accent}" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Symbol}" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource Success}"/><Style.Triggers><DataTrigger Binding="{Binding Ready}" Value="False"><Setter Property="Foreground" Value="{DynamicResource Warning}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
         <TextBlock Grid.Column="1" Text="{Binding DisplayName}" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="2" Text="{Binding DisplayDetail}" Style="{StaticResource Caption}" Margin="0,0,12,0" VerticalAlignment="Center"/>
-        <Button Grid.Column="3" Content="{Binding ActionLabel}" Tag="{Binding}" Click="SetupStep_Click" Padding="10,7" FontSize="12" Margin="0"/>
+        <Button Grid.Column="3" Content="{Binding ActionLabel}" Tag="{Binding}" Click="SetupStep_Click" Padding="10,7" FontSize="{DynamicResource Font12}" Margin="0"/>
       </Grid>
     </DataTemplate>
   </Window.Resources>
@@ -32,16 +32,16 @@
                 </Grid>
               </Viewbox>
             </Border>
-            <TextBlock x:Name="BrandName" FontSize="23" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock x:Name="BrandName" FontSize="23" FontFamily="Segoe UI" FontWeight="SemiBold" VerticalAlignment="Center"/>
           </DockPanel>
-          <TextBlock x:Name="BrandSubtitle" Style="{StaticResource Caption}"/>
+          <TextBlock x:Name="BrandSubtitle" Style="{StaticResource Caption}" Visibility="{DynamicResource BrandSubtitleVisibility}"/>
         </StackPanel>
-        <StackPanel DockPanel.Dock="Bottom" Margin="8,16,8,0">
-          <TextBlock Text="{local:Loc Text_4f4bcbb48773}" Style="{StaticResource Caption}" FontSize="11"/>
-          <TextBlock x:Name="SidebarBranch" Text="{local:Loc Text_1ff335e35fbf}" Margin="0,6,0,14"/>
+        <Expander x:Name="SidebarDetails" DockPanel.Dock="Bottom" Header="{local:Loc Text_45989de49fb7}" IsExpanded="{DynamicResource SidebarDetailsExpanded}" Margin="8,16,8,0"><StackPanel Margin="0,8,0,0">
+          <TextBlock Text="{local:Loc Text_4f4bcbb48773}" Style="{StaticResource Caption}" FontSize="{DynamicResource Font11}"/>
+          <TextBlock x:Name="SidebarBranch" Text="{local:Loc Text_1ff335e35fbf}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Margin="0,6,0,14"/>
           <TextBlock x:Name="VersionLabel" Style="{StaticResource Caption}"/>
           <TextBlock Text="{local:Loc Text_388a0721496d}" Style="{StaticResource Caption}" Margin="0,8,0,0"/>
-        </StackPanel>
+        </StackPanel></Expander>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
           <ListBox x:Name="Navigation" AutomationProperties.Name="{local:Loc Text_db03e3055c5a}" SelectedIndex="{Binding SelectedIndex, ElementName=Pages, Mode=TwoWay}"
                    BorderThickness="0" Background="Transparent" KeyboardNavigation.TabNavigation="Once" ToolTip="{local:Loc Text_ea41ce555d5c}">
@@ -75,16 +75,16 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <TextBlock x:Name="WorkspaceTitle" Text="{local:Loc Text_87bb59ba2f92}" FontSize="27" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,16,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+          <TextBlock x:Name="WorkspaceTitle" Text="{local:Loc Text_87bb59ba2f92}" FontSize="{DynamicResource Font27}" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,16,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
           <TextBlock x:Name="CheckoutLabel" Text="{local:Loc Text_eb24997abb6c}" Style="{StaticResource Caption}" Margin="0,8,16,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="{local:Loc Text_279d233b3ee4}" Click="ChangeLocation_Click"/><Button Content="{local:Loc Text_0e9161011702}" Click="Refresh_Click" Margin="0" ToolTip="{local:Loc Text_0fa5ec4ebbe9}"/></StackPanel>
       </Grid>
       <Border x:Name="StatusBanner" Grid.Row="1" Background="{DynamicResource StatusSurface}" BorderBrush="{DynamicResource Outline}" BorderThickness="1" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
         <DockPanel>
-          <ProgressBar x:Name="BusyProgress" DockPanel.Dock="Right" Width="65" Height="4" IsIndeterminate="True" Visibility="Collapsed" Margin="16,0,0,0"/>
+          <ProgressBar x:Name="BusyProgress" DockPanel.Dock="Right" Width="65" Height="4" IsIndeterminate="{DynamicResource AnimateProgress}" Visibility="Collapsed" Margin="16,0,0,0"/>
           <StackPanel>
-            <TextBlock x:Name="StatusLabel" AutomationProperties.LiveSetting="Polite" Text="{local:Loc Text_fca91d59bc5a}" FontSize="13"/>
+            <TextBlock x:Name="StatusLabel" AutomationProperties.LiveSetting="Polite" Text="{local:Loc Text_fca91d59bc5a}" FontSize="{DynamicResource Font13}"/>
             <TextBlock x:Name="OperationDetail" Style="{StaticResource Caption}" Visibility="Collapsed" Margin="0,6,0,0"/>
             <WrapPanel x:Name="FailureActions" Visibility="Collapsed" Margin="0,10,0,0">
               <Button Content="{local:Loc Text_b588f80b6484}" Click="OpenOperationLog_Click" Padding="10,6"/>
@@ -106,7 +106,7 @@
                       <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel>
-                      <TextBlock x:Name="ReadinessTitle" Text="{local:Loc Text_995c08ae21a7}" FontSize="21" FontWeight="SemiBold"/>
+                      <TextBlock x:Name="ReadinessTitle" Text="{local:Loc Text_995c08ae21a7}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                       <TextBlock x:Name="ReadinessLabel" Text="{local:Loc Text_edab1377682d}" Foreground="{DynamicResource Muted}" Margin="0,6,20,0"/>
                     </StackPanel>
                     <Button x:Name="PlayButton" IsEnabled="False" Grid.Column="1" Content="{local:Loc Text_b7ba5c1d1a1a}" Style="{StaticResource Primary}" Click="Play_Click" Padding="32,14" Margin="0"/>
@@ -159,18 +159,18 @@
         <TabItem Header="{local:Loc Text_7013af4c42fe}" x:Name="SetupPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
             <Border Style="{StaticResource Card}"><StackPanel>
-              <TextBlock Text="{local:Loc Text_f64a45cd7d47}" FontSize="21"/>
+              <TextBlock Text="{local:Loc Text_f64a45cd7d47}" FontSize="{DynamicResource Font21}"/>
               <TextBlock Text="{local:Loc Text_c7353185b802}" Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
               <WrapPanel><Button Content="{local:Loc Text_fa1e08557af3}" Click="FindRepository_Click"/><Button Content="{local:Loc Text_c032d8c45d13}" Click="ShowSettings_Click"/><Button Content="{local:Loc Text_d28f5e178579}" Click="OpenClient_Click"/><Button Content="{local:Loc Text_8d9f188ce712}" Click="OpenGuide_Click"/></WrapPanel>
             </StackPanel></Border>
             <Border Style="{StaticResource Card}"><StackPanel>
-              <TextBlock Text="{local:Loc Text_40e2fbc81bf9}" FontSize="18"/>
+              <TextBlock Text="{local:Loc Text_40e2fbc81bf9}" FontSize="{DynamicResource Font18}"/>
               <TextBlock Text="{local:Loc Text_b3f384f14d32}" Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
               <WrapPanel><Button Content="{local:Loc Text_2fad023a9cbb}" Click="Prepare_Click"/><Button Content="{local:Loc Text_58fc561ca474}" Click="Dependencies_Click"/><Button Content="{local:Loc Text_796ab9431174}" Click="Refresh_Click"/></WrapPanel>
             </StackPanel></Border>
             <ItemsControl x:Name="SetupRequirementList" ItemTemplate="{StaticResource SetupRequirementTemplate}"/>
             <Border Style="{StaticResource Card}" Margin="0,12,0,16"><StackPanel>
-              <TextBlock Text="{local:Loc Text_962ebe576545}" FontSize="18"/>
+              <TextBlock Text="{local:Loc Text_962ebe576545}" FontSize="{DynamicResource Font18}"/>
               <TextBlock Text="{local:Loc Text_7e64af709bfd}" Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
               <Button Content="{local:Loc Text_c7ece59b9c12}" Click="CreateAccount_Click" HorizontalAlignment="Left"/>
             </StackPanel></Border>
@@ -180,7 +180,7 @@
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="{local:Loc Text_6561a8925313}" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="{local:Loc Text_6561a8925313}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                 <TextBlock Text="{local:Loc Text_5c520be69184}" Foreground="{DynamicResource Muted}" Margin="0,8,0,12"/>
                 <WrapPanel Margin="0,0,0,12"><Button Content="{local:Loc Text_5a624ed29811}" Click="RefreshSources_Click"/><Button Content="{local:Loc Text_16eaede014f9}" Click="FetchSources_Click"/></WrapPanel>
                 <TextBlock x:Name="SourcesStatus" Text="{local:Loc Text_1c05492dd6ed}" Style="{StaticResource Caption}" Margin="0,0,0,10"/>
@@ -201,9 +201,9 @@
                 <TextBlock x:Name="PrValidation" Foreground="{DynamicResource Error}" Visibility="Collapsed" AutomationProperties.LiveSetting="Polite" Margin="0,6,0,0"/>
               </StackPanel></Border>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="{local:Loc Text_4859a908b868}" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="{local:Loc Text_4859a908b868}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                 <CheckBox x:Name="HotReloadBox" Content="{local:Loc Text_5b72b116c129}" Checked="HotReloadPreference_Changed" Unchecked="HotReloadPreference_Changed"/>
-                <TextBlock x:Name="HotReloadStateLabel" FontSize="16" Foreground="{DynamicResource Accent}"/>
+                <TextBlock x:Name="HotReloadStateLabel" FontSize="{DynamicResource Font16}" Foreground="{DynamicResource Accent}"/>
                 <TextBlock x:Name="HotReloadDetail" Style="{StaticResource Caption}" Margin="0,8,0,12"/>
                 <TextBlock Text="{local:Loc Text_22a62a64de6a}" Foreground="{DynamicResource Muted}"/>
                 <WrapPanel Margin="0,14,0,0"><Button Content="{local:Loc Text_d4d8fd81a610}" Click="GatewayLog_Click"/><Button Content="{local:Loc Text_3506d661965b}" Click="RestartGateway_Click"/><Button Content="{local:Loc Text_635484c1543e}" Click="ReloadData_Click"/></WrapPanel>
@@ -211,7 +211,7 @@
               </StackPanel></Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="{local:Loc Text_47712109b90c}" FontSize="21" FontWeight="SemiBold"/>
+                  <TextBlock Text="{local:Loc Text_47712109b90c}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                   <TextBlock Text="{local:Loc Text_91bd172009ab}" Foreground="{DynamicResource Muted}" Margin="0,8,0,20"/>
                   <TextBlock Text="{local:Loc Text_d10cdbf98c85}" Style="{StaticResource Caption}"/>
                   <local:CommitText x:Name="SourceIdentity" Margin="0,8,0,18"/>
@@ -226,7 +226,7 @@
               </Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="{local:Loc Text_9e471951a1b4}" FontSize="18"/>
+                  <TextBlock Text="{local:Loc Text_9e471951a1b4}" FontSize="{DynamicResource Font18}"/>
                   <TextBlock x:Name="EnvironmentIdentity" Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
                 </StackPanel>
               </Border>
@@ -234,10 +234,11 @@
           </ScrollViewer>
         </TabItem>
         <TabItem Header="{local:Loc Text_6e58b577a084}" x:Name="ModsPage">
+          <local:WorkspaceScroll MinimumContentHeight="{DynamicResource WorkspaceMinHeight}">
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <StackPanel>
-              <TextBlock Text="{local:Loc Text_6e58b577a084}" FontSize="22" FontWeight="SemiBold"/>
+              <TextBlock Text="{local:Loc Text_6e58b577a084}" FontSize="{DynamicResource Font22}" FontWeight="SemiBold"/>
               <TextBlock x:Name="ModsStatus" Text="{local:Loc Text_95b58be11552}" Foreground="{DynamicResource Muted}" Margin="0,6,0,10"/>
             </StackPanel>
             <WrapPanel Grid.Row="1" Margin="0,0,0,8">
@@ -268,7 +269,7 @@
               <Border Grid.Column="2" Style="{StaticResource Card}" Margin="0" Padding="16">
                 <DockPanel>
                   <StackPanel DockPanel.Dock="Top">
-                    <TextBlock x:Name="SelectedModTitle" Text="{local:Loc Text_245c1078b5e7}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Name="SelectedModTitle" Text="{local:Loc Text_245c1078b5e7}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <WrapPanel>
                       <Button x:Name="ToggleModButton" Content="{local:Loc Text_cfa63e97e7e5}" Click="ToggleMod_Click" IsEnabled="False"/>
                       <Button x:Name="BuildModButton" Content="{local:Loc Text_9777bf4aa207}" Click="BuildMod_Click" IsEnabled="False"/>
@@ -297,12 +298,14 @@
               </Expander>
             </StackPanel>
           </Grid>
+                  </local:WorkspaceScroll>
         </TabItem>
         <TabItem Header="{local:Loc Text_3334fee2c77f}" x:Name="BackupsPage">
+          <local:WorkspaceScroll MinimumContentHeight="{DynamicResource WorkspaceMinHeight}">
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <StackPanel>
-              <TextBlock Text="{local:Loc Text_58b1306d2f1d}" FontSize="22" FontWeight="SemiBold"/>
+              <TextBlock Text="{local:Loc Text_58b1306d2f1d}" FontSize="{DynamicResource Font22}" FontWeight="SemiBold"/>
               <TextBlock Text="{local:Loc Text_5cc72d6218d1}" Foreground="{DynamicResource Muted}" Margin="0,6,0,12"/>
             </StackPanel>
             <StackPanel Grid.Row="1">
@@ -324,7 +327,7 @@
               <Border Grid.Column="2" Style="{StaticResource Card}" Margin="0" Padding="16">
                 <DockPanel>
                   <StackPanel DockPanel.Dock="Top">
-                    <TextBlock Text="{local:Loc Text_a501a1aed56f}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock Text="{local:Loc Text_a501a1aed56f}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <WrapPanel><Button x:Name="RestoreBackupButton" Content="{local:Loc Text_1ac6734160c8}" Click="RestoreBackup_Click" IsEnabled="False"/><Button x:Name="DeleteBackupButton" Content="{local:Loc Text_74d9a7c8a656}" Click="DeleteBackup_Click" IsEnabled="False"/></WrapPanel>
                     <Button x:Name="RestoreModChoicesButton" Content="{local:Loc Text_8bc9335f3b83}" Click="RestoreModChoices_Click" IsEnabled="False" HorizontalAlignment="Left"/>
                     <TextBlock x:Name="BackupActionHint" Style="{StaticResource Caption}" Margin="0,2,0,12"/>
@@ -342,12 +345,13 @@
               </Expander>
             </StackPanel>
           </Grid>
+                  </local:WorkspaceScroll>
         </TabItem>
         <TabItem Header="{local:Loc Text_442aded87a55}">
           <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
             <Border Style="{StaticResource Card}">
               <StackPanel>
-                <TextBlock Text="{local:Loc Text_3bdee2629899}" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="{local:Loc Text_3bdee2629899}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                 <TextBlock Text="{local:Loc Text_64fe832d62f6}" Foreground="{DynamicResource Muted}" Margin="0,8,0,18"/>
                 <ItemsControl x:Name="PerformanceList" AutomationProperties.Name="{local:Loc Text_153565a001f1}">
                   <ItemsControl.ItemTemplate>
@@ -380,7 +384,7 @@
               <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel>
-              <TextBlock x:Name="SelectedLogLabel" Text="{local:Loc Text_358cc201f87d}" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12"/>
+              <TextBlock x:Name="SelectedLogLabel" Text="{local:Loc Text_358cc201f87d}" FontSize="{DynamicResource Font22}" FontWeight="SemiBold" Margin="0,0,0,12"/>
               <WrapPanel x:Name="LogSources" Margin="0,0,0,4">
                 <RadioButton Content="{local:Loc Text_358cc201f87d}" Tag="Operations" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click" IsChecked="True"/>
                 <RadioButton Content="{local:Loc Text_7e345470de24}" Tag="Patch" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
@@ -392,14 +396,20 @@
               </WrapPanel>
             </StackPanel>
             <DockPanel Grid.Row="1" Margin="0,0,0,12"><TextBlock Text="{local:Loc Text_49c266baaaa7}" Margin="0,0,10,0" VerticalAlignment="Center"/><CheckBox x:Name="WarningsOnlyBox" DockPanel.Dock="Right" Content="{local:Loc Text_176b219dca96}" Margin="14,0,0,0" Checked="LogFilter_Changed" Unchecked="LogFilter_Changed" VerticalAlignment="Center"/><TextBox x:Name="LogSearchBox" AutomationProperties.Name="{local:Loc Text_f0911b7e2f8c}" TextChanged="LogSearch_Changed" ToolTip="{local:Loc Text_64a576b180a8}"/></DockPanel>
-            <TextBox x:Name="LogText" AutomationProperties.Name="{local:Loc Text_1826368b30f4}" Grid.Row="2" IsReadOnly="True" FontFamily="Cascadia Mono,Consolas" FontSize="12" TextWrapping="NoWrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+            <TextBox x:Name="LogText" AutomationProperties.Name="{local:Loc Text_1826368b30f4}" Grid.Row="2" IsReadOnly="True" FontFamily="Cascadia Mono,Consolas" FontSize="{DynamicResource Font12}" TextWrapping="NoWrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
           </Grid>
         </TabItem>
         <TabItem Header="{local:Loc Text_74a883a037bc}" x:Name="SettingsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="{local:Loc Text_a4fe65264ef7}" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="{local:Loc Text_9575a529260a}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
+                <TextBlock x:Name="AppearanceSummary" Margin="0,8,0,8"/>
+                <TextBlock Text="{local:Loc Text_68fce9b8e435}" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
+                <Button x:Name="AppearanceButton" Content="{local:Loc Text_afb40dbadd2e}" HorizontalAlignment="Left" Click="Appearance_Click"/>
+              </StackPanel></Border>
+              <Border Style="{StaticResource Card}"><StackPanel>
+                <TextBlock Text="{local:Loc Text_a4fe65264ef7}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                 <ListBox x:Name="LanguageBox" AutomationProperties.Name="{local:Loc Text_a4fe65264ef7}" SelectionChanged="Language_Changed" SelectedIndex="0" HorizontalAlignment="Left" Margin="0,12,0,8" KeyboardNavigation.TabNavigation="Once">
                   <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
                   <ListBoxItem Content="English" Tag="en" Padding="16,9"/>
@@ -408,7 +418,7 @@
                 <TextBlock Text="{local:Loc Text_cb284ed772cb}" Style="{StaticResource Caption}"/>
               </StackPanel></Border>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="{local:Loc Text_17f32fa1f4b5}" FontSize="21"/>
+                <TextBlock Text="{local:Loc Text_17f32fa1f4b5}" FontSize="{DynamicResource Font21}"/>
                 <TextBlock Text="{local:Loc Text_fbcaf64adc92}" Foreground="{DynamicResource Muted}" Margin="0,8,0,14"/>
                 <WrapPanel><Button x:Name="FindRepositoryButton" Content="{local:Loc Text_fa1e08557af3}" Click="FindRepository_Click"/><Button Content="{local:Loc Text_dc0a0a26052e}" Click="Browse_Click"/></WrapPanel>
                 <TextBlock x:Name="DiscoveryStatus" Text="{local:Loc Text_223e64b8fc5b}" Margin="0,14,0,0"/>
@@ -426,7 +436,7 @@
               </StackPanel></Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="{local:Loc Text_4ac147b602c9}" FontSize="21" FontWeight="SemiBold"/>
+                  <TextBlock Text="{local:Loc Text_4ac147b602c9}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                   <TextBlock Text="{local:Loc Text_fb26532d9c38}" Foreground="{DynamicResource Muted}" Margin="0,8,0,18"/>
                   <TextBlock Text="{local:Loc Text_74160bd42b82}" Margin="0,0,0,8"/>
                   <DockPanel>
@@ -444,7 +454,7 @@
               </Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="{local:Loc Text_cf47dcf7cadf}" FontSize="18"/>
+                  <TextBlock Text="{local:Loc Text_cf47dcf7cadf}" FontSize="{DynamicResource Font18}"/>
                   <TextBlock Text="{local:Loc Text_a129818ff2ac}" Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
                   <TextBlock Text="{local:Loc Text_20759152bb78}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
                 </StackPanel>

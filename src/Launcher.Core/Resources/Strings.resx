@@ -42,14 +42,23 @@
   <data xml:space="preserve" name="Text_03f25d282624">
     <value>data/login-keys.json must match the prepared client; never regenerate existing keys casually</value>
   </data>
+  <data xml:space="preserve" name="Text_03fea198cf4c">
+    <value>Main background</value>
+  </data>
   <data xml:space="preserve" name="Text_0480c77bde68">
     <value>Launch adapter</value>
+  </data>
+  <data xml:space="preserve" name="Text_0516ac3163b5">
+    <value>Colors to edit</value>
   </data>
   <data xml:space="preserve" name="Text_057c2971fa56">
     <value>Could not read local branches. Check the selected Git checkout. </value>
   </data>
   <data xml:space="preserve" name="Text_057fd24429fa">
     <value>Restart service</value>
+  </data>
+  <data xml:space="preserve" name="Text_05d3ec58206c">
+    <value>Keyboard focus</value>
   </data>
   <data xml:space="preserve" name="Text_06291e8ea32e">
     <value>Found and using: </value>
@@ -59,6 +68,9 @@
   </data>
   <data xml:space="preserve" name="Text_08ad630cfbfa">
     <value>Open backup folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_08de788b0ede">
+    <value>Hovered controls</value>
   </data>
   <data xml:space="preserve" name="Text_09a216bf0611">
     <value>Client archive</value>
@@ -87,6 +99,9 @@
   <data xml:space="preserve" name="Text_0cef0d77a2fe">
     <value>View operation output</value>
   </data>
+  <data xml:space="preserve" name="Text_0de9f358ad56">
+    <value>Borders</value>
+  </data>
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Local runtime wrapper</value>
   </data>
@@ -102,11 +117,26 @@
   <data xml:space="preserve" name="Text_10384cde3c85">
     <value>Choose and check a workspace to see its mods.</value>
   </data>
+  <data xml:space="preserve" name="Text_108040ac289a">
+    <value>Ruby</value>
+  </data>
+  <data xml:space="preserve" name="Text_10ad4c387363">
+    <value>Slate</value>
+  </data>
+  <data xml:space="preserve" name="Text_10ee94005bb9">
+    <value>Color scheme</value>
+  </data>
   <data xml:space="preserve" name="Text_1180f832c808">
     <value>Could not save preferences: </value>
   </data>
+  <data xml:space="preserve" name="Text_122b49fe8f4e">
+    <value>Appearance saved.</value>
+  </data>
   <data xml:space="preserve" name="Text_130ec7311cce">
     <value>Environment checked.</value>
+  </data>
+  <data xml:space="preserve" name="Text_13ef73c47f3e">
+    <value>Reading font</value>
   </data>
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>none</value>
@@ -147,6 +177,9 @@
   <data xml:space="preserve" name="Text_1842c8d229bc">
     <value>Gateway began listening again after the previous reload event. Sign in again if the game returned to login.</value>
   </data>
+  <data xml:space="preserve" name="Text_18dd785c42a8">
+    <value>{0} · {1} · {2}% text</value>
+  </data>
   <data xml:space="preserve" name="Text_19766ed6ccb2">
     <value>Cancel</value>
   </data>
@@ -173,6 +206,9 @@
   </data>
   <data xml:space="preserve" name="Text_1c05492dd6ed">
     <value>Load the list to browse branches and open LocalExile PRs. Switching reuses the existing client copy.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1c304451f9d9">
+    <value>Checkbox marks</value>
   </data>
   <data xml:space="preserve" name="Text_1c7e31690f17">
     <value>Install Python 3.9 or newer from python.org with its PATH option enabled. Close and reopen the launcher, then Recheck setup. Frida is optional and is not required for ordinary play.</value>
@@ -243,6 +279,9 @@
   <data xml:space="preserve" name="Text_273ebd9d8848">
     <value>Choose a mod from the list.</value>
   </data>
+  <data xml:space="preserve" name="Text_275dbda9dedb">
+    <value>Sunset</value>
+  </data>
   <data xml:space="preserve" name="Text_275f2b247724">
     <value>
 Change location above to choose somewhere else.</value>
@@ -262,6 +301,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_292a37482041">
     <value>BUILT COMPONENTS · DEBUG</value>
   </data>
+  <data xml:space="preserve" name="Text_297ef4c79b4b">
+    <value>Reduce motion</value>
+  </data>
   <data xml:space="preserve" name="Text_297fba3fb830">
     <value>Build source mods or install a local mod to create this folder.</value>
   </data>
@@ -270,6 +312,12 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_29a8131f6403">
     <value>Python 3.9+ is required for data extraction</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a1a6355ed7e">
+    <value>Ice</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a36428839a3">
+    <value>Violet</value>
   </data>
   <data xml:space="preserve" name="Text_2a43880cee01">
     <value>Preserves the existing saves and runtime settings from config/runtime.local.ps1. Adapter v1 supports literal Game_* assignments and standard local ports. Unsupported profiles fail with an explanation.</value>
@@ -295,8 +343,14 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2dcb950944f5">
     <value>Runtime status has not been confirmed.</value>
   </data>
+  <data xml:space="preserve" name="Text_2deea4664d23">
+    <value>Secondary text</value>
+  </data>
   <data xml:space="preserve" name="Text_2ee7e02cbde9">
     <value>Building checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_2f444c96f7fb">
+    <value>Stronger keyboard focus borders</value>
   </data>
   <data xml:space="preserve" name="Text_2fad023a9cbb">
     <value>Prepare local client</value>
@@ -307,6 +361,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2ff6b56154ab">
     <value>Finish setup to play</value>
   </data>
+  <data xml:space="preserve" name="Text_30cc92d87a1e">
+    <value>Monochrome</value>
+  </data>
   <data xml:space="preserve" name="Text_3131e368b220">
     <value>Checked {0:T} · process ownership and required listening ports verified locally</value>
   </data>
@@ -316,11 +373,20 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_31d524153069">
     <value>Restore Waypoint</value>
   </data>
+  <data xml:space="preserve" name="Text_31e392d1c037">
+    <value>Apply</value>
+  </data>
   <data xml:space="preserve" name="Text_31fbef162594">
     <value>Continue</value>
   </data>
+  <data xml:space="preserve" name="Text_3225a6d60db2">
+    <value>Customize the currently displayed mode. Switch Light or Dark above to edit the other set.</value>
+  </data>
   <data xml:space="preserve" name="Text_32287b2cedcb">
     <value> · Mod history recorded</value>
+  </data>
+  <data xml:space="preserve" name="Text_324b134f57c7">
+    <value>Preview</value>
   </data>
   <data xml:space="preserve" name="Text_3253dba2c477">
     <value>Switch and build</value>
@@ -341,14 +407,23 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_34a4bac9ef24">
     <value>Checking setup</value>
   </data>
+  <data xml:space="preserve" name="Text_34ada7568b73">
+    <value>Following Windows: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_3506d661965b">
     <value>Restart Gateway</value>
   </data>
   <data xml:space="preserve" name="Text_358cc201f87d">
     <value>Operations</value>
   </data>
+  <data xml:space="preserve" name="Text_35ed5fa746ff">
+    <value>Dark colors</value>
+  </data>
   <data xml:space="preserve" name="Text_367ae45f5293">
     <value>In game: /mod lists runtime status.</value>
+  </data>
+  <data xml:space="preserve" name="Text_375e15d846ce">
+    <value>Waypoint mint</value>
   </data>
   <data xml:space="preserve" name="Text_381fb2297b10">
     <value>Extracting data</value>
@@ -358,6 +433,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_38cca6bea010">
     <value>OFF</value>
+  </data>
+  <data xml:space="preserve" name="Text_3907fa7f8072">
+    <value>Appearance</value>
   </data>
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Switch</value>
@@ -370,6 +448,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_3a4633d9bdb7">
     <value>Query the running Gateway’s confirmed mod status.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a495eb5b8fb">
+    <value>Main text</value>
   </data>
   <data xml:space="preserve" name="Text_3a824789af77">
     <value> · Source at backup: </value>
@@ -405,6 +486,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_3e9648b06bc7">
     <value>Using this installation only. Credentials are not saved by the launcher.</value>
   </data>
+  <data xml:space="preserve" name="Text_3ea221ce95ba">
+    <value>Primary button text</value>
+  </data>
   <data xml:space="preserve" name="Text_3fbcbf7d0499">
     <value>Fetch completed.</value>
   </data>
@@ -432,6 +516,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_442aded87a55">
     <value>Performance</value>
   </data>
+  <data xml:space="preserve" name="Text_45989de49fb7">
+    <value>Details</value>
+  </data>
   <data xml:space="preserve" name="Text_464848ad8a15">
     <value>Checking prerequisites and the selected installation.</value>
   </data>
@@ -440,6 +527,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_46d6b84bae4a">
     <value>Git is missing or this folder has no readable Git HEAD. Manual selection still works.</value>
+  </data>
+  <data xml:space="preserve" name="Text_4700b9ee6a2f">
+    <value>Use the wheel, the arrow keys on a slider, or an exact hex color. Escape cancels this color change.</value>
   </data>
   <data xml:space="preserve" name="Text_47712109b90c">
     <value>Know what you’re running</value>
@@ -461,6 +551,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_491291cca723">
     <value>Reload selected</value>
+  </data>
+  <data xml:space="preserve" name="Text_494ca78f7374">
+    <value>Custom</value>
   </data>
   <data xml:space="preserve" name="Text_49c266baaaa7">
     <value>Search</value>
@@ -494,6 +587,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_4d2fc504a139">
     <value> · client setup needed</value>
+  </data>
+  <data xml:space="preserve" name="Text_4d7056f0e9be">
+    <value>Hue</value>
   </data>
   <data xml:space="preserve" name="Text_4df1cf29668a">
     <value>Play completed.</value>
@@ -561,6 +657,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_5663485b8c0d">
     <value>DisableMod completed.</value>
   </data>
+  <data xml:space="preserve" name="Text_56e170d33d20">
+    <value>Red–green friendly</value>
+  </data>
   <data xml:space="preserve" name="Text_5841335d26d5">
     <value>Automatic backups are off. Back up manually on Backups before changes you may want to undo.</value>
   </data>
@@ -605,6 +704,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions.</value>
   </data>
+  <data xml:space="preserve" name="Text_5e9647ccdc6e">
+    <value>Choose a part of the interface to edit. Light and dark colors are stored separately. Editing a preset creates your Custom scheme.</value>
+  </data>
   <data xml:space="preserve" name="Text_5f1b134f71ee">
     <value>
 Search limits reached; other checkouts may exist. Browse to any location.</value>
@@ -612,11 +714,20 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_5f6d5cac3804">
     <value>Backing up saves</value>
   </data>
+  <data xml:space="preserve" name="Text_5f9f3af82191">
+    <value>Selected text</value>
+  </data>
   <data xml:space="preserve" name="Text_5fa7aac5375c">
     <value>Ready</value>
   </data>
+  <data xml:space="preserve" name="Text_5fb3160f1860">
+    <value>Attention indicators</value>
+  </data>
   <data xml:space="preserve" name="Text_608f1cf89149">
     <value>Login keys</value>
+  </data>
+  <data xml:space="preserve" name="Text_60acc53f13a5">
+    <value>Dark</value>
   </data>
   <data xml:space="preserve" name="Text_60be7b4c46e1">
     <value>No LocalExile checkout found in the searched locations. Browse to your checkout instead.</value>
@@ -626,6 +737,12 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_621db8f4e9cd">
     <value>scripts/dev/live.ps1 must support -ClientOnly and -Only</value>
+  </data>
+  <data xml:space="preserve" name="Text_6249df4367d0">
+    <value>Gold</value>
+  </data>
+  <data xml:space="preserve" name="Text_62a487dde87f">
+    <value>Status banner</value>
   </data>
   <data xml:space="preserve" name="Text_62b9bdf3765e">
     <value>Setup checks · {0} need attention</value>
@@ -645,6 +762,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_635484c1543e">
     <value>Reload game-data overrides</value>
   </data>
+  <data xml:space="preserve" name="Text_641a0296a7b8">
+    <value>Accent text and icons</value>
+  </data>
   <data xml:space="preserve" name="Text_64a576b180a8">
     <value>Search selected log (case insensitive)</value>
   </data>
@@ -663,6 +783,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_66bfcf020fee">
     <value>Setup checks · all passed</value>
   </data>
+  <data xml:space="preserve" name="Text_6725e7bbcd28">
+    <value>System</value>
+  </data>
   <data xml:space="preserve" name="Text_67fdcd462dc5">
     <value>Restore saves replaces progress after confirmation. Mod choices restore separately and require Gateway stopped.</value>
   </data>
@@ -672,14 +795,26 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_688ed737c588">
     <value>Starting services</value>
   </data>
+  <data xml:space="preserve" name="Text_68a30385dbf5">
+    <value>Every color scheme supports Light, Dark and System.</value>
+  </data>
+  <data xml:space="preserve" name="Text_68fce9b8e435">
+    <value>Light, dark or Windows appearance; color schemes, custom colors and reading preferences.</value>
+  </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Closing account service</value>
   </data>
   <data xml:space="preserve" name="Text_6a3fe8876b56">
     <value>Builds</value>
   </data>
+  <data xml:space="preserve" name="Text_6a5bc51f5c88">
+    <value>Choose the font that is easiest for you to read. OpenDyslexic is included; no installation is needed. Unsupported characters use Windows font fallback.</value>
+  </data>
   <data xml:space="preserve" name="Text_6a9084025c4b">
     <value>Open folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_6aa9edcc02f1">
+    <value>Change color: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_6ae2ae6a2f07">
     <value>Bundle decompressor</value>
@@ -693,8 +828,14 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_6dbc080db4ab">
     <value>Ready to play</value>
   </data>
+  <data xml:space="preserve" name="Text_6e169a16bf03">
+    <value>Preview changes here and in the workspace. Apply saves them; Cancel restores your previous appearance.</value>
+  </data>
   <data xml:space="preserve" name="Text_6e1cc2d63cee">
     <value>Environment checked · </value>
+  </data>
+  <data xml:space="preserve" name="Text_6e2bd3d0e2c3">
+    <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Shift+R restores default appearance without changing your checkout or saves.</value>
   </data>
   <data xml:space="preserve" name="Text_6e58b577a084">
     <value>Mods</value>
@@ -738,6 +879,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_7839ccd6957a">
     <value>Using your selected checkout. Change location or search again at any time.</value>
   </data>
+  <data xml:space="preserve" name="Text_796489077045">
+    <value>Scrollbars</value>
+  </data>
   <data xml:space="preserve" name="Text_796ab9431174">
     <value>Recheck setup</value>
   </data>
@@ -753,8 +897,17 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_7b0100d4aa11">
     <value>Diagnostic report preview</value>
   </data>
+  <data xml:space="preserve" name="Text_7caa2025f375">
+    <value>Input fields</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cd52f8db23c">
+    <value>Blue–yellow friendly</value>
+  </data>
   <data xml:space="preserve" name="Text_7cd7cde68dbf">
     <value>No mods found. Build source mods or open the mods folder to add one.</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cea9dbef301">
+    <value>Close button symbol</value>
   </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Close</value>
@@ -777,11 +930,17 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_80d16534322e">
     <value>BuildMod completed.</value>
   </data>
+  <data xml:space="preserve" name="Text_80fd4dce7fd0">
+    <value>Reduced motion replaces the animated progress bar with the existing stage and elapsed-time feedback. Windows animation preferences are respected automatically.</value>
+  </data>
   <data xml:space="preserve" name="Text_813b86284864">
     <value>Start Gateway with hot reload enabled to apply compatible saved code edits in game.</value>
   </data>
   <data xml:space="preserve" name="Text_8190281db975">
     <value>Restore down</value>
+  </data>
+  <data xml:space="preserve" name="Text_82855c11ae69">
+    <value>Sand</value>
   </data>
   <data xml:space="preserve" name="Text_8328dc8f6f33">
     <value>Checking prerequisites, process ownership and selected installation.</value>
@@ -797,6 +956,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_83bb589ce3ad">
     <value>Last launched Gateway: </value>
+  </data>
+  <data xml:space="preserve" name="Text_83f9b9c05a55">
+    <value>Increase text contrast</value>
   </data>
   <data xml:space="preserve" name="Text_849335f979c6">
     <value>{0:g} · {1:N0} KB · {2}</value>
@@ -816,6 +978,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_87bb59ba2f92">
     <value>Workspace</value>
   </data>
+  <data xml:space="preserve" name="Text_883c6a4d10b7">
+    <value>Enter a color as #RRGGBB, for example #2584D7.</value>
+  </data>
   <data xml:space="preserve" name="Text_88b2f4aa5837">
     <value>View setup guide</value>
   </data>
@@ -831,8 +996,14 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_8a2d9427ded5">
     <value>Another game client is running. Close it before launching or restarting services.</value>
   </data>
+  <data xml:space="preserve" name="Text_8a63af29f3c4">
+    <value>Color wheel; keyboard alternatives are below.</value>
+  </data>
   <data xml:space="preserve" name="Text_8b2d4fa44372">
     <value>Search mod ID, version, kind, status or error (Ctrl+F)</value>
+  </data>
+  <data xml:space="preserve" name="Text_8b7df2ff57b5">
+    <value>Some custom text/background combinations have low contrast. Adjust the colors or reset this scheme.</value>
   </data>
   <data xml:space="preserve" name="Text_8bc9335f3b83">
     <value>Restore recorded mod choices…</value>
@@ -873,6 +1044,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_933ffa160545">
     <value>Installing extraction dependency</value>
   </data>
+  <data xml:space="preserve" name="Text_93638ea9e0b0">
+    <value>Grayscale</value>
+  </data>
   <data xml:space="preserve" name="Text_9381b171923f">
     <value>This revision has no supported mod host. Older LocalExile revisions can still be launched normally.</value>
   </data>
@@ -885,8 +1059,14 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_9491bfb97e66">
     <value>Waiting for the game window to close without force termination.</value>
   </data>
+  <data xml:space="preserve" name="Text_9533a426d7fa">
+    <value>Logo background</value>
+  </data>
   <data xml:space="preserve" name="Text_95582a588b34">
     <value>PR #{0} (fetched when activated)</value>
+  </data>
+  <data xml:space="preserve" name="Text_9575a529260a">
+    <value>Appearance and accessibility</value>
   </data>
   <data xml:space="preserve" name="Text_95b58be11552">
     <value>Select a checkout to inspect its mods.</value>
@@ -914,6 +1094,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_9777bf4aa207">
     <value>Build selected</value>
+  </data>
+  <data xml:space="preserve" name="Text_993f024b650e">
+    <value>Saturation</value>
   </data>
   <data xml:space="preserve" name="Text_995c08ae21a7">
     <value>Choose a workspace</value>
@@ -949,8 +1132,14 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_9ca428fef4d5">
     <value>Mods disabled globally</value>
   </data>
+  <data xml:space="preserve" name="Text_9cabcedb7ac9">
+    <value>Adjusts foreground colors for readability when needed. Some mixed custom backgrounds may still need manual correction.</value>
+  </data>
   <data xml:space="preserve" name="Text_9caf4f258c84">
     <value>Build this source project.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9cea69fd345a">
+    <value>Window controls</value>
   </data>
   <data xml:space="preserve" name="Text_9d19ac7b2039">
     <value>Open logs folder</value>
@@ -960,6 +1149,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_9d3db01bcdf8">
     <value>Open checkout folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_9dfc93581c88">
+    <value>Close button hover</value>
   </data>
   <data xml:space="preserve" name="Text_9dfdeeac1e88">
     <value>Game-data reload uses /game_data reload through the checkout’s optional native helper (Python + Frida, client in game). It reloads SQLite overrides; it does not reload extracted files or rebuild source. The launcher waits for a revision confirmation.</value>
@@ -1024,6 +1216,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a501a1aed56f">
     <value>Selected backup</value>
   </data>
+  <data xml:space="preserve" name="Text_a5cccbcead7d">
+    <value>Amber</value>
+  </data>
   <data xml:space="preserve" name="Text_a5eeb9656c5c">
     <value>Preparing the local account service for this checkout.</value>
   </data>
@@ -1078,6 +1273,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_aeed4d26bb5f">
     <value>Starting</value>
   </data>
+  <data xml:space="preserve" name="Text_afb40dbadd2e">
+    <value>Change appearance…</value>
+  </data>
   <data xml:space="preserve" name="Text_b14dcdadc0c3">
     <value>Owned process; all required ports listening</value>
   </data>
@@ -1104,6 +1302,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b3a0f9e4aea4">
     <value>Local branch</value>
+  </data>
+  <data xml:space="preserve" name="Text_b3b29e2c5678">
+    <value>Color-vision profiles override accent and status colors, including custom choices. Windows High Contrast takes priority over all palettes.</value>
   </data>
   <data xml:space="preserve" name="Text_b3f384f14d32">
     <value>Copy the complete client into its Client folder first. Preparation creates missing local keys and a prepared executable, then selects the local gateway in that copy. Close the game and stop services before making setup changes.</value>
@@ -1132,17 +1333,26 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_b6aefbdc998a">
     <value>Using: </value>
   </data>
+  <data xml:space="preserve" name="Text_b6b099ac3763">
+    <value>Color vision</value>
+  </data>
   <data xml:space="preserve" name="Text_b77c7a041298">
     <value>Restoring saves</value>
   </data>
   <data xml:space="preserve" name="Text_b7ba5c1d1a1a">
     <value>▶  Play</value>
   </data>
+  <data xml:space="preserve" name="Text_b7cd0acd1470">
+    <value>Protect text contrast</value>
+  </data>
   <data xml:space="preserve" name="Text_b7d1e0571f80">
     <value>Workspace inspection failed. Resolve the problem in Settings, then refresh.</value>
   </data>
   <data xml:space="preserve" name="Text_b83816513bac">
     <value>Building account service</value>
+  </data>
+  <data xml:space="preserve" name="Text_b8a4b320cf19">
+    <value>Hex color (#RRGGBB)</value>
   </data>
   <data xml:space="preserve" name="Text_b8d31e852725">
     <value>on</value>
@@ -1152,6 +1362,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b9957b371d80">
     <value>Selecting local gateway</value>
+  </data>
+  <data xml:space="preserve" name="Text_baf5d82057e7">
+    <value>Orchid</value>
   </data>
   <data xml:space="preserve" name="Text_bb0b660ccd9d">
     <value>Sending /game_data reload through the selected checkout's native client helper; waiting for Gateway confirmation.</value>
@@ -1165,14 +1378,23 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_bed8374efd88">
     <value>Gateway is running without a watcher. Stop servers to change launch mode.</value>
   </data>
+  <data xml:space="preserve" name="Text_bf004e2e67d7">
+    <value>Error indicators</value>
+  </data>
   <data xml:space="preserve" name="Text_c032d8c45d13">
     <value>Choose installation</value>
   </data>
   <data xml:space="preserve" name="Text_c04a64764afe">
     <value>The selected local runtime profile names a database which does not exist. Restore the intended database or correct config/runtime.local.ps1. Do not create an empty replacement for an existing installation. Open Settings to select a different checkout/profile if needed.</value>
   </data>
+  <data xml:space="preserve" name="Text_c1ebc7817870">
+    <value>Needs attention</value>
+  </data>
   <data xml:space="preserve" name="Text_c2e0c347e274">
     <value>league</value>
+  </data>
+  <data xml:space="preserve" name="Text_c4a5bd52b99e">
+    <value>Success indicators</value>
   </data>
   <data xml:space="preserve" name="Text_c4ba5e396f03">
     <value>Automatic save backups before mod changes</value>
@@ -1216,6 +1438,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway started a new process under the same watcher. Sign in again if the game returned to login.</value>
   </data>
+  <data xml:space="preserve" name="Text_c9665c96a867">
+    <value>Lime</value>
+  </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Unavailable</value>
   </data>
@@ -1233,6 +1458,9 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_cae7d57bc067">
     <value>Stop</value>
   </data>
+  <data xml:space="preserve" name="Text_cafc8e32728a">
+    <value>Reset these custom colors</value>
+  </data>
   <data xml:space="preserve" name="Text_cb284ed772cb">
     <value>The language changes immediately. Logs and upstream diagnostics keep their original text.</value>
   </data>
@@ -1244,6 +1472,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Dependencies completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_cd27f46c485b">
+    <value>Customize colors</value>
   </data>
   <data xml:space="preserve" name="Text_cd78b7af946b">
     <value>Manage backups</value>
@@ -1260,6 +1491,12 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_cfa63e97e7e5">
     <value>Enable mod</value>
   </data>
+  <data xml:space="preserve" name="Text_d010ff390617">
+    <value>Panels</value>
+  </data>
+  <data xml:space="preserve" name="Text_d0ec1b1ff90e">
+    <value>Commit badge background</value>
+  </data>
   <data xml:space="preserve" name="Text_d10cdbf98c85">
     <value>SELECTED SOURCE</value>
   </data>
@@ -1272,8 +1509,20 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_d28f5e178579">
     <value>Open client folder</value>
   </data>
+  <data xml:space="preserve" name="Text_d3368cbffe23">
+    <value>Accessibility</value>
+  </data>
+  <data xml:space="preserve" name="Text_d33ce86357a9">
+    <value>Readable text</value>
+  </data>
   <data xml:space="preserve" name="Text_d352597ffd8f">
     <value>Load failed</value>
+  </data>
+  <data xml:space="preserve" name="Text_d35b0efe2128">
+    <value>Copper</value>
+  </data>
+  <data xml:space="preserve" name="Text_d452583a74d0">
+    <value>Buttons</value>
   </data>
   <data xml:space="preserve" name="Text_d4d8fd81a610">
     <value>Gateway output</value>
@@ -1281,8 +1530,17 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_d65fad07874f">
     <value>Install Node.js (the LocalExile setup guide uses Node 24). Close and reopen the launcher after installing, then Recheck setup.</value>
   </data>
+  <data xml:space="preserve" name="Text_d6807b3f9a54">
+    <value>Use color</value>
+  </data>
+  <data xml:space="preserve" name="Text_d68761cc1eb2">
+    <value>Text size</value>
+  </data>
   <data xml:space="preserve" name="Text_d72e311c4dda">
     <value>Minimize</value>
+  </data>
+  <data xml:space="preserve" name="Text_d81ab149e977">
+    <value>Indigo</value>
   </data>
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>GitHub PR list unavailable. Local/fetched branches still work; enter a PR number to try it directly.</value>
@@ -1302,6 +1560,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_db03e3055c5a">
     <value>Workspace pages</value>
   </data>
+  <data xml:space="preserve" name="Text_dbcd5e7bb7a0">
+    <value>Light</value>
+  </data>
   <data xml:space="preserve" name="Text_dc0a0a26052e">
     <value>Browse for a different location…</value>
   </data>
@@ -1320,11 +1581,23 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_deba91fae8c8">
     <value>Node.js is required for bundle decompression</value>
   </data>
+  <data xml:space="preserve" name="Text_dec1638d773b">
+    <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Alt+R restores default appearance without changing your checkout or saves.</value>
+  </data>
   <data xml:space="preserve" name="Text_dfab082d4644">
     <value>Build checkout</value>
   </data>
   <data xml:space="preserve" name="Text_e0eba74683f6">
     <value>RestoreBackup completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e10d850954a8">
+    <value>Rose</value>
+  </data>
+  <data xml:space="preserve" name="Text_e240e635ff6d">
+    <value>Reset to defaults</value>
+  </data>
+  <data xml:space="preserve" name="Text_e30ce05d3185">
+    <value>More interface colors</value>
   </data>
   <data xml:space="preserve" name="Text_e40f307a9136">
     <value>HEAD matches latest upstream</value>
@@ -1343,6 +1616,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_e8da4fa8b199">
     <value> failed: </value>
+  </data>
+  <data xml:space="preserve" name="Text_e8def7f2e04e">
+    <value>Light colors</value>
   </data>
   <data xml:space="preserve" name="Text_e9182bbf5cec">
     <value>Deleting backup</value>
@@ -1386,6 +1662,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_eb660ec5bb55">
     <value>Choose the LocalExile folder containing GameServer.slnx</value>
   </data>
+  <data xml:space="preserve" name="Text_ec811d30a89c">
+    <value>Brightness</value>
+  </data>
   <data xml:space="preserve" name="Text_edab1377682d">
     <value>Check the setup below before starting.</value>
   </data>
@@ -1400,6 +1679,12 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_eeaf954d8d43">
     <value>Setup and compatibility</value>
+  </data>
+  <data xml:space="preserve" name="Text_eed88b3afe90">
+    <value>Forest</value>
+  </data>
+  <data xml:space="preserve" name="Text_ef6691545d2c">
+    <value>Standard</value>
   </data>
   <data xml:space="preserve" name="Text_ef6c0d9877bf">
     <value>commit unavailable</value>
@@ -1419,6 +1704,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_f0911b7e2f8c">
     <value>Search selected log</value>
   </data>
+  <data xml:space="preserve" name="Text_f0f05a7102c2">
+    <value>Choose color: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_f10e12da4cc1">
     <value>Automatic lookup could not finish. Browse to your checkout instead. </value>
   </data>
@@ -1428,8 +1716,17 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_f28290933d40">
     <value>Process exists; waiting for listening ports</value>
   </data>
+  <data xml:space="preserve" name="Text_f2b4f43625b6">
+    <value>Targets stronger text contrast and may adjust button fills.</value>
+  </data>
   <data xml:space="preserve" name="Text_f3ec74792130">
     <value>Services remain stopped. A failed build preserves the save database.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f4047b3ea27a">
+    <value>Sample button</value>
+  </data>
+  <data xml:space="preserve" name="Text_f418537ab654">
+    <value>Color and font preferences can help readability. Important states also keep their text or symbols.</value>
   </data>
   <data xml:space="preserve" name="Text_f4702857c4a9">
     <value>
@@ -1456,14 +1753,26 @@ Mods at backup: </value>
   <data xml:space="preserve" name="Text_f69dee092bca">
     <value>Prepared client</value>
   </data>
+  <data xml:space="preserve" name="Text_f7efa7bc1fc5">
+    <value>Sidebar</value>
+  </data>
+  <data xml:space="preserve" name="Text_f87d86195087">
+    <value>Commit badge text</value>
+  </data>
   <data xml:space="preserve" name="Text_f8b15e8e3227">
     <value>Fetching Git objects only; source files, saves and running services are unchanged.</value>
   </data>
   <data xml:space="preserve" name="Text_f9b4581c3058">
     <value>No matching upstream HEAD found. Other LocalExile checkouts are listed below; you can use any of them or Browse elsewhere.</value>
   </data>
+  <data xml:space="preserve" name="Text_f9ce6b13b19a">
+    <value>Primary buttons</value>
+  </data>
   <data xml:space="preserve" name="Text_f9d2f04d4584">
     <value>Starting, rebuilding or restarting; inspect Gateway output for errors</value>
+  </data>
+  <data xml:space="preserve" name="Text_fa15a5c1d610">
+    <value>Teal</value>
   </data>
   <data xml:space="preserve" name="Text_fa1e08557af3">
     <value>Find LocalExile</value>
@@ -1476,6 +1785,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_fb26532d9c38">
     <value>Select the folder containing GameServer.slnx. The launcher keeps its own settings outside the repository.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb29df05ab2c">
+    <value>Selected items</value>
   </data>
   <data xml:space="preserve" name="Text_fb3a1f784532">
     <value>Loaded (last checked)</value>
@@ -1506,6 +1818,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_fe08c7214df1">
     <value>Additional account / character names to remove (comma separated)</value>
+  </data>
+  <data xml:space="preserve" name="Text_fed12611d2d8">
+    <value>Ocean</value>
   </data>
   <data xml:space="preserve" name="Text_ff85a35d337d">
     <value>Restore saved mod enable/disable choices from {0:g}?

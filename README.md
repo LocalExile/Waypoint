@@ -30,6 +30,11 @@ immediately; the preference is remembered for the next launch. English is the de
 The selector controls Waypoint's interface. Repository names, paths, commit hashes, in-game commands, raw logs and
 upstream diagnostics retain their original text. Translation maintenance is described in [localization](docs/localization.md).
 
+The **unreleased local appearance update** adds **Settings → Appearance and accessibility → Change appearance…**:
+18 light/dark/system color schemes, a custom color wheel/hex editor, reading fonts and text size, color-vision
+profiles, stronger contrast/focus and reduced motion. Preview changes, then choose Apply or Cancel. See
+[appearance and accessibility](docs/appearance.md) for controls, recovery shortcuts and validation limits.
+
 ## Requirements
 
 | Requirement | Used for |

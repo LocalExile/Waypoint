@@ -133,6 +133,7 @@ public partial class MainWindow
         Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
         {
             // Put keyboard users in the chosen page rather than leaving focus in detached content.
+            if (Pages.SelectedItem == SettingsPage) { AppearanceButton.Focus(); return; }
             if (!FocusPageSearch() && ((TabItem)Pages.SelectedItem).Content is FrameworkElement content)
                 content.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
         }));

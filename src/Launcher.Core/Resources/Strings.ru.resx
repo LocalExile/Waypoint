@@ -42,14 +42,23 @@
   <data xml:space="preserve" name="Text_03f25d282624">
     <value>data/login-keys.json должен соответствовать готовому клиенту; не пересоздавайте имеющиеся ключи без необходимости</value>
   </data>
+  <data xml:space="preserve" name="Text_03fea198cf4c">
+    <value>Основной фон</value>
+  </data>
   <data xml:space="preserve" name="Text_0480c77bde68">
     <value>Адаптер запуска</value>
+  </data>
+  <data xml:space="preserve" name="Text_0516ac3163b5">
+    <value>Какие цвета изменять</value>
   </data>
   <data xml:space="preserve" name="Text_057c2971fa56">
     <value>Не удалось прочитать локальные ветки. Проверьте выбранный репозиторий Git. </value>
   </data>
   <data xml:space="preserve" name="Text_057fd24429fa">
     <value>Перезапустить службу</value>
+  </data>
+  <data xml:space="preserve" name="Text_05d3ec58206c">
+    <value>Фокус клавиатуры</value>
   </data>
   <data xml:space="preserve" name="Text_06291e8ea32e">
     <value>Найден и выбран: </value>
@@ -59,6 +68,9 @@
   </data>
   <data xml:space="preserve" name="Text_08ad630cfbfa">
     <value>Папка копий</value>
+  </data>
+  <data xml:space="preserve" name="Text_08de788b0ede">
+    <value>Элементы под указателем</value>
   </data>
   <data xml:space="preserve" name="Text_09a216bf0611">
     <value>Архив клиента</value>
@@ -87,6 +99,9 @@
   <data xml:space="preserve" name="Text_0cef0d77a2fe">
     <value>Вывод операции</value>
   </data>
+  <data xml:space="preserve" name="Text_0de9f358ad56">
+    <value>Границы</value>
+  </data>
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Локальная оболочка запуска</value>
   </data>
@@ -102,11 +117,26 @@
   <data xml:space="preserve" name="Text_10384cde3c85">
     <value>Выберите и проверьте рабочую папку, чтобы увидеть её моды.</value>
   </data>
+  <data xml:space="preserve" name="Text_108040ac289a">
+    <value>Рубин</value>
+  </data>
+  <data xml:space="preserve" name="Text_10ad4c387363">
+    <value>Сланцевая</value>
+  </data>
+  <data xml:space="preserve" name="Text_10ee94005bb9">
+    <value>Цветовая схема</value>
+  </data>
   <data xml:space="preserve" name="Text_1180f832c808">
     <value>Не удалось сохранить настройки: </value>
   </data>
+  <data xml:space="preserve" name="Text_122b49fe8f4e">
+    <value>Оформление сохранено.</value>
+  </data>
   <data xml:space="preserve" name="Text_130ec7311cce">
     <value>Среда проверена.</value>
+  </data>
+  <data xml:space="preserve" name="Text_13ef73c47f3e">
+    <value>Шрифт для чтения</value>
   </data>
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>нет</value>
@@ -147,6 +177,9 @@
   <data xml:space="preserve" name="Text_1842c8d229bc">
     <value>Gateway снова принимает подключения после перезагрузки. Войдите повторно, если игра вернулась на экран входа.</value>
   </data>
+  <data xml:space="preserve" name="Text_18dd785c42a8">
+    <value>{0} · {1} · текст {2}%</value>
+  </data>
   <data xml:space="preserve" name="Text_19766ed6ccb2">
     <value>Отмена</value>
   </data>
@@ -173,6 +206,9 @@
   </data>
   <data xml:space="preserve" name="Text_1c05492dd6ed">
     <value>Загрузите список веток и открытых PR LocalExile. При переключении используется существующая копия клиента.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1c304451f9d9">
+    <value>Отметки флажков</value>
   </data>
   <data xml:space="preserve" name="Text_1c7e31690f17">
     <value>Установите Python 3.9 или новее с python.org, включив добавление в PATH. Перезапустите Waypoint и нажмите «Повторить проверку». Frida необязательна и не нужна для обычной игры.</value>
@@ -243,6 +279,9 @@
   <data xml:space="preserve" name="Text_273ebd9d8848">
     <value>Выберите мод из списка.</value>
   </data>
+  <data xml:space="preserve" name="Text_275dbda9dedb">
+    <value>Закат</value>
+  </data>
   <data xml:space="preserve" name="Text_275f2b247724">
     <value>
 Чтобы выбрать другую папку, нажмите «Изменить путь» выше.</value>
@@ -262,6 +301,9 @@
   <data xml:space="preserve" name="Text_292a37482041">
     <value>СОБРАННЫЕ КОМПОНЕНТЫ · DEBUG</value>
   </data>
+  <data xml:space="preserve" name="Text_297ef4c79b4b">
+    <value>Уменьшить анимацию</value>
+  </data>
   <data xml:space="preserve" name="Text_297fba3fb830">
     <value>Соберите моды из исходников или установите локальный мод, чтобы создать эту папку.</value>
   </data>
@@ -270,6 +312,12 @@
   </data>
   <data xml:space="preserve" name="Text_29a8131f6403">
     <value>Для извлечения данных нужен Python 3.9+</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a1a6355ed7e">
+    <value>Лёд</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a36428839a3">
+    <value>Фиолетовая</value>
   </data>
   <data xml:space="preserve" name="Text_2a43880cee01">
     <value>Сохраняет существующие сохранения и параметры из config/runtime.local.ps1. Адаптер v1 поддерживает буквальные присваивания Game_* и стандартные локальные порты. Неподдерживаемые профили отклоняются с пояснением.</value>
@@ -295,8 +343,14 @@
   <data xml:space="preserve" name="Text_2dcb950944f5">
     <value>Состояние в игре не подтверждено.</value>
   </data>
+  <data xml:space="preserve" name="Text_2deea4664d23">
+    <value>Вспомогательный текст</value>
+  </data>
   <data xml:space="preserve" name="Text_2ee7e02cbde9">
     <value>Сборка репозитория</value>
+  </data>
+  <data xml:space="preserve" name="Text_2f444c96f7fb">
+    <value>Более заметная рамка фокуса</value>
   </data>
   <data xml:space="preserve" name="Text_2fad023a9cbb">
     <value>Подготовить клиент</value>
@@ -307,6 +361,9 @@
   <data xml:space="preserve" name="Text_2ff6b56154ab">
     <value>Завершите подготовку</value>
   </data>
+  <data xml:space="preserve" name="Text_30cc92d87a1e">
+    <value>Монохромная</value>
+  </data>
   <data xml:space="preserve" name="Text_3131e368b220">
     <value>Проверено в {0:T} · принадлежность процессов и необходимые порты проверены локально</value>
   </data>
@@ -316,11 +373,20 @@
   <data xml:space="preserve" name="Text_31d524153069">
     <value>Восстановить Waypoint</value>
   </data>
+  <data xml:space="preserve" name="Text_31e392d1c037">
+    <value>Применить</value>
+  </data>
   <data xml:space="preserve" name="Text_31fbef162594">
     <value>Продолжить</value>
   </data>
+  <data xml:space="preserve" name="Text_3225a6d60db2">
+    <value>Изменяются цвета текущего режима. Выберите светлый или тёмный режим выше, чтобы настроить другой набор.</value>
+  </data>
   <data xml:space="preserve" name="Text_32287b2cedcb">
     <value> · история модов записана</value>
+  </data>
+  <data xml:space="preserve" name="Text_324b134f57c7">
+    <value>Предпросмотр</value>
   </data>
   <data xml:space="preserve" name="Text_3253dba2c477">
     <value>Переключить и собрать</value>
@@ -341,14 +407,23 @@
   <data xml:space="preserve" name="Text_34a4bac9ef24">
     <value>Проверка подготовки</value>
   </data>
+  <data xml:space="preserve" name="Text_34ada7568b73">
+    <value>По настройке Windows: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_3506d661965b">
     <value>Перезапустить Gateway</value>
   </data>
   <data xml:space="preserve" name="Text_358cc201f87d">
     <value>Операции</value>
   </data>
+  <data xml:space="preserve" name="Text_35ed5fa746ff">
+    <value>Тёмные цвета</value>
+  </data>
   <data xml:space="preserve" name="Text_367ae45f5293">
     <value>В игре: /mod показывает состояние модов.</value>
+  </data>
+  <data xml:space="preserve" name="Text_375e15d846ce">
+    <value>Мятная Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_381fb2297b10">
     <value>Извлечение данных</value>
@@ -358,6 +433,9 @@
   </data>
   <data xml:space="preserve" name="Text_38cca6bea010">
     <value>ВЫКЛЮЧЕНО</value>
+  </data>
+  <data xml:space="preserve" name="Text_3907fa7f8072">
+    <value>Оформление</value>
   </data>
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Переключение ревизии</value>
@@ -370,6 +448,9 @@
   </data>
   <data xml:space="preserve" name="Text_3a4633d9bdb7">
     <value>Запросить подтверждённое состояние модов у запущенного Gateway.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a495eb5b8fb">
+    <value>Основной текст</value>
   </data>
   <data xml:space="preserve" name="Text_3a824789af77">
     <value> · исходники при копировании: </value>
@@ -405,6 +486,9 @@
   <data xml:space="preserve" name="Text_3e9648b06bc7">
     <value>Используется только эта установка. Waypoint не сохраняет данные для входа.</value>
   </data>
+  <data xml:space="preserve" name="Text_3ea221ce95ba">
+    <value>Текст основных кнопок</value>
+  </data>
   <data xml:space="preserve" name="Text_3fbcbf7d0499">
     <value>Ветки получены.</value>
   </data>
@@ -432,6 +516,9 @@
   <data xml:space="preserve" name="Text_442aded87a55">
     <value>Мониторинг</value>
   </data>
+  <data xml:space="preserve" name="Text_45989de49fb7">
+    <value>Сведения</value>
+  </data>
   <data xml:space="preserve" name="Text_464848ad8a15">
     <value>Проверка требований и выбранной установки.</value>
   </data>
@@ -440,6 +527,9 @@
   </data>
   <data xml:space="preserve" name="Text_46d6b84bae4a">
     <value>Git отсутствует или HEAD этой папки недоступен. Папку по-прежнему можно выбрать вручную.</value>
+  </data>
+  <data xml:space="preserve" name="Text_4700b9ee6a2f">
+    <value>Используйте круг, клавиши со стрелками на ползунке или точный HEX-код. Escape отменяет это изменение цвета.</value>
   </data>
   <data xml:space="preserve" name="Text_47712109b90c">
     <value>Текущие исходники и сборки</value>
@@ -461,6 +551,9 @@
   </data>
   <data xml:space="preserve" name="Text_491291cca723">
     <value>Перезагрузить выбранный</value>
+  </data>
+  <data xml:space="preserve" name="Text_494ca78f7374">
+    <value>Своя схема</value>
   </data>
   <data xml:space="preserve" name="Text_49c266baaaa7">
     <value>Поиск</value>
@@ -494,6 +587,9 @@
   </data>
   <data xml:space="preserve" name="Text_4d2fc504a139">
     <value> · нужна подготовка клиента</value>
+  </data>
+  <data xml:space="preserve" name="Text_4d7056f0e9be">
+    <value>Цветовой тон</value>
   </data>
   <data xml:space="preserve" name="Text_4df1cf29668a">
     <value>Запуск завершён.</value>
@@ -561,6 +657,9 @@
   <data xml:space="preserve" name="Text_5663485b8c0d">
     <value>Мод отключён.</value>
   </data>
+  <data xml:space="preserve" name="Text_56e170d33d20">
+    <value>Красный–зелёный</value>
+  </data>
   <data xml:space="preserve" name="Text_5841335d26d5">
     <value>Автоматические копии выключены. Перед изменениями, которые может понадобиться отменить, создайте копию вручную на странице резервных копий.</value>
   </data>
@@ -605,6 +704,9 @@
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Учётные записи, персонажи и прогресс этой установки. Сохранения и выбор модов восстанавливаются отдельно.</value>
   </data>
+  <data xml:space="preserve" name="Text_5e9647ccdc6e">
+    <value>Выберите часть интерфейса для изменения. Цвета светлой и тёмной тем хранятся отдельно. Изменение готовой схемы создаёт пользовательскую палитру.</value>
+  </data>
   <data xml:space="preserve" name="Text_5f1b134f71ee">
     <value>
 Достигнут лимит поиска; другие репозитории могут остаться ненайденными. Вы можете выбрать любую папку вручную.</value>
@@ -612,11 +714,20 @@
   <data xml:space="preserve" name="Text_5f6d5cac3804">
     <value>Копирование сохранений</value>
   </data>
+  <data xml:space="preserve" name="Text_5f9f3af82191">
+    <value>Текст выделения</value>
+  </data>
   <data xml:space="preserve" name="Text_5fa7aac5375c">
     <value>Готов</value>
   </data>
+  <data xml:space="preserve" name="Text_5fb3160f1860">
+    <value>Индикаторы внимания</value>
+  </data>
   <data xml:space="preserve" name="Text_608f1cf89149">
     <value>Ключи входа</value>
+  </data>
+  <data xml:space="preserve" name="Text_60acc53f13a5">
+    <value>Тёмная</value>
   </data>
   <data xml:space="preserve" name="Text_60be7b4c46e1">
     <value>Репозиторий LocalExile не найден в проверенных папках. Укажите путь вручную.</value>
@@ -626,6 +737,12 @@
   </data>
   <data xml:space="preserve" name="Text_621db8f4e9cd">
     <value>scripts/dev/live.ps1 должен поддерживать -ClientOnly и -Only</value>
+  </data>
+  <data xml:space="preserve" name="Text_6249df4367d0">
+    <value>Золото</value>
+  </data>
+  <data xml:space="preserve" name="Text_62a487dde87f">
+    <value>Панель состояния</value>
   </data>
   <data xml:space="preserve" name="Text_62b9bdf3765e">
     <value>Проверки подготовки · требуют внимания: {0}</value>
@@ -645,6 +762,9 @@
   <data xml:space="preserve" name="Text_635484c1543e">
     <value>Обновить игровые данные</value>
   </data>
+  <data xml:space="preserve" name="Text_641a0296a7b8">
+    <value>Акцентный текст и значки</value>
+  </data>
   <data xml:space="preserve" name="Text_64a576b180a8">
     <value>Поиск в журнале без учёта регистра</value>
   </data>
@@ -663,6 +783,9 @@
   <data xml:space="preserve" name="Text_66bfcf020fee">
     <value>Проверки подготовки · всё в порядке</value>
   </data>
+  <data xml:space="preserve" name="Text_6725e7bbcd28">
+    <value>Как в Windows</value>
+  </data>
   <data xml:space="preserve" name="Text_67fdcd462dc5">
     <value>Восстановление сохранений заменяет прогресс после подтверждения. Выбор модов восстанавливается отдельно при остановленном Gateway.</value>
   </data>
@@ -672,14 +795,26 @@
   <data xml:space="preserve" name="Text_688ed737c588">
     <value>Запуск служб</value>
   </data>
+  <data xml:space="preserve" name="Text_68a30385dbf5">
+    <value>Для любой схемы доступны светлая, тёмная и системная темы.</value>
+  </data>
+  <data xml:space="preserve" name="Text_68fce9b8e435">
+    <value>Светлая, тёмная или системная тема; цветовые схемы, свои цвета и параметры чтения.</value>
+  </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Остановка службы учётных записей</value>
   </data>
   <data xml:space="preserve" name="Text_6a3fe8876b56">
     <value>Сборки</value>
   </data>
+  <data xml:space="preserve" name="Text_6a5bc51f5c88">
+    <value>Выберите наиболее удобный шрифт. OpenDyslexic уже включён, устанавливать его не нужно. Для отсутствующих символов Windows подбирает запасной шрифт.</value>
+  </data>
   <data xml:space="preserve" name="Text_6a9084025c4b">
     <value>Открыть папку</value>
+  </data>
+  <data xml:space="preserve" name="Text_6aa9edcc02f1">
+    <value>Изменить цвет: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_6ae2ae6a2f07">
     <value>Распаковщик</value>
@@ -693,8 +828,14 @@
   <data xml:space="preserve" name="Text_6dbc080db4ab">
     <value>Готово к игре</value>
   </data>
+  <data xml:space="preserve" name="Text_6e169a16bf03">
+    <value>Изменения видны здесь и в рабочем окне. «Применить» сохраняет их, «Отмена» возвращает прежнее оформление.</value>
+  </data>
   <data xml:space="preserve" name="Text_6e1cc2d63cee">
     <value>Среда проверена · </value>
+  </data>
+  <data xml:space="preserve" name="Text_6e2bd3d0e2c3">
+    <value>Возврат: Escape отменяет предпросмотр. Ctrl+R сбрасывает параметры в этом окне. В рабочем окне Ctrl+Shift+R возвращает стандартное оформление, не меняя репозиторий и сохранения.</value>
   </data>
   <data xml:space="preserve" name="Text_6e58b577a084">
     <value>Моды</value>
@@ -738,6 +879,9 @@
   <data xml:space="preserve" name="Text_7839ccd6957a">
     <value>Используется выбранный репозиторий. Вы можете изменить путь или повторить поиск в любое время.</value>
   </data>
+  <data xml:space="preserve" name="Text_796489077045">
+    <value>Полосы прокрутки</value>
+  </data>
   <data xml:space="preserve" name="Text_796ab9431174">
     <value>Повторить проверку</value>
   </data>
@@ -753,8 +897,17 @@
   <data xml:space="preserve" name="Text_7b0100d4aa11">
     <value>Предпросмотр диагностики</value>
   </data>
+  <data xml:space="preserve" name="Text_7caa2025f375">
+    <value>Поля ввода</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cd52f8db23c">
+    <value>Синий–жёлтый</value>
+  </data>
   <data xml:space="preserve" name="Text_7cd7cde68dbf">
     <value>Моды не найдены. Соберите моды из исходников или добавьте мод в их папку.</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cea9dbef301">
+    <value>Символ кнопки закрытия</value>
   </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Закрыть</value>
@@ -777,11 +930,17 @@
   <data xml:space="preserve" name="Text_80d16534322e">
     <value>Мод собран.</value>
   </data>
+  <data xml:space="preserve" name="Text_80fd4dce7fd0">
+    <value>Вместо анимированного индикатора используются название этапа и прошедшее время. Параметры анимации Windows учитываются автоматически.</value>
+  </data>
   <data xml:space="preserve" name="Text_813b86284864">
     <value>Запустите Gateway с горячей перезагрузкой, чтобы применять совместимые изменения кода в игре.</value>
   </data>
   <data xml:space="preserve" name="Text_8190281db975">
     <value>Восстановить размер</value>
+  </data>
+  <data xml:space="preserve" name="Text_82855c11ae69">
+    <value>Песочная</value>
   </data>
   <data xml:space="preserve" name="Text_8328dc8f6f33">
     <value>Проверка требований, принадлежности процессов и выбранной установки.</value>
@@ -797,6 +956,9 @@
   </data>
   <data xml:space="preserve" name="Text_83bb589ce3ad">
     <value>Последний запуск Gateway: </value>
+  </data>
+  <data xml:space="preserve" name="Text_83f9b9c05a55">
+    <value>Усилить контрастность текста</value>
   </data>
   <data xml:space="preserve" name="Text_849335f979c6">
     <value>{0:g} · {1:N0} КБ · {2}</value>
@@ -816,6 +978,9 @@
   <data xml:space="preserve" name="Text_87bb59ba2f92">
     <value>Рабочая папка</value>
   </data>
+  <data xml:space="preserve" name="Text_883c6a4d10b7">
+    <value>Введите цвет в виде #RRGGBB, например #2584D7.</value>
+  </data>
   <data xml:space="preserve" name="Text_88b2f4aa5837">
     <value>Руководство по настройке</value>
   </data>
@@ -831,8 +996,14 @@
   <data xml:space="preserve" name="Text_8a2d9427ded5">
     <value>Запущен другой игровой клиент. Закройте его перед запуском или перезапуском служб.</value>
   </data>
+  <data xml:space="preserve" name="Text_8a63af29f3c4">
+    <value>Цветовой круг; ниже доступны варианты управления с клавиатуры.</value>
+  </data>
   <data xml:space="preserve" name="Text_8b2d4fa44372">
     <value>Поиск по ID, версии, типу, состоянию или ошибке мода (Ctrl+F)</value>
+  </data>
+  <data xml:space="preserve" name="Text_8b7df2ff57b5">
+    <value>Некоторые сочетания своих цветов текста и фона имеют низкую контрастность. Измените цвета или сбросьте схему.</value>
   </data>
   <data xml:space="preserve" name="Text_8bc9335f3b83">
     <value>Восстановить выбор модов…</value>
@@ -873,6 +1044,9 @@
   <data xml:space="preserve" name="Text_933ffa160545">
     <value>Установка распаковщика</value>
   </data>
+  <data xml:space="preserve" name="Text_93638ea9e0b0">
+    <value>Оттенки серого</value>
+  </data>
   <data xml:space="preserve" name="Text_9381b171923f">
     <value>Эта ревизия не поддерживает моды. Старые ревизии LocalExile по-прежнему запускаются обычным способом.</value>
   </data>
@@ -885,8 +1059,14 @@
   <data xml:space="preserve" name="Text_9491bfb97e66">
     <value>Ожидание закрытия окна игры без принудительного завершения.</value>
   </data>
+  <data xml:space="preserve" name="Text_9533a426d7fa">
+    <value>Фон логотипа</value>
+  </data>
   <data xml:space="preserve" name="Text_95582a588b34">
     <value>PR #{0} (будет получен при активации)</value>
+  </data>
+  <data xml:space="preserve" name="Text_9575a529260a">
+    <value>Оформление и доступность</value>
   </data>
   <data xml:space="preserve" name="Text_95b58be11552">
     <value>Выберите репозиторий, чтобы проверить его моды.</value>
@@ -914,6 +1094,9 @@
   </data>
   <data xml:space="preserve" name="Text_9777bf4aa207">
     <value>Собрать выбранный</value>
+  </data>
+  <data xml:space="preserve" name="Text_993f024b650e">
+    <value>Насыщенность</value>
   </data>
   <data xml:space="preserve" name="Text_995c08ae21a7">
     <value>Выберите рабочую папку</value>
@@ -949,8 +1132,14 @@
   <data xml:space="preserve" name="Text_9ca428fef4d5">
     <value>Моды отключены глобально</value>
   </data>
+  <data xml:space="preserve" name="Text_9cabcedb7ac9">
+    <value>При необходимости корректирует цвет текста для удобства чтения. Сочетания сильно различающихся своих фонов могут потребовать ручной настройки.</value>
+  </data>
   <data xml:space="preserve" name="Text_9caf4f258c84">
     <value>Собрать этот проект из исходников.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9cea69fd345a">
+    <value>Кнопки окна</value>
   </data>
   <data xml:space="preserve" name="Text_9d19ac7b2039">
     <value>Папка журналов</value>
@@ -960,6 +1149,9 @@
   </data>
   <data xml:space="preserve" name="Text_9d3db01bcdf8">
     <value>Папка репозитория</value>
+  </data>
+  <data xml:space="preserve" name="Text_9dfc93581c88">
+    <value>Фон кнопки закрытия при наведении</value>
   </data>
   <data xml:space="preserve" name="Text_9dfdeeac1e88">
     <value>Обновление данных использует /game_data reload через необязательный помощник репозитория (Python + Frida, клиент в игре). Оно перечитывает переопределения SQLite, не перезагружая извлечённые файлы и не собирая исходники. Waypoint ожидает подтверждения ревизии.</value>
@@ -1024,6 +1216,9 @@
   <data xml:space="preserve" name="Text_a501a1aed56f">
     <value>Выбранная копия</value>
   </data>
+  <data xml:space="preserve" name="Text_a5cccbcead7d">
+    <value>Янтарь</value>
+  </data>
   <data xml:space="preserve" name="Text_a5eeb9656c5c">
     <value>Подготовка локальной службы учётных записей для этой установки.</value>
   </data>
@@ -1078,6 +1273,9 @@
   <data xml:space="preserve" name="Text_aeed4d26bb5f">
     <value>Запускается</value>
   </data>
+  <data xml:space="preserve" name="Text_afb40dbadd2e">
+    <value>Изменить оформление…</value>
+  </data>
   <data xml:space="preserve" name="Text_b14dcdadc0c3">
     <value>Процесс этой установки; все нужные порты прослушиваются</value>
   </data>
@@ -1104,6 +1302,9 @@
   </data>
   <data xml:space="preserve" name="Text_b3a0f9e4aea4">
     <value>Локальная ветка</value>
+  </data>
+  <data xml:space="preserve" name="Text_b3b29e2c5678">
+    <value>Профили восприятия заменяют акцентные цвета и цвета состояний, включая свои настройки. Высокая контрастность Windows имеет приоритет над всеми палитрами.</value>
   </data>
   <data xml:space="preserve" name="Text_b3f384f14d32">
     <value>Сначала скопируйте полный клиент в папку Client этого репозитория. Подготовка создаст недостающие локальные ключи и исполняемый файл, затем выберет локальный шлюз в этой копии. Перед изменениями закройте игру и остановите службы.</value>
@@ -1132,17 +1333,26 @@
   <data xml:space="preserve" name="Text_b6aefbdc998a">
     <value>Используется: </value>
   </data>
+  <data xml:space="preserve" name="Text_b6b099ac3763">
+    <value>Цветовое восприятие</value>
+  </data>
   <data xml:space="preserve" name="Text_b77c7a041298">
     <value>Восстановление сохранений</value>
   </data>
   <data xml:space="preserve" name="Text_b7ba5c1d1a1a">
     <value>▶  Играть</value>
   </data>
+  <data xml:space="preserve" name="Text_b7cd0acd1470">
+    <value>Сохранять контрастность текста</value>
+  </data>
   <data xml:space="preserve" name="Text_b7d1e0571f80">
     <value>Не удалось проверить рабочую папку. Устраните проблему в настройках и обновите состояние.</value>
   </data>
   <data xml:space="preserve" name="Text_b83816513bac">
     <value>Сборка службы учётных записей</value>
+  </data>
+  <data xml:space="preserve" name="Text_b8a4b320cf19">
+    <value>HEX-цвет (#RRGGBB)</value>
   </data>
   <data xml:space="preserve" name="Text_b8d31e852725">
     <value>включено</value>
@@ -1152,6 +1362,9 @@
   </data>
   <data xml:space="preserve" name="Text_b9957b371d80">
     <value>Выбор локального шлюза</value>
+  </data>
+  <data xml:space="preserve" name="Text_baf5d82057e7">
+    <value>Орхидея</value>
   </data>
   <data xml:space="preserve" name="Text_bb0b660ccd9d">
     <value>Отправка /game_data reload через встроенный помощник выбранного репозитория; ожидание подтверждения Gateway.</value>
@@ -1165,14 +1378,23 @@
   <data xml:space="preserve" name="Text_bed8374efd88">
     <value>Gateway работает без отслеживания изменений. Остановите серверы, чтобы изменить режим запуска.</value>
   </data>
+  <data xml:space="preserve" name="Text_bf004e2e67d7">
+    <value>Индикаторы ошибок</value>
+  </data>
   <data xml:space="preserve" name="Text_c032d8c45d13">
     <value>Выбор установки</value>
   </data>
   <data xml:space="preserve" name="Text_c04a64764afe">
     <value>В выбранном локальном профиле указана несуществующая база данных. Восстановите нужную базу или исправьте config/runtime.local.ps1. Не заменяйте базу существующей установки пустой. При необходимости выберите другой репозиторий или профиль в настройках.</value>
   </data>
+  <data xml:space="preserve" name="Text_c1ebc7817870">
+    <value>Требует внимания</value>
+  </data>
   <data xml:space="preserve" name="Text_c2e0c347e274">
     <value>Лига</value>
+  </data>
+  <data xml:space="preserve" name="Text_c4a5bd52b99e">
+    <value>Индикаторы успеха</value>
   </data>
   <data xml:space="preserve" name="Text_c4ba5e396f03">
     <value>Автокопии сохранений перед изменениями модов</value>
@@ -1216,6 +1438,9 @@
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway запустил новый процесс в том же сеансе отслеживания. Войдите повторно, если игра вернулась на экран входа.</value>
   </data>
+  <data xml:space="preserve" name="Text_c9665c96a867">
+    <value>Лайм</value>
+  </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
   </data>
@@ -1233,6 +1458,9 @@
   <data xml:space="preserve" name="Text_cae7d57bc067">
     <value>Остановить</value>
   </data>
+  <data xml:space="preserve" name="Text_cafc8e32728a">
+    <value>Сбросить эти свои цвета</value>
+  </data>
   <data xml:space="preserve" name="Text_cb284ed772cb">
     <value>Язык меняется сразу. Журналы и диагностика сторонних инструментов остаются на исходном языке.</value>
   </data>
@@ -1244,6 +1472,9 @@
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Зависимости установлены.</value>
+  </data>
+  <data xml:space="preserve" name="Text_cd27f46c485b">
+    <value>Настроить цвета</value>
   </data>
   <data xml:space="preserve" name="Text_cd78b7af946b">
     <value>Управление копиями</value>
@@ -1260,6 +1491,12 @@
   <data xml:space="preserve" name="Text_cfa63e97e7e5">
     <value>Включить мод</value>
   </data>
+  <data xml:space="preserve" name="Text_d010ff390617">
+    <value>Панели</value>
+  </data>
+  <data xml:space="preserve" name="Text_d0ec1b1ff90e">
+    <value>Фон метки коммита</value>
+  </data>
   <data xml:space="preserve" name="Text_d10cdbf98c85">
     <value>ВЫБРАННЫЕ ИСХОДНИКИ</value>
   </data>
@@ -1272,8 +1509,20 @@
   <data xml:space="preserve" name="Text_d28f5e178579">
     <value>Папка клиента</value>
   </data>
+  <data xml:space="preserve" name="Text_d3368cbffe23">
+    <value>Доступность</value>
+  </data>
+  <data xml:space="preserve" name="Text_d33ce86357a9">
+    <value>Удобный для чтения текст</value>
+  </data>
   <data xml:space="preserve" name="Text_d352597ffd8f">
     <value>Ошибка загрузки</value>
+  </data>
+  <data xml:space="preserve" name="Text_d35b0efe2128">
+    <value>Медь</value>
+  </data>
+  <data xml:space="preserve" name="Text_d452583a74d0">
+    <value>Кнопки</value>
   </data>
   <data xml:space="preserve" name="Text_d4d8fd81a610">
     <value>Вывод Gateway</value>
@@ -1281,8 +1530,17 @@
   <data xml:space="preserve" name="Text_d65fad07874f">
     <value>Установите Node.js (руководство LocalExile использует Node 24). Перезапустите Waypoint после установки и нажмите «Повторить проверку».</value>
   </data>
+  <data xml:space="preserve" name="Text_d6807b3f9a54">
+    <value>Выбрать цвет</value>
+  </data>
+  <data xml:space="preserve" name="Text_d68761cc1eb2">
+    <value>Размер текста</value>
+  </data>
   <data xml:space="preserve" name="Text_d72e311c4dda">
     <value>Свернуть</value>
+  </data>
+  <data xml:space="preserve" name="Text_d81ab149e977">
+    <value>Индиго</value>
   </data>
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>Список PR GitHub недоступен. Локальные и полученные ветки доступны; можно ввести номер PR напрямую.</value>
@@ -1302,6 +1560,9 @@
   <data xml:space="preserve" name="Text_db03e3055c5a">
     <value>Страницы рабочей папки</value>
   </data>
+  <data xml:space="preserve" name="Text_dbcd5e7bb7a0">
+    <value>Светлая</value>
+  </data>
   <data xml:space="preserve" name="Text_dc0a0a26052e">
     <value>Выбрать другую папку…</value>
   </data>
@@ -1320,11 +1581,23 @@
   <data xml:space="preserve" name="Text_deba91fae8c8">
     <value>Для распаковки пакетов нужен Node.js</value>
   </data>
+  <data xml:space="preserve" name="Text_dec1638d773b">
+    <value>Возврат: Escape отменяет предпросмотр. Ctrl+R сбрасывает параметры в этом окне. В рабочем окне Ctrl+Alt+R возвращает стандартное оформление, не меняя репозиторий и сохранения.</value>
+  </data>
   <data xml:space="preserve" name="Text_dfab082d4644">
     <value>Собрать репозиторий</value>
   </data>
   <data xml:space="preserve" name="Text_e0eba74683f6">
     <value>Сохранения восстановлены.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e10d850954a8">
+    <value>Роза</value>
+  </data>
+  <data xml:space="preserve" name="Text_e240e635ff6d">
+    <value>Вернуть настройки по умолчанию</value>
+  </data>
+  <data xml:space="preserve" name="Text_e30ce05d3185">
+    <value>Дополнительные цвета интерфейса</value>
   </data>
   <data xml:space="preserve" name="Text_e40f307a9136">
     <value>HEAD совпадает с последним коммитом LocalExile</value>
@@ -1343,6 +1616,9 @@
   </data>
   <data xml:space="preserve" name="Text_e8da4fa8b199">
     <value> — ошибка: </value>
+  </data>
+  <data xml:space="preserve" name="Text_e8def7f2e04e">
+    <value>Светлые цвета</value>
   </data>
   <data xml:space="preserve" name="Text_e9182bbf5cec">
     <value>Удаление копии</value>
@@ -1386,6 +1662,9 @@
   <data xml:space="preserve" name="Text_eb660ec5bb55">
     <value>Выберите папку LocalExile с файлом GameServer.slnx</value>
   </data>
+  <data xml:space="preserve" name="Text_ec811d30a89c">
+    <value>Яркость</value>
+  </data>
   <data xml:space="preserve" name="Text_edab1377682d">
     <value>Перед запуском проверьте подготовку ниже.</value>
   </data>
@@ -1400,6 +1679,12 @@
   </data>
   <data xml:space="preserve" name="Text_eeaf954d8d43">
     <value>Подготовка и совместимость</value>
+  </data>
+  <data xml:space="preserve" name="Text_eed88b3afe90">
+    <value>Лес</value>
+  </data>
+  <data xml:space="preserve" name="Text_ef6691545d2c">
+    <value>Обычное</value>
   </data>
   <data xml:space="preserve" name="Text_ef6c0d9877bf">
     <value>коммит недоступен</value>
@@ -1419,6 +1704,9 @@
   <data xml:space="preserve" name="Text_f0911b7e2f8c">
     <value>Поиск в выбранном журнале</value>
   </data>
+  <data xml:space="preserve" name="Text_f0f05a7102c2">
+    <value>Выбор цвета: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_f10e12da4cc1">
     <value>Не удалось завершить автоматический поиск. Выберите репозиторий вручную. </value>
   </data>
@@ -1428,8 +1716,17 @@
   <data xml:space="preserve" name="Text_f28290933d40">
     <value>Процесс существует; ожидание портов</value>
   </data>
+  <data xml:space="preserve" name="Text_f2b4f43625b6">
+    <value>Усиливает контрастность текста; при необходимости меняет фон кнопок.</value>
+  </data>
   <data xml:space="preserve" name="Text_f3ec74792130">
     <value>Службы остаются остановленными. Ошибка сборки не затронет базу сохранений.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f4047b3ea27a">
+    <value>Пример кнопки</value>
+  </data>
+  <data xml:space="preserve" name="Text_f418537ab654">
+    <value>Параметры цвета и шрифта помогают подобрать удобный вид. Важные состояния также обозначаются текстом или символами.</value>
   </data>
   <data xml:space="preserve" name="Text_f4702857c4a9">
     <value>
@@ -1456,14 +1753,26 @@
   <data xml:space="preserve" name="Text_f69dee092bca">
     <value>Готовый клиент</value>
   </data>
+  <data xml:space="preserve" name="Text_f7efa7bc1fc5">
+    <value>Боковая панель</value>
+  </data>
+  <data xml:space="preserve" name="Text_f87d86195087">
+    <value>Текст метки коммита</value>
+  </data>
   <data xml:space="preserve" name="Text_f8b15e8e3227">
     <value>Получение только объектов Git; исходники, сохранения и работающие службы не меняются.</value>
   </data>
   <data xml:space="preserve" name="Text_f9b4581c3058">
     <value>Совпадений с HEAD LocalExile нет. Другие найденные репозитории показаны ниже; выберите любой или укажите другую папку.</value>
   </data>
+  <data xml:space="preserve" name="Text_f9ce6b13b19a">
+    <value>Основные кнопки</value>
+  </data>
   <data xml:space="preserve" name="Text_f9d2f04d4584">
     <value>Запуск, сборка или перезапуск; проверьте вывод Gateway на ошибки</value>
+  </data>
+  <data xml:space="preserve" name="Text_fa15a5c1d610">
+    <value>Бирюза</value>
   </data>
   <data xml:space="preserve" name="Text_fa1e08557af3">
     <value>Найти LocalExile</value>
@@ -1476,6 +1785,9 @@
   </data>
   <data xml:space="preserve" name="Text_fb26532d9c38">
     <value>Выберите папку с файлом GameServer.slnx. Waypoint хранит свои настройки отдельно от репозитория.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb29df05ab2c">
+    <value>Выбранные элементы</value>
   </data>
   <data xml:space="preserve" name="Text_fb3a1f784532">
     <value>Загружен (при проверке)</value>
@@ -1506,6 +1818,9 @@
   </data>
   <data xml:space="preserve" name="Text_fe08c7214df1">
     <value>Дополнительные имена учётных записей / персонажей для скрытия через запятую</value>
+  </data>
+  <data xml:space="preserve" name="Text_fed12611d2d8">
+    <value>Океан</value>
   </data>
   <data xml:space="preserve" name="Text_ff85a35d337d">
     <value>Восстановить выбор включённых и отключённых модов от {0:g}?

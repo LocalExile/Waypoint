@@ -8,23 +8,23 @@
     <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
     <Setter Property="FontSize" Value="10"/>
     <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="Foreground" Value="{DynamicResource Muted}"/>
+    <Setter Property="Foreground" Value="{DynamicResource CaptionIcon}"/>
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
-      <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="2">
+      <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="{DynamicResource FocusThickness}">
         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
       </Border>
       <ControlTemplate.Triggers>
-        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource HoverSurface}"/><Setter Property="Foreground" Value="{DynamicResource SelectedText}"/></Trigger>
-        <Trigger Property="local:SnapCaption.IsHovered" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource HoverSurface}"/><Setter Property="Foreground" Value="{DynamicResource SelectedText}"/></Trigger>
+        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource HoverSurface}"/><Setter Property="Foreground" Value="{DynamicResource SelectedText}"/></Trigger>
+        <Trigger Property="local:SnapCaption.IsHovered" Value="True"><Setter Property="Background" Value="{DynamicResource HoverSurface}"/><Setter Property="Foreground" Value="{DynamicResource SelectedText}"/></Trigger>
         <Trigger Property="local:SnapCaption.IsPressed" Value="True"><Setter TargetName="Chrome" Property="Opacity" Value="0.65"/></Trigger>
         <Trigger Property="IsPressed" Value="True"><Setter TargetName="Chrome" Property="Opacity" Value="0.65"/></Trigger>
-        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Focus}"/></Trigger>
       </ControlTemplate.Triggers>
     </ControlTemplate></Setter.Value></Setter>
   </Style>
   <Style x:Key="CaptionCloseButton" TargetType="Button" BasedOn="{StaticResource CaptionButton}">
-    <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="{DynamicResource Error}"/></Trigger></Style.Triggers>
+    <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource CloseHover}"/><Setter Property="Foreground" Value="{DynamicResource CloseText}"/></Trigger></Style.Triggers>
   </Style>
   <Style TargetType="ListBox">
     <Setter Property="Background" Value="{DynamicResource Background}"/>
@@ -41,11 +41,11 @@
     <Setter Property="Padding" Value="10,9"/>
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-      <Border x:Name="Row" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" Padding="{TemplateBinding Padding}" CornerRadius="4"><ContentPresenter/></Border>
+      <Border x:Name="Row" Background="Transparent" BorderBrush="Transparent" BorderThickness="{DynamicResource FocusThickness}" Padding="{TemplateBinding Padding}" CornerRadius="4"><ContentPresenter/></Border>
       <ControlTemplate.Triggers>
         <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource HoverSurface}"/></Trigger>
         <Trigger Property="IsSelected" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource SelectedSurface}"/><Setter Property="Foreground" Value="{DynamicResource SelectedText}"/></Trigger>
-        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Focus}"/></Trigger>
       </ControlTemplate.Triggers>
     </ControlTemplate></Setter.Value></Setter>
   </Style>
@@ -55,11 +55,11 @@
     <Setter Property="MinHeight" Value="36"/>
     <Setter Property="Margin" Value="0,0,4,8"/>
     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
-      <Border x:Name="Chrome" BorderBrush="Transparent" BorderThickness="2" CornerRadius="5" Padding="{TemplateBinding Padding}"><ContentPresenter VerticalAlignment="Center"/></Border>
+      <Border x:Name="Chrome" BorderBrush="Transparent" BorderThickness="{DynamicResource FocusThickness}" CornerRadius="5" Padding="{TemplateBinding Padding}"><ContentPresenter VerticalAlignment="Center"/></Border>
       <ControlTemplate.Triggers>
         <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource HoverSurface}"/></Trigger>
-        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SelectedSurface}"/><Setter Property="Foreground" Value="{DynamicResource Accent}"/></Trigger>
-        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SelectedSurface}"/><Setter Property="Foreground" Value="{DynamicResource Focus}"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Focus}"/></Trigger>
       </ControlTemplate.Triggers>
     </ControlTemplate></Setter.Value></Setter>
   </Style>
@@ -68,18 +68,18 @@
     <Setter Property="Margin" Value="0,6,0,6"/>
     <Setter Property="MinHeight" Value="28"/>
     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
-      <Border x:Name="Focus" BorderBrush="Transparent" BorderThickness="2" Padding="2">
+      <Border x:Name="Focus" BorderBrush="Transparent" BorderThickness="{DynamicResource FocusThickness}" Padding="2">
         <DockPanel>
           <Border x:Name="Box" Width="18" Height="18" Background="{DynamicResource Background}" BorderBrush="{DynamicResource Outline}" BorderThickness="1" CornerRadius="3" Margin="0,0,9,0" VerticalAlignment="Center">
-            <Path x:Name="Check" Data="M 3,8 L 7,12 L 14,4" Stroke="{DynamicResource AccentText}" StrokeThickness="2" Visibility="Collapsed"/>
+            <Path x:Name="Check" Data="M 3,8 L 7,12 L 14,4" Stroke="{DynamicResource CheckMark}" StrokeThickness="2" Visibility="Collapsed"/>
           </Border>
           <ContentPresenter VerticalAlignment="Center" RecognizesAccessKey="True"/>
         </DockPanel>
       </Border>
       <ControlTemplate.Triggers>
         <Trigger Property="IsChecked" Value="True"><Setter TargetName="Box" Property="Background" Value="{DynamicResource Accent}"/><Setter TargetName="Check" Property="Visibility" Value="Visible"/></Trigger>
-        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Focus" Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
-        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Focus" Property="BorderBrush" Value="{DynamicResource Focus}"/></Trigger>
+        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Focus}"/></Trigger>
         <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Focus" Property="Opacity" Value="0.48"/></Trigger>
       </ControlTemplate.Triggers>
     </ControlTemplate></Setter.Value></Setter>
@@ -93,7 +93,7 @@
       <Grid Background="{TemplateBinding Background}">
         <Track x:Name="PART_Track" IsDirectionReversed="True" Orientation="Vertical">
           <Track.DecreaseRepeatButton><RepeatButton x:Name="Decrease" Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/></Track.DecreaseRepeatButton>
-          <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="{DynamicResource Outline}" CornerRadius="4" Margin="3"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+          <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="{DynamicResource ScrollThumb}" CornerRadius="4" Margin="3"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
           <Track.IncreaseRepeatButton><RepeatButton x:Name="Increase" Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/></Track.IncreaseRepeatButton>
         </Track>
       </Grid>

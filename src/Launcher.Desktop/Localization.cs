@@ -22,6 +22,7 @@ public partial class MainWindow
         Language = XmlLanguage.GetLanguage(L.Current.Culture.Name);
         // Recreate presentation rows only; repository selection and runtime operations are unchanged.
         RefreshNavigationLabels();
+        UpdateAppearanceSummary();
         LoadDevelopmentPreferences();
         UpdateWindowFrame();
         BrandSubtitle.Text = L.Text(brandSubtitle);

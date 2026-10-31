@@ -80,6 +80,10 @@ try
     Check(SettingsStore.Load(settingsPath).UseLocalProfile, "atomic settings replacement");
     SettingsStore.Save(original with { Language = "ru" }, settingsPath);
     Check(SettingsStore.Load(settingsPath) == original with { Language = "ru" }, "Russian preference persists with existing repository and runtime choices");
+    var appearance=new AppearanceSettings(Mode:"System",Scheme:"custom",DarkColors:new(){["PrimaryFill"]="#4567AB"},Font:"OpenDyslexic",TextScale:125,StrongFocus:true,ReduceMotion:true);
+    SettingsStore.Save(original with{Appearance=appearance},settingsPath);
+    var appearanceSettings=SettingsStore.Load(settingsPath);
+    Check(appearanceSettings.RepositoryPath==original.RepositoryPath && appearanceSettings.Appearance is{Mode:"System",Scheme:"custom",Font:"OpenDyslexic",TextScale:125,StrongFocus:true,ReduceMotion:true} && appearanceSettings.Appearance.DarkColors!["PrimaryFill"]=="#4567AB", "appearance, custom colors and accessibility preferences persist without changing runtime selection");
     File.WriteAllText(settingsPath, "{");
     bool rejected = false;
     try { SettingsStore.Load(settingsPath); } catch (JsonException) { rejected = true; }

@@ -58,6 +58,7 @@ static class Program
         app.InitializeComponent();
         var window = new MainWindow();
         Language(window, "en");
+        app.ApplyAppearance(new()); // Test expectations are independent of the owner's saved palette/font.
         var pages = Element<PageHost>(window, "Pages");
         var nav = Element<ListBox>(window, "Navigation");
         static nint Packed(short x, short y) => unchecked((nint)((ushort)x | ((uint)(ushort)y << 16)));
@@ -89,7 +90,7 @@ static class Program
             window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.DataBind);
             Check(nav.SelectedIndex == pages.SelectedIndex, "Programmatic navigation must update the sidebar.");
         }
-        Check(window.InputBindings.Count == 12, "Page, search, refresh and cycle shortcuts must be registered.");
+        Check(window.InputBindings.Count == 13, "Page, search, refresh and cycle shortcuts must be registered.");
         Check(Element<CheckBox>(window, "ModsAutoBackupBox").IsChecked == SettingsStore.Load().AutomaticBackups, "Backup preference must remain the stored choice.");
         var empty = new RuntimeSnapshot(Path.Combine(Path.GetTempPath(), "Waypoint-UI-Checks-no-install"), "UI fixture", "", "", "main", "",
             [new("Prepared client", false, "Missing")], [new("Gateway", "Stopped", 0, "", "Stopped", [6112], 0, 0, "")], []);
@@ -172,6 +173,7 @@ static class Program
         }
         ((FrameworkElement)window.Content).LayoutTransform = Transform.Identity;
         new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle();
+        AppearanceChecks.Run(app,window,Check);
         var dialog = new ConfirmationDialog(window, L.Text("Delete only the backup from {0:g}?\n\nCurrent saves are unchanged. This backup will no longer be available to restore.", DateTime.Now), L.Text("Delete selected backup"));
         var buttons = ((System.Windows.Controls.Panel)dialog.Content).Children.OfType<WrapPanel>().Single().Children.OfType<Button>().ToArray();
         Check(buttons.Any(b => b.IsCancel && b.IsDefault && (string)b.Content == "Отмена") && buttons.Any(b => !b.IsDefault && (string)b.Content == "Продолжить"), "Localized destructive confirmations must default to Cancel.");

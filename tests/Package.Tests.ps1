@@ -34,6 +34,10 @@ if (@($actual | Where-Object { $_.Extension -in @('.pdb','.db','.ggpk','.pfx') -
     throw 'Development/private game data must not be included in the portable package.'
 }
 $brand = Get-Content -LiteralPath (Join-Path $package 'brand.json') -Raw | ConvertFrom-Json
+if (-not (Test-Path -LiteralPath (Join-Path $package 'licenses/OpenDyslexic-OFL.txt')) -or
+    -not (Get-Content -LiteralPath (Join-Path $package 'licenses/OpenDyslexic-OFL.txt') -Raw).Contains('SIL OPEN FONT LICENSE Version 1.1')) {
+    throw 'The bundled reading font must retain its license notice.'
+}
 $satellite = Join-Path $package 'ru/Launcher.Core.resources.dll'
 if (-not (Test-Path -LiteralPath $satellite -PathType Leaf) -or
     -not @($manifest.Files | Where-Object Path -eq 'ru/Launcher.Core.resources.dll').Count) {

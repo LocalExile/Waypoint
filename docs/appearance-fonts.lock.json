@@ -1,0 +1,19 @@
+{
+  "Source": "https://github.com/antijingoist/opendyslexic",
+  "Commit": "1824da5c0e41dc3e13ffc7f3a636dcaf695d61b7",
+  "License": "SIL Open Font License 1.1",
+  "Files": [
+    {
+      "SHA256": "32f5840fb2bf844bdabafe372591ddfb9286e98117f5b21950aaf54ea856919a",
+      "Name": "OpenDyslexic-Regular.otf"
+    },
+    {
+      "SHA256": "5d690ea4c87ccb0d5d5d81487826a395e9b20a6c1d606f1f262c060d2bef4f03",
+      "Name": "OpenDyslexic-Bold.otf"
+    },
+    {
+      "SHA256": "caafcccfb70fc72458fcbda812ec8f0a06cb300cbabb87eabbb30b946124394b",
+      "Name": "OFL.txt"
+    }
+  ]
+}

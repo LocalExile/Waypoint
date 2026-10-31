@@ -188,3 +188,9 @@ Interface language is a launcher-only optional settings field (`Language`, defau
 forwarded to the runtime adapter, used to rewrite action/status tokens, or stored in LocalExile saves or backup metadata.
 Translated presentation preserves captured paths, IDs and native game commands. Raw runtime/diagnostic output remains
 available in its original form. See [localization](localization.md) for the satellite-file packaging requirement.
+
+`Appearance` is another optional launcher-only settings object. Legacy settings retain the Waypoint dark theme.
+It records the appearance mode, scheme, separate custom light/dark role colors, and reading/accessibility options.
+These settings are not passed to LocalExile. Theme detection reads the Windows application-theme preference and
+listens for changes; it never writes Windows registry values or installs fonts. Appearance previews write no settings
+until Apply; Cancel restores the prior appearance. The embedded OpenDyslexic font retains its OFL notice in packages.

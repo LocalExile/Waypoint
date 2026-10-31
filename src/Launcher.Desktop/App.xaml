@@ -23,8 +23,8 @@
     <Style TargetType="Window">
       <Setter Property="Background" Value="{DynamicResource Background}"/>
       <Setter Property="Foreground" Value="{DynamicResource Text}"/>
-      <Setter Property="FontFamily" Value="Segoe UI"/>
-      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="FontFamily" Value="{DynamicResource AppFont}"/>
+      <Setter Property="FontSize" Value="{DynamicResource Font14}"/>
       <Setter Property="UseLayoutRounding" Value="True"/>
     </Style>
     <Style TargetType="TextBlock">
@@ -32,7 +32,7 @@
     </Style>
     <Style x:Key="Caption" TargetType="TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource Muted}"/>
-      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontSize" Value="{DynamicResource Font12}"/>
       <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
     <Style x:Key="Card" TargetType="Border">
@@ -56,7 +56,7 @@
     </Style>
     <Style x:Key="CommitHashText" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="Cascadia Mono,Consolas"/>
-      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontSize" Value="{DynamicResource Font12}"/>
       <Setter Property="Foreground" Value="{DynamicResource BadgeText}"/>
       <Setter Property="TextWrapping" Value="NoWrap"/>
     </Style>
@@ -66,7 +66,7 @@
       <Setter Property="Padding" Value="12,7"/>
       <Setter Property="MinHeight" Value="36"/>
       <Setter Property="Margin" Value="0,0,8,8"/>
-      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="BorderThickness" Value="{DynamicResource FocusThickness}"/>
       <Setter Property="BorderBrush" Value="Transparent"/>
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
@@ -79,7 +79,7 @@
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.8"/>
+                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"/>
               </Trigger>
               <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.48"/>
@@ -87,20 +87,20 @@
               <Trigger Property="IsKeyboardFocused" Value="True">
                 <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource Text}"/>
               </Trigger>
-              <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonBorder" Property="Opacity" Value="0.65"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"/></Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
     </Style>
     <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-      <Setter Property="Background" Value="{DynamicResource Accent}"/>
+      <Setter Property="Background" Value="{DynamicResource PrimaryFill}"/>
       <Setter Property="Foreground" Value="{DynamicResource AccentText}"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Style.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Text}"/></Trigger></Style.Triggers>
+      <Style.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentText}"/></Trigger></Style.Triggers>
     </Style>
     <Style TargetType="TextBox">
-      <Setter Property="Background" Value="{DynamicResource Background}"/>
+      <Setter Property="Background" Value="{DynamicResource InputSurface}"/>
       <Setter Property="Foreground" Value="{DynamicResource Text}"/>
       <Setter Property="CaretBrush" Value="{DynamicResource Text}"/>
       <Setter Property="BorderBrush" Value="{DynamicResource Outline}"/>
@@ -108,10 +108,10 @@
       <Setter Property="SelectionBrush" Value="{DynamicResource SelectedSurface}"/>
       <Setter Property="SelectionTextBrush" Value="{DynamicResource SelectedText}"/>
       <Setter Property="MinHeight" Value="36"/>
-      <Style.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger></Style.Triggers>
+      <Style.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Focus}"/></Trigger></Style.Triggers>
     </Style>
     <Style TargetType="PasswordBox">
-      <Setter Property="Background" Value="{DynamicResource Background}"/>
+      <Setter Property="Background" Value="{DynamicResource InputSurface}"/>
       <Setter Property="Foreground" Value="{DynamicResource Text}"/>
       <Setter Property="CaretBrush" Value="{DynamicResource Text}"/>
       <Setter Property="BorderBrush" Value="{DynamicResource Outline}"/>
@@ -126,6 +126,7 @@
       </ControlTemplate></Setter.Value></Setter>
     </Style>
     <Style TargetType="TabItem"><Setter Property="Foreground" Value="{DynamicResource Text}"/></Style>
+    <Style TargetType="ToolTip"><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="Foreground" Value="{DynamicResource Text}"/><Setter Property="BorderBrush" Value="{DynamicResource Outline}"/><Setter Property="FontFamily" Value="{DynamicResource AppFont}"/><Setter Property="FontSize" Value="{DynamicResource Font12}"/></Style>
 </ResourceDictionary>
   </Application.Resources>
 </Application>
