@@ -1,10 +1,10 @@
-# Every push to main or the merge branch, and every pull request: the solution builds without warnings, the tests and the adapter's checks pass,
+# Every push to main and every pull request: the solution builds without warnings, the tests and the adapter's checks pass,
 # and all interface text has its Russian translation.
 name: CI
 
 on:
   push:
-    branches: [main, waypoint]
+    branches: [main]
   pull_request:
 
 permissions:
