@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Waypoint, the desktop launcher for a LocalExile server checkout (docs/launcher.md). `dotnet publish src/Waypoint -o .`
+       puts one Waypoint.exe in this repository's root. It references no server project: it drives a checkout through
+       live.ps1, the Gateway's `commands`/`values` modes, the dev host's protocol, the server's logs and the adapter in
+       scripts/ (Launcher.Core embeds it; BridgeScripts unpacks it). -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <!-- Only for the tray icon (NotifyIcon); its namespaces stay out of the implicit usings, where they clash with WPF's. -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Waypoint</AssemblyName>
+    <RootNamespace>Waypoint</RootNamespace>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>embedded</DebugType>
+    <!-- A build from source; the release workflow passes the git tag's version (-p:Version=1.2.3). -->
+    <Version>0.0.0-dev</Version>
+    <!-- The exe's icon (Explorer, shortcuts). branding\waypoint-master.png is the source; scripts\New-Icon.ps1 makes the
+         .ico (16 to 256 px) and the 192 px image the sidebar recolours. -->
+    <ApplicationIcon>..\..\branding\app.ico</ApplicationIcon>
+    <!-- English and Russian only: the toolkits' other satellite assemblies stay out of the exe. -->
+    <SatelliteResourceLanguages>en;ru</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The window's (title bar, taskbar) and the tray's icon, and the sidebar's emblem, read from the assembly. -->
+    <Resource Include="..\..\branding\app.ico" Link="app.ico" />
+    <Resource Include="..\..\branding\waypoint-192.png" Link="waypoint-192.png" />
+    <!-- The bundled reading font and its licence, which travels with it. -->
+    <Resource Include="Fonts\*.otf" />
+    <Resource Include="Fonts\OFL.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Waypoint.Tests" />
+    <!-- WPF leaves System.IO out of the implicit usings (its Path clashes with System.Windows.Shapes.Path, unused here). -->
+    <Using Include="System.IO" />
+    <Using Include="Launcher.Core" />
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Launcher.Core\Launcher.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The look: Material Design controls, restyled flat in Shell.xaml (Theme.cs applies the chosen palette). -->
+    <PackageReference Include="MaterialDesignThemes" Version="5.4.0" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.745401" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.8" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,56 @@
+<UserControl x:Class="Waypoint.BackupsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Waypoint">
+    <DockPanel>
+        <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="20,10,14,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="{l:Loc 'Open backup folder'}" Click="OpenFolder" />
+                    <Button Content="{l:Loc 'Refresh backups'}" Click="RefreshClicked" />
+                    <Button Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Back up now'}" Click="BackUpNow" Margin="0,0,0,6" />
+                </StackPanel>
+                <CheckBox x:Name="AutoBackup" DockPanel.Dock="Left" Content="{l:Loc 'Automatic backups'}" Checked="BackupChanged" Unchecked="BackupChanged"
+                          ToolTip="{l:Loc 'A consistent copy of the saves before a Gateway start, a checkout switch or an account change'}" />
+                <TextBlock x:Name="Status" Style="{StaticResource Shell.Secondary}" Margin="4,0,12,6" TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+
+        <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="170" Margin="20,8,20,12" />
+
+        <Grid Margin="20,10,20,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <ListBox x:Name="BackupList" SelectionChanged="SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="2,2">
+                                <TextBlock Text="{Binding Summary}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Identity}" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="Empty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center"
+                           VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="240" Margin="16" />
+            </Grid>
+            <GroupBox Grid.Column="2" Header="{l:Loc 'Selected backup'}" Margin="0">
+                <DockPanel>
+                    <WrapPanel DockPanel.Dock="Top">
+                        <Button x:Name="RestoreButton" Content="{l:Loc 'Restore saves'}" Click="Restore" IsEnabled="False" />
+                        <Button x:Name="RestoreModsButton" Content="{l:Loc 'Restore mod choices'}" Click="RestoreMods" IsEnabled="False" />
+                        <Button x:Name="DeleteButton" Content="{l:Loc 'Delete backup'}" Click="Delete" IsEnabled="False" Foreground="{DynamicResource Shell.Error}" />
+                    </WrapPanel>
+                    <TextBlock x:Name="Hint" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,8" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBlock x:Name="Details" TextWrapping="Wrap" FontFamily="{StaticResource Mono}" FontSize="12" />
+                    </ScrollViewer>
+                </DockPanel>
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+</UserControl>

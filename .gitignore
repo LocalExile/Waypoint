@@ -1,5 +1,5 @@
-# The published launcher (dotnet publish src/GameServer.Launcher -o .)
-/LocalExileLauncher.exe
+# The published launcher (dotnet publish src/Waypoint -o .)
+/Waypoint.exe
 
 # --- .NET ---
 bin/
@@ -7,6 +7,9 @@ obj/
 *.user
 *.suo
 TestResults/
+
+# --- Python ---
+__pycache__/
 
 # --- Machine-local tool config ---
 .vs/

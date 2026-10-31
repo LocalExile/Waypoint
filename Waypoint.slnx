@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Launcher.Core/Launcher.Core.csproj" />
+    <Project Path="src/Waypoint/Waypoint.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Launcher.Checks/Launcher.Checks.csproj" />
+    <Project Path="tests/Waypoint.Tests/Waypoint.Tests.csproj" />
+  </Folder>
+</Solution>

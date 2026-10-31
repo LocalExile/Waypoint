@@ -1,0 +1,48 @@
+<UserControl x:Class="Waypoint.LogsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:l="clr-namespace:Waypoint">
+    <UserControl.Resources>
+        <Style x:Key="LineText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource Mono}" />
+            <Setter Property="FontSize" Value="12" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Severity}" Value="Error">
+                    <Setter Property="Foreground" Value="{DynamicResource Shell.Error}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                    <Setter Property="Foreground" Value="{DynamicResource Shell.Warning}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <DockPanel Margin="20,12,20,12">
+        <ListBox x:Name="SourceList" DisplayMemberPath="Display" DockPanel.Dock="Left" Width="190" Margin="0,0,8,0" SelectionChanged="SourceChanged" />
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <TextBlock Text="{l:Loc 'Filter'}" VerticalAlignment="Center" Margin="0,0,6,6" />
+            <TextBox x:Name="Filter" Width="240" Margin="0,0,12,6" TextChanged="FilterChanged" ToolTip="{l:Loc 'Lines containing this text (case ignored)'}" />
+            <CheckBox x:Name="Problems" Content="{l:Loc 'Errors and warnings only'}" Checked="FilterChanged" Unchecked="FilterChanged" />
+            <CheckBox x:Name="Follow" Content="{l:Loc 'Follow'}" IsChecked="True" ToolTip="{l:Loc 'Scroll to each new line'}" />
+            <Button Content="{l:Loc 'Copy'}" Click="Copy" ToolTip="{l:Loc 'The shown lines to the clipboard'}" />
+            <Button Content="{l:Loc 'Open file'}" Click="OpenFile" />
+            <Button Content="{l:Loc 'Clear'}" Click="Clear" ToolTip="{l:Loc 'Clears the view; the file is not changed'}" />
+            <Button Content="{l:Loc 'Diagnostic report'}" Click="DiagnosticReportClicked" ToolTip="{l:Loc 'A redacted report for a bug: previewed first, copied only when you ask'}" />
+            <TextBlock x:Name="Count" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" Margin="6,0,0,6" />
+        </WrapPanel>
+        <ListBox x:Name="Lines" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Extended">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                    <Setter Property="Padding" Value="6,1" />
+                    <Setter Property="md:RippleAssist.IsDisabled" Value="True" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Text}" Style="{StaticResource LineText}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>

@@ -1,9 +1,10 @@
-# Every push to main and every pull request: the solution builds without warnings and the tests pass.
+# Every push to main or the merge branch, and every pull request: the solution builds without warnings, the tests and the adapter's checks pass,
+# and all interface text has its Russian translation.
 name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, waypoint]
   pull_request:
 
 permissions:
@@ -17,7 +18,25 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Build
-        run: dotnet build LocalExileLauncher.slnx -c Release
+        run: dotnet build Waypoint.slnx -c Release
       - name: Test
-        run: dotnet test LocalExileLauncher.slnx -c Release --no-build
+        run: dotnet test Waypoint.slnx -c Release --no-build
+      - name: Core checks
+        run: dotnet run --project tests/Launcher.Checks -c Release --no-build
+      - name: Adapter checks
+        shell: pwsh
+        run: |
+          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop') {
+            powershell -NoProfile -ExecutionPolicy Bypass -File "tests/$test.Tests.ps1"
+            if ($LASTEXITCODE -ne 0) { throw "$test.Tests.ps1 failed" }
+          }
+          python tests/AccountData.Tests.py
+          if ($LASTEXITCODE -ne 0) { throw 'AccountData.Tests.py failed' }
+          python tests/Capture.Tests.py
+          if ($LASTEXITCODE -ne 0) { throw 'Capture.Tests.py failed' }
+      - name: Translations
+        run: python tools/missing-translations.py

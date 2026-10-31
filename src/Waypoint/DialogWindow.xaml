@@ -1,0 +1,39 @@
+<Window x:Class="Waypoint.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        FontFamily="{DynamicResource AppFont}" FontSize="12.5" TextElement.Foreground="{DynamicResource Shell.Text}">
+    <!-- The launcher's own message box: a card with the kind's icon, the title, the text, optional details and the
+         buttons on a strip (Dialog.cs). The margin leaves room for the shadow. -->
+    <Border Margin="18" Background="{DynamicResource Shell.Background}" BorderBrush="{DynamicResource Shell.Border}"
+            BorderThickness="1" CornerRadius="8">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="3" Opacity="0.28" />
+        </Border.Effect>
+        <DockPanel MinWidth="400" MaxWidth="540">
+            <DockPanel DockPanel.Dock="Top" Margin="22,20,22,0" Background="Transparent" MouseLeftButtonDown="Drag">
+                <Grid Width="36" Height="36" VerticalAlignment="Top">
+                    <Ellipse x:Name="IconBack" Opacity="0.14" />
+                    <md:PackIcon x:Name="KindIcon" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+                <TextBlock x:Name="Heading" FontSize="15" FontWeight="SemiBold" Margin="14,0,0,0" VerticalAlignment="Center"
+                           TextWrapping="Wrap" />
+            </DockPanel>
+            <Border DockPanel.Dock="Bottom" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}"
+                    BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Padding="22,12">
+                <StackPanel x:Name="Buttons" Orientation="Horizontal" HorizontalAlignment="Right" />
+            </Border>
+            <StackPanel Margin="72,6,24,18">
+                <TextBlock x:Name="Message" TextWrapping="Wrap" LineHeight="19" />
+                <Border x:Name="DetailsBox" Visibility="Collapsed" Margin="0,12,0,0" Padding="10,8" CornerRadius="4"
+                        Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1">
+                    <ScrollViewer MaxHeight="170" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="Details" FontFamily="{StaticResource Mono}" FontSize="12" />
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</Window>

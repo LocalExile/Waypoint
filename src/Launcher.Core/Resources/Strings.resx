@@ -1,0 +1,4145 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Text_005cb5071483">
+    <value>Servers ready</value>
+  </data>
+  <data xml:space="preserve" name="Text_00e989018b91">
+    <value>Open mods folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_01134b9287ff">
+    <value>Could not read backups: </value>
+  </data>
+  <data name="Text_0126dc853a0e" xml:space="preserve">
+    <value>client: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_019c527ea981">
+    <value>SERVICES</value>
+  </data>
+  <data name="Text_01f6aefc4008" xml:space="preserve">
+    <value>Closing the window exits Waypoint completely.</value>
+  </data>
+  <data name="Text_01fc520500a2" xml:space="preserve">
+    <value>This removes this account, all of its characters and progress, and its personal and guild stashes in every league. Other accounts are unchanged.</value>
+  </data>
+  <data xml:space="preserve" name="Text_02262050828b">
+    <value>Replacing only this installation's saves; source, client and keys are unchanged.</value>
+  </data>
+  <data name="Text_024e575db6ff" xml:space="preserve">
+    <value>Not a server checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_02a2840b598b">
+    <value>Back up now</value>
+  </data>
+  <data xml:space="preserve" name="Text_030d3f415374">
+    <value>What backups include</value>
+  </data>
+  <data name="Text_035485f7a61d" xml:space="preserve">
+    <value>Pinned:</value>
+  </data>
+  <data xml:space="preserve" name="Text_0397d2f08fb2">
+    <value>Built files and confirmed runtime status are separate. LocalExile watches mod files independently of Gateway code hot reload. Building or reloading resets the mod’s in-memory state and can reload dependents. Disabling a dependency can unload other mods. Changes affect every character on this Gateway.</value>
+  </data>
+  <data xml:space="preserve" name="Text_03aaf79a604f">
+    <value>Stop servers</value>
+  </data>
+  <data xml:space="preserve" name="Text_03f25d282624">
+    <value>data/login-keys.json must match the prepared client; never regenerate existing keys casually</value>
+  </data>
+  <data name="Text_03f69885814b" xml:space="preserve">
+    <value>Open on GitHub</value>
+  </data>
+  <data xml:space="preserve" name="Text_03fea198cf4c">
+    <value>Main background</value>
+  </data>
+  <data name="Text_0405e2a9ec7d" xml:space="preserve">
+    <value>live.ps1 -NoClient: builds and starts Patch, Auth and Gateway; a running client stays</value>
+  </data>
+  <data name="Text_044006a3fc33" xml:space="preserve">
+    <value>The servers or the game are running. They stop before the update: a running Gateway would rebuild halfway through it.</value>
+  </data>
+  <data xml:space="preserve" name="Text_0480c77bde68">
+    <value>Launch adapter</value>
+  </data>
+  <data xml:space="preserve" name="Text_0516ac3163b5">
+    <value>Colors to edit</value>
+  </data>
+  <data name="Text_0543defbc095" xml:space="preserve">
+    <value>this build from source</value>
+  </data>
+  <data xml:space="preserve" name="Text_057c2971fa56">
+    <value>Could not read local branches. Check the selected Git checkout. </value>
+  </data>
+  <data name="Text_057f2d886683" xml:space="preserve">
+    <value>GameServer.Gateway {0} exited with {1}</value>
+  </data>
+  <data xml:space="preserve" name="Text_057fd24429fa">
+    <value>Restart service</value>
+  </data>
+  <data xml:space="preserve" name="Text_05d3ec58206c">
+    <value>Keyboard focus</value>
+  </data>
+  <data name="Text_0601b77efc9d" xml:space="preserve">
+    <value>The running Waypoint could not be contacted. Close it normally and try again. Use the same Windows permission level for both copies.</value>
+  </data>
+  <data xml:space="preserve" name="Text_06291e8ea32e">
+    <value>Found and using: </value>
+  </data>
+  <data name="Text_065699cd74f6" xml:space="preserve">
+    <value>a build from source</value>
+  </data>
+  <data name="Text_0656d2bfebf7" xml:space="preserve">
+    <value>Start with fresh saves</value>
+  </data>
+  <data name="Text_06748f34221f" xml:space="preserve">
+    <value>Select an account first.</value>
+  </data>
+  <data name="Text_070d63bf412e" xml:space="preserve">
+    <value>Another Waypoint build is already open. Close that window normally before opening this build. Existing operations and services have not been stopped.</value>
+  </data>
+  <data xml:space="preserve" name="Text_07c99f3f9c05">
+    <value>Compile failed</value>
+  </data>
+  <data name="Text_0858184ec92d" xml:space="preserve">
+    <value>pid {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_08ad630cfbfa">
+    <value>Open backup folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_08de788b0ede">
+    <value>Hovered controls</value>
+  </data>
+  <data name="Text_090416e6e2e6" xml:space="preserve">
+    <value>Records each area's walk map with Frida</value>
+  </data>
+  <data name="Text_0985d74b69c6" xml:space="preserve">
+    <value>Waiting for the verified client; existing capture files are preserved.</value>
+  </data>
+  <data xml:space="preserve" name="Text_09a216bf0611">
+    <value>Client archive</value>
+  </data>
+  <data name="Text_09df5fb37bf0" xml:space="preserve">
+    <value>Accounts loaded. Reload to check for changes.</value>
+  </data>
+  <data name="Text_0a019c8feee0" xml:space="preserve">
+    <value>ms/s</value>
+  </data>
+  <data name="Text_0a63ffdd26c0" xml:space="preserve">
+    <value>REQUIREMENT</value>
+  </data>
+  <data name="Text_0a6f2ed0b66a" xml:space="preserve">
+    <value>Filter the commands by name or description</value>
+  </data>
+  <data xml:space="preserve" name="Text_0a9315c001d9">
+    <value>Save and check</value>
+  </data>
+  <data name="Text_0aa2be2a39a2" xml:space="preserve">
+    <value>Setup did not finish</value>
+  </data>
+  <data name="Text_0b046bdcbbe3" xml:space="preserve">
+    <value>A new version of Waypoint is ready</value>
+  </data>
+  <data name="Text_0b092f15c64b" xml:space="preserve">
+    <value>Restart the game?</value>
+  </data>
+  <data name="Text_0b592089b24d" xml:space="preserve">
+    <value>Builds and starts the account service (the Accounts section starts it too)</value>
+  </data>
+  <data name="Text_0b6de39de685" xml:space="preserve">
+    <value>Starting fresh</value>
+  </data>
+  <data name="Text_0b74b0656b99" xml:space="preserve">
+    <value>gen 0</value>
+  </data>
+  <data name="Text_0b776bf7ef90" xml:space="preserve">
+    <value>Start the game (Control section), log in and enter an area, then send again.</value>
+  </data>
+  <data name="Text_0b7dda5c9b90" xml:space="preserve">
+    <value>The running window has an operation in progress. Let it finish before closing or changing checkout.</value>
+  </data>
+  <data name="Text_0c0e5ef46381" xml:space="preserve">
+    <value>Create a character</value>
+  </data>
+  <data name="Text_0c26727a3a51" xml:space="preserve">
+    <value>The game world</value>
+  </data>
+  <data xml:space="preserve" name="Text_0c26cc1e71ab">
+    <value>Watcher is alive; waiting for its Gateway child. Open Gateway output if this persists.</value>
+  </data>
+  <data xml:space="preserve" name="Text_0c77fe09ab33">
+    <value>Client</value>
+  </data>
+  <data xml:space="preserve" name="Text_0c79a9c22284">
+    <value>Applied</value>
+  </data>
+  <data xml:space="preserve" name="Text_0c7f86506b86">
+    <value>Install dependency</value>
+  </data>
+  <data xml:space="preserve" name="Text_0cdc983551de">
+    <value> · Mod history not recorded</value>
+  </data>
+  <data xml:space="preserve" name="Text_0ce2b3edbfd2">
+    <value>Live controls need the checkout’s native helper (Python + Frida) and a client in a playable area. With Gateway stopped, enable choices are saved for its next start. Otherwise use the displayed command in game. Loaded status expires after two minutes or a binary/configuration change.</value>
+  </data>
+  <data xml:space="preserve" name="Text_0cef0d77a2fe">
+    <value>View operation output</value>
+  </data>
+  <data name="Text_0d0d25a58963" xml:space="preserve">
+    <value>Fetches pull request #{0} again: its newest commits, also after a force-push</value>
+  </data>
+  <data name="Text_0d9fe2fa20b9" xml:space="preserve">
+    <value>You can change this in Settings → Window behavior.</value>
+  </data>
+  <data name="Text_0da96708cb8a" xml:space="preserve">
+    <value>Stop this checkout’s services when exiting Waypoint</value>
+  </data>
+  <data name="Text_0dc3484d5ab2" xml:space="preserve">
+    <value>No accounts yet: register one below.</value>
+  </data>
+  <data xml:space="preserve" name="Text_0de9f358ad56">
+    <value>Borders</value>
+  </data>
+  <data name="Text_0df6f1cad36c" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Text_0e2226b5235f" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+  <data name="Text_0e2a0f489dd2" xml:space="preserve">
+    <value>End it and continue</value>
+  </data>
+  <data name="Text_0e2a4f380fbe" xml:space="preserve">
+    <value>Build it and start the servers and the game now?</value>
+  </data>
+  <data xml:space="preserve" name="Text_0e4133cd4d29">
+    <value>Local runtime wrapper</value>
+  </data>
+  <data name="Text_0e8f55547359" xml:space="preserve">
+    <value>Use arrows to choose a page. Ctrl+1–9 switches pages; Ctrl+Tab moves to the next page.</value>
+  </data>
+  <data xml:space="preserve" name="Text_0e9161011702">
+    <value>Refresh</value>
+  </data>
+  <data name="Text_0f044feb6ca7" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="Text_0f17c1790f9b" xml:space="preserve">
+    <value>The game or services are still running. Waypoint will stay open. No force termination was attempted.</value>
+  </data>
+  <data name="Text_0f34b59d5c5f" xml:space="preserve">
+    <value>checking …</value>
+  </data>
+  <data xml:space="preserve" name="Text_0f45e54a225b">
+    <value>From Tools/ooz run npm install</value>
+  </data>
+  <data xml:space="preserve" name="Text_0fa5ec4ebbe9">
+    <value>Refresh local status (F5)</value>
+  </data>
+  <data name="Text_1026d509da03" xml:space="preserve">
+    <value>{0} has no GameServer.slnx and scripts\dev\live.ps1.</value>
+  </data>
+  <data xml:space="preserve" name="Text_10384cde3c85">
+    <value>Choose and check a workspace to see its mods.</value>
+  </data>
+  <data xml:space="preserve" name="Text_108040ac289a">
+    <value>Ruby</value>
+  </data>
+  <data xml:space="preserve" name="Text_10ad4c387363">
+    <value>Slate</value>
+  </data>
+  <data name="Text_10adc7d75e67" xml:space="preserve">
+    <value>At least 4 characters. Credentials are not saved by Waypoint.</value>
+  </data>
+  <data xml:space="preserve" name="Text_10ee94005bb9">
+    <value>Color scheme</value>
+  </data>
+  <data name="Text_112d64cc9b85" xml:space="preserve">
+    <value>Fetching …</value>
+  </data>
+  <data xml:space="preserve" name="Text_1180f832c808">
+    <value>Could not save preferences: </value>
+  </data>
+  <data name="Text_1181d704686c" xml:space="preserve">
+    <value>No capture session log yet.</value>
+  </data>
+  <data name="Text_118fb0172261" xml:space="preserve">
+    <value>{0} updated</value>
+  </data>
+  <data name="Text_11d3f9b625c9" xml:space="preserve">
+    <value>Ready to capture newly loaded areas.</value>
+  </data>
+  <data name="Text_11e940a84add" xml:space="preserve">
+    <value>Closes the game; the servers keep running</value>
+  </data>
+  <data name="Text_11e9fe71c67f" xml:space="preserve">
+    <value>{0} characters</value>
+  </data>
+  <data name="Text_121e08966248" xml:space="preserve">
+    <value>No usable client was found. Searched {0}.</value>
+  </data>
+  <data xml:space="preserve" name="Text_122b49fe8f4e">
+    <value>Appearance saved.</value>
+  </data>
+  <data name="Text_126b8d3e1100" xml:space="preserve">
+    <value>Reload accounts</value>
+  </data>
+  <data name="Text_12f9d7bebcb6" xml:space="preserve">
+    <value>The pull requests could not be read from GitHub (see the output).</value>
+  </data>
+  <data xml:space="preserve" name="Text_130ec7311cce">
+    <value>Environment checked.</value>
+  </data>
+  <data name="Text_131dac929d6e" xml:space="preserve">
+    <value>Applying the reviewed change in one SQLite transaction. Credentials are not logged.</value>
+  </data>
+  <data name="Text_135e912e8905" xml:space="preserve">
+    <value>What's new</value>
+  </data>
+  <data xml:space="preserve" name="Text_13ef73c47f3e">
+    <value>Reading font</value>
+  </data>
+  <data name="Text_1405a63e8a78" xml:space="preserve">
+    <value>Character</value>
+  </data>
+  <data xml:space="preserve" name="Text_140bedbf9c3f">
+    <value>none</value>
+  </data>
+  <data name="Text_1422c6b064e0" xml:space="preserve">
+    <value>30 s</value>
+  </data>
+  <data xml:space="preserve" name="Text_143b270a3260">
+    <value>Complete</value>
+  </data>
+  <data name="Text_144d877d3f41" xml:space="preserve">
+    <value>Duplicate account</value>
+  </data>
+  <data name="Text_14a35d80da45" xml:space="preserve">
+    <value>Switch without a backup?</value>
+  </data>
+  <data name="Text_14c1130db95a" xml:space="preserve">
+    <value>An older Waypoint without single-instance support is already open. Close it normally before opening this build. No process has been stopped.</value>
+  </data>
+  <data xml:space="preserve" name="Text_153565a001f1">
+    <value>Process measurements</value>
+  </data>
+  <data name="Text_1551e89173ed" xml:space="preserve">
+    <value>Minimize to tray keeps Waypoint running beside the clock. Click its icon, or open Waypoint again, to return.</value>
+  </data>
+  <data name="Text_15689b1ef00b" xml:space="preserve">
+    <value>Tools LocalExile needs</value>
+  </data>
+  <data name="Text_158b8358f7e4" xml:space="preserve">
+    <value>The search could not finish: </value>
+  </data>
+  <data name="Text_159fceff6f84" xml:space="preserve">
+    <value>Theme: {0} (click for {1}); System follows Windows</value>
+  </data>
+  <data name="Text_15cf2239e4e8" xml:space="preserve">
+    <value>Set up LocalExile</value>
+  </data>
+  <data xml:space="preserve" name="Text_1600160452d4">
+    <value>Invalid source</value>
+  </data>
+  <data xml:space="preserve" name="Text_16d6780ed99d">
+    <value>Dependency blocked</value>
+  </data>
+  <data xml:space="preserve" name="Text_16e705d95533">
+    <value>Game is running</value>
+  </data>
+  <data xml:space="preserve" name="Text_16eaede014f9">
+    <value>Fetch remote branches</value>
+  </data>
+  <data xml:space="preserve" name="Text_16fab6cfda80">
+    <value>Close the game before restoring saves. Stop Gateway before restoring mod choices.</value>
+  </data>
+  <data name="Text_1709305c9fa9" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data xml:space="preserve" name="Text_176b219dca96">
+    <value>Warnings / errors</value>
+  </data>
+  <data name="Text_17a007daa2f8" xml:space="preserve">
+    <value>Detaching the recorder without closing the game or removing captured files.</value>
+  </data>
+  <data name="Text_17cebc83e8bd" xml:space="preserve">
+    <value>The servers did not stop</value>
+  </data>
+  <data xml:space="preserve" name="Text_17eb3c0168d0">
+    <value>disabled</value>
+  </data>
+  <data xml:space="preserve" name="Text_17f32fa1f4b5">
+    <value>Find your LocalExile checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_1826368b30f4">
+    <value>Selected log output</value>
+  </data>
+  <data name="Text_1839753b1003" xml:space="preserve">
+    <value>Choose again</value>
+  </data>
+  <data xml:space="preserve" name="Text_1842c8d229bc">
+    <value>Gateway began listening again after the previous reload event. Sign in again if the game returned to login.</value>
+  </data>
+  <data name="Text_18c9175ef71b" xml:space="preserve">
+    <value>A redacted report for a bug: previewed first, copied only when you ask</value>
+  </data>
+  <data xml:space="preserve" name="Text_18dd785c42a8">
+    <value>{0} · {1} · {2}% text</value>
+  </data>
+  <data name="Text_1900b478a586" xml:space="preserve">
+    <value>Capture</value>
+  </data>
+  <data name="Text_19094b4ee12e" xml:space="preserve">
+    <value>threads, queued work items</value>
+  </data>
+  <data name="Text_19734a1b58ca" xml:space="preserve">
+    <value>Window</value>
+  </data>
+  <data xml:space="preserve" name="Text_19766ed6ccb2">
+    <value>Cancel</value>
+  </data>
+  <data xml:space="preserve" name="Text_19c29440bac8">
+    <value>This mod has no source project in the selected checkout.</value>
+  </data>
+  <data name="Text_19fc45efcadf" xml:space="preserve">
+    <value>The account name must match exactly. Nothing has been deleted.</value>
+  </data>
+  <data name="Text_1a2491cda7a1" xml:space="preserve">
+    <value>The checkout has {0} uncommitted change(s). They are stashed before the switch and come back with "Restore stashed changes" when you return to {1}.</value>
+  </data>
+  <data name="Text_1a3f4323beee" xml:space="preserve">
+    <value>not a result: {0}</value>
+  </data>
+  <data name="Text_1a4cd9d82bc5" xml:space="preserve">
+    <value>Choose the folder of your LocalExile server checkout: the one with GameServer.slnx and scripts\dev\live.ps1. Waypoint remembers it.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1a4f630ac1b6">
+    <value>Stopped</value>
+  </data>
+  <data name="Text_1a56ffc0af65" xml:space="preserve">
+    <value>The servers are running</value>
+  </data>
+  <data xml:space="preserve" name="Text_1a5ac0bd0b6b">
+    <value>Source: </value>
+  </data>
+  <data name="Text_1a6ff8f22cbb" xml:space="preserve">
+    <value>Start when you are ready. You can stop at any point, and the game can stay closed the whole time.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1ac6734160c8">
+    <value>Restore saves…</value>
+  </data>
+  <data name="Text_1aee4597ab3b" xml:space="preserve">
+    <value>Create account…</value>
+  </data>
+  <data xml:space="preserve" name="Text_1b275277ece1">
+    <value>This revision does not have a supported mod host.</value>
+  </data>
+  <data name="Text_1b28bb60c464" xml:space="preserve">
+    <value>Deletes the local pr/&lt;n&gt; branches of pull requests that are no longer open (not the current one)</value>
+  </data>
+  <data xml:space="preserve" name="Text_1b63be7c9abf">
+    <value>Gateway phase timings exist in LocalExile’s LocalExile.Gateway meter. Collecting those timings and recording benchmark comparisons are planned separately; these process measurements do not represent time spent in game systems.</value>
+  </data>
+  <data name="Text_1b77b94027cf" xml:space="preserve">
+    <value>server checkout too old for the launcher (no live.ps1 -Stop)</value>
+  </data>
+  <data xml:space="preserve" name="Text_1b87fafd9ff1">
+    <value>Servers are ready. Play opens the prepared client.</value>
+  </data>
+  <data name="Text_1bcd7cf47289" xml:space="preserve">
+    <value>Found {0} on this PC.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1c05492dd6ed">
+    <value>Load the list to browse branches and open LocalExile PRs. Switching reuses the existing client copy.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1c304451f9d9">
+    <value>Checkbox marks</value>
+  </data>
+  <data name="Text_1c54b5836312" xml:space="preserve">
+    <value>Not started: a server port is still in use.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1c7e31690f17">
+    <value>Install Python 3.9 or newer from python.org with its PATH option enabled. Close and reopen the launcher, then Recheck setup. Frida is optional and is not required for ordinary play.</value>
+  </data>
+  <data name="Text_1c98b88e71b9" xml:space="preserve">
+    <value>Close Waypoint completely.</value>
+  </data>
+  <data xml:space="preserve" name="Text_1d0fae1e7a27">
+    <value>No mods to show.</value>
+  </data>
+  <data name="Text_1d6ca631e720" xml:space="preserve">
+    <value>! commands not loaded: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_1ddc54772630">
+    <value> · prepared client found</value>
+  </data>
+  <data name="Text_1e0a5a4fd5bf" xml:space="preserve">
+    <value>Restart Gateway for capture</value>
+  </data>
+  <data name="Text_1e38f7b99036" xml:space="preserve">
+    <value>Requested checkout</value>
+  </data>
+  <data name="Text_1f330a2da345" xml:space="preserve">
+    <value>{0} stash tab</value>
+  </data>
+  <data name="Text_1f3c387a4c2d" xml:space="preserve">
+    <value>Automatic backup before mod changes</value>
+  </data>
+  <data name="Text_1f8d6be4b386" xml:space="preserve">
+    <value>Keep Waypoint running in the tray</value>
+  </data>
+  <data name="Text_1fceb5ed541c" xml:space="preserve">
+    <value>No branches: Fetch reads them.</value>
+  </data>
+  <data name="Text_1fd447009585" xml:space="preserve">
+    <value>Remember my choices</value>
+  </data>
+  <data xml:space="preserve" name="Text_1ff335e35fbf">
+    <value>No checkout selected</value>
+  </data>
+  <data name="Text_1ff57a29d7c9" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data xml:space="preserve" name="Text_2004618e77b7">
+    <value>Use this checkout</value>
+  </data>
+  <data name="Text_207565e87c76" xml:space="preserve">
+    <value>Accounts refreshed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_20759152bb78">
+    <value>Keyboard: Ctrl+1–8 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Appearance follows Waypoint’s dark theme and Windows High Contrast.</value>
+  </data>
+  <data name="Text_207b5bfd6962" xml:space="preserve">
+    <value>Create my first account next</value>
+  </data>
+  <data name="Text_20d28271bfa9" xml:space="preserve">
+    <value>{0} h ago</value>
+  </data>
+  <data name="Text_2125db5eddda" xml:space="preserve">
+    <value>LocalExile is ready</value>
+  </data>
+  <data name="Text_213d05dc1861" xml:space="preserve">
+    <value>Keyboard: Ctrl+1–9 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Appearance follows Waypoint’s dark theme and Windows High Contrast.</value>
+  </data>
+  <data name="Text_2141a1190cb3" xml:space="preserve">
+    <value>ManageAccount completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_217526d30143">
+    <value>Building / restarting</value>
+  </data>
+  <data xml:space="preserve" name="Text_21a0270b7f66">
+    <value>script</value>
+  </data>
+  <data name="Text_21d641e62ada" xml:space="preserve">
+    <value>LocalExile is built. Add your game client with this guide when you have it: Setup → Run setup guide.</value>
+  </data>
+  <data xml:space="preserve" name="Text_223e64b8fc5b">
+    <value>Automatic lookup runs on first use. You can also search again here.</value>
+  </data>
+  <data name="Text_225ea1a36f00" xml:space="preserve">
+    <value>Saved client credentials for this account will need to be entered again.</value>
+  </data>
+  <data name="Text_22614ace1aef" xml:space="preserve">
+    <value>Launcher</value>
+  </data>
+  <data name="Text_2288c47a9839" xml:space="preserve">
+    <value>Errors and warnings only</value>
+  </data>
+  <data xml:space="preserve" name="Text_22a62a64de6a">
+    <value>Compatible saved code edits apply in game. Compile errors keep old code running. Incompatible edits restart Gateway and return you to login. Static data and Auth/Patch changes can need a restart. Branch/PR switching always stops services first.</value>
+  </data>
+  <data xml:space="preserve" name="Text_22a970d2e5b1">
+    <value>Completed</value>
+  </data>
+  <data name="Text_22b2a5d05d3a" xml:space="preserve">
+    <value>Account data is up to date. Reload to check for changes.</value>
+  </data>
+  <data xml:space="preserve" name="Text_22dd7af622aa">
+    <value>Close Waypoint</value>
+  </data>
+  <data name="Text_22e2bada8f1c" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data xml:space="preserve" name="Text_230841178e46">
+    <value>Could not open download page: </value>
+  </data>
+  <data name="Text_231559a9d186" xml:space="preserve">
+    <value>live.ps1 -Stop -NoClient: the servers and the walk-map recorder; the client stays (back at the login screen)</value>
+  </data>
+  <data name="Text_2331c395597e" xml:space="preserve">
+    <value>Could not verify services before exiting.</value>
+  </data>
+  <data xml:space="preserve" name="Text_23c0a4391171">
+    <value>Upstream PR number</value>
+  </data>
+  <data xml:space="preserve" name="Text_245c1078b5e7">
+    <value>Mod details</value>
+  </data>
+  <data name="Text_2494bdb5bc46" xml:space="preserve">
+    <value>Loading accounts…</value>
+  </data>
+  <data xml:space="preserve" name="Text_2511413756fa">
+    <value>Review the redacted text before copying. Redaction recognizes common patterns; check for any private details it missed.</value>
+  </data>
+  <data name="Text_25202f7bbc33" xml:space="preserve">
+    <value>Enter the account's password and the character's name.</value>
+  </data>
+  <data name="Text_253a6e5a66fa" xml:space="preserve">
+    <value>downloading {0} …</value>
+  </data>
+  <data name="Text_257afbba53dd" xml:space="preserve">
+    <value>Python/frida check timed out</value>
+  </data>
+  <data name="Text_25855b01c0a7" xml:space="preserve">
+    <value>Refresh to verify this checkout’s current status.</value>
+  </data>
+  <data name="Text_258cdfb8102c" xml:space="preserve">
+    <value>loading {0} values …</value>
+  </data>
+  <data name="Text_25bf8e1a2393" xml:space="preserve">
+    <value>local</value>
+  </data>
+  <data xml:space="preserve" name="Text_25ce306e93b9">
+    <value>Close the game before stopping servers.</value>
+  </data>
+  <data name="Text_25d99e3dbef3" xml:space="preserve">
+    <value>live.ps1 is running; change the server when it is done.</value>
+  </data>
+  <data name="Text_25ec5c9141d3" xml:space="preserve">
+    <value>live.ps1 -NoClient: rebuilds and restarts Patch, Auth and Gateway (after a pull, or edits outside the Gateway); the Gateway's own code edits apply by themselves with hot reload. A running client stays.</value>
+  </data>
+  <data xml:space="preserve" name="Text_260a08977944">
+    <value>Creating a consistent SQLite snapshot and checking its integrity.</value>
+  </data>
+  <data xml:space="preserve" name="Text_261d63e6eab7">
+    <value>Launching the prepared client through live.ps1 -ClientOnly.</value>
+  </data>
+  <data name="Text_2637af936de3" xml:space="preserve">
+    <value>Only the published Waypoint.exe updates itself</value>
+  </data>
+  <data xml:space="preserve" name="Text_263c42bf45e5">
+    <value>No mods match your search. Clear it to see all mods.</value>
+  </data>
+  <data name="Text_265db6150f68" xml:space="preserve">
+    <value>Saving mod choice</value>
+  </data>
+  <data name="Text_26639e783252" xml:space="preserve">
+    <value>Change account</value>
+  </data>
+  <data name="Text_26a5b26009b2" xml:space="preserve">
+    <value>Current checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_26c164899bbb">
+    <value>not built</value>
+  </data>
+  <data xml:space="preserve" name="Text_271962fab9d7">
+    <value>Preparing client</value>
+  </data>
+  <data xml:space="preserve" name="Text_273ebd9d8848">
+    <value>Choose a mod from the list.</value>
+  </data>
+  <data xml:space="preserve" name="Text_275dbda9dedb">
+    <value>Sunset</value>
+  </data>
+  <data xml:space="preserve" name="Text_275f2b247724">
+    <value>
+Change location above to choose somewhere else.</value>
+  </data>
+  <data xml:space="preserve" name="Text_27712080ff00">
+    <value>ReloadData completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_279d233b3ee4">
+    <value>Change location</value>
+  </data>
+  <data xml:space="preserve" name="Text_27e6ed25bcfa">
+    <value>Select and check an installation first.</value>
+  </data>
+  <data xml:space="preserve" name="Text_282b08d0523c">
+    <value>Get Node.js</value>
+  </data>
+  <data name="Text_284c52af98f1" xml:space="preserve">
+    <value>game running</value>
+  </data>
+  <data name="Text_288994eb8c4a" xml:space="preserve">
+    <value>Close the game first. If services cannot stop safely, Waypoint stays open.</value>
+  </data>
+  <data name="Text_28c09aa06d80" xml:space="preserve">
+    <value>the account has the most characters it can have</value>
+  </data>
+  <data name="Text_28fd171b0b6b" xml:space="preserve">
+    <value>Ask again next time</value>
+  </data>
+  <data xml:space="preserve" name="Text_292a37482041">
+    <value>BUILT COMPONENTS · DEBUG</value>
+  </data>
+  <data name="Text_2951c4e2bb30" xml:space="preserve">
+    <value>Stopping: a step that writes the client or the keys finishes first.</value>
+  </data>
+  <data xml:space="preserve" name="Text_297ef4c79b4b">
+    <value>Reduce motion</value>
+  </data>
+  <data xml:space="preserve" name="Text_297fba3fb830">
+    <value>Build source mods or install a local mod to create this folder.</value>
+  </data>
+  <data xml:space="preserve" name="Text_298493527af6">
+    <value>Install the .NET 10 SDK for Windows x64 from Microsoft's download page. Close and reopen the launcher after installing, then Recheck setup.</value>
+  </data>
+  <data name="Text_298d318ece80" xml:space="preserve">
+    <value>per s</value>
+  </data>
+  <data name="Text_29945b65f986" xml:space="preserve">
+    <value>game data extracted (step 7)</value>
+  </data>
+  <data name="Text_29a40861bafe" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data xml:space="preserve" name="Text_29a8131f6403">
+    <value>Python 3.9+ is required for data extraction</value>
+  </data>
+  <data name="Text_29f2cb4814a9" xml:space="preserve">
+    <value>Prepare the client</value>
+  </data>
+  <data name="Text_2a0a15cf528f" xml:space="preserve">
+    <value>could not close the client: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a1a6355ed7e">
+    <value>Ice</value>
+  </data>
+  <data name="Text_2a1c36c08948" xml:space="preserve">
+    <value>ms per second</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a36428839a3">
+    <value>Violet</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a43880cee01">
+    <value>Preserves the existing saves and runtime settings from config/runtime.local.ps1. Adapter v1 supports literal Game_* assignments and standard local ports. Unsupported profiles fail with an explanation.</value>
+  </data>
+  <data xml:space="preserve" name="Text_2a954f0067b1">
+    <value>Save backup history</value>
+  </data>
+  <data xml:space="preserve" name="Text_2ad562319767">
+    <value>feature</value>
+  </data>
+  <data xml:space="preserve" name="Text_2ad580eaee79">
+    <value>Restore mod choices</value>
+  </data>
+  <data name="Text_2aec579f9e4a" xml:space="preserve">
+    <value>git failed</value>
+  </data>
+  <data name="Text_2b28514da699" xml:space="preserve">
+    <value>Setup stopped</value>
+  </data>
+  <data name="Text_2b4048cd80c1" xml:space="preserve">
+    <value>Nothing matches the search.</value>
+  </data>
+  <data name="Text_2b5e770c2b3b" xml:space="preserve">
+    <value>The minimize button still uses the taskbar. When hidden, click the Waypoint icon beside the clock to return. You may find it under the hidden-icons arrow.</value>
+  </data>
+  <data name="Text_2b69057ec9ef" xml:space="preserve">
+    <value>The password must have at least 4 characters.</value>
+  </data>
+  <data name="Text_2bcd48474ec9" xml:space="preserve">
+    <value>Extract the game data</value>
+  </data>
+  <data name="Text_2c2da2a749f0" xml:space="preserve">
+    <value>the dev host did not start (logs\launcher-host.err): {0}</value>
+  </data>
+  <data name="Text_2c4117e5b038" xml:space="preserve">
+    <value>Update to {0}?</value>
+  </data>
+  <data xml:space="preserve" name="Text_2cb93bc2b809">
+    <value>Enter a positive LocalExile PR number, including closed PRs</value>
+  </data>
+  <data name="Text_2cc145b2c0eb" xml:space="preserve">
+    <value>Restart servers</value>
+  </data>
+  <data xml:space="preserve" name="Text_2cdf3c95c8a5">
+    <value>Closing game</value>
+  </data>
+  <data name="Text_2d0370642087" xml:space="preserve">
+    <value>game not running</value>
+  </data>
+  <data name="Text_2d0afc98a2dd" xml:space="preserve">
+    <value>Keep services running</value>
+  </data>
+  <data xml:space="preserve" name="Text_2dafe4f58ab0">
+    <value> · tracked files modified</value>
+  </data>
+  <data name="Text_2db432a7964b" xml:space="preserve">
+    <value>Get {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_2dcb950944f5">
+    <value>Runtime status has not been confirmed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_2deea4664d23">
+    <value>Secondary text</value>
+  </data>
+  <data name="Text_2e19a6844469" xml:space="preserve">
+    <value>Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3b.</value>
+  </data>
+  <data name="Text_2e2833c43983" xml:space="preserve">
+    <value>git stash failed, nothing switched: {0}</value>
+  </data>
+  <data name="Text_2e3e57537a8b" xml:space="preserve">
+    <value>Installing Frida in the private environment. No global packages are changed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_2ee7e02cbde9">
+    <value>Building checkout</value>
+  </data>
+  <data name="Text_2eed71190382" xml:space="preserve">
+    <value>Full copy</value>
+  </data>
+  <data name="Text_2f1395cf5579" xml:space="preserve">
+    <value>Set password…</value>
+  </data>
+  <data xml:space="preserve" name="Text_2f444c96f7fb">
+    <value>Stronger keyboard focus borders</value>
+  </data>
+  <data name="Text_2f5ca4b733a1" xml:space="preserve">
+    <value>Exit Waypoint</value>
+  </data>
+  <data xml:space="preserve" name="Text_2fad023a9cbb">
+    <value>Prepare local client</value>
+  </data>
+  <data xml:space="preserve" name="Text_2fc55bd56efc">
+    <value>Start Gateway and enter a playable area to check live status. Python + Frida are required.</value>
+  </data>
+  <data xml:space="preserve" name="Text_2ff6b56154ab">
+    <value>Finish setup to play</value>
+  </data>
+  <data name="Text_300f88d55953" xml:space="preserve">
+    <value>Only applies to a full exit, including Exit Waypoint in the tray menu. Hiding to tray keeps services running. If the game is open, you can cancel or leave everything running.</value>
+  </data>
+  <data name="Text_302110ba3e90" xml:space="preserve">
+    <value>Look for a newer Waypoint release on GitHub</value>
+  </data>
+  <data xml:space="preserve" name="Text_30cc92d87a1e">
+    <value>Monochrome</value>
+  </data>
+  <data xml:space="preserve" name="Text_3131e368b220">
+    <value>Checked {0:T} · process ownership and required listening ports verified locally</value>
+  </data>
+  <data name="Text_314b16a3d271" xml:space="preserve">
+    <value>Client messages</value>
+  </data>
+  <data xml:space="preserve" name="Text_316e8e8cbc2d">
+    <value>Choose a backup to inspect its source and mod history.</value>
+  </data>
+  <data name="Text_318fae23f2ff" xml:space="preserve">
+    <value>Not switched: the servers did not stop.</value>
+  </data>
+  <data name="Text_3194ceb3ac95" xml:space="preserve">
+    <value>{0} is running; switch when it is done.</value>
+  </data>
+  <data xml:space="preserve" name="Text_31d524153069">
+    <value>Restore Waypoint</value>
+  </data>
+  <data xml:space="preserve" name="Text_31e392d1c037">
+    <value>Apply</value>
+  </data>
+  <data xml:space="preserve" name="Text_31fbef162594">
+    <value>Continue</value>
+  </data>
+  <data xml:space="preserve" name="Text_3225a6d60db2">
+    <value>Customize the currently displayed mode. Switch Light or Dark above to edit the other set.</value>
+  </data>
+  <data xml:space="preserve" name="Text_32287b2cedcb">
+    <value> · Mod history recorded</value>
+  </data>
+  <data xml:space="preserve" name="Text_324b134f57c7">
+    <value>Preview</value>
+  </data>
+  <data xml:space="preserve" name="Text_3253dba2c477">
+    <value>Switch and build</value>
+  </data>
+  <data xml:space="preserve" name="Text_32a9d6a7dfd3">
+    <value>
+This checkout has modified tracked files.</value>
+  </data>
+  <data name="Text_32d7e8208247" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data xml:space="preserve" name="Text_331551b0de41">
+    <value>Pending</value>
+  </data>
+  <data xml:space="preserve" name="Text_3334fee2c77f">
+    <value>Backups</value>
+  </data>
+  <data name="Text_333775e31a21" xml:space="preserve">
+    <value>gateway list not patched yet (step 6)</value>
+  </data>
+  <data name="Text_3374c9e93f22" xml:space="preserve">
+    <value>You can stop at any point: what is finished stays finished.</value>
+  </data>
+  <data name="Text_33a58116eb34" xml:space="preserve">
+    <value>Only in this checkout: not on origin (not pushed)</value>
+  </data>
+  <data xml:space="preserve" name="Text_33b938b93ca9">
+    <value>Open a specific upstream PR</value>
+  </data>
+  <data name="Text_3455a18c69a8" xml:space="preserve">
+    <value>{0:0.0} of {1:0.0} GB · {2:0} MB/s · {3}</value>
+  </data>
+  <data name="Text_348e16b56997" xml:space="preserve">
+    <value>Waypoint (built from source)</value>
+  </data>
+  <data xml:space="preserve" name="Text_34a4bac9ef24">
+    <value>Checking setup</value>
+  </data>
+  <data xml:space="preserve" name="Text_34ada7568b73">
+    <value>Following Windows: {0}</value>
+  </data>
+  <data name="Text_34b66838fe48" xml:space="preserve">
+    <value>Show log</value>
+  </data>
+  <data name="Text_34da57ce0a19" xml:space="preserve">
+    <value>live.ps1 is running; check the game data when it is done.</value>
+  </data>
+  <data name="Text_35045f868d57" xml:space="preserve">
+    <value>Python not found: no walk maps, no console</value>
+  </data>
+  <data xml:space="preserve" name="Text_3506d661965b">
+    <value>Restart Gateway</value>
+  </data>
+  <data xml:space="preserve" name="Text_358cc201f87d">
+    <value>Operations</value>
+  </data>
+  <data name="Text_35a86201334e" xml:space="preserve">
+    <value>Checking Python 3.9+ and Frida without installing packages.</value>
+  </data>
+  <data name="Text_35dd8b832082" xml:space="preserve">
+    <value>Show Waypoint</value>
+  </data>
+  <data xml:space="preserve" name="Text_35ed5fa746ff">
+    <value>Dark colors</value>
+  </data>
+  <data name="Text_360fe2a32742" xml:space="preserve">
+    <value>Calls per second over the window</value>
+  </data>
+  <data name="Text_3654f0dc9e94" xml:space="preserve">
+    <value>Stopping area capture</value>
+  </data>
+  <data name="Text_3659acba9aa2" xml:space="preserve">
+    <value>The selected action will run without a close dialog.</value>
+  </data>
+  <data xml:space="preserve" name="Text_367ae45f5293">
+    <value>In game: /mod lists runtime status.</value>
+  </data>
+  <data xml:space="preserve" name="Text_375e15d846ce">
+    <value>Waypoint mint</value>
+  </data>
+  <data name="Text_37a8eec1ce19" xml:space="preserve">
+    <value>default</value>
+  </data>
+  <data name="Text_381f5c69d6b1" xml:space="preserve">
+    <value>Could not open Waypoint</value>
+  </data>
+  <data xml:space="preserve" name="Text_381fb2297b10">
+    <value>Extracting data</value>
+  </data>
+  <data name="Text_388192a83182" xml:space="preserve">
+    <value>Found {0} on this PC. Choose the one to use.</value>
+  </data>
+  <data xml:space="preserve" name="Text_388a0721496d">
+    <value>Closing Waypoint leaves services running.</value>
+  </data>
+  <data xml:space="preserve" name="Text_38cca6bea010">
+    <value>OFF</value>
+  </data>
+  <data name="Text_38d69f252932" xml:space="preserve">
+    <value>Retiring removed source mods</value>
+  </data>
+  <data xml:space="preserve" name="Text_3907fa7f8072">
+    <value>Appearance</value>
+  </data>
+  <data xml:space="preserve" name="Text_39921a740bf2">
+    <value>Switch</value>
+  </data>
+  <data name="Text_3a0f7b919840" xml:space="preserve">
+    <value>Changing account data</value>
+  </data>
+  <data name="Text_3a1a91189489" xml:space="preserve">
+    <value>Browse to a folder with PathOfExile.exe and Content.ggpk. It must be a standalone 3.29.3b install: Steam and Epic installs do not work, and Waypoint cannot download the game.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a361f5a0e7f">
+    <value>Workspace needs attention</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a3846150ef4">
+    <value>Needs: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a4633d9bdb7">
+    <value>Query the running Gateway’s confirmed mod status.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a495eb5b8fb">
+    <value>Main text</value>
+  </data>
+  <data name="Text_3a6e351b6aa6" xml:space="preserve">
+    <value>UPDATED</value>
+  </data>
+  <data xml:space="preserve" name="Text_3a824789af77">
+    <value> · Source at backup: </value>
+  </data>
+  <data name="Text_3a8a331029ce" xml:space="preserve">
+    <value>Not updated: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_3ad8589795b3">
+    <value>Check live status</value>
+  </data>
+  <data name="Text_3b343d586243" xml:space="preserve">
+    <value>Not restored (the stash is kept): {0}</value>
+  </data>
+  <data name="Text_3b373fd62989" xml:space="preserve">
+    <value>can't start {0} ({1}): the bridge needs Python with frida (.venv, GettingStarted step 9)</value>
+  </data>
+  <data name="Text_3b5d8715cb2a" xml:space="preserve">
+    <value>Restart Gateway with area capture enabled? The game must be closed. Gateway will stop gracefully, then the recorder will wait for your next game launch.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3b5e2fe4d276">
+    <value>QueryMods completed.</value>
+  </data>
+  <data name="Text_3b7ffa42c6e0" xml:space="preserve">
+    <value>Also applies to Exit Waypoint from the tray menu.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3bd8fd42d412">
+    <value>Folder does not exist yet: </value>
+  </data>
+  <data xml:space="preserve" name="Text_3bdee2629899">
+    <value>Live process measurements</value>
+  </data>
+  <data xml:space="preserve" name="Text_3bf95cac512b">
+    <value>{0} mods · {1}
+{2}</value>
+  </data>
+  <data xml:space="preserve" name="Text_3c1e7be1b5a0">
+    <value>Password (at least 4 characters; not saved by the launcher)</value>
+  </data>
+  <data name="Text_3c25c5fd139b" xml:space="preserve">
+    <value>/ lists the commands, then each argument's values (areas, monsters, items, gems …): ↑↓ choose, Tab or Enter take one. Without a list ↑↓ go through the history. Text without / is a chat line.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3c58451ae577">
+    <value>Detached source</value>
+  </data>
+  <data name="Text_3d0bd7411efc" xml:space="preserve">
+    <value>Exit and leave running</value>
+  </data>
+  <data xml:space="preserve" name="Text_3d246cebf3ac">
+    <value>Switch completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3d487cea417c">
+    <value> · tracked files unchanged</value>
+  </data>
+  <data name="Text_3d502d9e88cc" xml:space="preserve">
+    <value>In the Standard league; the game's own creation screen offers the other leagues</value>
+  </data>
+  <data name="Text_3db20e7a2c35" xml:space="preserve">
+    <value>The current saves are backed up and moved aside, never deleted; this applies to one switch</value>
+  </data>
+  <data name="Text_3dbe26764706" xml:space="preserve">
+    <value>network mode not set yet: set Predictive in game</value>
+  </data>
+  <data name="Text_3dc5a2da83a2" xml:space="preserve">
+    <value>Last played: {0}</value>
+  </data>
+  <data name="Text_3dd9df4441fb" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="Text_3dff73672811" xml:space="preserve">
+    <value>wrong password</value>
+  </data>
+  <data name="Text_3e2d24eda853" xml:space="preserve">
+    <value>Git downloads LocalExile and switches its branches</value>
+  </data>
+  <data xml:space="preserve" name="Text_3e9648b06bc7">
+    <value>Using this installation only. Credentials are not saved by the launcher.</value>
+  </data>
+  <data xml:space="preserve" name="Text_3ea221ce95ba">
+    <value>Primary button text</value>
+  </data>
+  <data name="Text_3ee0b304b03f" xml:space="preserve">
+    <value>Stop and switch</value>
+  </data>
+  <data name="Text_3f8635c36da3" xml:space="preserve">
+    <value>Restore stashed changes</value>
+  </data>
+  <data name="Text_3f9bab3a3f0b" xml:space="preserve">
+    <value>You can stop at any point: what is finished stays finished, and the guide continues from there next time. Setup never changes your own Path of Exile install.</value>
+  </data>
+  <data name="Text_3fa059ee5bd6" xml:space="preserve">
+    <value>Keep Waypoint within reach?</value>
+  </data>
+  <data xml:space="preserve" name="Text_3fbcbf7d0499">
+    <value>Fetch completed.</value>
+  </data>
+  <data name="Text_3fe586513da2" xml:space="preserve">
+    <value>building GameServer.Host …</value>
+  </data>
+  <data name="Text_400d65cb7299" xml:space="preserve">
+    <value>Stop and update</value>
+  </data>
+  <data xml:space="preserve" name="Text_40e2fbc81bf9">
+    <value>Prepare this checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_40ef19a35d79">
+    <value>Stop completed.</value>
+  </data>
+  <data name="Text_411aa8a7f208" xml:space="preserve">
+    <value>LocalExile needs these ports, and Windows itself is using one of them, so Waypoint will not end it. Look at what uses it, free the port, and try again.</value>
+  </data>
+  <data name="Text_415ed7340303" xml:space="preserve">
+    <value>not running</value>
+  </data>
+  <data name="Text_4190c0c7ec72" xml:space="preserve">
+    <value>Open file</value>
+  </data>
+  <data xml:space="preserve" name="Text_419911a932d1">
+    <value>Selected checkout: </value>
+  </data>
+  <data xml:space="preserve" name="Text_41ed52921661">
+    <value>Gateway</value>
+  </data>
+  <data xml:space="preserve" name="Text_42154791e774">
+    <value>Language saved.</value>
+  </data>
+  <data name="Text_42610696b9f9" xml:space="preserve">
+    <value>This storage layout can be browsed, but account changes are disabled because its schema or import state is unfamiliar.</value>
+  </data>
+  <data name="Text_42e1d2be26fc" xml:space="preserve">
+    <value>The server saves the character's progress as it happens.</value>
+  </data>
+  <data name="Text_431027eb3edb" xml:space="preserve">
+    <value>Open Waypoint</value>
+  </data>
+  <data name="Text_433e00b3f109" xml:space="preserve">
+    <value>Clears the view; the file is not changed</value>
+  </data>
+  <data xml:space="preserve" name="Text_436e61016e26">
+    <value>Play</value>
+  </data>
+  <data name="Text_437c2cf0cad3" xml:space="preserve">
+    <value>Character names for the copy</value>
+  </data>
+  <data xml:space="preserve" name="Text_437d2a208b63">
+    <value>Local runtime uses {0}</value>
+  </data>
+  <data name="Text_4404e17d8000" xml:space="preserve">
+    <value>No area captured in the latest session.</value>
+  </data>
+  <data xml:space="preserve" name="Text_442aded87a55">
+    <value>Performance</value>
+  </data>
+  <data name="Text_449b92dc7163" xml:space="preserve">
+    <value>time in GC</value>
+  </data>
+  <data name="Text_4556e8f76b8d" xml:space="preserve">
+    <value>The download failed (git exit {0}). Check your connection and try again.</value>
+  </data>
+  <data xml:space="preserve" name="Text_45989de49fb7">
+    <value>Details</value>
+  </data>
+  <data name="Text_45d498d7208d" xml:space="preserve">
+    <value>Stopping the servers and the game …</value>
+  </data>
+  <data name="Text_45fd5081ff0d" xml:space="preserve">
+    <value>Update check failed</value>
+  </data>
+  <data xml:space="preserve" name="Text_464848ad8a15">
+    <value>Checking prerequisites and the selected installation.</value>
+  </data>
+  <data xml:space="preserve" name="Text_4660c28f96b5">
+    <value>Port {0} is occupied by another process (PID {1}); {2} is not owned by this checkout.</value>
+  </data>
+  <data xml:space="preserve" name="Text_46d6b84bae4a">
+    <value>Git is missing or this folder has no readable Git HEAD. Manual selection still works.</value>
+  </data>
+  <data name="Text_46d9953d562e" xml:space="preserve">
+    <value>Server  </value>
+  </data>
+  <data xml:space="preserve" name="Text_4700b9ee6a2f">
+    <value>Use the wheel, the arrow keys on a slider, or an exact hex color. Escape cancels this color change.</value>
+  </data>
+  <data name="Text_47483ec2a678" xml:space="preserve">
+    <value>live.ps1 -ClientOnly: the game, against the running servers</value>
+  </data>
+  <data name="Text_4759498ac2a7" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data xml:space="preserve" name="Text_47712109b90c">
+    <value>Know what you’re running</value>
+  </data>
+  <data xml:space="preserve" name="Text_477c5451ef0b">
+    <value>Clear mod search</value>
+  </data>
+  <data name="Text_47c062d35d2c" xml:space="preserve">
+    <value>No matching accounts</value>
+  </data>
+  <data xml:space="preserve" name="Text_47cc14147fa7">
+    <value>Build completed.</value>
+  </data>
+  <data name="Text_47d8440d8c62" xml:space="preserve">
+    <value>Close the game first. Gateway restarts gracefully with capture enabled.</value>
+  </data>
+  <data xml:space="preserve" name="Text_47e8b196a14c">
+    <value>Refresh backups</value>
+  </data>
+  <data name="Text_480189e83289" xml:space="preserve">
+    <value>{0} characters · {1} stash tabs</value>
+  </data>
+  <data xml:space="preserve" name="Text_4859a908b868">
+    <value>Hot reload</value>
+  </data>
+  <data name="Text_48ce04a2b2bc" xml:space="preserve">
+    <value>Full copy includes characters, progress and all personal/guild stash tabs. Start empty creates only a new login.</value>
+  </data>
+  <data xml:space="preserve" name="Text_49089f5749b2">
+    <value>Copy reviewed report</value>
+  </data>
+  <data xml:space="preserve" name="Text_491291cca723">
+    <value>Reload selected</value>
+  </data>
+  <data xml:space="preserve" name="Text_494ca78f7374">
+    <value>Custom</value>
+  </data>
+  <data name="Text_4987ea348964" xml:space="preserve">
+    <value>{0} is running; the lists are what the checkout already knew.</value>
+  </data>
+  <data xml:space="preserve" name="Text_49c266baaaa7">
+    <value>Search</value>
+  </data>
+  <data xml:space="preserve" name="Text_49dad9577c46">
+    <value>Could not inspect mods: </value>
+  </data>
+  <data xml:space="preserve" name="Text_4a1c51ca77b8">
+    <value>Enable choices apply at the next Gateway start. Build selected compiles this mod’s source.</value>
+  </data>
+  <data name="Text_4a416d8a0cdb" xml:space="preserve">
+    <value>Unavailable in this checkout</value>
+  </data>
+  <data name="Text_4a83511ffe2f" xml:space="preserve">
+    <value>pull the server's main branch</value>
+  </data>
+  <data name="Text_4a84639bfc72" xml:space="preserve">
+    <value>Set up the rest now, and add the client later</value>
+  </data>
+  <data xml:space="preserve" name="Text_4a9a45318354">
+    <value>Different local HEAD</value>
+  </data>
+  <data name="Text_4ac0fe518f59" xml:space="preserve">
+    <value>Waypoint will ask what to do the next time you close the window.</value>
+  </data>
+  <data xml:space="preserve" name="Text_4ac147b602c9">
+    <value>Connect your checkout</value>
+  </data>
+  <data name="Text_4afea6a9cacf" xml:space="preserve">
+    <value>Run setup guide…</value>
+  </data>
+  <data name="Text_4b132b882d17" xml:space="preserve">
+    <value>The notification area is unavailable. Waypoint has reopened so you can still use it.</value>
+  </data>
+  <data name="Text_4b81201360c2" xml:space="preserve">
+    <value>{0} character</value>
+  </data>
+  <data xml:space="preserve" name="Text_4b8df1bf034b">
+    <value>Client instructions</value>
+  </data>
+  <data xml:space="preserve" name="Text_4bdd511d381b">
+    <value>View instructions</value>
+  </data>
+  <data name="Text_4c5a0be141c4" xml:space="preserve">
+    <value>The game needs all three servers: use Play, or Start servers first.</value>
+  </data>
+  <data xml:space="preserve" name="Text_4c5c7d3c9542">
+    <value>Select and check an installation to view its backups.</value>
+  </data>
+  <data name="Text_4c764cb6248e" xml:space="preserve">
+    <value>Shadow</value>
+  </data>
+  <data name="Text_4cafea661228" xml:space="preserve">
+    <value>UPTIME</value>
+  </data>
+  <data name="Text_4cc500db62ed" xml:space="preserve">
+    <value>threads</value>
+  </data>
+  <data xml:space="preserve" name="Text_4cda809eee92">
+    <value>Building selected revision</value>
+  </data>
+  <data xml:space="preserve" name="Text_4d2ee5a61d29">
+    <value>Gateway restarted</value>
+  </data>
+  <data xml:space="preserve" name="Text_4d2fc504a139">
+    <value> · client setup needed</value>
+  </data>
+  <data xml:space="preserve" name="Text_4d7056f0e9be">
+    <value>Hue</value>
+  </data>
+  <data name="Text_4d95f1b334f2" xml:space="preserve">
+    <value>Stashed changes restored.</value>
+  </data>
+  <data name="Text_4da10f1fbb17" xml:space="preserve">
+    <value>Set up</value>
+  </data>
+  <data xml:space="preserve" name="Text_4df1cf29668a">
+    <value>Play completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_4df57ea533cf">
+    <value>Checking restore</value>
+  </data>
+  <data name="Text_4df7d19d0633" xml:space="preserve">
+    <value>Everything is in place. Press Play in Waypoint to start the servers and the game. In the game, set Options → Game → Network Mode to Predictive the first time.</value>
+  </data>
+  <data name="Text_4e3e2cd41804" xml:space="preserve">
+    <value>Build all mods</value>
+  </data>
+  <data xml:space="preserve" name="Text_4e80063a06ed">
+    <value> · watcher active</value>
+  </data>
+  <data name="Text_4eb3cfff6031" xml:space="preserve">
+    <value>{0} is up to date.</value>
+  </data>
+  <data name="Text_4ed2e771f1b1" xml:space="preserve">
+    <value>Starting area capture</value>
+  </data>
+  <data name="Text_4ed39abd9069" xml:space="preserve">
+    <value>This guide gets LocalExile ready to play. It looks for what you already have, and asks before it downloads or copies anything.</value>
+  </data>
+  <data name="Text_4f3a9bd00397" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data xml:space="preserve" name="Text_4f4bcbb48773">
+    <value>CURRENT SOURCE</value>
+  </data>
+  <data name="Text_4feda881a8e2" xml:space="preserve">
+    <value>the bridge stopped: {0}</value>
+  </data>
+  <data name="Text_5010cae2d615" xml:space="preserve">
+    <value>Waypoint downloads the new version and restarts; the servers and the game keep running.</value>
+  </data>
+  <data name="Text_5045659cf175" xml:space="preserve">
+    <value>{0}  ({1} errors)</value>
+  </data>
+  <data xml:space="preserve" name="Text_507d2cdd1d1b">
+    <value>Fetching pull request</value>
+  </data>
+  <data xml:space="preserve" name="Text_512f7f4147ad">
+    <value>No verified process for this checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_514d7286b5ae">
+    <value>{0} · Checked {1}</value>
+  </data>
+  <data name="Text_515509f0e334" xml:space="preserve">
+    <value>{0:0} MB</value>
+  </data>
+  <data name="Text_5199860e98ea" xml:space="preserve">
+    <value>New name for {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_51b0451ee87b">
+    <value>Close game</value>
+  </data>
+  <data xml:space="preserve" name="Text_51e7c752f8e6">
+    <value>Verifying the selected SQLite backup.</value>
+  </data>
+  <data xml:space="preserve" name="Text_521339c7dbbf">
+    <value>Wait for the current build or runtime operation to finish before closing.</value>
+  </data>
+  <data name="Text_52134427a938" xml:space="preserve">
+    <value>Marauder</value>
+  </data>
+  <data name="Text_523482ff186e" xml:space="preserve">
+    <value>allocated/s</value>
+  </data>
+  <data xml:space="preserve" name="Text_524d1e13a5b3">
+    <value>Building mods</value>
+  </data>
+  <data xml:space="preserve" name="Text_52656e8104ee">
+    <value>Branch</value>
+  </data>
+  <data xml:space="preserve" name="Text_526ba7a26daf">
+    <value>Wait for the current operation before changing checkout.</value>
+  </data>
+  <data name="Text_52ec94a020a9" xml:space="preserve">
+    <value>Last captured: {0} · {1:g}</value>
+  </data>
+  <data name="Text_52f9f5a843d0" xml:space="preserve">
+    <value>{0} is running …</value>
+  </data>
+  <data xml:space="preserve" name="Text_5355e8288662">
+    <value>Missing DLL</value>
+  </data>
+  <data name="Text_5368ec3622b8" xml:space="preserve">
+    <value>On a full exit</value>
+  </data>
+  <data name="Text_53bc57cdb692" xml:space="preserve">
+    <value>5 min</value>
+  </data>
+  <data name="Text_53be99dc1380" xml:space="preserve">
+    <value>Read-only: {0}</value>
+  </data>
+  <data name="Text_5411795d179d" xml:space="preserve">
+    <value>Close the game, then restart Gateway to enable capture.</value>
+  </data>
+  <data xml:space="preserve" name="Text_54377045445b">
+    <value>Building preparation tools</value>
+  </data>
+  <data name="Text_54624197825a" xml:space="preserve">
+    <value>Switch anyway</value>
+  </data>
+  <data xml:space="preserve" name="Text_546ad4e108c4">
+    <value>Open Agents/GettingStarted.md in the selected checkout. Use the supported upstream launch script and standard client/build paths. Then Recheck setup.</value>
+  </data>
+  <data xml:space="preserve" name="Text_5493a9520726">
+    <value>Clipboard busy — try again</value>
+  </data>
+  <data xml:space="preserve" name="Text_54941e76228c">
+    <value>Minimize Waypoint</value>
+  </data>
+  <data xml:space="preserve" name="Text_54c4fa1fb963">
+    <value>Restore selected save backup</value>
+  </data>
+  <data name="Text_54fb27bce27c" xml:space="preserve">
+    <value>Close window to the notification area (system tray)</value>
+  </data>
+  <data name="Text_55091c102c8f" xml:space="preserve">
+    <value>The saves could not be backed up. Automatic backups can be turned off on the Backups section.</value>
+  </data>
+  <data name="Text_5559b6621735" xml:space="preserve">
+    <value>{0} has no Content.ggpk and PathOfExile.exe, so it is not a standalone client.</value>
+  </data>
+  <data xml:space="preserve" name="Text_55880f0e7438">
+    <value>Operation output</value>
+  </data>
+  <data name="Text_5594a1f9def3" xml:space="preserve">
+    <value>Stop the servers and the game before exiting</value>
+  </data>
+  <data xml:space="preserve" name="Text_5634c7509b09">
+    <value>Automatic backups run before branch/PR activation, builds, Gateway startup/restart, game-data reload, mod changes and save restore. A failed backup blocks the change. Mod history records choices, manifest versions, DLL fingerprints and the last confirmed runtime report. Restoring saves does not switch source, client files, login keys or game-data overrides. Restoring mod choices never installs DLLs or replaces saves. Last launched Gateway is recorded by Waypoint; outside launches and every hot edit are not tracked.</value>
+  </data>
+  <data name="Text_564570edcef7" xml:space="preserve">
+    <value>The Gateway runs under dotnet watch, so saved code edits apply with the game still running; off passes -NoHotReload</value>
+  </data>
+  <data name="Text_565339bc4d33" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="Text_5663485b8c0d">
+    <value>DisableMod completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_56e170d33d20">
+    <value>Red–green friendly</value>
+  </data>
+  <data name="Text_5726606d5e2a" xml:space="preserve">
+    <value>release {0} has no {1} with its .sha256</value>
+  </data>
+  <data name="Text_581dec3ed74b" xml:space="preserve">
+    <value>LAST COMMIT</value>
+  </data>
+  <data xml:space="preserve" name="Text_5841335d26d5">
+    <value>Automatic backups are off. Back up manually on Backups before changes you may want to undo.</value>
+  </data>
+  <data xml:space="preserve" name="Text_58788a9810b6">
+    <value>Delete only the backup from {0:g}?
+
+Current saves are unchanged. This backup will no longer be available to restore.</value>
+  </data>
+  <data xml:space="preserve" name="Text_589877b1a7f3">
+    <value>Runtime last checked: </value>
+  </data>
+  <data xml:space="preserve" name="Text_58b1306d2f1d">
+    <value>Save backups</value>
+  </data>
+  <data xml:space="preserve" name="Text_58fc561ca474">
+    <value>Install extraction dependency</value>
+  </data>
+  <data name="Text_591889ac42e0" xml:space="preserve">
+    <value>Open logs</value>
+  </data>
+  <data xml:space="preserve" name="Text_594623afa2ef">
+    <value>Existing save database</value>
+  </data>
+  <data name="Text_59546c79643c" xml:space="preserve">
+    <value>Close {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_59976865a56d">
+    <value>Install .NET 10 SDK; check with dotnet --list-sdks</value>
+  </data>
+  <data name="Text_59e693cdbc2c" xml:space="preserve">
+    <value>Skip setup</value>
+  </data>
+  <data xml:space="preserve" name="Text_59fc6e9d24f1">
+    <value>Game running. Close it before stopping or restarting services.</value>
+  </data>
+  <data name="Text_5a3f8a56fafe" xml:space="preserve">
+    <value>Steam and Epic installs have no Content.ggpk and do not work. Choose a standalone install.</value>
+  </data>
+  <data xml:space="preserve" name="Text_5a624ed29811">
+    <value>Load / refresh list</value>
+  </data>
+  <data name="Text_5a681a15a3d6" xml:space="preserve">
+    <value>Set account password</value>
+  </data>
+  <data name="Text_5aeae0f3a80d" xml:space="preserve">
+    <value>.NET counters of</value>
+  </data>
+  <data xml:space="preserve" name="Text_5b72b116c129">
+    <value>Watch Gateway code while playing</value>
+  </data>
+  <data name="Text_5bb7de320b88" xml:space="preserve">
+    <value>{0} has {1} commit(s) of its own that the pull request has not; push or move them first</value>
+  </data>
+  <data xml:space="preserve" name="Text_5c412a262086">
+    <value>Game</value>
+  </data>
+  <data xml:space="preserve" name="Text_5c520be69184">
+    <value>Choose a local branch, a fetched remote branch or an upstream PR. Switching stops owned servers, backs up saves and builds the revision. Close the game first; press Play afterward.</value>
+  </data>
+  <data name="Text_5c6566e8941c" xml:space="preserve">
+    <value>install Python 3.9+ from python.org (GettingStarted step 9)</value>
+  </data>
+  <data name="Text_5c69120cac69" xml:space="preserve">
+    <value>Close the game before stopping services</value>
+  </data>
+  <data xml:space="preserve" name="Text_5c6b0c0b0420">
+    <value>Local account created. Sign in inside the game, then create a character there.</value>
+  </data>
+  <data name="Text_5cb474767eeb" xml:space="preserve">
+    <value>Download LocalExile from GitHub into this folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_5cc72d6218d1">
+    <value>Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions.</value>
+  </data>
+  <data name="Text_5d1765a3435c" xml:space="preserve">
+    <value>Supply one folder after --repo.</value>
+  </data>
+  <data name="Text_5d202208fa1a" xml:space="preserve">
+    <value>Duplicate…</value>
+  </data>
+  <data name="Text_5d9389cbbeb3" xml:space="preserve">
+    <value>DETAIL</value>
+  </data>
+  <data name="Text_5dd4cef18a27" xml:space="preserve">
+    <value>live.ps1 output</value>
+  </data>
+  <data xml:space="preserve" name="Text_5e9647ccdc6e">
+    <value>Choose a part of the interface to edit. Light and dark colors are stored separately. Editing a preset creates your Custom scheme.</value>
+  </data>
+  <data name="Text_5eb47e8ce8a7" xml:space="preserve">
+    <value>Back to main</value>
+  </data>
+  <data name="Text_5ec6014cb5f6" xml:space="preserve">
+    <value>The game is still running</value>
+  </data>
+  <data xml:space="preserve" name="Text_5f1b134f71ee">
+    <value>
+Search limits reached; other checkouts may exist. Browse to any location.</value>
+  </data>
+  <data name="Text_5f664501398a" xml:space="preserve">
+    <value>git fetch --prune origin, and the open pull requests from GitHub</value>
+  </data>
+  <data xml:space="preserve" name="Text_5f6d5cac3804">
+    <value>Backing up saves</value>
+  </data>
+  <data xml:space="preserve" name="Text_5f9f3af82191">
+    <value>Selected text</value>
+  </data>
+  <data xml:space="preserve" name="Text_5fa7aac5375c">
+    <value>Ready</value>
+  </data>
+  <data name="Text_5fafdc5e27a2" xml:space="preserve">
+    <value>checking {0} …</value>
+  </data>
+  <data xml:space="preserve" name="Text_5fb3160f1860">
+    <value>Attention indicators</value>
+  </data>
+  <data name="Text_5fd3eedf0f92" xml:space="preserve">
+    <value>Waypoint is already managing a checkout. Use Change location in the running window when you are ready. This launch has not changed its checkout or settings.</value>
+  </data>
+  <data name="Text_5fdc6c8aaff9" xml:space="preserve">
+    <value>Branches ({0})</value>
+  </data>
+  <data name="Text_60174772db52" xml:space="preserve">
+    <value>The port is still in use, so Waypoint did not go on.</value>
+  </data>
+  <data xml:space="preserve" name="Text_608f1cf89149">
+    <value>Login keys</value>
+  </data>
+  <data name="Text_6090013bebc7" xml:space="preserve">
+    <value>No newer release than {0}.</value>
+  </data>
+  <data xml:space="preserve" name="Text_60acc53f13a5">
+    <value>Dark</value>
+  </data>
+  <data xml:space="preserve" name="Text_60be7b4c46e1">
+    <value>No LocalExile checkout found in the searched locations. Browse to your checkout instead.</value>
+  </data>
+  <data name="Text_60cad5906260" xml:space="preserve">
+    <value>Standalone client</value>
+  </data>
+  <data name="Text_60d8629f9d8c" xml:space="preserve">
+    <value>Search accounts or characters</value>
+  </data>
+  <data name="Text_60ee2c29da51" xml:space="preserve">
+    <value>Stash and switch</value>
+  </data>
+  <data name="Text_6117d05e41be" xml:space="preserve">
+    <value>No update</value>
+  </data>
+  <data name="Text_6144214b4f33" xml:space="preserve">
+    <value>gen 1</value>
+  </data>
+  <data name="Text_61755957b7ec" xml:space="preserve">
+    <value>Switched to {0}</value>
+  </data>
+  <data name="Text_619e3be216f3" xml:space="preserve">
+    <value>Delete account…</value>
+  </data>
+  <data xml:space="preserve" name="Text_61a37b98f3e8">
+    <value>Upstream LocalExile PR head; may be closed or unmerged</value>
+  </data>
+  <data name="Text_61b04b5fb05f" xml:space="preserve">
+    <value>Restart the game</value>
+  </data>
+  <data name="Text_62076cdbb40a" xml:space="preserve">
+    <value>Switched to {0}.</value>
+  </data>
+  <data xml:space="preserve" name="Text_621db8f4e9cd">
+    <value>scripts/dev/live.ps1 must support -ClientOnly and -Only</value>
+  </data>
+  <data name="Text_6239659db3d9" xml:space="preserve">
+    <value>Switching to {0} …</value>
+  </data>
+  <data xml:space="preserve" name="Text_6249df4367d0">
+    <value>Gold</value>
+  </data>
+  <data xml:space="preserve" name="Text_62a487dde87f">
+    <value>Status banner</value>
+  </data>
+  <data xml:space="preserve" name="Text_62b9bdf3765e">
+    <value>Setup checks · {0} need attention</value>
+  </data>
+  <data xml:space="preserve" name="Text_62c3c0416e3e">
+    <value>Launches only through live.ps1 -ClientOnly</value>
+  </data>
+  <data xml:space="preserve" name="Text_62c95537c69d">
+    <value>Open launcher data</value>
+  </data>
+  <data xml:space="preserve" name="Text_62d7d2203fb2">
+    <value>Mods off in launch profile (Game_MODS=0)</value>
+  </data>
+  <data xml:space="preserve" name="Text_62ec07997eff">
+    <value>Gateway stopped</value>
+  </data>
+  <data name="Text_6300ef800bb8" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data xml:space="preserve" name="Text_635484c1543e">
+    <value>Reload game-data overrides</value>
+  </data>
+  <data name="Text_638e249f4a15" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Text_63abe4ec7c6c" xml:space="preserve">
+    <value>Last played</value>
+  </data>
+  <data name="Text_63bf045213ce" xml:space="preserve">
+    <value>Update now</value>
+  </data>
+  <data xml:space="preserve" name="Text_641a0296a7b8">
+    <value>Accent text and icons</value>
+  </data>
+  <data name="Text_641d1ef657bd" xml:space="preserve">
+    <value>Follow</value>
+  </data>
+  <data name="Text_646204c2d8fb" xml:space="preserve">
+    <value>Your LocalExile folder</value>
+  </data>
+  <data name="Text_646c61108060" xml:space="preserve">
+    <value>Open Client folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_64a576b180a8">
+    <value>Search selected log (case insensitive)</value>
+  </data>
+  <data name="Text_64a9b80f4b33" xml:space="preserve">
+    <value>Could not verify that services stopped. Waypoint will stay open.</value>
+  </data>
+  <data xml:space="preserve" name="Text_64e782b10e68">
+    <value>Refresh after resolving the installation check failure.</value>
+  </data>
+  <data name="Text_64f15b31581e" xml:space="preserve">
+    <value>{0} is running; restore when it is done.</value>
+  </data>
+  <data xml:space="preserve" name="Text_64fe832d62f6">
+    <value>CPU is the share of this machine’s total logical processors between refreshes. A dash means no running process or no second sample yet.</value>
+  </data>
+  <data name="Text_652bc5bf7952" xml:space="preserve">
+    <value>"{0}" comes from {1}: its code is not the LocalExile maintainers'.
+
+Switching to it builds and runs that code on this computer with your rights, live.ps1 and the other scripts included. Run it only if you trust its author or have read the changes (Open on GitHub).</value>
+  </data>
+  <data name="Text_652e32ff2169" xml:space="preserve">
+    <value>Walk maps · Frida. Saves area layout data as the game loads new areas. Optional; attaches only to this checkout's patched client. Existing captures are kept.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6561a8925313">
+    <value>Branches and pull requests</value>
+  </data>
+  <data name="Text_657233ccc108" xml:space="preserve">
+    <value>A server port is in use</value>
+  </data>
+  <data name="Text_65b8fd6a55b1" xml:space="preserve">
+    <value>Server time per second, all connections together; waits (queues, gates, locks) count their waiting time</value>
+  </data>
+  <data name="Text_6662850b5518" xml:space="preserve">
+    <value>The selected save database changed. Reload accounts and review the action again.</value>
+  </data>
+  <data name="Text_667d957ad516" xml:space="preserve">
+    <value>Player accounts</value>
+  </data>
+  <data xml:space="preserve" name="Text_667f64085762">
+    <value>Use PR number</value>
+  </data>
+  <data xml:space="preserve" name="Text_66bfcf020fee">
+    <value>Setup checks · all passed</value>
+  </data>
+  <data name="Text_66d94a7468b2" xml:space="preserve">
+    <value>the Windows registry</value>
+  </data>
+  <data name="Text_6707ce0b6be2" xml:space="preserve">
+    <value>that character name is taken</value>
+  </data>
+  <data xml:space="preserve" name="Text_6725e7bbcd28">
+    <value>System</value>
+  </data>
+  <data name="Text_6747464f35f8" xml:space="preserve">
+    <value>Always ask when I close the window</value>
+  </data>
+  <data name="Text_67524d4a7170" xml:space="preserve">
+    <value>Goes through the setup step by step, and continues a setup that was stopped</value>
+  </data>
+  <data name="Text_676796f86246" xml:space="preserve">
+    <value>Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.</value>
+  </data>
+  <data xml:space="preserve" name="Text_67fdcd462dc5">
+    <value>Restore saves replaces progress after confirmation. Mod choices restore separately and require Gateway stopped.</value>
+  </data>
+  <data name="Text_680551c51283" xml:space="preserve">
+    <value>Copied characters need unique names with 3–23 letters, digits, underscores or hyphens.</value>
+  </data>
+  <data name="Text_6807bd205052" xml:space="preserve">
+    <value>Close {0}?</value>
+  </data>
+  <data xml:space="preserve" name="Text_686046d08c9f">
+    <value>Watcher is building/restarting; inspect Gateway output for errors</value>
+  </data>
+  <data xml:space="preserve" name="Text_688ed737c588">
+    <value>Starting services</value>
+  </data>
+  <data xml:space="preserve" name="Text_68a30385dbf5">
+    <value>Every color scheme supports Light, Dark and System.</value>
+  </data>
+  <data name="Text_68e7e2420b8e" xml:space="preserve">
+    <value>The account's password: the dev host logs in with it</value>
+  </data>
+  <data xml:space="preserve" name="Text_68fce9b8e435">
+    <value>Light, dark or Windows appearance; color schemes, custom colors and reading preferences.</value>
+  </data>
+  <data name="Text_691145a11e9f" xml:space="preserve">
+    <value>{0} stash tabs</value>
+  </data>
+  <data name="Text_69886b8fc27b" xml:space="preserve">
+    <value>Looking for LocalExile on this PC…</value>
+  </data>
+  <data name="Text_69e5577bf302" xml:space="preserve">
+    <value>the password needs at least 4 characters</value>
+  </data>
+  <data xml:space="preserve" name="Text_69ea40204735">
+    <value>Closing account service</value>
+  </data>
+  <data xml:space="preserve" name="Text_6a3fe8876b56">
+    <value>Builds</value>
+  </data>
+  <data xml:space="preserve" name="Text_6a5bc51f5c88">
+    <value>Choose the font that is easiest for you to read. OpenDyslexic is included; no installation is needed. Unsupported characters use Windows font fallback.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6a9084025c4b">
+    <value>Open folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_6aa9edcc02f1">
+    <value>Change color: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_6ae2ae6a2f07">
+    <value>Bundle decompressor</value>
+  </data>
+  <data name="Text_6b43463e9003" xml:space="preserve">
+    <value>Delete the local branches of pull requests that are no longer open?</value>
+  </data>
+  <data name="Text_6b8471643e7d" xml:space="preserve">
+    <value>Stashed changes</value>
+  </data>
+  <data name="Text_6b983a81e5e8" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data xml:space="preserve" name="Text_6b9c67c85de7">
+    <value>Enter a PR number from 1 to 999999999, for example 401.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6bb4fd6d399a">
+    <value>Delete selected backup</value>
+  </data>
+  <data name="Text_6c26340a1b96" xml:space="preserve">
+    <value>Save database</value>
+  </data>
+  <data name="Text_6caadd32b7a9" xml:space="preserve">
+    <value>standalone client layout (Content.ggpk)</value>
+  </data>
+  <data name="Text_6cef8efc5471" xml:space="preserve">
+    <value>From {0}</value>
+  </data>
+  <data name="Text_6dafb2da0b4c" xml:space="preserve">
+    <value>★ Pin</value>
+  </data>
+  <data name="Text_6db467be062b" xml:space="preserve">
+    <value>This checkout does not provide a supported walk-map recorder.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6dbc080db4ab">
+    <value>Ready to play</value>
+  </data>
+  <data name="Text_6ddab223b645" xml:space="preserve">
+    <value>The search stopped at its time limit; Browse if your client is not listed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6e169a16bf03">
+    <value>Preview changes here and in the workspace. Apply saves them; Cancel restores your previous appearance.</value>
+  </data>
+  <data name="Text_6e1b46333871" xml:space="preserve">
+    <value>This is not the 3.29.3b build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6e1cc2d63cee">
+    <value>Environment checked · </value>
+  </data>
+  <data xml:space="preserve" name="Text_6e2bd3d0e2c3">
+    <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Shift+R restores default appearance without changing your checkout or saves.</value>
+  </data>
+  <data xml:space="preserve" name="Text_6e58b577a084">
+    <value>Mods</value>
+  </data>
+  <data name="Text_6f3c603b812d" xml:space="preserve">
+    <value>SERVICE</value>
+  </data>
+  <data name="Text_6fa62b3dba2f" xml:space="preserve">
+    <value>Rename…</value>
+  </data>
+  <data name="Text_6fab7aff6931" xml:space="preserve">
+    <value>Check your workspace in Settings before managing accounts.</value>
+  </data>
+  <data name="Text_6fac39e2845b" xml:space="preserve">
+    <value>Characters</value>
+  </data>
+  <data name="Text_6fd7b119e949" xml:space="preserve">
+    <value>git fetch failed: the lists are what the checkout already knew.</value>
+  </data>
+  <data name="Text_7006fe9be9c1" xml:space="preserve">
+    <value>(deleted fork)</value>
+  </data>
+  <data xml:space="preserve" name="Text_7013af4c42fe">
+    <value>Setup</value>
+  </data>
+  <data xml:space="preserve" name="Text_7034e1d32ac5">
+    <value>Create a LocalExile account</value>
+  </data>
+  <data name="Text_7041902da299" xml:space="preserve">
+    <value>Set up capture</value>
+  </data>
+  <data name="Text_7063e226c881" xml:space="preserve">
+    <value>Stop services on exit</value>
+  </data>
+  <data name="Text_71147e58a343" xml:space="preserve">
+    <value>Checking live mods</value>
+  </data>
+  <data xml:space="preserve" name="Text_7123c07a4c15">
+    <value>Automatic save backups</value>
+  </data>
+  <data xml:space="preserve" name="Text_714df70573cc">
+    <value>Prepare client</value>
+  </data>
+  <data xml:space="preserve" name="Text_7168faaaea2a">
+    <value>Gracefully stop servers for this checkout.</value>
+  </data>
+  <data name="Text_718870a89c04" xml:space="preserve">
+    <value>Pick another LocalExile server checkout; the launcher starts again on it</value>
+  </data>
+  <data name="Text_71c4cf22a93b" xml:space="preserve">
+    <value>Skip data check</value>
+  </data>
+  <data name="Text_71e98f7b1e7a" xml:space="preserve">
+    <value>SetupCapture completed.</value>
+  </data>
+  <data name="Text_720507ae8a09" xml:space="preserve">
+    <value>Start without a backup?</value>
+  </data>
+  <data name="Text_7230e6fd9880" xml:space="preserve">
+    <value>Open log</value>
+  </data>
+  <data xml:space="preserve" name="Text_72356c9e3235">
+    <value>Waiting for saved source edits. Auth and Patch require a restart.</value>
+  </data>
+  <data name="Text_7249db6e815d" xml:space="preserve">
+    <value>git output</value>
+  </data>
+  <data name="Text_726c2b850161" xml:space="preserve">
+    <value>This changes Waypoint's interface. Repository names, paths, commit hashes, in-game commands and raw logs keep their original text.</value>
+  </data>
+  <data name="Text_72cbebbffd2d" xml:space="preserve">
+    <value>Esc → Options → Game → Network Mode → Predictive, then log out to the character screen and Play again</value>
+  </data>
+  <data name="Text_72db542cccd0" xml:space="preserve">
+    <value>Changes here are saved immediately. The minimize button still uses the taskbar.</value>
+  </data>
+  <data name="Text_735373328df6" xml:space="preserve">
+    <value>This account has no characters to copy.</value>
+  </data>
+  <data name="Text_738060ca8527" xml:space="preserve">
+    <value>Account changes are read-only while any LocalExile login, Gateway or account-service process is running. Stop those services and close the game, then refresh. Nothing was changed.</value>
+  </data>
+  <data name="Text_738e4bcc0aee" xml:space="preserve">
+    <value>client: {0}, {1}</value>
+  </data>
+  <data name="Text_73b6e48a1b55" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data xml:space="preserve" name="Text_74160bd42b82">
+    <value>LocalExile repository folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_74a883a037bc">
+    <value>Settings</value>
+  </data>
+  <data name="Text_74b6d7d1e9c0" xml:space="preserve">
+    <value>Looking for the services …</value>
+  </data>
+  <data xml:space="preserve" name="Text_74d9a7c8a656">
+    <value>Delete backup…</value>
+  </data>
+  <data xml:space="preserve" name="Text_75081b593d15">
+    <value>Disabled</value>
+  </data>
+  <data name="Text_75304cf77db0" xml:space="preserve">
+    <value>Everything</value>
+  </data>
+  <data name="Text_7596fade4e2a" xml:space="preserve">
+    <value>Calls/s</value>
+  </data>
+  <data name="Text_7599d4f16e65" xml:space="preserve">
+    <value>Thread pool</value>
+  </data>
+  <data name="Text_75adbad9edb8" xml:space="preserve">
+    <value>1 min</value>
+  </data>
+  <data name="Text_76409ed15c76" xml:space="preserve">
+    <value>(no reply)</value>
+  </data>
+  <data name="Text_76900f1bfd16" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data xml:space="preserve" name="Text_76cde8e5dd63">
+    <value>Fetched remote branch</value>
+  </data>
+  <data name="Text_76e684d8787d" xml:space="preserve">
+    <value>Start setup</value>
+  </data>
+  <data name="Text_76f82c7438fc" xml:space="preserve">
+    <value>Commands go through the game client (scripts/dev/client_control.py): start the game and enter an area first.</value>
+  </data>
+  <data name="Text_770cd9979c26" xml:space="preserve">
+    <value>Game data</value>
+  </data>
+  <data name="Text_771a8ae3eeda" xml:space="preserve">
+    <value>Waiting for game</value>
+  </data>
+  <data name="Text_7743ce348d92" xml:space="preserve">
+    <value>draft</value>
+  </data>
+  <data name="Text_777a88e600e2" xml:space="preserve">
+    <value>Requested build</value>
+  </data>
+  <data name="Text_780287165a99" xml:space="preserve">
+    <value>The game and services stay open after Waypoint exits.</value>
+  </data>
+  <data name="Text_780d9cbbad69" xml:space="preserve">
+    <value>Stopped by the player.</value>
+  </data>
+  <data xml:space="preserve" name="Text_781fab451752">
+    <value>enable choice unknown</value>
+  </data>
+  <data xml:space="preserve" name="Text_7839ccd6957a">
+    <value>Using your selected checkout. Change location or search again at any time.</value>
+  </data>
+  <data name="Text_78f253f7422a" xml:space="preserve">
+    <value>login keys (step 4)</value>
+  </data>
+  <data name="Text_79448e892acc" xml:space="preserve">
+    <value>Auth and Patch</value>
+  </data>
+  <data name="Text_79488bea0d9c" xml:space="preserve">
+    <value>Servers running</value>
+  </data>
+  <data xml:space="preserve" name="Text_796489077045">
+    <value>Scrollbars</value>
+  </data>
+  <data xml:space="preserve" name="Text_796ab9431174">
+    <value>Recheck setup</value>
+  </data>
+  <data xml:space="preserve" name="Text_79735cd45cb7">
+    <value>{0} choices. Remote branches reflect the last fetch. </value>
+  </data>
+  <data name="Text_7989d0faa17f" xml:space="preserve">
+    <value>GameServer.Gateway commands: the built Gateway's list</value>
+  </data>
+  <data xml:space="preserve" name="Text_798ca2ce18bf">
+    <value>Create account</value>
+  </data>
+  <data name="Text_79f51f1987b6" xml:space="preserve">
+    <value>Choose where to download LocalExile</value>
+  </data>
+  <data name="Text_7a5198f98ec2" xml:space="preserve">
+    <value>This LocalExile folder already has a game client, so nothing needs copying.</value>
+  </data>
+  <data name="Text_7aad4be82785" xml:space="preserve">
+    <value>Puts the line in the box; Enter or Send sends it.</value>
+  </data>
+  <data name="Text_7aad79145794" xml:space="preserve">
+    <value>Ready to capture</value>
+  </data>
+  <data name="Text_7ab34499cbf7" xml:space="preserve">
+    <value>git pull --ff-only: {0} as origin has it now</value>
+  </data>
+  <data name="Text_7ac5b6d5456b" xml:space="preserve">
+    <value>Show service details</value>
+  </data>
+  <data xml:space="preserve" name="Text_7af959bccf93">
+    <value>Get SDK</value>
+  </data>
+  <data xml:space="preserve" name="Text_7b0100d4aa11">
+    <value>Diagnostic report preview</value>
+  </data>
+  <data name="Text_7b0a545591a2" xml:space="preserve">
+    <value>Choose your LocalExile checkout</value>
+  </data>
+  <data name="Text_7b1412689a1e" xml:space="preserve">
+    <value>live.ps1 selects the local gateway itself; step 6 keeps a backup</value>
+  </data>
+  <data name="Text_7b1b95097ad5" xml:space="preserve">
+    <value>extract-data.ps1 -List: which extracted files are missing or stale</value>
+  </data>
+  <data name="Text_7b472544bbda" xml:space="preserve">
+    <value>Templar</value>
+  </data>
+  <data name="Text_7ca41615c19b" xml:space="preserve">
+    <value>Choose…</value>
+  </data>
+  <data xml:space="preserve" name="Text_7caa2025f375">
+    <value>Input fields</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cd52f8db23c">
+    <value>Blue–yellow friendly</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cd7cde68dbf">
+    <value>No mods found. Build source mods or open the mods folder to add one.</value>
+  </data>
+  <data xml:space="preserve" name="Text_7cea9dbef301">
+    <value>Close button symbol</value>
+  </data>
+  <data name="Text_7cf77adcf36c" xml:space="preserve">
+    <value>Starting the dev host …</value>
+  </data>
+  <data xml:space="preserve" name="Text_7d9eb7acb13e">
+    <value>Close</value>
+  </data>
+  <data name="Text_7d9f2b516e2a" xml:space="preserve">
+    <value>Gateway not running</value>
+  </data>
+  <data name="Text_7ddb44d8a533" xml:space="preserve">
+    <value>just now</value>
+  </data>
+  <data name="Text_7e12616f0ba4" xml:space="preserve">
+    <value>The requested checkout path is empty or too long.</value>
+  </data>
+  <data name="Text_7e1b0d5641f2" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data xml:space="preserve" name="Text_7e345470de24">
+    <value>Patch</value>
+  </data>
+  <data name="Text_7e6406b032fd" xml:space="preserve">
+    <value>Looks for LocalExile checkouts in the usual folders</value>
+  </data>
+  <data xml:space="preserve" name="Text_7e64af709bfd">
+    <value>An account belongs to this LocalExile installation. Create one here, then sign in and create your character inside the game. The launcher does not store your password.</value>
+  </data>
+  <data name="Text_7e7214cd5b49" xml:space="preserve">
+    <value>installing …</value>
+  </data>
+  <data name="Text_7ec064d1790d" xml:space="preserve">
+    <value>live.ps1 -Stop failed (exit {0}); the output below says why. This version's live.ps1 may have no -Stop (older than the launcher hooks). Switch anyway, with the servers still running? A watched Gateway may rebuild or restart on its own; Stop all works again on a version that has -Stop.</value>
+  </data>
+  <data name="Text_7eddd8b0bee8" xml:space="preserve">
+    <value>Starting the capture helper.</value>
+  </data>
+  <data xml:space="preserve" name="Text_7ee581fb2eb4">
+    <value>EnableMod completed.</value>
+  </data>
+  <data name="Text_7f06ea4f0831" xml:space="preserve">
+    <value>League</value>
+  </data>
+  <data name="Text_7f1aa82e323e" xml:space="preserve">
+    <value>dotnet build GameServer.slnx, with the servers stopped</value>
+  </data>
+  <data xml:space="preserve" name="Text_7fd994d683da">
+    <value>Search branch names, PR titles, authors or commit hashes</value>
+  </data>
+  <data xml:space="preserve" name="Text_808fc010f815">
+    <value>{0}: {1} at backup</value>
+  </data>
+  <data xml:space="preserve" name="Text_80d16534322e">
+    <value>BuildMod completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_80fd4dce7fd0">
+    <value>Reduced motion replaces the animated progress bar with the existing stage and elapsed-time feedback. Windows animation preferences are respected automatically.</value>
+  </data>
+  <data xml:space="preserve" name="Text_813b86284864">
+    <value>Start Gateway with hot reload enabled to apply compatible saved code edits in game.</value>
+  </data>
+  <data name="Text_815390b47b15" xml:space="preserve">
+    <value>PORTS</value>
+  </data>
+  <data xml:space="preserve" name="Text_8190281db975">
+    <value>Restore down</value>
+  </data>
+  <data name="Text_81efa8f471e5" xml:space="preserve">
+    <value>! no {0} suggestions: {1}</value>
+  </data>
+  <data xml:space="preserve" name="Text_82855c11ae69">
+    <value>Sand</value>
+  </data>
+  <data name="Text_82b8c45a6503" xml:space="preserve">
+    <value>dev host stopped</value>
+  </data>
+  <data name="Text_8300d2d40c93" xml:space="preserve">
+    <value>Done: {0} ({1:0} s).</value>
+  </data>
+  <data xml:space="preserve" name="Text_8328dc8f6f33">
+    <value>Checking prerequisites, process ownership and selected installation.</value>
+  </data>
+  <data name="Text_833507f68e42" xml:space="preserve">
+    <value>Pull request #{0}: {1}</value>
+  </data>
+  <data xml:space="preserve" name="Text_8356dc6d3665">
+    <value>{0} · elapsed {1}</value>
+  </data>
+  <data xml:space="preserve" name="Text_838557924a5c">
+    <value>Backup</value>
+  </data>
+  <data xml:space="preserve" name="Text_83b12c2216ef">
+    <value>Clear</value>
+  </data>
+  <data xml:space="preserve" name="Text_83bb589ce3ad">
+    <value>Last launched Gateway: </value>
+  </data>
+  <data name="Text_83c16d892df9" xml:space="preserve">
+    <value>Waypoint blue</value>
+  </data>
+  <data name="Text_83c2e65fdc63" xml:space="preserve">
+    <value>this commit</value>
+  </data>
+  <data xml:space="preserve" name="Text_83f9b9c05a55">
+    <value>Increase text contrast</value>
+  </data>
+  <data xml:space="preserve" name="Text_849335f979c6">
+    <value>{0:g} · {1:N0} KB · {2}</value>
+  </data>
+  <data name="Text_84a907169eb8" xml:space="preserve">
+    <value>Avg ms</value>
+  </data>
+  <data name="Text_84aa1d6f1fba" xml:space="preserve">
+    <value>Closing the window keeps Waypoint running. Use Exit Waypoint in the tray menu to quit.</value>
+  </data>
+  <data name="Text_84c32e8d451e" xml:space="preserve">
+    <value>Play runs extract-data.ps1 first; it takes a few minutes the first time</value>
+  </data>
+  <data xml:space="preserve" name="Text_84c79505c114">
+    <value>Switching source</value>
+  </data>
+  <data name="Text_84e758c53a09" xml:space="preserve">
+    <value>4.  Copies the client, prepares it and builds LocalExile</value>
+  </data>
+  <data xml:space="preserve" name="Text_84f70fae4ad0">
+    <value>Disable mod</value>
+  </data>
+  <data xml:space="preserve" name="Text_84fbf57ef520">
+    <value>Workspace Manager for LocalExile</value>
+  </data>
+  <data xml:space="preserve" name="Text_850ce372f459">
+    <value>Multiple {0} processes belong to this checkout.</value>
+  </data>
+  <data name="Text_853c6a3cc7ff" xml:space="preserve">
+    <value>Update and restart</value>
+  </data>
+  <data name="Text_86232ddabee6" xml:space="preserve">
+    <value>patched client (step 5)</value>
+  </data>
+  <data name="Text_86cf366a184e" xml:space="preserve">
+    <value>Delete backup</value>
+  </data>
+  <data name="Text_8703b1f43ea7" xml:space="preserve">
+    <value>no local changes</value>
+  </data>
+  <data xml:space="preserve" name="Text_87bb59ba2f92">
+    <value>Workspace</value>
+  </data>
+  <data name="Text_87df6810fe11" xml:space="preserve">
+    <value>Total time divided by the calls in the window</value>
+  </data>
+  <data name="Text_87f63863e23c" xml:space="preserve">
+    <value>collections/s, % time</value>
+  </data>
+  <data name="Text_88143002dc1b" xml:space="preserve">
+    <value>Server phases</value>
+  </data>
+  <data name="Text_8815084551ec" xml:space="preserve">
+    <value>live.ps1 is already running.</value>
+  </data>
+  <data name="Text_88259cd6f621" xml:space="preserve">
+    <value>Register an account</value>
+  </data>
+  <data xml:space="preserve" name="Text_883c6a4d10b7">
+    <value>Enter a color as #RRGGBB, for example #2584D7.</value>
+  </data>
+  <data name="Text_885a693a2ff9" xml:space="preserve">
+    <value>LocalExile server checkout (the folder with GameServer.slnx)</value>
+  </data>
+  <data name="Text_88625091f50d" xml:space="preserve">
+    <value>The game data could not be extracted (exit {0}).</value>
+  </data>
+  <data xml:space="preserve" name="Text_88b2f4aa5837">
+    <value>View setup guide</value>
+  </data>
+  <data xml:space="preserve" name="Text_88b6f7429ce7">
+    <value>Unchanged</value>
+  </data>
+  <data name="Text_88fccfb10a8d" xml:space="preserve">
+    <value>Running {0} …</value>
+  </data>
+  <data xml:space="preserve" name="Text_898a809683dd">
+    <value>ReloadMod completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_89d00e7dc413">
+    <value>Standalone Content.ggpk is required; Steam layout is unsupported</value>
+  </data>
+  <data name="Text_8a05d3c65b24" xml:space="preserve">
+    <value>Double-click a command to put it in the line.</value>
+  </data>
+  <data xml:space="preserve" name="Text_8a2d9427ded5">
+    <value>Another game client is running. Close it before launching or restarting services.</value>
+  </data>
+  <data name="Text_8a32d34bd93b" xml:space="preserve">
+    <value>LocalExile was not found on this PC. Download it, or browse to it if it is somewhere else.</value>
+  </data>
+  <data xml:space="preserve" name="Text_8a63af29f3c4">
+    <value>Color wheel; keyboard alternatives are below.</value>
+  </data>
+  <data name="Text_8a7c8b67fe8b" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data xml:space="preserve" name="Text_8b2d4fa44372">
+    <value>Search mod ID, version, kind, status or error (Ctrl+F)</value>
+  </data>
+  <data name="Text_8b3a87465604" xml:space="preserve">
+    <value>dev host listening on 127.0.0.1:{0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_8b7df2ff57b5">
+    <value>Some custom text/background combinations have low contrast. Adjust the colors or reset this scheme.</value>
+  </data>
+  <data xml:space="preserve" name="Text_8bc9335f3b83">
+    <value>Restore recorded mod choices…</value>
+  </data>
+  <data name="Text_8bd4d2ac7e54" xml:space="preserve">
+    <value>p95 per second, busiest operations</value>
+  </data>
+  <data name="Text_8c1304fcac2d" xml:space="preserve">
+    <value>No characters yet. Sign in and create a character in the game.</value>
+  </data>
+  <data name="Text_8c2e4a035f5f" xml:space="preserve">
+    <value>STATUS</value>
+  </data>
+  <data name="Text_8c44609d7c15" xml:space="preserve">
+    <value>client copied into Client\ (step 3)</value>
+  </data>
+  <data name="Text_8d099abe78af" xml:space="preserve">
+    <value>When I close the window</value>
+  </data>
+  <data name="Text_8d0ad2fe691e" xml:space="preserve">
+    <value>no answer from the bridge in {0:0} s</value>
+  </data>
+  <data name="Text_8d0c7ac992af" xml:space="preserve">
+    <value>fork</value>
+  </data>
+  <data xml:space="preserve" name="Text_8d525e5f158b">
+    <value>Copied</value>
+  </data>
+  <data name="Text_8d616d350961" xml:space="preserve">
+    <value>15 min</value>
+  </data>
+  <data name="Text_8d99a834e478" xml:space="preserve">
+    <value>Changes require the game and all LocalExile services to stay stopped until the operation finishes.</value>
+  </data>
+  <data xml:space="preserve" name="Text_8d9f188ce712">
+    <value>Open setup guide</value>
+  </data>
+  <data xml:space="preserve" name="Text_8da29ab6e244">
+    <value>Prepared client for this checkout</value>
+  </data>
+  <data name="Text_8db630167248" xml:space="preserve">
+    <value>The dev host did not start: {0}</value>
+  </data>
+  <data name="Text_8de4d4dac04c" xml:space="preserve">
+    <value>gen 2</value>
+  </data>
+  <data name="Text_8e18a81993ce" xml:space="preserve">
+    <value>client not running</value>
+  </data>
+  <data xml:space="preserve" name="Text_8e3cda3b4f8b">
+    <value>Local HEAD unavailable</value>
+  </data>
+  <data xml:space="preserve" name="Text_8e70857af792">
+    <value>Optional account/character names to remove, separated by commas</value>
+  </data>
+  <data xml:space="preserve" name="Text_8e8f728f3018">
+    <value>Waiting for process</value>
+  </data>
+  <data xml:space="preserve" name="Text_8eb3ea9bbde6">
+    <value>Auth</value>
+  </data>
+  <data name="Text_8ec3f7b3561d" xml:space="preserve">
+    <value>Open capture folder</value>
+  </data>
+  <data name="Text_8ef7823ca89b" xml:space="preserve">
+    <value>Guided setup</value>
+  </data>
+  <data name="Text_8f030bdb2aed" xml:space="preserve">
+    <value>Close Waypoint when it is done.</value>
+  </data>
+  <data name="Text_8f3bd2dddf93" xml:space="preserve">
+    <value>Set up area capture</value>
+  </data>
+  <data name="Text_8f496f16c1af" xml:space="preserve">
+    <value>The shown lines to the clipboard</value>
+  </data>
+  <data name="Text_8fa0453793e2" xml:space="preserve">
+    <value>Choose a plain path: spaces are fine, but not &amp; | &lt; &gt; ^ % ! or quotes.</value>
+  </data>
+  <data name="Text_902bf1204f8a" xml:space="preserve">
+    <value>Skip build</value>
+  </data>
+  <data name="Text_9045b1ddb963" xml:space="preserve">
+    <value>New account name</value>
+  </data>
+  <data name="Text_9057a199a1c0" xml:space="preserve">
+    <value>Port {0}: {1} (PID {2}), started {3:g}</value>
+  </data>
+  <data name="Text_9057fd0f98cc" xml:space="preserve">
+    <value>Game client</value>
+  </data>
+  <data name="Text_9158396951bf" xml:space="preserve">
+    <value>Same as Stop all: the game, the walk-map recorder, the servers and the account service.</value>
+  </data>
+  <data xml:space="preserve" name="Text_91bd172009ab">
+    <value>Source and built component identities are separate. Hot reload can apply uncommitted code edits; a build hash identifies the original compiled revision.</value>
+  </data>
+  <data name="Text_92646da937a1" xml:space="preserve">
+    <value>Starts with Play or Start servers while Walk maps is on</value>
+  </data>
+  <data name="Text_9275216c6094" xml:space="preserve">
+    <value>Start capture</value>
+  </data>
+  <data xml:space="preserve" name="Text_92b2c95e99f0">
+    <value>Version </value>
+  </data>
+  <data xml:space="preserve" name="Text_92c1cdfdf4cb">
+    <value>Enabled</value>
+  </data>
+  <data xml:space="preserve" name="Text_92fef4d42c37">
+    <value>Build this mod or install its DLL.</value>
+  </data>
+  <data name="Text_932fe5163220" xml:space="preserve">
+    <value>Operation logs and save backups</value>
+  </data>
+  <data xml:space="preserve" name="Text_933ffa160545">
+    <value>Installing extraction dependency</value>
+  </data>
+  <data xml:space="preserve" name="Text_93638ea9e0b0">
+    <value>Grayscale</value>
+  </data>
+  <data xml:space="preserve" name="Text_9381b171923f">
+    <value>This revision has no supported mod host. Older LocalExile revisions can still be launched normally.</value>
+  </data>
+  <data xml:space="preserve" name="Text_93c6b664dce6">
+    <value>Browse…</value>
+  </data>
+  <data xml:space="preserve" name="Text_94351810d456">
+    <value>Checking upstream HEAD and searching common local folders… You can still Browse to choose a location.</value>
+  </data>
+  <data name="Text_9436d7250b38" xml:space="preserve">
+    <value>More: restart, log</value>
+  </data>
+  <data xml:space="preserve" name="Text_9491bfb97e66">
+    <value>Waiting for the game window to close without force termination.</value>
+  </data>
+  <data name="Text_94b04d14b4fa" xml:space="preserve">
+    <value>Find automatically…</value>
+  </data>
+  <data name="Text_94e14eed87ef" xml:space="preserve">
+    <value>client (pid {0}) closed</value>
+  </data>
+  <data xml:space="preserve" name="Text_9533a426d7fa">
+    <value>Logo background</value>
+  </data>
+  <data xml:space="preserve" name="Text_95582a588b34">
+    <value>PR #{0} (fetched when activated)</value>
+  </data>
+  <data xml:space="preserve" name="Text_9575a529260a">
+    <value>Appearance and accessibility</value>
+  </data>
+  <data name="Text_95784099d97d" xml:space="preserve">
+    <value>{0} is still running</value>
+  </data>
+  <data xml:space="preserve" name="Text_95b58be11552">
+    <value>Select a checkout to inspect its mods.</value>
+  </data>
+  <data xml:space="preserve" name="Text_962ebe576545">
+    <value>First local account</value>
+  </data>
+  <data xml:space="preserve" name="Text_964cf7280ca9">
+    <value>Additional names to remove (comma separated)</value>
+  </data>
+  <data name="Text_96696ebb5f8d" xml:space="preserve">
+    <value>What to copy</value>
+  </data>
+  <data name="Text_96850b2f4bd2" xml:space="preserve">
+    <value>Duelist</value>
+  </data>
+  <data name="Text_9699394c5080" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="Text_969a6a82b17a" xml:space="preserve">
+    <value>bridge: {0}</value>
+  </data>
+  <data name="Text_969ebdae3c68" xml:space="preserve">
+    <value>Leave the servers and the game running</value>
+  </data>
+  <data xml:space="preserve" name="Text_96b40ff2f6d3">
+    <value>Play prepares and starts the servers, then opens the game.</value>
+  </data>
+  <data xml:space="preserve" name="Text_96b7cd5714e0">
+    <value>RestoreModChoices completed.</value>
+  </data>
+  <data name="Text_96cedcf686b0" xml:space="preserve">
+    <value>Characters on selected account</value>
+  </data>
+  <data xml:space="preserve" name="Text_9701a68fede6">
+    <value>Search branches and pull requests</value>
+  </data>
+  <data xml:space="preserve" name="Text_970b08a02cb0">
+    <value>Reading local branches and GitHub PR metadata…</value>
+  </data>
+  <data xml:space="preserve" name="Text_9715f9a3e1c5">
+    <value>Upstream {0}: {1} (checked {2:t}).</value>
+  </data>
+  <data name="Text_974bad034f90" xml:space="preserve">
+    <value>Remember my choice</value>
+  </data>
+  <data name="Text_9753ec53268f" xml:space="preserve">
+    <value>Check Python and Frida before enabling capture.</value>
+  </data>
+  <data name="Text_9773db12d339" xml:space="preserve">
+    <value>{0} uncommitted change(s)</value>
+  </data>
+  <data xml:space="preserve" name="Text_9777bf4aa207">
+    <value>Build selected</value>
+  </data>
+  <data name="Text_9814c443a469" xml:space="preserve">
+    <value>Exit stops this checkout’s services before closing Waypoint. If the game is open, you can cancel or leave everything running.</value>
+  </data>
+  <data name="Text_984c29f084d4" xml:space="preserve">
+    <value>Built from source</value>
+  </data>
+  <data name="Text_9851f49eb7e6" xml:space="preserve">
+    <value>No branches of closed pull requests to delete.</value>
+  </data>
+  <data name="Text_986739fa4712" xml:space="preserve">
+    <value>Window behavior</value>
+  </data>
+  <data name="Text_989176ed75d6" xml:space="preserve">
+    <value>Stop capture</value>
+  </data>
+  <data name="Text_991c02eaff62" xml:space="preserve">
+    <value>Gateway is stopped; the choice takes effect on its next start.</value>
+  </data>
+  <data name="Text_992e854a82a5" xml:space="preserve">
+    <value>Choose a checkout and reload its accounts.</value>
+  </data>
+  <data xml:space="preserve" name="Text_993f024b650e">
+    <value>Saturation</value>
+  </data>
+  <data xml:space="preserve" name="Text_995c08ae21a7">
+    <value>Choose a workspace</value>
+  </data>
+  <data xml:space="preserve" name="Text_995fcc9b6baa">
+    <value>Waiting for services</value>
+  </data>
+  <data name="Text_998195e4aaa2" xml:space="preserve">
+    <value>Search again</value>
+  </data>
+  <data xml:space="preserve" name="Text_99cc5fa5fefe">
+    <value>Local services</value>
+  </data>
+  <data xml:space="preserve" name="Text_99efec87ba2a">
+    <value>Resolve the workspace conflict</value>
+  </data>
+  <data name="Text_9a82f40e3cfb" xml:space="preserve">
+    <value>that account name is taken</value>
+  </data>
+  <data xml:space="preserve" name="Text_9a8b62d3ae1e">
+    <value>Check failed: </value>
+  </data>
+  <data xml:space="preserve" name="Text_9a8e5d375c8e">
+    <value>Start fresh (replace accounts and characters)</value>
+  </data>
+  <data xml:space="preserve" name="Text_9aa6000ef944">
+    <value>Restore saves from {0:g}?
+
+{1}
+
+Owned servers will stop. Automatic backup is {2}. Source, client and login keys stay as selected; an older save may need its original revision.</value>
+  </data>
+  <data name="Text_9afaaba23e27" xml:space="preserve">
+    <value>Register completed.</value>
+  </data>
+  <data name="Text_9b1120c28631" xml:space="preserve">
+    <value>Logs folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_9b6f051b7ea9">
+    <value>Use this checkout’s local runtime wrapper when present</value>
+  </data>
+  <data name="Text_9bc7bc6c8d2a" xml:space="preserve">
+    <value>Inspect completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9c2f5c362587">
+    <value>Create a local game account</value>
+  </data>
+  <data name="Text_9c384372f6be" xml:space="preserve">
+    <value>Capture stopped. Existing files were kept.</value>
+  </data>
+  <data name="Text_9c5499b7d628" xml:space="preserve">
+    <value>The update failed: {0}</value>
+  </data>
+  <data name="Text_9c618d925c1c" xml:space="preserve">
+    <value>Patch server: the client's update check stays local</value>
+  </data>
+  <data xml:space="preserve" name="Text_9ca428fef4d5">
+    <value>Mods disabled globally</value>
+  </data>
+  <data name="Text_9ca6f38e3e9c" xml:space="preserve">
+    <value>Select and check a LocalExile checkout first.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9cabcedb7ac9">
+    <value>Adjusts foreground colors for readability when needed. Some mixed custom backgrounds may still need manual correction.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9caf4f258c84">
+    <value>Build this source project.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9cea69fd345a">
+    <value>Window controls</value>
+  </data>
+  <data name="Text_9cf951e82d56" xml:space="preserve">
+    <value>Multiple-instance test mode</value>
+  </data>
+  <data xml:space="preserve" name="Text_9d19ac7b2039">
+    <value>Open logs folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_9d39a3628a49">
+    <value>Retry operation</value>
+  </data>
+  <data xml:space="preserve" name="Text_9d3db01bcdf8">
+    <value>Open checkout folder</value>
+  </data>
+  <data name="Text_9d4fdb63fa4f" xml:space="preserve">
+    <value>Look for a newer Waypoint release whenever it starts (release builds)</value>
+  </data>
+  <data name="Text_9da3e9b26c5e" xml:space="preserve">
+    <value>Port held by another</value>
+  </data>
+  <data name="Text_9df4f4d7fd9d" xml:space="preserve">
+    <value>Pick another LocalExile server checkout; Waypoint starts again on it</value>
+  </data>
+  <data xml:space="preserve" name="Text_9dfc93581c88">
+    <value>Close button hover</value>
+  </data>
+  <data xml:space="preserve" name="Text_9dfdeeac1e88">
+    <value>Game-data reload uses /game_data reload through the checkout’s optional native helper (Python + Frida, client in game). It reloads SQLite overrides; it does not reload extracted files or rebuild source. The launcher waits for a revision confirmation.</value>
+  </data>
+  <data xml:space="preserve" name="Text_9e2b60866e8b">
+    <value>Checking checkout…</value>
+  </data>
+  <data xml:space="preserve" name="Text_9e471951a1b4">
+    <value>Environment</value>
+  </data>
+  <data name="Text_9e4f33182b00" xml:space="preserve">
+    <value>live.ps1 -ClientOnly: starts the game against the running servers (Restart servers rebuilds them)</value>
+  </data>
+  <data xml:space="preserve" name="Text_9f365252d60f">
+    <value>Resolve the check failure in Settings, then refresh.</value>
+  </data>
+  <data name="Text_9f59b95311b3" xml:space="preserve">
+    <value>Waypoint is closing. Wait for it to finish, then open it again.</value>
+  </data>
+  <data name="Text_9f97cf25460a" xml:space="preserve">
+    <value>LocalExile is already downloaded here.</value>
+  </data>
+  <data name="Text_9fa77e063410" xml:space="preserve">
+    <value>Version {0} is out; this is {1}. The servers and the game keep running while it updates.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a0160f336a55">
+    <value>Could not open folder: </value>
+  </data>
+  <data xml:space="preserve" name="Text_a01e3a76d9b3">
+    <value>Reloading game-data overrides</value>
+  </data>
+  <data xml:space="preserve" name="Text_a03efc4496c5">
+    <value>Checks run locally. No account or game data is uploaded.</value>
+  </data>
+  <data name="Text_a0515ee27dac" xml:space="preserve">
+    <value>p99 ms</value>
+  </data>
+  <data xml:space="preserve" name="Text_a06db67ffa92">
+    <value>Checking the selected installation…</value>
+  </data>
+  <data name="Text_a0c0082323d1" xml:space="preserve">
+    <value>Pull requests ({0})</value>
+  </data>
+  <data xml:space="preserve" name="Text_a0c561f9ecd0">
+    <value>Opening game</value>
+  </data>
+  <data name="Text_a0e63d7c7125" xml:space="preserve">
+    <value>Not now</value>
+  </data>
+  <data xml:space="preserve" name="Text_a101713cac16">
+    <value>Get Python</value>
+  </data>
+  <data xml:space="preserve" name="Text_a129818ff2ac">
+    <value>Windows · standalone PoE 3.29.3b · .NET 10 · Debug builds · standard localhost ports. Game launch always passes through live.ps1. Services stop through Ctrl+C; the launcher never force-kills a server or game.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a1ac9a887b35">
+    <value>Verifying ownership of every required listening port.</value>
+  </data>
+  <data name="Text_a25890814951" xml:space="preserve">
+    <value>Stop services before exiting</value>
+  </data>
+  <data name="Text_a266fe9c4d1d" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data xml:space="preserve" name="Text_a2b0e1cca90c">
+    <value>Reload this enabled mod and its dependents.</value>
+  </data>
+  <data name="Text_a2e20a335700" xml:space="preserve">
+    <value>Delete account</value>
+  </data>
+  <data name="Text_a330c2786496" xml:space="preserve">
+    <value>Start anyway</value>
+  </data>
+  <data name="Text_a34d444917a5" xml:space="preserve">
+    <value>{0} could not be read. Close the game and try again.</value>
+  </data>
+  <data name="Text_a37f0d9d865e" xml:space="preserve">
+    <value>Capture is optional. Existing files are kept.</value>
+  </data>
+  <data name="Text_a388bd2d373c" xml:space="preserve">
+    <value>Uncommitted changes</value>
+  </data>
+  <data name="Text_a3b98f7ed11c" xml:space="preserve">
+    <value>Enter a valid account name: 3–32 letters, digits, underscores or hyphens.</value>
+  </data>
+  <data name="Text_a3dc8f59f7b2" xml:space="preserve">
+    <value>Client must be a separate physical copy in this checkout, not a link to another folder.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a3f721e4f70e">
+    <value>Standalone 3.29.3b executable at Client/Game.exe</value>
+  </data>
+  <data name="Text_a3ffee699add" xml:space="preserve">
+    <value>Looking for a game client on this PC…</value>
+  </data>
+  <data xml:space="preserve" name="Text_a43b66fb01b9">
+    <value>Diagnostic report…</value>
+  </data>
+  <data xml:space="preserve" name="Text_a4561c05ee2f">
+    <value>Select a valid checkout first.</value>
+  </data>
+  <data name="Text_a45a59aa1dcf" xml:space="preserve">
+    <value>could not close {0}: {1}</value>
+  </data>
+  <data name="Text_a46403b71ed5" xml:space="preserve">
+    <value>Deleted {0} branch(es).</value>
+  </data>
+  <data xml:space="preserve" name="Text_a495d2996fdf">
+    <value>Building the selected LocalExile solution.</value>
+  </data>
+  <data name="Text_a49679d08a5c" xml:space="preserve">
+    <value>the downloaded {0} does not match its SHA-256; nothing was changed</value>
+  </data>
+  <data xml:space="preserve" name="Text_a4b0fb1fe1fc">
+    <value>Another server or watcher is running (PID {0}). Stop it from its own installation before launching here.</value>
+  </data>
+  <data name="Text_a4be546fbdc7" xml:space="preserve">
+    <value>PULL REQUEST</value>
+  </data>
+  <data xml:space="preserve" name="Text_a4c03d4f18b4">
+    <value>CloseGame completed.</value>
+  </data>
+  <data name="Text_a4cb3139c1c6" xml:space="preserve">
+    <value>The servers or the game are running. They stop before the switch: a running Gateway would rebuild halfway through it.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a4fe65264ef7">
+    <value>Language</value>
+  </data>
+  <data xml:space="preserve" name="Text_a501a1aed56f">
+    <value>Selected backup</value>
+  </data>
+  <data name="Text_a52a8ef55340" xml:space="preserve">
+    <value>Switch to #{0}</value>
+  </data>
+  <data name="Text_a58b335cdd9f" xml:space="preserve">
+    <value>Install the extraction dependency</value>
+  </data>
+  <data xml:space="preserve" name="Text_a5cccbcead7d">
+    <value>Amber</value>
+  </data>
+  <data xml:space="preserve" name="Text_a5eeb9656c5c">
+    <value>Preparing the local account service for this checkout.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a63d0dedb7bb">
+    <value>In game: /mod_{0} {1} · /mod_reload {2}</value>
+  </data>
+  <data name="Text_a64988aa2c93" xml:space="preserve">
+    <value>BRANCH</value>
+  </data>
+  <data name="Text_a65a4357e343" xml:space="preserve">
+    <value>Reload accounts after changing the workspace.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a679c1884503">
+    <value>Retaining existing keys and prepared executable; creating only missing files.</value>
+  </data>
+  <data name="Text_a67ecaab2e09" xml:space="preserve">
+    <value>Services stopped. Exiting Waypoint.</value>
+  </data>
+  <data name="Text_a6b4705c6883" xml:space="preserve">
+    <value>Change…</value>
+  </data>
+  <data xml:space="preserve" name="Text_a700e84e04df">
+    <value>DeleteBackup completed.</value>
+  </data>
+  <data name="Text_a704d8d4a818" xml:space="preserve">
+    <value>Account name</value>
+  </data>
+  <data name="Text_a71162b3bbb4" xml:space="preserve">
+    <value>network mode is {0}: the character won't move</value>
+  </data>
+  <data name="Text_a7436507dc71" xml:space="preserve">
+    <value>Exiting without stopping the game or services.</value>
+  </data>
+  <data name="Text_a7495cf51ff7" xml:space="preserve">
+    <value>2.  Finds LocalExile on this PC, or downloads it to a folder you choose</value>
+  </data>
+  <data name="Text_a7543ccb9b4a" xml:space="preserve">
+    <value>This folder is not empty. Choose a new or empty folder.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a7626cdbe094">
+    <value>Binary-only mod</value>
+  </data>
+  <data name="Text_a76e13b98392" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Text_a7984ca9bfc9" xml:space="preserve">
+    <value>Enter a name and a password.</value>
+  </data>
+  <data name="Text_a7ba608e8a20" xml:space="preserve">
+    <value>The port is still in use. When you have looked at it, press Continue: Waypoint will ask again.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a7ea0fd7015f">
+    <value>Backup completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_a80983dbe5df">
+    <value>Needs Gateway running, an enabled built mod, and a client in a playable area (Python + Frida).</value>
+  </data>
+  <data xml:space="preserve" name="Text_a86bfd7816e2">
+    <value>Upstream live.ps1</value>
+  </data>
+  <data name="Text_a89b896cdcfb" xml:space="preserve">
+    <value>Lines containing this text (case ignored)</value>
+  </data>
+  <data xml:space="preserve" name="Text_a8e176f580cf">
+    <value>Check the account name and password requirements above.</value>
+  </data>
+  <data name="Text_a91d36846491" xml:space="preserve">
+    <value>Start the recorder before entering a new area. If the game is closed, it waits up to 10 minutes.</value>
+  </data>
+  <data name="Text_a9666e46fd95" xml:space="preserve">
+    <value>{0} (pid {1}) closed</value>
+  </data>
+  <data name="Text_a9901fd90954" xml:space="preserve">
+    <value>Hide Waypoint in the tray when the game starts, and bring it back when the game closes</value>
+  </data>
+  <data xml:space="preserve" name="Text_a9969d6d514d">
+    <value>Mods enabled</value>
+  </data>
+  <data xml:space="preserve" name="Text_a9ad74159ab1">
+    <value>Select a revision above.</value>
+  </data>
+  <data name="Text_a9ada4eade1d" xml:space="preserve">
+    <value>A save backup will be created before this change.</value>
+  </data>
+  <data name="Text_a9f51233a4ef" xml:space="preserve">
+    <value>Stop dev host</value>
+  </data>
+  <data xml:space="preserve" name="Text_aa1bf9baa865">
+    <value>Could not select checkout: </value>
+  </data>
+  <data name="Text_aa6a199107e9" xml:space="preserve">
+    <value>The servers are not running</value>
+  </data>
+  <data name="Text_aac89777241c" xml:space="preserve">
+    <value>{0} is running; update when it is done.</value>
+  </data>
+  <data name="Text_aad03e2b1c5c" xml:space="preserve">
+    <value>Automatic backups are OFF. This change will not create a recovery backup.</value>
+  </data>
+  <data name="Text_ab4657748d92" xml:space="preserve">
+    <value>LocalExile needs these ports, and another program is listening on them. It may be a server from another LocalExile folder, or something else entirely. Waypoint can end it, or you can look at it first. A server gets the chance to save before it is ended; another program may lose unsaved work.</value>
+  </data>
+  <data name="Text_ab4bdca6bf1a" xml:space="preserve">
+    <value>Reload accounts to view the selected database.</value>
+  </data>
+  <data name="Text_ab8c3af14fb6" xml:space="preserve">
+    <value>Minimize to tray</value>
+  </data>
+  <data name="Text_abb39b8adf1f" xml:space="preserve">
+    <value>Diagnostic report</value>
+  </data>
+  <data name="Text_abe6ba498754" xml:space="preserve">
+    <value>3.  Finds your game client, or lets you point to it</value>
+  </data>
+  <data xml:space="preserve" name="Text_ac15c0c9a3e0">
+    <value>Showing the first 1,000 open PRs. Enter a PR number to fetch another.</value>
+  </data>
+  <data xml:space="preserve" name="Text_ac7fcf0ba22e">
+    <value>No installed mods</value>
+  </data>
+  <data xml:space="preserve" name="Text_acb4bce11dae">
+    <value>A workspace operation is in progress.</value>
+  </data>
+  <data name="Text_ad909a80eb9a" xml:space="preserve">
+    <value>No open pull requests.</value>
+  </data>
+  <data xml:space="preserve" name="Text_adb0547b2fad">
+    <value>Restart completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_adb8a7038d6c">
+    <value>Select a mod to view its dependencies and controls.</value>
+  </data>
+  <data name="Text_addd1dcb439b" xml:space="preserve">
+    <value>Exiting Waypoint stops this checkout’s services.</value>
+  </data>
+  <data name="Text_ae684f70a175" xml:space="preserve">
+    <value>CheckCapture completed.</value>
+  </data>
+  <data name="Text_ae82cf58855d" xml:space="preserve">
+    <value>Reload mod</value>
+  </data>
+  <data xml:space="preserve" name="Text_aeed4d26bb5f">
+    <value>Starting</value>
+  </data>
+  <data name="Text_af20391b2b63" xml:space="preserve">
+    <value>The game is running: Play closes it and starts it again; the servers keep running.</value>
+  </data>
+  <data name="Text_af86ecd2ae72" xml:space="preserve">
+    <value>{0} ({1}) created on {2}.</value>
+  </data>
+  <data xml:space="preserve" name="Text_afb40dbadd2e">
+    <value>Change appearance…</value>
+  </data>
+  <data name="Text_afbb2e8b37b4" xml:space="preserve">
+    <value>git could not run: {0}. Install Git for Windows and start the launcher again.</value>
+  </data>
+  <data name="Text_b016f6d52f72" xml:space="preserve">
+    <value>You stashed changes when you left {0}. Restore them now?</value>
+  </data>
+  <data name="Text_b09919b9d100" xml:space="preserve">
+    <value>QueryAccounts completed.</value>
+  </data>
+  <data name="Text_b0c35534bd56" xml:space="preserve">
+    <value>Keyboard: Ctrl+1–9 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Change appearance and accessibility preferences in Settings.</value>
+  </data>
+  <data name="Text_b11ebb313cb0" xml:space="preserve">
+    <value>Gateway restart required</value>
+  </data>
+  <data name="Text_b14253a69f90" xml:space="preserve">
+    <value>Reload commands</value>
+  </data>
+  <data xml:space="preserve" name="Text_b14dcdadc0c3">
+    <value>Owned process; all required ports listening</value>
+  </data>
+  <data name="Text_b1863828ce51" xml:space="preserve">
+    <value>Capture area layouts while playing</value>
+  </data>
+  <data xml:space="preserve" name="Text_b186b72af3a9">
+    <value>Search mods</value>
+  </data>
+  <data xml:space="preserve" name="Text_b239a87356cd">
+    <value>{0} checkouts match upstream HEAD. Choose one below, or Browse elsewhere.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b23a6a8439c0">
+    <value>unknown</value>
+  </data>
+  <data name="Text_b2439bcb8dee" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data xml:space="preserve" name="Text_b2518d20e2cb">
+    <value>Start servers</value>
+  </data>
+  <data name="Text_b26fa9e01921" xml:space="preserve">
+    <value>Leave LocalExile services running</value>
+  </data>
+  <data xml:space="preserve" name="Text_b2cc39e00968">
+    <value>Start completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b2d54e04976a">
+    <value>PrepareClient completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b34ae7c4547d">
+    <value>Local HEAD: </value>
+  </data>
+  <data name="Text_b370dc0062ea" xml:space="preserve">
+    <value>live.ps1: builds and starts the servers, then the game (closes a running one)</value>
+  </data>
+  <data name="Text_b39bfca7ddf5" xml:space="preserve">
+    <value>robocopy your 3.29.3b client to Client, then copy PathOfExile.exe to Game.exe</value>
+  </data>
+  <data xml:space="preserve" name="Text_b3a0f9e4aea4">
+    <value>Local branch</value>
+  </data>
+  <data xml:space="preserve" name="Text_b3b29e2c5678">
+    <value>Color-vision profiles override accent and status colors, including custom choices. Windows High Contrast takes priority over all palettes.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b3f384f14d32">
+    <value>Copy the complete client into its Client folder first. Preparation creates missing local keys and a prepared executable, then selects the local gateway in that copy. Close the game and stop services before making setup changes.</value>
+  </data>
+  <data name="Text_b45a804aa67c" xml:space="preserve">
+    <value>Keep the game and all LocalExile services stopped until the change finishes.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b460af7eddc8">
+    <value>Load the list for the selected checkout.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b46871152667">
+    <value>Restart required</value>
+  </data>
+  <data xml:space="preserve" name="Text_b4a5df23dc4d">
+    <value>Invalid manifest</value>
+  </data>
+  <data name="Text_b5022456bffb" xml:space="preserve">
+    <value>Scroll to each new line</value>
+  </data>
+  <data xml:space="preserve" name="Text_b588f80b6484">
+    <value>Open failed stage log</value>
+  </data>
+  <data xml:space="preserve" name="Text_b61d4817d0f1">
+    <value>Follow Agents/GettingStarted.md steps 4-5 to prepare Game.patched.exe</value>
+  </data>
+  <data name="Text_b63f1f48f79d" xml:space="preserve">
+    <value>60 min</value>
+  </data>
+  <data xml:space="preserve" name="Text_b6578325df01">
+    <value>How mod changes work</value>
+  </data>
+  <data xml:space="preserve" name="Text_b66a9733627c">
+    <value>Close the game and stop services first. This uses a temporary local account service and the database below. Sign in inside the game after creation, then create your character there.</value>
+  </data>
+  <data name="Text_b670d9ade6d2" xml:space="preserve">
+    <value>When Waypoint exits</value>
+  </data>
+  <data xml:space="preserve" name="Text_b6aefbdc998a">
+    <value>Using: </value>
+  </data>
+  <data xml:space="preserve" name="Text_b6b099ac3763">
+    <value>Color vision</value>
+  </data>
+  <data name="Text_b6df2441064f" xml:space="preserve">
+    <value>Needs setup</value>
+  </data>
+  <data name="Text_b72026d96f3c" xml:space="preserve">
+    <value>Gateway log</value>
+  </data>
+  <data name="Text_b77636c1849a" xml:space="preserve">
+    <value>Build LocalExile</value>
+  </data>
+  <data xml:space="preserve" name="Text_b77c7a041298">
+    <value>Restoring saves</value>
+  </data>
+  <data name="Text_b7b159728e5f" xml:space="preserve">
+    <value>Node.js or Tools\ooz\node_modules missing (step 7)</value>
+  </data>
+  <data name="Text_b7b22b7dc356" xml:space="preserve">
+    <value>gateway list points at the local login server (step 6)</value>
+  </data>
+  <data xml:space="preserve" name="Text_b7ba5c1d1a1a">
+    <value>▶  Play</value>
+  </data>
+  <data xml:space="preserve" name="Text_b7cd0acd1470">
+    <value>Protect text contrast</value>
+  </data>
+  <data xml:space="preserve" name="Text_b7d1e0571f80">
+    <value>Workspace inspection failed. Resolve the problem in Settings, then refresh.</value>
+  </data>
+  <data xml:space="preserve" name="Text_b83816513bac">
+    <value>Building account service</value>
+  </data>
+  <data name="Text_b8436e8702c8" xml:space="preserve">
+    <value>Waypoint — click to open</value>
+  </data>
+  <data xml:space="preserve" name="Text_b8a4b320cf19">
+    <value>Hex color (#RRGGBB)</value>
+  </data>
+  <data name="Text_b8aab09f074a" xml:space="preserve">
+    <value>Stops the account service</value>
+  </data>
+  <data xml:space="preserve" name="Text_b8d31e852725">
+    <value>on</value>
+  </data>
+  <data xml:space="preserve" name="Text_b9289f13fa7e">
+    <value>Account name (3–32 letters, digits, _ or -)</value>
+  </data>
+  <data name="Text_b949c922b6ef" xml:space="preserve">
+    <value>Git</value>
+  </data>
+  <data xml:space="preserve" name="Text_b9957b371d80">
+    <value>Selecting local gateway</value>
+  </data>
+  <data name="Text_b9bd06a6286b" xml:space="preserve">
+    <value>install Node.js, then: cd Tools\ooz; npm install</value>
+  </data>
+  <data name="Text_b9f4f560cff4" xml:space="preserve">
+    <value>A pull request that is not in the open list: its head is fetched from GitHub by number</value>
+  </data>
+  <data name="Text_ba2cad95033e" xml:space="preserve">
+    <value>#{0} comes from a fork</value>
+  </data>
+  <data name="Text_ba4e38e456ba" xml:space="preserve">
+    <value>Use the checkout's local launch profile when it has one</value>
+  </data>
+  <data name="Text_ba55baf7dd30" xml:space="preserve">
+    <value>Applies game-data overrides to the running game: needs a client in game (Python + Frida)</value>
+  </data>
+  <data name="Text_ba849df3b860" xml:space="preserve">
+    <value>{0}, level {1}, {2}, {3}</value>
+  </data>
+  <data name="Text_ba865ad5a8d4" xml:space="preserve">
+    <value>Ready to set up</value>
+  </data>
+  <data name="Text_ba89783a339f" xml:space="preserve">
+    <value>Select an account</value>
+  </data>
+  <data name="Text_baaf468928e9" xml:space="preserve">
+    <value>Check the server ports</value>
+  </data>
+  <data xml:space="preserve" name="Text_baf5d82057e7">
+    <value>Orchid</value>
+  </data>
+  <data xml:space="preserve" name="Text_bb0b660ccd9d">
+    <value>Sending /game_data reload through the selected checkout's native client helper; waiting for Gateway confirmation.</value>
+  </data>
+  <data name="Text_bb612d263d60" xml:space="preserve">
+    <value>AUTHOR</value>
+  </data>
+  <data name="Text_bb7234ec1245" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Text_bbe8574175ab" xml:space="preserve">
+    <value>Stopping…</value>
+  </data>
+  <data name="Text_bc31a9393a79" xml:space="preserve">
+    <value>live.ps1 -Only {0}: builds and starts it</value>
+  </data>
+  <data name="Text_bc5cf0efe679" xml:space="preserve">
+    <value>network mode Predictive</value>
+  </data>
+  <data xml:space="preserve" name="Text_bc74ef1e258a">
+    <value> output</value>
+  </data>
+  <data name="Text_bca0785c9799" xml:space="preserve">
+    <value>Window behavior saved.</value>
+  </data>
+  <data name="Text_bca5f64eb6ea" xml:space="preserve">
+    <value>Pull request #{0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_bdd254b65baa">
+    <value>Build</value>
+  </data>
+  <data name="Text_be3ff8326226" xml:space="preserve">
+    <value>Your game client</value>
+  </data>
+  <data name="Text_be46faa4a87c" xml:space="preserve">
+    <value>Choose an account from the list, or change your search.</value>
+  </data>
+  <data name="Text_be7bb7f4faeb" xml:space="preserve">
+    <value>% of the machine</value>
+  </data>
+  <data xml:space="preserve" name="Text_bed8374efd88">
+    <value>Gateway is running without a watcher. Stop servers to change launch mode.</value>
+  </data>
+  <data name="Text_bef228d2176d" xml:space="preserve">
+    <value>Copy the game client</value>
+  </data>
+  <data name="Text_bf000421aeb3" xml:space="preserve">
+    <value>Confirm new password</value>
+  </data>
+  <data xml:space="preserve" name="Text_bf004e2e67d7">
+    <value>Error indicators</value>
+  </data>
+  <data name="Text_bf009459884a" xml:space="preserve">
+    <value>Reload game data</value>
+  </data>
+  <data name="Text_bffd26352bd5" xml:space="preserve">
+    <value>You’ll be asked once before a closing preference is saved.</value>
+  </data>
+  <data name="Text_c0025cda19a2" xml:space="preserve">
+    <value>The server checkout's branch ({0}): click to switch it</value>
+  </data>
+  <data name="Text_c02af3329071" xml:space="preserve">
+    <value>Rename account</value>
+  </data>
+  <data xml:space="preserve" name="Text_c032d8c45d13">
+    <value>Choose installation</value>
+  </data>
+  <data xml:space="preserve" name="Text_c04a64764afe">
+    <value>The selected local runtime profile names a database which does not exist. Restore the intended database or correct config/runtime.local.ps1. Do not create an empty replacement for an existing installation. Open Settings to select a different checkout/profile if needed.</value>
+  </data>
+  <data name="Text_c0adcac645f4" xml:space="preserve">
+    <value>Start empty</value>
+  </data>
+  <data name="Text_c0fa1dcd67a3" xml:space="preserve">
+    <value>What is finished stays finished, and a partial copy is kept. Continue picks up from here, now or another day.</value>
+  </data>
+  <data name="Text_c1c1009d3f37" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data xml:space="preserve" name="Text_c1ebc7817870">
+    <value>Needs attention</value>
+  </data>
+  <data name="Text_c2423c59626b" xml:space="preserve">
+    <value>Stop services and exit</value>
+  </data>
+  <data name="Text_c29f3cadd717" xml:space="preserve">
+    <value>Minimizing to tray always keeps services running. This choice applies to a full exit.</value>
+  </data>
+  <data name="Text_c2ce3224739f" xml:space="preserve">
+    <value>{0}: {1}. Show service details.</value>
+  </data>
+  <data xml:space="preserve" name="Text_c2e0c347e274">
+    <value>league</value>
+  </data>
+  <data name="Text_c3812fc4acb8" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Text_c3963aedaac6" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+  <data name="Text_c3f80698ef0a" xml:space="preserve">
+    <value>StartCapture completed.</value>
+  </data>
+  <data name="Text_c481efeab782" xml:space="preserve">
+    <value>Server time</value>
+  </data>
+  <data xml:space="preserve" name="Text_c4a5bd52b99e">
+    <value>Success indicators</value>
+  </data>
+  <data xml:space="preserve" name="Text_c4ba5e396f03">
+    <value>Automatic save backups before mod changes</value>
+  </data>
+  <data name="Text_c50ae6b7f77e" xml:space="preserve">
+    <value>Dev host running on port {0}</value>
+  </data>
+  <data name="Text_c5132d954d7b" xml:space="preserve">
+    <value>Remember this for next time</value>
+  </data>
+  <data name="Text_c58597b15074" xml:space="preserve">
+    <value>3–32 letters, digits, _ or -</value>
+  </data>
+  <data xml:space="preserve" name="Text_c66a58ec272f">
+    <value>Maximize Waypoint</value>
+  </data>
+  <data name="Text_c69883335d5b" xml:space="preserve">
+    <value>Servers stopped</value>
+  </data>
+  <data name="Text_c6c20be1441a" xml:space="preserve">
+    <value>Server timings</value>
+  </data>
+  <data name="Text_c6edad1de780" xml:space="preserve">
+    <value>Could not minimize to tray: </value>
+  </data>
+  <data xml:space="preserve" name="Text_c6fae2f09ede">
+    <value>
+Last reported Gateway event. Open Gateway output for details.</value>
+  </data>
+  <data name="Text_c721900cbf6c" xml:space="preserve">
+    <value>Keyboard: Ctrl+1–8 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Change appearance and accessibility preferences in Settings.</value>
+  </data>
+  <data name="Text_c722752a8e39" xml:space="preserve">
+    <value>(select an account above)</value>
+  </data>
+  <data name="Text_c726cb5de813" xml:space="preserve">
+    <value>Walk maps</value>
+  </data>
+  <data xml:space="preserve" name="Text_c7353185b802">
+    <value>Use an existing prepared checkout, or prepare a separate client copy in the selected checkout. The supported client is standalone PoE 3.29.3b.</value>
+  </data>
+  <data xml:space="preserve" name="Text_c74950bf4f08">
+    <value>Verified process and listening ports</value>
+  </data>
+  <data xml:space="preserve" name="Text_c75b3ea942d7">
+    <value>Search branches and PRs</value>
+  </data>
+  <data xml:space="preserve" name="Text_c75dcf9e038c">
+    <value>Stopping services</value>
+  </data>
+  <data xml:space="preserve" name="Text_c7a882f64135">
+    <value>Could not load source choices: </value>
+  </data>
+  <data name="Text_c7b81e4f8801" xml:space="preserve">
+    <value>Choose your Path of Exile folder (the one with Content.ggpk)</value>
+  </data>
+  <data xml:space="preserve" name="Text_c7bc8ebf53fa">
+    <value>Copy the complete standalone PoE 3.29.3b installation to:
+{0}
+
+1. In File Explorer, open the supported client folder containing Content.ggpk and PathOfExile.exe (or Game.exe).
+2. Press Ctrl+A, then Ctrl+C to copy; do not move your normal installation.
+3. Open the selected checkout in another File Explorer window. Create its Client folder if missing, open it, then press Ctrl+V.
+4. Wait for the copy to finish. Return to Setup and click Prepare local client.
+
+Steam layout and a newer official client are unsupported. The launcher does not download the game.</value>
+  </data>
+  <data xml:space="preserve" name="Text_c7ece59b9c12">
+    <value>Create local account</value>
+  </data>
+  <data name="Text_c813077590fe" xml:space="preserve">
+    <value>Accounts and characters</value>
+  </data>
+  <data name="Text_c81444ec55e1" xml:space="preserve">
+    <value>StopCapture completed.</value>
+  </data>
+  <data name="Text_c8207851222b" xml:space="preserve">
+    <value>Choose each time. Remembering a choice in the dialog turns this off.</value>
+  </data>
+  <data name="Text_c827708ef040" xml:space="preserve">
+    <value>Account data updated.</value>
+  </data>
+  <data name="Text_c888f98938da" xml:space="preserve">
+    <value>{0} d ago</value>
+  </data>
+  <data name="Text_c88f2330c818" xml:space="preserve">
+    <value>Close Waypoint or keep it running?</value>
+  </data>
+  <data xml:space="preserve" name="Text_c8ae1bb777a0">
+    <value>Gateway started a new process under the same watcher. Sign in again if the game returned to login.</value>
+  </data>
+  <data name="Text_c8f6940914be" xml:space="preserve">
+    <value>Back to {0}</value>
+  </data>
+  <data name="Text_c9263b3df7d6" xml:space="preserve">
+    <value>Dev host running.</value>
+  </data>
+  <data xml:space="preserve" name="Text_c9665c96a867">
+    <value>Lime</value>
+  </data>
+  <data name="Text_c9b2c9b72ddd" xml:space="preserve">
+    <value>What should closing the window do?</value>
+  </data>
+  <data name="Text_c9e0f4911e18" xml:space="preserve">
+    <value>p95 ms</value>
+  </data>
+  <data xml:space="preserve" name="Text_ca1844969742">
+    <value>Unavailable</value>
+  </data>
+  <data xml:space="preserve" name="Text_ca4e5268289a">
+    <value>{0} backups for {1}</value>
+  </data>
+  <data xml:space="preserve" name="Text_ca6952ed3b88">
+    <value>No branch information</value>
+  </data>
+  <data name="Text_ca7981b46ecf" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data xml:space="preserve" name="Text_ca869b4d0a6f">
+    <value>Launch profile: {0}
+Save database: {1}
+Client: {2}</value>
+  </data>
+  <data name="Text_ca895d35b3b0" xml:space="preserve">
+    <value>{0:0.#} GB free on this drive; LocalExile with its client needs about {1:0} GB.</value>
+  </data>
+  <data xml:space="preserve" name="Text_cae7d57bc067">
+    <value>Stop</value>
+  </data>
+  <data xml:space="preserve" name="Text_cafc8e32728a">
+    <value>Reset these custom colors</value>
+  </data>
+  <data xml:space="preserve" name="Text_cb284ed772cb">
+    <value>The language changes immediately. Logs and upstream diagnostics keep their original text.</value>
+  </data>
+  <data name="Text_cb4371ac1b6b" xml:space="preserve">
+    <value>Through the dev host: works beside running servers</value>
+  </data>
+  <data name="Text_cb45e116beb5" xml:space="preserve">
+    <value>.NET SDK not found (dotnet)</value>
+  </data>
+  <data name="Text_cb52a8c99835" xml:space="preserve">
+    <value>exceptions/s</value>
+  </data>
+  <data name="Text_cb8603c8ce91" xml:space="preserve">
+    <value>Automatic backups</value>
+  </data>
+  <data xml:space="preserve" name="Text_cba1d9e44ad3">
+    <value>Select the account, revision or backup action again to review its current options.</value>
+  </data>
+  <data name="Text_cba6dec12959" xml:space="preserve">
+    <value>Stop the local account service before changing player accounts.</value>
+  </data>
+  <data xml:space="preserve" name="Text_cbef8c5002e9">
+    <value>{0} | hot reload watcher PID {1}</value>
+  </data>
+  <data xml:space="preserve" name="Text_cc490cdeff7b">
+    <value>Dependencies completed.</value>
+  </data>
+  <data name="Text_cccbd64fecc9" xml:space="preserve">
+    <value>Read-only while the game or services are running, or ownership is uncertain. Stop them and reload before changing accounts.</value>
+  </data>
+  <data name="Text_cd127b0387bb" xml:space="preserve">
+    <value>Windows could not show the notification area icon.</value>
+  </data>
+  <data xml:space="preserve" name="Text_cd27f46c485b">
+    <value>Customize colors</value>
+  </data>
+  <data xml:space="preserve" name="Text_cd78b7af946b">
+    <value>Manage backups</value>
+  </data>
+  <data xml:space="preserve" name="Text_cd7d61bf7e38">
+    <value>Fetch</value>
+  </data>
+  <data xml:space="preserve" name="Text_cdd181261fc4">
+    <value>Checking the upstream extraction manifest; missing or outdated data will be generated.</value>
+  </data>
+  <data name="Text_cde298eb5d10" xml:space="preserve">
+    <value>no counters: {0}</value>
+  </data>
+  <data name="Text_cef20f906175" xml:space="preserve">
+    <value>{0} lines</value>
+  </data>
+  <data name="Text_cf051d46df67" xml:space="preserve">
+    <value>game data not extracted yet (step 7)</value>
+  </data>
+  <data xml:space="preserve" name="Text_cf47dcf7cadf">
+    <value>What this version manages</value>
+  </data>
+  <data name="Text_cf5c6c0d1737" xml:space="preserve">
+    <value>Exiting Waypoint leaves services running.</value>
+  </data>
+  <data name="Text_cf97478c04ab" xml:space="preserve">
+    <value>frida missing: no walk maps, no console</value>
+  </data>
+  <data xml:space="preserve" name="Text_cfa63e97e7e5">
+    <value>Enable mod</value>
+  </data>
+  <data xml:space="preserve" name="Text_d010ff390617">
+    <value>Panels</value>
+  </data>
+  <data name="Text_d03a6edefa0c" xml:space="preserve">
+    <value>All errors</value>
+  </data>
+  <data xml:space="preserve" name="Text_d0ec1b1ff90e">
+    <value>Commit badge background</value>
+  </data>
+  <data xml:space="preserve" name="Text_d10cdbf98c85">
+    <value>SELECTED SOURCE</value>
+  </data>
+  <data name="Text_d1373700538f" xml:space="preserve">
+    <value>Failed: {0} exited with {1}; see the output and the Logs section.</value>
+  </data>
+  <data xml:space="preserve" name="Text_d16948e73a68">
+    <value>Not checked</value>
+  </data>
+  <data name="Text_d17cf3164169" xml:space="preserve">
+    <value>Use a LocalExile folder I already have</value>
+  </data>
+  <data name="Text_d1cbffcbd10b" xml:space="preserve">
+    <value>the release's .sha256 holds no SHA-256</value>
+  </data>
+  <data name="Text_d1d87274da84" xml:space="preserve">
+    <value>Level generation</value>
+  </data>
+  <data xml:space="preserve" name="Text_d22e9e7b8580">
+    <value>Not built</value>
+  </data>
+  <data name="Text_d239f70bf53f" xml:space="preserve">
+    <value>Checking capture dependencies</value>
+  </data>
+  <data name="Text_d24c41ae530a" xml:space="preserve">
+    <value>Unexpected error</value>
+  </data>
+  <data xml:space="preserve" name="Text_d28f5e178579">
+    <value>Open client folder</value>
+  </data>
+  <data xml:space="preserve" name="Text_d3368cbffe23">
+    <value>Accessibility</value>
+  </data>
+  <data xml:space="preserve" name="Text_d33ce86357a9">
+    <value>Readable text</value>
+  </data>
+  <data xml:space="preserve" name="Text_d352597ffd8f">
+    <value>Load failed</value>
+  </data>
+  <data xml:space="preserve" name="Text_d35b0efe2128">
+    <value>Copper</value>
+  </data>
+  <data name="Text_d36be6494248" xml:space="preserve">
+    <value>queued</value>
+  </data>
+  <data name="Text_d3b65b039981" xml:space="preserve">
+    <value>{0} is not built yet: start the servers once (live.ps1 builds it)</value>
+  </data>
+  <data xml:space="preserve" name="Text_d452583a74d0">
+    <value>Buttons</value>
+  </data>
+  <data name="Text_d46497f64e95" xml:space="preserve">
+    <value>Not switched: {0}</value>
+  </data>
+  <data name="Text_d48776dd109e" xml:space="preserve">
+    <value>The worst second's 95th percentile in the window (the server publishes quantiles per second)</value>
+  </data>
+  <data name="Text_d494e53bf0b0" xml:space="preserve">
+    <value>Dev host stopped (registering starts it)</value>
+  </data>
+  <data name="Text_d4a64eb66e6c" xml:space="preserve">
+    <value>Detach the recorder now. Capture starts again with the next Play while the option is enabled.</value>
+  </data>
+  <data name="Text_d4c9f823432c" xml:space="preserve">
+    <value>-Walkmaps: capture each area's walk map with Frida (GettingStarted step 9)</value>
+  </data>
+  <data name="Text_d4d7f382fdd3" xml:space="preserve">
+    <value>{0} failed. Fix what it says, then try again: finished steps are not repeated.</value>
+  </data>
+  <data xml:space="preserve" name="Text_d4d8fd81a610">
+    <value>Gateway output</value>
+  </data>
+  <data name="Text_d4eee6017bf1" xml:space="preserve">
+    <value>Waypoint: stopping …</value>
+  </data>
+  <data name="Text_d505316d6f5f" xml:space="preserve">
+    <value>Exit closes Waypoint completely. Servers and the game keep running either way.</value>
+  </data>
+  <data name="Text_d5c6cc663b20" xml:space="preserve">
+    <value>Replacing saved enable/disable overrides only; no mod binaries or save restore.</value>
+  </data>
+  <data name="Text_d5e4a3eb71f6" xml:space="preserve">
+    <value>no timings: {0}</value>
+  </data>
+  <data name="Text_d61fc5870a81" xml:space="preserve">
+    <value>A consistent copy of the saves before a Gateway start, a checkout switch or an account change</value>
+  </data>
+  <data xml:space="preserve" name="Text_d65fad07874f">
+    <value>Install Node.js (the LocalExile setup guide uses Node 24). Close and reopen the launcher after installing, then Recheck setup.</value>
+  </data>
+  <data xml:space="preserve" name="Text_d6807b3f9a54">
+    <value>Use color</value>
+  </data>
+  <data xml:space="preserve" name="Text_d68761cc1eb2">
+    <value>Text size</value>
+  </data>
+  <data name="Text_d6961e5e450e" xml:space="preserve">
+    <value>Everything is installed.</value>
+  </data>
+  <data name="Text_d6aae160070e" xml:space="preserve">
+    <value>Start with fresh saves after the next switch</value>
+  </data>
+  <data name="Text_d6d6be81ee89" xml:space="preserve">
+    <value>{0} is up to date. Restart servers (or Play) builds it.</value>
+  </data>
+  <data name="Text_d7001bf5b45e" xml:space="preserve">
+    <value>GC heap</value>
+  </data>
+  <data xml:space="preserve" name="Text_d72e311c4dda">
+    <value>Minimize</value>
+  </data>
+  <data name="Text_d79efb58cadf" xml:space="preserve">
+    <value>View capture log</value>
+  </data>
+  <data xml:space="preserve" name="Text_d81ab149e977">
+    <value>Indigo</value>
+  </data>
+  <data name="Text_d81c4c024cb7" xml:space="preserve">
+    <value>Download and install Frida into a private Waypoint Python environment for this checkout? Python 3.9+ must already be installed. LocalExile source and global Python packages are unchanged.</value>
+  </data>
+  <data name="Text_d81f68261ee7" xml:space="preserve">
+    <value>Waypoint is already open</value>
+  </data>
+  <data xml:space="preserve" name="Text_d8205881eccd">
+    <value>GitHub PR list unavailable. Local/fetched branches still work; enter a PR number to try it directly.</value>
+  </data>
+  <data xml:space="preserve" name="Text_d838ad216459">
+    <value>✓  Game running</value>
+  </data>
+  <data name="Text_d869e1c9fe5a" xml:space="preserve">
+    <value>Exit cancelled. Close the game before stopping services.</value>
+  </data>
+  <data xml:space="preserve" name="Text_d8831332ef86">
+    <value>{0} local/fetched branches ready. Loading GitHub PRs…</value>
+  </data>
+  <data name="Text_d8b8392e2c54" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="Text_d94343f8f050" xml:space="preserve">
+    <value>Update anyway</value>
+  </data>
+  <data name="Text_d958fa43d8ce" xml:space="preserve">
+    <value>Not switched: no backup.</value>
+  </data>
+  <data xml:space="preserve" name="Text_da5562465e90">
+    <value>{0} · {1}
+Dependencies: {2}
+{3}
+{4}</value>
+  </data>
+  <data name="Text_daf3be705205" xml:space="preserve">
+    <value>Tray while the game runs</value>
+  </data>
+  <data xml:space="preserve" name="Text_db03e3055c5a">
+    <value>Workspace pages</value>
+  </data>
+  <data name="Text_db13497649fa" xml:space="preserve">
+    <value>Creating a private Python environment for this checkout.</value>
+  </data>
+  <data name="Text_db2b02df46b9" xml:space="preserve">
+    <value>Look for updates at start</value>
+  </data>
+  <data name="Text_db4cea7c5a2c" xml:space="preserve">
+    <value>Path of Exile, patched for the local servers</value>
+  </data>
+  <data name="Text_db9a4c7d4c19" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data xml:space="preserve" name="Text_dbcd5e7bb7a0">
+    <value>Light</value>
+  </data>
+  <data name="Text_dbdf27e5db8d" xml:space="preserve">
+    <value>Setting up</value>
+  </data>
+  <data xml:space="preserve" name="Text_dc0a0a26052e">
+    <value>Browse for a different location…</value>
+  </data>
+  <data xml:space="preserve" name="Text_dc62d4bb4fb1">
+    <value>Creating local account</value>
+  </data>
+  <data name="Text_dca661517d71" xml:space="preserve">
+    <value>no git checkout</value>
+  </data>
+  <data name="Text_dcd1d5223f73" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data xml:space="preserve" name="Text_dcedba2939b9">
+    <value>Original client</value>
+  </data>
+  <data name="Text_dcf6607f29a2" xml:space="preserve">
+    <value>{0} min ago</value>
+  </data>
+  <data xml:space="preserve" name="Text_ddc95fd087c9">
+    <value>Prepare the existing client copy using LocalExile's Auth and Patch tools. Existing keys are retained. Missing keys and Game.patched.exe are created, and the copy's gateway list is set to localhost. Existing prepared executables are never overwritten.</value>
+  </data>
+  <data xml:space="preserve" name="Text_ddf65dfc3807">
+    <value>No backups yet. Use Back up now to save a copy of your current progress.</value>
+  </data>
+  <data name="Text_de2a5f6b153d" xml:space="preserve">
+    <value>Create your first account to get started. Characters are created in the game.</value>
+  </data>
+  <data name="Text_de955093808e" xml:space="preserve">
+    <value>Account {0} registered: log in with it in the game's Email field.</value>
+  </data>
+  <data xml:space="preserve" name="Text_deba91fae8c8">
+    <value>Node.js is required for bundle decompression</value>
+  </data>
+  <data xml:space="preserve" name="Text_dec1638d773b">
+    <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Alt+R restores default appearance without changing your checkout or saves.</value>
+  </data>
+  <data name="Text_deeb8da20758" xml:space="preserve">
+    <value>server checkout supports the launcher</value>
+  </data>
+  <data name="Text_df38f1891a79" xml:space="preserve">
+    <value>An existing save database will be backed up before account creation.</value>
+  </data>
+  <data name="Text_df59cd0e567a" xml:space="preserve">
+    <value>This checkout is older than the launcher hooks, so its Gateway cannot list commands: pull the server's main branch.</value>
+  </data>
+  <data name="Text_dfa5992a4fd0" xml:space="preserve">
+    <value>Check dependencies</value>
+  </data>
+  <data xml:space="preserve" name="Text_dfab082d4644">
+    <value>Build checkout</value>
+  </data>
+  <data name="Text_dfb118290f6f" xml:space="preserve">
+    <value>Restoring mod choices</value>
+  </data>
+  <data name="Text_e0ad23f58ba8" xml:space="preserve">
+    <value>The worst second's 99th percentile in the window</value>
+  </data>
+  <data name="Text_e0d1b68224bf" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data xml:space="preserve" name="Text_e0eba74683f6">
+    <value>RestoreBackup completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e10d850954a8">
+    <value>Rose</value>
+  </data>
+  <data name="Text_e11ed003f60a" xml:space="preserve">
+    <value>build failed: GameServer.Host
+{0}</value>
+  </data>
+  <data name="Text_e153a0e8e725" xml:space="preserve">
+    <value>{0} missing. Install them from their download pages, then check again; there is no need to restart Waypoint.</value>
+  </data>
+  <data name="Text_e197f8109b6e" xml:space="preserve">
+    <value>Restore saves</value>
+  </data>
+  <data name="Text_e1ac34af368e" xml:space="preserve">
+    <value>Setting up capture</value>
+  </data>
+  <data name="Text_e1ef93197100" xml:space="preserve">
+    <value>Type the exact account name to delete it</value>
+  </data>
+  <data name="Text_e20846d20bcd" xml:space="preserve">
+    <value>Ready.</value>
+  </data>
+  <data name="Text_e21f935f11d7" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data xml:space="preserve" name="Text_e240e635ff6d">
+    <value>Reset to defaults</value>
+  </data>
+  <data name="Text_e262c148bad6" xml:space="preserve">
+    <value>GC heap and allocation</value>
+  </data>
+  <data name="Text_e2bc3ab610f6" xml:space="preserve">
+    <value>Running · hot reload</value>
+  </data>
+  <data name="Text_e2d0a54968ea" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Text_e2f9115abb87" xml:space="preserve">
+    <value>Choose a full folder path.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e30ce05d3185">
+    <value>More interface colors</value>
+  </data>
+  <data name="Text_e33d34991e45" xml:space="preserve">
+    <value>Under dotnet watch: a saved edit to the Gateway's code applies within seconds, the game staying in; an edit hot reload cannot apply restarts the Gateway by itself. Edits to Auth, Patch or shared projects need Restart servers.</value>
+  </data>
+  <data name="Text_e36274578842" xml:space="preserve">
+    <value>{0} is not empty. Choose an empty folder for the download.</value>
+  </data>
+  <data name="Text_e3f02e617e2c" xml:space="preserve">
+    <value>3–32 letters, digits, underscores or hyphens.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e40f307a9136">
+    <value>HEAD matches latest upstream</value>
+  </data>
+  <data name="Text_e487cafcf930" xml:space="preserve">
+    <value>live.ps1 -Stop and the dev host: the game, the walk-map recorder, the servers and the account service</value>
+  </data>
+  <data name="Text_e4b802b7ff23" xml:space="preserve">
+    <value>Chosen by you</value>
+  </data>
+  <data xml:space="preserve" name="Text_e4bb9f1ece9a">
+    <value>Start</value>
+  </data>
+  <data name="Text_e4e9436bc643" xml:space="preserve">
+    <value>Creates the missing login keys and Game.patched.exe in your client copy; existing ones are kept</value>
+  </data>
+  <data name="Text_e577f85f0ebe" xml:space="preserve">
+    <value>not the 3.29.3b build</value>
+  </data>
+  <data name="Text_e5997acfabd7" xml:space="preserve">
+    <value>The game is running: Waypoint waits here and comes back when the game closes.</value>
+  </data>
+  <data name="Text_e5d5f6f3c0d8" xml:space="preserve">
+    <value>Running build</value>
+  </data>
+  <data name="Text_e6024c22b8bb" xml:space="preserve">
+    <value>Waiting for the selected game client.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e62daa01ba01">
+    <value>Choose and check a workspace to see its backups.</value>
+  </data>
+  <data name="Text_e64a3e6ff925" xml:space="preserve">
+    <value>Area layout capture</value>
+  </data>
+  <data xml:space="preserve" name="Text_e6617c8f941d">
+    <value>BuildMods completed.</value>
+  </data>
+  <data name="Text_e684c2284663" xml:space="preserve">
+    <value>Steam installs have no Content.ggpk</value>
+  </data>
+  <data name="Text_e6cd637f954b" xml:space="preserve">
+    <value>Ranger</value>
+  </data>
+  <data name="Text_e74cca36ea73" xml:space="preserve">
+    <value>MB, MB/s</value>
+  </data>
+  <data name="Text_e7b8cd4e8858" xml:space="preserve">
+    <value>Login and character selection</value>
+  </data>
+  <data name="Text_e7cf3ef4f17c" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data xml:space="preserve" name="Text_e802a1d6a8c0">
+    <value>One checkout matches upstream HEAD. You can use it below or Browse elsewhere.</value>
+  </data>
+  <data name="Text_e8c6f5fd769e" xml:space="preserve">
+    <value>Moving this installation's saves aside; nothing is deleted.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e8da4fa8b199">
+    <value> failed: </value>
+  </data>
+  <data xml:space="preserve" name="Text_e8def7f2e04e">
+    <value>Light colors</value>
+  </data>
+  <data xml:space="preserve" name="Text_e9182bbf5cec">
+    <value>Deleting backup</value>
+  </data>
+  <data xml:space="preserve" name="Text_e97166b54500">
+    <value>enable</value>
+  </data>
+  <data name="Text_e9988a42ca34" xml:space="preserve">
+    <value>Waypoint could not find its own executable.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e9b13ad2ca83">
+    <value>Allowing the temporary local service to shut down.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e9b53806a276">
+    <value>Live changes affect every character on this Gateway. Reload resets mod state.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e9d7f3ec4aa7">
+    <value>Select a backup to restore or delete it.</value>
+  </data>
+  <data xml:space="preserve" name="Text_e9d8992f3481">
+    <value>disable</value>
+  </data>
+  <data xml:space="preserve" name="Text_e9e895e3c405">
+    <value>Enter a playable area for live controls, or stop Gateway to save enable choices.</value>
+  </data>
+  <data xml:space="preserve" name="Text_ea2100dc89ae">
+    <value>Logs</value>
+  </data>
+  <data xml:space="preserve" name="Text_ea41ce555d5c">
+    <value>Use arrows to choose a page. Ctrl+1–8 switches pages; Ctrl+Tab moves to the next page.</value>
+  </data>
+  <data xml:space="preserve" name="Text_ea6467743294">
+    <value>Building services</value>
+  </data>
+  <data xml:space="preserve" name="Text_ea78a0d3095b">
+    <value>Open selected folder</value>
+  </data>
+  <data name="Text_ea7d090c3be5" xml:space="preserve">
+    <value>Contention and exceptions</value>
+  </data>
+  <data name="Text_ea93d6a262ec" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Text_ead4f70a6fdb" xml:space="preserve">
+    <value>Stop all</value>
+  </data>
+  <data xml:space="preserve" name="Text_eb24997abb6c">
+    <value>Select a LocalExile checkout in Settings.</value>
+  </data>
+  <data xml:space="preserve" name="Text_eb3ab0ad976b">
+    <value>No branches or PRs match. Clear or change your search, or use a PR number below.</value>
+  </data>
+  <data name="Text_eb4431518740" xml:space="preserve">
+    <value>Something failed; Waypoint keeps running. The details help a bug report.</value>
+  </data>
+  <data xml:space="preserve" name="Text_eb660ec5bb55">
+    <value>Choose the LocalExile folder containing GameServer.slnx</value>
+  </data>
+  <data name="Text_ebe1b4195ee4" xml:space="preserve">
+    <value>Finish later</value>
+  </data>
+  <data name="Text_ebf30f3177ff" xml:space="preserve">
+    <value>Show running window</value>
+  </data>
+  <data name="Text_ec0a7a7da019" xml:space="preserve">
+    <value>The client is running: Play closes it and starts it again.</value>
+  </data>
+  <data name="Text_ec7ee2826c84" xml:space="preserve">
+    <value>Copy details</value>
+  </data>
+  <data xml:space="preserve" name="Text_ec811d30a89c">
+    <value>Brightness</value>
+  </data>
+  <data name="Text_ec963ffc911b" xml:space="preserve">
+    <value>Checking…</value>
+  </data>
+  <data name="Text_ed5eb9a37e2d" xml:space="preserve">
+    <value>now</value>
+  </data>
+  <data xml:space="preserve" name="Text_edab1377682d">
+    <value>Check the setup below before starting.</value>
+  </data>
+  <data name="Text_ee21b15cbfce" xml:space="preserve">
+    <value>Updating {0} …</value>
+  </data>
+  <data xml:space="preserve" name="Text_ee32fb834190">
+    <value>Backup history could not be read. Check the folder and try Refresh backups.</value>
+  </data>
+  <data name="Text_ee597f010c9c" xml:space="preserve">
+    <value>{0} of {1} servers up</value>
+  </data>
+  <data name="Text_ee80fc3f5cc0" xml:space="preserve">
+    <value>No save database exists yet. Create your first account to initialize LocalExile.</value>
+  </data>
+  <data xml:space="preserve" name="Text_ee9b6f783cc6">
+    <value>Watcher is alive but Gateway has no running child. Open Gateway output to inspect the build errors.</value>
+  </data>
+  <data xml:space="preserve" name="Text_eeaf3fc78d1a">
+    <value>Wait for the current operation before changing these options.</value>
+  </data>
+  <data xml:space="preserve" name="Text_eeaf954d8d43">
+    <value>Setup and compatibility</value>
+  </data>
+  <data name="Text_eecd85f698cf" xml:space="preserve">
+    <value>Close the game and stop LocalExile services before changing player accounts.</value>
+  </data>
+  <data xml:space="preserve" name="Text_eed88b3afe90">
+    <value>Forest</value>
+  </data>
+  <data name="Text_eed9a8e081ea" xml:space="preserve">
+    <value>only the published Waypoint.exe updates itself; download it from the release page</value>
+  </data>
+  <data name="Text_ef1d15273690" xml:space="preserve">
+    <value>{0}: {1} missing</value>
+  </data>
+  <data xml:space="preserve" name="Text_ef6691545d2c">
+    <value>Standard</value>
+  </data>
+  <data xml:space="preserve" name="Text_ef6c0d9877bf">
+    <value>commit unavailable</value>
+  </data>
+  <data xml:space="preserve" name="Text_ef7e1ae10439">
+    <value>Build failed / waiting</value>
+  </data>
+  <data name="Text_ef93bf3045a7" xml:space="preserve">
+    <value>FreshSaves completed.</value>
+  </data>
+  <data xml:space="preserve" name="Text_efb840bd2787">
+    <value>Build source mods</value>
+  </data>
+  <data name="Text_eff6e90ea93a" xml:space="preserve">
+    <value>Running executable</value>
+  </data>
+  <data xml:space="preserve" name="Text_f013cc16ddca">
+    <value>Setup needs attention. See the checks below.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f03cfd6cfde8">
+    <value>Refreshing remote branches</value>
+  </data>
+  <data xml:space="preserve" name="Text_f0911b7e2f8c">
+    <value>Search selected log</value>
+  </data>
+  <data xml:space="preserve" name="Text_f0f05a7102c2">
+    <value>Choose color: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_f10e12da4cc1">
+    <value>Automatic lookup could not finish. Browse to your checkout instead. </value>
+  </data>
+  <data name="Text_f142fc186288" xml:space="preserve">
+    <value>Already prepared for LocalExile</value>
+  </data>
+  <data name="Text_f1fd5ed417a0" xml:space="preserve">
+    <value>MB, working set</value>
+  </data>
+  <data name="Text_f24116ae1425" xml:space="preserve">
+    <value>Welcome to Waypoint</value>
+  </data>
+  <data name="Text_f25cdb3f89bd" xml:space="preserve">
+    <value>character names are 3–32 letters, digits, _ or -</value>
+  </data>
+  <data name="Text_f26f3275e735" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data xml:space="preserve" name="Text_f271c3aff77a">
+    <value>Backups are on for both current-character and fresh starts. Manage them on Backups.</value>
+  </data>
+  <data name="Text_f28214fc21bf" xml:space="preserve">
+    <value>Building mod</value>
+  </data>
+  <data xml:space="preserve" name="Text_f28290933d40">
+    <value>Process exists; waiting for listening ports</value>
+  </data>
+  <data name="Text_f28854498a03" xml:space="preserve">
+    <value>Witch</value>
+  </data>
+  <data xml:space="preserve" name="Text_f2b4f43625b6">
+    <value>Targets stronger text contrast and may adjust button fills.</value>
+  </data>
+  <data name="Text_f2ff9dad3097" xml:space="preserve">
+    <value>GameServer.Host, which Waypoint starts to register accounts and create characters</value>
+  </data>
+  <data name="Text_f30bd0b67351" xml:space="preserve">
+    <value>Python with frida (walk maps, console)</value>
+  </data>
+  <data xml:space="preserve" name="Text_f3ec74792130">
+    <value>Services remain stopped. A failed build preserves the save database.</value>
+  </data>
+  <data name="Text_f3fca419194d" xml:space="preserve">
+    <value>Pin this line as a button (right-click a pinned button to remove it)</value>
+  </data>
+  <data xml:space="preserve" name="Text_f4047b3ea27a">
+    <value>Sample button</value>
+  </data>
+  <data xml:space="preserve" name="Text_f418537ab654">
+    <value>Color and font preferences can help readability. Important states also keep their text or symbols.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f4702857c4a9">
+    <value>
+Mods at backup: </value>
+  </data>
+  <data xml:space="preserve" name="Text_f4bfa9a07c59">
+    <value>This installs the checkout's locked Node dependency in Tools/ooz using npm ci. It does not install software globally. Node.js must be installed first.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f4ccae29e1bb">
+    <value>Running</value>
+  </data>
+  <data name="Text_f4cebd794740" xml:space="preserve">
+    <value>Capture will start with Play or Start servers.</value>
+  </data>
+  <data name="Text_f4f5dca37b59" xml:space="preserve">
+    <value>{0} of {1} accounts</value>
+  </data>
+  <data name="Text_f50927a27948" xml:space="preserve">
+    <value>1.  Checks the tools LocalExile needs</value>
+  </data>
+  <data xml:space="preserve" name="Text_f50bc20748e3">
+    <value>Multiple Gateway watchers belong to this checkout.</value>
+  </data>
+  <data name="Text_f5387f9bb6ed" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Text_f585e9956645" xml:space="preserve">
+    <value>Node.js and ooz (data extraction)</value>
+  </data>
+  <data name="Text_f5877bfaa055" xml:space="preserve">
+    <value>Gateway pid {0}</value>
+  </data>
+  <data name="Text_f58d44d29836" xml:space="preserve">
+    <value>Already done</value>
+  </data>
+  <data xml:space="preserve" name="Text_f5bbcb40056e">
+    <value>Restart {0}</value>
+  </data>
+  <data xml:space="preserve" name="Text_f6388410aa5a">
+    <value> · working files not checked</value>
+  </data>
+  <data xml:space="preserve" name="Text_f64a45cd7d47">
+    <value>Choose how to get ready</value>
+  </data>
+  <data name="Text_f6777141eaf7" xml:space="preserve">
+    <value>The Setup section: every requirement with its next step</value>
+  </data>
+  <data name="Text_f694aaa8da2c" xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f69dee092bca">
+    <value>Prepared client</value>
+  </data>
+  <data name="Text_f6a8ae6db0ed" xml:space="preserve">
+    <value>(no branch)</value>
+  </data>
+  <data name="Text_f6f4688ff23d" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Text_f785c3ce1d58" xml:space="preserve">
+    <value>ms</value>
+  </data>
+  <data name="Text_f7d87ca41b10" xml:space="preserve">
+    <value>Dev host</value>
+  </data>
+  <data xml:space="preserve" name="Text_f7efa7bc1fc5">
+    <value>Sidebar</value>
+  </data>
+  <data xml:space="preserve" name="Text_f87d86195087">
+    <value>Commit badge text</value>
+  </data>
+  <data name="Text_f89ea27036ac" xml:space="preserve">
+    <value>Versions</value>
+  </data>
+  <data xml:space="preserve" name="Text_f8b15e8e3227">
+    <value>Fetching Git objects only; source files, saves and running services are unchanged.</value>
+  </data>
+  <data name="Text_f8b8eb4bc03f" xml:space="preserve">
+    <value>Check it first</value>
+  </data>
+  <data name="Text_f8f49a355205" xml:space="preserve">
+    <value>names are 3–32 letters, digits, _ or -</value>
+  </data>
+  <data name="Text_f91058b1dfbd" xml:space="preserve">
+    <value>Setup guide</value>
+  </data>
+  <data name="Text_f938c3286fd7" xml:space="preserve">
+    <value>Clean up</value>
+  </data>
+  <data name="Text_f9a56c85fda5" xml:space="preserve">
+    <value>Game status</value>
+  </data>
+  <data xml:space="preserve" name="Text_f9b4581c3058">
+    <value>No matching upstream HEAD found. Other LocalExile checkouts are listed below; you can use any of them or Browse elsewhere.</value>
+  </data>
+  <data xml:space="preserve" name="Text_f9ce6b13b19a">
+    <value>Primary buttons</value>
+  </data>
+  <data xml:space="preserve" name="Text_f9d2f04d4584">
+    <value>Starting, rebuilding or restarting; inspect Gateway output for errors</value>
+  </data>
+  <data xml:space="preserve" name="Text_fa15a5c1d610">
+    <value>Teal</value>
+  </data>
+  <data xml:space="preserve" name="Text_fa1e08557af3">
+    <value>Find LocalExile</value>
+  </data>
+  <data name="Text_fa2f3df21cac" xml:space="preserve">
+    <value>lock contentions/s</value>
+  </data>
+  <data name="Text_fa3589d27498" xml:space="preserve">
+    <value>Scion</value>
+  </data>
+  <data name="Text_faa6d163b29d" xml:space="preserve">
+    <value>Color schemes, custom colors, reading fonts, text size and accessibility preferences.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fab4753af1e0">
+    <value>Available mods</value>
+  </data>
+  <data name="Text_fab505904d81" xml:space="preserve">
+    <value>Ask me when I close the window</value>
+  </data>
+  <data name="Text_fac215487bcb" xml:space="preserve">
+    <value>Hide to tray</value>
+  </data>
+  <data name="Text_fad198a3ed81" xml:space="preserve">
+    <value>Open Waypoint's data folder</value>
+  </data>
+  <data name="Text_fb0c0c960b16" xml:space="preserve">
+    <value>Hide the window beside the clock. Waypoint, services and the game keep running.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb1a779f6127">
+    <value>Stop services before rebuilding. Starting a stopped service beside running services reuses its existing build. Stop all services and build first after changing source. Game launch uses the supported upstream script.</value>
+  </data>
+  <data name="Text_fb25f996f647" xml:space="preserve">
+    <value>Automatic backup before account changes</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb26532d9c38">
+    <value>Select the folder containing GameServer.slnx. The launcher keeps its own settings outside the repository.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb29df05ab2c">
+    <value>Selected items</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb3a1f784532">
+    <value>Loaded (last checked)</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb42d9b4075f">
+    <value>Upstream HEAD unavailable.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb5b3abf52be">
+    <value>Only the copied client archive is updated.</value>
+  </data>
+  <data name="Text_fb7099ad8e81" xml:space="preserve">
+    <value>Check again</value>
+  </data>
+  <data xml:space="preserve" name="Text_fb9cf75606b4">
+    <value>enabled</value>
+  </data>
+  <data xml:space="preserve" name="Text_fba6c2c5d946">
+    <value>Maximize</value>
+  </data>
+  <data xml:space="preserve" name="Text_fbc594054d51">
+    <value>Watching</value>
+  </data>
+  <data xml:space="preserve" name="Text_fbcaf64adc92">
+    <value>We check the latest upstream commit and look in common local folders. You can always choose a different location. Your saved checkout stays selected.</value>
+  </data>
+  <data name="Text_fc1c076ae7f5" xml:space="preserve">
+    <value>{0} account(s).</value>
+  </data>
+  <data xml:space="preserve" name="Text_fca91d59bc5a">
+    <value>Choose your checkout to get started.</value>
+  </data>
+  <data xml:space="preserve" name="Text_fcd4fe1982a4">
+    <value>npm ci in this checkout's Tools/ooz directory</value>
+  </data>
+  <data name="Text_fd609750643a" xml:space="preserve">
+    <value>at least 4 characters</value>
+  </data>
+  <data name="Text_fdaabbacfdbf" xml:space="preserve">
+    <value>the dev host closed the connection</value>
+  </data>
+  <data name="Text_fdf8cf25d45d" xml:space="preserve">
+    <value>npm ci in the checkout's Tools/ooz</value>
+  </data>
+  <data xml:space="preserve" name="Text_fe08c7214df1">
+    <value>Additional account / character names to remove (comma separated)</value>
+  </data>
+  <data name="Text_fe1af8738076" xml:space="preserve">
+    <value>Stops the walk-map recorder</value>
+  </data>
+  <data name="Text_fea8224e17a4" xml:space="preserve">
+    <value>Steam or Epic layout: it cannot be used</value>
+  </data>
+  <data xml:space="preserve" name="Text_fed12611d2d8">
+    <value>Ocean</value>
+  </data>
+  <data name="Text_fee9dda2d85a" xml:space="preserve">
+    <value>Class / ascendancy</value>
+  </data>
+  <data name="Text_ff6c6bc8e40c" xml:space="preserve">
+    <value>Server checkout</value>
+  </data>
+  <data xml:space="preserve" name="Text_ff85a35d337d">
+    <value>Restore saved mod enable/disable choices from {0:g}?
+
+{1}
+
+This replaces the saved choices only. Mod DLLs and saves are not restored. The choices take effect at the next Gateway start. Automatic backup is {2}.</value>
+  </data>
+  <data xml:space="preserve" name="Text_ffa98e02f7ce">
+    <value>Remote</value>
+  </data>
+  <data name="Text_ffaeffaddaa8" xml:space="preserve">
+    <value>Download LocalExile</value>
+  </data>
+  <data name="Text_ffc0b9c77e4f" xml:space="preserve">
+    <value>Waypoint will not stop services underneath an open game. Cancel to close the game first, or exit Waypoint and leave the game and services running this time.</value>
+  </data>
+</root>

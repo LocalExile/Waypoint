@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><DebugType>embedded</DebugType></PropertyGroup>
+  <!-- The adapter's scripts. Embedded so the one-file Waypoint.exe carries them (BridgeScripts unpacks them); also copied
+       beside the build for the checks, which run them from there, but never into the published exe's folder. -->
+  <ItemGroup>
+    <None Include="../../scripts/*.ps1" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" Exclude="../../scripts/New-Icon.ps1" />
+    <None Include="../../scripts/*.py" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
+    <EmbeddedResource Include="../../scripts/*.ps1;../../scripts/*.py" Exclude="../../scripts/New-Icon.ps1" LogicalName="Bridge/%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

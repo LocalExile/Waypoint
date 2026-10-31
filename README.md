@@ -1,44 +1,86 @@
-# LocalExile Launcher
+# Waypoint
 
-A Windows desktop launcher for a [LocalExile](https://github.com/LocalExile/LocalExile) server checkout: start, stop
-and restart the servers and the game client, watch the services and their performance, read every log, manage dev
-accounts and send the Gateway's chat commands with suggestions.
+**Workspace manager for [LocalExile](https://github.com/LocalExile/LocalExile)**
 
-It is a separate tool: it references no server project and drives a checkout only through what the server offers
-outside tools (`scripts/dev/live.ps1`, the Gateway's `commands`/`values` modes, the dev host's protocol, the client
-control bridge, the logs). Every start goes through `live.ps1`, so the server's rules apply unchanged.
+A Windows desktop launcher for a LocalExile server checkout: set it up, play, start and stop the servers and the game
+client, switch branches and pull requests, manage mods, save backups and accounts, watch the services and their
+performance, read every log and send the Gateway's chat commands with suggestions.
+
+Waypoint brings together two launchers: the interface, performance tools and console of JetStream's LocalExile
+Launcher, and the setup, mod, backup, account, appearance and language tools of the first Waypoint.
+
+It is a separate tool: it references no server project and drives a checkout only through what the server offers outside
+tools (`scripts/dev/live.ps1`, the Gateway's `commands`/`values` modes, the dev host's protocol, the client control bridge,
+the logs) and through its own adapter in `scripts/`. Every start goes through `live.ps1`, so the server's rules apply
+unchanged. It does not download Path of Exile, bundle LocalExile or offer a public server.
 
 ## Install
 
-Requirements: Windows 10/11 x64, the .NET 10 SDK (the server needs it anyway; it brings the Desktop Runtime the
-launcher runs on), and a LocalExile server checkout set up as its
-[GettingStarted](https://github.com/LocalExile/LocalExile/blob/main/Agents/GettingStarted.md) describes.
+Requirements: Windows 10/11 x64, the .NET 10 SDK (the server needs it anyway; it brings the Desktop Runtime Waypoint runs
+on), and a LocalExile server checkout. The **Setup** section walks through what the checkout still needs; the server's
+[GettingStarted](https://github.com/LocalExile/LocalExile/blob/main/Agents/GettingStarted.md) is the full guide.
 
-1. Download `LocalExileLauncher.exe` from the latest release on this repository's **Releases** page.
-2. Put it anywhere, for example in a folder beside your `LocalExile` checkout, and start it.
-3. On its first start it asks for the server folder (the one with `GameServer.slnx`); it remembers it, and **Change…**
-   in the Control section's Setup panel picks another one.
+| Requirement | Used for |
+| --- | --- |
+| A [LocalExile](https://github.com/LocalExile/LocalExile) source checkout | The server Waypoint manages: the folder with `GameServer.slnx` |
+| [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) | Building and running LocalExile |
+| [Git](https://git-scm.com/downloads/win) | Branches and pull requests |
+| [Python 3.9+](https://www.python.org/downloads/windows/) | Data extraction, consistent save backups, the account tools |
+| [Node.js](https://nodejs.org/en/download) | The bundle-decompression dependency |
+| Your own standalone PoE **3.29.3b** client | A separate copy in the checkout's `Client` folder; Steam layout and newer clients are unsupported |
+
+Frida (`pip install frida`) is optional: it is needed for walk maps, the console and live mod control, not for ordinary play.
+
+1. Download `Waypoint.exe` from the latest release on this repository's **Releases** page.
+2. Put it anywhere and start it.
+3. On its first start the **setup guide** opens. It checks the tools you need, finds LocalExile on your PC or downloads it to
+   a folder you choose, finds your game client, copies and prepares it, and builds everything. You can skip it, and you can
+   stop it at any point: what is finished stays finished, and **Setup → Run setup guide** continues from there later.
 
 The exe is not code-signed, so Windows SmartScreen may say "Windows protected your PC" the first time: **More info** →
 **Run anyway**.
 
+Settings of an earlier Waypoint or LocalExile Launcher are taken over on the first start, and existing save backups stay
+where they are. Neither old file is changed.
+
+## Sections
+
+| Section | What it does |
+| --- | --- |
+| **Control** | Play, start and stop the servers and each service, with the switches of `live.ps1` and its output |
+| **Setup** | What the checkout still needs, each requirement with its next step; the setup guide, which does all of it in one go |
+| **Versions** | Branches and pull requests of the checkout, with every switch guarded; build, hot reload status, fresh saves |
+| **Mods** | The checkout's mods: build, enable, disable, reload, live status |
+| **Backups** | Consistent copies of the saves, made automatically before risky steps; restore, delete, saved mod choices |
+| **Accounts** | Accounts and characters, read from the saves; register, create a character, duplicate, rename, set a password, delete |
+| **Performance**, **Server timings** | Live CPU, memory and runtime counters; what each Gateway operation costs |
+| **Logs** | Every server's log, the client's, Waypoint's own, and all errors in one place; a redacted diagnostic report |
+| **Console** | The Gateway's chat commands for the character in game, with suggestions and pinned lines |
+| **Settings** | Appearance and accessibility, language, what closing the window does, updates, the checkout |
+
+**English and Russian** are in **Settings → Language**, and switch at once. **Settings → Appearance** has 19 color
+schemes in light, dark and system modes, custom colors, reading fonts (OpenDyslexic included), text size, color-vision
+profiles, stronger contrast and focus, and reduced motion: see [appearance](docs/appearance.md).
+
 ## Updates
 
-A release build looks for a newer release when it starts (**Look for updates at start** in the header's settings
-turns that off; **Check for updates** there looks at once). A newer one shows a green card at the bottom of the window:
-**Update now** downloads the new exe, checks it against the release's SHA-256, puts it in place of the running one and
-restarts the launcher. The servers and the game keep running. **What's new** opens the release page.
+A release build looks for a newer release when it starts (**Look for updates at start** in Settings turns that off;
+**Check for updates** there looks at once). A newer one shows a green card at the bottom of the window: **Update now**
+downloads the new exe, checks it against the release's SHA-256, puts it in place of the running one and restarts
+Waypoint. The servers and the game keep running. **What's new** opens the release page.
 
 ## Build from source
 
 ```powershell
-git clone <this repository> LocalExile-Launcher
-cd LocalExile-Launcher
-dotnet publish src/GameServer.Launcher -o .
-.\LocalExileLauncher.exe
+git clone <this repository> Waypoint
+cd Waypoint
+dotnet publish src/Waypoint -o .
+.\Waypoint.exe
 ```
 
 A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
 how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
+
+Waypoint is under the [MIT license](LICENSE). OpenDyslexic is under the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt).
 
 This project is not affiliated with or endorsed by Grinding Gear Games.

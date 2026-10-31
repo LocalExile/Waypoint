@@ -1,5 +1,5 @@
-# A version tag (v1.2.3) publishes a release: the tests, then LocalExileLauncher.exe built with that version and its
-# SHA-256, attached to a GitHub release of the tag. The launcher's update check reads the latest one (Updates.cs).
+# A version tag (v1.2.3) publishes a release: the tests, then Waypoint.exe built with that version and its SHA-256, attached
+# to a GitHub release of the tag. Waypoint's update check reads the latest one (Updates.cs).
 name: Release
 
 on:
@@ -25,18 +25,18 @@ jobs:
           if ($tag -notmatch '^v(\d+\.\d+\.\d+)$') { throw "tag $tag is not v<major>.<minor>.<patch>" }
           "number=$($Matches[1])" >> $env:GITHUB_OUTPUT
       - name: Test
-        run: dotnet test LocalExileLauncher.slnx -c Release
+        run: dotnet test Waypoint.slnx -c Release
       - name: Publish
         shell: pwsh
         run: |
-          dotnet publish src/GameServer.Launcher -c Release -o out -p:Version=${{ steps.version.outputs.number }}
-          $hash = (Get-FileHash out/LocalExileLauncher.exe -Algorithm SHA256).Hash.ToLowerInvariant()
-          [IO.File]::WriteAllText("$PWD/out/LocalExileLauncher.exe.sha256", "$hash  LocalExileLauncher.exe`n")
+          dotnet publish src/Waypoint -c Release -o out -p:Version=${{ steps.version.outputs.number }}
+          $hash = (Get-FileHash out/Waypoint.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText("$PWD/out/Waypoint.exe.sha256", "$hash  Waypoint.exe`n")
       - name: Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create '${{ github.ref_name }}' out/LocalExileLauncher.exe out/LocalExileLauncher.exe.sha256
-          --title 'LocalExile Launcher ${{ steps.version.outputs.number }}' --generate-notes --verify-tag
-          --notes 'Download **LocalExileLauncher.exe** below and run it; a launcher you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it.'
+          gh release create '${{ github.ref_name }}' out/Waypoint.exe out/Waypoint.exe.sha256
+          --title 'Waypoint ${{ steps.version.outputs.number }}' --generate-notes --verify-tag
+          --notes 'Download **Waypoint.exe** below and run it; a Waypoint you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it.'

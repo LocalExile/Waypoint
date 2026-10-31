@@ -1,0 +1,178 @@
+using Waypoint;
+
+namespace Waypoint.Tests;
+
+// Every launcher button is a live.ps1 switch; these are the command lines it runs.
+public class LiveRequestTests
+{
+    [Fact]
+    public void Play_passes_the_chosen_options()
+    {
+        Assert.Empty(new LiveRequest(LiveMode.All).Arguments());
+        Assert.Equal(["-Walkmaps", "-NoBuild", "-NoExtract"], new LiveRequest(LiveMode.All, Walkmaps: true, NoBuild: true, NoExtract: true).Arguments());
+        Assert.Equal(["-NoClient", "-Walkmaps"], new LiveRequest(LiveMode.Servers, Walkmaps: true).Arguments());
+    }
+
+    [Fact]
+    public void Starting_only_the_game_takes_only_Walkmaps()
+    {
+        // live.ps1 skips building and extraction for -ClientOnly; -Walkmaps starts the recorder beside the client.
+        Assert.Equal(["-ClientOnly", "-Walkmaps"], new LiveRequest(LiveMode.Client, Walkmaps: true, NoBuild: true, NoExtract: true).Arguments());
+        Assert.Equal(["-ClientOnly"], new LiveRequest(LiveMode.Client, NoBuild: true).Arguments());
+    }
+
+    [Fact]
+    public void A_live_script_that_refuses_ClientOnly_with_Walkmaps_is_told_apart()
+    {
+        Assert.False(Repo.ClientOnlyTakesWalkmaps("if ($NoClient -or $Only -or $Walkmaps) { throw '-ClientOnly cannot be combined with -NoClient, -Only or -Walkmaps' }"));
+        Assert.True(Repo.ClientOnlyTakesWalkmaps("if ($NoClient -or $Only) { throw '-ClientOnly cannot be combined with -NoClient or -Only' }"));
+        Assert.False(Repo.ClientOnlyTakesWalkmaps("param([switch]$NoClient)"));
+    }
+
+    [Fact]
+    public void A_restart_names_one_server_and_keeps_the_walk_map_switch()
+    {
+        Assert.Equal(["-Only", "Gateway", "-Walkmaps"], new LiveRequest(LiveMode.Restart, "Gateway", Walkmaps: true).Arguments());
+        Assert.Equal(["-Only", "Auth", "-NoBuild"], new LiveRequest(LiveMode.Restart, "Auth", NoBuild: true).Arguments());
+        Assert.Throws<ArgumentException>(() => new LiveRequest(LiveMode.Restart, "Host").Arguments());
+        Assert.Throws<ArgumentException>(() => new LiveRequest(LiveMode.Restart).Arguments());
+    }
+
+    [Fact]
+    public void Stop_takes_only_the_server_it_stops()
+    {
+        Assert.Equal(["-Stop"], new LiveRequest(LiveMode.Stop, Walkmaps: true, NoBuild: true).Arguments());
+        Assert.Equal(["-Stop", "-Only", "Patch"], new LiveRequest(LiveMode.Stop, "Patch").Arguments());
+        Assert.Equal("live.ps1 -Stop", new LiveRequest(LiveMode.Stop).Describe());
+        Assert.Equal(["-Stop", "-NoClient"], new LiveRequest(LiveMode.StopServers, Walkmaps: true).Arguments());
+    }
+
+    [Fact]
+    public void Turning_hot_reload_off_reaches_only_runs_that_start_a_gateway()
+    {
+        Assert.Equal(["-NoHotReload"], new LiveRequest(LiveMode.All, NoHotReload: true).Arguments());
+        Assert.Equal(["-NoClient", "-NoHotReload"], new LiveRequest(LiveMode.Servers, NoHotReload: true).Arguments());
+        Assert.Equal(["-Only", "Gateway", "-NoHotReload"], new LiveRequest(LiveMode.Restart, "Gateway", NoHotReload: true).Arguments());
+        Assert.Equal(["-Only", "Auth"], new LiveRequest(LiveMode.Restart, "Auth", NoHotReload: true).Arguments());
+        Assert.Equal(["-ClientOnly"], new LiveRequest(LiveMode.Client, NoHotReload: true).Arguments());
+        Assert.Equal(["-Stop"], new LiveRequest(LiveMode.Stop, NoHotReload: true).Arguments());
+    }
+
+    /// <summary>A folder that looks like a server checkout to the launcher.</summary>
+    static string Checkout(string dir)
+    {
+        Directory.CreateDirectory(Path.Combine(dir, "scripts", "dev"));
+        File.WriteAllText(Path.Combine(dir, "GameServer.slnx"), "");
+        File.WriteAllText(Path.Combine(dir, "scripts", "dev", "live.ps1"), "");
+        return dir;
+    }
+
+    [Fact]
+    public void The_server_is_the_saved_checkout_else_the_working_directory_else_the_players_choice()
+    {
+        string top = Path.Combine(Path.GetTempPath(), $"lxroot-{Guid.NewGuid():N}");
+        try
+        {
+            string server = Checkout(Path.Combine(top, "LocalExile"));
+            string other = Checkout(Path.Combine(top, "Other"));
+            string launcher = Path.Combine(top, "LocalExile-Launcher");
+            Directory.CreateDirectory(launcher);
+
+            Assert.Equal(server, Repo.Find(server, other));
+            Assert.Equal(other, Repo.Find(Path.Combine(top, "gone"), other));
+            Assert.Equal(other, Repo.Find(null, other));
+            Assert.Null(Repo.Find(launcher, launcher));
+            Assert.Null(Repo.Find(null, top));
+        }
+        finally { Directory.Delete(top, recursive: true); }
+    }
+
+    [Fact]
+    public void The_folder_picker_starts_at_a_LocalExile_checkout_beside_the_launchers_repository()
+    {
+        string top = Path.Combine(Path.GetTempPath(), $"lxroot-{Guid.NewGuid():N}");
+        try
+        {
+            string exeFolder = Path.Combine(top, "LocalExile-Launcher", "src", "Waypoint", "bin");
+            Directory.CreateDirectory(exeFolder);
+            Assert.Equal(exeFolder, Repo.Suggested(exeFolder));
+            string server = Checkout(Path.Combine(top, "LocalExile"));
+            Assert.Equal(server, Repo.Suggested(exeFolder));
+            Assert.Equal(server, Repo.Suggested(Path.Combine(top, "LocalExile-Launcher")));
+        }
+        finally { Directory.Delete(top, recursive: true); }
+    }
+
+    [Fact]
+    public void The_checkouts_branch_comes_from_its_HEAD_a_short_commit_when_detached()
+    {
+        Assert.Equal("feat/launcher-support", Repo.BranchOf("ref: refs/heads/feat/launcher-support\n"));
+        Assert.Equal("9297197", Repo.BranchOf("92971976069dc6abacd6d6b351df179fc85b8430\n"));
+        Assert.Null(Repo.BranchOf(""));
+        Assert.Null(Repo.BranchOf("not a head"));
+    }
+
+    [Fact]
+    public void Play_starts_only_the_game_when_the_three_servers_already_listen()
+    {
+        static ServiceSample Up(Service s, bool listening = true) => new(s, 100, listening, 0, 0, 0, 0, TimeSpan.FromMinutes(1));
+        static ServiceSample Down(Service s) => new(s, null, false, 0, 0, 0, 0, TimeSpan.Zero);
+        ServiceSample[] servers = [Up(Service.Patch), Up(Service.Auth), Up(Service.Gateway)];
+
+        Assert.True(ControlTab.PlaysOnlyTheGame([.. servers, Down(Service.Client), Down(Service.Recorder)], walkmaps: false, clientTakesWalkmaps: true));
+        Assert.True(ControlTab.PlaysOnlyTheGame([.. servers, Up(Service.Client), Up(Service.Recorder)], walkmaps: true, clientTakesWalkmaps: false));
+        // Walk maps on without a recorder: -ClientOnly starts one where live.ps1 can, else only a full run does.
+        Assert.True(ControlTab.PlaysOnlyTheGame([.. servers, Down(Service.Recorder)], walkmaps: true, clientTakesWalkmaps: true));
+        Assert.False(ControlTab.PlaysOnlyTheGame([.. servers, Down(Service.Recorder)], walkmaps: true, clientTakesWalkmaps: false));
+        // A server down or still starting: the full run.
+        Assert.False(ControlTab.PlaysOnlyTheGame([Up(Service.Patch), Up(Service.Auth), Down(Service.Gateway)], walkmaps: false, clientTakesWalkmaps: true));
+        Assert.False(ControlTab.PlaysOnlyTheGame([Up(Service.Patch), Up(Service.Auth), Up(Service.Gateway, listening: false)], walkmaps: false, clientTakesWalkmaps: true));
+        Assert.False(ControlTab.PlaysOnlyTheGame([], walkmaps: false, clientTakesWalkmaps: true));
+    }
+
+    [Fact]
+    public void The_appearance_is_saved_with_the_settings()
+    {
+        string json = System.Text.Json.JsonSerializer.Serialize(new Settings { Appearance = new AppearanceSettings(Mode: "Dark", Scheme: "ocean") });
+        var read = System.Text.Json.JsonSerializer.Deserialize<Settings>(json)!;
+        Assert.Equal("Dark", read.Appearance?.Mode);
+        Assert.Equal("ocean", read.Appearance?.Scheme);
+        Assert.Null(System.Text.Json.JsonSerializer.Deserialize<Settings>("{}")!.Appearance);
+    }
+
+    [Fact]
+    public void A_checkout_older_than_the_hooks_is_not_asked_for_its_commands()
+    {
+        // Its Gateway ignores `commands` and starts serving: the live.ps1 that has -Stop is what says the modes exist.
+        Assert.True(Repo.HasLauncherHooks("param([switch]$NoClient, [switch]$ClientOnly, [switch]$Stop, [string[]]$Only = @())"));
+        Assert.False(Repo.HasLauncherHooks("param([switch]$NoClient, [switch]$ClientOnly, [string[]]$Only = @())"));
+    }
+
+    [Fact]
+    public void A_new_installation_gets_the_default_look_and_follows_Windows()
+    {
+        var appearance = ThemePalette.Normalize(null);
+        Assert.Equal("System", appearance.Mode);
+        Assert.Equal(ThemePalette.DefaultScheme, appearance.Scheme);
+        // A scheme that no longer exists falls back to the default rather than failing.
+        Assert.Equal(ThemePalette.DefaultScheme, ThemePalette.Normalize(new AppearanceSettings(Scheme: "gone")).Scheme);
+    }
+
+    [Theory]
+    [InlineData("Dark")]
+    [InlineData("Light")]
+    public void Every_scheme_gives_the_sections_every_brush_they_use(string mode)
+    {
+        foreach (var scheme in ThemePalette.Schemes)
+        {
+            var settings = ThemePalette.Normalize(new AppearanceSettings(Mode: mode, Scheme: scheme.Id));
+            var shell = ThemePalette.Shell(ThemePalette.Build(settings, systemLight: mode == "Light"), settings, mode == "Dark");
+            foreach (string key in (string[])["Shell.Sidebar", "Shell.SidebarSelected", "Shell.SidebarText", "Shell.SidebarStrong", "Shell.Background", "Shell.Text",
+                         "Shell.TextSecondary", "Shell.Accent", "Shell.Primary", "Shell.OnAccent", "Shell.Border", "Shell.Good", "Shell.Warning", "Shell.Error"])
+                Assert.True(shell.ContainsKey(key), $"{scheme.Id} has no {key}");
+            // Sidebar text stays readable on the colour the scheme gives the sidebar.
+            Assert.True(ThemePalette.Contrast(shell["Shell.SidebarStrong"], shell["Shell.Sidebar"]) >= 4.5, $"{scheme.Id} {mode} sidebar");
+            Assert.True(ThemePalette.Contrast(shell["Shell.OnAccent"], shell["Shell.Primary"]) >= 4.5, $"{scheme.Id} {mode} primary button");
+        }
+    }
+}

@@ -1,0 +1,79 @@
+<UserControl x:Class="Waypoint.SetupTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:l="clr-namespace:Waypoint">
+    <DockPanel>
+        <!-- Which checkout, and the steps that prepare it. -->
+        <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="20,10,14,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="{l:Loc 'Run setup guide…'}" Click="RunGuide"
+                            ToolTip="{l:Loc 'Goes through the setup step by step, and continues a setup that was stopped'}" />
+                    <Button Content="{l:Loc 'Find automatically…'}" Click="FindCheckout"
+                            ToolTip="{l:Loc 'Looks for LocalExile checkouts in the usual folders'}" />
+                    <Button Content="{l:Loc 'Change…'}" Click="ChangeCheckout"
+                            ToolTip="{l:Loc 'Pick another LocalExile server checkout; Waypoint starts again on it'}" />
+                    <Button Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Check again'}" Click="CheckAgain" Margin="0,0,0,6" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,6">
+                    <md:PackIcon Kind="FolderOutline" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource Shell.TextSecondary}" />
+                    <TextBlock x:Name="ServerFolder" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="Summary" Style="{StaticResource Shell.Secondary}" Margin="10,0,0,0" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="170" Margin="20,8,20,12" />
+
+        <WrapPanel DockPanel.Dock="Bottom" Margin="20,8,20,0">
+            <Button x:Name="PrepareButton" Content="{l:Loc 'Prepare client'}" Click="Prepare"
+                    ToolTip="{l:Loc 'Creates the missing login keys and Game.patched.exe in your client copy; existing ones are kept'}" />
+            <Button x:Name="DependenciesButton" Content="{l:Loc 'Install dependency'}" Click="Dependencies"
+                    ToolTip="{l:Loc 'npm ci in the checkout\'s Tools/ooz'}" />
+            <Button Content="{l:Loc 'Create account…'}" Click="CreateAccount" />
+            <Button Content="{l:Loc 'Open Client folder'}" Click="OpenClient" />
+            <Button Content="{l:Loc 'Setup guide'}" Click="OpenGuide" ToolTip="Agents/GettingStarted.md" />
+        </WrapPanel>
+
+        <!-- Every requirement, with what to do about it. -->
+        <Grid Margin="20,4,20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Height="34" Margin="10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="26" />
+                    <ColumnDefinition Width="190" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="150" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" Text="{l:Loc 'REQUIREMENT'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="2" Text="{l:Loc 'DETAIL'}" Style="{StaticResource Shell.ColumnHeader}" />
+            </Grid>
+            <ListBox x:Name="Steps" Grid.Row="1" Style="{StaticResource Shell.Table}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="26" />
+                                <ColumnDefinition Width="190" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="16" Height="16" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding Step.DisplayName}" Style="{StaticResource Shell.Cell}" FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="2" Text="{Binding Step.DisplayDetail}" Style="{StaticResource Shell.Cell}" Margin="0,0,12,0"
+                                       Foreground="{DynamicResource Shell.TextSecondary}" ToolTip="{Binding Step.DisplayDetail}" />
+                            <Button Grid.Column="3" HorizontalAlignment="Right" Height="28" Margin="0" Click="RunStep" Content="{Binding Step.ActionLabel}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock x:Name="Empty" Grid.Row="1" Style="{StaticResource Shell.Secondary}" HorizontalAlignment="Center" VerticalAlignment="Top"
+                       Margin="0,24,0,0" TextWrapping="Wrap" />
+        </Grid>
+    </DockPanel>
+</UserControl>

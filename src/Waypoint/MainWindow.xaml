@@ -1,0 +1,193 @@
+<Window x:Class="Waypoint.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:l="clr-namespace:Waypoint"
+        Title="Waypoint" Icon="app.ico" Width="1280" Height="800" MinWidth="900" MinHeight="560"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize"
+        Background="{DynamicResource Shell.Background}"
+        TextElement.Foreground="{DynamicResource Shell.Text}"
+        FontFamily="{DynamicResource AppFont}" FontSize="12.5">
+    <!-- Waypoint draws its own title bar: the header below is the caption (WindowFrame.cs). The one-pixel glass frame keeps
+         Windows' shadow; the window's own background covers it. -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="56" ResizeBorderThickness="6" GlassFrameThickness="1" CornerRadius="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+    <Grid x:Name="WindowLayout">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- The sidebar: the name and the sections. -->
+        <Border Background="{DynamicResource Shell.Sidebar}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="14,12,0,10">
+                    <!-- The emblem, recoloured with the scheme (Theme.cs). -->
+                    <Image Source="{DynamicResource BrandArtwork}" Width="38" Height="38" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="Waypoint" FontSize="21" FontWeight="Bold" Foreground="{DynamicResource Shell.SidebarStrong}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <Border DockPanel.Dock="Top" Height="1" Background="{DynamicResource Shell.SidebarDivider}" Margin="10,0,10,10" />
+                <TextBlock x:Name="Version" DockPanel.Dock="Bottom" Foreground="{DynamicResource Shell.SidebarText}" Opacity="0.6"
+                           FontSize="11" Margin="18,0,0,12" />
+                <ListBox x:Name="Sections" Background="Transparent" BorderThickness="0" Margin="6,0" SelectionChanged="SectionChanged"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarText}" />
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Body" CornerRadius="4" Padding="10,7" Margin="0,1" Background="Transparent">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Body" Property="Background" Value="{DynamicResource Shell.SidebarHover}" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Body" Property="Background" Value="{DynamicResource Shell.SidebarSelected}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarStrong}" />
+                                            </Trigger>
+                                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                                <Setter TargetName="Body" Property="BorderBrush" Value="{DynamicResource Shell.SidebarStrong}" />
+                                                <Setter TargetName="Body" Property="BorderThickness" Value="1" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="{Binding Icon}" Width="17" Height="17" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding DisplayName}" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <DockPanel Grid.Column="1">
+            <!-- The header, which is also the title bar: the section, the checkout's branch, the theme, the settings and the
+                 window's buttons. Only those controls take clicks; the rest drags the window. -->
+            <Border DockPanel.Dock="Top" Height="56" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+                <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button x:Name="MinimizeWindowButton" Content="&#xE921;" AutomationProperties.Name="{l:Loc 'Minimize Waypoint'}" ToolTip="{l:Loc 'Minimize'}"
+                            Style="{StaticResource Shell.CaptionButton}" Command="{x:Static SystemCommands.MinimizeWindowCommand}" />
+                    <Button x:Name="MaximizeWindowButton" Content="&#xE922;" AutomationProperties.Name="{l:Loc 'Maximize Waypoint'}" ToolTip="{l:Loc 'Maximize'}"
+                            Style="{StaticResource Shell.CaptionButton}" Command="{x:Static SystemCommands.MaximizeWindowCommand}" />
+                    <Button x:Name="CloseWindowButton" Content="&#xE8BB;" AutomationProperties.Name="{l:Loc 'Close Waypoint'}" ToolTip="{l:Loc 'Close Waypoint'}"
+                            Style="{StaticResource Shell.CaptionCloseButton}" Command="{x:Static SystemCommands.CloseWindowCommand}" />
+                </StackPanel>
+                <DockPanel Margin="20,0,150,0">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Border x:Name="BranchChip" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="4"
+                                Padding="10,5" Margin="0,0,10,0" VerticalAlignment="Center" Cursor="Hand" Background="Transparent"
+                                MouseLeftButtonUp="OpenVersionsSection">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="SourceBranch" Width="15" Height="15" Margin="0,0,7,0" VerticalAlignment="Center"
+                                             Foreground="{DynamicResource Shell.TextSecondary}" />
+                                <TextBlock x:Name="BranchName" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Button x:Name="ThemeButton" Style="{StaticResource Shell.IconButton}" Click="CycleTheme">
+                            <md:PackIcon x:Name="ThemeIcon" Kind="ThemeLightDark" Width="18" Height="18" />
+                        </Button>
+                        <Button Style="{StaticResource Shell.IconButton}" Click="OpenSettingsSection" ToolTip="{l:Loc 'Settings'}" Margin="4,0,0,0">
+                            <md:PackIcon Kind="CogOutline" Width="18" Height="18" />
+                        </Button>
+                    </StackPanel>
+                    <TextBlock x:Name="SectionTitle" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </DockPanel>
+                </Grid>
+            </Border>
+
+            <!-- What runs, at a glance, on every section: a named lamp for what the game needs, and for the dev host and the
+                 walk-map recorder while they run; then the rest in words. -->
+            <Border DockPanel.Dock="Top" Background="{DynamicResource Shell.Banner}" Padding="0,8">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ItemsControl x:Name="Lights" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,14,0" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tip}"
+                                            Visibility="{Binding Shown}" MouseLeftButtonUp="OpenControlSection">
+                                    <Grid Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center">
+                                        <Ellipse Stroke="{Binding Lamp}" StrokeThickness="1.5" Effect="{Binding Glow}" />
+                                        <Path Data="{Binding Mark}" Stroke="{Binding Lamp}" StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Grid>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ProgressBar x:Name="BusyBar" Width="50" Height="3" IsIndeterminate="True" Margin="0,0,10,0" Visibility="Collapsed" VerticalAlignment="Center" />
+                    <TextBlock x:Name="StatusText" Text="{l:Loc 'Looking for the services …'}" />
+                    <TextBlock x:Name="StatusDetail" Style="{StaticResource Shell.Secondary}" />
+                    <TextBlock Text="  ·  " Style="{StaticResource Shell.Secondary}" />
+                    <TextBlock Text="{l:Loc 'Open logs'}" Foreground="{DynamicResource Shell.Accent}" Cursor="Hand" MouseLeftButtonUp="OpenLogsSection" />
+                </StackPanel>
+            </Border>
+
+            <!-- The sections; one shows at a time (SectionChanged). -->
+            <Grid>
+                <l:ControlTab x:Name="Control" />
+                <l:SetupTab x:Name="Setup" Visibility="Collapsed" />
+                <l:VersionsTab x:Name="Versions" Visibility="Collapsed" />
+                <l:ModsTab x:Name="Mods" Visibility="Collapsed" />
+                <l:BackupsTab x:Name="Backups" Visibility="Collapsed" />
+                <l:AccountsTab x:Name="Accounts" Visibility="Collapsed" />
+                <l:PerformanceTab x:Name="Performance" Visibility="Collapsed" />
+                <l:TimingsTab x:Name="Timings" Visibility="Collapsed" />
+                <l:LogsTab x:Name="LogsView" Visibility="Collapsed" />
+                <l:ConsoleTab x:Name="ConsoleView" Visibility="Collapsed" />
+                <l:SettingsTab x:Name="SettingsView" Visibility="Collapsed" />
+            </Grid>
+        </DockPanel>
+
+        <!-- A newer release: a card floating over the bottom of the whole window, shown when the check finds one
+             (Updates.cs), green so it does not blend into the blue status strip. -->
+        <Border x:Name="UpdateBar" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="14,0,14,14" Visibility="Collapsed"
+                Background="{DynamicResource Shell.UpdateBack}" BorderBrush="{DynamicResource Shell.UpdateBorder}" BorderThickness="1"
+                CornerRadius="8" Padding="16,12" TextElement.Foreground="{DynamicResource Shell.UpdateText}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.3" />
+            </Border.Effect>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="UpdateNow" Style="{StaticResource Shell.PrimaryButton}" Click="UpdateClicked" Margin="0,0,8,0"
+                            Background="{DynamicResource Shell.UpdateAccent}" BorderBrush="{DynamicResource Shell.UpdateAccent}" Foreground="White">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Download" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:Loc 'Update now'}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Content="{l:Loc 'What\'s new'}" Click="ReleasePageClicked" Margin="0,0,8,0" Foreground="{DynamicResource Shell.UpdateText}"
+                            BorderBrush="{DynamicResource Shell.UpdateBorder}" />
+                    <Button Content="{l:Loc 'Later'}" Click="LaterClicked" Margin="0" Foreground="{DynamicResource Shell.UpdateText}"
+                            BorderBrush="{DynamicResource Shell.UpdateBorder}" />
+                </StackPanel>
+                <Grid DockPanel.Dock="Left" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <Ellipse Fill="{DynamicResource Shell.UpdateAccent}" />
+                    <md:PackIcon Kind="ArrowUpBold" Width="20" Height="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{l:Loc 'A new version of Waypoint is ready'}" FontSize="13.5" FontWeight="SemiBold" />
+                    <TextBlock x:Name="UpdateText" TextWrapping="Wrap" Opacity="0.85" Margin="0,1,0,0" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

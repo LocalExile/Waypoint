@@ -1,0 +1,211 @@
+<UserControl x:Class="Waypoint.VersionsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:l="clr-namespace:Waypoint">
+    <DockPanel>
+        <!-- What the checkout runs now, and the actions on it. Disabled while live.ps1 or git runs. -->
+        <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="20,10,14,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Click="RefreshClicked" ToolTip="{l:Loc 'git fetch --prune origin, and the open pull requests from GitHub'}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="CloudDownloadOutline" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource Shell.TextSecondary}" />
+                            <TextBlock Text="{l:Loc 'Fetch'}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="BackButton" Click="BackClicked">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="KeyboardReturn" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource Shell.TextSecondary}" />
+                            <TextBlock x:Name="BackText" Text="{l:Loc 'Back to main'}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="UpdateButton" Style="{StaticResource Shell.PrimaryButton}" Click="UpdateClicked" Margin="0,0,0,6">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Refresh" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:Loc 'Update'}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,6">
+                    <md:PackIcon Kind="SourceBranch" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource Shell.TextSecondary}" />
+                    <TextBlock x:Name="CurrentName" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock x:Name="CurrentDetail" Style="{StaticResource Shell.Secondary}" Margin="10,0,0,0" />
+                    <TextBlock x:Name="RestoreLink" Text="{l:Loc 'Restore stashed changes'}" Foreground="{DynamicResource Shell.Accent}" Cursor="Hand"
+                               Margin="12,0,0,0" VerticalAlignment="Center" Visibility="Collapsed" MouseLeftButtonUp="RestoreClicked" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- What git did, and what the checkout is built from. -->
+        <Grid DockPanel.Dock="Bottom" Height="170" Margin="20,8,20,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="{l:Loc 'git output'}" Margin="0" Padding="0">
+                <DockPanel Background="{DynamicResource Shell.Panel}">
+                    <DockPanel DockPanel.Dock="Top" Margin="10,6,6,0">
+                        <Button DockPanel.Dock="Right" Content="{l:Loc 'Clear'}" Click="ClearOutput" Height="24" Padding="10,0" Margin="0" />
+                        <TextBlock x:Name="RunState" Text="{l:Loc 'Ready.'}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                    <TextBox x:Name="Output" IsReadOnly="True" FontFamily="{StaticResource Mono}" FontSize="12" Margin="8,2,8,6"
+                             BorderThickness="0" md:TextFieldAssist.DecorationVisibility="Hidden" Background="Transparent"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap" />
+                </DockPanel>
+            </GroupBox>
+            <GroupBox x:Name="BuildBox" Grid.Column="2" Header="{l:Loc 'Build'}" Margin="0">
+                <DockPanel>
+                    <WrapPanel DockPanel.Dock="Bottom" Margin="0,4,0,-6">
+                        <Button x:Name="BuildButton" Content="{l:Loc 'Build checkout'}" Click="BuildClicked" Height="26" Padding="10,0" ToolTipService.ShowOnDisabled="True"
+                                ToolTip="{l:Loc 'dotnet build GameServer.slnx, with the servers stopped'}" />
+                        <Button x:Name="ReloadDataButton" Content="{l:Loc 'Reload game data'}" Click="ReloadDataClicked" Height="26" Padding="10,0" ToolTipService.ShowOnDisabled="True"
+                                ToolTip="{l:Loc 'Applies game-data overrides to the running game: needs a client in game (Python + Frida)'}" />
+                    </WrapPanel>
+                    <TextBlock x:Name="HotReloadState" DockPanel.Dock="Bottom" Style="{StaticResource Shell.Secondary}" FontSize="11.5" Margin="0,4,0,0" />
+                    <CheckBox x:Name="FreshSaves" DockPanel.Dock="Bottom" Content="{l:Loc 'Start with fresh saves after the next switch'}" Margin="0,4,0,0"
+                              ToolTip="{l:Loc 'The current saves are backed up and moved aside, never deleted; this applies to one switch'}" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBlock x:Name="BuildIdentity" TextWrapping="Wrap" FontFamily="{StaticResource Mono}" FontSize="11.5" />
+                    </ScrollViewer>
+                </DockPanel>
+            </GroupBox>
+        </Grid>
+
+        <!-- Branches or pull requests, with a search. -->
+        <DockPanel DockPanel.Dock="Top" Margin="20,10,20,0">
+            <Button DockPanel.Dock="Right" Click="CleanUpClicked" Margin="8,0,0,0"
+                    ToolTip="{l:Loc 'Deletes the local pr/&lt;n&gt; branches of pull requests that are no longer open (not the current one)'}">
+                <StackPanel Orientation="Horizontal">
+                    <md:PackIcon Kind="Broom" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center"
+                                 Foreground="{DynamicResource Shell.TextSecondary}" />
+                    <TextBlock Text="{l:Loc 'Clean up'}" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <TextBox x:Name="Search" DockPanel.Dock="Right" Width="240" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search'}"
+                     md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SearchChanged" />
+            <Button x:Name="SwitchByNumber" DockPanel.Dock="Right" Click="SwitchNumberClicked" Margin="0,0,8,0" Visibility="Collapsed"
+                    ToolTip="{l:Loc 'A pull request that is not in the open list: its head is fetched from GitHub by number'}" />
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="ShowBranches" Style="{StaticResource MaterialDesignTabRadioButton}" IsChecked="True"
+                             Checked="ListChanged" Margin="0,0,4,0" Padding="14,6" />
+                <RadioButton x:Name="ShowPulls" Style="{StaticResource MaterialDesignTabRadioButton}" Checked="ListChanged" Padding="14,6" />
+            </StackPanel>
+        </DockPanel>
+
+        <Grid Margin="20,4,20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Branches -->
+            <Grid x:Name="BranchHeader" Height="34" Margin="10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="1.4*" />
+                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="110" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{l:Loc 'BRANCH'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="1" Text="{l:Loc 'LAST COMMIT'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="2" Text="{l:Loc 'AUTHOR'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="3" Text="{l:Loc 'UPDATED'}" Style="{StaticResource Shell.ColumnHeader}" />
+            </Grid>
+            <ListBox x:Name="BranchList" Grid.Row="1" Style="{StaticResource Shell.Table}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="200" />
+                                <ColumnDefinition Width="1.4*" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="110" />
+                            </Grid.ColumnDefinitions>
+                            <DockPanel Margin="0,0,12,0">
+                                <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding DefaultBadge}">
+                                    <TextBlock Text="{l:Loc 'default'}" />
+                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding LocalBadge}"
+                                        BorderBrush="{DynamicResource Shell.Accent}" ToolTip="{l:Loc 'Only in this checkout: not on origin (not pushed)'}">
+                                    <TextBlock Text="{l:Loc 'local'}" Foreground="{DynamicResource Shell.Accent}" />
+                                </Border>
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource Shell.Cell}" FontWeight="SemiBold" ToolTip="{Binding Name}" />
+                            </DockPanel>
+                            <TextBlock Grid.Column="1" Text="{Binding Subject}" Style="{StaticResource Shell.Cell}" ToolTip="{Binding Subject}"
+                                       Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,0,12,0" />
+                            <TextBlock Grid.Column="2" Text="{Binding Author}" Style="{StaticResource Shell.Cell}" />
+                            <TextBlock Grid.Column="3" Text="{Binding Updated}" Style="{StaticResource Shell.Cell}" ToolTip="{Binding UpdatedExact}" />
+                            <Button Grid.Column="4" HorizontalAlignment="Right" Width="96" Height="28" Margin="0" Click="SwitchBranch"
+                                    IsEnabled="{Binding CanSwitch}">
+                                <TextBlock Text="{Binding Action}" />
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Pull requests -->
+            <Grid x:Name="PullHeader" Height="34" Margin="10,0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="56" />
+                    <ColumnDefinition Width="*" MinWidth="240" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="142" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="#" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="1" Text="{l:Loc 'PULL REQUEST'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="2" Text="{l:Loc 'AUTHOR'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock Grid.Column="3" Text="{l:Loc 'UPDATED'}" Style="{StaticResource Shell.ColumnHeader}" />
+            </Grid>
+            <ListBox x:Name="PullList" Grid.Row="1" Style="{StaticResource Shell.Table}" Visibility="Collapsed">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="56" />
+                                <ColumnDefinition Width="*" MinWidth="240" />
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="142" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding NumberText}" Style="{StaticResource Shell.Cell}" Foreground="{DynamicResource Shell.TextSecondary}" />
+                            <DockPanel Grid.Column="1" Margin="0,0,12,0">
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                    <Border Style="{StaticResource Shell.Badge}" Visibility="{Binding DraftBadge}">
+                                        <TextBlock Text="{l:Loc 'draft'}" />
+                                    </Border>
+                                    <Border Style="{StaticResource Shell.Badge}" Visibility="{Binding ForkBadge}" BorderBrush="{DynamicResource Shell.Warning}"
+                                            ToolTip="{Binding Source}">
+                                        <TextBlock Text="{l:Loc 'fork'}" Foreground="{DynamicResource Shell.Warning}" />
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource Shell.Cell}" FontWeight="SemiBold" ToolTip="{Binding Title}" />
+                            </DockPanel>
+                            <TextBlock Grid.Column="2" Text="{Binding Author}" Style="{StaticResource Shell.Cell}" />
+                            <TextBlock Grid.Column="3" Text="{Binding Updated}" Style="{StaticResource Shell.Cell}" ToolTip="{Binding UpdatedExact}" />
+                            <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Width="96" Height="28" Margin="0" Click="SwitchPull" IsEnabled="{Binding CanSwitch}">
+                                    <TextBlock Text="{Binding Action}" />
+                                </Button>
+                                <Button Style="{StaticResource Shell.IconButton}" Width="28" Height="28" Margin="4,0,0,0" Click="OpenPull"
+                                        ToolTip="{l:Loc 'Open on GitHub'}">
+                                    <md:PackIcon Kind="OpenInNew" Width="15" Height="15" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock x:Name="Empty" Grid.Row="1" Style="{StaticResource Shell.Secondary}" HorizontalAlignment="Center"
+                       VerticalAlignment="Top" Margin="0,24,0,0" Visibility="Collapsed" />
+        </Grid>
+    </DockPanel>
+</UserControl>

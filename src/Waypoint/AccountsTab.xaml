@@ -1,0 +1,108 @@
+<UserControl x:Class="Waypoint.AccountsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:l="clr-namespace:Waypoint">
+    <DockPanel Margin="20,12,20,12">
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <Button DockPanel.Dock="Left" Content="{l:Loc 'Reload accounts'}" Click="Refresh" />
+            <Button DockPanel.Dock="Right" x:Name="StopHost" Content="{l:Loc 'Stop dev host'}" Click="StopDevHost"
+                    ToolTip="{l:Loc 'GameServer.Host, which Waypoint starts to register accounts and create characters'}" />
+            <TextBlock x:Name="HostState" VerticalAlignment="Center" Margin="8,0,8,6" Foreground="{DynamicResource Shell.TextSecondary}" />
+        </DockPanel>
+
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="{l:Loc 'Register an account'}" Grid.Column="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{l:Loc 'Name'}" Margin="0,4,8,4" />
+                    <TextBox x:Name="NewAccount" Grid.Column="1" Margin="0,2" ToolTip="{l:Loc '3–32 letters, digits, _ or -'}" />
+                    <TextBlock Text="{l:Loc 'Password'}" Grid.Row="1" Margin="0,4,8,4" />
+                    <PasswordBox x:Name="NewPassword" Grid.Row="1" Grid.Column="1" Margin="0,2" ToolTip="{l:Loc 'at least 4 characters'}" />
+                    <Button Content="{l:Loc 'Register'}" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0" Click="Register"
+                            ToolTip="{l:Loc 'Through the dev host: works beside running servers'}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="{l:Loc 'Create a character'}" Grid.Column="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{l:Loc 'Account'}" Margin="0,4,8,4" />
+                    <TextBlock x:Name="ForAccount" Grid.Column="1" Margin="0,4" FontWeight="SemiBold" />
+                    <TextBlock Text="{l:Loc 'Password'}" Grid.Row="1" Margin="0,4,8,4" />
+                    <PasswordBox x:Name="AccountPassword" Grid.Row="1" Grid.Column="1" Margin="0,2"
+                                 ToolTip="{l:Loc 'The account\'s password: the dev host logs in with it'}" />
+                    <TextBlock Text="{l:Loc 'Name'}" Grid.Row="2" Margin="0,4,8,4" />
+                    <TextBox x:Name="CharacterName" Grid.Row="2" Grid.Column="1" Margin="0,2" />
+                    <TextBlock Text="{l:Loc 'Class'}" Grid.Row="3" Margin="0,4,8,4" />
+                    <ComboBox x:Name="CharacterClass" Grid.Row="3" Grid.Column="1" Margin="0,2" />
+                    <Button Content="{l:Loc 'Create'}" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Margin="0,6,0,0" Click="Create"
+                            ToolTip="{l:Loc 'In the Standard league; the game\'s own creation screen offers the other leagues'}" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <TextBlock x:Name="Access" DockPanel.Dock="Bottom" Margin="0,4,0,0" TextWrapping="Wrap" FontSize="11.5" Foreground="{DynamicResource Shell.TextSecondary}" />
+        <TextBlock x:Name="Status" DockPanel.Dock="Bottom" Margin="0,4,0,8" TextWrapping="Wrap" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <DockPanel>
+                <TextBox x:Name="Search" DockPanel.Dock="Top" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search accounts or characters'}"
+                         md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SearchChanged" />
+                <DataGrid x:Name="AccountGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                          SelectionChanged="AccountSelected" HeadersVisibility="Column" GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{l:Loc 'Account'}" Binding="{Binding Name}" Width="*" MinWidth="120" />
+                        <DataGridTextColumn Header="{l:Loc 'Characters'}" Binding="{Binding Summary}" Width="1.4*" MinWidth="120" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+            <DockPanel Grid.Column="2">
+                <WrapPanel DockPanel.Dock="Top" x:Name="AccountActions">
+                    <Button Content="{l:Loc 'Create account…'}" Click="CreateAccountClicked" x:Name="CreateButton" />
+                    <Button Content="{l:Loc 'Duplicate…'}" Click="Change" Tag="Duplicate" />
+                    <Button Content="{l:Loc 'Rename…'}" Click="Change" Tag="Rename" />
+                    <Button Content="{l:Loc 'Set password…'}" Click="Change" Tag="Password" />
+                    <Button Content="{l:Loc 'Delete account…'}" Click="Change" Tag="Delete" Foreground="{DynamicResource Shell.Error}" />
+                </WrapPanel>
+                <DataGrid x:Name="CharacterGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{l:Loc 'Character'}" Binding="{Binding Name}" Width="*" MinWidth="130" />
+                        <DataGridTextColumn Header="{l:Loc 'Class / ascendancy'}" Binding="{Binding DisplayClass}" Width="Auto" />
+                        <DataGridTextColumn Header="{l:Loc 'Level'}" Binding="{Binding Level}" Width="Auto" />
+                        <DataGridTextColumn Header="{l:Loc 'League'}" Binding="{Binding League}" Width="Auto" />
+                        <DataGridTextColumn Header="{l:Loc 'Last played'}" Binding="{Binding Played}" Width="Auto" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>
