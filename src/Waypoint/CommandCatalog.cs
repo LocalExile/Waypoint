@@ -36,7 +36,7 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
 
     /// <summary>Runs the built Gateway in one of its listing modes and returns what it printed. The process never outlives
     /// the question, whatever it was doing.</summary>
-    static async Task<string> AskGateway(TimeSpan timeout, params string[] arguments)
+    internal static async Task<string> AskGateway(TimeSpan timeout, params string[] arguments)
     {
         if (!Repo.HasLauncherHooks())
             throw new InvalidOperationException(L.Text("This checkout is older than the launcher hooks, so its Gateway cannot list commands: pull the server's main branch."));
