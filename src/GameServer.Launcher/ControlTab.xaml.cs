@@ -169,7 +169,10 @@ public partial class ControlTab : UserControl
         Append(code is null ? "" : $"(exit {code})");
     }
 
-    async void Play(object sender, RoutedEventArgs e)
+    async void Play(object sender, RoutedEventArgs e) => await PlayAsync();
+
+    /// <summary>Play: also what the Versions section starts after a switch.</summary>
+    internal async Task PlayAsync()
     {
         if (ClientRunning && !Confirm("The client is running: Play closes it and starts it again. Go on?")) return;
         await Run(Request(LiveMode.All));
@@ -276,7 +279,8 @@ public partial class ControlTab : UserControl
 
     async void CheckSetup(object sender, RoutedEventArgs e) => await RefreshSetup();
 
-    async Task RefreshSetup()
+    /// <summary>The setup checks again (also after the Versions section switched the checkout).</summary>
+    internal async Task RefreshSetup()
     {
         SetupList.ItemsSource = new[] { new SetupCheck(null, "checking …") };
         SetupList.ItemsSource = await Task.Run(SetupChecks.Run);

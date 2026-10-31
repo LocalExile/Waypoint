@@ -71,7 +71,8 @@
                 <DockPanel Margin="20,0,14,0">
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                         <Border x:Name="BranchChip" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="4"
-                                Padding="10,5" Margin="0,0,10,0" VerticalAlignment="Center">
+                                Padding="10,5" Margin="0,0,10,0" VerticalAlignment="Center" Cursor="Hand" Background="Transparent"
+                                MouseLeftButtonUp="OpenVersionsSection">
                             <StackPanel Orientation="Horizontal">
                                 <md:PackIcon Kind="SourceBranch" Width="15" Height="15" Margin="0,0,7,0" VerticalAlignment="Center"
                                              Foreground="{DynamicResource Shell.TextSecondary}" />
@@ -130,6 +131,7 @@
             <!-- The sections; one shows at a time (SectionChanged). -->
             <Grid>
                 <l:ControlTab x:Name="Control" />
+                <l:VersionsTab x:Name="Versions" Visibility="Collapsed" />
                 <l:PerformanceTab x:Name="Performance" Visibility="Collapsed" />
                 <l:TimingsTab x:Name="Timings" Visibility="Collapsed" />
                 <l:LogsTab x:Name="LogsView" Visibility="Collapsed" />

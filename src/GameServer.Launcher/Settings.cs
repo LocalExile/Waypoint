@@ -20,6 +20,8 @@ sealed class Settings
     /// <summary>Light, dark, or the Windows app theme.</summary>
     [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<ThemeChoice>))]
     public ThemeChoice Theme { get; set; } = ThemeChoice.System;
+    /// <summary>Pull requests from forks the player agreed to run (asked once each).</summary>
+    public List<int> TrustedPullRequests { get; set; } = [];
     /// <summary>Pinned console lines, shown as buttons.</summary>
     public List<string> Favorites { get; set; } = ["/commands", "/pos", "/heal", "/god"];
     /// <summary>The console's last lines, newest last.</summary>

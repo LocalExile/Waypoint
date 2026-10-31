@@ -117,30 +117,7 @@
                 <TextBlock Grid.Column="5" Text="CPU" Style="{StaticResource Shell.ColumnHeader}" />
                 <TextBlock Grid.Column="6" Text="MEMORY" Style="{StaticResource Shell.ColumnHeader}" />
             </Grid>
-            <ListBox x:Name="ServiceList" Grid.Row="1" AlternationCount="2" BorderThickness="0" Background="Transparent"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Focusable" Value="False" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListBoxItem">
-                                    <Border x:Name="Row" Height="44" Padding="10,0" CornerRadius="3" Background="Transparent">
-                                        <ContentPresenter VerticalAlignment="Center" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource Shell.RowAlt}" />
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource Shell.RowHover}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <ListBox x:Name="ServiceList" Grid.Row="1" Style="{StaticResource Shell.Table}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>

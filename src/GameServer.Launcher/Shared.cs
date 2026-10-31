@@ -11,9 +11,11 @@ sealed class Shared : IDisposable
     public ClientBridge Bridge { get; } = new();
 
     int _running;
-    /// <summary>A live.ps1 run started or ended (true while it runs). Raised on the caller's thread.</summary>
+    /// <summary>A live.ps1 run or a git switch started or ended (true while it runs). Raised on the caller's thread.</summary>
     public event Action<bool>? LiveRunning;
     public bool IsLiveRunning => Volatile.Read(ref _running) == 1;
+    /// <summary>What holds the checkout while <see cref="IsLiveRunning"/>: "live.ps1" or "git".</summary>
+    public string BusyWith { get; private set; } = "live.ps1";
     DateTime _quietUntil;
 
     public Shared()
@@ -34,6 +36,7 @@ sealed class Shared : IDisposable
     public async Task<int?> RunLiveAsync(LiveRequest request, Action<string> output)
     {
         if (Interlocked.CompareExchange(ref _running, 1, 0) == 1) return null;
+        BusyWith = "live.ps1";
         LiveRunning?.Invoke(true);
         try
         {
@@ -56,6 +59,22 @@ sealed class Shared : IDisposable
             Volatile.Write(ref _running, 0);
             LiveRunning?.Invoke(false);
         }
+    }
+
+    /// <summary>Runs git work on the checkout (the Versions section) while no live.ps1 runs, and keeps live.ps1 out
+    /// meanwhile; false when something already runs.</summary>
+    public async Task<bool> RunGitAsync(Func<Task> work)
+    {
+        if (Interlocked.CompareExchange(ref _running, 1, 0) == 1) return false;
+        BusyWith = "git";
+        LiveRunning?.Invoke(true);
+        try { await work(); }
+        finally
+        {
+            Volatile.Write(ref _running, 0);
+            LiveRunning?.Invoke(false);
+        }
+        return true;
     }
 
     /// <summary>Ends the dev host the launcher started for the accounts tab (it is not one of live.ps1's servers).</summary>

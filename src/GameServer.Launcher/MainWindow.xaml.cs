@@ -22,6 +22,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Control.Attach(_shared);
+        Versions.Attach(_shared);
         Performance.Attach(_shared);
         Timings.Attach(_shared);
         LogsView.Attach(_shared);
@@ -41,6 +42,7 @@ public partial class MainWindow : Window
         Sections.ItemsSource = new Section[]
         {
             new("Control", PackIconKind.ViewDashboardOutline, Control),
+            new("Versions", PackIconKind.SourceBranch, Versions),
             new("Performance", PackIconKind.ChartLine, Performance),
             new("Server timings", PackIconKind.TimerOutline, Timings),
             new("Logs", PackIconKind.TextBoxOutline, LogsView),
@@ -48,6 +50,16 @@ public partial class MainWindow : Window
             new("Console", PackIconKind.Console, ConsoleView),
         };
         Sections.SelectedIndex = 0;
+        Versions.Switched += () =>
+        {
+            BranchName.Text = Repo.Branch() ?? "no git checkout";
+            _ = Control.RefreshSetup();
+        };
+        Versions.PlayRequested += () =>
+        {
+            ShowSection(Control);
+            _ = Control.PlayAsync();
+        };
         Control.ShowLogRequested += source =>
         {
             LogsView.Show(source);
@@ -55,7 +67,7 @@ public partial class MainWindow : Window
         };
         string? branch = Repo.Branch();
         BranchName.Text = branch ?? "no git checkout";
-        BranchChip.ToolTip = $"The server checkout's branch ({Environment.CurrentDirectory}); choosing one comes later (docs/roadmap.md)";
+        BranchChip.ToolTip = $"The server checkout's branch ({Environment.CurrentDirectory}): click to switch it";
         TrayWhileGame.IsChecked = _shared.Settings.TrayWhileGameRuns;
         CheckAtStart.IsChecked = _shared.Settings.CheckForUpdates;
         ShowTheme();
@@ -76,7 +88,11 @@ public partial class MainWindow : Window
         SectionTitle.Text = shown.Name;
     }
 
-    void OpenLogsSection(object sender, RoutedEventArgs e) => Sections.SelectedItem = Sections.Items.Cast<Section>().First(s => s.View == LogsView);
+    void ShowSection(FrameworkElement view) => Sections.SelectedItem = Sections.Items.Cast<Section>().First(s => s.View == view);
+
+    void OpenLogsSection(object sender, RoutedEventArgs e) => ShowSection(LogsView);
+
+    void OpenVersionsSection(object sender, RoutedEventArgs e) => ShowSection(Versions);
 
     /// <summary>The status strip: the servers, the game, and a live.ps1 run.</summary>
     void ShowStatus(IReadOnlyList<ServiceSample> samples)
@@ -86,7 +102,7 @@ public partial class MainWindow : Window
         bool game = samples.Any(s => s.Service == Service.Client && s.Running);
         StatusText.Text = up == servers ? "Servers running" : up == 0 ? "Servers stopped" : $"{up} of {servers} servers up";
         StatusLamp.Fill = Theme.Brush(up == servers ? "Shell.Good" : up == 0 ? "Shell.Idle" : "Shell.Warning");
-        StatusDetail.Text = $"  ·  game {(game ? "running" : "not running")}" + (_live ? "  ·  live.ps1 is running …" : "");
+        StatusDetail.Text = $"  ·  game {(game ? "running" : "not running")}" + (_live ? $"  ·  {_shared.BusyWith} is running …" : "");
     }
 
     void CycleTheme(object sender, RoutedEventArgs e)

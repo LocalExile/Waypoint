@@ -61,7 +61,7 @@ static class Updates
         sha256File.Split((char[])[' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() is { Length: 64 } hex
             ? hex.ToLowerInvariant() : null;
 
-    static HttpClient Client()
+    internal static HttpClient Client()
     {
         var client = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
         client.DefaultRequestHeaders.UserAgent.ParseAdd($"LocalExile-Launcher/{Current}");

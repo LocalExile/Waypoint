@@ -120,6 +120,49 @@
                 <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
+            <!-- The launcher's own tables: a ListBox of 44 px rows, every other one shaded, the hovered one tinted; no
+                 selection (a row acts through its buttons). -->
+            <Style x:Key="Shell.Table" TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+                <Setter Property="AlternationCount" Value="2" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Focusable" Value="False" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Row" Height="44" Padding="10,0" CornerRadius="3" Background="Transparent">
+                                            <ContentPresenter VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource Shell.RowAlt}" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource Shell.RowHover}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!-- A small rounded label in a table cell (draft, fork, current). -->
+            <Style x:Key="Shell.Badge" TargetType="Border">
+                <Setter Property="CornerRadius" Value="9" />
+                <Setter Property="Padding" Value="7,0,7,1" />
+                <Setter Property="Margin" Value="6,0,0,0" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+                <Setter Property="TextElement.FontSize" Value="11" />
+                <Setter Property="TextElement.Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+            </Style>
             <Style x:Key="Shell.Cell" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="12.5" />
                 <Setter Property="VerticalAlignment" Value="Center" />

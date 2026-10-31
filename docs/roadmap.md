@@ -6,39 +6,22 @@ from the server (a hook in the server repository, per [AGENTS.md](../AGENTS.md))
 To pick an item up, mark it **in progress** with your name or PR here; when it ships, describe it in
 [launcher.md](launcher.md) and remove it from this file in the same change.
 
-Order: the new look (built, being checked), then branches and pull requests, the riskiest item; the collaboration
-items can happen at any time.
+Order: branches and pull requests (built, being checked); the collaboration items can happen at any time.
 
-## 1. The new look: dark mode and one row per service
+## 1. Pick a branch or a pull request
 
-**In progress**: built, waiting for a check on a real setup. Material Design controls in blue and white, Light, Dark and
-System themes, a sidebar instead of tabs, and the Control section as a table of services with one Start/Stop button
-each; [launcher.md](launcher.md) ("Look", "Control") describes it. Checked: every section in both themes against a real
-checkout, and the published single-file exe. No server change.
+**In progress**: built, waiting for a check on the real checkout. The Versions section ([launcher.md](launcher.md),
+"Versions") lists origin's branches and the open pull requests and switches between them with the guards described
+there. Checked: both lists against the real repository in both themes, and every switch against a throwaway repository
+(branch, pull request, force-pushed pull request, refusal over a local commit, stash and restore, update). No server
+change.
 
 Left to do:
 
-- Press each row's button against a real setup: start and stop Patch, Auth and Gateway alone (`-Only`, `-Stop -Only`),
-  the client (Start game only, close), the dev host, stopping the walk-map recorder, and a server's Restart; then Play,
-  Stop all and Stop servers as before. Then this item leaves the roadmap.
+- On the real checkout: switch to a pull request (a fork's: the question once), Play it, Back to main with an
+  uncommitted change (stashed and offered back), Update main, Clean up. Then this item leaves the roadmap.
 
-## 2. Pick a branch or a pull request
-
-Choose what the checkout runs: a branch of the server repository, or an open pull request. The most requested item,
-and the one that can lose work or run foreign code, so it needs these guards:
-
-- A checkout with uncommitted changes is never switched silently: offer to stash them, or refuse.
-- The servers and the game stop (`live.ps1 -Stop`) before a checkout.
-- Pull requests from forks run someone else's code on this machine: say so and ask for a separate confirmation.
-- No `gh` dependency: list branches and pull requests through the public GitHub API, fetch a pull request with
-  `git fetch origin pull/<n>/head:pr-<n>`. A **Back to main** button returns to the default branch.
-- Game data needs nothing special: `live.ps1` runs `extract-data.ps1`, whose manifest regenerates what the branch
-  changed.
-
-Switches the one checkout in place. A worktree per branch would leave the main checkout alone, but each needs its own
-`data/` and `Client/`; not planned.
-
-## 3. Collaboration
+## 2. Collaboration
 
 - Decide with the LocalExile maintainers whether the repository moves to the LocalExile organisation. If it does, change
   the release lookup (`Updates.cs`, now `jetstream1128/LocalExile-Launcher`) and publish a release before relying on
@@ -47,7 +30,7 @@ Switches the one checkout in place. A worktree per branch would leave the main c
   come only from a maintainer's tag.
 - Protect `main`: changes arrive through reviewed pull requests.
 
-## 4. Ideas, not planned yet
+## 3. Ideas, not planned yet
 
 - Server timings: message names instead of hex ids (the server has no complete id-to-name table yet), a reset button,
   CSV export for bug reports.

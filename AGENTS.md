@@ -17,8 +17,10 @@ git history and rules: the server's are in its `AGENTS.md`.
   time). Stopping the client's process or the dev host the launcher started is fine.
 - **No reference to server projects.** The launcher talks to the server only through its outside-tool hooks:
   `live.ps1`, `GameServer.Gateway commands` / `values <kind>`, the dev host's JSON-lines protocol, the client control
-  bridge, the logs. A feature that needs more from the server adds a small hook there first, in the server repository,
-  with its own tests and docs.
+  bridge, the logs. The Versions section also runs git in the checkout and reads GitHub's public API. A feature that
+  needs more from the server adds a small hook there first, in the server repository, with its own tests and docs.
+- **A switch of the checkout never loses work.** It stashes uncommitted changes, stops what runs, asks before running a
+  fork's pull request, and refuses what would drop a local commit; keep those guards when changing `VersionsTab`.
 - **Work from the checkout's root.** The launcher makes the chosen checkout its working directory at startup; keep its
   paths relative to that root, never absolute or searched for.
 - **No server data or secrets here**: nothing from the checkout's `Client/` or `data/`, no keys, accounts or passwords.

@@ -85,15 +85,16 @@ reaches everything at once; a colour written into a view would stay light in the
 
 The theme button in the header goes System → Light → Dark. System follows the Windows app theme, also when it changes
 while the launcher runs; the title bar turns dark with the dark theme (`DWMWA_USE_IMMERSIVE_DARK_MODE`). The choice is
-saved. The branch is read from the checkout's `.git/HEAD` (a short commit when detached); choosing one is on the
-[roadmap](roadmap.md). The settings button holds **Tray while the game runs**, **Look for updates at start** and
-**Check for updates**.
+saved. The branch is read from the checkout's `.git/HEAD` (a short commit when detached); clicking it opens the
+Versions section. The settings button holds **Tray while the game runs**, **Look for updates at start** and **Check for
+updates**.
 
 ## Sections
 
 | Section | What it does | How |
 |---|---|---|
 | Control | Play, Start servers, Stop servers, Stop all and the Hot reload, Skip build, Skip data check and Walk maps switches; every service as a table row with its state and one Start/Stop button; the script's output; the server folder and the setup checks | `live.ps1`, `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`, `-NoHotReload`; Close game ends the client's process, Stop all also the dev host |
+| Versions | what the checkout runs: origin's branches and the open pull requests, switching between them, updating the current one, going back to the default branch, restoring stashed changes, deleting the branches of closed pull requests | git in the checkout (`fetch --prune`, `switch`, `pull --ff-only`, `stash`, `fetch origin pull/<n>/head`); the open pull requests from GitHub's public API |
 | Performance | CPU and memory of every service; for the chosen server, GC heap, allocation rate, collections, time in GC, thread pool, lock contention and exceptions | the processes once a second; the runtime's `System.Runtime` counters through its diagnostics port (what `dotnet-counters` reads), with nothing changed in the servers |
 | Server timings | what each Gateway operation costs over a window (30 s to 15 min, 1 min by default): calls per second, average, p95 and p99 (the worst second's), milliseconds per second; client messages by id, server phases (input queue, handler, send and wire gates, combat lock, surround, blocker build), level generation by area; the five busiest charted (p95 and ms per second) | the Gateway's `LocalExile.Gateway` meter (`localexile.gateway.duration`, ms, tags `phase` and `operation`) through the runtime's `System.Diagnostics.Metrics` event source, in the Gateway's counter session, published once a second; a checkout older than the `Message` and `LevelGen` phases shows only the phases |
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
@@ -142,6 +143,33 @@ saved. The branch is read from the checkout's `.git/HEAD` (a short commit when d
 - A failure on a background thread (the process sampling, a runtime counter session, the log reading) is reported in the
   launcher's log, never ends the launcher: a server that `live.ps1` stops ends its counter stream anywhere, even inside
   a block. Anything that still ends the process is written to the checkout's `logs\launcher-crash.log`.
+
+### Versions
+
+- The section lists origin's branches (the default one first) and the open pull requests of the GitHub repository
+  origin points at, with their last commit or title, author, age, and a **draft** or **fork** label. Showing it
+  fetches (`git fetch --prune origin`) when the lists are older than five minutes; **Fetch** does at once. GitHub's API
+  is used without a token (60 requests an hour), so the pull requests are read again only on Fetch or after a minute.
+- **Switch** to a branch switches to the local branch of that name, moved forward to origin's when that loses nothing
+  (a local branch with commits of its own is left as it is), or makes one that tracks origin's. **Switch** to a pull
+  request fetches its head (`pull/<n>/head`) into the local branch `pr/<n>`, again on each switch and on **Update**, so
+  a force-pushed pull request comes in whole. It refuses when `pr/<n>` has commits of the player's own: the launcher
+  remembers the head it fetched last (`refs/launcher/pr/<n>`), so commits a force-push left behind are not taken for
+  the player's.
+- Every switch has the same guards, in this order. A pull request from a fork (or a deleted one) asks once, with the
+  author's repository named: its code, `live.ps1` and the scripts included, runs on this computer with the player's
+  rights. The agreed ones are kept in the settings. Uncommitted changes (the ignored `data\` and `Client\` are not
+  any) are listed and stashed as `launcher: <branch> before switching to <target>`; going back to that branch offers
+  them back, and **Restore stashed changes** next to the branch's name does it later. Running servers or a running game
+  are stopped first (`live.ps1 -Stop` and the dev host), or a watched Gateway would rebuild halfway through. A switch
+  that fails puts the stashed changes back.
+- git and `live.ps1` never run at once: a switch takes the same lock as a `live.ps1` run, and the status strip says
+  which one runs. After a switch the header's branch and the setup checks are read again, and the launcher offers Play,
+  which builds the new version (`live.ps1` regenerates the game data the version's manifest changed).
+- **Update** is `git pull --ff-only` on a branch, a new fetch on a pull request. **Back to main** switches to origin's
+  default branch. **Clean up** deletes the `pr/<n>` branches of pull requests that are no longer open.
+- git runs with `GIT_TERMINAL_PROMPT=0`: the server repository is public, and a credential prompt would hang a hidden
+  process. git's output goes to the section's output and the launcher's log.
 
 ### Logs and errors
 
@@ -194,6 +222,7 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `ServiceMonitor.cs` | the services, found by WMI every two seconds, sampled every second |
 | `App.xaml`, `Theme.cs`, `MainWindow.xaml` | the look: Material Design's controls restyled, the `Shell.*` colours of each theme, the sidebar, header and status strip |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
+| `Git.cs`, `PullRequests.cs`, `VersionsTab.xaml.cs` | git in the checkout and the parsing of its output, the open pull requests, the Versions section and its guards |
 | `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
 | `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |
@@ -204,5 +233,9 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 
 Tests: `tests/GameServer.Launcher.Tests` (the `live.ps1` command lines, the server folder, following logs, severities,
 command and argument suggestions, the dev host's account list, finding the services, versions and releases, counter
-payloads, histogram tags and quantiles, the timings window, chart scales).
+payloads, histogram tags and quantiles, the timings window, chart scales, origin's branches, remote URLs, the launcher's
+stashes, pull requests and forks, ages).
+The switches themselves (branch, pull request, a force-pushed one, the refusal over a local commit, stash and restore,
+update) were run against a throwaway repository with its own origin; they change a real checkout, so they have no unit
+test.
 The server's side of these hooks has its own tests there (`ChatCommandCatalogTests`, `HostTests`).
