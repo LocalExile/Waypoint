@@ -1,0 +1,20 @@
+{
+  "asset": "Waypoint emblem",
+  "generationTool": "built-in image_gen.imagegen",
+  "generatedOn": "2026-10-30",
+  "reference": {
+    "title": "PoE1 waypoint screenshot in MMORPG.com beginner guide",
+    "page": "https://www.mmorpg.com/guides/beginners-guide-to-path-of-exile-2000121370",
+    "image": "https://images.mmorpg.com/images/contentImages/122021/waypoints.jpg",
+    "usage": "Visual reference only; screenshot not included in application assets."
+  },
+  "master": "waypoint-master.png",
+  "generationPrompt": "Use case: logo-brand. Generate an original app emblem for Waypoint using the supplied ACTUAL PATH OF EXILE 1 WAYPOINT screenshot as the direct visual reference. The user must immediately recognize a PoE1 ground waypoint. Preserve its distinguishing layout: dark slate angular overlapping stone foundation forming a roughly octagonal/squared eight-corner silhouette; a recessed circular stone inset; a thin luminous cyan-blue circular band of many small rune marks around the inner perimeter; a small elegant four-way curled/forking sigil in the center with generous empty space around it. Closely follow those structural proportions from the reference. DO NOT replace it with a generic compass wheel, eight chunky spokes, separate large jewel motifs, a Celtic knot or a futuristic ship wheel. Render as a straight overhead compact game-inventory icon, original clean stylized painted stone, very restrained texture, bright clearly separated runic circle and central curl symbol. The original screenshot is reference only: omit character, floor, camera perspective, fog, vertical light pillar, all environment. Keep stone surface a simple medium slate value so it remains distinguishable on both light/dark desktops. Cyan runes have crisp cores and minimal restrained glow. All of the complete angular stone perimeter stays inside a square canvas at about 84 percent width. Transparent background outside the stone footprint. One icon only, no words, no labels, no presentation mockup.",
+  "finalEditPrompt": "Edit this original Waypoint emblem, preserving its exact stone shape, central sigil, runic-circle layout and all proportions. The ONLY light sources must be the etched cyan glyphs and the thin etched circular channels. Make those etched lines look luminous from within: crisp pale-cyan cores and soft saturated blue bloom emanating out of the engravings and illuminating only the immediately surrounding stone. Very tasteful game-icon lighting, blue spill around the inner rune band and central sigil, like the activated Path of Exile 1 waypoint. CRITICAL: the outer brick perimeter must stay neutral slate and completely unlit. NO glowing outline around the outside of the stone, NO blue rim light, NO halo surrounding the emblem, NO blue border or stroke following the masonry silhouette. The stone does not glow. Only etched glyphs glow. Leave a neutral dark-slate buffer of stone around the entire outer edge. Do not change the composition, stone details, glyph designs, viewpoint or transparent background. No particles, vertical beams, fog, scenery or text.",
+  "preparation": "scripts/New-Icon.ps1 deterministically resizes the reviewed PNG to the WPF source and ten PNG-backed ICO frames. Runtime recoloring retains the raster geometry; only the etched light channel carries the chosen accent. Windows icon intentionally retains fixed blue lighting.",
+  "rejectedDirections": [
+    "Ornate jewel/spoke design unrelated to the photographed layout",
+    "Generic flat sigils",
+    "Blue outline around the outer masonry"
+  ]
+}
