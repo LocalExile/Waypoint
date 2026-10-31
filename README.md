@@ -218,7 +218,7 @@ manager, including the recorded source commit and last Gateway build used with t
 exact account name and removes its characters and stashes in every league. **Cancel** is the default Enter action.
 Unknown storage formats stay read-only. Python with SQLite 3.37+ is required; no server source changes are needed.
 
-This work is local and awaiting owner review; it has not been pushed or released. See the [account guide and validation](docs/account-management.md)
+The 0.6.0 UI and review build are local and awaiting owner review; they have not been pushed or released. See the [account guide and validation](docs/account-management.md)
 for offline safeguards, recovery and the supported storage contract. The latest published download remains 0.5.2.
 
 ## Build and check

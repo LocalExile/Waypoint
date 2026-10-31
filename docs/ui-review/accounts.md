@@ -1,6 +1,6 @@
 # Accounts UI and validation — 0.6.0 local review
 
-This work is local and unpublished. The Accounts workflow adds a new capability, so the review version is 0.6.0.
+The 0.6.0 UI and review package remain local and unreleased. The Accounts workflow adds a new capability, so the review version is 0.6.0.
 The published 0.5.2 package is unchanged. See the [user guide](../account-management.md).
 
 ## Design resources and implementation
@@ -72,6 +72,26 @@ screen-reader listening, physical display/DPI transition or live Windows High Co
 Automated layout/resource checks are not claims of those physical tests. Arbitrary mod progress references are
 preserved rather than understood or rewritten. Keep manual external service starts paused during offline edits.
 
-Portable package verification and the externally launched production UI are recorded in the local review evidence
-alongside the clean-source manifest and ZIP checksum. The package includes both account helpers, Russian resources,
-font/runtime licenses and the bundled Windows x64 .NET Desktop runtime. No upload or publication is part of validation.
+The clean-source portable package at commit `895fbb46890230c50661bf35e214e91ea4bf8621` was verified and extracted
+outside the development folder. All **415** payload hashes/sizes passed, alongside archive checksum, path containment,
+Windows x64 header, version/source identity, Russian satellite, account helpers and font/runtime licenses.
+ZIP SHA-256: `e9374efffc3dd70ecc21aaaabf0de62d57963a12bb8fb48cbaeac9564dcb1f53`.
+
+The extracted production EXE loaded all four disposable accounts. Ctrl+6 selected Accounts, Ctrl+F focused search,
+and an Elementalist query found both matching accounts. At 960×730 the action row wrapped and character details
+remained usable. The full-size capture is 1240×900. Fixture browsing left the database hash unchanged, and owner
+preferences still matched the original byte-for-byte. No game/server processes were started or stopped.
+
+![Packaged Accounts page with disposable characters](screenshots/accounts-production.jpg)
+
+![Accounts at the minimum 960×730 window size](screenshots/accounts-production-minimum.jpg)
+
+![Russian large-text typed-delete validation in the private presentation fixture](screenshots/accounts-delete-ru-validation.jpg)
+
+## Remote baseline observed during final review
+
+Read-only `git ls-remote origin refs/heads/main` returned `f3e6a94b0a419d7a7eddaa09405a183b853115c4`.
+The local remote-tracking reflog records an update by push at 2026-10-30 22:28:06 -0700, through the backend commit.
+This was discovered and reported after resuming from the requested computer-use pause. No push, tag or release was
+run after resuming. The database-binding fix, Accounts UI and review-package preparation remain beyond that remote
+baseline; remote history was left untouched. Publication still requires owner review and authorization.
