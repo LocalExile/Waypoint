@@ -146,6 +146,8 @@ function Invoke-ModClientCommands([string[]]$commands, $snapshot) {
     $info.Arguments = '"' + $helper + '" --stdio'
     $info.WorkingDirectory = $script:root; $info.UseShellExecute = $false; $info.CreateNoWindow = $true
     $info.RedirectStandardInput = $true; $info.RedirectStandardOutput = $true; $info.RedirectStandardError = $true
+    # Under a UTF-8 console a started process's stdin begins with a byte-order mark, which the helper cannot read as JSON.
+    [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
     $process = [Diagnostics.Process]::Start($info)
     try {
         $errors = $process.StandardError.ReadToEndAsync()

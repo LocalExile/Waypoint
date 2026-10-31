@@ -3,6 +3,8 @@ $ErrorActionPreference = 'Stop'
 $fixture = Join-Path ([IO.Path]::GetTempPath()) ('Launcher-mod-transport-' + [guid]::NewGuid().ToString('N'))
 $oldData = $env:LOCALAPPDATA
 $env:LOCALAPPDATA = Join-Path $fixture 'launcher-data'
+# As on a machine whose console is UTF-8, where a request must still reach the helper without a byte-order mark.
+try { [Console]::InputEncoding = [Text.UTF8Encoding]::new($true) } catch [IO.IOException] { }
 $script:root = Join-Path $fixture 'Checkout with spaces'
 $Action = 'QueryMods'
 $ResultPath = Join-Path $fixture 'result.json'
