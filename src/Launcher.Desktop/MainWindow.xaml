@@ -25,7 +25,12 @@
         <StackPanel DockPanel.Dock="Top" Margin="8,0,8,18">
           <DockPanel Margin="0,0,0,8">
             <Border Background="{DynamicResource AccentSurface}" CornerRadius="7" Width="32" Height="32" Margin="0,0,10,0" DockPanel.Dock="Left">
-              <TextBlock Text="↗" FontSize="23" Foreground="{DynamicResource Accent}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              <Viewbox Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                <Grid Width="24" Height="24">
+                  <Path Data="M3,10 L21,3 L14,21 L10,14 Z" Fill="{DynamicResource Accent}"/>
+                  <Path Data="M3,10 L21,3 L10,14 Z" Fill="{DynamicResource AccentText}" Opacity="0.24"/>
+                </Grid>
+              </Viewbox>
             </Border>
             <TextBlock x:Name="BrandName" FontSize="23" FontWeight="SemiBold" VerticalAlignment="Center"/>
           </DockPanel>

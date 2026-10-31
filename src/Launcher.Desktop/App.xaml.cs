@@ -31,10 +31,10 @@ public partial class App : Application
             foreach (var pair in darkBrushes) Resources[pair.Key] = pair.Value;
             return;
         }
-        foreach (string key in new[] { "Background", "Sidebar", "Surface", "StatusSurface" }) Resources[key] = SystemColors.WindowBrush;
+        foreach (string key in new[] { "Background", "Sidebar", "Surface", "StatusSurface", "AccentSurface" }) Resources[key] = SystemColors.WindowBrush;
         foreach (string key in new[] { "Text", "Muted", "Outline", "Error", "BadgeText" }) Resources[key] = SystemColors.WindowTextBrush;
         foreach (string key in new[] { "ControlSurface", "BadgeSurface" }) Resources[key] = SystemColors.ControlBrush;
-        foreach (string key in new[] { "Accent", "SelectedSurface", "HoverSurface", "AccentSurface" }) Resources[key] = SystemColors.HighlightBrush;
+        foreach (string key in new[] { "Accent", "SelectedSurface", "HoverSurface" }) Resources[key] = SystemColors.HighlightBrush;
         foreach (string key in new[] { "AccentText", "SelectedText" }) Resources[key] = SystemColors.HighlightTextBrush;
     }
 

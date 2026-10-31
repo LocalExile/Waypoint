@@ -70,10 +70,19 @@ Live checks confirmed the native picker appears with the restored and maximized 
 
 Final build: zero warnings/errors; **158 desktop assertions passed**. This includes signed/negative screen-coordinate decoding, exclusive edges beside the close/client areas, empty/scaled bounds, existing interaction checks, and three layout widths at simulated 100/125/150/200%. Core (78) and bridge (18) results above remain from the preceding UI verification on unchanged components.
 
+### Sidebar marker refinement
+
+Replaced the small Unicode northeast arrow with an original two-facet vector waypoint/navigation marker. It keeps the existing mint palette and 32-DIP badge, with explicit centered geometry instead of font glyph metrics. The graphic is decorative beside the readable wordmark. In High Contrast, its plate now uses the window background rather than the same highlight brush as the marker, keeping the silhouette distinct.
+
+Inspected the changed header in the running app; solution build passed without warnings/errors and all 158 desktop checks passed. The close-up after previews below render the actual WPF header at 100% and 200% pixel density without starting runtime services or changing settings. They are component renders, not claims of a physical monitor DPI transition. The before image is the owner's supplied crop. Existing pre-commit regression results (319 assertions) are recorded above; this isolated graphic/theme adjustment required the desktop build/checks and visual review.
+
 - [Before: Play at minimum size](screenshots/before-play.png)
 - [Current: integrated window frame at minimum size](screenshots/custom-window-frame.png)
 - [Current: native Windows Snap Layout picker](screenshots/native-snap-layouts.png)
 - [Current: half-screen-compatible 960×730 layout](screenshots/snap-fit-960.png)
+- [Sidebar marker before](screenshots/brand-header-before.png)
+- [Sidebar marker after, 100% render](screenshots/brand-header-after.png)
+- [Sidebar marker after, 200% render](screenshots/brand-header-after-2x.png)
 - [Before: Mods with actions below the viewport](screenshots/before-mods.png)
 - [After: Play at default size](screenshots/after-play.png)
 - [After: Play at minimum size](screenshots/after-play-minimum.png)
