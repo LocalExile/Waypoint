@@ -40,12 +40,16 @@
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Content="{l:Loc 'Check for updates'}" Click="CheckUpdates" Margin="12,0,0,0"
                             ToolTip="{l:Loc 'Look for a newer Waypoint release on GitHub'}" />
-                    <CheckBox x:Name="CheckAtStart" Content="{l:Loc 'Look for updates at start'}" Checked="CheckAtStartChanged" Unchecked="CheckAtStartChanged"
-                              ToolTip="{l:Loc 'Look for a newer Waypoint release whenever it starts (release builds)'}" />
+                    <StackPanel>
+                        <CheckBox x:Name="CheckAtStart" Content="{l:Loc 'Look for updates at start'}" Checked="CheckAtStartChanged" Unchecked="CheckAtStartChanged"
+                                  ToolTip="{l:Loc 'Look for a newer Waypoint release whenever it starts (release builds)'}" />
+                        <CheckBox x:Name="KeepUpToDate" Content="{l:Loc 'Keep LocalExile up to date'}" Checked="KeepUpToDateChanged" Unchecked="KeepUpToDateChanged"
+                                  ToolTip="{l:Loc 'Play gets the newest LocalExile at most once a day, after backing up your saves. A copy with your own changes is left alone.'}" />
+                    </StackPanel>
                 </DockPanel>
             </GroupBox>
 
-            <GroupBox Header="{l:Loc 'Server checkout'}">
+            <GroupBox x:Name="CheckoutGroup" Header="{l:Loc 'Server checkout'}">
                 <StackPanel>
                     <TextBlock x:Name="ServerFolder" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,0,0,6" />
                     <CheckBox x:Name="UseProfile" Content="{l:Loc 'Use the checkout\'s local launch profile when it has one'}" Checked="ProfileChanged" Unchecked="ProfileChanged"

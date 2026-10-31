@@ -13,6 +13,35 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="56" ResizeBorderThickness="6" GlassFrameThickness="1" CornerRadius="0" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <!-- One half of the sidebar's Simple | Advanced switch. -->
+        <Style x:Key="ModeChoice" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarText}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Body" CornerRadius="3" Padding="4,5" Background="Transparent" BorderThickness="1" BorderBrush="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Body" Property="Background" Value="{DynamicResource Shell.SidebarHover}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Body" Property="Background" Value="{DynamicResource Shell.SidebarSelected}" />
+                                <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarStrong}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Body" Property="BorderBrush" Value="{DynamicResource Shell.SidebarStrong}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid x:Name="WindowLayout">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210" />
@@ -30,6 +59,16 @@
                 <Border DockPanel.Dock="Top" Height="1" Background="{DynamicResource Shell.SidebarDivider}" Margin="10,0,10,10" />
                 <TextBlock x:Name="Version" DockPanel.Dock="Bottom" Foreground="{DynamicResource Shell.SidebarText}" Opacity="0.6"
                            FontSize="11" Margin="18,0,0,12" />
+                <!-- Simple or Advanced: always in reach, whichever section shows. -->
+                <Border DockPanel.Dock="Bottom" Margin="12,0,12,10" Padding="2" CornerRadius="4" BorderThickness="1"
+                        BorderBrush="{DynamicResource Shell.SidebarDivider}">
+                    <UniformGrid Rows="1">
+                        <RadioButton x:Name="SimpleMode" GroupName="Mode" Content="{l:Loc 'Simple'}" Style="{StaticResource ModeChoice}" Checked="ModeChosen"
+                                     ToolTip="{l:Loc 'Play, mods and accounts. Waypoint keeps LocalExile up to date.'}" />
+                        <RadioButton x:Name="AdvancedMode" GroupName="Mode" Content="{l:Loc 'Advanced'}" Style="{StaticResource ModeChoice}" Checked="ModeChosen"
+                                     ToolTip="{l:Loc 'Adds the servers, branches and pull requests, backups, performance, logs and the console. Waypoint then never updates LocalExile by itself.'}" />
+                    </UniformGrid>
+                </Border>
                 <ListBox x:Name="Sections" Background="Transparent" BorderThickness="0" Margin="6,0" SelectionChanged="SectionChanged"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemContainerStyle>
@@ -111,7 +150,7 @@
 
             <!-- What runs, at a glance, on every section: a named lamp for what the game needs, and for the dev host and the
                  walk-map recorder while they run; then the rest in words. -->
-            <Border DockPanel.Dock="Top" Background="{DynamicResource Shell.Banner}" Padding="0,8">
+            <Border x:Name="StatusStrip" DockPanel.Dock="Top" Background="{DynamicResource Shell.Banner}" Padding="0,8">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <ItemsControl x:Name="Lights" VerticalAlignment="Center">
                         <ItemsControl.ItemsPanel>
@@ -143,6 +182,7 @@
 
             <!-- The sections; one shows at a time (SectionChanged). -->
             <Grid>
+                <l:PlayTab x:Name="PlayView" Visibility="Collapsed" />
                 <l:ControlTab x:Name="Control" />
                 <l:SetupTab x:Name="Setup" Visibility="Collapsed" />
                 <l:VersionsTab x:Name="Versions" Visibility="Collapsed" />

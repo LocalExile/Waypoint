@@ -8,7 +8,7 @@
         <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="20,10,14,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button Click="RefreshClicked" ToolTip="{l:Loc 'git fetch --prune origin, and the open pull requests from GitHub'}">
+                    <Button Click="RefreshClicked" ToolTip="{l:Loc 'Reads the branches of LocalExile and origin, and LocalExile\'s open pull requests'}">
                         <StackPanel Orientation="Horizontal">
                             <md:PackIcon Kind="CloudDownloadOutline" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center"
                                          Foreground="{DynamicResource Shell.TextSecondary}" />
@@ -135,6 +135,14 @@
                                 <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding LocalBadge}"
                                         BorderBrush="{DynamicResource Shell.Accent}" ToolTip="{l:Loc 'Only in this checkout: not on origin (not pushed)'}">
                                     <TextBlock Text="{l:Loc 'local'}" Foreground="{DynamicResource Shell.Accent}" />
+                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding ForkBadge}"
+                                        BorderBrush="{DynamicResource Shell.Accent}" ToolTip="{l:Loc 'On your fork (origin), not on LocalExile'}">
+                                    <TextBlock Text="{l:Loc 'your fork'}" Foreground="{DynamicResource Shell.Accent}" />
+                                </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding UpstreamBadge}"
+                                        ToolTip="{l:Loc 'On LocalExile'}">
+                                    <TextBlock Text="LocalExile" />
                                 </Border>
                                 <TextBlock Text="{Binding Name}" Style="{StaticResource Shell.Cell}" FontWeight="SemiBold" ToolTip="{Binding Name}" />
                             </DockPanel>

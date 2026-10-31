@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Waypoint;
 
@@ -8,6 +9,19 @@ sealed class Settings
 {
     /// <summary>The LocalExile server checkout Waypoint drives (chosen on the first start, <see cref="Repo"/>).</summary>
     public string? ServerPath { get; set; }
+    /// <summary>Every section, or Simple mode's few. A new player starts in Simple mode; someone who used an earlier launcher,
+    /// or this one before the modes, stays with every section (<see cref="Load"/>).</summary>
+    public bool? AdvancedMode { get; set; }
+    [JsonIgnore]
+    public bool Advanced => AdvancedMode == true;
+    /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>).</summary>
+    public bool KeepUpToDate { get; set; } = true;
+    /// <summary>When Play last looked for an update of LocalExile.</summary>
+    public DateTimeOffset? LastUpdateCheck { get; set; }
+    /// <summary>Going back to an earlier version pauses Play's updates until then.</summary>
+    public DateTimeOffset? UpdatesPausedUntil { get; set; }
+    /// <summary>The update Play made last, until the player went back from it.</summary>
+    public CheckoutUpdate? LastUpdate { get; set; }
     public bool Walkmaps { get; set; }
     public bool NoBuild { get; set; }
     public bool NoExtract { get; set; }
@@ -56,9 +70,14 @@ sealed class Settings
     {
         try
         {
-            if (System.IO.File.Exists(File)) return JsonSerializer.Deserialize<Settings>(System.IO.File.ReadAllText(File), Options) ?? new();
+            if (System.IO.File.Exists(File))
+            {
+                var saved = JsonSerializer.Deserialize<Settings>(System.IO.File.ReadAllText(File), Options) ?? new();
+                saved.AdvancedMode ??= true;
+                return saved;
+            }
         }
-        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new(); }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true }; }
         return Imported();
     }
 
@@ -74,6 +93,7 @@ sealed class Settings
             {
                 string text = System.IO.File.ReadAllText(launcher);
                 settings = JsonSerializer.Deserialize<Settings>(text, Options) ?? settings;
+                settings.AdvancedMode = true;
                 using var document = JsonDocument.Parse(text);
                 if (document.RootElement.TryGetProperty("Theme", out var theme) && theme.ValueKind == JsonValueKind.String)
                     settings.Appearance = new AppearanceSettings(Mode: theme.GetString() ?? "System");
@@ -86,6 +106,7 @@ sealed class Settings
             if (System.IO.File.Exists(path))
             {
                 var waypoint = SettingsStore.Load(path);
+                settings.AdvancedMode = true;
                 if (string.IsNullOrEmpty(settings.ServerPath) && waypoint.RepositoryPath.Length > 0) settings.ServerPath = waypoint.RepositoryPath;
                 settings.UseLocalProfile = waypoint.UseLocalProfile;
                 settings.AutomaticBackups = waypoint.AutomaticBackups;
@@ -99,6 +120,7 @@ sealed class Settings
             }
         }
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException or InvalidDataException) { }
+        settings.AdvancedMode ??= false;
         return settings;
     }
 

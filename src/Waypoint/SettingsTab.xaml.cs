@@ -38,7 +38,10 @@ public partial class SettingsTab : UserControl
         AlwaysAsk.IsChecked = S.AlwaysAskOnClose;
         TrayWhileGame.IsChecked = S.TrayWhileGameRuns;
         CheckAtStart.IsChecked = S.CheckForUpdates;
+        KeepUpToDate.IsChecked = S.KeepUpToDate;
         UseProfile.IsChecked = S.UseLocalProfile;
+        KeepUpToDate.Visibility = S.Advanced ? Visibility.Collapsed : Visibility.Visible;
+        CheckoutGroup.Visibility = S.Advanced ? Visibility.Visible : Visibility.Collapsed;
         _loading = false;
     }
 
@@ -94,6 +97,19 @@ public partial class SettingsTab : UserControl
         if (_loading || _shared is null) return;
         S.CheckForUpdates = CheckAtStart.IsChecked == true;
         S.Save();
+    }
+
+    void KeepUpToDateChanged(object sender, RoutedEventArgs e)
+    {
+        if (_loading || _shared is null) return;
+        S.KeepUpToDate = KeepUpToDate.IsChecked == true;
+        S.Save();
+    }
+
+    /// <summary>The sidebar's switch moved: Simple and Advanced mode show different settings.</summary>
+    internal void ShowMode()
+    {
+        if (_shared is not null) Show();
     }
 
     void CheckUpdates(object sender, RoutedEventArgs e) => CheckUpdatesRequested?.Invoke();

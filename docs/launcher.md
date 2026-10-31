@@ -131,13 +131,39 @@ MessageBox: the kind's icon, a title, the text, details such as a list of files 
 after what they do ("Stash and switch", not OK). Enter presses the main one, Esc or closing the box cancels; a risky
 question (a fork's pull request) has Cancel as its default.
 
+## Simple and Advanced modes
+
+A new player starts in **Simple mode**, with four sections (Play, Mods, Accounts, Settings) and no status strip or branch
+chip: nothing to choose before playing. The **Simple | Advanced** switch at the bottom of the sidebar is always there:
+Advanced gives every section and takes Play away, as the Control section has it. Someone who used an earlier launcher, or
+Waypoint before the modes, starts in Advanced mode (`Settings.Load`).
+
+**Play** in Simple mode (`PlayTab`) is the Control section's Play with an update before it:
+
+1. When `CheckoutUpdates.Due` says so (at most once a day; **Settings → Updates → Keep LocalExile up to date**, on by
+   default) and nothing runs, Waypoint fetches. No network is no reason not to play: the game starts as it is.
+2. Only a plain copy is moved (`CheckoutUpdates.PlainCopy`): on the default branch, with LocalExile as origin, no uncommitted
+   changes and no commits of its own. Anything else is the player's work and stays as it is, in either mode.
+3. The saves are backed up (unless **Automatic backups** is off); a failed backup means no update, and the game starts as
+   it is. Then the branch moves forward, fast-forward only, and the commit and backup before it are kept in the settings.
+4. `ControlTab.PlayAsync` runs, so a start is the same `live.ps1` run with the same port question.
+5. When that run fails after an update, Waypoint stops what runs, restores that backup, puts the checkout back
+   (`git reset --keep`) and starts again, and says so.
+
+**Go back to the version you had** stays for a week after an update: the same way back, on request, and updates pause for a
+week. Restoring keeps a copy of the current saves first. LocalExile has no releases or tags and `main` has no test
+results, so an update is `main` as it is: the way back catches a build or start that fails, not a bug in the game.
+
+A link to a section Simple mode's list lacks (a log, from a failure) shows that section without selecting anything.
+
 ## Sections
 
 | Section | What it does | How |
 |---|---|---|
+| Play | Simple mode's home: one sentence and one button, an update before the start, the way back | `PlayTab`, `CheckoutUpdates`; the Control section's Play |
 | Control | Play, Start servers, Stop servers, Stop all and the Hot reload, Skip build, Skip data check and Walk maps switches; every service as a table row with its state and one Start/Stop button; the script's output; the server folder and the setup checks | `live.ps1` (or `live.local.ps1`, see below), `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`, `-NoHotReload`; Close game ends the client's process, Stop all also the dev host |
 | Setup | every requirement of the checkout with its next step: instructions, Prepare client, Install dependency, Create account, the Client folder, the setup guide | the adapter's `Inspect`, `PrepareClient` and `Dependencies` |
-| Versions | what the checkout runs: origin's branches and the open pull requests, switching between them, updating the current one, going back to the default branch, restoring stashed changes, deleting the branches of closed pull requests; the commit and the built versions, Build checkout, Reload game data, fresh saves | git in the checkout (`fetch --prune`, `switch`, `pull --ff-only`, `stash`, `fetch origin pull/<n>/head`); the open pull requests from GitHub's public API; the adapter's `Backup`, `Build`, `ReloadData`, `FreshSaves` |
+| Versions | what the checkout runs and how far it is from LocalExile: LocalExile's branches and open pull requests, a fork's branches, the checkout's own, switching between them, updating the current one, going back to the default branch, restoring stashed changes, deleting the branches of closed pull requests; the commit and the built versions, Build checkout, Reload game data, fresh saves | git in the checkout (`fetch --prune`, `switch`, `merge --ff-only`, `pull --ff-only`, `stash`, `fetch <LocalExile> pull/<n>/head`); the open pull requests from GitHub's public API; the adapter's `Backup`, `Build`, `ReloadData`, `FreshSaves` |
 | Mods | the checkout's mods, built from source or binary only: search, enable and disable, build one or all, reload, live status, the folders | the mods' manifests and the server's saved choices (`ModCatalog.cs`); the adapter's `BuildMod`, `BuildMods`, `EnableMod`, `DisableMod`, `ReloadMod`, `QueryMods` |
 | Backups | the save database's backups: what each was made from, back up now, restore saves, restore mod choices, delete, the automatic backups switch | the adapter's `Backup`, `RestoreBackup`, `RestoreModChoices`, `DeleteBackup` and `SaveBackup.py` (SQLite's backup API); `BackupCatalog.cs` |
 | Performance | CPU and memory of every service; for the chosen server, GC heap, allocation rate, collections, time in GC, thread pool, lock contention and exceptions | the processes once a second; the runtime's `System.Runtime` counters through its diagnostics port (what `dotnet-counters` reads), with nothing changed in the servers |
@@ -145,7 +171,7 @@ question (a fork's pull request) has Cancel as its default.
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters, searchable; registering an account; creating a character; creating, duplicating, renaming, setting a password and deleting with everything stopped | the list and those changes are the adapter's (`QueryAccounts`, `Register`, `ManageAccount`, `AccountData.py`; [account-management.md](account-management.md)); Register and Create go through the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `register`, `create_character`; Waypoint builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
-| Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile | saved as chosen; `Settings.cs` |
+| Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
 ### Control
 
@@ -208,14 +234,18 @@ question (a fork's pull request) has Cancel as its default.
 
 ### Versions
 
-- The section lists origin's branches (the default one first), the checkout's own branches origin has not (a **local**
-  label: work not pushed yet; the `pr/<n>` ones stay in the pull requests' list) and the open pull requests of the
-  GitHub repository origin points at, with their last commit or title, author, age, and a **draft** or **fork** label.
-  Showing it fetches (`git fetch --prune origin`) when the lists are older than five minutes; **Fetch** does at once. GitHub's API
+- LocalExile is the reference whatever `origin` is: a contributor's origin is their fork, which knows nothing of LocalExile's
+  newer commits or pull requests. Beside a fork, Waypoint fetches LocalExile by address into `refs/launcher/upstream/*`, so no
+  remote of the player's changes (the old `Wrathen/LocalExile` address counts as LocalExile). The header says how far the
+  branch is from LocalExile's: "195 commit(s) behind LocalExile".
+- The section lists LocalExile's branches, then, beside a fork, the fork's that LocalExile has not (a **your fork** label,
+  and LocalExile's get one too), the checkout's own (a **local** label: work not pushed yet; the `pr/<n>` ones stay in the
+  pull requests' list) and LocalExile's open pull requests, with their last commit or title, author, age, and a **draft** or
+  **fork** label. Showing it fetches when the lists are older than five minutes; **Fetch** does at once. GitHub's API
   is used without a token (60 requests an hour), so the pull requests are read again only on Fetch or after a minute.
-- **Switch** to a branch switches to the local branch of that name, moved forward to origin's when that loses nothing
-  (a local branch with commits of its own is left as it is; one origin has not is only switched to), or makes one that
-  tracks origin's. **Switch** to a pull request fetches its head (`pull/<n>/head`) into the local branch `pr/<n>`,
+- **Switch** to a branch switches to the local branch of that name, moved forward to what it follows (LocalExile's, else
+  origin's) when that loses nothing (a local branch with commits of its own is left as it is; one neither has is only
+  switched to), or makes one from origin's, which it tracks, or from LocalExile's beside a fork. **Switch** to a pull request fetches its head (`pull/<n>/head`, from LocalExile) into the local branch `pr/<n>`,
   again on each switch and on **Update**, so a force-pushed pull request comes in whole. It refuses when `pr/<n>` has commits of the player's own: the launcher
   remembers the head it fetched last (`refs/launcher/pr/<n>`), so commits a force-push left behind are not taken for
   the player's.
@@ -237,8 +267,9 @@ question (a fork's pull request) has Cancel as its default.
 - git, `live.ps1` and the adapter's operations never run at once: a switch takes the same lock as a `live.ps1` run, and the
   status strip says which one runs. After a switch the header's branch and the setup checks are read again, and the launcher offers Play,
   which builds the new version (`live.ps1` regenerates the game data the version's manifest changed).
-- **Update** is `git pull --ff-only` on a branch, a new fetch on a pull request. **Back to main** switches to origin's
-  default branch. **Clean up** deletes the `pr/<n>` branches of pull requests that are no longer open.
+- **Update** fetches and fast-forwards a branch to what it follows, and refuses when it has commits of its own; on a pull
+  request it is a new fetch. Nothing is pushed: a fork's `main` stays where it is. **Back to main** switches to the default
+  branch. **Clean up** deletes the `pr/<n>` branches of pull requests that are no longer open.
 - git runs with `GIT_TERMINAL_PROMPT=0`: the server repository is public, and a credential prompt would hang a hidden
   process. git's output goes to the section's output and the launcher's log.
 
@@ -369,6 +400,7 @@ adapter does not know can be browsed but not changed.
 | `scripts/` | the adapter: `RuntimeBridge.ps1` and its parts, `SaveBackup.py`, `AccountData.py` |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
 | `Git.cs`, `PullRequests.cs`, `VersionsTab.xaml.cs` | git in the checkout and the parsing of its output, the open pull requests, the Versions section and its guards |
+| `PlayTab.xaml.cs`, `CheckoutUpdates.cs` | Simple mode's home; when Play may update the checkout |
 | `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
 | `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |
@@ -385,7 +417,8 @@ accounts, settings, discovery, the catalogs, the single instance). `tests/Waypoi
 command and argument suggestions, the dev host's account list, finding the services, versions and releases, counter
 payloads, histogram tags and quantiles, the timings window, chart scales, origin's branches, remote URLs, the launcher's
 stashes, pull requests and forks, ages).
-The switches themselves (branch, pull request, a force-pushed one, the refusal over a local commit, stash and restore,
-update) were run against a throwaway repository with its own origin; they change a real checkout, so they have no unit
-test.
+`GitUpstreamTests` runs real git on throwaway repositories: a fork as origin against LocalExile, where each branch comes
+from, updating, the refusal over a local commit, a pull request, going back.
+The other switches (a force-pushed pull request, stash and restore) were run against a throwaway repository with its own
+origin; they have no unit test.
 The server's side of these hooks has its own tests there (`ChatCommandCatalogTests`, `HostTests`).

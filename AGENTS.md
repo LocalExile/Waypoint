@@ -26,6 +26,8 @@ rules: the server's are in its `AGENTS.md`.
 - **A switch of the checkout never loses work.** It backs the saves up, stashes uncommitted changes, stops what runs, asks
   before running a fork's pull request, and refuses what would drop a local commit; keep those guards when changing
   `VersionsTab`.
+- **Waypoint moves a checkout by itself only in Simple mode, and only a plain copy of LocalExile**
+  (`CheckoutUpdates.PlainCopy`): anything of the player's own stays as it is, and Advanced mode never moves one.
 - **Saves are never overwritten in place.** Restoring or starting fresh moves the current database aside first, and a
   change to accounts or mods is backed up unless the player turned that off. Never force-kill a Gateway as an automatic
   fallback; it needs the chance to save.

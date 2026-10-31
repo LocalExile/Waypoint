@@ -6,18 +6,18 @@ What to build next. Each item says where it stands, what it needs from the serve
 To pick an item up, mark it **in progress** with your name or PR here; when it ships, describe it in
 [launcher.md](launcher.md) and remove it from this file in the same change.
 
-Order: the collaboration items, then the player's first run, then isolated environments, then the ideas.
+Order: the collaboration items, then Simple mode, then isolated environments, then the ideas.
 
 ## 1. Collaboration
 
 - Protect `main`: changes arrive through reviewed pull requests.
+- Ask the LocalExile maintainers to mark good commits, with a moving `stable` tag or releases, and have Simple mode's Play
+  follow that. It follows `main` now, which changes many times a day with no test results, so a player can get a bug
+  inside the game.
 
-## 2. A simple first run
+## 2. Simple mode
 
-The setup guide covers the first run. JetStream's plan for the main view, not started:
-
-- A simple view with one Play button that does everything, plus mods and leagues; an **Advanced options** toggle brings back
-  the sections as they are now (servers, tests, branches). This needs a decision on what stays visible by default.
+- Leagues on Simple mode's sections, from JetStream's plan for one simple view.
 
 ## 3. Isolated environments
 

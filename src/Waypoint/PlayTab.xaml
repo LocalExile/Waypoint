@@ -1,0 +1,34 @@
+<UserControl x:Class="Waypoint.PlayTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Waypoint">
+    <UserControl.Resources>
+        <!-- A quiet action: reads as a link, and takes the keyboard as a button does. -->
+        <Style x:Key="QuietLink" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource Shell.Accent}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <!-- Simple mode's home: one sentence, one button. Everything else appears only when there is something to say. -->
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460">
+            <TextBlock x:Name="Headline" FontSize="24" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,24" />
+            <Button x:Name="MainButton" Style="{StaticResource Shell.PrimaryButton}" Click="MainClicked" HorizontalAlignment="Center"
+                    Height="52" MinWidth="200" Padding="40,0" Margin="0" FontSize="18" />
+            <ProgressBar x:Name="Working" Height="4" Width="260" IsIndeterminate="True" Visibility="Collapsed" />
+            <TextBlock x:Name="Note" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,18,0,0" Visibility="Collapsed" />
+            <Button x:Name="DetailsLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" />
+            <Button x:Name="StopLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" />
+            <Button x:Name="GoBackLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Go back to the version you had'}" Margin="0,18,0,0" Click="GoBackClicked" />
+        </StackPanel>
+    </Grid>
+</UserControl>

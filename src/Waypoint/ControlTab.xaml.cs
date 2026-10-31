@@ -175,7 +175,7 @@ public partial class ControlTab : UserControl
 
     bool ClientRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Client && s.Running);
 
-    Task Run(LiveRequest request) => Run(request, _shared.RunLiveAsync);
+    Task<int?> Run(LiveRequest request) => Run(request, _shared.RunLiveAsync);
 
     /// <summary>A run that starts a Gateway gets a backup of the saves first. Without one it goes on only if the player says
     /// so.</summary>
@@ -205,10 +205,11 @@ public partial class ControlTab : UserControl
         return false;
     }
 
-    async Task Run(LiveRequest request, Func<LiveRequest, Action<string>, Task<int?>> run)
+    /// <summary>The exit code of what ran; null when nothing did.</summary>
+    async Task<int?> Run(LiveRequest request, Func<LiveRequest, Action<string>, Task<int?>> run)
     {
-        if (!await PortsFree(request)) return;
-        if (!await BackUp(request)) return;
+        if (!await PortsFree(request)) return null;
+        if (!await BackUp(request)) return null;
         Append($"> {request.Describe()}");
         Say(() => L.Text("Running {0} …", request.Describe()));
         var started = Stopwatch.StartNew();
@@ -221,12 +222,14 @@ public partial class ControlTab : UserControl
             _ => L.Text("Failed: {0} exited with {1}; see the output and the Logs section.", request.Describe(), code),
         });
         Append(code is null ? "" : $"(exit {code})");
+        return code;
     }
 
     async void Play(object sender, RoutedEventArgs e) => await PlayAsync();
 
-    /// <summary>Play: also what the Versions section starts after a switch.</summary>
-    internal async Task PlayAsync()
+    /// <summary>Play: also what the Versions section starts after a switch, and Simple mode's Play. The exit code of the run;
+    /// null when none ran.</summary>
+    internal async Task<int?> PlayAsync()
     {
         if (PlaysOnlyTheGame(_shared.Monitor.Latest, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps()))
         {
@@ -234,15 +237,14 @@ public partial class ControlTab : UserControl
             if (ClientRunning)
             {
                 if (!Confirm(L.Text("Restart the game?"), L.Text("The game is running: Play closes it and starts it again; the servers keep running."),
-                        L.Text("Restart the game"))) return;
+                        L.Text("Restart the game"))) return null;
                 // live.ps1 -ClientOnly refuses a second client: this one has to be gone first.
-                if (!CloseClient()) return;
+                if (!CloseClient()) return null;
             }
-            await Run(ClientRequest());
-            return;
+            return await Run(ClientRequest());
         }
-        if (ClientRunning && !Confirm(L.Text("Restart the game?"), L.Text("The client is running: Play closes it and starts it again."), L.Text("Restart the game"))) return;
-        await Run(Request(LiveMode.All));
+        if (ClientRunning && !Confirm(L.Text("Restart the game?"), L.Text("The client is running: Play closes it and starts it again."), L.Text("Restart the game"))) return null;
+        return await Run(Request(LiveMode.All));
     }
 
     /// <summary>Play starts only the game when the three servers already listen: a full live.ps1 run would rebuild and

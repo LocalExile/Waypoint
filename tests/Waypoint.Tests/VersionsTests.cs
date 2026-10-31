@@ -28,6 +28,32 @@ public class VersionsTests
         Assert.All(Git.ParseBranches("origin/main\t2026-10-30T09:00:00+00:00\tAtakan\tMerge\n"), b => Assert.False(b.LocalOnly));
     }
 
+    [Fact]
+    public void LocalExiles_branches_beside_a_fork_lose_the_launchers_prefix()
+    {
+        var branches = Git.ParseBranches("launcher/upstream/main\t2026-10-30T09:00:00+00:00\tAtakan\tMerge\n", "launcher/upstream");
+        Assert.Equal("main", Assert.Single(branches).Name);
+        Assert.Equal(BranchSource.LocalExile, branches[0].Source);
+    }
+
+    [Theory]
+    [InlineData("LocalExile/LocalExile", true)]
+    [InlineData("localexile/LOCALEXILE", true)]
+    [InlineData("Wrathen/LocalExile", true)]
+    [InlineData("evrydayjunglist/evryPath", false)]
+    [InlineData(null, false)]
+    public void LocalExile_is_known_by_its_old_name_too(string? repository, bool expected) =>
+        Assert.Equal(expected, Git.IsUpstream(repository));
+
+    [Theory]
+    [InlineData("0\t195", 0, 195)]
+    [InlineData("3\t0\n", 3, 0)]
+    public void The_distance_from_LocalExile_reads_both_counts(string output, int ahead, int behind) =>
+        Assert.Equal((ahead, behind), Git.ParseCounts(output));
+
+    [Fact]
+    public void A_distance_git_did_not_give_is_no_distance() => Assert.Null(Git.ParseCounts("fatal: bad revision"));
+
     [Theory]
     [InlineData("https://github.com/LocalExile/LocalExile", "LocalExile/LocalExile")]
     [InlineData("https://github.com/LocalExile/LocalExile.git\n", "LocalExile/LocalExile")]

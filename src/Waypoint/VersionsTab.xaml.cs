@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Waypoint;
 
-sealed record BranchRow(RemoteBranch Branch, bool Current, bool IsDefault)
+sealed record BranchRow(RemoteBranch Branch, bool Current, bool IsDefault, bool Fork)
 {
     public string Name => Branch.Name;
     public string Subject => Branch.Subject;
@@ -16,6 +16,9 @@ sealed record BranchRow(RemoteBranch Branch, bool Current, bool IsDefault)
     public string UpdatedExact => Branch.Updated.LocalDateTime.ToString("g", CultureInfo.CurrentCulture);
     public Visibility DefaultBadge => IsDefault ? Visibility.Visible : Visibility.Collapsed;
     public Visibility LocalBadge => Branch.LocalOnly ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility ForkBadge => Branch.Source == BranchSource.Fork ? Visibility.Visible : Visibility.Collapsed;
+    /// <summary>Only beside a fork: with LocalExile as origin every remote branch is LocalExile's.</summary>
+    public Visibility UpstreamBadge => Fork && Branch.Source == BranchSource.LocalExile ? Visibility.Visible : Visibility.Collapsed;
     public bool CanSwitch => !Current;
     public string Action => L.Text(Current ? "Current" : "Switch");
 }
@@ -35,15 +38,17 @@ sealed record PullRow(PullRequest Pull, bool Current)
 }
 
 /// <summary>
-/// The Versions section: what the server checkout runs (a branch of origin, or an open pull request fetched into
-/// <c>pr/&lt;n&gt;</c>) and switching it. A switch never loses work: uncommitted changes are stashed (and offered back on
+/// The Versions section: what the server checkout runs (a branch, or an open pull request fetched into
+/// <c>pr/&lt;n&gt;</c>), how it compares with LocalExile, and switching it: LocalExile's branches and pull requests whatever
+/// <c>origin</c> is, a fork's branches beside them. A switch never loses work: uncommitted changes are stashed (and offered back on
 /// return), running servers and the game are stopped first, a pull request from a fork is run only after the player
 /// agreed to, once per pull request. Everything is git in the checkout and GitHub's public API; nothing in the server.
 /// </summary>
 public partial class VersionsTab : UserControl
 {
     Shared _shared = null!;
-    string? _repository;
+    bool _fork;
+    (int Ahead, int Behind)? _compared;
     string _default = "main";
     string? _current;
     List<RemoteBranch> _branches = [];
@@ -136,14 +141,11 @@ public partial class VersionsTab : UserControl
                 if (!ran) Say(() => L.Text("{0} is running; the lists are what the checkout already knew.", _shared.BusyWith));
             }
             await ReadLocalAsync();
-            if (_repository is not null)
+            try { _pulls = await PullRequests.OpenAsync(Git.UpstreamRepository, refresh: fetch); }
+            catch (Exception e) when (e is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
             {
-                try { _pulls = await PullRequests.OpenAsync(_repository, refresh: fetch); }
-                catch (Exception e) when (e is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
-                {
-                    Log($"pull requests: {e.Message}");
-                    Say(() => L.Text("The pull requests could not be read from GitHub (see the output)."));
-                }
+                Log($"pull requests: {e.Message}");
+                Say(() => L.Text("The pull requests could not be read from GitHub (see the output)."));
             }
             Show();
         }
@@ -154,11 +156,12 @@ public partial class VersionsTab : UserControl
         }
     }
 
-    /// <summary>The checkout's state: its branch, its changes, its stashes, origin's branches.</summary>
+    /// <summary>The checkout's state: its branch, how that compares with LocalExile, its changes, its stashes, the branches.</summary>
     async Task ReadLocalAsync()
     {
         _current = Repo.Branch();
-        _repository ??= await Git.GitHubRepositoryAsync();
+        _fork = !await Git.OriginIsUpstreamAsync();
+        _compared = _current is null ? null : await Git.CompareAsync(_current);
         _default = await Git.DefaultBranchAsync();
         _branches = await Git.BranchesAsync();
         _stashes = await Git.StashesAsync();
@@ -174,15 +177,26 @@ public partial class VersionsTab : UserControl
         CurrentName.Text = pull is int number
             ? title is null ? L.Text("Pull request #{0}", number) : L.Text("Pull request #{0}: {1}", number, title)
             : _current ?? L.Text("(no branch)");
-        CurrentDetail.Text = _changes == 0 ? L.Text("no local changes") : L.Text("{0} uncommitted change(s)", _changes);
+        CurrentDetail.Text = (_changes == 0 ? L.Text("no local changes") : L.Text("{0} uncommitted change(s)", _changes)) + Compared();
         RestoreLink.Visibility = _stashes.Any(s => s.Branch == _current) ? Visibility.Visible : Visibility.Collapsed;
         BackText.Text = L.Text("Back to {0}", _default);
         BackButton.IsEnabled = _current != _default;
         UpdateButton.IsEnabled = _current is not null;
         UpdateButton.ToolTip = pull is int p
             ? L.Text("Fetches pull request #{0} again: its newest commits, also after a force-push", p)
-            : L.Text("git pull --ff-only: {0} as origin has it now", _current);
+            : _compared is null ? L.Text("git pull --ff-only: {0} as origin has it now", _current)
+            : L.Text("Fast-forwards {0} to LocalExile's; refused when it has commits of its own", _current);
     }
+
+    /// <summary>The checkout against LocalExile's branch of the same name, where it has one.</summary>
+    string Compared() => _compared switch
+    {
+        null => "",
+        (0, 0) => "  ·  " + L.Text("up to date with LocalExile"),
+        (0, var behind) => "  ·  " + L.Text("{0} commit(s) behind LocalExile", behind),
+        (var ahead, 0) => "  ·  " + L.Text("{0} commit(s) ahead of LocalExile", ahead),
+        var (ahead, behind) => "  ·  " + L.Text("{0} ahead of LocalExile, {1} behind", ahead, behind),
+    };
 
     void Show()
     {
@@ -190,9 +204,9 @@ public partial class VersionsTab : UserControl
         bool Has(string? s) => q.Length == 0 || s?.Contains(q, StringComparison.OrdinalIgnoreCase) == true;
         int? currentPull = Git.PullRequestOf(_current);
         var branches = _branches.Where(b => Has(b.Name) || Has(b.Subject) || Has(b.Author))
-            .Select(b => new BranchRow(b, b.Name == _current, b.Name == _default))
-            // The default branch, then this checkout's own branches (what one works on), then origin's, newest first.
-            .OrderByDescending(r => r.IsDefault).ThenByDescending(r => r.Branch.LocalOnly).ToList();
+            .Select(b => new BranchRow(b, b.Name == _current, b.Name == _default, _fork))
+            // The default branch, then this checkout's own branches (what one works on), a fork's, LocalExile's, newest first.
+            .OrderByDescending(r => r.IsDefault).ThenByDescending(r => r.Branch.Source).ToList();
         var pulls = _pulls.Where(p => Has(p.Title) || Has(p.Author) || Has($"#{p.Number}") || Has(p.Number.ToString(CultureInfo.InvariantCulture)))
             .Select(p => new PullRow(p, p.Number == currentPull)).ToList();
         BranchList.ItemsSource = branches;
@@ -251,7 +265,7 @@ public partial class VersionsTab : UserControl
         bool ran = await _shared.RunGitAsync(async () =>
         {
             Say(() => L.Text("Updating {0} …", branch));
-            var r = await Git.PullAsync(Log);
+            var r = await Git.UpdateAsync(branch!, Log);
             Say(() => r.Ok ? L.Text("{0} is up to date. Restart servers (or Play) builds it.", branch) : L.Text("Not updated: {0}", LastLine(r.Output)));
         });
         if (!ran) Say(() => L.Text("{0} is running; update when it is done.", _shared.BusyWith));

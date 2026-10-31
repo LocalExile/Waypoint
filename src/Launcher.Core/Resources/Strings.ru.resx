@@ -123,6 +123,9 @@
   <data name="Text_090416e6e2e6" xml:space="preserve">
     <value>Записывает планировку каждой области через Frida</value>
   </data>
+  <data name="Text_092709c82157" xml:space="preserve">
+    <value>LocalExile и ваши сохранения вернутся к состоянию до обновления. Прогресс, полученный с тех пор, останется в резервной копии. Обновления приостановятся на неделю.</value>
+  </data>
   <data name="Text_0985d74b69c6" xml:space="preserve">
     <value>Ожидание проверенного клиента; существующие записи сохраняются.</value>
   </data>
@@ -197,6 +200,9 @@
   </data>
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>Заново получает запрос на слияние #{0}: его новейшие коммиты, в том числе после force-push</value>
+  </data>
+  <data name="Text_0d422d261e8b" xml:space="preserve">
+    <value>Резервное копирование сохранений</value>
   </data>
   <data name="Text_0d9fe2fa20b9" xml:space="preserve">
     <value>Это можно изменить в разделе «Настройки → Поведение окна».</value>
@@ -305,6 +311,9 @@
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>Что нового</value>
+  </data>
+  <data name="Text_13e5b221168b" xml:space="preserve">
+    <value>отстаёт от LocalExile на {0} коммит(ов)</value>
   </data>
   <data xml:space="preserve" name="Text_13ef73c47f3e">
     <value>Шрифт для чтения</value>
@@ -474,6 +483,9 @@
   <data name="Text_1c98b88e71b9" xml:space="preserve">
     <value>Полностью закрыть Waypoint.</value>
   </data>
+  <data name="Text_1d0a51791fe2" xml:space="preserve">
+    <value>Возвращаем прежнюю версию</value>
+  </data>
   <data xml:space="preserve" name="Text_1d0fae1e7a27">
     <value>Нет модов для отображения.</value>
   </data>
@@ -579,6 +591,9 @@
   <data name="Text_2331c395597e" xml:space="preserve">
     <value>Не удалось проверить службы перед выходом.</value>
   </data>
+  <data name="Text_23a7fbf942ec" xml:space="preserve">
+    <value>Обновление не сработало, поэтому у вас осталась прежняя версия.</value>
+  </data>
   <data xml:space="preserve" name="Text_23c0a4391171">
     <value>Номер PR LocalExile</value>
   </data>
@@ -623,6 +638,9 @@
   </data>
   <data xml:space="preserve" name="Text_261d63e6eab7">
     <value>Запуск подготовленного клиента через live.ps1 -ClientOnly.</value>
+  </data>
+  <data name="Text_2622a68ee9da" xml:space="preserve">
+    <value>совпадает с LocalExile</value>
   </data>
   <data name="Text_2637af936de3" xml:space="preserve">
     <value>Обновляется только опубликованный Waypoint.exe</value>
@@ -1083,6 +1101,9 @@
   <data name="Text_3fe586513da2" xml:space="preserve">
     <value>сборка GameServer.Host …</value>
   </data>
+  <data name="Text_3fee95da5ab6" xml:space="preserve">
+    <value>Простой</value>
+  </data>
   <data name="Text_400d65cb7299" xml:space="preserve">
     <value>Остановить и обновить</value>
   </data>
@@ -1158,11 +1179,17 @@
   <data xml:space="preserve" name="Text_4660c28f96b5">
     <value>Порт {0} занят другим процессом (PID {1}); {2} не принадлежит этой установке.</value>
   </data>
+  <data name="Text_46a268a1cf86" xml:space="preserve">
+    <value>Вернуться к прежней версии</value>
+  </data>
   <data xml:space="preserve" name="Text_46d6b84bae4a">
     <value>Git отсутствует или HEAD этой папки недоступен. Папку по-прежнему можно выбрать вручную.</value>
   </data>
   <data name="Text_46d9953d562e" xml:space="preserve">
     <value>Сервер  </value>
+  </data>
+  <data name="Text_46dc6b04ab13" xml:space="preserve">
+    <value>Вы вернулись к прежней версии.</value>
   </data>
   <data xml:space="preserve" name="Text_4700b9ee6a2f">
     <value>Используйте круг, клавиши со стрелками на ползунке или точный HEX-код. Escape отменяет это изменение цвета.</value>
@@ -1197,6 +1224,9 @@
   <data xml:space="preserve" name="Text_4859a908b868">
     <value>Горячая перезагрузка</value>
   </data>
+  <data name="Text_48713a5c63fb" xml:space="preserve">
+    <value>Закончить игру</value>
+  </data>
   <data name="Text_48ce04a2b2bc" xml:space="preserve">
     <value>Полная копия включает персонажей, прогресс и все вкладки личных и гильдейских тайников. Пустой аккаунт содержит только новые данные входа.</value>
   </data>
@@ -1208,6 +1238,9 @@
   </data>
   <data xml:space="preserve" name="Text_494ca78f7374">
     <value>Своя схема</value>
+  </data>
+  <data name="Text_494d2555d158" xml:space="preserve">
+    <value>Waypoint не удалось вернуться к этой версии.</value>
   </data>
   <data name="Text_4987ea348964" xml:space="preserve">
     <value>Выполняется {0}; в списках то, что репозиторий уже знал.</value>
@@ -1304,6 +1337,9 @@
   </data>
   <data name="Text_4eb3cfff6031" xml:space="preserve">
     <value>{0}: обновлено.</value>
+  </data>
+  <data name="Text_4ec6dbda5bb3" xml:space="preserve">
+    <value>LocalExile обновлён.</value>
   </data>
   <data name="Text_4ed2e771f1b1" xml:space="preserve">
     <value>Запуск записи областей</value>
@@ -1703,6 +1739,9 @@
   <data xml:space="preserve" name="Text_667f64085762">
     <value>Выбрать PR</value>
   </data>
+  <data name="Text_66bf9723b741" xml:space="preserve">
+    <value>LocalExile ещё не готов</value>
+  </data>
   <data xml:space="preserve" name="Text_66bfcf020fee">
     <value>Проверки подготовки · всё в порядке</value>
   </data>
@@ -1772,6 +1811,9 @@
   <data xml:space="preserve" name="Text_6aa9edcc02f1">
     <value>Изменить цвет: {0}</value>
   </data>
+  <data name="Text_6aadac2f2b7a" xml:space="preserve">
+    <value>Вернуться</value>
+  </data>
   <data xml:space="preserve" name="Text_6ae2ae6a2f07">
     <value>Распаковщик</value>
   </data>
@@ -1825,6 +1867,9 @@
   </data>
   <data xml:space="preserve" name="Text_6e58b577a084">
     <value>Моды</value>
+  </data>
+  <data name="Text_6ed7c4e56792" xml:space="preserve">
+    <value>Обновлять LocalExile автоматически</value>
   </data>
   <data name="Text_6f3c603b812d" xml:space="preserve">
     <value>СЛУЖБА</value>
@@ -2062,6 +2107,9 @@
   </data>
   <data name="Text_7ddb44d8a533" xml:space="preserve">
     <value>только что</value>
+  </data>
+  <data name="Text_7def4e5a805e" xml:space="preserve">
+    <value>Кнопка «Играть» получает новейший LocalExile не чаще раза в день, сначала создав резервную копию сохранений. Копия с вашими изменениями остаётся нетронутой.</value>
   </data>
   <data name="Text_7e12616f0ba4" xml:space="preserve">
     <value>Путь к запрошенному репозиторию пуст или слишком длинный.</value>
@@ -2309,6 +2357,9 @@
   <data name="Text_8e18a81993ce" xml:space="preserve">
     <value>клиент не запущен</value>
   </data>
+  <data name="Text_8e29cf69a571" xml:space="preserve">
+    <value>Игра не запустилась.</value>
+  </data>
   <data xml:space="preserve" name="Text_8e3cda3b4f8b">
     <value>Локальный HEAD недоступен</value>
   </data>
@@ -2541,6 +2592,9 @@
   <data name="Text_9c384372f6be" xml:space="preserve">
     <value>Запись остановлена. Существующие файлы сохранены.</value>
   </data>
+  <data name="Text_9c508bc48078" xml:space="preserve">
+    <value>Подготовка</value>
+  </data>
   <data name="Text_9c5499b7d628" xml:space="preserve">
     <value>Не удалось обновить: {0}</value>
   </data>
@@ -2597,6 +2651,9 @@
   </data>
   <data name="Text_9e4f33182b00" xml:space="preserve">
     <value>live.ps1 -ClientOnly: запускает игру с работающими серверами («Перезапустить серверы» пересобирает их)</value>
+  </data>
+  <data name="Text_9f088dbebd6c" xml:space="preserve">
+    <value>Расширенный</value>
   </data>
   <data xml:space="preserve" name="Text_9f365252d60f">
     <value>Устраните ошибку проверки в настройках, затем обновите состояние.</value>
@@ -2754,6 +2811,9 @@
   <data name="Text_a71162b3bbb4" xml:space="preserve">
     <value>сетевой режим {0}: персонаж не сможет двигаться</value>
   </data>
+  <data name="Text_a71ee1d4ac5c" xml:space="preserve">
+    <value>Остановка</value>
+  </data>
   <data name="Text_a7436507dc71" xml:space="preserve">
     <value>Выход без остановки игры и служб.</value>
   </data>
@@ -2880,6 +2940,9 @@
   <data name="Text_afbb2e8b37b4" xml:space="preserve">
     <value>Не удалось запустить git: {0}. Установите Git для Windows и перезапустите Waypoint.</value>
   </data>
+  <data name="Text_afc05ca34f9e" xml:space="preserve">
+    <value>В вашем форке (origin), но не в LocalExile</value>
+  </data>
   <data name="Text_b016f6d52f72" xml:space="preserve">
     <value>Вы отложили изменения, когда ушли с {0}. Вернуть их сейчас?</value>
   </data>
@@ -2954,6 +3017,9 @@
   </data>
   <data xml:space="preserve" name="Text_b4a5df23dc4d">
     <value>Ошибка манифеста</value>
+  </data>
+  <data name="Text_b4bb971e7efe" xml:space="preserve">
+    <value>Добавляет серверы, ветки и запросы на слияние, резервные копии, производительность, журналы и консоль. Тогда Waypoint никогда не обновляет LocalExile сам.</value>
   </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>Прокручивать к каждой новой строке</value>
@@ -3072,8 +3138,14 @@
   <data name="Text_bb7234ec1245" xml:space="preserve">
     <value>Зарегистрировать</value>
   </data>
+  <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
+    <value>Запуск игры</value>
+  </data>
   <data name="Text_bbe8574175ab" xml:space="preserve">
     <value>Остановка…</value>
+  </data>
+  <data name="Text_bc01ae77f37c" xml:space="preserve">
+    <value>Завершить настройку</value>
   </data>
   <data name="Text_bc31a9393a79" xml:space="preserve">
     <value>live.ps1 -Only {0}: собирает и запускает</value>
@@ -3267,11 +3339,17 @@
   <data name="Text_c9263b3df7d6" xml:space="preserve">
     <value>Dev host работает.</value>
   </data>
+  <data name="Text_c934e59747e8" xml:space="preserve">
+    <value>Вернуться к прежней версии?</value>
+  </data>
   <data xml:space="preserve" name="Text_c9665c96a867">
     <value>Лайм</value>
   </data>
   <data name="Text_c9b2c9b72ddd" xml:space="preserve">
     <value>Что делать при закрытии окна?</value>
+  </data>
+  <data name="Text_c9cf9cba7b44" xml:space="preserve">
+    <value>Читает ветки LocalExile и origin, а также открытые запросы на слияние LocalExile</value>
   </data>
   <data name="Text_c9e0f4911e18" xml:space="preserve">
     <value>p95, мс</value>
@@ -3373,6 +3451,9 @@
   </data>
   <data name="Text_d03a6edefa0c" xml:space="preserve">
     <value>Все ошибки</value>
+  </data>
+  <data name="Text_d07a6262689c" xml:space="preserve">
+    <value>ваш форк</value>
   </data>
   <data xml:space="preserve" name="Text_d0ec1b1ff90e">
     <value>Фон метки коммита</value>
@@ -3569,6 +3650,9 @@
   <data name="Text_dcf6607f29a2" xml:space="preserve">
     <value>{0} мин назад</value>
   </data>
+  <data name="Text_ddbbe6445504" xml:space="preserve">
+    <value>Перематывает {0} вперёд до версии LocalExile; отказывает, если в ветке есть свои коммиты</value>
+  </data>
   <data xml:space="preserve" name="Text_ddc95fd087c9">
     <value>Подготовьте существующую копию клиента инструментами Auth и Patch LocalExile. Имеющиеся ключи сохраняются. Будут созданы недостающие ключи и Game.patched.exe, а список шлюзов копии будет настроен на localhost. Готовые исполняемые файлы не перезаписываются.</value>
   </data>
@@ -3636,6 +3720,9 @@
   <data name="Text_e20846d20bcd" xml:space="preserve">
     <value>Готово.</value>
   </data>
+  <data name="Text_e21cbdbe5596" xml:space="preserve">
+    <value>В LocalExile</value>
+  </data>
   <data name="Text_e21f935f11d7" xml:space="preserve">
     <value>Копировать</value>
   </data>
@@ -3668,6 +3755,9 @@
   </data>
   <data xml:space="preserve" name="Text_e40f307a9136">
     <value>HEAD совпадает с последним коммитом LocalExile</value>
+  </data>
+  <data name="Text_e448d0ca53ec" xml:space="preserve">
+    <value>Получение последнего обновления</value>
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop и dev host: игра, запись планировок, серверы и служба аккаунтов</value>
@@ -3737,6 +3827,9 @@
   </data>
   <data name="Text_e9988a42ca34" xml:space="preserve">
     <value>Waypoint не удалось найти свой исполняемый файл.</value>
+  </data>
+  <data name="Text_e9a58032e93d" xml:space="preserve">
+    <value>Игра запущена</value>
   </data>
   <data xml:space="preserve" name="Text_e9b13ad2ca83">
     <value>Ожидание завершения временной локальной службы.</value>
@@ -3873,6 +3966,9 @@
   <data xml:space="preserve" name="Text_f0f05a7102c2">
     <value>Выбор цвета: {0}</value>
   </data>
+  <data name="Text_f1067859a57b" xml:space="preserve">
+    <value>Поиск обновлений</value>
+  </data>
   <data xml:space="preserve" name="Text_f10e12da4cc1">
     <value>Не удалось завершить автоматический поиск. Выберите репозиторий вручную. </value>
   </data>
@@ -3967,6 +4063,9 @@
   <data xml:space="preserve" name="Text_f64a45cd7d47">
     <value>Выберите способ подготовки</value>
   </data>
+  <data name="Text_f65c3ff46b08" xml:space="preserve">
+    <value>Обновление не сработало. Возвращаем прежнюю версию</value>
+  </data>
   <data name="Text_f6777141eaf7" xml:space="preserve">
     <value>Раздел «Подготовка»: все требования и следующий шаг для каждого</value>
   </data>
@@ -3982,8 +4081,14 @@
   <data name="Text_f6f4688ff23d" xml:space="preserve">
     <value>Отправить</value>
   </data>
+  <data name="Text_f73bbf129e06" xml:space="preserve">
+    <value>Игра, моды и аккаунты. Waypoint сам обновляет LocalExile.</value>
+  </data>
   <data name="Text_f785c3ce1d58" xml:space="preserve">
     <value>мс</value>
+  </data>
+  <data name="Text_f7a90ea11a44" xml:space="preserve">
+    <value>Посмотреть, что случилось</value>
   </data>
   <data name="Text_f7d87ca41b10" xml:space="preserve">
     <value>Dev host</value>
@@ -4105,6 +4210,9 @@
   <data name="Text_fdaabbacfdbf" xml:space="preserve">
     <value>dev host закрыл соединение</value>
   </data>
+  <data name="Text_fdbe7939d897" xml:space="preserve">
+    <value>опережает LocalExile на {0}, отстаёт на {1}</value>
+  </data>
   <data name="Text_fdf8cf25d45d" xml:space="preserve">
     <value>npm ci в Tools/ooz репозитория</value>
   </data>
@@ -4141,5 +4249,8 @@
   </data>
   <data name="Text_ffc0b9c77e4f" xml:space="preserve">
     <value>Waypoint не будет останавливать службы при открытой игре. Отмените выход, чтобы сначала закрыть игру, или выйдите из Waypoint, оставив игру и службы работать в этот раз.</value>
+  </data>
+  <data name="Text_ffd7f7c8013d" xml:space="preserve">
+    <value>опережает LocalExile на {0} коммит(ов)</value>
   </data>
 </root>

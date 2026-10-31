@@ -43,13 +43,26 @@ The exe is not code-signed, so Windows SmartScreen may say "Windows protected yo
 Settings of an earlier Waypoint or LocalExile Launcher are taken over on the first start, and existing save backups stay
 where they are. Neither old file is changed.
 
+## Simple and Advanced modes
+
+A new player starts in **Simple mode**: **Play**, **Mods**, **Accounts** and **Settings**. **Play** does everything. It backs up
+your saves, gets the newest LocalExile at most once a day, builds it and starts the game. If an update doesn't start, Waypoint
+goes back to the version you had and starts that. **Go back to the version you had** stays for a week after an update, and
+**Settings → Keep LocalExile up to date** turns updates off. LocalExile has no releases yet, so an update is its latest
+code; a bug inside the game is what the way back is for.
+
+A copy with anything of your own (another branch, a fork as `origin`, changes, your own commits) is never updated by itself.
+
+The **Simple | Advanced** switch at the bottom of the sidebar is always there: **Advanced** gives every section below, with
+full control over branches and pull requests. Someone coming from an earlier launcher starts there.
+
 ## Sections
 
 | Section | What it does |
 | --- | --- |
 | **Control** | Play, start and stop the servers and each service, with the switches of `live.ps1` and its output |
 | **Setup** | What the checkout still needs, each requirement with its next step; the setup guide, which does all of it in one go |
-| **Versions** | Branches and pull requests of the checkout, with every switch guarded; build, hot reload status, fresh saves |
+| **Versions** | LocalExile's branches and pull requests and your own, how far you are from LocalExile, with every switch guarded; build, hot reload status, fresh saves |
 | **Mods** | The checkout's mods: build, enable, disable, reload, live status |
 | **Backups** | Consistent copies of the saves, made automatically before risky steps; restore, delete, saved mod choices |
 | **Accounts** | Accounts and characters, read from the saves; register, create a character, duplicate, rename, set a password, delete |

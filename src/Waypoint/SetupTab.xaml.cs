@@ -53,6 +53,9 @@ public partial class SetupTab : UserControl
 
     async void CheckAgain(object sender, RoutedEventArgs e) => await _shared.Workspace.RefreshAsync();
 
+    /// <summary>Simple mode's way to the guide.</summary>
+    internal void OpenSetupGuide() => RunGuide(this, new RoutedEventArgs());
+
     /// <summary>The guide holds the checkout while it is open, as a live.ps1 run does. Choosing another checkout in it starts
     /// Waypoint again on that one.</summary>
     async void RunGuide(object sender, RoutedEventArgs e)

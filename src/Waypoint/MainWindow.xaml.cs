@@ -70,6 +70,7 @@ public partial class MainWindow : Window
 {
     readonly Shared _shared = new();
     readonly Tray _tray = new();
+    readonly Section[] _sections;
     readonly StatusLight[] _lights =
     [
         new(Service.Patch, "Patch"), new(Service.Gateway, "Gateway"), new(Service.Auth, "Auth"), new(Service.Client, "Game"),
@@ -88,6 +89,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         InitializeWindowFrame();
         Control.Attach(_shared);
+        PlayView.Attach(_shared, Control);
         Setup.Attach(_shared);
         Versions.Attach(_shared);
         Mods.Attach(_shared);
@@ -117,8 +119,9 @@ public partial class MainWindow : Window
         _shared.Workspace.Stage += (stage, _) => Dispatcher.BeginInvoke(() => { _operation = stage; ShowStatus(_shared.Monitor.Latest); });
         _shared.Workspace.Failed += (stage, message, log) => Dispatcher.BeginInvoke(() => ShowFailure(stage, message, log));
 
-        Sections.ItemsSource = new Section[]
-        {
+        _sections =
+        [
+            new("Play", PackIconKind.Play, PlayView),
             new("Control", PackIconKind.ViewDashboardOutline, Control),
             new("Setup", PackIconKind.ClipboardCheckOutline, Setup),
             new("Versions", PackIconKind.SourceBranch, Versions),
@@ -130,14 +133,12 @@ public partial class MainWindow : Window
             new("Logs", PackIconKind.TextBoxOutline, LogsView),
             new("Console", PackIconKind.Console, ConsoleView),
             new("Settings", PackIconKind.CogOutline, SettingsView),
-        };
-        Sections.SelectedIndex = 0;
-        Versions.Switched += () =>
-        {
-            BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");
-            _ = Control.RefreshSetup();
-            _ = _shared.Workspace.RefreshAsync();
-        };
+        ];
+        ShowMode();
+        Versions.Switched += CheckoutMoved;
+        PlayView.CheckoutChanged += CheckoutMoved;
+        PlayView.SetupRequested += Setup.OpenSetupGuide;
+        PlayView.DetailsRequested += () => ShowSection(LogsView);
         Versions.PlayRequested += () =>
         {
             ShowSection(Control);
@@ -176,14 +177,60 @@ public partial class MainWindow : Window
 
     bool _live;
 
+    /// <summary>Simple mode's sections and nothing about the servers, or all of them. The section on show stays when the new
+    /// list has it.</summary>
+    void ShowMode()
+    {
+        bool advanced = _shared.Settings.Advanced;
+        var sections = _sections.Where(s => advanced ? s.View != PlayView : s.View is PlayTab or ModsTab or AccountsTab or SettingsTab).ToArray();
+        var shown = Sections.SelectedItem as Section;
+        Sections.ItemsSource = sections;
+        Sections.SelectedItem = sections.Contains(shown) ? shown : sections[0];
+        BranchChip.Visibility = StatusStrip.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+        SimpleMode.IsChecked = !advanced;
+        AdvancedMode.IsChecked = advanced;
+        SettingsView.ShowMode();
+    }
+
+    /// <summary>The sidebar's switch.</summary>
+    void ModeChosen(object sender, RoutedEventArgs e)
+    {
+        bool advanced = AdvancedMode.IsChecked == true;
+        if (advanced == _shared.Settings.Advanced) return;
+        _shared.Settings.AdvancedMode = advanced;
+        _shared.Settings.Save();
+        ShowMode();
+    }
+
+    void CheckoutMoved()
+    {
+        BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");
+        _ = Control.RefreshSetup();
+        _ = _shared.Workspace.RefreshAsync();
+    }
+
     void SectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (Sections.SelectedItem is not Section shown) return;
-        foreach (Section s in Sections.Items) s.View.Visibility = s == shown ? Visibility.Visible : Visibility.Collapsed;
+        if (Sections.SelectedItem is Section shown) Show(shown);
+    }
+
+    void Show(Section shown)
+    {
+        foreach (var s in _sections) s.View.Visibility = s == shown ? Visibility.Visible : Visibility.Collapsed;
         SectionTitle.Text = shown.DisplayName;
     }
 
-    void ShowSection(FrameworkElement view) => Sections.SelectedItem = Sections.Items.Cast<Section>().First(s => s.View == view);
+    /// <summary>A link can lead to a section Simple mode's list does not have: it then shows without being selected.</summary>
+    void ShowSection(FrameworkElement view)
+    {
+        var section = _sections.First(s => s.View == view);
+        if (Sections.Items.Contains(section)) Sections.SelectedItem = section;
+        else
+        {
+            Sections.SelectedItem = null;
+            Show(section);
+        }
+    }
 
     void OpenLogsSection(object sender, RoutedEventArgs e) => ShowSection(LogsView);
 
