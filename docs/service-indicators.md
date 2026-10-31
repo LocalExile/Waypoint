@@ -50,3 +50,17 @@ The solution builds with zero warnings/errors. The full regression suite passed 
 skipped Python symlink test**: 1,498 desktop, 143 core, 18 bridge, 13 mod startup, 18 mod control, nine mod transport,
 25 source/save, 21 account bridge and 19 Python account-data checks. No real game/server action or saved preference
 change was performed by the automated/preview checks.
+
+## Portable review build
+
+- Source: `483b63d9454322f284b626b3f812ce5c27e65a63`.
+- ZIP: `.local/releases/483b63d-20261031-011318-0770ba84/Waypoint-0.6.4-win-x64.zip`.
+- SHA-256: `ca0f7708bb2e48326b84ed9762f59a6eae757ca2d75bdc88febb6530322acd8a`.
+- External EXE: `F:\Waypoint Release Validation\0.6.4-review-483b63d\Waypoint\Waypoint.exe`.
+- The actual ZIP passed all 415 payload hash/size, branding/version, runtime/license, Russian satellite and absence
+  of extra/private game-file checks. The extracted app showed Version 0.6.4 and all four actual checkout components
+  as Stopped, matching their service rows. Screenshot: `.local/status-review/release-0.6.4.png`.
+- The older review copy was exited normally with leave-services selected. Original owner preferences were restored
+  byte-for-byte (SHA-256 `abc218bd7570e3027e0628b135774d372ddeaad4ac5037623e9a914695c9da79`).
+  One extracted 0.6.4 workspace was left open for review. No real service or game was started/stopped, and no changes
+  were pushed, uploaded or published.
