@@ -13,7 +13,15 @@ This is a Windows x64 portable preview. No installer is required.
    scroll to First local account and choose Create local account.
 6. Press Play, sign in inside the game and create/select a character there.
    Builds manages branches, PRs and hot reload. Backups manages save snapshots
-   and the automatic-backup preference.
+   and the automatic-backup preference. Mods manages local mods and shows
+   their last confirmed runtime status.
+7. In Settings > Language, choose English or Русский. The interface changes
+   immediately and remembers your choice. Logs and technical identifiers
+   keep their original text. English is the default.
+
+Use Ctrl+1 through Ctrl+8 to choose a page, Ctrl+Tab or Ctrl+Shift+Tab to
+cycle pages, Ctrl+F to search the current page and F5 to refresh local status.
+On Windows 11, hover over the maximize button to open native Snap Layouts.
 
 Keep all files and subfolders together. Moving only the EXE will not work.
 The launcher includes its .NET Desktop runtime. Building/running LocalExile

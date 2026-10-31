@@ -41,7 +41,7 @@ try {
     & dotnet @arguments
     if ($LASTEXITCODE -ne 0) { throw 'Release build failed. No ZIP was created.' }
     foreach ($file in @("$name.exe", "$name.dll", "$name.runtimeconfig.json", "$name.deps.json", 'Launcher.Core.dll',
-        'brand.json', 'RuntimeBridge.ps1', 'ModBridge.ps1', 'ConsoleSignal.ps1', 'SaveBackup.py', 'hostfxr.dll', 'coreclr.dll', 'PresentationFramework.dll')) {
+        'brand.json', 'ru/Launcher.Core.resources.dll', 'RuntimeBridge.ps1', 'ModBridge.ps1', 'ConsoleSignal.ps1', 'SaveBackup.py', 'hostfxr.dll', 'coreclr.dll', 'PresentationFramework.dll')) {
         if (-not (Test-Path -LiteralPath (Join-Path $package $file) -PathType Leaf)) { throw "Release is missing required file: $file" }
     }
     $runtime = Get-Content -LiteralPath (Join-Path $package "$name.runtimeconfig.json") -Raw | ConvertFrom-Json

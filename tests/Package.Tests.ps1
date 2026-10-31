@@ -34,12 +34,29 @@ if (@($actual | Where-Object { $_.Extension -in @('.pdb','.db','.ggpk','.pfx') -
     throw 'Development/private game data must not be included in the portable package.'
 }
 $brand = Get-Content -LiteralPath (Join-Path $package 'brand.json') -Raw | ConvertFrom-Json
+$satellite = Join-Path $package 'ru/Launcher.Core.resources.dll'
+if (-not (Test-Path -LiteralPath $satellite -PathType Leaf) -or
+    -not @($manifest.Files | Where-Object Path -eq 'ru/Launcher.Core.resources.dll').Count) {
+    throw 'The Russian interface satellite must be included and covered by the manifest.'
+}
+$satelliteIdentity = [Reflection.AssemblyName]::GetAssemblyName($satellite)
+if ($satelliteIdentity.Name -ne 'Launcher.Core.resources' -or $satelliteIdentity.CultureName -ne 'ru') {
+    throw 'Expected the Russian Launcher.Core satellite assembly.'
+}
 if (-not (Test-Path -LiteralPath (Join-Path $package 'LICENSE.txt')) -or
     -not (Get-Content -LiteralPath (Join-Path $package 'LICENSE.txt') -Raw).StartsWith('MIT License') -or
     -not (Test-Path -LiteralPath (Join-Path $package 'RELEASE-NOTES.md'))) { throw 'Application license or release notes are missing.' }
 if (-not (Test-Path -LiteralPath (Join-Path $package 'licenses/Microsoft.NETCore.App-LICENSE.TXT')) -or
     -not (Test-Path -LiteralPath (Join-Path $package 'licenses/Microsoft.WindowsDesktop.App-LICENSE.txt'))) { throw 'Bundled runtime license files are missing.' }
 if ($brand.displayName -ne $manifest.Product -or ($brand.executableName + '.exe') -ne $manifest.Executable -or $brand.version -ne $manifest.Version) { throw 'Branding and executable metadata do not agree.' }
+$appDll = Join-Path $package ($brand.executableName + '.dll')
+$identity = [Diagnostics.FileVersionInfo]::GetVersionInfo($appDll).ProductVersion
+if (-not $identity.StartsWith($manifest.Version + '+') -or -not $identity.Contains($manifest.SourceCommit)) {
+    throw 'The application assembly must identify the manifest version and source commit.'
+}
+if ($satelliteIdentity.Version -ne [Reflection.AssemblyName]::GetAssemblyName((Join-Path $package 'Launcher.Core.dll')).Version) {
+    throw 'Russian resources must match the packaged Core assembly version.'
+}
 $exe = Join-Path $package $manifest.Executable
 $stream = [IO.File]::OpenRead($exe)
 try {
@@ -48,6 +65,6 @@ try {
     $stream.Position = 0x3C; $offset = $reader.ReadInt32(); $stream.Position = $offset
     if ($reader.ReadUInt32() -ne 0x00004550 -or $reader.ReadUInt16() -ne 0x8664) { throw 'Expected a Windows x64 executable.' }
 } finally { $stream.Dispose() }
-Write-Host "PASS: ZIP checksum; all $(@($manifest.Files).Count) payload hashes/sizes; no extra/private game files; matching branding; Windows x64 EXE."
+Write-Host "PASS: ZIP checksum; all $(@($manifest.Files).Count) payload hashes/sizes; Russian satellite; no extra/private game files; matching branding; Windows x64 EXE."
 Write-Host "Extracted package: $package"
 Write-Host "Source commit: $($manifest.SourceCommit)"

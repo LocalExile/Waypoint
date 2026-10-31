@@ -1,6 +1,8 @@
 # Local UI/UX review
 
-This work is a local review candidate following Waypoint 0.4.0. No release, tag, push, deployment or upload is part of this task. Product version and stable settings identity remain unchanged.
+This is the historical local review record for UI work following Waypoint 0.4.0. During that review, no release,
+tag, push, deployment or upload was performed, and the product version stayed unchanged. The owner subsequently
+authorized inclusion in [Waypoint 0.5.0](../releases/0.5.0.md). The stable settings identity remains unchanged.
 
 The build fingerprint in this directory records the pre-commit UI-review snapshot. Subsequent local commits do not change that historical artifact or turn it into a published release. Before grouping the pending work into commits, all documented checks were rerun: 158 desktop, 78 Core, 18 bridge, 13 mod-startup, 18 mod-control, 9 mod-transport and 25 source/save assertions passed (319 total).
 
