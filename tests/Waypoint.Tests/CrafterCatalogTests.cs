@@ -38,4 +38,31 @@ public class CrafterCatalogTests
         Assert.Equal(["IncreasedLife7", "IncreasedLife6"], catalog.Tiers(0, life).Select(m => m.Id));
         Assert.Equal("Dire", Assert.Single(catalog.Words).Text);
     }
+
+    [Fact]
+    public void A_line_break_in_a_description_makes_two_lines()
+    {
+        var description = new StatDescription(["charges"], [new DescriptionVariant(["#"], @"Used {0} times\nDoes not Queue", [])]);
+        var mod = new CraftMod("Charges1", "", 1, 1, 1, [0], [], [new CraftStat("charges", 3, 3)]);
+        Assert.Equal(["Used 3 times", "Does not Queue"], ModText.Lines(mod, _ => description, [3]));
+    }
+
+    [Fact]
+    public void A_Gateway_is_only_asked_for_the_crafter_when_it_has_the_hook()
+    {
+        // One built before the hook would take `crafter` for a normal start.
+        Assert.False(CrafterCatalog.HasCrafter(new CommandCatalog([new ChatCommand("item", "/item <name>")])));
+        Assert.True(CrafterCatalog.HasCrafter(new CommandCatalog([new ChatCommand("item", "/item <name>"), new ChatCommand("item_give", "/item_give <item as JSON>")])));
+    }
+
+    [Fact]
+    public void A_window_stays_inside_its_monitor()
+    {
+        // Centred on a small owner in a corner: moved, as far as it takes and no further.
+        Assert.Equal((0, 0, 1320, 840), FormWindow.Fit((-210, -140, 1320, 840), (0, 0, 1920, 1040)));
+        // Larger than a laptop's screen at 150%.
+        Assert.Equal((0, 0, 1280, 672), FormWindow.Fit((-20, -84, 1320, 840), (0, 0, 1280, 672)));
+        // Already inside, on a monitor to the left of the main one: left alone.
+        Assert.Equal((-1800, 100, 1320, 840), FormWindow.Fit((-1800, 100, 1320, 840), (-1920, 0, 1920, 1040)));
+    }
 }

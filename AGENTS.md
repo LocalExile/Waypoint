@@ -14,7 +14,8 @@ rules: the server's are in its `AGENTS.md`.
 
 - **Waypoint never starts a server or the game client itself.** Every start, restart and stop on the Control section is a
   `scripts/dev/live.ps1` switch of the checkout (the server's rule: the client starts only through `live.ps1`, one at a
-  time). Stopping the client's process or the dev host Waypoint started is fine.
+  time). Stopping the client's process or the dev host Waypoint started is fine. A Gateway ignores a listing mode it doesn't
+  know and starts for real, so a new mode needs a check that the build has it first (`CrafterCatalog.HasCrafter`).
 - **No reference to server projects.** Waypoint talks to the server only through its outside-tool hooks: `live.ps1`,
   `GameServer.Gateway commands` / `values <kind>` / `crafter`, the dev host's JSON-lines protocol, the client control
   bridge, the logs. The Versions section also runs git in the checkout and reads GitHub's public API; the adapter in `scripts/` reads

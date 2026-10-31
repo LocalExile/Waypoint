@@ -252,9 +252,6 @@
   <data name="Text_0e2a4f380fbe" xml:space="preserve">
     <value>Собрать и запустить серверы и игру сейчас?</value>
   </data>
-  <data name="Text_0e3720be6816" xml:space="preserve">
-    <value>В Gateway этого чекаута нет конструктора предметов: подтяните основную ветку сервера.</value>
-  </data>
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Локальная оболочка запуска</value>
   </data>
@@ -599,6 +596,9 @@
   </data>
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile собран. Когда появится игровой клиент, добавьте его с помощью этого мастера: Подготовка → Запустить мастер настройки.</value>
+  </data>
+  <data name="Text_21ea97893c68" xml:space="preserve">
+    <value>В Gateway этого чекаута пока нет конструктора предметов: обновите LocalExile, затем начните игру или запустите серверы, чтобы собрать его.</value>
   </data>
   <data xml:space="preserve" name="Text_223e64b8fc5b">
     <value>При первом запуске выполняется автоматический поиск. Здесь можно запустить его повторно.</value>
@@ -2873,6 +2873,9 @@
   </data>
   <data xml:space="preserve" name="Text_a06db67ffa92">
     <value>Проверяем выбранную установку…</value>
+  </data>
+  <data name="Text_a0b23bdf2ea5" xml:space="preserve">
+    <value>мосту нужен Python с frida, а он не установлен: как установить, показано в разделе «Подготовка» в расширенном режиме</value>
   </data>
   <data name="Text_a0c0082323d1" xml:space="preserve">
     <value>Запросы на слияние ({0})</value>

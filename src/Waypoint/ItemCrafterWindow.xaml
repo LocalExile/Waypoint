@@ -64,22 +64,22 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="360" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="380" />
+            <ColumnDefinition Width="27*" MinWidth="290" />
+            <ColumnDefinition Width="44*" MinWidth="440" />
+            <ColumnDefinition Width="29*" MinWidth="290" />
         </Grid.ColumnDefinitions>
 
         <!-- Left: the base, the modifiers to add, the saved items. -->
         <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,1,0">
             <DockPanel Margin="14,10,14,10">
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
                     <RadioButton x:Name="BasesPage" Style="{StaticResource MaterialDesignTabRadioButton}" IsChecked="True" Checked="PageChanged"
                                  Content="{l:Loc 'Base'}" Padding="12,6" Margin="0,0,2,0" />
                     <RadioButton x:Name="ModsPage" Style="{StaticResource MaterialDesignTabRadioButton}" Checked="PageChanged"
                                  Content="{l:Loc 'Add modifiers'}" Padding="12,6" Margin="0,0,2,0" />
                     <RadioButton x:Name="SavedPage" Style="{StaticResource MaterialDesignTabRadioButton}" Checked="PageChanged"
                                  Content="{l:Loc 'Saved'}" Padding="12,6" />
-                </StackPanel>
+                </WrapPanel>
 
                 <Grid>
                     <!-- Bases: the classes as icons, a search, the list. -->
@@ -188,7 +188,7 @@
                 </DockPanel>
 
                 <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'RARITY'}" />
-                <StackPanel x:Name="RarityButtons" Orientation="Horizontal" />
+                <WrapPanel x:Name="RarityButtons" />
 
                 <Grid Margin="0,4,0,0">
                     <Grid.ColumnDefinitions>
@@ -248,8 +248,10 @@
                 <DockPanel Margin="0,14,0,0">
                     <Button DockPanel.Dock="Right" Click="ClearMods" Content="{l:Loc 'Remove all'}" Margin="0" />
                     <Button DockPanel.Dock="Right" Click="ShowModPicker" Content="{l:Loc 'Add modifiers'}" Margin="0,0,6,0" />
-                    <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'MODIFIERS'}" VerticalAlignment="Center" Margin="0" />
-                    <TextBlock x:Name="AffixCount" Style="{StaticResource Shell.Secondary}" FontSize="11.5" Margin="12,0,0,0" VerticalAlignment="Center" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'MODIFIERS'}" Margin="0" />
+                        <TextBlock x:Name="AffixCount" Style="{StaticResource Shell.Secondary}" FontSize="11.5" Margin="0,2,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
                 </DockPanel>
                 <StackPanel x:Name="ModRows" Margin="0,8,0,0" />
                 <TextBlock x:Name="NoMods" Style="{StaticResource Shell.Secondary}" Margin="0,6,0,0" TextWrapping="Wrap"
@@ -261,9 +263,10 @@
         <Border Grid.Column="2" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1,0,0,0">
             <DockPanel Margin="16,14,16,12">
                 <StackPanel DockPanel.Dock="Bottom">
-                    <TextBox x:Name="LabelBox" md:HintAssist.Hint="{l:Loc 'Label in the saved list (optional)'}" Margin="0,0,0,8" />
+                    <TextBox x:Name="LabelBox" md:HintAssist.Hint="{l:Loc 'Label in the saved list (optional)'}" Margin="0,0,0,8" TextChanged="LabelChanged" />
                     <WrapPanel>
-                        <Button x:Name="SaveButton" Click="SaveItem" IsEnabled="False" ToolTip="{l:Loc 'Keep the item in the saved list to come back to it'}">
+                        <Button x:Name="SaveButton" Click="SaveItem" IsEnabled="False" ToolTip="{l:Loc 'Keep the item in the saved list to come back to it'}"
+                                AutomationProperties.Name="{l:Loc 'Save'}">
                             <StackPanel Orientation="Horizontal">
                                 <md:PackIcon Kind="ContentSaveOutline" Margin="0,0,6,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{l:Loc 'Save'}" />
@@ -271,7 +274,7 @@
                         </Button>
                         <Button x:Name="GiveButton" Style="{StaticResource Shell.PrimaryButton}" Click="GiveItem" IsEnabled="False"
                                 ToolTip="{l:Loc 'Put the item into the inventory of the character in game (the client control bridge)'}"
-                                ToolTipService.ShowOnDisabled="True">
+                                AutomationProperties.Name="{l:Loc 'Give item'}" ToolTipService.ShowOnDisabled="True">
                             <StackPanel Orientation="Horizontal">
                                 <md:PackIcon Kind="GiftOutline" Margin="0,0,6,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{l:Loc 'Give item'}" />

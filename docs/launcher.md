@@ -411,8 +411,11 @@ write and gives it to the character in game.
 
 The data is the Gateway's own (`GameServer.Gateway crafter`, read once per Gateway build): the bases, the modifiers each
 can have (the server's own rolling rules), their stat descriptions in English (the checkout's
-`data/stat-descriptions.txt`) and the name words. A checkout without the hook says so; `CrafterCatalog.cs` reads it and
-words the modifiers.
+`data/stat-descriptions.txt`) and the name words. `CrafterCatalog.cs` reads it and words the modifiers.
+
+A Gateway built before the hook does not know `crafter` and would start for real, so Waypoint first asks `commands`,
+which is safe, and goes on only if that lists `/item_give`, which came with the hook. If not, the window says the
+checkout needs updating and building; nothing starts.
 
 ### Accounts
 

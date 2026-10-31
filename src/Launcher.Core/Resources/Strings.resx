@@ -252,9 +252,6 @@
   <data name="Text_0e2a4f380fbe" xml:space="preserve">
     <value>Build it and start the servers and the game now?</value>
   </data>
-  <data name="Text_0e3720be6816" xml:space="preserve">
-    <value>This checkout's Gateway has no item crafter: pull the server's main branch.</value>
-  </data>
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Local runtime wrapper</value>
   </data>
@@ -599,6 +596,9 @@
   </data>
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile is built. Add your game client with this guide when you have it: Setup → Run setup guide.</value>
+  </data>
+  <data name="Text_21ea97893c68" xml:space="preserve">
+    <value>This checkout's Gateway has no item crafter yet: update LocalExile, then play or start the servers once to build it.</value>
   </data>
   <data xml:space="preserve" name="Text_223e64b8fc5b">
     <value>Automatic lookup runs on first use. You can also search again here.</value>
@@ -2873,6 +2873,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_a06db67ffa92">
     <value>Checking the selected installation…</value>
+  </data>
+  <data name="Text_a0b23bdf2ea5" xml:space="preserve">
+    <value>the bridge needs Python with frida, which is not installed: the Setup section in Advanced mode shows how</value>
   </data>
   <data name="Text_a0c0082323d1" xml:space="preserve">
     <value>Pull requests ({0})</value>

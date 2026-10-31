@@ -65,6 +65,9 @@ public partial class ItemCrafterWindow : FormWindow
         }
         ShowLanguage();
         ShowSaved();
+        MinWidth = Math.Min(MinWidth, SystemParameters.WorkArea.Width);
+        MinHeight = Math.Min(MinHeight, SystemParameters.WorkArea.Height);
+        Loaded += (_, _) => KeepOnScreen();
         Loaded += async (_, _) => await LoadCatalog();
         L.Current.PropertyChanged += LanguageChanged;
         Theme.Changed += ThemeChanged;
@@ -909,6 +912,11 @@ public partial class ItemCrafterWindow : FormWindow
     };
 
     void SavedSearchChanged(object sender, TextChangedEventArgs e) => ShowSaved();
+
+    void LabelChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!_updating) _item.Label = LabelBox.Text;
+    }
 
     void SavedChosen(object sender, SelectionChangedEventArgs e)
     {

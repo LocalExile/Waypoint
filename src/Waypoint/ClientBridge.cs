@@ -38,6 +38,9 @@ sealed class ClientBridge : IDisposable
                 string error;
                 lock (_errors) error = _errors.ToString();
                 Stop();
+                // Frida is optional for playing, so this one is expected and has a way out.
+                if (error.Contains("No module named 'frida'", StringComparison.Ordinal))
+                    throw new InvalidOperationException(L.Text("the bridge needs Python with frida, which is not installed: the Setup section in Advanced mode shows how"));
                 throw new InvalidOperationException(L.Text("the bridge stopped: {0}", Tail(error)));
             }
             return JsonNode.Parse(line)?.AsObject() ?? throw new InvalidOperationException(L.Text("not a result: {0}", line));

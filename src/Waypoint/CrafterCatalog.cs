@@ -65,13 +65,20 @@ sealed class CrafterCatalog
         if (!File.Exists(dll)) throw new FileNotFoundException(L.Text("{0} is not built yet: start the servers once (live.ps1 builds it)", dll));
         DateTime built = File.GetLastWriteTimeUtc(dll);
         if (_loaded is { } loaded && loaded.Built == built) return loaded;
+        // A Gateway built before the crafter hook does not know `crafter` and starts for real: the saves, Auth, the port.
+        // /item_give came with the hook, and `commands` is safe on every Gateway with the launcher hooks.
+        if (!HasCrafter(await CommandCatalog.LoadAsync())) throw new InvalidOperationException(NoCrafter);
         string output = await CommandCatalog.AskGateway(TimeSpan.FromSeconds(90), dll, "crafter");
         var catalog = Parse(output);
-        if (catalog.Bases.Count == 0)
-            throw new InvalidOperationException(L.Text("This checkout's Gateway has no item crafter: pull the server's main branch."));
+        if (catalog.Bases.Count == 0) throw new InvalidOperationException(NoCrafter);
         catalog.Built = built;
         return _loaded = catalog;
     }
+
+    static string NoCrafter => L.Text("This checkout's Gateway has no item crafter yet: update LocalExile, then play or start the servers once to build it.");
+
+    /// <summary>Whether this Gateway build has the crafter hook.</summary>
+    internal static bool HasCrafter(CommandCatalog commands) => commands.Of("/item_give") is not null;
 
     /// <summary>The `crafter` mode's JSON lines; other lines (the Gateway's own log) are skipped.</summary>
     internal static CrafterCatalog Parse(string jsonLines)
@@ -204,7 +211,8 @@ static class ModText
             ?? d.Variants.FirstOrDefault(v => Matches(v, ranges.Select(r => r.Min).ToList()));
         if (variant is null) return null;
         int next = 0;
-        return Placeholder.Replace(variant.Text, m =>
+        // A line break in a description is written "\n", as in the client's file.
+        return Placeholder.Replace(variant.Text.Replace("\\n", "\n"), m =>
         {
             int index = m.Groups[1].Length > 0 ? int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture) : next++;
             if (index >= ranges.Count) return m.Value;

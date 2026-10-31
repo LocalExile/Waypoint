@@ -70,6 +70,30 @@ public class FormWindow : Window
         SetWindowPos(hwnd, 0, 0, 0, 0, 0, 0x37); // FRAMECHANGED, NOMOVE, NOSIZE, NOZORDER, NOACTIVATE
     }
 
+    /// <summary>Brings a large window inside the work area of its monitor: on a small screen, or centred on a smaller owner,
+    /// its title bar and buttons would start off the screen, with no way to reach them.</summary>
+    protected void KeepOnScreen()
+    {
+        nint hwnd = new WindowInteropHelper(this).Handle;
+        if (!GetWindowRect(hwnd, out var r)) return;
+        var work = System.Windows.Forms.Screen.FromHandle(hwnd).WorkingArea;
+        var (left, top, width, height) = Fit((r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top), (work.Left, work.Top, work.Width, work.Height));
+        SetWindowPos(hwnd, 0, left, top, width, height, 0x14); // NOZORDER, NOACTIVATE
+    }
+
+    /// <summary>The window's place within the work area: no larger than it, and moved only as far as it takes.</summary>
+    internal static (int Left, int Top, int Width, int Height) Fit((int Left, int Top, int Width, int Height) window, (int Left, int Top, int Width, int Height) work)
+    {
+        int width = Math.Min(window.Width, work.Width), height = Math.Min(window.Height, work.Height);
+        return (Math.Clamp(window.Left, work.Left, work.Left + work.Width - width), Math.Clamp(window.Top, work.Top, work.Top + work.Height - height), width, height);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct NativeRect { public int Left, Top, Right, Bottom; }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    static extern bool GetWindowRect(nint hwnd, out NativeRect rect);
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
     static extern nint GetWindowLongPtr(nint hwnd, int index);
     [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
