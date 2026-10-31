@@ -210,13 +210,11 @@ public partial class VersionsTab : UserControl
 
         if (pull is { FromFork: true } && !_shared.Settings.TrustedPullRequests.Contains(pull.Number))
         {
-            var answer = MessageBox.Show(owner,
-                $"#{pull.Number} \"{pull.Title}\" comes from {pull.Source}, a fork: its code is not the LocalExile maintainers'.\n\n" +
-                "Switching to it builds and runs that code on this computer with your rights, live.ps1 and the other scripts " +
-                "included. Run it only if you trust its author or have read the changes (Open on GitHub).\n\n" +
-                $"Switch to #{pull.Number}?",
-                "Pull request from a fork", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
-            if (answer != MessageBoxResult.Yes) return;
+            if (!Dialog.Ask(owner, DialogKind.Warning, $"#{pull.Number} comes from a fork",
+                    $"\"{pull.Title}\" comes from {pull.Source}: its code is not the LocalExile maintainers'.\n\n" +
+                    "Switching to it builds and runs that code on this computer with your rights, live.ps1 and the other " +
+                    "scripts included. Run it only if you trust its author or have read the changes (Open on GitHub).",
+                    $"Switch to #{pull.Number}", cancelByDefault: true)) return;
             _shared.Settings.TrustedPullRequests.Add(pull.Number);
             _shared.Settings.Save();
         }
@@ -225,19 +223,20 @@ public partial class VersionsTab : UserControl
         bool stash = changes.Count > 0;
         if (stash)
         {
-            string list = string.Join("\n", changes.Take(8)) + (changes.Count > 8 ? $"\n… and {changes.Count - 8} more" : "");
-            if (MessageBox.Show(owner,
-                    $"The checkout has {changes.Count} uncommitted change(s):\n\n{list}\n\nStash them and switch? They come back " +
+            if (!Dialog.Ask(owner, DialogKind.Question, "Uncommitted changes",
+                    $"The checkout has {changes.Count} uncommitted change(s). They are stashed before the switch and come back " +
                     $"with \"Restore stashed changes\" when you return to {_current ?? "this commit"}.",
-                    "Uncommitted changes", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
+                    "Stash and switch", details: string.Join("\n", changes))) return;
         }
 
         // A watched Gateway would rebuild halfway through the switch, and every server runs the old build.
         bool running = _shared.Monitor.Latest.Any(s => s.Running);
         if (running)
         {
-            if (MessageBox.Show(owner, $"The servers or the game are running. Stop them and {(update ? "update" : "switch")}?",
-                    "LocalExile Launcher", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
+            if (!Dialog.Ask(owner, DialogKind.Question, "The servers are running",
+                    $"The servers or the game are running. They stop before the {(update ? "update" : "switch")}: a running " +
+                    "Gateway would rebuild halfway through it.",
+                    update ? "Stop and update" : "Stop and switch")) return;
             RunState.Text = "Stopping the servers and the game …";
             if (await _shared.StopAllAsync(Log) is null) { RunState.Text = $"{_shared.BusyWith} is running; switch when it is done."; return; }
         }
@@ -266,12 +265,12 @@ public partial class VersionsTab : UserControl
         if (!ok) return;
 
         if (!update && _stashes.FirstOrDefault(s => s.Branch == _current) is { } back
-            && MessageBox.Show(owner, $"You stashed changes when you left {_current}. Restore them now?", "Stashed changes",
-                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            && Dialog.Ask(owner, DialogKind.Question, "Stashed changes",
+                $"You stashed changes when you left {_current}. Restore them now?", "Restore", "Not now"))
             await RestoreAsync(back);
 
-        if (MessageBox.Show(owner, $"{(update ? "Updated" : "Switched to")} {label}. Build it and start the servers and the game now (Play)?",
-                "LocalExile Launcher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        if (Dialog.Ask(owner, DialogKind.Info, update ? $"{label} updated" : $"Switched to {label}",
+                "Build it and start the servers and the game now?", "Play", "Later"))
             PlayRequested?.Invoke();
     }
 
@@ -298,8 +297,9 @@ public partial class VersionsTab : UserControl
         var stale = (await Git.LocalBranchesAsync())
             .Where(b => Git.PullRequestOf(b) is int n && !open.Contains(n) && b != _current).Order().ToList();
         if (stale.Count == 0) { RunState.Text = "No branches of closed pull requests to delete."; return; }
-        if (MessageBox.Show(Window.GetWindow(this), $"Delete the local branches of pull requests that are no longer open?\n\n{string.Join("\n", stale)}",
-                "Clean up", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
+        if (!Dialog.Ask(Window.GetWindow(this), DialogKind.Question, "Clean up",
+                "Delete the local branches of pull requests that are no longer open?", "Delete",
+                details: string.Join("\n", stale))) return;
         await _shared.RunGitAsync(async () =>
         {
             foreach (string b in stale) await Git.DeletePullRequestAsync(Git.PullRequestOf(b)!.Value, Log);

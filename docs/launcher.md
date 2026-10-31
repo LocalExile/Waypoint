@@ -77,9 +77,9 @@ launcher's settings) and a status strip on every section: whether the servers li
 `live.ps1` run is going on, and a link to the logs. A newer release shows as a strip above it.
 
 The controls are [Material Design in XAML](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)'s,
-restyled flat in `App.xaml`: 30 px buttons with 4 px corners and no shadows, an outlined one by default and one blue
+restyled flat in `Shell.xaml` (which `App.xaml` merges): 30 px buttons with 4 px corners and no shadows, an outlined one by default and one blue
 primary button per view, thin borders, tables with small grey column titles. The launcher's own colours are the
-`Shell.*` brushes: App.xaml holds the light ones and `Theme.cs` swaps every one of them, with Material's base theme and
+`Shell.*` brushes: Shell.xaml holds the light ones and `Theme.cs` swaps every one of them, with Material's base theme and
 primary colour, for the dark theme. Views use them through `DynamicResource` (code through `Theme.Brush`), so a switch
 reaches everything at once; a colour written into a view would stay light in the dark theme.
 
@@ -88,6 +88,11 @@ while the launcher runs; the title bar turns dark with the dark theme (`DWMWA_US
 saved. The branch is read from the checkout's `.git/HEAD` (a short commit when detached); clicking it opens the
 Versions section. The settings button holds **Tray while the game runs**, **Look for updates at start** and **Check for
 updates**.
+
+Questions and notices are the launcher's own message boxes (`Dialog.cs`), in its look and theme, never Windows'
+MessageBox: the kind's icon, a title, the text, details such as a list of files in a scrolling box, and buttons named
+after what they do ("Stash and switch", not OK). Enter presses the main one, Esc or closing the box cancels; a risky
+question (a fork's pull request) has Cancel as its default.
 
 ## Sections
 
@@ -220,7 +225,8 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `App.xaml.cs`, `Repo.cs` | the server folder (saved, chosen, changed) and the checkout's paths |
 | `LiveScript.cs` | `LiveRequest` (the buttons as `live.ps1` switches) and the PowerShell runner |
 | `ServiceMonitor.cs` | the services, found by WMI every two seconds, sampled every second |
-| `App.xaml`, `Theme.cs`, `MainWindow.xaml` | the look: Material Design's controls restyled, the `Shell.*` colours of each theme, the sidebar, header and status strip |
+| `Shell.xaml`, `Theme.cs`, `MainWindow.xaml` | the look: Material Design's controls restyled, the `Shell.*` colours of each theme, the sidebar, header and status strip |
+| `Dialog.cs`, `DialogWindow.xaml` | the launcher's message boxes |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
 | `Git.cs`, `PullRequests.cs`, `VersionsTab.xaml.cs` | git in the checkout and the parsing of its output, the open pull requests, the Versions section and its guards |
 | `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |

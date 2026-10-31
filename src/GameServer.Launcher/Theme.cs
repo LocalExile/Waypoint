@@ -9,7 +9,7 @@ namespace GameServer.Launcher;
 enum ThemeChoice { System, Light, Dark }
 
 /// <summary>
-/// Light or dark: Material Design's base theme and primary colour, the launcher's own <c>Shell.*</c> brushes (App.xaml
+/// Light or dark: Material Design's base theme and primary colour, the launcher's own <c>Shell.*</c> brushes (Shell.xaml
 /// holds the light ones), and the windows' title bars. System follows the Windows app theme, also when it changes while
 /// the launcher runs.
 /// </summary>

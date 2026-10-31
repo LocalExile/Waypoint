@@ -174,7 +174,7 @@ public partial class ControlTab : UserControl
     /// <summary>Play: also what the Versions section starts after a switch.</summary>
     internal async Task PlayAsync()
     {
-        if (ClientRunning && !Confirm("The client is running: Play closes it and starts it again. Go on?")) return;
+        if (ClientRunning && !Confirm("Restart the game?", "The client is running: Play closes it and starts it again.", "Restart the game")) return;
         await Run(Request(LiveMode.All));
     }
 
@@ -197,7 +197,7 @@ public partial class ControlTab : UserControl
             case (ServiceKind.Server, false): await Run(Request(LiveMode.Restart, row.Name)); break;
             case (ServiceKind.Server, true): await Run(new LiveRequest(LiveMode.Stop, row.Name)); break;
             case (ServiceKind.Client, false): await StartGame(); break;
-            case (ServiceKind.Client, true): StopProcess(row, "Close the game client? The server saves progress as it happens."); break;
+            case (ServiceKind.Client, true): StopProcess(row, "The server saves the character's progress as it happens."); break;
             case (ServiceKind.DevHost, false): await StartDevHost(); break;
             case (ServiceKind.DevHost, true):
                 _shared.StopDevHost();
@@ -212,7 +212,8 @@ public partial class ControlTab : UserControl
         bool serversUp = _shared.Monitor.Latest.Where(s => s.Service.Kind == ServiceKind.Server).All(s => s.Listening);
         if (!serversUp)
         {
-            MessageBox.Show(Window.GetWindow(this), "The servers are not all running: use Play, or Start servers first.", "Start game");
+            Dialog.Tell(Window.GetWindow(this), DialogKind.Info, "The servers are not running",
+                "The game needs all three servers: use Play, or Start servers first.");
             return;
         }
         await Run(Request(LiveMode.Client));
@@ -236,7 +237,7 @@ public partial class ControlTab : UserControl
     void StopProcess(ServiceRow row, string? confirm)
     {
         if (_shared.Monitor.Latest.FirstOrDefault(s => s.Service == row.Service)?.Pid is not int pid) return;
-        if (confirm is not null && !Confirm(confirm)) return;
+        if (confirm is not null && !Confirm($"Close {row.Name}?", confirm, "Close")) return;
         try
         {
             using var p = Process.GetProcessById(pid);
@@ -260,8 +261,7 @@ public partial class ControlTab : UserControl
 
     void ShowRowLog(object sender, RoutedEventArgs e) => ShowLogRequested?.Invoke(RowOf(sender).Name);
 
-    bool Confirm(string text) =>
-        MessageBox.Show(Window.GetWindow(this), text, "LocalExile Launcher", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK;
+    bool Confirm(string title, string text, string action) => Dialog.Ask(Window.GetWindow(this), DialogKind.Question, title, text, action);
 
     void Append(string line)
     {

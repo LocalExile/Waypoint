@@ -152,20 +152,21 @@ public partial class MainWindow : Window
                 UpdateBar.Visibility = Visibility.Visible;
             }
             else if (manual)
-                MessageBox.Show(this, $"No newer release than {(Updates.IsReleaseBuild ? Updates.Current.ToString() : "this build from source")}.", "LocalExile Launcher");
+                Dialog.Tell(this, DialogKind.Info, "No update",
+                    $"No newer release than {(Updates.IsReleaseBuild ? Updates.Current.ToString() : "this build from source")}.");
         }
         catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
         {
             _shared.Logs.Write($"update check failed: {ex.Message}", Severity.Warning);
-            if (manual) MessageBox.Show(this, $"Could not check for updates: {ex.Message}", "LocalExile Launcher");
+            if (manual) Dialog.Tell(this, DialogKind.Warning, "Update check failed", ex.Message);
         }
     }
 
     async void UpdateClicked(object sender, RoutedEventArgs e)
     {
         if (_release is null) return;
-        if (MessageBox.Show(this, $"Download and install LocalExile Launcher {_release.Version}? The launcher restarts; the servers and the game keep running.",
-            "LocalExile Launcher", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
+        if (!Dialog.Ask(this, DialogKind.Question, $"Update to {_release.Version}?",
+                "The launcher downloads the new version and restarts; the servers and the game keep running.", "Update and restart")) return;
         UpdateNow.IsEnabled = false;
         try
         {
@@ -228,15 +229,16 @@ public partial class MainWindow : Window
         bool anything = _shared.Monitor.Latest.Any(s => s.Running && s.Service.Kind is not ServiceKind.Recorder);
         if (anything)
         {
-            var answer = MessageBox.Show(this, "Stop the servers and the game as well?\n\nNo leaves them running.",
-                "LocalExile Launcher", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-            if (answer == MessageBoxResult.Cancel) { e.Cancel = true; return; }
-            if (answer == MessageBoxResult.Yes)
+            int answer = Dialog.Show(this, DialogKind.Question, "Close the launcher",
+                "The servers or the game are still running. They keep running without the launcher, or stop now.", null,
+                ["Stop them and close", "Leave them running", "Cancel"]);
+            if (answer is 2 or -1) { e.Cancel = true; return; }
+            if (answer == 0)
             {
                 e.Cancel = true;
                 if (_shared.IsLiveRunning)
                 {
-                    MessageBox.Show(this, "live.ps1 is still running; close the launcher when it is done.", "LocalExile Launcher");
+                    Dialog.Tell(this, DialogKind.Info, $"{_shared.BusyWith} is still running", "Close the launcher when it is done.");
                     return;
                 }
                 IsEnabled = false;

@@ -11,12 +11,14 @@ public partial class App : Application
     {
         base.OnStartup(e);
         var settings = Settings.Load();
+        // Before anything shows, the first start's questions included.
+        Theme.Apply(settings.Theme);
         string? root = Repo.Find(settings.ServerPath, Environment.CurrentDirectory);
         if (root is null)
         {
-            MessageBox.Show("Choose the folder of your LocalExile server checkout: the one with GameServer.slnx and " +
-                "scripts\\dev\\live.ps1. The launcher remembers it; Change… on the Control section picks another one.",
-                "LocalExile Launcher: first start", MessageBoxButton.OK, MessageBoxImage.Information);
+            Dialog.Tell(null, DialogKind.Info, "Choose your server checkout",
+                "Choose the folder of your LocalExile server checkout: the one with GameServer.slnx and scripts\\dev\\live.ps1. " +
+                "The launcher remembers it; Change… on the Control section picks another one.", ok: "Choose folder…");
             root = ChooseServer(null);
         }
         if (root is null)
@@ -31,7 +33,6 @@ public partial class App : Application
         }
         // Every path of the server's tools is relative to its root (its AGENTS.md).
         Environment.CurrentDirectory = root;
-        Theme.Apply(settings.Theme);
         DispatcherUnhandledException += Unhandled;
         // Off the UI thread nothing can keep the process alive, but the reason is kept.
         AppDomain.CurrentDomain.UnhandledException += (_, args) => Crashed(args.ExceptionObject);
@@ -52,8 +53,8 @@ public partial class App : Application
             };
             if (dialog.ShowDialog(owner) != true) return null;
             if (Repo.IsRoot(dialog.FolderName)) return Path.GetFullPath(dialog.FolderName);
-            MessageBox.Show($"{dialog.FolderName} is not a LocalExile server checkout: it has no GameServer.slnx and " +
-                "scripts\\dev\\live.ps1.", "LocalExile Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+            Dialog.Tell(owner, DialogKind.Warning, "Not a server checkout",
+                $"{dialog.FolderName} has no GameServer.slnx and scripts\\dev\\live.ps1.", ok: "Choose again");
             start = dialog.FolderName;
         }
     }
@@ -82,7 +83,10 @@ public partial class App : Application
 
     static void Unhandled(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        MessageBox.Show(e.Exception.ToString(), "LocalExile Launcher: unexpected error", MessageBoxButton.OK, MessageBoxImage.Error);
+        if (Dialog.Show(Current.MainWindow, DialogKind.Error, "Unexpected error",
+                "Something failed; the launcher keeps running. The details help a bug report.", e.Exception.ToString(),
+                ["OK", "Copy details"]) == 1)
+            Clipboard.SetText(e.Exception.ToString());
         e.Handled = true;
     }
 }
