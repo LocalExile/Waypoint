@@ -18,8 +18,7 @@ sealed record Release(Version Version, string Tag, string Page, string Notes, st
 /// </summary>
 static class Updates
 {
-    /// <summary>Where the releases are published (owner/name). Builds from before the move to the LocalExile organization
-    /// ask for evrydayjunglist/Waypoint, a transferred repository's old name, which keeps answering.</summary>
+    /// <summary>Where the releases are published (owner/name).</summary>
     public const string Repository = "LocalExile/Waypoint";
     public const string ExeName = "Waypoint.exe";
 
