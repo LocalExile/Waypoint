@@ -18,6 +18,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         Control.Attach(_shared);
         Performance.Attach(_shared);
+        Timings.Attach(_shared);
         LogsView.Attach(_shared);
         Accounts.Attach(_shared);
         ConsoleView.Attach(_shared);

@@ -76,6 +76,7 @@ Its own settings (the server folder, the switches, pinned console lines, the his
 |---|---|---|
 | Control | Servers: Start, Stop, Restart Gateway/Auth/Patch and the Walk maps, Skip build, Skip data check and Hot reload switches; Game: Play, Start game only, Close game; Stop all; the services' state; the server folder and the setup checks; the script's output | `live.ps1`, `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`, `-NoHotReload`; Close game ends the client's process, Stop all also the dev host |
 | Performance | CPU and memory of every service; for the chosen server, GC heap, allocation rate, collections, time in GC, thread pool, lock contention and exceptions | the processes once a second; the runtime's `System.Runtime` counters through its diagnostics port (what `dotnet-counters` reads), with nothing changed in the servers |
+| Server timings | what each Gateway operation costs over a window (30 s to 15 min, 1 min by default): calls per second, average, p95 and p99 (the worst second's), milliseconds per second; client messages by id, server phases (input queue, handler, send and wire gates, combat lock, surround, blocker build), level generation by area; the five busiest charted (p95 and ms per second) | the Gateway's `LocalExile.Gateway` meter (`localexile.gateway.duration`, ms, tags `phase` and `operation`) through the runtime's `System.Diagnostics.Metrics` event source, in the Gateway's counter session, published once a second; a checkout older than the `Message` and `LevelGen` phases shows only the phases |
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters; registering an account; creating a character | the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `accounts`, `register`, `create_character`; the launcher builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
@@ -166,6 +167,7 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `LiveScript.cs` | `LiveRequest` (the buttons as `live.ps1` switches) and the PowerShell runner |
 | `ServiceMonitor.cs` | the services, found by WMI every two seconds, sampled every second |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
+| `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
 | `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |
 | `DevHost.cs`, `AccountList.cs` | the dev host and its account list |
@@ -175,5 +177,5 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 
 Tests: `tests/GameServer.Launcher.Tests` (the `live.ps1` command lines, the server folder, following logs, severities,
 command and argument suggestions, the dev host's account list, finding the services, versions and releases, counter
-payloads, chart scales).
+payloads, histogram tags and quantiles, the timings window, chart scales).
 The server's side of these hooks has its own tests there (`ChatCommandCatalogTests`, `HostTests`).

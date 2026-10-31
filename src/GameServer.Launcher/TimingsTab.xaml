@@ -1,0 +1,60 @@
+<UserControl x:Class="GameServer.Launcher.TimingsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:GameServer.Launcher">
+    <DockPanel Margin="10">
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <TextBlock Text="Window" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox x:Name="WindowPicker" Width="90" SelectionChanged="Changed" Margin="0,0,20,0">
+                <ComboBoxItem Content="30 s" Tag="30" />
+                <ComboBoxItem Content="1 min" Tag="60" IsSelected="True" />
+                <ComboBoxItem Content="5 min" Tag="300" />
+                <ComboBoxItem Content="15 min" Tag="900" />
+            </ComboBox>
+            <TextBlock Text="Show" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <ComboBox x:Name="KindPicker" Width="140" SelectionChanged="Changed" Margin="0,0,12,0">
+                <ComboBoxItem Content="Everything" Tag="" IsSelected="True" />
+                <ComboBoxItem Content="Client messages" Tag="Client messages" />
+                <ComboBoxItem Content="Server phases" Tag="Server phases" />
+                <ComboBoxItem Content="Level generation" Tag="Level generation" />
+            </ComboBox>
+            <TextBlock x:Name="State" VerticalAlignment="Center" Foreground="Gray" />
+        </WrapPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="1.3*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!-- The five operations with the most server time in the window, the same colour on both charts. -->
+            <l:LineChart x:Name="SlowChart" Title="p95 per second, busiest operations" Unit="ms" Format="0.##" Margin="4" />
+            <l:LineChart x:Name="LoadChart" Grid.Column="1" Title="Server time" Unit="ms per second" Format="0.#" Margin="4" />
+            <ListView x:Name="Table" Grid.Row="1" Grid.ColumnSpan="2" Margin="4">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Operation" Width="200" DisplayMemberBinding="{Binding Label}" />
+                        <GridViewColumn Header="Kind" Width="120" DisplayMemberBinding="{Binding Kind}" />
+                        <GridViewColumn Width="80" DisplayMemberBinding="{Binding PerSecond, StringFormat=0.##}">
+                            <GridViewColumnHeader Content="Calls/s" ToolTip="Calls per second over the window" />
+                        </GridViewColumn>
+                        <GridViewColumn Width="80" DisplayMemberBinding="{Binding Average, StringFormat=0.###}">
+                            <GridViewColumnHeader Content="Avg ms" ToolTip="Total time divided by the calls in the window" />
+                        </GridViewColumn>
+                        <GridViewColumn Width="80" DisplayMemberBinding="{Binding P95, StringFormat=0.###}">
+                            <GridViewColumnHeader Content="p95 ms" ToolTip="The worst second's 95th percentile in the window (the server publishes quantiles per second)" />
+                        </GridViewColumn>
+                        <GridViewColumn Width="80" DisplayMemberBinding="{Binding P99, StringFormat=0.###}">
+                            <GridViewColumnHeader Content="p99 ms" ToolTip="The worst second's 99th percentile in the window" />
+                        </GridViewColumn>
+                        <GridViewColumn Width="90" DisplayMemberBinding="{Binding MsPerSecond, StringFormat=0.##}">
+                            <GridViewColumnHeader Content="ms/s" ToolTip="Server time per second, all connections together; waits (queues, gates, locks) count their waiting time" />
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</UserControl>

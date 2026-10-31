@@ -8,7 +8,7 @@ sealed class TimeSeries(string name, System.Windows.Media.Color color, int capac
     int _start, _count;
 
     public string Name { get; } = name;
-    public System.Windows.Media.Color Color { get; } = color;
+    public System.Windows.Media.Color Color { get; set; } = color;
     public int Capacity => _points.Length;
 
     public void Add(double t, double v)

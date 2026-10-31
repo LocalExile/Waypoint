@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.Tracing;
+using System.Globalization;
 using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
 
@@ -9,7 +10,8 @@ namespace GameServer.Launcher;
 /// The .NET runtime's own counters of one server process (the <c>System.Runtime</c> event source, what
 /// <c>dotnet-counters</c> shows), read through the runtime's diagnostics port: GC heap and collections, allocation rate,
 /// thread pool, lock contention, exceptions. Nothing in the server changes; a session only subscribes to the counters,
-/// once a second.
+/// once a second. Given <see cref="OperationTimings"/>, the same session also reads the Gateway's duration histogram
+/// from the <c>System.Diagnostics.Metrics</c> event source (what <c>dotnet-counters</c> shows for a meter).
 /// </summary>
 sealed class RuntimeCounters : IDisposable
 {
@@ -20,18 +22,35 @@ sealed class RuntimeCounters : IDisposable
 
     readonly ConcurrentDictionary<string, double> _values = new();
     readonly EventPipeSession? _session;
+    readonly OperationTimings? _timings;
+    readonly Func<double> _clock;
+    // The metrics event source serves several sessions at once (dotnet-counters beside the launcher) and tags its events
+    // with the session's id.
+    readonly string _metricsSession = Guid.NewGuid().ToString();
 
     public int Pid { get; }
     public string? Error { get; private set; }
+    /// <summary>Why the operation timings stopped or never came (the event source's own error), else null.</summary>
+    public string? TimingsError { get; private set; }
 
-    public RuntimeCounters(int pid)
+    public RuntimeCounters(int pid, OperationTimings? timings = null, Func<double>? clock = null)
     {
         Pid = pid;
+        _timings = timings;
+        _clock = clock ?? (() => 0);
         try
         {
-            var provider = new EventPipeProvider("System.Runtime", EventLevel.Informational, -1,
-                new Dictionary<string, string> { ["EventCounterIntervalSec"] = "1" });
-            _session = new DiagnosticsClient(pid).StartEventPipeSession([provider], requestRundown: false, circularBufferMB: 16);
+            List<EventPipeProvider> providers = [new("System.Runtime", EventLevel.Informational, -1,
+                new Dictionary<string, string> { ["EventCounterIntervalSec"] = "1" })];
+            // Keywords: Messages (errors) and TimeSeriesValues. Every (phase, operation) is a histogram of its own, one per
+            // client message id among them: far more than the default limit of 20.
+            if (timings is not null)
+                providers.Add(new("System.Diagnostics.Metrics", EventLevel.Informational, 0x3, new Dictionary<string, string>
+                {
+                    ["SessionId"] = _metricsSession, ["Metrics"] = OperationTimings.Meter, ["RefreshInterval"] = "1",
+                    ["MaxHistograms"] = "5000", ["MaxTimeSeries"] = "5000",
+                }));
+            _session = new DiagnosticsClient(pid).StartEventPipeSession(providers, requestRundown: false, circularBufferMB: 16);
             var thread = new Thread(Read) { IsBackground = true, Name = $"counters {pid}" };
             thread.Start(_session);
         }
@@ -50,6 +69,7 @@ sealed class RuntimeCounters : IDisposable
             source.Dynamic.All += e =>
             {
                 if (e.EventName == "EventCounters" && Counter(e.PayloadValue(0)) is var (name, value)) _values[name] = value;
+                else if (_timings is not null && e.ProviderName == "System.Diagnostics.Metrics") Metric(e);
             };
             source.Process();
         }
@@ -58,6 +78,29 @@ sealed class RuntimeCounters : IDisposable
         catch (Exception e)
         {
             Error ??= e.Message;
+        }
+    }
+
+    /// <summary>An event of the metrics event source: a histogram's interval for the timings, or why there are none.</summary>
+    void Metric(TraceEvent e)
+    {
+        string? Field(string name) => e.PayloadByName(name)?.ToString();
+        // Events of a dotnet-counters session running beside this one carry its id.
+        string? session = Field("sessionId");
+        if (session is not null && session.Length > 0 && session != _metricsSession) return;
+        switch (e.EventName)
+        {
+            case "HistogramValuePublished" when Field("meterName") == OperationTimings.Meter && Field("instrumentName") == OperationTimings.Instrument:
+                if (OperationTimings.Tags(Field("tags")) is not var (phase, operation)) return;
+                double count = double.TryParse(Field("count"), CultureInfo.InvariantCulture, out double c) ? c : 0;
+                double sum = double.TryParse(Field("sum"), CultureInfo.InvariantCulture, out double s) ? s : 0;
+                var quantiles = OperationTimings.Quantiles(Field("quantiles"));
+                _timings!.Add(_clock(), phase, operation, quantiles is null ? 0 : count, sum, quantiles?.P95 ?? 0, quantiles?.P99 ?? 0);
+                break;
+            case "Error" or "MultipleSessionsNotSupportedError" or "MultipleSessionsConfiguredIncorrectlyError"
+                or "HistogramLimitReached" or "TimeSeriesLimitReached" or "ObservableInstrumentCallbackError":
+                TimingsError = Field("errorMessage") is { Length: > 0 } message ? $"{e.EventName}: {message}" : e.EventName;
+                break;
         }
     }
 

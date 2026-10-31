@@ -11,21 +11,14 @@ because they are the riskiest; the collaboration items can happen at any time.
 
 ## 1. Server timings: what each Gateway operation costs
 
-**In progress** (server hook written, not yet committed; launcher side not started).
+**In progress**: built, waiting for a check in game. The Server timings tab ([launcher.md](launcher.md), "Tabs") reads
+the Gateway's meter; checked against a process writing the same meter, not yet against a Gateway with a player in game.
+The server's `Message` and `LevelGen` phases are on the server's `feat/launcher-support` branch, not yet merged.
 
-The Performance tab shows how long the Gateway spends on each operation, as charts and a table over a sliding window
-(the last 60 seconds by default): calls per second, average, p95 and p99 per operation.
+Left to do:
 
-- Server hook (server repository, `feat/launcher-support`): the `LocalExile.Gateway` meter's
-  `localexile.gateway.duration` histogram (ms, tags `phase` and `operation`) gains the `Message` phase, one sample per
-  client message with its id as the operation (`0x0025`), and `LevelGen`, one sample per generated area with its area
-  id. The other phases (input queue, handler batch, send and wire gates, combat lock, surround, blocker build) were
-  already there.
-- Launcher: subscribe to the `System.Diagnostics.Metrics` event source for `LocalExile.Gateway` in the same diagnostics
-  session as the runtime counters (`RuntimeCounters.cs`), with a refresh interval of 1 s and limits high enough for one
-  histogram per message id. Keep each interval's count, sum and quantiles per (phase, operation) and build the window
-  from them. The event source publishes p50/p95/p99 per interval, not a maximum, so the window's p95 is the highest
-  per-interval p95 (stated in the tab).
+- Check it in game: a session through several areas, the table and charts against the `[latency]` and `server levels:
+  generated` lines in `logs\live-gateway.log`; then this item moves to launcher.md.
 - Undecided: message names instead of hex ids (the server has no complete id-to-name table yet); a reset button; CSV
   export for bug reports.
 

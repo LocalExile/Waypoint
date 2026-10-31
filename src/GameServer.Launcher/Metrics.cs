@@ -4,7 +4,8 @@ using System.Windows.Media;
 namespace GameServer.Launcher;
 
 /// <summary>The history the performance tab draws, kept from the launcher's start whether the tab is shown or not: CPU
-/// and memory of every service, and the runtime counters of the .NET ones (one diagnostics session per process).</summary>
+/// and memory of every service, the runtime counters of the .NET ones (one diagnostics session per process), and the
+/// Gateway's operation timings.</summary>
 sealed class Metrics : IDisposable
 {
     public static readonly Dictionary<Service, Color> Colors = new()
@@ -38,6 +39,8 @@ sealed class Metrics : IDisposable
     public Dictionary<Service, TimeSeries> Cpu { get; } = [];
     public Dictionary<Service, TimeSeries> Memory { get; } = [];
     public Dictionary<(Service, string), TimeSeries> Runtime { get; } = [];
+    /// <summary>What each Gateway operation costs, read in the Gateway's counter session.</summary>
+    public OperationTimings Timings { get; } = new();
 
     public double Now => _clock.Elapsed.TotalSeconds;
 
@@ -58,6 +61,14 @@ sealed class Metrics : IDisposable
     {
         lock (_sessions)
             return !_sessions.TryGetValue(s, out var session) ? "not running" : session.Error is { } e ? $"no counters: {e}" : $"pid {session.Pid}";
+    }
+
+    /// <summary>Where the Gateway's operation timings come from, or why they do not.</summary>
+    public string TimingsState()
+    {
+        lock (_sessions)
+            return !_sessions.TryGetValue(Service.Gateway, out var session) ? "Gateway not running"
+                : (session.Error ?? session.TimingsError) is { } e ? $"no timings: {e}" : $"Gateway pid {session.Pid}";
     }
 
     void Add(IReadOnlyList<ServiceSample> samples)
@@ -81,7 +92,7 @@ sealed class Metrics : IDisposable
                 }
                 // A process a second old may not have opened its diagnostics port yet.
                 if (session is null && sample.Pid is int pid && sample.Uptime > TimeSpan.FromSeconds(2))
-                    _sessions[s] = session = new RuntimeCounters(pid);
+                    _sessions[s] = session = s == Service.Gateway ? new RuntimeCounters(pid, Timings, () => Now) : new RuntimeCounters(pid);
             }
             foreach (var c in Counters) Runtime[(s, c.Counter)].Add(t, session is null ? double.NaN : session[c.Counter] * c.Scale);
         }
