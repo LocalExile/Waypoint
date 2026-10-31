@@ -51,7 +51,7 @@ try {
     # Runtime binaries are redistributable dependencies; preserve their supplied license/notice files.
     $assets = Get-Content -LiteralPath (Join-Path $root 'src/Launcher.Desktop/obj/project.assets.json') -Raw | ConvertFrom-Json
     $licenses = Join-Path $package 'licenses'
-    New-Item -ItemType Directory -Path $licenses | Out-Null
+    New-Item -ItemType Directory -Path $licenses -Force | Out-Null
     foreach ($framework in $runtime.runtimeOptions.includedFrameworks) {
         $id = switch ($framework.name) {
             'Microsoft.NETCore.App' { 'microsoft.netcore.app.runtime.win-x64' }
