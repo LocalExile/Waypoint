@@ -11,7 +11,7 @@
             <TextBlock x:Name="HostState" VerticalAlignment="Center" Margin="8,0,8,6" Foreground="{DynamicResource Shell.TextSecondary}" />
         </DockPanel>
 
-        <Grid DockPanel.Dock="Bottom">
+        <Grid x:Name="HostTools" DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="12" />

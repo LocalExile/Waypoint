@@ -64,9 +64,8 @@ sealed class StepRow(string name) : INotifyPropertyChanged
 /// </summary>
 public partial class SetupWizard : FormWindow
 {
-    enum Page { Welcome, Requirements, Checkout, Client, Run, Done }
+    enum Page { Welcome, Source, Install, Requirements, Checkout, Client, Account, Run, Done }
 
-    static readonly string[] PageNames = ["Welcome", "Tools", "LocalExile", "Game client", "Set up"];
     /// <summary>Roughly what a checkout takes with its client and generated data.</summary>
     const long NeededBytes = 75_000_000_000;
 
@@ -82,7 +81,10 @@ public partial class SetupWizard : FormWindow
     CancellationTokenSource? _stop;
     Task? _running;
     SetupOutcome? _outcome;
-    bool _searchedCheckouts, _clientsSearched, _closeWhenStopped, _portsHeld;
+    bool _searchedCheckouts, _clientsSearched, _closeWhenStopped, _portsHeld, _accountAsked;
+    /// <summary>The option LocalExile.exe stopped to ask for: the page that gives it shows next.</summary>
+    string? _neededOption;
+    readonly bool _newCopy;
     /// <summary>The data folder with the keys that fit the chosen client, when it can be shared.</summary>
     string? _sharedKeys;
 
@@ -93,8 +95,10 @@ public partial class SetupWizard : FormWindow
     /// <summary>The player wants the Accounts section's Create dialog next.</summary>
     public bool CreateAccountNext { get; private set; }
 
-    internal SetupWizard(Settings settings, Window? owner, string? current)
+    /// <param name="newCopy">Opens on the source route, with cloning chosen: a developer's new copy.</param>
+    internal SetupWizard(Settings settings, Window? owner, string? current, bool newCopy = false)
     {
+        _newCopy = newCopy;
         _settings = settings;
         _current = current;
         Checkout = current;
@@ -109,33 +113,71 @@ public partial class SetupWizard : FormWindow
         StepList.ItemsSource = _steps;
         DownloadFolder.Text = SuggestedFolder();
         ExistingChoice.IsChecked = true;
-        Closed += (_, _) => _closing.Cancel();
-        Show(Page.Welcome);
+        InstallFolder.Text = LocalExileReleases.IsInstall(current) ? current! : SuggestedInstallFolder();
+        (newCopy || Repo.IsRoot(current) ? SourceChoice : ReleaseChoice).IsChecked = true;
+        Closed += (_, _) =>
+        {
+            _closing.Cancel();
+            ForgetPassword();
+        };
+        Show(newCopy ? Page.Requirements : Page.Welcome);
     }
 
     bool Running => _running is { IsCompleted: false };
 
+    /// <summary>The ready-to-play release rather than a source checkout.</summary>
+    bool UsingRelease => ReleaseChoice.IsChecked == true;
+
+    /// <summary>A new install has no saves, so no account yet; LocalExile.exe asks when one with saves has none.</summary>
+    bool AccountNeeded => UsingRelease && NoClient.IsChecked != true && (_accountAsked || ChosenCheckout() is not { } folder || !LocalExileReleases.HasSaves(folder));
+
+    /// <summary>The pages of the chosen route, in order.</summary>
+    Page[] Flow => UsingRelease
+        ? AccountNeeded ? [Page.Welcome, Page.Source, Page.Install, Page.Client, Page.Account, Page.Run, Page.Done] : [Page.Welcome, Page.Source, Page.Install, Page.Client, Page.Run, Page.Done]
+        : [Page.Welcome, Page.Source, Page.Requirements, Page.Checkout, Page.Client, Page.Run, Page.Done];
+
+    static string PageName(Page page) => L.Text(page switch
+    {
+        Page.Welcome => "Welcome",
+        Page.Source => "Choose",
+        Page.Requirements => "Tools",
+        Page.Install or Page.Checkout => "LocalExile",
+        Page.Client => "Game client",
+        Page.Account => "Account",
+        _ => "Set up",
+    });
+
     void Show(Page page)
     {
         _page = page;
-        (FrameworkElement, Page)[] pages = [(WelcomePage, Page.Welcome), (RequirementsPage, Page.Requirements), (CheckoutPage, Page.Checkout),
-            (ClientPage, Page.Client), (RunPage, Page.Run), (DonePage, Page.Done)];
+        (FrameworkElement, Page)[] pages = [(WelcomePage, Page.Welcome), (SourcePage, Page.Source), (InstallPage, Page.Install), (RequirementsPage, Page.Requirements), (CheckoutPage, Page.Checkout),
+            (ClientPage, Page.Client), (AccountPage, Page.Account), (RunPage, Page.Run), (DonePage, Page.Done)];
         foreach (var (element, shown) in pages) element.Visibility = shown == page ? Visibility.Visible : Visibility.Collapsed;
-        Rail.Children.Clear();
-        for (int i = 0; i < PageNames.Length; i++)
-        {
-            var step = new TextBlock { Text = L.Text(PageNames[i]), Margin = new Thickness(0, 0, 0, 10), FontWeight = (int)page == i ? FontWeights.SemiBold : FontWeights.Normal };
-            step.SetResourceReference(TextBlock.ForegroundProperty, (int)page >= i ? "Shell.SidebarStrong" : "Shell.SidebarText");
-            step.Opacity = (int)page >= i ? 1 : .65;
-            Rail.Children.Add(step);
-        }
+        if (page == Page.Account) _accountAsked = true;
+        ShowRail();
         UpdateButtons();
         switch (page)
         {
+            case Page.Install: ShowInstallNote(); break;
             case Page.Requirements: _ = CheckRequirementsAsync(); break;
             case Page.Checkout when !_searchedCheckouts: _ = FindCheckoutsAsync(); break;
             case Page.Client when !_clientsSearched: _ = FindClientsAsync(); break;
             case Page.Run when !Running && _outcome != SetupOutcome.Finished: PrepareRun(); break;
+        }
+    }
+
+    /// <summary>The steps of the guide, with where the player is. The route's choice changes them.</summary>
+    void ShowRail()
+    {
+        Rail.Children.Clear();
+        Page[] flow = Flow;
+        int at = Array.IndexOf(flow, _page);
+        for (int i = 0; i < flow.Length - 1; i++)
+        {
+            var step = new TextBlock { Text = PageName(flow[i]), Margin = new Thickness(0, 0, 0, 10), FontWeight = at == i ? FontWeights.SemiBold : FontWeights.Normal };
+            step.SetResourceReference(TextBlock.ForegroundProperty, at >= i ? "Shell.SidebarStrong" : "Shell.SidebarText");
+            step.Opacity = at >= i ? 1 : .65;
+            Rail.Children.Add(step);
         }
     }
 
@@ -150,7 +192,8 @@ public partial class SetupWizard : FormWindow
         NextButton.IsEnabled = _page switch
         {
             Page.Requirements => RequirementList.Items.OfType<RequirementRow>().Any() && RequirementList.Items.OfType<RequirementRow>().All(r => r.Item.Ready),
-            Page.Checkout => ChosenCheckout() is not null,
+            Page.Install or Page.Checkout => ChosenCheckout() is not null,
+            Page.Account => AccountProblem() is null,
             Page.Client => NoClient.IsChecked == true || ClientList.SelectedItem is FoundClient { Usable: true } || HasClient(ChosenCheckout()),
             Page.Run => !running || _stop?.IsCancellationRequested != true,
             _ => true,
@@ -171,13 +214,11 @@ public partial class SetupWizard : FormWindow
     {
         switch (_page)
         {
-            case Page.Welcome: Show(Page.Requirements); break;
-            case Page.Requirements: Show(Page.Checkout); break;
-            case Page.Checkout:
+            case Page.Welcome or Page.Source or Page.Requirements or Page.Client or Page.Account: Show(Next()); break;
+            case Page.Install or Page.Checkout:
                 _clientsSearched = false;
-                Show(Page.Client);
+                Show(Next());
                 break;
-            case Page.Client: Show(Page.Run); break;
             case Page.Run when Running: RequestStop(); break;
             case Page.Run:
                 _running = RunAsync();
@@ -190,12 +231,68 @@ public partial class SetupWizard : FormWindow
         }
     }
 
-    void BackClicked(object sender, RoutedEventArgs e) => Show(_page - 1);
+    Page Next() => Flow[Array.IndexOf(Flow, _page) + 1];
+
+    void BackClicked(object sender, RoutedEventArgs e) => Show(Flow[Math.Max(Array.IndexOf(Flow, _page) - 1, 0)]);
+
+    void SourceChanged(object sender, RoutedEventArgs e)
+    {
+        if (!IsInitialized) return;
+        ShowRail();
+        UpdateButtons();
+    }
+
+    // --- Where the release goes ---
+
+    /// <summary>The usual folder, or one beside it when that holds something else (a source checkout, usually).</summary>
+    static string SuggestedInstallFolder()
+    {
+        string folder = SuggestedFolder();
+        return FolderProblem(folder) is null || LocalExileReleases.IsInstall(folder) ? folder : folder + " Release";
+    }
+
+    void InstallFolderChanged(object sender, TextChangedEventArgs e) => ShowInstallNote();
+
+    void ShowInstallNote()
+    {
+        if (InstallNote is null) return;
+        string folder = InstallFolder.Text.Trim();
+        InstallNote.Text = LocalExileReleases.IsInstall(folder) ? L.Text("LocalExile {0} is already installed here.", LocalExileReleases.Installed(folder)?.ToString() ?? "")
+            : FolderProblem(folder) ?? (ClientCopy.FreeSpace(folder) is { } free ? L.Text("{0:0.#} GB free on this drive; LocalExile with its client needs about {1:0} GB.", free / 1e9, NeededBytes / 1e9) : "");
+        UpdateButtons();
+    }
+
+    void ChooseInstallFolder(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFolderDialog { Title = L.Text("Choose where to install LocalExile") };
+        if (dialog.ShowDialog(this) != true) return;
+        // An empty folder or an install is taken as it is; otherwise LocalExile gets a folder of its own inside.
+        InstallFolder.Text = LocalExileReleases.IsInstall(dialog.FolderName) || !Directory.EnumerateFileSystemEntries(dialog.FolderName).Any() ? dialog.FolderName : Path.Combine(dialog.FolderName, "LocalExile");
+    }
+
+    // --- The account of a release install ---
+
+    string? AccountProblem() => LocalExileReleases.AccountProblem(AccountName.Text.Trim(), AccountPassword.Password, AccountAgain.Password);
+
+    void AccountChanged(object sender, RoutedEventArgs e)
+    {
+        bool typed = AccountName.Text.Length > 0 || AccountPassword.Password.Length > 0;
+        AccountNote.Text = typed ? AccountProblem() ?? "" : "";
+        UpdateButtons();
+    }
+
+    void ForgetPassword()
+    {
+        AccountPassword.Clear();
+        AccountAgain.Clear();
+    }
 
     /// <summary>Skip on any page. Later, after a stop, it reads Finish later: the checkout stays, and the guide can be run again
     /// from the Setup section.</summary>
     void SkipClicked(object sender, RoutedEventArgs e)
     {
+        if (_outcome is null && !Dialog.Ask(this, DialogKind.Question, L.Text("Skip setup?"),
+                L.Text("LocalExile won't be ready to play until setup is finished. You can run this guide again later."), L.Text("Skip setup"))) return;
         Skipped = _outcome is null;
         Close();
     }
@@ -260,7 +357,7 @@ public partial class SetupWizard : FormWindow
             CheckoutList.SelectedItem = _checkouts.FirstOrDefault(c => c.Root.Equals(_current, StringComparison.OrdinalIgnoreCase)) ?? _checkouts.FirstOrDefault();
             CheckoutStatus.Text = _checkouts.Count == 0 ? L.Text("LocalExile was not found on this PC. Download it, or browse to it if it is somewhere else.")
                 : L.Text("Found {0} on this PC.", _checkouts.Count);
-            if (_checkouts.Count == 0) DownloadChoice.IsChecked = true;
+            if (_checkouts.Count == 0 || _newCopy) DownloadChoice.IsChecked = true;
         }
         catch (OperationCanceledException) { }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
@@ -291,6 +388,7 @@ public partial class SetupWizard : FormWindow
 
     string? ChosenCheckout()
     {
+        if (UsingRelease) return InstallFolder.Text.Trim() is var install && (FolderProblem(install) is null || LocalExileReleases.IsInstall(install)) ? install : null;
         string folder = DownloadFolder.Text.Trim();
         // A download that finished is no longer an empty folder, and that is fine.
         if (DownloadChoice.IsChecked == true) return FolderProblem(folder) is null || RepositoryDiscovery.IsLocalExile(folder) ? folder : null;
@@ -407,9 +505,10 @@ public partial class SetupWizard : FormWindow
         var client = ClientList.SelectedItem as FoundClient;
         _sharedKeys = null;
         ShareClient.Visibility = Visibility.Collapsed;
+        LinkClient.Visibility = UsingRelease && client is not null ? Visibility.Visible : Visibility.Collapsed;
         if (client is not null) ClientNote.Text = ClientWarning(client);
         UpdateButtons();
-        if (client is not { Kind: ClientKind.Ready } || ChosenCheckout() is not { } checkout) return;
+        if (UsingRelease || client is not { Kind: ClientKind.Ready } || ChosenCheckout() is not { } checkout) return;
         string[] others = _checkouts.Select(c => c.Root).Where(r => !r.Equals(checkout, StringComparison.OrdinalIgnoreCase)).ToArray();
         string? keys = await Task.Run(() => ClientCopy.SharedKeys(client.Folder, checkout, others));
         if (keys is null || !Equals(ClientList.SelectedItem, client)) return;
@@ -433,13 +532,17 @@ public partial class SetupWizard : FormWindow
     string ClientWarning(FoundClient client)
     {
         if (client.KnownBuild == false) return L.Text("This is not the 3.29.3b build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
-        if (Sharing) return "";
+        if (Sharing || LinkClient.IsChecked == true) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining
             ? L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9) : "";
     }
 
-    void NoClientChanged(object sender, RoutedEventArgs e) => UpdateButtons();
+    void NoClientChanged(object sender, RoutedEventArgs e)
+    {
+        ShowRail();
+        UpdateButtons();
+    }
 
     // --- Setting up ---
 
@@ -473,6 +576,84 @@ public partial class SetupWizard : FormWindow
         if (prepare)
             tasks.Add(new(L.Text("Extract the game data"), null, (detail, stop) => SetupSequence.ExtractAsync(checkout, line => { Write(line); detail(line); }, stop)));
         return tasks;
+    }
+
+    /// <summary>A release's steps: the zip, then LocalExile.exe's own setup, which goes on from wherever it stopped.</summary>
+    IReadOnlyList<SetupTask> ReleasePlan(string folder, string? client, bool prepare)
+    {
+        var tasks = new List<SetupTask> { new(L.Text("Download LocalExile"), () => LocalExileReleases.IsInstall(folder), (detail, stop) => DownloadReleaseAsync(folder, detail, stop)) };
+        if (prepare) tasks.Add(new(L.Text("Prepare LocalExile"), null, (detail, stop) => PrepareReleaseAsync(folder, client, detail, stop)));
+        return tasks;
+    }
+
+    async Task DownloadReleaseAsync(string folder, Action<string> detail, CancellationToken stop)
+    {
+        try
+        {
+            using var client = Updates.Client();
+            var release = await LocalExileReleases.LatestAsync(client, stop) ?? throw new InvalidOperationException(L.Text("LocalExile has no release to download yet."));
+            Write($"> {release.Tag}: {release.ZipUrl}");
+            bool extracting = false;
+            await LocalExileReleases.InstallAsync(client, release, folder, (done, total) => Dispatcher.BeginInvoke(() =>
+            {
+                detail(extracting ? L.Text("Installing: {0:0} of {1:0} MB", done / 1e6, total / 1e6) : L.Text("Downloading: {0:0} of {1:0} MB", done / 1e6, total / 1e6));
+                ShowProgress(done, total);
+            }), () => extracting = true, stop);
+            Dispatcher.Invoke(() => Progress.IsIndeterminate = true);
+            Remember(folder);
+        }
+        // The sequence reports what it knows how to; these are the same to the player.
+        catch (Exception e) when (e is System.Net.Http.HttpRequestException or InvalidDataException or TaskCanceledException && !stop.IsCancellationRequested)
+        {
+            throw new IOException(L.Text("The download failed: {0}", e.Message), e);
+        }
+    }
+
+    void ShowProgress(long done, long total)
+    {
+        Progress.IsIndeterminate = false;
+        Progress.Value = total == 0 ? 0 : 100d * done / total;
+    }
+
+    /// <summary><c>LocalExile.exe setup --json</c>. A stop ends the run unless it is in a step that writes the client or the keys:
+    /// that one finishes first. A question it stops with sends the player to the page that answers it (<see cref="Finish"/>).</summary>
+    async Task PrepareReleaseAsync(string folder, string? client, Action<string> detail, CancellationToken stop)
+    {
+        List<string> arguments = ["setup"];
+        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", LinkClient.IsChecked == true ? "link" : "copy"]);
+        string? password = null;
+        if (AccountProblem() is null)
+        {
+            arguments.AddRange(["--account", AccountName.Text.Trim(), "--password-stdin"]);
+            password = AccountPassword.Password;
+        }
+        using var end = new CancellationTokenSource();
+        string? stage = null;
+        bool ending = false;
+        using var stopping = stop.Register(() =>
+        {
+            if (LocalExileReleases.MustFinish(Volatile.Read(ref stage))) Volatile.Write(ref ending, true);
+            else end.Cancel();
+        });
+        var result = await LocalExileTool.RunAsync(folder, arguments, item =>
+        {
+            if (item.Name is "step" or "progress")
+            {
+                Volatile.Write(ref stage, item.Id);
+                if (Volatile.Read(ref ending) && !LocalExileReleases.MustFinish(item.Id)) end.Cancel();
+                string name = LocalExileReleases.Stage(item.Id, item.Message ?? "");
+                detail(item.Name == "progress" && item.Message is { } message ? $"{name}: {message}" : name);
+                if (item.Current is { } done && item.Total is { } total) Dispatcher.BeginInvoke(() => ShowProgress(done, total));
+                else if (item.Name == "step") Dispatcher.BeginInvoke(() => Progress.IsIndeterminate = !Theme.Current.ReduceMotion);
+            }
+            if (item.Message is { } text) Write(text);
+        }, Write, password, end.Token);
+        if (result.NeededOption is { } option)
+        {
+            _neededOption = option;
+            throw new InvalidOperationException(L.Text("LocalExile needs a little more from you."));
+        }
+        if (result.Code != 0) throw new InvalidOperationException(result.Error ?? L.Text("LocalExile.exe stopped with exit code {0}.", result.Code));
     }
 
     /// <summary>The adapter refuses to prepare anything while another program holds a server's port, so the guide asks first.
@@ -516,6 +697,7 @@ public partial class SetupWizard : FormWindow
         string checkout = ChosenCheckout() ?? Checkout ?? "";
         var client = NoClient.IsChecked == true ? null : ClientList.SelectedItem as FoundClient;
         bool hasClient = client is not null || HasClient(checkout);
+        if (UsingRelease) return ReleasePlan(checkout, HasClient(checkout) ? null : client?.Folder, hasClient);
         return Plan(checkout, DownloadChoice.IsChecked == true, HasClient(checkout) ? null : client?.Folder, Sharing ? _sharedKeys : null, hasClient);
     }
 
@@ -533,12 +715,13 @@ public partial class SetupWizard : FormWindow
         // A step that was done when the page opened may have stopped since: the list is made again.
         _steps.Clear();
         foreach (var task in tasks) _steps.Add(new(task.Name));
-        if (RepositoryDiscovery.IsLocalExile(checkout)) Remember(checkout);
+        if (RepositoryDiscovery.IsLocalExile(checkout) || LocalExileReleases.IsInstall(checkout)) Remember(checkout);
         _settings.SetupClient = (ClientList.SelectedItem as FoundClient)?.Folder;
         _settings.Save();
         _stop = new();
         _outcome = null;
         _portsHeld = false;
+        _neededOption = null;
         RunTitle.Text = L.Text("Setting up");
         RunStatus.Text = L.Text("You can stop at any point: what is finished stays finished.");
         Progress.Visibility = Visibility.Visible;
@@ -558,6 +741,15 @@ public partial class SetupWizard : FormWindow
     void Finish(string checkout)
     {
         var failed = _steps.FirstOrDefault(s => s.State == SetupState.Failed);
+        if (_neededOption is { } option)
+        {
+            _neededOption = null;
+            _outcome = null;
+            UpdateButtons();
+            if (!_closeWhenStopped) Show(option is "--account" or "--password-stdin" ? Page.Account : Page.Client);
+            else Close();
+            return;
+        }
         switch (_outcome)
         {
             case SetupOutcome.Finished:
@@ -566,8 +758,12 @@ public partial class SetupWizard : FormWindow
                 _settings.Save();
                 DoneText.Text = HasClient(checkout) ? L.Text("Everything is in place. Press Play in Waypoint to start the servers and the game. In the game, set Options → Game → Network Mode to Predictive the first time.")
                     : L.Text("LocalExile is built. Add your game client with this guide when you have it: Setup → Run setup guide.");
-                CreateAccount.Visibility = HasClient(checkout) ? Visibility.Visible : Visibility.Collapsed;
-                CreateAccount.IsChecked = HasClient(checkout);
+                bool accounts = HasClient(checkout) && !UsingRelease;
+                if (UsingRelease) DoneText.Text = HasClient(checkout) ? L.Text("Everything is in place. Press Play in Waypoint to start the game. Log in with your account: its name goes in the Email field. In the game, set Options → Game → Network Mode to Predictive the first time.")
+                    : L.Text("LocalExile is installed. Run this guide again when you have your game client: Play → Finish setup.");
+                CreateAccount.Visibility = accounts ? Visibility.Visible : Visibility.Collapsed;
+                CreateAccount.IsChecked = accounts;
+                ForgetPassword();
                 Show(Page.Done);
                 break;
             case SetupOutcome.Stopped:

@@ -11,10 +11,14 @@ static class Repo
     public static bool IsRoot(string? dir) =>
         !string.IsNullOrEmpty(dir) && File.Exists(Path.Combine(dir, "GameServer.slnx")) && File.Exists(Path.Combine(dir, LiveScript));
 
-    /// <summary>The checkout to drive: the saved one while it still is one, else the working directory when it is one
-    /// (`dotnet run` from a server checkout); null when the player has to choose.</summary>
+    /// <summary>The checkout to drive: the saved one while it still is one, a saved release install, else the working
+    /// directory when it is a checkout (`dotnet run` from a server checkout); null when the player has to choose.</summary>
     public static string? Find(string? saved, string workingDirectory) =>
-        IsRoot(saved) ? Path.GetFullPath(saved!) : IsRoot(workingDirectory) ? workingDirectory : null;
+        IsRoot(saved) || LocalExileReleases.IsInstall(saved) ? Path.GetFullPath(saved!) : IsRoot(workingDirectory) ? workingDirectory : null;
+
+    /// <summary>Waypoint runs on a release install: everything goes through LocalExile.exe, and what needs a checkout's
+    /// live.ps1, adapter or git is not offered. Set once at startup.</summary>
+    public static bool IsInstall { get; set; }
 
     /// <summary>Where the folder picker starts: a "LocalExile" folder beside the launcher's own repository when it is a
     /// checkout (the usual layout, LocalExile\ and LocalExile-Launcher\ side by side), else the launcher's folder.</summary>
@@ -94,7 +98,7 @@ static class Repo
     public static string Logs { get; } = "logs";
 
     /// <summary>A server's build output, as live.ps1 runs it (Debug, net10.0).</summary>
-    public static string ServerDll(string project) =>
+    public static string ServerDll(string project) => IsInstall ? Path.Combine("app", $"GameServer.{project}.exe") :
         Path.Combine("src", $"GameServer.{project}", "bin", "Debug", "net10.0", $"GameServer.{project}.dll");
 
     /// <summary>The checkout's virtual environment wins over the python on PATH, as in live.ps1.</summary>

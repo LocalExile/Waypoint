@@ -4,7 +4,7 @@
              xmlns:l="clr-namespace:Waypoint">
     <DockPanel Margin="20,12,20,12">
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-            <Button DockPanel.Dock="Left" Content="{l:Loc 'Game status'}" Click="GameStatus" ToolTip="client_control.py game:status" />
+            <Button x:Name="GameStatusButton" DockPanel.Dock="Left" Content="{l:Loc 'Game status'}" Click="GameStatus" ToolTip="client_control.py game:status" />
             <Button DockPanel.Dock="Left" Content="{l:Loc 'Reload commands'}" Click="ReloadCommands" ToolTip="{l:Loc 'GameServer.Gateway commands: the built Gateway\'s list'}" />
             <TextBlock x:Name="State" VerticalAlignment="Center" Margin="6,0,0,6" Foreground="{DynamicResource Shell.TextSecondary}" TextTrimming="CharacterEllipsis"
                        Text="{l:Loc 'Commands go through the game client (scripts/dev/client_control.py): start the game and enter an area first.'}" />

@@ -14,8 +14,10 @@ rules: the server's are in its `AGENTS.md`.
 
 - **Waypoint never starts a server or the game client itself.** Every start, restart and stop on the Control section is a
   `scripts/dev/live.ps1` switch of the checkout (the server's rule: the client starts only through `live.ps1`, one at a
-  time). Stopping the client's process or the dev host Waypoint started is fine. A Gateway ignores a listing mode it doesn't
-  know and starts for real, so a new mode needs a check that the build has it first (`CrafterCatalog.HasCrafter`).
+  time). Stopping the client's process or the dev host Waypoint started is fine. A release install has no `live.ps1`: there
+  every start and stop is its own `LocalExile.exe --json` (the release's rule: the client starts only through it). A Gateway
+  ignores a listing mode it doesn't know and starts for real, so a new mode needs a check that the build has it first
+  (`CrafterCatalog.HasCrafter`), on a release's too.
 - **No reference to server projects.** Waypoint talks to the server only through its outside-tool hooks: `live.ps1`,
   `GameServer.Gateway commands` / `values <kind>` / `crafter`, the dev host's JSON-lines protocol, the client control
   bridge, the logs. The Versions section also runs git in the checkout and reads GitHub's public API; the adapter in `scripts/` reads
@@ -28,7 +30,9 @@ rules: the server's are in its `AGENTS.md`.
   before running a fork's pull request, and refuses what would drop a local commit; keep those guards when changing
   `VersionsTab`.
 - **Waypoint moves a checkout by itself only in Simple mode, and only a plain copy of LocalExile**
-  (`CheckoutUpdates.PlainCopy`): anything of the player's own stays as it is, and Advanced mode never moves one.
+  (`CheckoutUpdates.PlainCopy`): anything of the player's own stays as it is, and Advanced mode never moves one. A release
+  install is updated only when the player accepts the prompt, with the game closed; a zip that names `data\` (other than
+  `data\schema\`) or `Client\` is refused.
 - **Saves are never overwritten in place.** Restoring or starting fresh moves the current database aside first, and a
   change to accounts or mods is backed up unless the player turned that off. Never force-kill a Gateway as an automatic
   fallback; it needs the chance to save.

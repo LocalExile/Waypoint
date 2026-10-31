@@ -21,6 +21,8 @@ public partial class AccountsTab : UserControl
         _shared = shared;
         CharacterClass.ItemsSource = AccountList.Classes;
         CharacterClass.SelectedItem = "Witch";
+        // These go through the dev host, which a release does not have; Create account… works there through LocalExile.exe.
+        if (Repo.IsInstall) StopHost.Visibility = HostState.Visibility = HostTools.Visibility = Visibility.Collapsed;
         ForAccount.Text = L.Text("(select an account above)");
         shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() =>
         {

@@ -45,6 +45,9 @@
   <data name="Text_024e575db6ff" xml:space="preserve">
     <value>Not a server checkout</value>
   </data>
+  <data name="Text_0254ec4a2f77" xml:space="preserve">
+    <value>The passwords differ.</value>
+  </data>
   <data xml:space="preserve" name="Text_02a2840b598b">
     <value>Back up now</value>
   </data>
@@ -53,6 +56,9 @@
   </data>
   <data name="Text_02d0aa76b41b" xml:space="preserve">
     <value>Any modifier (no rules)</value>
+  </data>
+  <data name="Text_02f419eca140" xml:space="preserve">
+    <value>an unknown version</value>
   </data>
   <data xml:space="preserve" name="Text_030d3f415374">
     <value>What backups include</value>
@@ -117,6 +123,9 @@
   <data name="Text_0656d2bfebf7" xml:space="preserve">
     <value>Start with fresh saves</value>
   </data>
+  <data name="Text_066985b08f1e" xml:space="preserve">
+    <value>Patch, Auth and Gateway without the game. To play, stop them and press Play: one LocalExile.exe runs an install at a time.</value>
+  </data>
   <data name="Text_06748f34221f" xml:space="preserve">
     <value>Select an account first.</value>
   </data>
@@ -162,6 +171,9 @@
   <data xml:space="preserve" name="Text_0a9315c001d9">
     <value>Save and check</value>
   </data>
+  <data name="Text_0aa22dd274ff" xml:space="preserve">
+    <value>You log in to the game with this. It stays on this PC, so do not reuse a real password.</value>
+  </data>
   <data name="Text_0aa2be2a39a2" xml:space="preserve">
     <value>Setup did not finish</value>
   </data>
@@ -197,6 +209,9 @@
   </data>
   <data name="Text_0c0e5ef46381" xml:space="preserve">
     <value>Create a character</value>
+  </data>
+  <data name="Text_0c2524dc63f2" xml:space="preserve">
+    <value>Running for {0}</value>
   </data>
   <data name="Text_0c26727a3a51" xml:space="preserve">
     <value>The game world</value>
@@ -273,8 +288,17 @@
   <data xml:space="preserve" name="Text_0f45e54a225b">
     <value>From Tools/ooz run npm install</value>
   </data>
+  <data name="Text_0f5a9c5ec33d" xml:space="preserve">
+    <value>Copying the game client</value>
+  </data>
   <data xml:space="preserve" name="Text_0fa5ec4ebbe9">
     <value>Refresh local status (F5)</value>
+  </data>
+  <data name="Text_0fe48573aa2b" xml:space="preserve">
+    <value>Set up a new copy…</value>
+  </data>
+  <data name="Text_10103cd43afc" xml:space="preserve">
+    <value>LocalExile is installed. Run this guide again when you have your game client: Play → Finish setup.</value>
   </data>
   <data name="Text_1026d509da03" xml:space="preserve">
     <value>{0} has no GameServer.slnx and scripts\dev\live.ps1.</value>
@@ -360,6 +384,12 @@
   <data name="Text_144d877d3f41" xml:space="preserve">
     <value>Duplicate account</value>
   </data>
+  <data name="Text_14735da889ea" xml:space="preserve">
+    <value>the release has no {0} or {1}; nothing was changed</value>
+  </data>
+  <data name="Text_149987f7b1c8" xml:space="preserve">
+    <value>LocalExile.exe stopped with exit code {0}.</value>
+  </data>
   <data name="Text_149f6fa0a11f" xml:space="preserve">
     <value>Sockets: as a new item gets them</value>
   </data>
@@ -390,8 +420,14 @@
   <data name="Text_15cf2239e4e8" xml:space="preserve">
     <value>Set up LocalExile</value>
   </data>
+  <data name="Text_15eeb441cd21" xml:space="preserve">
+    <value>Close the game to change mods.</value>
+  </data>
   <data xml:space="preserve" name="Text_1600160452d4">
     <value>Invalid source</value>
+  </data>
+  <data name="Text_162f35a6c5a0" xml:space="preserve">
+    <value>Preparing the login keys</value>
   </data>
   <data xml:space="preserve" name="Text_16d6780ed99d">
     <value>Dependency blocked</value>
@@ -600,6 +636,9 @@
   <data name="Text_21ea97893c68" xml:space="preserve">
     <value>This checkout's Gateway has no item crafter yet: update LocalExile, then play or start the servers once to build it.</value>
   </data>
+  <data name="Text_21f1037412e4" xml:space="preserve">
+    <value>What is happening</value>
+  </data>
   <data xml:space="preserve" name="Text_223e64b8fc5b">
     <value>Automatic lookup runs on first use. You can also search again here.</value>
   </data>
@@ -641,6 +680,9 @@
   </data>
   <data xml:space="preserve" name="Text_23c0a4391171">
     <value>Upstream PR number</value>
+  </data>
+  <data name="Text_240f51c01b28" xml:space="preserve">
+    <value>The password can only use English letters, digits and common symbols.</value>
   </data>
   <data xml:space="preserve" name="Text_245c1078b5e7">
     <value>Mod details</value>
@@ -742,6 +784,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_288994eb8c4a" xml:space="preserve">
     <value>Close the game first. If services cannot stop safely, Waypoint stays open.</value>
   </data>
+  <data name="Text_28c07dd19179" xml:space="preserve">
+    <value>LocalExile needs a little more from you.</value>
+  </data>
   <data name="Text_28c09aa06d80" xml:space="preserve">
     <value>the account has the most characters it can have</value>
   </data>
@@ -759,6 +804,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2951c4e2bb30" xml:space="preserve">
     <value>Stopping: a step that writes the client or the keys finishes first.</value>
+  </data>
+  <data name="Text_297ca576d20c" xml:space="preserve">
+    <value>Installing: {0:0} of {1:0} MB</value>
   </data>
   <data xml:space="preserve" name="Text_297ef4c79b4b">
     <value>Reduce motion</value>
@@ -858,6 +906,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_2deea4664d23">
     <value>Secondary text</value>
+  </data>
+  <data name="Text_2e07253d4cbb" xml:space="preserve">
+    <value>Extracting the game data</value>
   </data>
   <data name="Text_2e19a6844469" xml:space="preserve">
     <value>Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3b.</value>
@@ -998,6 +1049,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_3506d661965b">
     <value>Restart Gateway</value>
   </data>
+  <data name="Text_3577169c42d9" xml:space="preserve">
+    <value>LocalExile won't be ready to play until setup is finished. You can run this guide again later.</value>
+  </data>
   <data xml:space="preserve" name="Text_358cc201f87d">
     <value>Operations</value>
   </data>
@@ -1088,6 +1142,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_3ad8589795b3">
     <value>Check live status</value>
   </data>
+  <data name="Text_3b0bd8704408" xml:space="preserve">
+    <value>Where should LocalExile go?</value>
+  </data>
   <data name="Text_3b343d586243" xml:space="preserve">
     <value>Not restored (the stash is kept): {0}</value>
   </data>
@@ -1124,6 +1181,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_3c58451ae577">
     <value>Detached source</value>
+  </data>
+  <data name="Text_3cd54602c9df" xml:space="preserve">
+    <value>Downloading: {0:0} of {1:0} MB</value>
   </data>
   <data name="Text_3d0bd7411efc" xml:space="preserve">
     <value>Exit and leave running</value>
@@ -1173,6 +1233,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3fa059ee5bd6" xml:space="preserve">
     <value>Keep Waypoint within reach?</value>
   </data>
+  <data name="Text_3fb7b39416f1" xml:space="preserve">
+    <value>Developer</value>
+  </data>
   <data xml:space="preserve" name="Text_3fbcbf7d0499">
     <value>Fetch completed.</value>
   </data>
@@ -1208,6 +1271,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_41ed52921661">
     <value>Gateway</value>
+  </data>
+  <data name="Text_41ff2410bb48" xml:space="preserve">
+    <value>The password needs at least 4 characters.</value>
   </data>
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Language saved.</value>
@@ -1338,6 +1404,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_49dad9577c46">
     <value>Could not inspect mods: </value>
   </data>
+  <data name="Text_49fc111261b6" xml:space="preserve">
+    <value>LocalExile update</value>
+  </data>
   <data xml:space="preserve" name="Text_4a1c51ca77b8">
     <value>Enable choices apply at the next Gateway start. Build selected compiles this mod’s source.</value>
   </data>
@@ -1364,6 +1433,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4b132b882d17" xml:space="preserve">
     <value>The notification area is unavailable. Waypoint has reopened so you can still use it.</value>
+  </data>
+  <data name="Text_4b3207d58add" xml:space="preserve">
+    <value>Waypoint downloads {0:0} MB, checks it, and puts it over this install. Your characters, keys and game client are kept, and your saves are copied first when Automatic backups is on. The next Play may extract game data again.</value>
   </data>
   <data name="Text_4b72b1793476" xml:space="preserve">
     <value>{0} already has files in it, so Waypoint will not replace it with a link.</value>
@@ -1416,11 +1488,17 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_4df1cf29668a">
     <value>Play completed.</value>
   </data>
+  <data name="Text_4df36313ae04" xml:space="preserve">
+    <value>2.  Finds your game client, or lets you point to it</value>
+  </data>
   <data xml:space="preserve" name="Text_4df57ea533cf">
     <value>Checking restore</value>
   </data>
   <data name="Text_4df7d19d0633" xml:space="preserve">
     <value>Everything is in place. Press Play in Waypoint to start the servers and the game. In the game, set Options → Game → Network Mode to Predictive the first time.</value>
+  </data>
+  <data name="Text_4e2f30ce9131" xml:space="preserve">
+    <value>Something else is using LocalExile. Try again when it is done.</value>
   </data>
   <data name="Text_4e3e2cd41804" xml:space="preserve">
     <value>Build all mods</value>
@@ -1518,6 +1596,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_53be99dc1380" xml:space="preserve">
     <value>Read-only: {0}</value>
   </data>
+  <data name="Text_53e6fa24d72d" xml:space="preserve">
+    <value>Needs .NET, Git, Python and Node. Adds branches, pull requests, mods, accounts and the console.</value>
+  </data>
   <data name="Text_5411795d179d" xml:space="preserve">
     <value>Close the game, then restart Gateway to enable capture.</value>
   </data>
@@ -1545,8 +1626,14 @@ This checkout has modified tracked files.</value>
   <data name="Text_55091c102c8f" xml:space="preserve">
     <value>The saves could not be backed up. Automatic backups can be turned off on the Backups section.</value>
   </data>
+  <data name="Text_553decbc612d" xml:space="preserve">
+    <value>Update LocalExile to {0}?</value>
+  </data>
   <data name="Text_5559b6621735" xml:space="preserve">
     <value>{0} has no Content.ggpk and PathOfExile.exe, so it is not a standalone client.</value>
+  </data>
+  <data name="Text_55863ec85560" xml:space="preserve">
+    <value>Linking the game client</value>
   </data>
   <data xml:space="preserve" name="Text_55880f0e7438">
     <value>Operation output</value>
@@ -1624,6 +1711,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5aeae0f3a80d" xml:space="preserve">
     <value>.NET counters of</value>
+  </data>
+  <data name="Text_5b18a6940649" xml:space="preserve">
+    <value>Password again</value>
   </data>
   <data xml:space="preserve" name="Text_5b72b116c129">
     <value>Watch Gateway code while playing</value>
@@ -1707,6 +1797,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data name="Text_60174772db52" xml:space="preserve">
     <value>The port is still in use, so Waypoint did not go on.</value>
   </data>
+  <data name="Text_60540eaada37" xml:space="preserve">
+    <value>LocalExile.exe: starts the servers, then the game</value>
+  </data>
   <data xml:space="preserve" name="Text_608f1cf89149">
     <value>Login keys</value>
   </data>
@@ -1745,6 +1838,15 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data name="Text_61b04b5fb05f" xml:space="preserve">
     <value>Restart the game</value>
+  </data>
+  <data name="Text_61d64d38cb24" xml:space="preserve">
+    <value>Adds a Simple | Advanced switch to the sidebar. Advanced has the servers, branches and pull requests, backups, performance, logs and the console.</value>
+  </data>
+  <data name="Text_61e9e054c8b6" xml:space="preserve">
+    <value>Copied: {0}</value>
+  </data>
+  <data name="Text_61f82c126875" xml:space="preserve">
+    <value>LocalExile {0} is the newest release.</value>
   </data>
   <data name="Text_62076cdbb40a" xml:space="preserve">
     <value>Switched to {0}.</value>
@@ -1821,6 +1923,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_64fe832d62f6">
     <value>CPU is the share of this machine’s total logical processors between refreshes. A dash means no running process or no second sample yet.</value>
   </data>
+  <data name="Text_6525897796c7" xml:space="preserve">
+    <value>When Waypoint starts, look for a newer LocalExile release and offer to install it.</value>
+  </data>
   <data name="Text_652bc5bf7952" xml:space="preserve">
     <value>"{0}" comes from {1}: its code is not the LocalExile maintainers'.
 
@@ -1885,6 +1990,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6807bd205052" xml:space="preserve">
     <value>Close {0}?</value>
+  </data>
+  <data name="Text_6808c5883afe" xml:space="preserve">
+    <value>Close the game first</value>
   </data>
   <data name="Text_680ce38047bf" xml:space="preserve">
     <value>Hunter</value>
@@ -2009,6 +2117,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_6f3c603b812d" xml:space="preserve">
     <value>SERVICE</value>
   </data>
+  <data name="Text_6f7c506d045e" xml:space="preserve">
+    <value>Developer Mode</value>
+  </data>
   <data name="Text_6fa62b3dba2f" xml:space="preserve">
     <value>Rename…</value>
   </data>
@@ -2036,6 +2147,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7063e226c881" xml:space="preserve">
     <value>Stop services on exit</value>
   </data>
+  <data name="Text_708dc8aff75e" xml:space="preserve">
+    <value>Prepare LocalExile</value>
+  </data>
   <data name="Text_71147e58a343" xml:space="preserve">
     <value>Checking live mods</value>
   </data>
@@ -2050,6 +2164,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_718870a89c04" xml:space="preserve">
     <value>Pick another LocalExile server checkout; the launcher starts again on it</value>
+  </data>
+  <data name="Text_718c45696575" xml:space="preserve">
+    <value>Newer</value>
   </data>
   <data name="Text_71c4cf22a93b" xml:space="preserve">
     <value>Skip data check</value>
@@ -2087,8 +2204,14 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_738e4bcc0aee" xml:space="preserve">
     <value>client: {0}, {1}</value>
   </data>
+  <data name="Text_7396f3b0b843" xml:space="preserve">
+    <value>Replaces Play with Control, and adds Versions, performance and server timings.</value>
+  </data>
   <data name="Text_73b6e48a1b55" xml:space="preserve">
     <value>Later</value>
+  </data>
+  <data name="Text_740d285557d7" xml:space="preserve">
+    <value>How do you want LocalExile?</value>
   </data>
   <data xml:space="preserve" name="Text_74160bd42b82">
     <value>LocalExile repository folder</value>
@@ -2101,6 +2224,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_74d9a7c8a656">
     <value>Delete backup…</value>
+  </data>
+  <data name="Text_74f09adf5088" xml:space="preserve">
+    <value>Change folder…</value>
   </data>
   <data name="Text_74feac5eb8d9" xml:space="preserve">
     <value>Prefix</value>
@@ -2177,6 +2303,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_79735cd45cb7">
     <value>{0} choices. Remote branches reflect the last fetch. </value>
   </data>
+  <data name="Text_7982db2ffc3a" xml:space="preserve">
+    <value>Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests</value>
+  </data>
   <data name="Text_7989d0faa17f" xml:space="preserve">
     <value>GameServer.Gateway commands: the built Gateway's list</value>
   </data>
@@ -2237,6 +2366,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_7cea9dbef301">
     <value>Close button symbol</value>
   </data>
+  <data name="Text_7cec6cca16cb" xml:space="preserve">
+    <value>LocalExile {0}</value>
+  </data>
   <data name="Text_7cf77adcf36c" xml:space="preserve">
     <value>Starting the dev host …</value>
   </data>
@@ -2282,11 +2414,17 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_7ee581fb2eb4">
     <value>EnableMod completed.</value>
   </data>
+  <data name="Text_7eeddee4e939" xml:space="preserve">
+    <value>Play, logs and settings.</value>
+  </data>
   <data name="Text_7f06ea4f0831" xml:space="preserve">
     <value>League</value>
   </data>
   <data name="Text_7f1aa82e323e" xml:space="preserve">
     <value>dotnet build GameServer.slnx, with the servers stopped</value>
+  </data>
+  <data name="Text_7f8ba52ba5d8" xml:space="preserve">
+    <value>The ready-to-play release (recommended)</value>
   </data>
   <data xml:space="preserve" name="Text_7fd994d683da">
     <value>Search branch names, PR titles, authors or commit hashes</value>
@@ -2302,6 +2440,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_80fd4dce7fd0">
     <value>Reduced motion replaces the animated progress bar with the existing stage and elapsed-time feedback. Windows animation preferences are respected automatically.</value>
+  </data>
+  <data name="Text_81319fb532ca" xml:space="preserve">
+    <value>Your local account</value>
   </data>
   <data xml:space="preserve" name="Text_813b86284864">
     <value>Start Gateway with hot reload enabled to apply compatible saved code edits in game.</value>
@@ -2441,6 +2582,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_89d00e7dc413">
     <value>Standalone Content.ggpk is required; Steam layout is unsupported</value>
   </data>
+  <data name="Text_89d29dccbe1f" xml:space="preserve">
+    <value>Adds a Simple | Advanced switch to the sidebar. On a release install, Advanced adds the status strip, performance and server timings; the other sections need a source checkout.</value>
+  </data>
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>Double-click a command to put it in the line.</value>
   </data>
@@ -2461,6 +2605,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8ad920a3b55b" xml:space="preserve">
     <value>Shaper</value>
+  </data>
+  <data name="Text_8b18eaba7be1" xml:space="preserve">
+    <value>3.  Copies the client and prepares it</value>
   </data>
   <data xml:space="preserve" name="Text_8b2d4fa44372">
     <value>Search mod ID, version, kind, status or error (Ctrl+F)</value>
@@ -2495,6 +2642,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8d0c7ac992af" xml:space="preserve">
     <value>fork</value>
   </data>
+  <data name="Text_8d21c00d704e" xml:space="preserve">
+    <value>Copying your saves …</value>
+  </data>
   <data xml:space="preserve" name="Text_8d525e5f158b">
     <value>Copied</value>
   </data>
@@ -2527,6 +2677,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_8e3cda3b4f8b">
     <value>Local HEAD unavailable</value>
+  </data>
+  <data name="Text_8e6f9abf3515" xml:space="preserve">
+    <value>LocalExile</value>
   </data>
   <data xml:space="preserve" name="Text_8e70857af792">
     <value>Optional account/character names to remove, separated by commas</value>
@@ -2567,6 +2720,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_9057fd0f98cc" xml:space="preserve">
     <value>Game client</value>
   </data>
+  <data name="Text_908eb71d714e" xml:space="preserve">
+    <value>Everything is in place. Press Play in Waypoint to start the game. Log in with your account: its name goes in the Email field. In the game, set Options → Game → Network Mode to Predictive the first time.</value>
+  </data>
   <data name="Text_9158396951bf" xml:space="preserve">
     <value>Same as Stop all: the game, the walk-map recorder, the servers and the account service.</value>
   </data>
@@ -2605,6 +2761,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_9381b171923f">
     <value>This revision has no supported mod host. Older LocalExile revisions can still be launched normally.</value>
+  </data>
+  <data name="Text_93827aab09d1" xml:space="preserve">
+    <value>Play, mods, backups, accounts, logs, the console and tools.</value>
   </data>
   <data xml:space="preserve" name="Text_93c6b664dce6">
     <value>Browse…</value>
@@ -2717,6 +2876,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_989176ed75d6" xml:space="preserve">
     <value>Stop capture</value>
   </data>
+  <data name="Text_990c09b02baf" xml:space="preserve">
+    <value>LocalExile {0} is out; you have {1}. Your characters, keys and game client are kept.</value>
+  </data>
   <data name="Text_991c02eaff62" xml:space="preserve">
     <value>Gateway is stopped; the choice takes effect on its next start.</value>
   </data>
@@ -2826,6 +2988,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9da3e9b26c5e" xml:space="preserve">
     <value>Port held by another</value>
   </data>
+  <data name="Text_9da689a1ee2c" xml:space="preserve">
+    <value>Use this folder itself instead of a copy. It saves the space, but LocalExile then changes that client.</value>
+  </data>
   <data name="Text_9df4f4d7fd9d" xml:space="preserve">
     <value>Pick another LocalExile server checkout; Waypoint starts again on it</value>
   </data>
@@ -2850,6 +3015,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_9f365252d60f">
     <value>Resolve the check failure in Settings, then refresh.</value>
   </data>
+  <data name="Text_9f367746addb" xml:space="preserve">
+    <value>The download failed: {0}</value>
+  </data>
   <data name="Text_9f59b95311b3" xml:space="preserve">
     <value>Waypoint is closing. Wait for it to finish, then open it again.</value>
   </data>
@@ -2858,6 +3026,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9fa77e063410" xml:space="preserve">
     <value>Version {0} is out; this is {1}. The servers and the game keep running while it updates.</value>
+  </data>
+  <data name="Text_9ff9b19918a1" xml:space="preserve">
+    <value>Copy a command, then paste it into the game's chat with Ctrl+V.</value>
   </data>
   <data xml:space="preserve" name="Text_a0160f336a55">
     <value>Could not open folder: </value>
@@ -2907,17 +3078,26 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a2e20a335700" xml:space="preserve">
     <value>Delete account</value>
   </data>
+  <data name="Text_a307b32442e5" xml:space="preserve">
+    <value>Checking your account</value>
+  </data>
   <data name="Text_a330c2786496" xml:space="preserve">
     <value>Start anyway</value>
   </data>
   <data name="Text_a34d444917a5" xml:space="preserve">
     <value>{0} could not be read. Close the game and try again.</value>
   </data>
+  <data name="Text_a359209c9b61" xml:space="preserve">
+    <value>Choose where to install LocalExile</value>
+  </data>
   <data name="Text_a37f0d9d865e" xml:space="preserve">
     <value>Capture is optional. Existing files are kept.</value>
   </data>
   <data name="Text_a388bd2d373c" xml:space="preserve">
     <value>Uncommitted changes</value>
+  </data>
+  <data name="Text_a3ac0b8d4d94" xml:space="preserve">
+    <value>1.  Gets LocalExile to a folder you choose, or finds the copy you have</value>
   </data>
   <data name="Text_a3b98f7ed11c" xml:space="preserve">
     <value>Enter a valid account name: 3–32 letters, digits, underscores or hyphens.</value>
@@ -2960,6 +3140,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a4cb3139c1c6" xml:space="preserve">
     <value>The servers or the game are running. They stop before the switch: a running Gateway would rebuild halfway through it.</value>
+  </data>
+  <data name="Text_a4fc48b844f8" xml:space="preserve">
+    <value>This LocalExile speaks a newer protocol than this Waypoint knows. Update Waypoint.</value>
   </data>
   <data xml:space="preserve" name="Text_a4fe65264ef7">
     <value>Language</value>
@@ -3057,6 +3240,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a91d36846491" xml:space="preserve">
     <value>Start the recorder before entering a new area. If the game is closed, it waits up to 10 minutes.</value>
   </data>
+  <data name="Text_a920c446a52e" xml:space="preserve">
+    <value>Pointing the client at your PC</value>
+  </data>
   <data name="Text_a9666e46fd95" xml:space="preserve">
     <value>{0} (pid {1}) closed</value>
   </data>
@@ -3147,6 +3333,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_aeed4d26bb5f">
     <value>Starting</value>
   </data>
+  <data name="Text_af0303342a01" xml:space="preserve">
+    <value>Open page</value>
+  </data>
   <data name="Text_af20391b2b63" xml:space="preserve">
     <value>The game is running: Play closes it and starts it again; the servers keep running.</value>
   </data>
@@ -3168,8 +3357,14 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b0176d1229f3" xml:space="preserve">
     <value>The command is on the clipboard.</value>
   </data>
+  <data name="Text_b03f0885df1b" xml:space="preserve">
+    <value>{0} is not inside the release's LocalExile folder; nothing was changed</value>
+  </data>
   <data name="Text_b09919b9d100" xml:space="preserve">
     <value>QueryAccounts completed.</value>
+  </data>
+  <data name="Text_b0a3816e6bf3" xml:space="preserve">
+    <value>Nothing else to install. Waypoint tells you when a newer release is out and installs it for you.</value>
   </data>
   <data name="Text_b0c35534bd56" xml:space="preserve">
     <value>Keyboard: Ctrl+1–9 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Change appearance and accessibility preferences in Settings.</value>
@@ -3207,6 +3402,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b291f6978e5e" xml:space="preserve">
     <value>Default sockets; e.g. RRGB a 4-link, RR GB two pairs</value>
   </data>
+  <data name="Text_b29deff122c6" xml:space="preserve">
+    <value>Switching branches and pull requests needs a copy of LocalExile with git. This folder is a release. Open a git folder, or set up a new copy.</value>
+  </data>
   <data name="Text_b2ab0c098068" xml:space="preserve">
     <value>Another modifier of the same group is on the item: the game would not roll both.</value>
   </data>
@@ -3215,6 +3413,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b2d54e04976a">
     <value>PrepareClient completed.</value>
+  </data>
+  <data name="Text_b2feff991def" xml:space="preserve">
+    <value>Log in with your LocalExile account: its name goes in the Email field. Closing the game stops the servers.</value>
   </data>
   <data xml:space="preserve" name="Text_b34ae7c4547d">
     <value>Local HEAD: </value>
@@ -3308,6 +3509,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b7d1e0571f80">
     <value>Workspace inspection failed. Resolve the problem in Settings, then refresh.</value>
+  </data>
+  <data name="Text_b82eacd81525" xml:space="preserve">
+    <value>the release holds an unsafe path, {0}; nothing was changed</value>
   </data>
   <data xml:space="preserve" name="Text_b83816513bac">
     <value>Building account service</value>
@@ -3453,8 +3657,14 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c0fa1dcd67a3" xml:space="preserve">
     <value>What is finished stays finished, and a partial copy is kept. Continue picks up from here, now or another day.</value>
   </data>
+  <data name="Text_c11c363d0402" xml:space="preserve">
+    <value>the release would overwrite {0}, which holds your own data; nothing was changed</value>
+  </data>
   <data name="Text_c12805c5fe6e" xml:space="preserve">
     <value>Quality: +{0}%</value>
+  </data>
+  <data name="Text_c176bcfe0c3f" xml:space="preserve">
+    <value>LocalExile has no release to download yet.</value>
   </data>
   <data name="Text_c18c0a3bb845" xml:space="preserve">
     <value>Put the item into the inventory of the character in game (the client control bridge)</value>
@@ -3575,6 +3785,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   </data>
   <data xml:space="preserve" name="Text_c7ece59b9c12">
     <value>Create local account</value>
+  </data>
+  <data name="Text_c7f937836f5d" xml:space="preserve">
+    <value>Choose</value>
   </data>
   <data name="Text_c813077590fe" xml:space="preserve">
     <value>Accounts and characters</value>
@@ -3704,6 +3917,9 @@ Client: {2}</value>
   <data name="Text_cde298eb5d10" xml:space="preserve">
     <value>no counters: {0}</value>
   </data>
+  <data name="Text_ce8272ce39a9" xml:space="preserve">
+    <value>Could not read the releases: {0}</value>
+  </data>
   <data name="Text_cef20f906175" xml:space="preserve">
     <value>{0} lines</value>
   </data>
@@ -3788,6 +4004,9 @@ Client: {2}</value>
   <data name="Text_d3b65b039981" xml:space="preserve">
     <value>{0} is not built yet: start the servers once (live.ps1 builds it)</value>
   </data>
+  <data name="Text_d3c3517c3d57" xml:space="preserve">
+    <value>LocalExile {0} is already installed here.</value>
+  </data>
   <data xml:space="preserve" name="Text_d452583a74d0">
     <value>Buttons</value>
   </data>
@@ -3817,6 +4036,9 @@ Client: {2}</value>
   </data>
   <data name="Text_d505316d6f5f" xml:space="preserve">
     <value>Exit closes Waypoint completely. Servers and the game keep running either way.</value>
+  </data>
+  <data name="Text_d58f93b4a354" xml:space="preserve">
+    <value>LocalExile can only be updated while the game and its servers are closed. Close the game, wait for the servers to stop, then press Update now again.</value>
   </data>
   <data name="Text_d5c6cc663b20" xml:space="preserve">
     <value>Replacing saved enable/disable overrides only; no mod binaries or save restore.</value>
@@ -3853,6 +4075,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_d72e311c4dda">
     <value>Minimize</value>
+  </data>
+  <data name="Text_d7967cfaaec9" xml:space="preserve">
+    <value>Choose a new or empty folder, or a release you already installed. Your game client is copied here too.</value>
   </data>
   <data name="Text_d79efb58cadf" xml:space="preserve">
     <value>View capture log</value>
@@ -4014,6 +4239,9 @@ Dependencies: {2}
   <data name="Text_e153a0e8e725" xml:space="preserve">
     <value>{0} missing. Install them from their download pages, then check again; there is no need to restart Waypoint.</value>
   </data>
+  <data name="Text_e16a630a20a6" xml:space="preserve">
+    <value>Adds a Simple | Advanced switch to the sidebar. Advanced replaces Play with Control, and adds Versions, performance and server timings.</value>
+  </data>
   <data name="Text_e197f8109b6e" xml:space="preserve">
     <value>Restore saves</value>
   </data>
@@ -4029,6 +4257,9 @@ Dependencies: {2}
   <data name="Text_e1fe46b5de30" xml:space="preserve">
     <value>No modifiers. Add them from the Add modifiers page on the left; double-click or Enter adds the selected one.</value>
   </data>
+  <data name="Text_e1fe8b01e751" xml:space="preserve">
+    <value>Starting the servers</value>
+  </data>
   <data name="Text_e20846d20bcd" xml:space="preserve">
     <value>Ready.</value>
   </data>
@@ -4043,6 +4274,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e262c148bad6" xml:space="preserve">
     <value>GC heap and allocation</value>
+  </data>
+  <data name="Text_e265e9d65fed" xml:space="preserve">
+    <value>Enable choices apply the next time you press Play.</value>
   </data>
   <data name="Text_e2bc3ab610f6" xml:space="preserve">
     <value>Running · hot reload</value>
@@ -4076,6 +4310,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop and the dev host: the game, the walk-map recorder, the servers and the account service</value>
+  </data>
+  <data name="Text_e4a97b87b06b" xml:space="preserve">
+    <value>The source code, for working on LocalExile</value>
   </data>
   <data name="Text_e4b802b7ff23" xml:space="preserve">
     <value>Chosen by you</value>
@@ -4112,6 +4349,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e6cd637f954b" xml:space="preserve">
     <value>Ranger</value>
+  </data>
+  <data name="Text_e6deff541223" xml:space="preserve">
+    <value>LocalExile needs a little more from you. Finish setup to give it.</value>
   </data>
   <data name="Text_e74cca36ea73" xml:space="preserve">
     <value>MB, MB/s</value>
@@ -4182,6 +4422,9 @@ Dependencies: {2}
   <data name="Text_ead4f70a6fdb" xml:space="preserve">
     <value>Stop all</value>
   </data>
+  <data name="Text_eaee391f73bd" xml:space="preserve">
+    <value>Checking the game client</value>
+  </data>
   <data xml:space="preserve" name="Text_eb24997abb6c">
     <value>Select a LocalExile checkout in Settings.</value>
   </data>
@@ -4202,6 +4445,9 @@ Dependencies: {2}
   </data>
   <data name="Text_ec0a7a7da019" xml:space="preserve">
     <value>The client is running: Play closes it and starts it again.</value>
+  </data>
+  <data name="Text_ec7ec1f4944b" xml:space="preserve">
+    <value>The account name needs 3 to 32 letters, digits, _ or -.</value>
   </data>
   <data name="Text_ec7ee2826c84" xml:space="preserve">
     <value>Copy details</value>
@@ -4259,6 +4505,9 @@ Dependencies: {2}
   </data>
   <data name="Text_ef1d15273690" xml:space="preserve">
     <value>{0}: {1} missing</value>
+  </data>
+  <data name="Text_ef1de933c8fc" xml:space="preserve">
+    <value>Skip setup?</value>
   </data>
   <data xml:space="preserve" name="Text_ef6691545d2c">
     <value>Standard</value>
@@ -4393,6 +4642,9 @@ Mods at backup: </value>
   <data name="Text_f58d44d29836" xml:space="preserve">
     <value>Already done</value>
   </data>
+  <data name="Text_f596b21dfb42" xml:space="preserve">
+    <value>The item crafter needs a source checkout: this LocalExile release has no crafter in its server, and releases do not include the client control bridge that gives the item.</value>
+  </data>
   <data xml:space="preserve" name="Text_f5bbcb40056e">
     <value>Restart {0}</value>
   </data>
@@ -4435,6 +4687,9 @@ Mods at backup: </value>
   <data xml:space="preserve" name="Text_f7efa7bc1fc5">
     <value>Sidebar</value>
   </data>
+  <data name="Text_f84337275c50" xml:space="preserve">
+    <value>Looking for releases …</value>
+  </data>
   <data xml:space="preserve" name="Text_f87d86195087">
     <value>Commit badge text</value>
   </data>
@@ -4443,6 +4698,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_f8b15e8e3227">
     <value>Fetching Git objects only; source files, saves and running services are unchanged.</value>
+  </data>
+  <data name="Text_f8b32f4e92bd" xml:space="preserve">
+    <value>Installed</value>
   </data>
   <data name="Text_f8b8eb4bc03f" xml:space="preserve">
     <value>Check it first</value>
@@ -4479,6 +4737,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fa3589d27498" xml:space="preserve">
     <value>Scion</value>
+  </data>
+  <data name="Text_fa4fcbac1182" xml:space="preserve">
+    <value>A new version of LocalExile is ready</value>
   </data>
   <data name="Text_faa6d163b29d" xml:space="preserve">
     <value>Color schemes, custom colors, reading fonts, text size and accessibility preferences.</value>
@@ -4557,6 +4818,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fdbe7939d897" xml:space="preserve">
     <value>{0} ahead of LocalExile, {1} behind</value>
+  </data>
+  <data name="Text_fdda460bdd81" xml:space="preserve">
+    <value>Adds the status strip, performance and server timings.</value>
   </data>
   <data name="Text_fdf8cf25d45d" xml:space="preserve">
     <value>npm ci in the checkout's Tools/ooz</value>

@@ -21,6 +21,10 @@ public partial class PlayTab : UserControl
     internal event Action? SetupRequested;
     /// <summary>The window opens the logs.</summary>
     internal event Action? DetailsRequested;
+    /// <summary>The player wants another folder.</summary>
+    internal event Action? ChangeFolderRequested;
+    /// <summary>The player wants a new git copy set up.</summary>
+    internal event Action? NewCopyRequested;
     /// <summary>The checkout moved: what reads it reads it again.</summary>
     internal event Action? CheckoutChanged;
 
@@ -49,6 +53,7 @@ public partial class PlayTab : UserControl
     {
         bool needsSetup = NeedsSetup;
         bool busy = _working || _shared.IsLiveRunning;
+        FolderText.Text = Environment.CurrentDirectory;
         Headline.Text = _stage?.Invoke() ?? (GameRunning ? L.Text("The game is running")
             : Checking ? L.Text("Getting ready")
             : needsSetup ? L.Text("LocalExile isn't ready yet")
@@ -213,6 +218,10 @@ public partial class PlayTab : UserControl
             Show();
         }
     }
+
+    void ChangeFolderClicked(object sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
+
+    void NewCopyClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
 
     void DetailsClicked(object sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

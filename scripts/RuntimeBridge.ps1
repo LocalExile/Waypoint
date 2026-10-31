@@ -88,6 +88,8 @@ function Get-Inventory {
     $script:listeners = @(Get-NetTCPConnection -State Listen)
 }
 function Owned-Server($process, [string]$name) {
+    # A release runs each server's own executable from app\, under LocalExile.exe.
+    if ($script:isRelease) { return $process -and (Same-Path $process.ExecutablePath (At "app\GameServer.$name.exe")) }
     if (-not $process -or $process.Name -ine 'dotnet.exe') { return $false }
     $relative = "src\GameServer.$name\bin\Debug\net10.0\GameServer.$name.dll"
     $arguments = Split-Arguments $process.CommandLine
@@ -407,6 +409,8 @@ function Assert-Physical([string]$path) {
 function Get-Python {
     $venv = At '.venv/Scripts/python.exe'
     if (Test-Path -LiteralPath $venv) { return $venv }
+    $bundled = At 'Tools/python/python.exe'
+    if ($script:isRelease -and (Test-Path -LiteralPath $bundled)) { return $bundled }
     $command = Get-Command python.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
     Require ([bool]$command) 'Python is required to make a consistent save backup. Install Python or disable automatic backups explicitly.'
     return $command.Source
@@ -655,7 +659,7 @@ function Prepare-Client($snapshot) {
 }
 function Register-Account($snapshot) {
     Assert-AccountsStopped $snapshot
-    Require (Test-Sdk) 'Install .NET 10 SDK first.'
+    Require ($script:isRelease -or (Test-Sdk)) 'Install .NET 10 SDK first.'
     Require (-not ($ResultPath -match '[&|<>^%!"\r\n]')) 'Account setup needs a launcher data path without command-shell metacharacters.'
     Require ((-not $env:Game_DEV_PORT -or $env:Game_DEV_PORT -eq '7000') -and (-not $env:Game_DEV_BIND -or $env:Game_DEV_BIND -eq '127.0.0.1')) 'Account setup requires the default localhost account-service address.'
     Require (-not @($script:listeners | Where-Object LocalPort -eq 7000).Count) 'Port 7000 is in use. Stop the existing account service first; it will not be adopted.'
@@ -666,6 +670,17 @@ function Register-Account($snapshot) {
     Require ($request.Password -is [string] -and $request.Password.Length -ge 4 -and $request.Password.Length -le 1024) 'Password must contain 4-1024 characters.'
     Assert-AccountDatabase $request $false
     Backup-Saves $snapshot
+    if ($script:isRelease) {
+        # LocalExile.exe reads standard input in the console's code page: anything but ASCII could become another password.
+        Require ($request.Password -cmatch '^[\x20-\x7E]+$') 'The password can only use English letters, digits and common symbols.'
+        Set-Stage 'Creating local account' 'Using this installation only. Credentials are not saved by the launcher.'
+        $OutputEncoding = [Text.ASCIIEncoding]::new()
+        $lines = @($request.Password | & (At 'LocalExile.exe') account create $request.Name --password-stdin --json)
+        $code = $LASTEXITCODE
+        $failure = @($lines | ForEach-Object { try { $_ | ConvertFrom-Json } catch { $null } } | Where-Object { $_.event -eq 'error' } | Select-Object -First 1)
+        Require ($code -eq 0) $(if ($failure.Count) { [string]$failure[0].message } else { "LocalExile.exe could not create the account (exit $code)." })
+        return
+    }
     Set-Stage 'Building account service' 'Preparing the local account service for this checkout.'
     & dotnet build (At 'src/GameServer.Host') --nologo -v minimal | Out-Null
     Require ($LASTEXITCODE -eq 0) 'Account service build failed. Run Build checkout to inspect compiler output.'
@@ -731,8 +746,12 @@ try {
     Require ([IO.Path]::IsPathRooted($ResultPath)) 'ResultPath must be absolute.'
     $script:root = (Resolve-Path -LiteralPath $RepoRoot).Path.TrimEnd('\')
     Require (-not ($script:root -match '[&|<>^%!"\r\n]')) 'This checkout path contains characters unsupported by upstream live.ps1 command handling. Use a plain path (spaces are supported).'
-    Require (Test-Path -LiteralPath (At 'GameServer.slnx')) 'Choose the LocalExile repository root containing GameServer.slnx.'
-    Require (Test-Path -LiteralPath (At 'scripts/dev/live.ps1')) 'The checkout has no scripts/dev/live.ps1.'
+    # A release install has no source and no live.ps1: its saves, mods and accounts are where a checkout has them.
+    $script:isRelease = (Test-Path -LiteralPath (At 'LocalExile.exe')) -and (Test-Path -LiteralPath (At 'release.json')) -and -not (Test-Path -LiteralPath (At 'GameServer.slnx'))
+    if (-not $script:isRelease) {
+        Require (Test-Path -LiteralPath (At 'GameServer.slnx')) 'Choose the LocalExile repository root containing GameServer.slnx.'
+        Require (Test-Path -LiteralPath (At 'scripts/dev/live.ps1')) 'The checkout has no scripts/dev/live.ps1.'
+    }
     Set-Location -LiteralPath $script:root
     Add-Type -TypeDefinition @'
 using System;

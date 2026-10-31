@@ -1,0 +1,74 @@
+<UserControl x:Class="Waypoint.InstallTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:l="clr-namespace:Waypoint">
+    <UserControl.Resources>
+        <!-- A quiet action, as on PlayTab: reads as a link, and takes the keyboard as a button does. -->
+        <Style x:Key="QuietLink" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource Shell.Accent}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <!-- A release install's home, laid out as PlayTab: one sentence, one button. Below them, once Play was pressed, what the run
+         is doing: its steps as on the setup guide, and its output. -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460">
+            <TextBlock x:Name="Headline" FontSize="24" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,24" />
+            <Button x:Name="MainButton" Style="{StaticResource Shell.PrimaryButton}" Click="MainClicked" HorizontalAlignment="Center"
+                    Height="52" MinWidth="200" Padding="40,0" Margin="0" FontSize="18" />
+            <ProgressBar x:Name="Working" Height="4" Width="260" IsIndeterminate="True" Visibility="Collapsed" />
+            <TextBlock x:Name="Note" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,18,0,0" Visibility="Collapsed" />
+            <Button x:Name="DetailsLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" />
+            <Button x:Name="StopLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" />
+            <TextBlock x:Name="VersionText" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" Margin="0,24,0,0" />
+            <TextBlock x:Name="FolderText" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,2,0,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Change folder…'}" Margin="0,0,16,0" Click="ChangeFolderClicked" />
+                <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
+                        ToolTip="{l:Loc 'Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests'}" />
+            </StackPanel>
+        </StackPanel>
+        <Border x:Name="Activity" Grid.Row="1" Visibility="Collapsed" Margin="24,8,24,16" Padding="14,10" CornerRadius="6" BorderThickness="1"
+                BorderBrush="{DynamicResource Shell.Border}">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <TextBlock x:Name="Elapsed" DockPanel.Dock="Right" Style="{StaticResource Shell.Secondary}" />
+                    <TextBlock Text="{l:Loc 'What is happening'}" FontWeight="SemiBold" />
+                </DockPanel>
+                <Expander DockPanel.Dock="Bottom" Header="{l:Loc 'Details'}" IsExpanded="True" Margin="0,6,0,0">
+                    <TextBox x:Name="Log" Height="130" IsReadOnly="True" FontFamily="{StaticResource Mono}" FontSize="11.5" TextWrapping="NoWrap"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+                </Expander>
+                <ScrollViewer x:Name="StepScroll" MaxHeight="170" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="StepList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="0,0,0,7">
+                                    <md:PackIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="18" Height="18" Margin="0,1,10,0" />
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Detail}" Style="{StaticResource Caption}" Visibility="{Binding DetailShown}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

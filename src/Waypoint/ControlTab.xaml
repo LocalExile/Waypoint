@@ -14,7 +14,7 @@
                             <TextBlock Text="{l:Loc 'Stop all'}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Click="StopServers" ToolTip="{l:Loc 'live.ps1 -Stop -NoClient: the servers and the walk-map recorder; the client stays (back at the login screen)'}">
+                    <Button x:Name="StopServersButton" Click="StopServers" ToolTip="{l:Loc 'live.ps1 -Stop -NoClient: the servers and the walk-map recorder; the client stays (back at the login screen)'}">
                         <StackPanel Orientation="Horizontal">
                             <md:PackIcon Kind="Stop" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Error}" />
                             <TextBlock Text="{l:Loc 'Stop servers'}" VerticalAlignment="Center" />
@@ -35,7 +35,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
-                <WrapPanel VerticalAlignment="Center">
+                <WrapPanel x:Name="RunOptions" VerticalAlignment="Center">
                     <CheckBox x:Name="HotReload" Content="{l:Loc 'Hot reload'}"
                               ToolTip="{l:Loc 'The Gateway runs under dotnet watch, so saved code edits apply with the game still running; off passes -NoHotReload'}" />
                     <CheckBox x:Name="NoBuild" Content="{l:Loc 'Skip build'}" ToolTip="-NoBuild" />
@@ -74,8 +74,10 @@
                     <WrapPanel DockPanel.Dock="Bottom" Margin="0,6,0,-6">
                         <Button Content="{l:Loc 'Guided setup'}" Click="OpenGuidedSetup" Height="26" Padding="10,0"
                                 ToolTip="{l:Loc 'The Setup section: every requirement with its next step'}" />
-                        <Button Content="{l:Loc 'Check again'}" Click="CheckSetup" Height="26" Padding="10,0" />
-                        <Button Content="{l:Loc 'Game data'}" Click="CheckData" Height="26" Padding="10,0"
+                        <Button Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked" Height="26" Padding="10,0"
+                                ToolTip="{l:Loc 'Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests'}" />
+                        <Button x:Name="CheckAgainButton" Content="{l:Loc 'Check again'}" Click="CheckSetup" Height="26" Padding="10,0" />
+                        <Button x:Name="GameDataButton" Content="{l:Loc 'Game data'}" Click="CheckData" Height="26" Padding="10,0"
                                 ToolTip="{l:Loc 'extract-data.ps1 -List: which extracted files are missing or stale'}" />
                         <Button Content="{l:Loc 'Logs folder'}" Click="OpenLogs" Height="26" Padding="10,0" />
                     </WrapPanel>
@@ -151,7 +153,7 @@
                             <TextBlock Grid.Column="5" Text="{Binding Cpu}" Style="{StaticResource Shell.Cell}" />
                             <TextBlock Grid.Column="6" Text="{Binding Memory}" Style="{StaticResource Shell.Cell}" />
                             <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Width="84" Height="28" Margin="0" Click="Toggle" IsEnabled="{Binding CanAct}" ToolTip="{Binding ActionTip}"
+                                <Button Width="84" Height="28" Margin="0" Click="Toggle" IsEnabled="{Binding CanAct}" Visibility="{Binding ActionShown}" ToolTip="{Binding ActionTip}"
                                         ToolTipService.ShowOnDisabled="True">
                                     <StackPanel Orientation="Horizontal">
                                         <md:PackIcon Kind="{Binding ActionIcon}" Width="14" Height="14" Margin="0,0,5,0"

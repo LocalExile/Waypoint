@@ -30,12 +30,23 @@ public partial class ConsoleTab : UserControl
         _shared = shared;
         _historyIndex = shared.Settings.History.Count;
         ShowFavorites();
+        ShowRelease();
         _ = LoadCommands();
         L.Current.PropertyChanged += (_, _) =>
         {
+            ShowRelease();
             if (_status is not null) State.Text = Summary(_status);
             ShowFavorites();
         };
+    }
+
+    /// <summary>A release has no client control bridge to send through: a line is copied, for the game's chat.</summary>
+    void ShowRelease()
+    {
+        if (!Repo.IsInstall) return;
+        GameStatusButton.Visibility = Visibility.Collapsed;
+        SendButton.Content = L.Text("Copy");
+        State.Text = L.Text("Copy a command, then paste it into the game's chat with Ctrl+V.");
     }
 
     bool _reloading;
@@ -181,6 +192,16 @@ public partial class ConsoleTab : UserControl
         _historyIndex = _shared.Settings.History.Count;
         Input.Clear();
         SuggestionPopup.IsOpen = false;
+        if (Repo.IsInstall)
+        {
+            try
+            {
+                Clipboard.SetText(text);
+                Append(L.Text("Copied: {0}", text));
+            }
+            catch (System.Runtime.InteropServices.ExternalException ex) { Problem(ex.Message); }
+            return;
+        }
         Append($"> {text}");
         SendButton.IsEnabled = false;
         try

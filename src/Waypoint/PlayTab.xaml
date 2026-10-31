@@ -29,6 +29,12 @@
             <Button x:Name="DetailsLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" />
             <Button x:Name="StopLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" />
             <Button x:Name="GoBackLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Go back to the version you had'}" Margin="0,18,0,0" Click="GoBackClicked" />
+            <TextBlock x:Name="FolderText" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,24,0,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Change folder…'}" Margin="0,0,16,0" Click="ChangeFolderClicked" />
+                <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
+                        ToolTip="{l:Loc 'Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests'}" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

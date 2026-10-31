@@ -60,7 +60,7 @@
                 <TextBlock x:Name="Version" DockPanel.Dock="Bottom" Foreground="{DynamicResource Shell.SidebarText}" Opacity="0.6"
                            FontSize="11" Margin="18,0,0,12" />
                 <!-- Simple or Advanced: always in reach, whichever section shows. -->
-                <Border DockPanel.Dock="Bottom" Margin="12,0,12,10" Padding="2" CornerRadius="4" BorderThickness="1"
+                <Border x:Name="ModeSwitch" DockPanel.Dock="Bottom" Margin="12,0,12,10" Padding="2" CornerRadius="4" BorderThickness="1"
                         BorderBrush="{DynamicResource Shell.SidebarDivider}">
                     <UniformGrid Rows="1">
                         <RadioButton x:Name="SimpleMode" GroupName="Mode" Content="{l:Loc 'Simple'}" Style="{StaticResource ModeChoice}" Checked="ModeChosen"
@@ -183,9 +183,11 @@
             <!-- The sections; one shows at a time (SectionChanged). -->
             <Grid>
                 <l:PlayTab x:Name="PlayView" Visibility="Collapsed" />
+                <l:InstallTab x:Name="InstallView" Visibility="Collapsed" />
                 <l:ControlTab x:Name="Control" />
                 <l:SetupTab x:Name="Setup" Visibility="Collapsed" />
                 <l:VersionsTab x:Name="Versions" Visibility="Collapsed" />
+                <l:ReleasesTab x:Name="ReleasesView" Visibility="Collapsed" />
                 <l:ModsTab x:Name="Mods" Visibility="Collapsed" />
                 <l:BackupsTab x:Name="Backups" Visibility="Collapsed" />
                 <l:AccountsTab x:Name="Accounts" Visibility="Collapsed" />
@@ -198,9 +200,41 @@
             </Grid>
         </DockPanel>
 
-        <!-- A newer release: a card floating over the bottom of the whole window, shown when the check finds one
-             (Updates.cs), green so it does not blend into the blue status strip. -->
-        <Border x:Name="UpdateBar" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="14,0,14,14" Visibility="Collapsed"
+        <!-- A newer release: cards floating over the bottom of the whole window, shown when a check finds one
+             (Updates.cs for Waypoint, LocalExileReleases for a release install), green so they do not blend into the blue
+             status strip. -->
+        <StackPanel Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+        <Border x:Name="ExileUpdateBar" Margin="14,0,14,14" Visibility="Collapsed"
+                Background="{DynamicResource Shell.UpdateBack}" BorderBrush="{DynamicResource Shell.UpdateBorder}" BorderThickness="1"
+                CornerRadius="8" Padding="16,12" TextElement.Foreground="{DynamicResource Shell.UpdateText}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.3" />
+            </Border.Effect>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="ExileUpdateNow" Style="{StaticResource Shell.PrimaryButton}" Click="ExileUpdateClicked" Margin="0,0,8,0"
+                            Background="{DynamicResource Shell.UpdateAccent}" BorderBrush="{DynamicResource Shell.UpdateAccent}" Foreground="White">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Download" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:Loc 'Update now'}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Content="{l:Loc 'What\'s new'}" Click="ExilePageClicked" Margin="0,0,8,0" Foreground="{DynamicResource Shell.UpdateText}"
+                            BorderBrush="{DynamicResource Shell.UpdateBorder}" />
+                    <Button x:Name="ExileLater" Content="{l:Loc 'Later'}" Click="ExileLaterClicked" Margin="0" Foreground="{DynamicResource Shell.UpdateText}"
+                            BorderBrush="{DynamicResource Shell.UpdateBorder}" />
+                </StackPanel>
+                <Grid DockPanel.Dock="Left" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <Ellipse Fill="{DynamicResource Shell.UpdateAccent}" />
+                    <md:PackIcon Kind="ArrowUpBold" Width="20" Height="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{l:Loc 'A new version of LocalExile is ready'}" FontSize="13.5" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ExileUpdateText" TextWrapping="Wrap" Opacity="0.85" Margin="0,1,0,0" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <Border x:Name="UpdateBar" Margin="14,0,14,14" Visibility="Collapsed"
                 Background="{DynamicResource Shell.UpdateBack}" BorderBrush="{DynamicResource Shell.UpdateBorder}" BorderThickness="1"
                 CornerRadius="8" Padding="16,12" TextElement.Foreground="{DynamicResource Shell.UpdateText}">
             <Border.Effect>
@@ -230,5 +264,6 @@
                 </StackPanel>
             </DockPanel>
         </Border>
+        </StackPanel>
     </Grid>
 </Window>

@@ -56,6 +56,7 @@ public partial class App : Application
             }
             // Every path of the server's tools is relative to its root (its AGENTS.md).
             Environment.CurrentDirectory = root;
+            Repo.IsInstall = LocalExileReleases.IsInstall(root);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException
             or System.ComponentModel.Win32Exception or System.Security.SecurityException or InvalidOperationException)
@@ -147,7 +148,7 @@ public partial class App : Application
                 InitialDirectory = start,
             };
             if (dialog.ShowDialog(owner) != true) return null;
-            if (Repo.IsRoot(dialog.FolderName)) return Path.GetFullPath(dialog.FolderName);
+            if (Repo.IsRoot(dialog.FolderName) || LocalExileReleases.IsInstall(dialog.FolderName)) return Path.GetFullPath(dialog.FolderName);
             Dialog.Tell(owner, DialogKind.Warning, L.Text("Not a server checkout"),
                 L.Text("{0} has no GameServer.slnx and scripts\\dev\\live.ps1.", dialog.FolderName), ok: L.Text("Choose again"));
             start = dialog.FolderName;

@@ -35,14 +35,33 @@
                     <TextBlock Text="{l:Loc 'Welcome to Waypoint'}" FontSize="{DynamicResource Font22}" FontWeight="SemiBold" />
                     <TextBlock Text="{l:Loc 'This guide gets LocalExile ready to play. It looks for what you already have, and asks before it downloads or copies anything.'}"
                                Margin="0,10,0,14" />
-                    <TextBlock Text="{l:Loc '1.  Checks the tools LocalExile needs'}" Margin="0,0,0,6" />
-                    <TextBlock Text="{l:Loc '2.  Finds LocalExile on this PC, or downloads it to a folder you choose'}" Margin="0,0,0,6" />
-                    <TextBlock Text="{l:Loc '3.  Finds your game client, or lets you point to it'}" Margin="0,0,0,6" />
-                    <TextBlock Text="{l:Loc '4.  Copies the client, prepares it and builds LocalExile'}" Margin="0,0,0,14" />
+                    <TextBlock Text="{l:Loc '1.  Gets LocalExile to a folder you choose, or finds the copy you have'}" Margin="0,0,0,6" />
+                    <TextBlock Text="{l:Loc '2.  Finds your game client, or lets you point to it'}" Margin="0,0,0,6" />
+                    <TextBlock Text="{l:Loc '3.  Copies the client and prepares it'}" Margin="0,0,0,14" />
                     <TextBlock Text="{l:Loc 'You can stop at any point: what is finished stays finished, and the guide continues from there next time. Setup never changes your own Path of Exile install.'}"
                                Style="{StaticResource Caption}" />
                     <TextBlock Text="{l:Loc 'Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3b.'}"
                                Style="{StaticResource Caption}" Margin="0,8,0,0" />
+                </StackPanel>
+
+                <!-- Which LocalExile: the release, or a source checkout -->
+                <StackPanel x:Name="SourcePage" Visibility="Collapsed">
+                    <TextBlock Text="{l:Loc 'How do you want LocalExile?'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,12" />
+                    <RadioButton x:Name="ReleaseChoice" GroupName="Source" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'The ready-to-play release (recommended)'}" Checked="SourceChanged" />
+                    <TextBlock Text="{l:Loc 'Nothing else to install. Waypoint tells you when a newer release is out and installs it for you.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
+                    <RadioButton x:Name="SourceChoice" GroupName="Source" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'The source code, for working on LocalExile'}" Checked="SourceChanged" />
+                    <TextBlock Text="{l:Loc 'Needs .NET, Git, Python and Node. Adds branches, pull requests, mods, accounts and the console.'}" Style="{StaticResource Caption}" Margin="27,0,0,0" />
+                </StackPanel>
+
+                <!-- Where the release goes -->
+                <StackPanel x:Name="InstallPage" Visibility="Collapsed">
+                    <TextBlock Text="{l:Loc 'Where should LocalExile go?'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" />
+                    <TextBlock Text="{l:Loc 'Choose a new or empty folder, or a release you already installed. Your game client is copied here too.'}" Margin="0,6,0,10" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="{l:Loc 'Choose…'}" Click="ChooseInstallFolder" Margin="8,0,0,0" />
+                        <TextBox x:Name="InstallFolder" TextChanged="InstallFolderChanged" />
+                    </DockPanel>
+                    <TextBlock x:Name="InstallNote" Style="{StaticResource Caption}" Margin="0,4,0,0" />
                 </StackPanel>
 
                 <!-- Requirements -->
@@ -101,6 +120,9 @@
                     <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
                         <TextBlock x:Name="ClientNote" Style="{StaticResource Caption}" Margin="0,0,0,6" />
                         <CheckBox x:Name="ShareClient" Visibility="Collapsed" Margin="0,0,0,6" Checked="ShareChanged" Unchecked="ShareChanged" />
+                        <CheckBox x:Name="LinkClient" Visibility="Collapsed" Margin="0,0,0,6" Checked="ShareChanged" Unchecked="ShareChanged">
+                            <TextBlock TextWrapping="Wrap" Text="{l:Loc 'Use this folder itself instead of a copy. It saves the space, but LocalExile then changes that client.'}" />
+                        </CheckBox>
                         <WrapPanel>
                             <Button Content="{l:Loc 'Browse…'}" Click="BrowseClient" />
                             <Button x:Name="SearchAgain" Content="{l:Loc 'Search again'}" Click="SearchClientsClicked" />
@@ -133,6 +155,19 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </DockPanel>
+
+                <!-- The account of a release install -->
+                <StackPanel x:Name="AccountPage" Visibility="Collapsed">
+                    <TextBlock Text="{l:Loc 'Your local account'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" />
+                    <TextBlock Text="{l:Loc 'You log in to the game with this. It stays on this PC, so do not reuse a real password.'}" Margin="0,6,0,12" />
+                    <TextBlock Text="{l:Loc 'Account name'}" />
+                    <TextBox x:Name="AccountName" MaxLength="32" Margin="0,2,0,8" TextChanged="AccountChanged" ToolTip="{l:Loc '3–32 letters, digits, _ or -'}" />
+                    <TextBlock Text="{l:Loc 'Password'}" />
+                    <PasswordBox x:Name="AccountPassword" MaxLength="1024" Margin="0,2,0,8" PasswordChanged="AccountChanged" ToolTip="{l:Loc 'at least 4 characters'}" />
+                    <TextBlock Text="{l:Loc 'Password again'}" />
+                    <PasswordBox x:Name="AccountAgain" MaxLength="1024" Margin="0,2,0,8" PasswordChanged="AccountChanged" />
+                    <TextBlock x:Name="AccountNote" Style="{StaticResource Caption}" />
+                </StackPanel>
 
                 <!-- Setting up -->
                 <DockPanel x:Name="RunPage" Visibility="Collapsed">
