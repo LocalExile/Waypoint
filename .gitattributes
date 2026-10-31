@@ -8,3 +8,4 @@
 *.md text eol=lf
 *.ps1 text eol=crlf
 *.ico binary
+/.agents/skills/ui-ux-pro-max/** -text -whitespace

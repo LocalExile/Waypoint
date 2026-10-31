@@ -5,3 +5,4 @@
 *.user
 *.suo
 TestResults/
+__pycache__/
