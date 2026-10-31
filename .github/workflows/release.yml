@@ -39,3 +39,4 @@ jobs:
         run: >
           gh release create '${{ github.ref_name }}' out/LocalExileLauncher.exe out/LocalExileLauncher.exe.sha256
           --title 'LocalExile Launcher ${{ steps.version.outputs.number }}' --generate-notes --verify-tag
+          --notes 'Download **LocalExileLauncher.exe** below and run it; a launcher you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it.'
