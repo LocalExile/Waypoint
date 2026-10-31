@@ -151,9 +151,11 @@ menu being ready, a successful authentication or entry into a playable area.
 ## Setup and diagnostics
 
 Setup writes require the selected installation's game/services to be stopped and no listener conflicts.
-PrepareClient refuses redirected client folders and relevant files, retains existing keys/prepared executable,
-refuses an unpaired prepared executable before writing, and uses the checkout's Auth and Patch commands for
-missing key/executable preparation and the copied archive's gateway list. Users supply the complete client copy.
+PrepareClient never changes a client reached through a link: a linked client that is ready needs nothing, and one that is
+not is refused, because other checkouts may share it and its patched executable trusts one set of keys. On a client in the
+checkout it refuses redirected files, retains existing keys/prepared executable, refuses an unpaired prepared executable
+before writing, and uses the checkout's Auth and Patch commands for missing key/executable preparation and the copied
+archive's gateway list. Users supply the complete client copy.
 Dependencies runs `npm ci --ignore-scripts --no-audit --no-fund` in Tools/ooz with the checkout's lockfile.
 
 Register builds the checkout's Host service, starts a dedicated temporary localhost:7000 console with operation-local

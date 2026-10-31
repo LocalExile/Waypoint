@@ -60,4 +60,28 @@ Check (-not (Owned-Watcher $watcher)) 'watcher in another checkout cannot be sig
 Check ((Server-Command 'Auth' $false) -eq 'dotnet src\GameServer.Auth\bin\Debug\net10.0\GameServer.Auth.dll serve') 'Auth startup preserves the DLL and serve argument boundary'
 Check ((Server-Command 'Gateway' $true) -eq 'dotnet watch run --project src\GameServer.Gateway --non-interactive --') 'watched startup uses the verified upstream command'
 Check ((Server-Command 'Gateway' $false) -eq 'dotnet src\GameServer.Gateway\bin\Debug\net10.0\GameServer.Gateway.dll') 'disabled/older hot reload uses the normal Gateway DLL'
+
+# A Client folder that is a link. Test-Sdk stands in for dotnet: nothing here may reach a build.
+$linkFixture = Join-Path ([IO.Path]::GetTempPath()) ('Launcher-client-link-' + [guid]::NewGuid().ToString('N'))
+$sharedClient = Join-Path $linkFixture 'shared'
+$script:root = Join-Path $linkFixture 'checkout'
+New-Item -ItemType Directory -Path $sharedClient, (At 'data') | Out-Null
+foreach ($name in 'Game.exe', 'Game.patched.exe', 'Content.ggpk') { Set-Content -LiteralPath (Join-Path $sharedClient $name) -Value 'stand-in' }
+Set-Content -LiteralPath (At 'data/login-keys.json') -Value '{}'
+New-Item -ItemType Junction -Path (At 'Client') -Target $sharedClient | Out-Null
+function Test-Sdk { $true }
+$stopped = [pscustomobject]@{ Conflicts=@(); Services=@() }
+try {
+    Check ((Get-ClientDetail) -eq "Linked to $sharedClient") 'a linked client says where it leads'
+    Prepare-Client $stopped 6>$null
+    Check ((Get-Content -LiteralPath (Join-Path $sharedClient 'Content.ggpk') -Raw).Trim() -eq 'stand-in') 'preparing a linked client that is ready does nothing, and does not fail'
+    Remove-Item -LiteralPath (At 'data/login-keys.json')
+    $refused = $null
+    try { Prepare-Client $stopped 6>$null } catch { $refused = $_.Exception.Message }
+    Check ($refused -like "Client is a link to $sharedClient,*") 'a linked client that is not ready is refused, and never changed'
+    Remove-Item -LiteralPath $sharedClient -Recurse -Force
+    Check ((Get-ClientDetail) -eq "Client links to $sharedClient, which has no client. Run the setup guide to replace the link.") 'a link that leads nowhere says so'
+} finally {
+    Remove-Item -LiteralPath $linkFixture -Recurse -Force -ErrorAction SilentlyContinue
+}
 Write-Host "$script:passed bridge checks passed."

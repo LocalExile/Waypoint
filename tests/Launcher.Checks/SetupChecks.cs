@@ -12,6 +12,7 @@ static class SetupChecks
         Classify(root, check);
         await CopyAsync(root, check);
         Keys(root, check);
+        await LinksAsync(root, check);
         await SequenceAsync(check);
         await CloneAsync(root, check);
         check(Prerequisites.HasSdk("8.0.427 [C:\\sdk]\n10.0.403 [C:\\sdk]\n") && !Prerequisites.HasSdk("9.0.320 [C:\\sdk]\n"), "only a .NET 10 SDK counts");
@@ -116,6 +117,96 @@ static class SetupChecks
         File.WriteAllText(Path.Combine(keyed, "data", "login-keys.json"), "own keys");
         plan = ClientCopy.Plan(Path.Combine(other, "Client"), keyed);
         check(plan.Keys is null && !plan.Files.Any(f => f.Target.EndsWith("Game.patched.exe", StringComparison.Ordinal)), "a checkout's own keys stay, and the executable patched for other keys does not come");
+    }
+
+    static void Link(string link, string target)
+    {
+        var info = new ProcessStartInfo("cmd.exe") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };
+        foreach (string argument in new[] { "/c", "mklink", "/J", link, target }) info.ArgumentList.Add(argument);
+        using var process = Process.Start(info)!;
+        process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+    }
+
+    static string Keyed(string folder, string publicKey)
+    {
+        Directory.CreateDirectory(folder);
+        string path = Path.Combine(folder, "login-keys.json");
+        File.WriteAllText(path, $$"""{"dsaY":"{{publicKey}}"}""");
+        return path;
+    }
+
+    static async Task LinksAsync(string root, Action<bool, string> check)
+    {
+        // A prepared client beside its checkout, the public key inside its patched executable, as the server's patch writes it.
+        string owner = Path.Combine(root, "link-owner");
+        string shared = Client(owner, "Client", ("Content.ggpk", 10), ("Game.exe", 10));
+        File.WriteAllBytes(Path.Combine(shared, "Game.patched.exe"), [1, 2, 0xAB, 0xCD, 0xEF, 0x12, 3, 4]);
+        string keys = Keyed(Path.Combine(owner, "data"), "00ABCDEF12");
+        File.WriteAllText(Path.Combine(owner, "data", "gateway_list.original.txt"), "list");
+        check(ClientCopy.KeysFit(shared, keys), "keys are recognized inside the client patched for them");
+        check(!ClientCopy.KeysFit(shared, Keyed(Path.Combine(root, "other-keys"), "99887766")), "another checkout's keys are not");
+        File.WriteAllText(Path.Combine(root, "other-keys", "broken.json"), "not json");
+        check(!ClientCopy.KeysFit(shared, Path.Combine(root, "other-keys", "broken.json")) && !ClientCopy.KeysFit(shared, Path.Combine(root, "missing.json")), "keys that cannot be read are no match");
+
+        string fresh = Path.Combine(root, "link-fresh");
+        Directory.CreateDirectory(fresh);
+        check(ClientCopy.SharedKeys(shared, fresh, []) == Path.Combine(owner, "data"), "a prepared client can be shared with a checkout that has no keys");
+        check(ClientCopy.SharedKeys(Path.Combine(root, "standalone"), fresh, []) is null, "a client not prepared yet is never shared: preparing would change the player's install");
+        string keyed = Path.Combine(root, "link-keyed");
+        Keyed(Path.Combine(keyed, "data"), "99887766");
+        check(ClientCopy.SharedKeys(shared, keyed, []) is null, "a checkout with other keys cannot share a client patched for different ones");
+
+        await ClientCopy.ShareAsync(shared, fresh, Path.Combine(owner, "data"), _ => { }, CancellationToken.None);
+        string link = Path.Combine(fresh, "Client");
+        check(new DirectoryInfo(link).LinkTarget is not null && ClientLocator.Classify(link) == ClientKind.Ready, "sharing links the checkout to the client");
+        check(File.ReadAllText(Path.Combine(fresh, "data", "login-keys.json")) == File.ReadAllText(keys) && File.Exists(Path.Combine(fresh, "data", "gateway_list.original.txt")), "the keys come with a shared client");
+
+        // A checkout already linked to the client vouches for it when the folder is not inside a checkout.
+        string outside = Path.Combine(root, "shelf");
+        string shelved = Client(outside, "Game", ("Content.ggpk", 10), ("Game.exe", 10));
+        File.WriteAllBytes(Path.Combine(shelved, "Game.patched.exe"), [0xAB, 0xCD, 0xEF, 0x12]);
+        string linked = Path.Combine(root, "link-linked");
+        Directory.CreateDirectory(linked);
+        Link(Path.Combine(linked, "Client"), shelved);
+        Keyed(Path.Combine(linked, "data"), "ABCDEF12");
+        check(ClientCopy.SharedKeys(shelved, fresh + "-second", [linked]) == Path.Combine(linked, "data"), "a client shared by another checkout brings that checkout's keys");
+
+        // The folder a link led to is gone.
+        string moved = Path.Combine(root, "moved");
+        Directory.CreateDirectory(moved);
+        string dead = Path.Combine(root, "link-dead");
+        Directory.CreateDirectory(dead);
+        Link(Path.Combine(dead, "Client"), moved);
+        Directory.Delete(moved);
+        string source = Client(root, "dead-source", ("Content.ggpk", 100), ("PathOfExile.exe", 10));
+        await ClientCopy.RunAsync(ClientCopy.Plan(source, dead), null, CancellationToken.None);
+        check(new DirectoryInfo(Path.Combine(dead, "Client")).LinkTarget is null && ClientLocator.Classify(Path.Combine(dead, "Client")) == ClientKind.Standalone, "a link that leads nowhere gives way to the copy");
+
+        // A link to a folder that holds other things: replacing it must not touch them.
+        string kept = Client(root, "kept", ("precious.txt", 10));
+        string wrong = Path.Combine(root, "link-wrong");
+        Directory.CreateDirectory(wrong);
+        Link(Path.Combine(wrong, "Client"), kept);
+        await ClientCopy.RunAsync(ClientCopy.Plan(source, wrong), null, CancellationToken.None);
+        check(File.Exists(Path.Combine(kept, "precious.txt")) && !File.Exists(Path.Combine(kept, "Content.ggpk")) && ClientLocator.Classify(Path.Combine(wrong, "Client")) == ClientKind.Standalone,
+            "replacing a link leaves the folder it pointed at untouched");
+
+        // A copy never writes through a link to a working client.
+        bool refused = false;
+        try { await ClientCopy.RunAsync(ClientCopy.Plan(source, fresh), null, CancellationToken.None); }
+        catch (IOException) { refused = true; }
+        check(refused && !File.Exists(Path.Combine(shared, "PathOfExile.exe")), "a copy never writes through a link to a working client");
+
+        string started = Path.Combine(root, "link-started");
+        Client(started, "Client", ("Content.ggpk.partial", 10));
+        refused = false;
+        try { await ClientCopy.ShareAsync(shared, started, Path.Combine(owner, "data"), _ => { }, CancellationToken.None); }
+        catch (IOException) { refused = true; }
+        check(refused && File.Exists(Path.Combine(started, "Client", "Content.ggpk.partial")), "sharing leaves a copy stopped halfway alone");
+
+        // The fixture's own cleanup does not go through junctions.
+        foreach (string made in new[] { link, Path.Combine(linked, "Client") }) Directory.Delete(made);
     }
 
     static async Task SequenceAsync(Action<bool, string> check)

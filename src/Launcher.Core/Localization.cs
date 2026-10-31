@@ -30,6 +30,10 @@ public sealed class L : INotifyPropertyChanged
     [
         (@"\ALocal runtime uses (.+)\z", "Local runtime uses {0}"),
         (@"\ANeeds: (.+)\z", "Needs: {0}"),
+        (@"\ALinked to (.+)\z", "Linked to {0}"),
+        (@"\AClient links to (.+), which has no client\. Run the setup guide to replace the link\.\z", "Client links to {0}, which has no client. Run the setup guide to replace the link."),
+        (@"\AClient is a link to (.+), and other copies of LocalExile may share that folder, so Waypoint will not change it\. Prepare it there, or run the setup guide to put a client here\.\z",
+            "Client is a link to {0}, and other copies of LocalExile may share that folder, so Waypoint will not change it. Prepare it there, or run the setup guide to put a client here."),
         (@"\A(.+) \| hot reload watcher PID (\d+)\z", "{0} | hot reload watcher PID {1}"),
         (@"\A(.+) · Checked (.+)\z", "{0} · Checked {1}"),
         (@"\AMultiple (Patch|Gateway|Auth) processes belong to this checkout\.\z", "Multiple {0} processes belong to this checkout."),

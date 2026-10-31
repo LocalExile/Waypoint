@@ -83,6 +83,8 @@ public partial class SetupWizard : FormWindow
     Task? _running;
     SetupOutcome? _outcome;
     bool _searchedCheckouts, _clientsSearched, _closeWhenStopped, _portsHeld;
+    /// <summary>The data folder with the keys that fit the chosen client, when it can be shared.</summary>
+    string? _sharedKeys;
 
     /// <summary>The checkout the guide ended with; null when it ended without one.</summary>
     public string? Checkout { get; private set; }
@@ -362,8 +364,11 @@ public partial class SetupWizard : FormWindow
             foreach (var client in result.Clients) _clients.Add(client);
             if (!string.IsNullOrEmpty(_settings.SetupClient) && ClientLocator.Describe(_settings.SetupClient) is { } earlier && !_clients.Any(c => c.Folder.Equals(earlier.Folder, StringComparison.OrdinalIgnoreCase)))
                 _clients.Insert(0, earlier);
+            // A client that can be shared comes first: it saves the whole copy.
+            FoundClient[] ready = _clients.Where(c => c.Kind == ClientKind.Ready).ToArray();
+            var shareable = checkout is null ? null : await Task.Run(() => ready.FirstOrDefault(c => ClientCopy.SharedKeys(c.Folder, checkout, others) is not null), _closing.Token);
             ClientList.SelectedItem = _clients.FirstOrDefault(c => c.Folder.Equals(_settings.SetupClient, StringComparison.OrdinalIgnoreCase))
-                ?? _clients.FirstOrDefault(c => c.Usable && c.KnownBuild == true) ?? _clients.FirstOrDefault(c => c.Usable);
+                ?? shareable ?? _clients.FirstOrDefault(c => c.Usable && c.KnownBuild == true) ?? _clients.FirstOrDefault(c => c.Usable);
             int usable = _clients.Count(c => c.Usable);
             ClientStatus.Text = usable > 0 ? L.Text("Found {0} on this PC. Choose the one to use.", usable)
                 : L.Text("No usable client was found. Searched {0}.", string.Join(", ", result.Searched));
@@ -397,18 +402,38 @@ public partial class SetupWizard : FormWindow
         else ClientNote.Text = L.Text("Steam and Epic installs have no Content.ggpk and do not work. Choose a standalone install.");
     }
 
-    void ClientSelected(object sender, SelectionChangedEventArgs e)
+    async void ClientSelected(object sender, SelectionChangedEventArgs e)
     {
         var client = ClientList.SelectedItem as FoundClient;
+        _sharedKeys = null;
+        ShareClient.Visibility = Visibility.Collapsed;
         if (client is not null) ClientNote.Text = ClientWarning(client);
         UpdateButtons();
+        if (client is not { Kind: ClientKind.Ready } || ChosenCheckout() is not { } checkout) return;
+        string[] others = _checkouts.Select(c => c.Root).Where(r => !r.Equals(checkout, StringComparison.OrdinalIgnoreCase)).ToArray();
+        string? keys = await Task.Run(() => ClientCopy.SharedKeys(client.Folder, checkout, others));
+        if (keys is null || !Equals(ClientList.SelectedItem, client)) return;
+        _sharedKeys = keys;
+        ShareClient.Content = new TextBlock { Text = L.Text("Share this client instead of copying it (saves {0:0} GB). Both LocalExile folders will use the same game files.", client.Bytes / 1e9), TextWrapping = TextWrapping.Wrap };
+        ShareClient.IsChecked = true;
+        ShareClient.Visibility = Visibility.Visible;
+        ClientNote.Text = ClientWarning(client);
     }
+
+    void ShareChanged(object sender, RoutedEventArgs e)
+    {
+        if (ClientList.SelectedItem is FoundClient client) ClientNote.Text = ClientWarning(client);
+    }
+
+    /// <summary>The chosen client is shared through a link, with the keys of this folder, instead of copied.</summary>
+    bool Sharing => _sharedKeys is not null && ShareClient.IsChecked == true;
 
     /// <summary>A wrong client only fails later, at the keys, after a long copy: this says so now. It stays the player's call,
     /// because a build Waypoint does not know may be one a newer server supports.</summary>
     string ClientWarning(FoundClient client)
     {
         if (client.KnownBuild == false) return L.Text("This is not the 3.29.3b build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
+        if (Sharing) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining
             ? L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9) : "";
@@ -419,7 +444,7 @@ public partial class SetupWizard : FormWindow
     // --- Setting up ---
 
     /// <summary>The steps this run will take, in order, for the Run page to show before Start.</summary>
-    IReadOnlyList<SetupTask> Plan(string checkout, bool download, string? client, bool prepare)
+    IReadOnlyList<SetupTask> Plan(string checkout, bool download, string? client, string? sharedKeys, bool prepare)
     {
         LauncherSettings Options() => _settings.ForBridge with { RepositoryPath = checkout };
         async Task Bridge(string action, Action<string> detail, CancellationToken stop)
@@ -436,7 +461,9 @@ public partial class SetupWizard : FormWindow
                 await SetupSequence.CloneAsync(GitRepositoryProbe.UpstreamUrl, checkout, line => { Write(line); detail(line); }, stop);
                 Remember(checkout);
             }));
-        if (client is not null)
+        if (client is not null && sharedKeys is not null)
+            tasks.Add(new(L.Text("Share the game client"), () => HasClient(checkout), (detail, stop) => ClientCopy.ShareAsync(client, checkout, sharedKeys, line => { Write(line); detail(line); }, stop)));
+        else if (client is not null)
             tasks.Add(new(L.Text("Copy the game client"), () => HasClient(checkout), (detail, stop) => CopyAsync(client, checkout, detail, stop)));
         tasks.Add(new(L.Text("Install the extraction dependency"), () => File.Exists(Path.Combine(checkout, "Tools", "ooz", "node_modules", ".package-lock.json")), (detail, stop) => Bridge("Dependencies", detail, stop)));
         if (prepare)
@@ -489,7 +516,7 @@ public partial class SetupWizard : FormWindow
         string checkout = ChosenCheckout() ?? Checkout ?? "";
         var client = NoClient.IsChecked == true ? null : ClientList.SelectedItem as FoundClient;
         bool hasClient = client is not null || HasClient(checkout);
-        return Plan(checkout, DownloadChoice.IsChecked == true, HasClient(checkout) ? null : client?.Folder, hasClient);
+        return Plan(checkout, DownloadChoice.IsChecked == true, HasClient(checkout) ? null : client?.Folder, Sharing ? _sharedKeys : null, hasClient);
     }
 
     void Remember(string checkout)

@@ -324,6 +324,9 @@
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>нет</value>
   </data>
+  <data name="Text_14189860e58d" xml:space="preserve">
+    <value>Client — это ссылка на {0}. Эту папку могут использовать другие копии LocalExile, поэтому Waypoint не будет её менять. Подготовьте клиент там или запустите мастер настройки, чтобы разместить клиент здесь.</value>
+  </data>
   <data name="Text_1422c6b064e0" xml:space="preserve">
     <value>30 с</value>
   </data>
@@ -1278,6 +1281,9 @@
   <data name="Text_4b132b882d17" xml:space="preserve">
     <value>Область уведомлений недоступна. Окно Waypoint снова открыто, чтобы вы могли продолжить работу.</value>
   </data>
+  <data name="Text_4b72b1793476" xml:space="preserve">
+    <value>В {0} уже есть файлы, поэтому Waypoint не будет заменять эту папку ссылкой.</value>
+  </data>
   <data name="Text_4b81201360c2" xml:space="preserve">
     <value>Персонаж: {0}</value>
   </data>
@@ -2099,6 +2105,9 @@
   <data name="Text_7cf77adcf36c" xml:space="preserve">
     <value>Запуск dev host …</value>
   </data>
+  <data name="Text_7d0a4fb5a543" xml:space="preserve">
+    <value>Связан с {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Закрыть</value>
   </data>
@@ -2296,6 +2305,9 @@
   </data>
   <data xml:space="preserve" name="Text_8a63af29f3c4">
     <value>Цветовой круг; ниже доступны варианты управления с клавиатуры.</value>
+  </data>
+  <data name="Text_8a71113cc56c" xml:space="preserve">
+    <value>Client ссылается на {0}, где нет клиента. Запустите мастер настройки, чтобы заменить ссылку.</value>
   </data>
   <data name="Text_8a7c8b67fe8b" xml:space="preserve">
     <value>Аккаунты</value>
@@ -2898,6 +2910,9 @@
   <data name="Text_abe6ba498754" xml:space="preserve">
     <value>3.  Найдёт ваш игровой клиент или позволит указать его вручную</value>
   </data>
+  <data name="Text_ac00a70dabb9" xml:space="preserve">
+    <value>Windows не удалось создать ссылку в {0}. Скопируйте клиент вместо этого.</value>
+  </data>
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Показаны первые 1000 открытых PR. Введите номер другого PR, чтобы получить его.</value>
   </data>
@@ -3395,6 +3410,9 @@
   <data name="Text_cb8603c8ce91" xml:space="preserve">
     <value>Автоматические копии</value>
   </data>
+  <data name="Text_cb98398071ad" xml:space="preserve">
+    <value>Использовать этот клиент совместно вместо копирования (экономит {0:0} ГБ). Обе папки LocalExile будут использовать одни и те же файлы игры.</value>
+  </data>
   <data xml:space="preserve" name="Text_cba1d9e44ad3">
     <value>Повторно выберите действие с учётной записью, ревизией или копией, чтобы проверить текущие параметры.</value>
   </data>
@@ -3463,6 +3481,9 @@
   </data>
   <data name="Text_d1373700538f" xml:space="preserve">
     <value>Ошибка: {0} завершился с кодом {1}; см. вывод и раздел «Журналы».</value>
+  </data>
+  <data name="Text_d15a9fb6bec1" xml:space="preserve">
+    <value>Общий клиент игры</value>
   </data>
   <data xml:space="preserve" name="Text_d16948e73a68">
     <value>Не проверен</value>

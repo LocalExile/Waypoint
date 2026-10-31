@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace Launcher.Core;
 
 public sealed record ClientCopyFile(string Source, string Target, long Length);
@@ -11,7 +13,9 @@ public sealed record ClientCopyProgress(string File, long Done, long Total);
 /// Copies a client into a checkout's <c>Client</c> folder, never touching the source. It can stop at any moment and go on
 /// later: a file is written as <c>name.partial</c> and takes its real name only when complete, so a file with its real name is
 /// always whole. (That is also why it is never compared with the source: Content.ggpk changes once the client is prepared.)
-/// Content.ggpk goes last, so a checkout that has it has all of the client.
+/// Content.ggpk goes last, so a checkout that has it has all of the client. A client already prepared can instead be shared
+/// through a link, which saves the copy: only that kind, because preparing a client changes it, and only with the keys it
+/// was patched for.
 /// </summary>
 public static class ClientCopy
 {
@@ -62,11 +66,76 @@ public static class ClientCopy
             throw new IOException(L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9));
     }
 
+    /// <summary>A link that leads to no client only stands in the way, and deleting it removes the link and nothing it points
+    /// at. One that leads to a client is in use, and stays.</summary>
+    static void RemoveDeadLink(string target)
+    {
+        if (new DirectoryInfo(target).LinkTarget is null) return;
+        if (ClientLocator.Classify(target) is ClientKind.Ready or ClientKind.Standalone)
+            throw new IOException(L.Text("Client must be a separate physical copy in this checkout, not a link to another folder."));
+        Directory.Delete(target);
+    }
+
+    /// <summary>A client patched for a set of keys has their public key in it, as it is, and the original has not: so whether
+    /// the two belong together can be read rather than assumed. Anything unreadable is no match.</summary>
+    public static bool KeysFit(string client, string keysFile)
+    {
+        try
+        {
+            using var keys = JsonDocument.Parse(File.ReadAllText(keysFile));
+            string hex = keys.RootElement.GetProperty("dsaY").GetString() ?? "";
+            ReadOnlySpan<byte> key = Convert.FromHexString(hex.Length % 2 == 0 ? hex : "0" + hex);
+            key = key.TrimStart((byte)0);
+            return key.Length > 0 && File.ReadAllBytes(Path.Combine(client, "Game.patched.exe")).AsSpan().IndexOf(key) >= 0;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException or FormatException or KeyNotFoundException or InvalidOperationException) { return false; }
+    }
+
+    /// <summary>The data folder with the keys that fit a prepared client, when <paramref name="checkout"/> can share it: its
+    /// own keys if it has any, else those of the client's checkout or of one already linked to it. Null: it cannot.</summary>
+    public static string? SharedKeys(string client, string checkout, IEnumerable<string> checkouts)
+    {
+        if (ClientLocator.Classify(client) != ClientKind.Ready) return null;
+        string own = Path.Combine(checkout, "data");
+        if (File.Exists(Path.Combine(own, "login-keys.json"))) return KeysFit(client, Path.Combine(own, "login-keys.json")) ? own : null;
+        string real = Path.TrimEndingDirectorySeparator(ClientLocator.RealPath(client));
+        var folders = checkouts.Where(c => string.Equals(Path.TrimEndingDirectorySeparator(ClientLocator.RealPath(Path.Combine(c, "Client"))), real, StringComparison.OrdinalIgnoreCase))
+            .Select(c => Path.Combine(c, "data")).ToList();
+        if (Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(client)) is { } parent) folders.Insert(0, Path.Combine(parent, "data"));
+        return folders.FirstOrDefault(f => File.Exists(Path.Combine(f, "login-keys.json")) && KeysFit(client, Path.Combine(f, "login-keys.json")));
+    }
+
+    /// <summary>Links the checkout's <c>Client</c> to a prepared client, with the keys from <paramref name="keys"/>
+    /// (<see cref="SharedKeys"/>). A folder with anything in it stays: that may be a copy stopped halfway.</summary>
+    public static async Task ShareAsync(string client, string checkout, string keys, Action<string> output, CancellationToken stop)
+    {
+        string target = Path.Combine(checkout, "Client");
+        RemoveDeadLink(target);
+        if (Directory.Exists(target))
+        {
+            if (Directory.EnumerateFileSystemEntries(target).Any()) throw new IOException(L.Text("{0} already has files in it, so Waypoint will not replace it with a link.", target));
+            Directory.Delete(target);
+        }
+        // A junction needs no special rights, which a symbolic link does.
+        int code = await ToolProcess.RunAsync("cmd.exe", ["/c", "mklink", "/J", target, ClientLocator.RealPath(client)], checkout, output, stop);
+        if (code != 0) throw new IOException(L.Text("Windows could not make the link at {0}. Copy the client instead.", target));
+        BringKeys(keys, checkout);
+    }
+
+    /// <summary>What belongs with a prepared client, for a checkout that lacks it.</summary>
+    static void BringKeys(string data, string checkout)
+    {
+        string folder = Path.Combine(checkout, "data");
+        Directory.CreateDirectory(folder);
+        foreach (string name in new[] { "login-keys.json", "gateway_list.original.txt" })
+            if (File.Exists(Path.Combine(data, name)) && !File.Exists(Path.Combine(folder, name)))
+                File.Copy(Path.Combine(data, name), Path.Combine(folder, name));
+    }
+
     public static async Task RunAsync(ClientCopyPlan plan, Action<ClientCopyProgress>? progress, CancellationToken stop)
     {
         RequireSpace(plan);
-        if (new DirectoryInfo(plan.Target) is { Exists: true } folder && (folder.Attributes & FileAttributes.ReparsePoint) != 0)
-            throw new IOException(L.Text("Client must be a separate physical copy in this checkout, not a link to another folder."));
+        RemoveDeadLink(plan.Target);
         long done = plan.Files.Where(f => File.Exists(f.Target)).Sum(f => f.Length);
         var report = System.Diagnostics.Stopwatch.StartNew();
         foreach (var file in plan.Files)
@@ -95,13 +164,7 @@ public static class ClientCopy
             File.SetLastWriteTimeUtc(partial, File.GetLastWriteTimeUtc(file.Source));
             File.Move(partial, file.Target);
         }
-        if (plan.Keys is { } data)
-        {
-            Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(plan.Target)!, "data"));
-            foreach (string name in new[] { "login-keys.json", "gateway_list.original.txt" })
-                if (File.Exists(Path.Combine(data, name)))
-                    File.Copy(Path.Combine(data, name), Path.Combine(Path.GetDirectoryName(plan.Target)!, "data", name), overwrite: false);
-        }
+        if (plan.Keys is { } data) BringKeys(data, Path.GetDirectoryName(plan.Target)!);
         progress?.Invoke(new("", plan.Total, plan.Total));
     }
 

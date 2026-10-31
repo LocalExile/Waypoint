@@ -100,6 +100,7 @@
                     <TextBlock DockPanel.Dock="Top" x:Name="ClientStatus" Margin="0,6,0,8" />
                     <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
                         <TextBlock x:Name="ClientNote" Style="{StaticResource Caption}" Margin="0,0,0,6" />
+                        <CheckBox x:Name="ShareClient" Visibility="Collapsed" Margin="0,0,0,6" Checked="ShareChanged" Unchecked="ShareChanged" />
                         <WrapPanel>
                             <Button Content="{l:Loc 'Browse…'}" Click="BrowseClient" />
                             <Button x:Name="SearchAgain" Content="{l:Loc 'Search again'}" Click="SearchClientsClicked" />

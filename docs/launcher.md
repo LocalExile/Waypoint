@@ -308,6 +308,21 @@ another day all come down to running the same list again.
 A prepared client from another checkout brings that checkout's `login-keys.json`, because a patched client works only with the
 keys it was patched for. A checkout with keys of its own keeps them, and its client is patched again.
 
+**A prepared client can be shared instead of copied**, which saves about 70 GB. `Client` then is a junction, made by the guide
+or by hand, and that state is a normal one:
+
+- **Sharing** is offered, on by default, and chosen first among the clients found, only for a client already prepared, because preparing changes a client and a
+  player's real install must not be changed. Its keys must fit: the public key is in the patched executable as it is, so
+  `ClientCopy.KeysFit` reads whether they belong together. Keys come from the client's checkout or a checkout linked to it, and
+  a checkout with other keys cannot share it. When that can't be shown, the option does not appear and the copy stands.
+- **A working link** is used as it is. Setup says where it leads, and Prepare client does nothing: it never writes through a
+  link, because other checkouts may share the folder.
+- **A link that leads nowhere**, or to a folder without a client, is replaced by the guide's copy or link. Deleting a link
+  removes the link and nothing it points at. A link to a working client is never replaced, and a `Client` folder with files in
+  it, such as a stopped copy, stays.
+
+A requirement that is met shows no action, so Setup offers nothing that has nothing to do.
+
 The player's own install is only ever read.
 
 ### Setup

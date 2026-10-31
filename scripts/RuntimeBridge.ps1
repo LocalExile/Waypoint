@@ -182,7 +182,7 @@ function Get-Snapshot {
     $requirements = @(
         @{ Name='.NET 10 SDK'; Ready=(Test-Sdk); Detail='Install .NET 10 SDK; check with dotnet --list-sdks' },
         @{ Name='Launch adapter'; Ready=((Test-Path -LiteralPath (At 'scripts/dev/live.ps1')) -and ((Get-Content -LiteralPath (At 'scripts/dev/live.ps1') -Raw) -match '\$ClientOnly')); Detail='scripts/dev/live.ps1 must support -ClientOnly and -Only' },
-        @{ Name='Original client'; Ready=(Test-Path -LiteralPath (At 'Client/Game.exe')); Detail='Standalone 3.29.3b executable at Client/Game.exe' },
+        @{ Name='Original client'; Ready=(Test-Path -LiteralPath (At 'Client/Game.exe')); Detail=(Get-ClientDetail) },
         @{ Name='Prepared client'; Ready=(Test-Path -LiteralPath $gamePath); Detail='Follow Agents/GettingStarted.md steps 4-5 to prepare Game.patched.exe' },
         @{ Name='Client archive'; Ready=(Test-Path -LiteralPath (At 'Client/Content.ggpk')); Detail='Standalone Content.ggpk is required; Steam layout is unsupported' },
         @{ Name='Login keys'; Ready=(Test-Path -LiteralPath (At 'data/login-keys.json')); Detail='data/login-keys.json must match the prepared client; never regenerate existing keys casually' },
@@ -603,11 +603,25 @@ function Start-FreshSaves($snapshot) {
     Assert-Physical $history
     if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
 }
+function Get-ClientDetail {
+    $client = Get-Item -LiteralPath (At 'Client') -Force -ErrorAction SilentlyContinue
+    if (-not $client -or -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return 'Standalone 3.29.3b executable at Client/Game.exe' }
+    $target = @($client.Target)[0]
+    if (Test-Path -LiteralPath (At 'Client/Game.exe')) { return "Linked to $target" }
+    return "Client links to $target, which has no client. Run the setup guide to replace the link."
+}
 function Prepare-Client($snapshot) {
     Assert-SetupStopped $snapshot
     Require (Test-Sdk) 'Install .NET 10 SDK first.'
-    $client = Get-Item -LiteralPath (At 'Client') -ErrorAction SilentlyContinue
-    Require ($client -and -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) 'Client must be a separate physical copy in this checkout; preparation refuses a redirected Client folder.'
+    # A linked client is used as it is. Other checkouts may share it, and its patched executable trusts one set of keys, so
+    # preparing it here could break them.
+    $client = Get-Item -LiteralPath (At 'Client') -Force -ErrorAction SilentlyContinue
+    if ($client -and ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+        $target = @($client.Target)[0]
+        Require ((Test-Path -LiteralPath (At 'Client/Game.patched.exe')) -and (Test-Path -LiteralPath (At 'data/login-keys.json'))) "Client is a link to $target, and other copies of LocalExile may share that folder, so Waypoint will not change it. Prepare it there, or run the setup guide to put a client here."
+        Write-Host "Client is a link to $target and is already prepared: nothing to do."
+        return
+    }
     Require (Test-Path -LiteralPath (At 'Client/Content.ggpk')) 'Copy the complete standalone 3.29.3b client into Client first.'
     foreach ($relative in @('Client/Content.ggpk','Client/Game.exe','Client/PathOfExile.exe','Client/Game.patched.exe','data','data/login-keys.json')) {
         $item = Get-Item -LiteralPath (At $relative) -ErrorAction SilentlyContinue

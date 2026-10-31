@@ -10,6 +10,8 @@ sealed record SetupRow(SetupStep Step)
 {
     public PackIconKind Icon => Step.Ready ? PackIconKind.CheckCircleOutline : PackIconKind.AlertCircleOutline;
     public Brush Brush => Theme.Brush(Step.Ready ? "Shell.Good" : "Shell.Warning");
+    /// <summary>A requirement that is met has nothing to do.</summary>
+    public Visibility ActionShown => Step.Ready ? Visibility.Collapsed : Visibility.Visible;
 }
 
 /// <summary>The Setup section: what the checkout still needs, each with its next step. The requirements come from the
@@ -46,6 +48,9 @@ public partial class SetupTab : UserControl
         var rows = state?.Requirements.Select(r => new SetupRow(SetupGuidance.Describe(r, state.Root))).ToList() ?? [];
         Steps.ItemsSource = rows;
         int missing = rows.Count(r => !r.Step.Ready);
+        bool Needs(params string[] names) => state is null || rows.Any(r => !r.Step.Ready && names.Contains(r.Step.Name));
+        PrepareButton.Visibility = Needs("Prepared client", "Login keys") ? Visibility.Visible : Visibility.Collapsed;
+        DependenciesButton.Visibility = Needs("Bundle decompressor") ? Visibility.Visible : Visibility.Collapsed;
         Summary.Text = state is null ? "" : missing == 0 ? L.Text("Setup checks · all passed") : L.Text("Setup checks · {0} need attention", missing);
         Empty.Text = _shared.Workspace.InspectError is { } error ? L.Text("Check failed: ") + error : L.Text("Checking the selected installation…");
         Empty.Visibility = rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;

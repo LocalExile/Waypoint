@@ -150,7 +150,8 @@ public static class ClientLocator
         return false;
     }
 
-    static string RealPath(string folder)
+    /// <summary>The folder a link leads to; a real folder is its own.</summary>
+    public static string RealPath(string folder)
     {
         try { return new DirectoryInfo(folder).ResolveLinkTarget(returnFinalTarget: true)?.FullName ?? folder; }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return folder; }

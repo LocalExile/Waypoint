@@ -324,6 +324,9 @@
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>none</value>
   </data>
+  <data name="Text_14189860e58d" xml:space="preserve">
+    <value>Client is a link to {0}, and other copies of LocalExile may share that folder, so Waypoint will not change it. Prepare it there, or run the setup guide to put a client here.</value>
+  </data>
   <data name="Text_1422c6b064e0" xml:space="preserve">
     <value>30 s</value>
   </data>
@@ -1278,6 +1281,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4b132b882d17" xml:space="preserve">
     <value>The notification area is unavailable. Waypoint has reopened so you can still use it.</value>
   </data>
+  <data name="Text_4b72b1793476" xml:space="preserve">
+    <value>{0} already has files in it, so Waypoint will not replace it with a link.</value>
+  </data>
   <data name="Text_4b81201360c2" xml:space="preserve">
     <value>{0} character</value>
   </data>
@@ -2099,6 +2105,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7cf77adcf36c" xml:space="preserve">
     <value>Starting the dev host …</value>
   </data>
+  <data name="Text_7d0a4fb5a543" xml:space="preserve">
+    <value>Linked to {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Close</value>
   </data>
@@ -2296,6 +2305,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_8a63af29f3c4">
     <value>Color wheel; keyboard alternatives are below.</value>
+  </data>
+  <data name="Text_8a71113cc56c" xml:space="preserve">
+    <value>Client links to {0}, which has no client. Run the setup guide to replace the link.</value>
   </data>
   <data name="Text_8a7c8b67fe8b" xml:space="preserve">
     <value>Accounts</value>
@@ -2898,6 +2910,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_abe6ba498754" xml:space="preserve">
     <value>3.  Finds your game client, or lets you point to it</value>
   </data>
+  <data name="Text_ac00a70dabb9" xml:space="preserve">
+    <value>Windows could not make the link at {0}. Copy the client instead.</value>
+  </data>
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Showing the first 1,000 open PRs. Enter a PR number to fetch another.</value>
   </data>
@@ -3395,6 +3410,9 @@ Client: {2}</value>
   <data name="Text_cb8603c8ce91" xml:space="preserve">
     <value>Automatic backups</value>
   </data>
+  <data name="Text_cb98398071ad" xml:space="preserve">
+    <value>Share this client instead of copying it (saves {0:0} GB). Both LocalExile folders will use the same game files.</value>
+  </data>
   <data xml:space="preserve" name="Text_cba1d9e44ad3">
     <value>Select the account, revision or backup action again to review its current options.</value>
   </data>
@@ -3463,6 +3481,9 @@ Client: {2}</value>
   </data>
   <data name="Text_d1373700538f" xml:space="preserve">
     <value>Failed: {0} exited with {1}; see the output and the Logs section.</value>
+  </data>
+  <data name="Text_d15a9fb6bec1" xml:space="preserve">
+    <value>Share the game client</value>
   </data>
   <data xml:space="preserve" name="Text_d16948e73a68">
     <value>Not checked</value>
