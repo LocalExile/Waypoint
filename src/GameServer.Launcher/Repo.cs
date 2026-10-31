@@ -50,6 +50,29 @@ static class Repo
     }
 
     public static string LiveScript { get; } = Path.Combine("scripts", "dev", "live.ps1");
+
+    /// <summary>Whether the checkout's live.ps1 starts the walk-map recorder with -ClientOnly -Walkmaps; an older one
+    /// refuses the pair, and then starting the game with Walk maps on takes a full run.</summary>
+    public static bool ClientOnlyTakesWalkmaps()
+    {
+        try
+        {
+            // Asked every second (the Play button's tooltip): read again only when the script changed (a switch, a pull).
+            var written = File.GetLastWriteTimeUtc(LiveScript);
+            if (_clientOnly is { } known && known.Written == written) return known.Takes;
+            bool takes = File.Exists(LiveScript) && ClientOnlyTakesWalkmaps(File.ReadAllText(LiveScript));
+            _clientOnly = (written, takes);
+            return takes;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
+    }
+
+    static (DateTime Written, bool Takes)? _clientOnly;
+
+    internal static bool ClientOnlyTakesWalkmaps(string script) =>
+        script.Contains("-ClientOnly", StringComparison.Ordinal)
+        && !script.Contains("-ClientOnly cannot be combined with -NoClient, -Only or -Walkmaps", StringComparison.Ordinal);
+
     public static string ExtractScript { get; } = Path.Combine("scripts", "dev", "extract-data.ps1");
     public static string ClientControl { get; } = Path.Combine("scripts", "dev", "client_control.py");
     public static string Logs { get; } = "logs";

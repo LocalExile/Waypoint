@@ -137,6 +137,9 @@ public partial class ControlTab : UserControl
             ? "live.ps1 -NoClient: rebuilds and restarts Patch, Auth and Gateway (after a pull, or edits outside the Gateway); " +
               "the Gateway's own code edits apply by themselves with hot reload. A running client stays."
             : "live.ps1 -NoClient: builds and starts Patch, Auth and Gateway; a running client stays";
+        PlayButton.ToolTip = PlaysOnlyTheGame(samples, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps())
+            ? "live.ps1 -ClientOnly: starts the game against the running servers (Restart servers rebuilds them)"
+            : "live.ps1: builds and starts the servers, then the game (closes a running one)";
     }
 
     LiveRequest Request(LiveMode mode, string? server = null)
@@ -174,8 +177,60 @@ public partial class ControlTab : UserControl
     /// <summary>Play: also what the Versions section starts after a switch.</summary>
     internal async Task PlayAsync()
     {
+        if (PlaysOnlyTheGame(_shared.Monitor.Latest, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps()))
+        {
+            // The servers stay as they are: only the game (again) against them.
+            if (ClientRunning)
+            {
+                if (!Confirm("Restart the game?", "The game is running: Play closes it and starts it again; the servers keep running.",
+                        "Restart the game")) return;
+                // live.ps1 -ClientOnly refuses a second client: this one has to be gone first.
+                if (!CloseClient()) return;
+            }
+            await Run(ClientRequest());
+            return;
+        }
         if (ClientRunning && !Confirm("Restart the game?", "The client is running: Play closes it and starts it again.", "Restart the game")) return;
         await Run(Request(LiveMode.All));
+    }
+
+    /// <summary>Play starts only the game when the three servers already listen: a full live.ps1 run would rebuild and
+    /// restart them for nothing (the Gateway's edits apply by hot reload; Restart servers is there for the rest). With
+    /// Walk maps on, -ClientOnly starts the recorder too; a checkout whose live.ps1 cannot (<paramref name="clientTakesWalkmaps"/>
+    /// false) needs the full run while no recorder runs.</summary>
+    internal static bool PlaysOnlyTheGame(IReadOnlyList<ServiceSample> samples, bool walkmaps, bool clientTakesWalkmaps)
+    {
+        var servers = samples.Where(s => s.Service.Kind == ServiceKind.Server).ToList();
+        bool serversUp = servers.Count == Service.All.Count(s => s.Kind == ServiceKind.Server) && servers.All(s => s.Running && s.Listening);
+        bool recorderMissing = walkmaps && !clientTakesWalkmaps && !samples.Any(s => s.Service.Kind == ServiceKind.Recorder && s.Running);
+        return serversUp && !recorderMissing;
+    }
+
+    /// <summary>The game alone, with the walk-map recorder when Walk maps is on and the checkout's live.ps1 can.</summary>
+    LiveRequest ClientRequest()
+    {
+        var request = Request(LiveMode.Client);
+        return Repo.ClientOnlyTakesWalkmaps() ? request : request with { Walkmaps = false };
+    }
+
+    /// <summary>Ends the game's process and waits for it to be gone; false when it would not end.</summary>
+    bool CloseClient()
+    {
+        if (_shared.Monitor.Latest.FirstOrDefault(s => s.Service == Service.Client)?.Pid is not int pid) return true;
+        try
+        {
+            using var p = Process.GetProcessById(pid);
+            p.Kill();
+            p.WaitForExit(10_000);
+            Append($"client (pid {pid}) closed");
+            return true;
+        }
+        catch (ArgumentException) { return true; }   // already gone
+        catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception)
+        {
+            Append($"could not close the client: {ex.Message}");
+            return false;
+        }
     }
 
     async void StartServers(object sender, RoutedEventArgs e) => await Run(Request(LiveMode.Servers));
@@ -216,7 +271,7 @@ public partial class ControlTab : UserControl
                 "The game needs all three servers: use Play, or Start servers first.");
             return;
         }
-        await Run(Request(LiveMode.Client));
+        await Run(ClientRequest());
     }
 
     async Task StartDevHost()

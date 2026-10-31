@@ -29,7 +29,7 @@ The version shows in the window's title. A build from source is 0.0.0 ("built fr
 
 A release build asks GitHub's public API for the latest release of `Updates.Repository` (jetstream1128/LocalExile-Launcher until the move to the LocalExile organization) when it starts (**Look for
 updates at start** in the header's settings; **Check for updates** there asks at once and says what it found). A newer
-version shows a strip under the header. **Update now**, after a confirmation:
+version shows a green card floating over the bottom of the window. **Update now**, after a confirmation:
 
 1. downloads the release's `.sha256`, then its exe beside the running one (`LocalExileLauncher.exe.new`);
 2. refuses an exe whose SHA-256 differs, changing nothing;
@@ -74,7 +74,8 @@ Its own settings (the server folder, the switches, the theme, pinned console lin
 
 The window is a blue sidebar with the sections, a header (the section's name, the checkout's branch, the theme, the
 launcher's settings) and a status strip on every section: whether the servers listen, whether the game runs, whether a
-`live.ps1` run is going on, and a link to the logs. A newer release shows as a strip above it.
+`live.ps1` run is going on, and a link to the logs. A newer release shows as a green card floating over the bottom of
+the whole window, apart from the blue strip; **Later** hides it until the next start.
 
 The controls are [Material Design in XAML](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)'s,
 restyled flat in `Shell.xaml` (which `App.xaml` merges): 30 px buttons with 4 px corners and no shadows, an outlined one by default and one blue
@@ -117,8 +118,13 @@ question (a fork's pull request) has Cancel as its default.
   alone. A server's is `live.ps1 -Only <server>` (build and start) or `live.ps1 -Stop -Only <server>`; the client's is
   Start game only or closing its process; the dev host's builds and starts it or ends it; the walk-map recorder's only
   stops it (it starts with a run while Walk maps is on). The ⋮ menu restarts a server and opens the service's log.
-- **Play** is plain `live.ps1`: it builds, restarts the servers and starts the client. It asks first if a client is
-  running, because `live.ps1` closes it.
+- **Play** with the three servers already listening is `live.ps1 -ClientOnly`: only the game, against them, and a
+  running game is closed first after a question (`-ClientOnly` refuses a second client). With Walk maps on it is
+  `-ClientOnly -Walkmaps`, which also starts the walk-map recorder (it ends with each client). The servers are not
+  rebuilt: the Gateway's edits apply by hot reload, and **Restart servers** rebuilds them for the rest. Otherwise Play
+  is plain `live.ps1`: it builds, restarts the servers and starts the client, asking first if a client is running,
+  because `live.ps1` closes it. A checkout whose `live.ps1` refuses `-ClientOnly -Walkmaps` (older than that hook) gets
+  the full run while Walk maps is on and no recorder runs. Its tooltip says which one Play does.
 - **Start servers** is `live.ps1 -NoClient`, **Stop servers** `live.ps1 -Stop -NoClient`: the servers and the walk-map
   recorder, the client staying (it drops to the login screen).
 - The client row's **Start** is `live.ps1 -ClientOnly`, with the unreachable proxy the control bridge also sets for it. It

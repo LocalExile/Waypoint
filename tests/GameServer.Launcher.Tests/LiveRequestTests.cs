@@ -14,10 +14,19 @@ public class LiveRequestTests
     }
 
     [Fact]
-    public void Starting_only_the_game_takes_no_other_switch()
+    public void Starting_only_the_game_takes_only_Walkmaps()
     {
-        // live.ps1 refuses -ClientOnly with -Walkmaps and skips building and extraction for it.
-        Assert.Equal(["-ClientOnly"], new LiveRequest(LiveMode.Client, Walkmaps: true, NoBuild: true, NoExtract: true).Arguments());
+        // live.ps1 skips building and extraction for -ClientOnly; -Walkmaps starts the recorder beside the client.
+        Assert.Equal(["-ClientOnly", "-Walkmaps"], new LiveRequest(LiveMode.Client, Walkmaps: true, NoBuild: true, NoExtract: true).Arguments());
+        Assert.Equal(["-ClientOnly"], new LiveRequest(LiveMode.Client, NoBuild: true).Arguments());
+    }
+
+    [Fact]
+    public void A_live_script_that_refuses_ClientOnly_with_Walkmaps_is_told_apart()
+    {
+        Assert.False(Repo.ClientOnlyTakesWalkmaps("if ($NoClient -or $Only -or $Walkmaps) { throw '-ClientOnly cannot be combined with -NoClient, -Only or -Walkmaps' }"));
+        Assert.True(Repo.ClientOnlyTakesWalkmaps("if ($NoClient -or $Only) { throw '-ClientOnly cannot be combined with -NoClient or -Only' }"));
+        Assert.False(Repo.ClientOnlyTakesWalkmaps("param([switch]$NoClient)"));
     }
 
     [Fact]
@@ -101,6 +110,24 @@ public class LiveRequestTests
         Assert.Equal("9297197", Repo.BranchOf("92971976069dc6abacd6d6b351df179fc85b8430\n"));
         Assert.Null(Repo.BranchOf(""));
         Assert.Null(Repo.BranchOf("not a head"));
+    }
+
+    [Fact]
+    public void Play_starts_only_the_game_when_the_three_servers_already_listen()
+    {
+        static ServiceSample Up(Service s, bool listening = true) => new(s, 100, listening, 0, 0, 0, 0, TimeSpan.FromMinutes(1));
+        static ServiceSample Down(Service s) => new(s, null, false, 0, 0, 0, 0, TimeSpan.Zero);
+        ServiceSample[] servers = [Up(Service.Patch), Up(Service.Auth), Up(Service.Gateway)];
+
+        Assert.True(ControlTab.PlaysOnlyTheGame([.. servers, Down(Service.Client), Down(Service.Recorder)], walkmaps: false, clientTakesWalkmaps: true));
+        Assert.True(ControlTab.PlaysOnlyTheGame([.. servers, Up(Service.Client), Up(Service.Recorder)], walkmaps: true, clientTakesWalkmaps: false));
+        // Walk maps on without a recorder: -ClientOnly starts one where live.ps1 can, else only a full run does.
+        Assert.True(ControlTab.PlaysOnlyTheGame([.. servers, Down(Service.Recorder)], walkmaps: true, clientTakesWalkmaps: true));
+        Assert.False(ControlTab.PlaysOnlyTheGame([.. servers, Down(Service.Recorder)], walkmaps: true, clientTakesWalkmaps: false));
+        // A server down or still starting: the full run.
+        Assert.False(ControlTab.PlaysOnlyTheGame([Up(Service.Patch), Up(Service.Auth), Down(Service.Gateway)], walkmaps: false, clientTakesWalkmaps: true));
+        Assert.False(ControlTab.PlaysOnlyTheGame([Up(Service.Patch), Up(Service.Auth), Up(Service.Gateway, listening: false)], walkmaps: false, clientTakesWalkmaps: true));
+        Assert.False(ControlTab.PlaysOnlyTheGame([], walkmaps: false, clientTakesWalkmaps: true));
     }
 
     [Fact]

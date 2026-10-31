@@ -22,6 +22,7 @@ static class Theme
         ["Shell.Border"] = "#E4E7EC", ["Shell.Text"] = "#1F2328", ["Shell.TextSecondary"] = "#6B7280",
         ["Shell.Banner"] = "#E9EDFB", ["Shell.Accent"] = "#2442C8", ["Shell.Panel"] = "#F6F7F9",
         ["Shell.Good"] = "#2E9E4F", ["Shell.Warning"] = "#C77700", ["Shell.Error"] = "#C62828", ["Shell.Idle"] = "#9AA1AD",
+        ["Shell.UpdateBack"] = "#E3F5E8", ["Shell.UpdateBorder"] = "#7CC995", ["Shell.UpdateText"] = "#14532D", ["Shell.UpdateAccent"] = "#1E8E3E",
     };
     static readonly Dictionary<string, string> Dark = new()
     {
@@ -30,6 +31,7 @@ static class Theme
         ["Shell.Border"] = "#2B303A", ["Shell.Text"] = "#E6E8EC", ["Shell.TextSecondary"] = "#9AA1AD",
         ["Shell.Banner"] = "#1A2550", ["Shell.Accent"] = "#4D6BFF", ["Shell.Panel"] = "#1C1F26",
         ["Shell.Good"] = "#43B865", ["Shell.Warning"] = "#E0A030", ["Shell.Error"] = "#EF5350", ["Shell.Idle"] = "#6B7280",
+        ["Shell.UpdateBack"] = "#173A25", ["Shell.UpdateBorder"] = "#2F7D4C", ["Shell.UpdateText"] = "#CDEFD8", ["Shell.UpdateAccent"] = "#2EA352",
     };
 
     public static ThemeChoice Mode { get; private set; } = ThemeChoice.System;

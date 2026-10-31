@@ -26,8 +26,8 @@
                             <TextBlock x:Name="StartServersText" Text="Start servers" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Style="{StaticResource Shell.PrimaryButton}" Click="Play" Margin="0,0,0,6"
-                            ToolTip="live.ps1: builds and restarts the servers, then starts the game (closes a running one)">
+                    <Button x:Name="PlayButton" Style="{StaticResource Shell.PrimaryButton}" Click="Play" Margin="0,0,0,6"
+                            ToolTip="live.ps1: builds and starts the servers, then the game (closes a running one)">
                         <StackPanel Orientation="Horizontal">
                             <md:PackIcon Kind="Play" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
                             <TextBlock Text="Play" VerticalAlignment="Center" />

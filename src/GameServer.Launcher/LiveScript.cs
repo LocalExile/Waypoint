@@ -12,14 +12,15 @@ sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = 
 {
     public static readonly string[] Servers = ["Gateway", "Auth", "Patch"];
 
-    /// <summary>The script's switches. -ClientOnly takes none (the script refuses -Walkmaps with it and skips the rest);
-    /// -Stop takes only -Only.</summary>
+    /// <summary>The script's switches. -ClientOnly takes only -Walkmaps (the recorder beside the new client; a checkout's
+    /// live.ps1 older than that refuses it, so the caller leaves it out there, <see cref="Repo.ClientOnlyTakesWalkmaps"/>)
+    /// and skips the rest; -Stop takes only -Only.</summary>
     public IReadOnlyList<string> Arguments()
     {
         var args = new List<string>();
         switch (Mode)
         {
-            case LiveMode.Client: return ["-ClientOnly"];
+            case LiveMode.Client: return Walkmaps ? ["-ClientOnly", "-Walkmaps"] : ["-ClientOnly"];
             case LiveMode.Stop:
                 args.Add("-Stop");
                 if (Server is not null) args.AddRange(["-Only", CheckedServer]);

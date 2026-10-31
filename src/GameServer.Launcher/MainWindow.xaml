@@ -100,21 +100,6 @@
                 </DockPanel>
             </Border>
 
-            <!-- A newer release: shown when the check finds one (Updates.cs). -->
-            <Border x:Name="UpdateBar" DockPanel.Dock="Top" Visibility="Collapsed" Background="{DynamicResource Shell.Banner}"
-                    BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1" Padding="20,7,14,1">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button x:Name="UpdateNow" Style="{StaticResource Shell.PrimaryButton}" Content="Update now" Click="UpdateClicked" />
-                        <Button Content="What's new" Click="ReleasePageClicked" />
-                        <Button Content="Later" Click="LaterClicked" />
-                    </StackPanel>
-                    <md:PackIcon DockPanel.Dock="Left" Kind="ArrowUpCircleOutline" Width="18" Height="18" Margin="0,0,8,6"
-                                 VerticalAlignment="Center" Foreground="{DynamicResource Shell.Accent}" />
-                    <TextBlock x:Name="UpdateText" VerticalAlignment="Center" Margin="0,0,0,6" TextWrapping="Wrap" />
-                </DockPanel>
-            </Border>
-
             <!-- What runs, at a glance, on every section. -->
             <Border DockPanel.Dock="Top" Background="{DynamicResource Shell.Banner}" Padding="0,8">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -137,5 +122,38 @@
                 <l:ConsoleTab x:Name="ConsoleView" Visibility="Collapsed" />
             </Grid>
         </DockPanel>
+
+        <!-- A newer release: a card floating over the bottom of the whole window, shown when the check finds one
+             (Updates.cs), green so it does not blend into the blue status strip. -->
+        <Border x:Name="UpdateBar" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="14,0,14,14" Visibility="Collapsed"
+                Background="{DynamicResource Shell.UpdateBack}" BorderBrush="{DynamicResource Shell.UpdateBorder}" BorderThickness="1"
+                CornerRadius="8" Padding="16,12" TextElement.Foreground="{DynamicResource Shell.UpdateText}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.3" />
+            </Border.Effect>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="UpdateNow" Style="{StaticResource Shell.PrimaryButton}" Click="UpdateClicked" Margin="0,0,8,0"
+                            Background="{DynamicResource Shell.UpdateAccent}" BorderBrush="{DynamicResource Shell.UpdateAccent}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Download" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Update now" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Content="What's new" Click="ReleasePageClicked" Margin="0,0,8,0" Foreground="{DynamicResource Shell.UpdateText}"
+                            BorderBrush="{DynamicResource Shell.UpdateBorder}" />
+                    <Button Content="Later" Click="LaterClicked" Margin="0" Foreground="{DynamicResource Shell.UpdateText}"
+                            BorderBrush="{DynamicResource Shell.UpdateBorder}" />
+                </StackPanel>
+                <Grid DockPanel.Dock="Left" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <Ellipse Fill="{DynamicResource Shell.UpdateAccent}" />
+                    <md:PackIcon Kind="ArrowUpBold" Width="20" Height="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="A new version of the launcher is ready" FontSize="13.5" FontWeight="SemiBold" />
+                    <TextBlock x:Name="UpdateText" TextWrapping="Wrap" Opacity="0.85" Margin="0,1,0,0" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
     </Grid>
 </Window>

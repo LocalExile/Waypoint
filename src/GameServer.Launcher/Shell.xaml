@@ -27,6 +27,11 @@
     <SolidColorBrush x:Key="Shell.Warning" Color="#C77700" />
     <SolidColorBrush x:Key="Shell.Error" Color="#C62828" />
     <SolidColorBrush x:Key="Shell.Idle" Color="#9AA1AD" />
+    <!-- The new-release card: green, so it stands out from the blue status strip. -->
+    <SolidColorBrush x:Key="Shell.UpdateBack" Color="#E3F5E8" />
+    <SolidColorBrush x:Key="Shell.UpdateBorder" Color="#7CC995" />
+    <SolidColorBrush x:Key="Shell.UpdateText" Color="#14532D" />
+    <SolidColorBrush x:Key="Shell.UpdateAccent" Color="#1E8E3E" />
 
     <FontFamily x:Key="Mono">Consolas, Courier New</FontFamily>
 

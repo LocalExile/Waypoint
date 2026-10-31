@@ -146,7 +146,8 @@ public partial class MainWindow : Window
             _release = await Updates.CheckAsync();
             if (_release is not null)
             {
-                UpdateText.Text = $"LocalExile Launcher {_release.Version} is available (this is {(Updates.IsReleaseBuild ? Updates.Current.ToString() : "a build from source")}).";
+                UpdateText.Text = $"Version {_release.Version} is out; this is {(Updates.IsReleaseBuild ? Updates.Current.ToString() : "a build from source")}. " +
+                    "The servers and the game keep running while it updates.";
                 UpdateNow.IsEnabled = Updates.RunningExe is not null;
                 UpdateNow.ToolTip = Updates.RunningExe is null ? "Only the published LocalExileLauncher.exe updates itself" : null;
                 UpdateBar.Visibility = Visibility.Visible;

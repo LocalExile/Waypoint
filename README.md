@@ -25,9 +25,9 @@ The exe is not code-signed, so Windows SmartScreen may say "Windows protected yo
 ## Updates
 
 A release build looks for a newer release when it starts (**Look for updates at start** in the header's settings
-turns that off; **Check for updates** there looks at once). A newer one shows a strip under the header: **Update now**
-downloads the new exe, checks it against the release's SHA-256, puts it in place of the running one and restarts the
-launcher. The servers and the game keep running. **What's new** opens the release page.
+turns that off; **Check for updates** there looks at once). A newer one shows a green card at the bottom of the window:
+**Update now** downloads the new exe, checks it against the release's SHA-256, puts it in place of the running one and
+restarts the launcher. The servers and the game keep running. **What's new** opens the release page.
 
 ## Build from source
 
