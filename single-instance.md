@@ -80,8 +80,21 @@ It uses the existing WPF dialog frame, localization, palette and accessibility r
 
 ![Older build compatibility notice](docs/ui-review/screenshots/instance-legacy-conflict.jpg)
 
-The screenshots are local preview evidence; source hashes identify their particular builds. Exact portable package
-metadata and final repeat-launch confirmation are recorded with the local review artifacts after packaging.
+## Clean portable package confirmation
+
+The self-contained Windows x64 review ZIP was built from clean source
+`bfb30d0e6d9bbd1073fd2c9fbd5bcd0ef6462e27`, then verified and extracted to a new folder outside the development
+checkout. All **415 payload hashes/sizes**, archive checksum, branding/source identity, x64 header, resources and
+license checks passed. ZIP SHA-256: `e74468303d4b1c6f21896fb6d3b1068a3259e817472bee963eaacd16df73debf`.
+
+The extracted EXE opened the owner's normal saved checkout. An identical copy extracted into another folder
+handed off and exited with code zero; the original process remained the only workspace. A different-checkout
+request in that same clean package produced the expected notice, then Enter dismissed it. Settings still matched
+the original bytes. Only the final review workspace was left open; no special startup command is needed.
+
+![Final packaged checkout notice](docs/ui-review/screenshots/instance-final-checkout-notice.jpg)
+
+The earlier screenshots are preview evidence; source hashes identify their particular builds.
 Different Windows accounts/sessions, mixed-elevation launches, physical DPI changes, screen-reader listening and
 live Windows High Contrast toggles were not exercised. The related scoping/failure paths are implementation limits,
 not claims of those physical tests. No game/server lifecycle or account mutation was needed for this startup change.
