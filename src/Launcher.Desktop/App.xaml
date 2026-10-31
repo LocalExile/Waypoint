@@ -27,6 +27,30 @@
       <Setter Property="FontSize" Value="{DynamicResource Font14}"/>
       <Setter Property="UseLayoutRounding" Value="True"/>
     </Style>
+    <Style x:Key="DialogWindow" TargetType="Window" BasedOn="{StaticResource {x:Type Window}}">
+      <Setter Property="WindowStyle" Value="None"/>
+      <Setter Property="ShowInTaskbar" Value="False"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Window">
+        <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Outline}" BorderThickness="1">
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <Grid x:Name="DialogCaption" MinHeight="32" Background="{TemplateBinding Background}">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <TextBlock x:Name="DialogTitle" Text="{TemplateBinding Title}" Foreground="{DynamicResource Text}" FontSize="{DynamicResource Font12}"
+                         Margin="16,6,12,6" VerticalAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                         ToolTip="{TemplateBinding Title}" IsHitTestVisible="False"/>
+              <Button x:Name="DialogCloseButton" Grid.Column="1" Content="&#xE8BB;" Style="{StaticResource CaptionCloseButton}"
+                      Height="Auto" VerticalAlignment="Stretch" WindowChrome.IsHitTestVisibleInChrome="True"
+                      Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+            </Grid>
+            <AdornerDecorator Grid.Row="1"><ContentPresenter/></AdornerDecorator>
+          </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsActive" Value="False"><Setter TargetName="DialogTitle" Property="Foreground" Value="{DynamicResource Muted}"/></Trigger>
+        </ControlTemplate.Triggers>
+      </ControlTemplate></Setter.Value></Setter>
+    </Style>
     <Style TargetType="TextBlock">
       <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>

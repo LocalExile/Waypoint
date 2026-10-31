@@ -680,6 +680,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_594623afa2ef">
     <value>Existing save database</value>
   </data>
+  <data name="Text_59546c79643c" xml:space="preserve">
+    <value>Close {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_59976865a56d">
     <value>Install .NET 10 SDK; check with dotnet --list-sdks</value>
   </data>

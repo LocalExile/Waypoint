@@ -67,7 +67,7 @@ public sealed class ColorWheel : FrameworkElement
     }
 }
 
-public sealed class ColorPickerDialog : Window
+public sealed class ColorPickerDialog : DialogWindow
 {
     readonly ColorWheel wheel = new();
     readonly Slider hue = new() { Minimum = 0, Maximum = 360, SmallChange = 1, LargeChange = 15 };

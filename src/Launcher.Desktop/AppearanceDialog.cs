@@ -7,7 +7,7 @@ using Launcher.Core;
 
 namespace Launcher.Desktop;
 
-public sealed class AppearanceDialog : Window
+public sealed class AppearanceDialog : DialogWindow
 {
     readonly App app;
     readonly AppearanceSettings original;

@@ -49,6 +49,10 @@ Recovery: **Escape** cancels the current preview. **Ctrl+R** resets the appearan
 **Ctrl+Shift+R** saves default appearance preferences without changing the checkout or saves. Existing page/search/refresh
 keyboard shortcuts remain available. The new controls have application-provided accessible names and Russian labels.
 
+App-owned dialogs share Waypoint's themed title bar and close control. The caption follows text size, supports native
+dragging/resizing and the system menu, and closes with cancellation rather than applying a preview. Modal dialogs have
+one Close control and stay with their owner. Windows' folder picker retains the standard system interface.
+
 ## Implementation and resources
 
 The WPF framework is unchanged. `ThemePalette` generates/validates semantic roles; `ThemeResources` applies brushes,

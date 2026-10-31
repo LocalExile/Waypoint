@@ -6,22 +6,35 @@ namespace Launcher.Desktop;
 
 static class DialogLayout
 {
-    public static void Configure(Window dialog, Window owner, string title, int width = 680)
+    public static void Configure(DialogWindow dialog, Window owner, string title, int width = 680)
     {
         dialog.Owner = owner;
         dialog.Language = owner.Language;
         dialog.Title = title;
         dialog.Width = width;
         dialog.SizeToContent = SizeToContent.Height;
-        dialog.MaxHeight = 650;
+        dialog.MaxHeight = Math.Min(650, SystemParameters.WorkArea.Height - 40);
+        dialog.MinWidth = 420;
+        dialog.MinHeight = 220;
         dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        dialog.Style = (Style)Application.Current.FindResource(typeof(Window));
         dialog.ResizeMode = ResizeMode.CanResize;
+    }
+
+    public static UIElement WithActions(Panel body, UIElement actions)
+    {
+        body.Children.Remove(actions);
+        var layout = new DockPanel { Margin = body.Margin };
+        body.Margin = new Thickness(0);
+        DockPanel.SetDock(actions, Dock.Bottom);
+        layout.Children.Add(actions);
+        layout.Children.Add(new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
+        return layout;
     }
 }
 
 /// <summary>Localized confirmation with Cancel as the safe keyboard default.</summary>
-public sealed class ConfirmationDialog : Window
+public sealed class ConfirmationDialog : DialogWindow
 {
     public ConfirmationDialog(Window owner, string message, string title)
     {
@@ -36,12 +49,12 @@ public sealed class ConfirmationDialog : Window
         buttons.Children.Add(proceed);
         buttons.Children.Add(cancel);
         panel.Children.Add(buttons);
-        Content = panel;
+        Content = DialogLayout.WithActions(panel, buttons);
         Loaded += (_, _) => cancel.Focus();
     }
 }
 
-public sealed class SetupInstructionsDialog : Window
+public sealed class SetupInstructionsDialog : DialogWindow
 {
     public SetupInstructionsDialog(Window owner, SetupStep step, string root)
     {
@@ -55,11 +68,11 @@ public sealed class SetupInstructionsDialog : Window
         proceed.Click += (_, _) => DialogResult = true;
         var close = new Button { Content = L.Text("Close"), IsCancel = true };
         buttons.Children.Add(proceed); buttons.Children.Add(close); panel.Children.Add(buttons);
-        Content = panel;
+        Content = DialogLayout.WithActions(panel, buttons);
     }
 }
 
-public sealed class CreateAccountDialog : Window
+public sealed class CreateAccountDialog : DialogWindow
 {
     public AccountRequest? Request { get; private set; }
     public CreateAccountDialog(Window owner, string database)
@@ -88,11 +101,12 @@ public sealed class CreateAccountDialog : Window
             DialogResult = true;
         };
         buttons.Children.Add(create); buttons.Children.Add(new Button { Content = L.Text("Cancel"), IsCancel = true });
-        panel.Children.Add(buttons); Content = panel;
+        panel.Children.Add(buttons); Content = DialogLayout.WithActions(panel, buttons);
+        Loaded += (_, _) => name.Focus();
     }
 }
 
-public sealed class DiagnosticPreviewDialog : Window
+public sealed class DiagnosticPreviewDialog : DialogWindow
 {
     public DiagnosticPreviewDialog(Window owner, Func<string[], string> create)
     {

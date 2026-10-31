@@ -174,6 +174,7 @@ static class Program
         ((FrameworkElement)window.Content).LayoutTransform = Transform.Identity;
         new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle();
         AppearanceChecks.Run(app,window,Check);
+        DialogFrameChecks.Run(app,window,Check);
         var dialog = new ConfirmationDialog(window, L.Text("Delete only the backup from {0:g}?\n\nCurrent saves are unchanged. This backup will no longer be available to restore.", DateTime.Now), L.Text("Delete selected backup"));
         var buttons = ((System.Windows.Controls.Panel)dialog.Content).Children.OfType<WrapPanel>().Single().Children.OfType<Button>().ToArray();
         Check(buttons.Any(b => b.IsCancel && b.IsDefault && (string)b.Content == "Отмена") && buttons.Any(b => !b.IsDefault && (string)b.Content == "Продолжить"), "Localized destructive confirmations must default to Cancel.");
