@@ -5,6 +5,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Launcher.Core;
 
 namespace Launcher.Desktop;
 
@@ -27,7 +28,8 @@ public sealed class PageHost : TabControl
 
 public sealed record NavigationPage(string Label, string Glyph)
 {
-    public override string ToString() => Label;
+    public string DisplayLabel => L.Text(Label);
+    public override string ToString() => DisplayLabel;
 }
 
 public static class UiCommands
@@ -68,8 +70,9 @@ public static class UiCollection
 public sealed class ServicePresentation(ServiceRow value) : INotifyPropertyChanged
 {
     public ServiceRow Value { get; private set; } = value;
-    public override string ToString() => $"{Value.Name}, {Value.Status}";
+    public override string ToString() => $"{Value.DisplayName}, {Value.DisplayStatus}";
     public event PropertyChangedEventHandler? PropertyChanged;
+    public void RefreshLanguage() => PropertyChanged?.Invoke(this, new(nameof(Value)));
     public void Update(ServiceRow next)
     {
         if (Value == next) return;
@@ -84,6 +87,14 @@ public partial class MainWindow
     readonly ObservableCollection<ServicePresentation> serviceRows = [];
     readonly ObservableCollection<Launcher.Core.SetupStep> requirementRows = [];
     string announcedStatus = "";
+
+    void RefreshNavigationLabels()
+    {
+        // A new collection refreshes display bindings without changing the selected page.
+        int selected = Math.Max(0, Pages.SelectedIndex);
+        if (Navigation.ItemsSource is NavigationPage[] pages) Navigation.ItemsSource = pages.ToArray();
+        Navigation.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, selected);
+    }
 
     void InitializeInteraction()
     {

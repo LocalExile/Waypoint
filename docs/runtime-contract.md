@@ -183,3 +183,8 @@ No recursive mod-folder deletion or third-party adoption exists. Unrecorded outp
 user-managed; an unchanged project path is not an attestation of third-party compatibility.
 Untracked Mods/Binaries files are treated as runtime data even on older revisions lacking the ignore rule; tracked
 edits anywhere and other untracked source still block activation. No repository ignore file is changed.
+
+Interface language is a launcher-only optional settings field (`Language`, default `en`; supported `ru`). It is never
+forwarded to the runtime adapter, used to rewrite action/status tokens, or stored in LocalExile saves or backup metadata.
+Translated presentation preserves captured paths, IDs and native game commands. Raw runtime/diagnostic output remains
+available in its original form. See [localization](localization.md) for the satellite-file packaging requirement.

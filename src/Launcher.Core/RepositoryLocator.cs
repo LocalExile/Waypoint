@@ -9,11 +9,11 @@ public sealed record UpstreamHead(string Branch, string Commit, DateTimeOffset C
 public sealed record LocalRepositoryHead(string Commit, string Branch, bool? HasTrackedChanges);
 public sealed record DiscoveredRepository(string Root, LocalRepositoryHead Head, bool MatchesUpstream, bool ClientFilesFound)
 {
-    public string Summary => (MatchesUpstream ? "HEAD matches latest upstream" : Head.Commit.Length > 0 ? "Different local HEAD" : "Local HEAD unavailable") +
-        " · " + (Head.Branch.Length > 0 ? Head.Branch : "No branch information") +
-        (Head.HasTrackedChanges == true ? " · tracked files modified" : Head.HasTrackedChanges is null ? " · working files not checked" : " · tracked files unchanged") +
-        (ClientFilesFound ? " · prepared client found" : " · client setup needed");
-    public string CommitLabel => Head.Commit.Length > 0 ? "Local HEAD: " + Head.Commit : "Git is missing or this folder has no readable Git HEAD. Manual selection still works.";
+    public string Summary => (MatchesUpstream ? L.Text("HEAD matches latest upstream") : Head.Commit.Length > 0 ? L.Text("Different local HEAD") : L.Text("Local HEAD unavailable")) +
+        " · " + (Head.Branch.Length > 0 ? Head.Branch : L.Text("No branch information")) +
+        (Head.HasTrackedChanges == true ? L.Text(" · tracked files modified") : Head.HasTrackedChanges is null ? L.Text(" · working files not checked") : L.Text(" · tracked files unchanged")) +
+        (ClientFilesFound ? L.Text(" · prepared client found") : L.Text(" · client setup needed"));
+    public string CommitLabel => Head.Commit.Length > 0 ? L.Text("Local HEAD: ") + Head.Commit : L.Text("Git is missing or this folder has no readable Git HEAD. Manual selection still works.");
 }
 public sealed record RepositoryLookupResult(UpstreamHead? Upstream, DiscoveredRepository[] Repositories,
     int DirectoriesChecked, bool Limited, string? UpstreamError)

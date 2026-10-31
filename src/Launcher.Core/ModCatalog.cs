@@ -11,7 +11,8 @@ public sealed record ModEntry(string Id, string Version, string Kind, string[] D
     string Detail, string Folder, string Project, string Fingerprint)
 {
     public string SearchText => $"{Id} {Version} {Kind} {Status} {Detail}";
-    public string Summary => $"{Version} · {Kind} · " + (Status == "Disabled" ? "Disabled" : $"{(Enabled ? "Enabled" : "Disabled")} · {Status}");
+    public string DisplayDetail => L.Describe(Detail);
+    public string Summary => $"{Version} · {L.Text(Kind)} · " + (Status == "Disabled" ? L.Text("Disabled") : $"{L.Text(Enabled ? "Enabled" : "Disabled")} · {L.Text(Status)}");
 }
 
 /// <summary>Reads LocalExile's public mod file contract without loading mod assemblies or running project code.</summary>

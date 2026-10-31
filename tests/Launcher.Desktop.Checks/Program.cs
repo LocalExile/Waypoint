@@ -37,6 +37,14 @@ static class Program
         static double Linear(byte b) { double v = b / 255d; return v <= .04045 ? v / 12.92 : Math.Pow((v + .055) / 1.055, 2.4); }
         return .2126 * Linear(c.R) + .7152 * Linear(c.G) + .0722 * Linear(c.B);
     }
+
+    static void Language(MainWindow window, string language)
+    {
+        var field = typeof(MainWindow).GetField("settings", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        field.SetValue(window, ((LauncherSettings)field.GetValue(window)!) with { Language = language });
+        typeof(MainWindow).GetMethod("ApplyLanguage", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(window, null);
+        window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.DataBind);
+    }
     static double Contrast(Brush text, Brush background)
     {
         double a = Luminance(((SolidColorBrush)text).Color), b = Luminance(((SolidColorBrush)background).Color);
@@ -49,6 +57,7 @@ static class Program
         var app = new App();
         app.InitializeComponent();
         var window = new MainWindow();
+        Language(window, "en");
         var pages = Element<PageHost>(window, "Pages");
         var nav = Element<ListBox>(window, "Navigation");
         static nint Packed(short x, short y) => unchecked((nint)((ushort)x | ((uint)(ushort)y << 16)));
@@ -85,7 +94,7 @@ static class Program
         var empty = new RuntimeSnapshot(Path.Combine(Path.GetTempPath(), "Waypoint-UI-Checks-no-install"), "UI fixture", "", "", "main", "",
             [new("Prepared client", false, "Missing")], [new("Gateway", "Stopped", 0, "", "Stopped", [6112], 0, 0, "")], []);
         Render(window, empty);
-        Check(Element<TextBlock>(window, "ReadinessTitle").Text == "Finish setup to play", "Readiness must describe the actual state.");
+        Check(Element<TextBlock>(window, "ReadinessTitle").Text == "Finish setup to play", $"Readiness must describe the actual state: {Element<TextBlock>(window, "ReadinessTitle").Text} ({L.Current.Language}, {app.Windows.Count} windows).");
         Check(!Element<Button>(window, "PlayButton").IsEnabled && !Element<Button>(window, "StopServersButton").IsEnabled, "Unavailable runtime actions must be disabled.");
         Check(!Element<Button>(window, "ReloadModButton").IsEnabled, "Unsupported/empty mod inventory must not offer reload.");
         var ready = empty with { Requirements = [new("Prepared client", true, "Ready")] };
@@ -142,6 +151,34 @@ static class Program
         app.ApplyContrast(false);
         Check(((SolidColorBrush)app.Resources["Background"]).Color == Color.FromRgb(16, 21, 30), "Leaving High Contrast must restore the dark palette.");
         Check(AutomationProperties.GetName(modSearch) == "Search mods", "Search must have an accessible name.");
+        Language(window, "ru");
+        Render(window, ready);
+        Check(Element<TextBlock>(window, "ReadinessTitle").Text == "Готово к игре", "Russian readiness must reflect current runtime state.");
+        Check(AutomationProperties.GetName(modSearch) == "Поиск модов", "Accessible names must switch language live.");
+        Check(((NavigationPage)nav.Items[7]).DisplayLabel == "Настройки", "Navigation must switch language without changing canonical page identities.");
+        var translatedRow = (ServicePresentation)services.Items[0];
+        Check(translatedRow.Value.Name == "Gateway" && translatedRow.Value.DisplayStatus == "Остановлен" && translatedRow.Value.DisplayAction == "Запустить", "Russian service presentation must preserve canonical action routing.");
+        Check(Element<ListBox>(window, "LanguageBox").SelectedIndex == 1, "Selected language must remain discoverable in Settings.");
+        foreach (double scale in new[] { 1d, 1.25, 1.5, 2d })
+        foreach (var size in new[] { new Size(960, 730), new Size(1226, 861) })
+        {
+            ((FrameworkElement)window.Content).LayoutTransform = new ScaleTransform(scale, scale);
+            for (int page = 0; page < 8; page++)
+            {
+                pages.SelectedIndex = page;
+                Layout(window, size.Width * scale, size.Height * scale);
+                Check(pages.ActualWidth > 650 && pages.ActualHeight > 400, $"Russian page {page} must retain usable space at {scale:P0}.");
+            }
+        }
+        ((FrameworkElement)window.Content).LayoutTransform = Transform.Identity;
+        new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle();
+        var dialog = new ConfirmationDialog(window, L.Text("Delete only the backup from {0:g}?\n\nCurrent saves are unchanged. This backup will no longer be available to restore.", DateTime.Now), L.Text("Delete selected backup"));
+        var buttons = ((System.Windows.Controls.Panel)dialog.Content).Children.OfType<WrapPanel>().Single().Children.OfType<Button>().ToArray();
+        Check(buttons.Any(b => b.IsCancel && b.IsDefault && (string)b.Content == "Отмена") && buttons.Any(b => !b.IsDefault && (string)b.Content == "Продолжить"), "Localized destructive confirmations must default to Cancel.");
+        dialog.Close();
+        Language(window, "en");
+        Render(window, ready);
+        Check(AutomationProperties.GetName(modSearch) == "Search mods" && translatedRow.Value.DisplayAction == "Start", "Switching back must restore English without changing service identity.");
         window.Close();
         Console.WriteLine($"PASS: {passed} desktop checks (no runtime actions or saved settings changed).");
     }

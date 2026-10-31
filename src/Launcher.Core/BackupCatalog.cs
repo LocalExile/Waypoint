@@ -8,11 +8,11 @@ namespace Launcher.Core;
 public sealed record SaveBackup(string Id, string Directory, DateTimeOffset CreatedUtc, string SourceCommit,
     string SourceBranch, string LastBuildCommit, string RequestedSource, long Bytes, string ModSummary = "", bool HasModChoices = false, string ModHistory = "")
 {
-    public string Summary => $"{CreatedUtc.ToLocalTime():g} · {Bytes / 1024d:N0} KB · {(string.IsNullOrWhiteSpace(SourceBranch) ? "Detached source" : SourceBranch)}";
-    public string Identity => "Last launched Gateway: " + (LastBuildCommit.Length > 0 ? LastBuildCommit : "unknown") +
-        " · Source at backup: " + (SourceCommit.Length > 0 ? SourceCommit : "unknown") +
-        (HasModChoices ? " · Mod history recorded" : " · Mod history not recorded");
-    public string Details => Identity + (ModSummary.Length > 0 ? "\nMods at backup: " + ModSummary : "") +
+    public string Summary => L.Text("{0:g} · {1:N0} KB · {2}", CreatedUtc.ToLocalTime(), Bytes / 1024d, (string.IsNullOrWhiteSpace(SourceBranch) ? L.Text("Detached source") : SourceBranch));
+    public string Identity => L.Text("Last launched Gateway: ") + (LastBuildCommit.Length > 0 ? LastBuildCommit : L.Text("unknown")) +
+        L.Text(" · Source at backup: ") + (SourceCommit.Length > 0 ? SourceCommit : L.Text("unknown")) +
+        (HasModChoices ? L.Text(" · Mod history recorded") : L.Text(" · Mod history not recorded"));
+    public string Details => Identity + (ModSummary.Length > 0 ? L.Text("\nMods at backup: ") + ModSummary : "") +
         (ModHistory.Length > 0 ? "\n" + ModHistory : "");
     public override string ToString() => Summary;
 }
@@ -70,16 +70,16 @@ public static class BackupCatalog
                         names.Add(modId.GetString() + " " + version);
                         string modKey = modId.GetString()!;
                         bool? choice = choices.TryGetValue(modKey, out bool savedChoice) ? savedChoice : enabled;
-                        modHistory.Add($"{modKey}: {(choice is true ? "enabled" : choice is false ? "disabled" : "enable choice unknown")} at backup");
+                        modHistory.Add(L.Text("{0}: {1} at backup", modKey, L.Text(choice is true ? "enabled" : choice is false ? "disabled" : "enable choice unknown")));
                         if (mod.TryGetProperty("Assemblies", out var assemblies) && assemblies.ValueKind == JsonValueKind.Object)
                             foreach (var assembly in assemblies.EnumerateObject())
                                 if (assembly.Value.ValueKind == JsonValueKind.String && Regex.IsMatch(assembly.Value.GetString()!, @"\A[0-9a-fA-F]{64}\z"))
                                     modHistory.Add(assembly.Name + " SHA-256: " + assembly.Value.GetString());
                     }
-                    modSummary = names.Count == 0 ? "No installed mods" : string.Join(", ", names);
+                    modSummary = names.Count == 0 ? L.Text("No installed mods") : string.Join(", ", names);
                     if (mods.TryGetProperty("CheckedUtc", out var checkedAt) && checkedAt.ValueKind == JsonValueKind.String && !string.IsNullOrEmpty(checkedAt.GetString()))
                     {
-                        modHistory.Add("Runtime last checked: " + checkedAt.GetString());
+                        modHistory.Add(L.Text("Runtime last checked: ") + checkedAt.GetString());
                         if (mods.TryGetProperty("RuntimeReport", out var report) && report.ValueKind == JsonValueKind.String) modHistory.Add(report.GetString()!);
                     }
                 }

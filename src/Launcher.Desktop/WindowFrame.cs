@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Shell;
+using Launcher.Core;
 
 namespace Launcher.Desktop;
 
@@ -43,8 +44,8 @@ public partial class MainWindow
         bool maximized = WindowState == WindowState.Maximized;
         MaximizeWindowButton.Content = maximized ? "\uE923" : "\uE922";
         MaximizeWindowButton.Command = maximized ? SystemCommands.RestoreWindowCommand : SystemCommands.MaximizeWindowCommand;
-        MaximizeWindowButton.ToolTip = maximized ? "Restore down" : "Maximize";
-        AutomationProperties.SetName(MaximizeWindowButton, maximized ? "Restore Waypoint" : "Maximize Waypoint");
+        MaximizeWindowButton.ToolTip = maximized ? L.Text("Restore down") : L.Text("Maximize");
+        AutomationProperties.SetName(MaximizeWindowButton, maximized ? L.Text("Restore Waypoint") : L.Text("Maximize Waypoint"));
         // Maximized HWNDs extend the invisible resize frame beyond the work area. Keep the
         // client controls inside that frame, using this monitor's actual DPI rather than 8px.
         if (maximized)

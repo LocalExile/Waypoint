@@ -20,7 +20,7 @@ public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDat
 
 public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null);
 public sealed record LauncherSettings(string RepositoryPath = "", bool UseLocalProfile = true,
-    bool AutomaticBackups = true, bool HotReload = true);
+    bool AutomaticBackups = true, bool HotReload = true, string Language = "en");
 
 public static class SettingsStore
 {

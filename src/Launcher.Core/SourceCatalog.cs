@@ -7,6 +7,9 @@ namespace Launcher.Core;
 public sealed record SourceChoice(string Kind, string Value, string Label, string Commit, string Detail)
 {
     public string SearchText => Label + " " + Detail + " " + Commit;
+    public string DisplayDetail => L.Text(Detail);
+    public string DisplayLabel => Kind == "PR" && Label == $"PR #{Value} (fetched when activated)"
+        ? L.Text("PR #{0} (fetched when activated)", Value) : Label;
     public override string ToString() => Label;
 }
 public sealed record SourceSwitchRequest(string Kind, string Value, bool StartFresh = false);
@@ -72,17 +75,17 @@ public static class SourceCatalog
                         var values = ParsePullRequests(await response.Content.ReadAsStringAsync(cancellation));
                         all.AddRange(values);
                         if (values.Length < 100) break;
-                        if (page == 10) warning = "Showing the first 1,000 open PRs. Enter a PR number to fetch another.";
+                        if (page == 10) warning = L.Text("Showing the first 1,000 open PRs. Enter a PR number to fetch another.");
                     }
                     cachedPrs = all.ToArray(); cachedAt = DateTimeOffset.UtcNow; etag = nextEtag ?? etag;
                 }
                 catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException or KeyNotFoundException)
-                { cancellation.ThrowIfCancellationRequested(); warning = "GitHub PR list unavailable. Local/fetched branches still work; enter a PR number to try it directly."; }
+                { cancellation.ThrowIfCancellationRequested(); warning = L.Text("GitHub PR list unavailable. Local/fetched branches still work; enter a PR number to try it directly."); }
             }
             prs = cachedPrs;
         }
         finally { CacheGate.Release(); }
-        if (branches.ExitCode != 0) warning = "Could not read local branches. Check the selected Git checkout. " + warning;
+        if (branches.ExitCode != 0) warning = L.Text("Could not read local branches. Check the selected Git checkout. ") + warning;
         return new(ParseBranches(branches.Output).Concat(prs).ToArray(), warning);
     }
 }

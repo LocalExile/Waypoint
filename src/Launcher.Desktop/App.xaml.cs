@@ -13,6 +13,9 @@ public partial class App : Application
         ApplyContrast(SystemParameters.HighContrast);
         SystemParameters.StaticPropertyChanged += SystemSettingChanged;
         base.OnStartup(e);
+        // Explicit startup also lets in-process checks supply an unshown fixture window
+        // before pumping bindings, without starting a second window and its runtime timers.
+        if (MainWindow is null) new MainWindow().Show();
     }
 
     void SystemSettingChanged(object? sender, PropertyChangedEventArgs e)

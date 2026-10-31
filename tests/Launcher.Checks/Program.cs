@@ -45,11 +45,13 @@ Directory.CreateDirectory(fixture);
 try
 {
     ModChecks.Run(fixture, Check);
+    LocalizationChecks.Run(Check);
     string settingsPath = Path.Combine(fixture, "settings.json");
     Check(SettingsStore.Load(settingsPath).RepositoryPath == "", "first run has no machine-specific path");
     Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "backups and Gateway watch default on for every save choice");
     File.WriteAllText(settingsPath, "{\"RepositoryPath\":\"older-settings\",\"UseLocalProfile\":false}");
     Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "older settings inherit backup and watch defaults");
+    Check(SettingsStore.Load(settingsPath).Language == "en", "older settings default to English without changing the selected checkout");
     var branches = SourceCatalog.ParseBranches("refs/heads/main\t" + new string('a',40) + "\nrefs/remotes/origin/HEAD\t" + new string('a',40) + "\nrefs/remotes/origin/test\t" + new string('b',40) + "\nrefs/tags/v1\t" + new string('a',40));
     Check(branches.Length == 2 && branches[0].Kind == "Branch" && branches[1].Kind == "Remote", "branch picker retains full unambiguous refs and excludes symbolic remote HEAD/tags");
     Check(SourceCatalog.ParsePullRequests("[{\"number\":12,\"title\":\"Fix portals\",\"head\":{\"sha\":\"" + new string('a',40) + "\",\"label\":\"author:feature\"}}]")[0].Value == "12", "PR picker keeps upstream number, title, author and full head identity");
@@ -76,6 +78,8 @@ try
     Check(SettingsStore.Load(settingsPath) == original, "settings round-trip paths with spaces and runtime selection");
     SettingsStore.Save(original with { UseLocalProfile = true }, settingsPath);
     Check(SettingsStore.Load(settingsPath).UseLocalProfile, "atomic settings replacement");
+    SettingsStore.Save(original with { Language = "ru" }, settingsPath);
+    Check(SettingsStore.Load(settingsPath) == original with { Language = "ru" }, "Russian preference persists with existing repository and runtime choices");
     File.WriteAllText(settingsPath, "{");
     bool rejected = false;
     try { SettingsStore.Load(settingsPath); } catch (JsonException) { rejected = true; }

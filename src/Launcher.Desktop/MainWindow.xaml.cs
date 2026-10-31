@@ -22,6 +22,8 @@ public partial class MainWindow : Window
     readonly CancellationTokenSource discoveryCancellation = new();
     readonly Dictionary<string, (int Pid, string Started, double Cpu, DateTime Time)> samples = new();
     LauncherSettings settings = new();
+    string brandSubtitle = "Workspace Manager for LocalExile";
+    string brandVersion = "";
     RuntimeSnapshot? snapshot;
     string operationText = "";
     string logSource = "Operations";
@@ -48,8 +50,8 @@ public partial class MainWindow : Window
         {
             using var brand = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "brand.json")));
             Title = BrandName.Text = brand.RootElement.GetProperty("displayName").GetString() ?? "Launcher";
-            BrandSubtitle.Text = brand.RootElement.GetProperty("subtitle").GetString();
-            VersionLabel.Text = "Version " + brand.RootElement.GetProperty("version").GetString();
+            brandSubtitle = brand.RootElement.GetProperty("subtitle").GetString() ?? brandSubtitle;
+            brandVersion = brand.RootElement.GetProperty("version").GetString() ?? "";
             settings = SettingsStore.Load();
         }
         catch (Exception ex) when (ex is IOException or JsonException or InvalidOperationException)
@@ -62,6 +64,7 @@ public partial class MainWindow : Window
         LoadDevelopmentPreferences();
         InitializeInteraction();
         InitializeWindowFrame();
+        ApplyLanguage();
         Pages.SelectionChanged += async (sender, e) =>
         {
             if (e.Source != Pages || !IsLoaded) return;
@@ -78,7 +81,7 @@ public partial class MainWindow : Window
             }
             else
             {
-                DiscoveryStatus.Text = "Using your selected checkout. Change location or search again at any time.";
+                DiscoveryStatus.Text = L.Text("Using your selected checkout. Change location or search again at any time.");
                 await RefreshAsync();
                 if (!RepositoryDiscovery.IsLocalExile(settings.RepositoryPath))
                 {
@@ -107,27 +110,27 @@ public partial class MainWindow : Window
             Render(snapshot);
             SetFeedback(lastError is not null);
             if (lastError is null) StatusLabel.Text = result.Snapshot.Conflicts.Length > 0
-                ? result.Snapshot.Conflicts[0] : "Environment checked · " + result.Snapshot.Profile;
+                ? L.Describe(result.Snapshot.Conflicts[0]) : L.Text("Environment checked · ") + L.Text(result.Snapshot.Profile);
         }
         catch (Exception ex)
         {
             snapshot = null;
             UpdateSourceSelection();
             UpdateBackupSelection();
-            HotReloadStateLabel.Text = "Unavailable";
-            HotReloadDetail.Text = "Refresh after resolving the installation check failure.";
+            HotReloadStateLabel.Text = L.Text("Unavailable");
+            HotReloadDetail.Text = L.Text("Refresh after resolving the installation check failure.");
             serviceRows.Clear();
             requirementRows.Clear();
             modEntries = [];
             ApplyModFilter();
             CheckModsButton.IsEnabled = BuildAllModsButton.IsEnabled = OpenModsButton.IsEnabled = false;
-            ModsStatus.Text = "Workspace inspection failed. Resolve the problem in Settings, then refresh.";
+            ModsStatus.Text = L.Text("Workspace inspection failed. Resolve the problem in Settings, then refresh.");
             RefreshBackups();
             PlayButton.IsEnabled = false;
             StartServersButton.IsEnabled = StopServersButton.IsEnabled = CloseGameButton.IsEnabled = false;
-            ReadinessTitle.Text = "Workspace needs attention";
-            StatusLabel.Text = "Check failed: " + ex.Message;
-            ReadinessLabel.Text = "Resolve the check failure in Settings, then refresh.";
+            ReadinessTitle.Text = L.Text("Workspace needs attention");
+            StatusLabel.Text = L.Text("Check failed: ") + ex.Message;
+            ReadinessLabel.Text = L.Text("Resolve the check failure in Settings, then refresh.");
             SetFeedback(true);
         }
         finally { gate.Release(); }
@@ -139,17 +142,17 @@ public partial class MainWindow : Window
             var parts = component.Split('=', 2);
             string metadata = parts.Length == 2 ? parts[1] : "";
             string commit = Regex.Match(metadata, @"\b(?:[a-fA-F0-9]{64}|[a-fA-F0-9]{40})\b").Value;
-            return $"{parts[0]} · {(commit.Length > 0 ? commit : metadata == "not built" ? "not built" : "commit unavailable")}";
+            return $"{parts[0]} · {(commit.Length > 0 ? commit : metadata == "not built" ? L.Text("not built") : L.Text("commit unavailable"))}";
         }));
 
     void UpdateWorkspaceHeading(string path)
     {
-        CheckoutLabel.Text = string.IsNullOrWhiteSpace(path) ? "Select a LocalExile checkout in Settings." : path;
+        CheckoutLabel.Text = string.IsNullOrWhiteSpace(path) ? L.Text("Select a LocalExile checkout in Settings.") : path;
         string root = RepositoryDiscovery.IsLocalExile(path) ? path : "";
         if (string.Equals(root, headingRoot, StringComparison.OrdinalIgnoreCase)) return;
         headingRoot = root;
         int revision = ++headingRevision;
-        WorkspaceTitle.Text = RepositoryNaming.FolderName(root);
+        WorkspaceTitle.Text = root.Length == 0 ? L.Text("Workspace") : RepositoryNaming.FolderName(root);
         if (root.Length > 0) _ = ResolveWorkspaceHeadingAsync(root, revision);
     }
 
@@ -168,24 +171,24 @@ public partial class MainWindow : Window
         RenderMods(state);
         RenderDevelopment(state);
         UpdateWorkspaceHeading(state.Root);
-        SidebarBranch.Text = !string.IsNullOrWhiteSpace(state.SourceBranch) ? state.SourceBranch : !string.IsNullOrWhiteSpace(state.SourceLabel) ? state.SourceLabel : "Detached source";
+        SidebarBranch.Text = !string.IsNullOrWhiteSpace(state.SourceBranch) ? state.SourceBranch : !string.IsNullOrWhiteSpace(state.SourceLabel) ? state.SourceLabel : L.Text("Detached source");
         SourceIdentity.Value = $"{SidebarBranch.Text}  ·  {state.SourceCommit}";
         BuildIdentity.Value = BuildCommitLabels(state.BuildCommit);
-        EnvironmentIdentity.Text = $"Launch profile: {state.Profile}\nSave database: {state.SaveDatabase}\nClient: {Path.Combine(state.Root, "Client", "Game.patched.exe")}";
-        ReadinessLabel.Text = state.Conflicts.Length > 0 ? string.Join("\n", state.Conflicts)
-            : !state.SetupReady ? "Setup needs attention. See the checks below."
-            : state.GameRunning ? "Game running. Close it before stopping or restarting services."
-            : state.ServersReady ? "Servers are ready. Play opens the prepared client."
-            : "Play prepares and starts the servers, then opens the game.";
-        ReadinessTitle.Text = state.Conflicts.Length > 0 ? "Resolve the workspace conflict" : !state.SetupReady ? "Finish setup to play"
-            : state.GameRunning ? "Game is running" : state.ServersReady ? "Servers ready" : "Ready to play";
-        SetupSummary.Header = state.SetupReady ? "Setup checks · all passed" : $"Setup checks · {state.Requirements.Count(r => !r.Ready)} need attention";
+        EnvironmentIdentity.Text = L.Text("Launch profile: {0}\nSave database: {1}\nClient: {2}", L.Text(state.Profile), state.SaveDatabase, Path.Combine(state.Root, "Client", "Game.patched.exe"));
+        ReadinessLabel.Text = state.Conflicts.Length > 0 ? string.Join("\n", state.Conflicts.Select(L.Describe))
+            : !state.SetupReady ? L.Text("Setup needs attention. See the checks below.")
+            : state.GameRunning ? L.Text("Game running. Close it before stopping or restarting services.")
+            : state.ServersReady ? L.Text("Servers are ready. Play opens the prepared client.")
+            : L.Text("Play prepares and starts the servers, then opens the game.");
+        ReadinessTitle.Text = state.Conflicts.Length > 0 ? L.Text("Resolve the workspace conflict") : !state.SetupReady ? L.Text("Finish setup to play")
+            : state.GameRunning ? L.Text("Game is running") : state.ServersReady ? L.Text("Servers ready") : L.Text("Ready to play");
+        SetupSummary.Header = state.SetupReady ? L.Text("Setup checks · all passed") : L.Text("Setup checks · {0} need attention", state.Requirements.Count(r => !r.Ready));
         StartServersButton.IsEnabled = !busy && state.SafeToLaunch && !state.ServersReady;
         StopServersButton.IsEnabled = !busy && state.HasServers && !state.GameRunning;
-        StopServersButton.ToolTip = state.GameRunning ? "Close the game before stopping servers." : "Gracefully stop servers for this checkout.";
+        StopServersButton.ToolTip = state.GameRunning ? L.Text("Close the game before stopping servers.") : L.Text("Gracefully stop servers for this checkout.");
         CloseGameButton.IsEnabled = !busy && state.GameRunning;
         PlayButton.IsEnabled = !busy && state.SafeToLaunch && !state.GameRunning;
-        PlayButton.Content = state.GameRunning ? "✓  Game running" : "▶  Play";
+        PlayButton.Content = state.GameRunning ? L.Text("✓  Game running") : L.Text("▶  Play");
         var steps = state.Requirements.Select(r => SetupGuidance.Describe(r, state.Root)).ToArray();
         UiCollection.Reconcile(requirementRows, steps, step => step.Name);
         var rows = new List<ServiceRow>();
@@ -211,7 +214,7 @@ public partial class MainWindow : Window
         }
         UiCollection.Reconcile(serviceRows, rows.Select(row => new ServicePresentation(row)), row => row.Value.Name,
             update: (existing, incoming) => existing.Update(incoming.Value));
-        LastCheckedLabel.Text = $"Checked {DateTime.Now:T} · process ownership and required listening ports verified locally";
+        LastCheckedLabel.Text = L.Text("Checked {0:T} · process ownership and required listening ports verified locally", DateTime.Now);
         RefreshLog();
     }
 
@@ -256,14 +259,14 @@ public partial class MainWindow : Window
             }
             snapshot = result.Snapshot;
             if (action == "Switch") FreshSavesBox.IsChecked = false;
-            StatusLabel.Text = result.Message;
+            StatusLabel.Text = L.Text(result.Message);
             AnnounceStatus();
             AppendLog(result.Message);
         }
         catch (Exception ex)
         {
             lastError = ex.Message;
-            StatusLabel.Text = currentStage + " failed: " + ex.Message;
+            StatusLabel.Text = L.Text(currentStage) + L.Text(" failed: ") + ex.Message;
             SetFeedback(true);
             AppendLog("ERROR in " + currentStage + ": " + ex.Message);
             FailureActions.Visibility = Visibility.Visible;
@@ -275,13 +278,13 @@ public partial class MainWindow : Window
             busy = false;
             operationClock.Stop();
             operationTimer.Stop();
-            OperationDetail.Text = $"{currentStage} · elapsed {ElapsedText}";
+            OperationDetail.Text = L.Text("{0} · elapsed {1}", L.Text(currentStage), ElapsedText);
             BusyProgress.Visibility = Visibility.Collapsed;
             gate.Release();
             await RefreshAsync();
             if (action is "Switch" or "Fetch") await LoadSourcesAsync(false);
             RefreshBackups();
-            if (lastError is not null) StatusLabel.Text = currentStage + " failed: " + lastError;
+            if (lastError is not null) StatusLabel.Text = L.Text(currentStage) + L.Text(" failed: ") + lastError;
         }
     }
 
@@ -293,7 +296,7 @@ public partial class MainWindow : Window
     }
     void RefreshLog()
     {
-        SelectedLogLabel.Text = logSource == "Operations" ? "Operation output" : logSource + " output";
+        SelectedLogLabel.Text = logSource == "Operations" ? L.Text("Operation output") : L.Text(logSource) + L.Text(" output");
         foreach (var choice in LogSources.Children.OfType<RadioButton>()) choice.IsChecked = (string)choice.Tag == logSource;
         if (logSource == "Operations") selectedLogText = operationText;
         else if (logSource == "Game") selectedLogText = LogReader.Tail(LogReader.GameLog(settings.RepositoryPath));
@@ -324,10 +327,10 @@ public partial class MainWindow : Window
     void UpdateOperationLabel()
     {
         if (!busy) return;
-        StatusLabel.Text = currentStage + "…";
+        StatusLabel.Text = L.Text(currentStage) + "…";
         AnnounceStatus();
         OperationDetail.Visibility = Visibility.Visible;
-        OperationDetail.Text = $"{stageDetail} · elapsed {ElapsedText}";
+        OperationDetail.Text = L.Text("{0} · elapsed {1}", L.Text(stageDetail), ElapsedText);
     }
     void LogSearch_Changed(object sender, TextChangedEventArgs e) => ApplyLogFilter();
     void LogFilter_Changed(object sender, RoutedEventArgs e) => ApplyLogFilter();
@@ -369,7 +372,7 @@ public partial class MainWindow : Window
     async void CreateAccount_Click(object sender, RoutedEventArgs e)
     {
         if (busy) return;
-        if (snapshot is null) { StatusLabel.Text = "Select and check an installation first."; return; }
+        if (snapshot is null) { StatusLabel.Text = L.Text("Select and check an installation first."); return; }
         var dialog = new CreateAccountDialog(this, snapshot.SaveDatabase);
         if (dialog.ShowDialog() == true && dialog.Request is { } request)
         {
@@ -380,7 +383,7 @@ public partial class MainWindow : Window
     void OpenDownload(string url)
     {
         try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-        catch (Exception ex) { StatusLabel.Text = "Could not open download page: " + ex.Message; }
+        catch (Exception ex) { StatusLabel.Text = L.Text("Could not open download page: ") + ex.Message; }
     }
     void OpenOperationLog_Click(object sender, RoutedEventArgs e)
     {
@@ -393,7 +396,7 @@ public partial class MainWindow : Window
     async void Retry_Click(object sender, RoutedEventArgs e)
     {
         if (retry is { } operation) await OperateAsync(operation.Action, operation.Service, mod: retryMod);
-        else StatusLabel.Text = "Select the account, revision or backup action again to review its current options.";
+        else StatusLabel.Text = L.Text("Select the account, revision or backup action again to review its current options.");
     }
 
     async void Play_Click(object sender, RoutedEventArgs e) => await OperateAsync("Play");
@@ -413,7 +416,7 @@ public partial class MainWindow : Window
     async void Browse_Click(object sender, RoutedEventArgs e)
     {
         locationRevision++; // Opening manual selection takes priority over an in-flight automatic result.
-        var dialog = new OpenFolderDialog { Title = "Choose the LocalExile folder containing GameServer.slnx" };
+        var dialog = new OpenFolderDialog { Title = L.Text("Choose the LocalExile folder containing GameServer.slnx") };
         if (dialog.ShowDialog(this) == true) await SelectRepositoryAsync(dialog.FolderName);
     }
     void ChangeLocation_Click(object sender, RoutedEventArgs e) { Pages.SelectedItem = SettingsPage; Browse_Click(sender, e); }
@@ -429,7 +432,7 @@ public partial class MainWindow : Window
         discovering = true;
         int revision = locationRevision;
         FindRepositoryButton.IsEnabled = false;
-        DiscoveryStatus.Text = "Checking upstream HEAD and searching common local folders… You can still Browse to choose a location.";
+        DiscoveryStatus.Text = L.Text("Checking upstream HEAD and searching common local folders… You can still Browse to choose a location.");
         try
         {
             var roots = RepositoryDiscovery.DefaultRoots(AppContext.BaseDirectory, Environment.CurrentDirectory, settings.RepositoryPath);
@@ -437,28 +440,28 @@ public partial class MainWindow : Window
             if (closing) return;
             DiscoveredRepositories.ItemsSource = result.Repositories;
             string upstream = result.Upstream is { } tip
-                ? $"Upstream {tip.Branch}: {tip.Commit} (checked {tip.CheckedAt.ToLocalTime():t})."
-                : result.UpstreamError ?? "Upstream HEAD unavailable.";
+                ? L.Text("Upstream {0}: {1} (checked {2:t}).", tip.Branch, tip.Commit, tip.CheckedAt.ToLocalTime())
+                : result.UpstreamError ?? L.Text("Upstream HEAD unavailable.");
             UpstreamIdentity.Value = result.Upstream is not null ? upstream : "";
             UpstreamIdentity.Visibility = result.Upstream is not null ? Visibility.Visible : Visibility.Collapsed;
             int matches = result.Repositories.Count(r => r.MatchesUpstream);
-            string choices = matches > 1 ? $"{matches} checkouts match upstream HEAD. Choose one below, or Browse elsewhere."
-                : matches == 1 ? "One checkout matches upstream HEAD. You can use it below or Browse elsewhere."
-                : result.Repositories.Length > 0 ? "No matching upstream HEAD found. Other LocalExile checkouts are listed below; you can use any of them or Browse elsewhere."
-                : "No LocalExile checkout found in the searched locations. Browse to your checkout instead.";
+            string choices = matches > 1 ? L.Text("{0} checkouts match upstream HEAD. Choose one below, or Browse elsewhere.", matches)
+                : matches == 1 ? L.Text("One checkout matches upstream HEAD. You can use it below or Browse elsewhere.")
+                : result.Repositories.Length > 0 ? L.Text("No matching upstream HEAD found. Other LocalExile checkouts are listed below; you can use any of them or Browse elsewhere.")
+                : L.Text("No LocalExile checkout found in the searched locations. Browse to your checkout instead.");
             DiscoveryStatus.Text = (result.Upstream is null ? upstream + "\n" : "") + choices +
-                (result.Limited ? "\nSearch limits reached; other checkouts may exist. Browse to any location." : "");
+                (result.Limited ? L.Text("\nSearch limits reached; other checkouts may exist. Browse to any location.") : "");
             // Only a fresh, untouched choice can be adopted automatically. Never replace a saved or manual selection.
             if (result.SingleMatch is { } match && string.IsNullOrWhiteSpace(settings.RepositoryPath) &&
                 string.IsNullOrWhiteSpace(RepositoryPathBox.Text) && locationRevision == revision && lastError is null && !busy)
             {
-                if (await SelectRepositoryAsync(match.Root) && settings.RepositoryPath == match.Root) DiscoveryStatus.Text = "Found and using: " + match.Root + "\nChange location above to choose somewhere else." +
-                    (match.Head.HasTrackedChanges == true ? "\nThis checkout has modified tracked files." : "");
+                if (await SelectRepositoryAsync(match.Root) && settings.RepositoryPath == match.Root) DiscoveryStatus.Text = L.Text("Found and using: ") + match.Root + L.Text("\nChange location above to choose somewhere else.") +
+                    (match.Head.HasTrackedChanges == true ? L.Text("\nThis checkout has modified tracked files.") : "");
             }
         }
         catch (OperationCanceledException) when (discoveryCancellation.IsCancellationRequested) { }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
-        { if (!closing) DiscoveryStatus.Text = "Automatic lookup could not finish. Browse to your checkout instead. " + ex.Message; }
+        { if (!closing) DiscoveryStatus.Text = L.Text("Automatic lookup could not finish. Browse to your checkout instead. ") + ex.Message; }
         finally
         {
             discovering = false;
@@ -472,7 +475,7 @@ public partial class MainWindow : Window
     }
     async Task<bool> SelectRepositoryAsync(string path)
     {
-        if (busy) { StatusLabel.Text = "Wait for the current operation before changing checkout."; return false; }
+        if (busy) { StatusLabel.Text = L.Text("Wait for the current operation before changing checkout."); return false; }
         busy = true;
         await gate.WaitAsync();
         try
@@ -490,23 +493,23 @@ public partial class MainWindow : Window
             sourceChoices = [];
             SourcesList.ItemsSource = null;
             BackupsList.ItemsSource = null;
-            SourcesStatus.Text = "Load the list for the selected checkout.";
+            SourcesStatus.Text = L.Text("Load the list for the selected checkout.");
             serviceRows.Clear();
             requirementRows.Clear();
             modEntries = [];
             ApplyModFilter();
             CheckModsButton.IsEnabled = BuildAllModsButton.IsEnabled = OpenModsButton.IsEnabled = false;
             PlayButton.IsEnabled = false;
-            SidebarBranch.Text = "Checking checkout…";
+            SidebarBranch.Text = L.Text("Checking checkout…");
             SourceIdentity.Value = BuildIdentity.Value = EnvironmentIdentity.Text = "";
-            ReadinessLabel.Text = "Checking the selected installation…";
+            ReadinessLabel.Text = L.Text("Checking the selected installation…");
             lastError = null;
             OperationDetail.Visibility = FailureActions.Visibility = Visibility.Collapsed;
             retry = null;
-            DiscoveryStatus.Text = "Using: " + path + "\nChange location above to choose somewhere else.";
+            DiscoveryStatus.Text = L.Text("Using: ") + path + L.Text("\nChange location above to choose somewhere else.");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        { StatusLabel.Text = "Could not select checkout: " + ex.Message; return false; }
+        { StatusLabel.Text = L.Text("Could not select checkout: ") + ex.Message; return false; }
         finally { busy = false; gate.Release(); }
         await RefreshAsync();
         return true;
@@ -523,20 +526,20 @@ public partial class MainWindow : Window
     {
         string path = Path.Combine(settings.RepositoryPath, "Agents", "GettingStarted.md");
         if (File.Exists(path)) Process.Start(new ProcessStartInfo("notepad.exe") { ArgumentList = { path }, UseShellExecute = false });
-        else StatusLabel.Text = "Select a valid checkout first.";
+        else StatusLabel.Text = L.Text("Select a valid checkout first.");
     }
     void OpenFolder(string path)
     {
         try
         {
-            if (!Directory.Exists(path)) { StatusLabel.Text = "Folder does not exist yet: " + path; return; }
+            if (!Directory.Exists(path)) { StatusLabel.Text = L.Text("Folder does not exist yet: ") + path; return; }
             Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { path }, UseShellExecute = false });
         }
-        catch (Exception ex) { StatusLabel.Text = "Could not open folder: " + ex.Message; }
+        catch (Exception ex) { StatusLabel.Text = L.Text("Could not open folder: ") + ex.Message; }
     }
     void OnClosing(object? sender, CancelEventArgs e)
     {
-        if (busy) { e.Cancel = true; StatusLabel.Text = "Wait for the current build or runtime operation to finish before closing."; return; }
+        if (busy) { e.Cancel = true; StatusLabel.Text = L.Text("Wait for the current build or runtime operation to finish before closing."); return; }
         closing = true;
         discoveryCancellation.Cancel();
         timer.Stop();
@@ -545,4 +548,13 @@ public partial class MainWindow : Window
 }
 
 public sealed record ServiceRow(string Name, string Status, string PortText, string Metrics, string Detail,
-    string Action, bool CanAct, bool CanRestart, string StateColor, string Cpu, string Memory, string Uptime);
+    string Action, bool CanAct, bool CanRestart, string StateColor, string Cpu, string Memory, string Uptime)
+{
+    public string DisplayName => L.Text(Name);
+    public string DisplayStatus => L.Text(Status);
+    public string DisplayDetail => L.Describe(Detail);
+    public string DisplayAction => L.Text(Action);
+    public string DisplayPortText => L.Text(PortText);
+    public string DisplayUptime => L.Text(Uptime);
+    public string RestartName => L.Text("Restart {0}", DisplayName);
+}

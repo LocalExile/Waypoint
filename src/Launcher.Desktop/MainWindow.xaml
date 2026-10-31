@@ -8,8 +8,8 @@
       <Grid Margin="0,0,0,12">
         <Grid.ColumnDefinitions><ColumnDefinition Width="25"/><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
         <TextBlock Text="{Binding Symbol}" Foreground="{DynamicResource Accent}" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="2" Text="{Binding Detail}" Style="{StaticResource Caption}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="2" Text="{Binding DisplayDetail}" Style="{StaticResource Caption}" Margin="0,0,12,0" VerticalAlignment="Center"/>
         <Button Grid.Column="3" Content="{Binding ActionLabel}" Tag="{Binding}" Click="SetupStep_Click" Padding="10,7" FontSize="12" Margin="0"/>
       </Grid>
     </DataTemplate>
@@ -17,7 +17,7 @@
   <Grid x:Name="WindowLayout">
     <Grid.RowDefinitions><RowDefinition Height="32"/><RowDefinition Height="*"/></Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="196"/>
+      <ColumnDefinition Width="216"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
     <Border Grid.RowSpan="2" Background="{DynamicResource Sidebar}" Padding="14,22,14,16">
@@ -37,17 +37,17 @@
           <TextBlock x:Name="BrandSubtitle" Style="{StaticResource Caption}"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom" Margin="8,16,8,0">
-          <TextBlock Text="CURRENT SOURCE" Style="{StaticResource Caption}" FontSize="11"/>
-          <TextBlock x:Name="SidebarBranch" Text="No checkout selected" Margin="0,6,0,14"/>
+          <TextBlock Text="{local:Loc Text_4f4bcbb48773}" Style="{StaticResource Caption}" FontSize="11"/>
+          <TextBlock x:Name="SidebarBranch" Text="{local:Loc Text_1ff335e35fbf}" Margin="0,6,0,14"/>
           <TextBlock x:Name="VersionLabel" Style="{StaticResource Caption}"/>
-          <TextBlock Text="Closing Waypoint leaves services running." Style="{StaticResource Caption}" Margin="0,8,0,0"/>
+          <TextBlock Text="{local:Loc Text_388a0721496d}" Style="{StaticResource Caption}" Margin="0,8,0,0"/>
         </StackPanel>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-          <ListBox x:Name="Navigation" AutomationProperties.Name="Workspace pages" SelectedIndex="{Binding SelectedIndex, ElementName=Pages, Mode=TwoWay}"
-                   BorderThickness="0" Background="Transparent" KeyboardNavigation.TabNavigation="Once" ToolTip="Use arrows to choose a page. Ctrl+1–8 switches pages; Ctrl+Tab moves to the next page.">
+          <ListBox x:Name="Navigation" AutomationProperties.Name="{local:Loc Text_db03e3055c5a}" SelectedIndex="{Binding SelectedIndex, ElementName=Pages, Mode=TwoWay}"
+                   BorderThickness="0" Background="Transparent" KeyboardNavigation.TabNavigation="Once" ToolTip="{local:Loc Text_ea41ce555d5c}">
             <ListBox.ItemTemplate><DataTemplate><DockPanel>
               <TextBlock Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" Width="28" VerticalAlignment="Center"/>
-              <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding DisplayLabel}" VerticalAlignment="Center"/>
             </DockPanel></DataTemplate></ListBox.ItemTemplate>
           </ListBox>
         </ScrollViewer>
@@ -57,9 +57,9 @@
          Only these controls opt into client input. Branding stays in the sidebar once. -->
     <Grid Grid.Column="1" Background="{DynamicResource Background}">
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
-        <Button x:Name="MinimizeWindowButton" Content="&#xE921;" AutomationProperties.Name="Minimize Waypoint" ToolTip="Minimize" Style="{StaticResource CaptionButton}" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
-        <Button x:Name="MaximizeWindowButton" Content="&#xE922;" AutomationProperties.Name="Maximize Waypoint" ToolTip="Maximize" Style="{StaticResource CaptionButton}" Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
-        <Button x:Name="CloseWindowButton" Content="&#xE8BB;" AutomationProperties.Name="Close Waypoint" ToolTip="Close Waypoint" Style="{StaticResource CaptionCloseButton}" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+        <Button x:Name="MinimizeWindowButton" Content="&#xE921;" AutomationProperties.Name="{local:Loc Text_54941e76228c}" ToolTip="{local:Loc Text_d72e311c4dda}" Style="{StaticResource CaptionButton}" Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+        <Button x:Name="MaximizeWindowButton" Content="&#xE922;" AutomationProperties.Name="{local:Loc Text_c66a58ec272f}" ToolTip="{local:Loc Text_fba6c2c5d946}" Style="{StaticResource CaptionButton}" Command="{x:Static SystemCommands.MaximizeWindowCommand}"/>
+        <Button x:Name="CloseWindowButton" Content="&#xE8BB;" AutomationProperties.Name="{local:Loc Text_22dd7af622aa}" ToolTip="{local:Loc Text_22dd7af622aa}" Style="{StaticResource CaptionCloseButton}" Command="{x:Static SystemCommands.CloseWindowCommand}"/>
       </StackPanel>
     </Grid>
     <Grid Grid.Row="1" Grid.Column="1" Margin="24,8,24,16">
@@ -75,27 +75,27 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <TextBlock x:Name="WorkspaceTitle" Text="Workspace" FontSize="27" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,16,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
-          <TextBlock x:Name="CheckoutLabel" Text="Select a LocalExile checkout in Settings." Style="{StaticResource Caption}" Margin="0,8,16,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+          <TextBlock x:Name="WorkspaceTitle" Text="{local:Loc Text_87bb59ba2f92}" FontSize="27" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,16,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+          <TextBlock x:Name="CheckoutLabel" Text="{local:Loc Text_eb24997abb6c}" Style="{StaticResource Caption}" Margin="0,8,16,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
         </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="Change location" Click="ChangeLocation_Click"/><Button Content="Refresh" Click="Refresh_Click" Margin="0" ToolTip="Refresh local status (F5)"/></StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button Content="{local:Loc Text_279d233b3ee4}" Click="ChangeLocation_Click"/><Button Content="{local:Loc Text_0e9161011702}" Click="Refresh_Click" Margin="0" ToolTip="{local:Loc Text_0fa5ec4ebbe9}"/></StackPanel>
       </Grid>
       <Border x:Name="StatusBanner" Grid.Row="1" Background="{DynamicResource StatusSurface}" BorderBrush="{DynamicResource Outline}" BorderThickness="1" CornerRadius="7" Padding="14,10" Margin="0,0,0,14">
         <DockPanel>
           <ProgressBar x:Name="BusyProgress" DockPanel.Dock="Right" Width="65" Height="4" IsIndeterminate="True" Visibility="Collapsed" Margin="16,0,0,0"/>
           <StackPanel>
-            <TextBlock x:Name="StatusLabel" AutomationProperties.LiveSetting="Polite" Text="Choose your checkout to get started." FontSize="13"/>
+            <TextBlock x:Name="StatusLabel" AutomationProperties.LiveSetting="Polite" Text="{local:Loc Text_fca91d59bc5a}" FontSize="13"/>
             <TextBlock x:Name="OperationDetail" Style="{StaticResource Caption}" Visibility="Collapsed" Margin="0,6,0,0"/>
             <WrapPanel x:Name="FailureActions" Visibility="Collapsed" Margin="0,10,0,0">
-              <Button Content="Open failed stage log" Click="OpenOperationLog_Click" Padding="10,6"/>
-              <Button Content="View operation output" Click="ViewOperations_Click" Padding="10,6"/>
-              <Button Content="Retry operation" Click="Retry_Click" Padding="10,6"/>
+              <Button Content="{local:Loc Text_b588f80b6484}" Click="OpenOperationLog_Click" Padding="10,6"/>
+              <Button Content="{local:Loc Text_0cef0d77a2fe}" Click="ViewOperations_Click" Padding="10,6"/>
+              <Button Content="{local:Loc Text_9d39a3628a49}" Click="Retry_Click" Padding="10,6"/>
             </WrapPanel>
           </StackPanel>
         </DockPanel>
       </Border>
       <local:PageHost Grid.Row="2" x:Name="Pages" Style="{StaticResource {x:Type TabControl}}" KeyboardNavigation.TabNavigation="Local">
-        <TabItem Header="Play">
+        <TabItem Header="{local:Loc Text_436e61016e26}">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
               <Border Style="{StaticResource Card}">
@@ -106,23 +106,23 @@
                       <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel>
-                      <TextBlock x:Name="ReadinessTitle" Text="Choose a workspace" FontSize="21" FontWeight="SemiBold"/>
-                      <TextBlock x:Name="ReadinessLabel" Text="Check the setup below before starting." Foreground="{DynamicResource Muted}" Margin="0,6,20,0"/>
+                      <TextBlock x:Name="ReadinessTitle" Text="{local:Loc Text_995c08ae21a7}" FontSize="21" FontWeight="SemiBold"/>
+                      <TextBlock x:Name="ReadinessLabel" Text="{local:Loc Text_edab1377682d}" Foreground="{DynamicResource Muted}" Margin="0,6,20,0"/>
                     </StackPanel>
-                    <Button x:Name="PlayButton" IsEnabled="False" Grid.Column="1" Content="▶  Play" Style="{StaticResource Primary}" Click="Play_Click" Padding="32,14" Margin="0"/>
+                    <Button x:Name="PlayButton" IsEnabled="False" Grid.Column="1" Content="{local:Loc Text_b7ba5c1d1a1a}" Style="{StaticResource Primary}" Click="Play_Click" Padding="32,14" Margin="0"/>
                   </Grid>
                   <WrapPanel Margin="0,16,0,0">
-                    <Button x:Name="StartServersButton" Content="Start servers" Click="Start_Click" IsEnabled="False"/>
-                    <Button x:Name="StopServersButton" Content="Stop servers" Click="Stop_Click" IsEnabled="False"/>
-                    <Button x:Name="CloseGameButton" Content="Close game" Click="CloseGame_Click" IsEnabled="False"/>
-                    <Button Content="Open logs folder" Click="OpenLogs_Click"/>
-                    <Button Content="Setup" Click="ShowSetup_Click"/>
+                    <Button x:Name="StartServersButton" Content="{local:Loc Text_b2518d20e2cb}" Click="Start_Click" IsEnabled="False"/>
+                    <Button x:Name="StopServersButton" Content="{local:Loc Text_03aaf79a604f}" Click="Stop_Click" IsEnabled="False"/>
+                    <Button x:Name="CloseGameButton" Content="{local:Loc Text_51b0451ee87b}" Click="CloseGame_Click" IsEnabled="False"/>
+                    <Button Content="{local:Loc Text_9d19ac7b2039}" Click="OpenLogs_Click"/>
+                    <Button Content="{local:Loc Text_7013af4c42fe}" Click="ShowSetup_Click"/>
                   </WrapPanel>
                 </StackPanel>
               </Border>
-              <TextBlock Text="SERVICES" Style="{StaticResource Caption}" Margin="0,0,0,10"/>
+              <TextBlock Text="{local:Loc Text_019c527ea981}" Style="{StaticResource Caption}" Margin="0,0,0,10"/>
               <Border Style="{StaticResource Card}" Padding="16,6">
-                <ItemsControl x:Name="ServiceList" AutomationProperties.Name="Local services">
+                <ItemsControl x:Name="ServiceList" AutomationProperties.Name="{local:Loc Text_99cc5fa5fefe}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate>
                       <Grid Margin="0,8">
@@ -133,154 +133,154 @@
                           <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel VerticalAlignment="Center">
-                          <TextBlock Text="{Binding Value.Name}" FontWeight="SemiBold"/>
-                          <TextBlock Text="{Binding Value.PortText}" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
+                          <TextBlock Text="{Binding Value.DisplayName}" FontWeight="SemiBold"/>
+                          <TextBlock Text="{Binding Value.DisplayPortText}" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
                         </StackPanel>
-                        <TextBlock Grid.Column="1" Text="{Binding Value.Status}" Foreground="{DynamicResource Muted}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Value.DisplayStatus}" Foreground="{DynamicResource Muted}" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="8,0,14,0">
                           <TextBlock Text="{Binding Value.Metrics}" Style="{StaticResource Caption}"/>
-                          <TextBlock Text="{Binding Value.Detail}" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
+                          <TextBlock Text="{Binding Value.DisplayDetail}" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
-                          <Button Content="{Binding Value.Action}" Tag="{Binding Value.Name}" Click="Service_Click" IsEnabled="{Binding Value.CanAct}" Padding="12,7"/>
-                          <Button Content="↻" AutomationProperties.Name="{Binding Value.Name, StringFormat=Restart {0}}" Tag="{Binding Value.Name}" Click="Restart_Click" IsEnabled="{Binding Value.CanRestart}" ToolTip="Restart service" Padding="11,7" Margin="0"/>
+                          <Button Content="{Binding Value.DisplayAction}" Tag="{Binding Value.Name}" Click="Service_Click" IsEnabled="{Binding Value.CanAct}" Padding="12,7"/>
+                          <Button Content="↻" AutomationProperties.Name="{Binding Value.RestartName}" Tag="{Binding Value.Name}" Click="Restart_Click" IsEnabled="{Binding Value.CanRestart}" ToolTip="{local:Loc Text_057fd24429fa}" Padding="11,7" Margin="0"/>
                         </StackPanel>
                       </Grid>
                     </DataTemplate>
                   </ItemsControl.ItemTemplate>
                 </ItemsControl>
               </Border>
-              <Expander x:Name="SetupSummary" Header="Setup and compatibility" IsExpanded="False" Foreground="{DynamicResource Text}" Margin="0,2,0,12">
+              <Expander x:Name="SetupSummary" Header="{local:Loc Text_eeaf954d8d43}" IsExpanded="False" Foreground="{DynamicResource Text}" Margin="0,2,0,12">
                 <ItemsControl x:Name="RequirementList" Margin="0,12,0,0" ItemTemplate="{StaticResource SetupRequirementTemplate}"/>
               </Expander>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="Setup" x:Name="SetupPage">
+        <TabItem Header="{local:Loc Text_7013af4c42fe}" x:Name="SetupPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
             <Border Style="{StaticResource Card}"><StackPanel>
-              <TextBlock Text="Choose how to get ready" FontSize="21"/>
-              <TextBlock Text="Use an existing prepared checkout, or prepare a separate client copy in the selected checkout. The supported client is standalone PoE 3.29.3b." Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
-              <WrapPanel><Button Content="Find LocalExile" Click="FindRepository_Click"/><Button Content="Choose installation" Click="ShowSettings_Click"/><Button Content="Open client folder" Click="OpenClient_Click"/><Button Content="Open setup guide" Click="OpenGuide_Click"/></WrapPanel>
+              <TextBlock Text="{local:Loc Text_f64a45cd7d47}" FontSize="21"/>
+              <TextBlock Text="{local:Loc Text_c7353185b802}" Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
+              <WrapPanel><Button Content="{local:Loc Text_fa1e08557af3}" Click="FindRepository_Click"/><Button Content="{local:Loc Text_c032d8c45d13}" Click="ShowSettings_Click"/><Button Content="{local:Loc Text_d28f5e178579}" Click="OpenClient_Click"/><Button Content="{local:Loc Text_8d9f188ce712}" Click="OpenGuide_Click"/></WrapPanel>
             </StackPanel></Border>
             <Border Style="{StaticResource Card}"><StackPanel>
-              <TextBlock Text="Prepare this checkout" FontSize="18"/>
-              <TextBlock Text="Copy the complete client into its Client folder first. Preparation creates missing local keys and a prepared executable, then selects the local gateway in that copy. Close the game and stop services before making setup changes." Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
-              <WrapPanel><Button Content="Prepare local client" Click="Prepare_Click"/><Button Content="Install extraction dependency" Click="Dependencies_Click"/><Button Content="Recheck setup" Click="Refresh_Click"/></WrapPanel>
+              <TextBlock Text="{local:Loc Text_40e2fbc81bf9}" FontSize="18"/>
+              <TextBlock Text="{local:Loc Text_b3f384f14d32}" Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
+              <WrapPanel><Button Content="{local:Loc Text_2fad023a9cbb}" Click="Prepare_Click"/><Button Content="{local:Loc Text_58fc561ca474}" Click="Dependencies_Click"/><Button Content="{local:Loc Text_796ab9431174}" Click="Refresh_Click"/></WrapPanel>
             </StackPanel></Border>
             <ItemsControl x:Name="SetupRequirementList" ItemTemplate="{StaticResource SetupRequirementTemplate}"/>
             <Border Style="{StaticResource Card}" Margin="0,12,0,16"><StackPanel>
-              <TextBlock Text="First local account" FontSize="18"/>
-              <TextBlock Text="An account belongs to this LocalExile installation. Create one here, then sign in and create your character inside the game. The launcher does not store your password." Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
-              <Button Content="Create local account" Click="CreateAccount_Click" HorizontalAlignment="Left"/>
+              <TextBlock Text="{local:Loc Text_962ebe576545}" FontSize="18"/>
+              <TextBlock Text="{local:Loc Text_7e64af709bfd}" Foreground="{DynamicResource Muted}" Margin="0,10,0,16"/>
+              <Button Content="{local:Loc Text_c7ece59b9c12}" Click="CreateAccount_Click" HorizontalAlignment="Left"/>
             </StackPanel></Border>
           </StackPanel></ScrollViewer>
         </TabItem>
-        <TabItem Header="Builds" x:Name="BuildsPage">
+        <TabItem Header="{local:Loc Text_6a3fe8876b56}" x:Name="BuildsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="Branches and pull requests" FontSize="21" FontWeight="SemiBold"/>
-                <TextBlock Text="Choose a local branch, a fetched remote branch or an upstream PR. Switching stops owned servers, backs up saves and builds the revision. Close the game first; press Play afterward." Foreground="{DynamicResource Muted}" Margin="0,8,0,12"/>
-                <WrapPanel Margin="0,0,0,12"><Button Content="Load / refresh list" Click="RefreshSources_Click"/><Button Content="Fetch remote branches" Click="FetchSources_Click"/></WrapPanel>
-                <TextBlock x:Name="SourcesStatus" Text="Load the list to browse branches and open LocalExile PRs. Switching reuses the existing client copy." Style="{StaticResource Caption}" Margin="0,0,0,10"/>
-                <TextBlock Text="Search branches and PRs" Style="{StaticResource Caption}" Margin="0,0,0,5"/>
-                <TextBox x:Name="SourceSearch" AutomationProperties.Name="Search branches and pull requests" ToolTip="Search branch names, PR titles, authors or commit hashes" TextChanged="SourceSearch_Changed" Margin="0,0,0,8"/>
-                <ListBox x:Name="SourcesList" Height="200" Background="{DynamicResource Background}" Foreground="{DynamicResource Text}" BorderBrush="{DynamicResource Outline}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="SourceSelection_Changed" AutomationProperties.Name="Branches and pull requests">
-                  <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}"><Setter Property="AutomationProperties.Name" Value="{Binding Label}"/></Style></ListBox.ItemContainerStyle>
+                <TextBlock Text="{local:Loc Text_6561a8925313}" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="{local:Loc Text_5c520be69184}" Foreground="{DynamicResource Muted}" Margin="0,8,0,12"/>
+                <WrapPanel Margin="0,0,0,12"><Button Content="{local:Loc Text_5a624ed29811}" Click="RefreshSources_Click"/><Button Content="{local:Loc Text_16eaede014f9}" Click="FetchSources_Click"/></WrapPanel>
+                <TextBlock x:Name="SourcesStatus" Text="{local:Loc Text_1c05492dd6ed}" Style="{StaticResource Caption}" Margin="0,0,0,10"/>
+                <TextBlock Text="{local:Loc Text_c75b3ea942d7}" Style="{StaticResource Caption}" Margin="0,0,0,5"/>
+                <TextBox x:Name="SourceSearch" AutomationProperties.Name="{local:Loc Text_9701a68fede6}" ToolTip="{local:Loc Text_7fd994d683da}" TextChanged="SourceSearch_Changed" Margin="0,0,0,8"/>
+                <ListBox x:Name="SourcesList" Height="200" Background="{DynamicResource Background}" Foreground="{DynamicResource Text}" BorderBrush="{DynamicResource Outline}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="SourceSelection_Changed" AutomationProperties.Name="{local:Loc Text_6561a8925313}">
+                  <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}"><Setter Property="AutomationProperties.Name" Value="{Binding DisplayLabel}"/></Style></ListBox.ItemContainerStyle>
 
-                  <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Label}" FontWeight="SemiBold"/><TextBlock Text="{Binding Detail}" Style="{StaticResource ListCaption}"/><local:CommitText Value="{Binding Commit}" Margin="0,4,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                  <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding DisplayLabel}" FontWeight="SemiBold"/><TextBlock Text="{Binding DisplayDetail}" Style="{StaticResource ListCaption}"/><local:CommitText Value="{Binding Commit}" Margin="0,4,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock x:Name="SourcesEmpty" Visibility="Collapsed" Text="No branches or PRs match. Clear or change your search, or use a PR number below." Style="{StaticResource Caption}" Margin="0,8,0,0"/>
+                <TextBlock x:Name="SourcesEmpty" Visibility="Collapsed" Text="{local:Loc Text_eb3ab0ad976b}" Style="{StaticResource Caption}" Margin="0,8,0,0"/>
                 <local:CommitText x:Name="SelectedSourceIdentity" Margin="0,10,0,0"/>
-                <CheckBox x:Name="FreshSavesBox" Content="Start fresh (replace accounts and characters)"/>
-                <CheckBox x:Name="AutoBackupBox" Content="Automatic save backups" Checked="BackupPreference_Changed" Unchecked="BackupPreference_Changed" Margin="0,0,0,10"/>
+                <CheckBox x:Name="FreshSavesBox" Content="{local:Loc Text_9a8e5d375c8e}"/>
+                <CheckBox x:Name="AutoBackupBox" Content="{local:Loc Text_7123c07a4c15}" Checked="BackupPreference_Changed" Unchecked="BackupPreference_Changed" Margin="0,0,0,10"/>
                 <TextBlock x:Name="BackupModeDetail" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
-                <WrapPanel><Button x:Name="SwitchSourceButton" Content="Switch and build" Style="{StaticResource Primary}" Click="SwitchSource_Click" IsEnabled="False"/><Button Content="Manage backups" Click="ShowBackups_Click"/></WrapPanel>
-                <TextBlock Text="Open a specific upstream PR" Style="{StaticResource Caption}" Margin="0,16,0,6"/><DockPanel><Button Content="Use PR number" DockPanel.Dock="Right" Click="SwitchPrNumber_Click" Margin="10,0,0,0"/><TextBox x:Name="PrNumberBox" AutomationProperties.Name="Upstream PR number" ToolTip="Enter a positive LocalExile PR number, including closed PRs"/></DockPanel>
+                <WrapPanel><Button x:Name="SwitchSourceButton" Content="{local:Loc Text_3253dba2c477}" Style="{StaticResource Primary}" Click="SwitchSource_Click" IsEnabled="False"/><Button Content="{local:Loc Text_cd78b7af946b}" Click="ShowBackups_Click"/></WrapPanel>
+                <TextBlock Text="{local:Loc Text_33b938b93ca9}" Style="{StaticResource Caption}" Margin="0,16,0,6"/><DockPanel><Button Content="{local:Loc Text_667f64085762}" DockPanel.Dock="Right" Click="SwitchPrNumber_Click" Margin="10,0,0,0"/><TextBox x:Name="PrNumberBox" AutomationProperties.Name="{local:Loc Text_23c0a4391171}" ToolTip="{local:Loc Text_2cb93bc2b809}"/></DockPanel>
                 <TextBlock x:Name="PrValidation" Foreground="{DynamicResource Error}" Visibility="Collapsed" AutomationProperties.LiveSetting="Polite" Margin="0,6,0,0"/>
               </StackPanel></Border>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="Hot reload" FontSize="21" FontWeight="SemiBold"/>
-                <CheckBox x:Name="HotReloadBox" Content="Watch Gateway code while playing" Checked="HotReloadPreference_Changed" Unchecked="HotReloadPreference_Changed"/>
+                <TextBlock Text="{local:Loc Text_4859a908b868}" FontSize="21" FontWeight="SemiBold"/>
+                <CheckBox x:Name="HotReloadBox" Content="{local:Loc Text_5b72b116c129}" Checked="HotReloadPreference_Changed" Unchecked="HotReloadPreference_Changed"/>
                 <TextBlock x:Name="HotReloadStateLabel" FontSize="16" Foreground="{DynamicResource Accent}"/>
                 <TextBlock x:Name="HotReloadDetail" Style="{StaticResource Caption}" Margin="0,8,0,12"/>
-                <TextBlock Text="Compatible saved code edits apply in game. Compile errors keep old code running. Incompatible edits restart Gateway and return you to login. Static data and Auth/Patch changes can need a restart. Branch/PR switching always stops services first." Foreground="{DynamicResource Muted}"/>
-                <WrapPanel Margin="0,14,0,0"><Button Content="Gateway output" Click="GatewayLog_Click"/><Button Content="Restart Gateway" Click="RestartGateway_Click"/><Button Content="Reload game-data overrides" Click="ReloadData_Click"/></WrapPanel>
-                <TextBlock Text="Game-data reload uses /game_data reload through the checkout’s optional native helper (Python + Frida, client in game). It reloads SQLite overrides; it does not reload extracted files or rebuild source. The launcher waits for a revision confirmation." Style="{StaticResource Caption}" Margin="0,10,0,0"/>
+                <TextBlock Text="{local:Loc Text_22a62a64de6a}" Foreground="{DynamicResource Muted}"/>
+                <WrapPanel Margin="0,14,0,0"><Button Content="{local:Loc Text_d4d8fd81a610}" Click="GatewayLog_Click"/><Button Content="{local:Loc Text_3506d661965b}" Click="RestartGateway_Click"/><Button Content="{local:Loc Text_635484c1543e}" Click="ReloadData_Click"/></WrapPanel>
+                <TextBlock Text="{local:Loc Text_9dfdeeac1e88}" Style="{StaticResource Caption}" Margin="0,10,0,0"/>
               </StackPanel></Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="Know what you’re running" FontSize="21" FontWeight="SemiBold"/>
-                  <TextBlock Text="Source and built component identities are separate. Hot reload can apply uncommitted code edits; a build hash identifies the original compiled revision." Foreground="{DynamicResource Muted}" Margin="0,8,0,20"/>
-                  <TextBlock Text="SELECTED SOURCE" Style="{StaticResource Caption}"/>
+                  <TextBlock Text="{local:Loc Text_47712109b90c}" FontSize="21" FontWeight="SemiBold"/>
+                  <TextBlock Text="{local:Loc Text_91bd172009ab}" Foreground="{DynamicResource Muted}" Margin="0,8,0,20"/>
+                  <TextBlock Text="{local:Loc Text_d10cdbf98c85}" Style="{StaticResource Caption}"/>
                   <local:CommitText x:Name="SourceIdentity" Margin="0,8,0,18"/>
-                  <TextBlock Text="BUILT COMPONENTS · DEBUG" Style="{StaticResource Caption}"/>
+                  <TextBlock Text="{local:Loc Text_292a37482041}" Style="{StaticResource Caption}"/>
                   <local:CommitText x:Name="BuildIdentity" TextWrapping="Wrap" Margin="0,8,0,18"/>
                   <WrapPanel>
-                    <Button Content="Build checkout" Style="{StaticResource Primary}" Click="Build_Click"/>
-                    <Button Content="Open checkout folder" Click="OpenCheckout_Click"/>
+                    <Button Content="{local:Loc Text_dfab082d4644}" Style="{StaticResource Primary}" Click="Build_Click"/>
+                    <Button Content="{local:Loc Text_9d3db01bcdf8}" Click="OpenCheckout_Click"/>
                   </WrapPanel>
-                  <TextBlock Text="Stop services before rebuilding. Starting a stopped service beside running services reuses its existing build. Stop all services and build first after changing source. Game launch uses the supported upstream script." Foreground="{DynamicResource Muted}" Margin="0,16,0,0"/>
+                  <TextBlock Text="{local:Loc Text_fb1a779f6127}" Foreground="{DynamicResource Muted}" Margin="0,16,0,0"/>
                 </StackPanel>
               </Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="Environment" FontSize="18"/>
+                  <TextBlock Text="{local:Loc Text_9e471951a1b4}" FontSize="18"/>
                   <TextBlock x:Name="EnvironmentIdentity" Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
                 </StackPanel>
               </Border>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="Mods" x:Name="ModsPage">
+        <TabItem Header="{local:Loc Text_6e58b577a084}" x:Name="ModsPage">
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <StackPanel>
-              <TextBlock Text="Mods" FontSize="22" FontWeight="SemiBold"/>
-              <TextBlock x:Name="ModsStatus" Text="Select a checkout to inspect its mods." Foreground="{DynamicResource Muted}" Margin="0,6,0,10"/>
+              <TextBlock Text="{local:Loc Text_6e58b577a084}" FontSize="22" FontWeight="SemiBold"/>
+              <TextBlock x:Name="ModsStatus" Text="{local:Loc Text_95b58be11552}" Foreground="{DynamicResource Muted}" Margin="0,6,0,10"/>
             </StackPanel>
             <WrapPanel Grid.Row="1" Margin="0,0,0,8">
-              <Button x:Name="BuildAllModsButton" Content="Build source mods" Click="BuildAllMods_Click" IsEnabled="False"/>
-              <Button x:Name="CheckModsButton" Content="Check live status" Click="CheckMods_Click" IsEnabled="False"/>
-              <Button x:Name="OpenModsButton" Content="Open mods folder" Click="OpenMods_Click" IsEnabled="False"/>
-              <Button Content="Manage backups" Click="ShowBackups_Click"/>
+              <Button x:Name="BuildAllModsButton" Content="{local:Loc Text_efb840bd2787}" Click="BuildAllMods_Click" IsEnabled="False"/>
+              <Button x:Name="CheckModsButton" Content="{local:Loc Text_3ad8589795b3}" Click="CheckMods_Click" IsEnabled="False"/>
+              <Button x:Name="OpenModsButton" Content="{local:Loc Text_00e989018b91}" Click="OpenMods_Click" IsEnabled="False"/>
+              <Button Content="{local:Loc Text_cd78b7af946b}" Click="ShowBackups_Click"/>
             </WrapPanel>
             <Grid Grid.Row="2">
               <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
               <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                <TextBlock Text="Search mods" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
+                <TextBlock Text="{local:Loc Text_b186b72af3a9}" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
                 <DockPanel Grid.Row="1" Margin="0,0,0,10">
-                  <Button Content="Clear" Click="ClearModSearch_Click" DockPanel.Dock="Right" Margin="6,0,0,0" ToolTip="Clear mod search"/>
-                  <TextBox x:Name="ModSearch" AutomationProperties.Name="Search mods" TextChanged="ModSearch_Changed" ToolTip="Search mod ID, version, kind, status or error (Ctrl+F)"/>
+                  <Button Content="{local:Loc Text_83b12c2216ef}" Click="ClearModSearch_Click" DockPanel.Dock="Right" Margin="6,0,0,0" ToolTip="{local:Loc Text_477c5451ef0b}"/>
+                  <TextBox x:Name="ModSearch" AutomationProperties.Name="{local:Loc Text_b186b72af3a9}" TextChanged="ModSearch_Changed" ToolTip="{local:Loc Text_8b2d4fa44372}"/>
                 </DockPanel>
                 <Grid Grid.Row="2">
-                  <ListBox x:Name="ModsList" SelectionChanged="ModSelection_Changed" AutomationProperties.Name="Available mods">
+                  <ListBox x:Name="ModsList" SelectionChanged="ModSelection_Changed" AutomationProperties.Name="{local:Loc Text_fab4753af1e0}">
                     <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}"><Setter Property="AutomationProperties.Name" Value="{Binding Id}"/></Style></ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate><DataTemplate><StackPanel>
                       <TextBlock Text="{Binding Id}" FontWeight="SemiBold"/>
                       <TextBlock Text="{Binding Summary}" Style="{StaticResource ListCaption}" Margin="0,4,0,0"/>
                     </StackPanel></DataTemplate></ListBox.ItemTemplate>
                   </ListBox>
-                  <TextBlock x:Name="ModsEmpty" IsHitTestVisible="False" Text="No mods to show." Style="{StaticResource Caption}" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="230" Margin="16"/>
+                  <TextBlock x:Name="ModsEmpty" IsHitTestVisible="False" Text="{local:Loc Text_1d0fae1e7a27}" Style="{StaticResource Caption}" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="230" Margin="16"/>
                 </Grid>
               </Grid>
               <Border Grid.Column="2" Style="{StaticResource Card}" Margin="0" Padding="16">
                 <DockPanel>
                   <StackPanel DockPanel.Dock="Top">
-                    <TextBlock x:Name="SelectedModTitle" Text="Mod details" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <TextBlock x:Name="SelectedModTitle" Text="{local:Loc Text_245c1078b5e7}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
                     <WrapPanel>
-                      <Button x:Name="ToggleModButton" Content="Enable mod" Click="ToggleMod_Click" IsEnabled="False"/>
-                      <Button x:Name="BuildModButton" Content="Build selected" Click="BuildMod_Click" IsEnabled="False"/>
-                      <Button x:Name="ReloadModButton" Content="Reload selected" Click="ReloadMod_Click" IsEnabled="False"/>
-                      <Button x:Name="OpenSelectedModButton" Content="Open selected folder" Click="OpenSelectedMod_Click" IsEnabled="False"/>
-                      <Button Content="Gateway output" Click="GatewayLog_Click"/>
+                      <Button x:Name="ToggleModButton" Content="{local:Loc Text_cfa63e97e7e5}" Click="ToggleMod_Click" IsEnabled="False"/>
+                      <Button x:Name="BuildModButton" Content="{local:Loc Text_9777bf4aa207}" Click="BuildMod_Click" IsEnabled="False"/>
+                      <Button x:Name="ReloadModButton" Content="{local:Loc Text_491291cca723}" Click="ReloadMod_Click" IsEnabled="False"/>
+                      <Button x:Name="OpenSelectedModButton" Content="{local:Loc Text_ea78a0d3095b}" Click="OpenSelectedMod_Click" IsEnabled="False"/>
+                      <Button Content="{local:Loc Text_d4d8fd81a610}" Click="GatewayLog_Click"/>
                     </WrapPanel>
                     <TextBlock x:Name="ModActionHint" Style="{StaticResource Caption}" Margin="0,4,0,12"/>
                   </StackPanel>
                   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
-                      <TextBlock x:Name="ModDetails" Text="Select a mod to view its dependencies and controls." Foreground="{DynamicResource Muted}"/>
+                      <TextBlock x:Name="ModDetails" Text="{local:Loc Text_adb8a7038d6c}" Foreground="{DynamicResource Muted}"/>
                       <TextBlock x:Name="ModCommandHint" Style="{StaticResource Caption}" Margin="0,12,0,0"/>
                     </StackPanel>
                   </ScrollViewer>
@@ -288,45 +288,45 @@
               </Border>
             </Grid>
             <StackPanel Grid.Row="3" Margin="0,10,0,0">
-              <CheckBox x:Name="ModsAutoBackupBox" Content="Automatic save backups before mod changes" Checked="ModsBackupPreference_Changed" Unchecked="ModsBackupPreference_Changed"/>
-              <Expander Header="How mod changes work" Margin="0,2,0,0">
+              <CheckBox x:Name="ModsAutoBackupBox" Content="{local:Loc Text_c4ba5e396f03}" Checked="ModsBackupPreference_Changed" Unchecked="ModsBackupPreference_Changed"/>
+              <Expander Header="{local:Loc Text_b6578325df01}" Margin="0,2,0,0">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="140"><StackPanel Margin="0,10,14,0">
-                  <TextBlock Text="Built files and confirmed runtime status are separate. LocalExile watches mod files independently of Gateway code hot reload. Building or reloading resets the mod’s in-memory state and can reload dependents. Disabling a dependency can unload other mods. Changes affect every character on this Gateway." Style="{StaticResource Caption}"/>
-                  <TextBlock Text="Live controls need the checkout’s native helper (Python + Frida) and a client in a playable area. With Gateway stopped, enable choices are saved for its next start. Otherwise use the displayed command in game. Loaded status expires after two minutes or a binary/configuration change." Style="{StaticResource Caption}" Margin="0,8,0,0"/>
+                  <TextBlock Text="{local:Loc Text_0397d2f08fb2}" Style="{StaticResource Caption}"/>
+                  <TextBlock Text="{local:Loc Text_0ce2b3edbfd2}" Style="{StaticResource Caption}" Margin="0,8,0,0"/>
                 </StackPanel></ScrollViewer>
               </Expander>
             </StackPanel>
           </Grid>
         </TabItem>
-        <TabItem Header="Backups" x:Name="BackupsPage">
+        <TabItem Header="{local:Loc Text_3334fee2c77f}" x:Name="BackupsPage">
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <StackPanel>
-              <TextBlock Text="Save backups" FontSize="22" FontWeight="SemiBold"/>
-              <TextBlock Text="Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions." Foreground="{DynamicResource Muted}" Margin="0,6,0,12"/>
+              <TextBlock Text="{local:Loc Text_58b1306d2f1d}" FontSize="22" FontWeight="SemiBold"/>
+              <TextBlock Text="{local:Loc Text_5cc72d6218d1}" Foreground="{DynamicResource Muted}" Margin="0,6,0,12"/>
             </StackPanel>
             <StackPanel Grid.Row="1">
-              <WrapPanel><Button Content="Back up now" Click="BackupNow_Click"/><Button Content="Refresh backups" Click="RefreshBackups_Click"/><Button Content="Open backup folder" Click="OpenBackupFolder_Click"/></WrapPanel>
+              <WrapPanel><Button Content="{local:Loc Text_02a2840b598b}" Click="BackupNow_Click"/><Button Content="{local:Loc Text_47e8b196a14c}" Click="RefreshBackups_Click"/><Button Content="{local:Loc Text_08ad630cfbfa}" Click="OpenBackupFolder_Click"/></WrapPanel>
               <TextBlock x:Name="BackupsStatus" Style="{StaticResource Caption}" Margin="0,2,0,12"/>
             </StackPanel>
             <Grid Grid.Row="2">
               <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
               <Grid>
-                <ListBox x:Name="BackupsList" SelectionChanged="BackupSelection_Changed" AutomationProperties.Name="Save backup history">
+                <ListBox x:Name="BackupsList" SelectionChanged="BackupSelection_Changed" AutomationProperties.Name="{local:Loc Text_2a954f0067b1}">
                   <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}"><Setter Property="AutomationProperties.Name" Value="{Binding Summary}"/></Style></ListBox.ItemContainerStyle>
                   <ListBox.ItemTemplate><DataTemplate><StackPanel>
                     <TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/>
                     <local:CommitText Value="{Binding Identity}" TextWrapping="Wrap" Style="{StaticResource ListCaption}" Margin="0,5,0,0"/>
                   </StackPanel></DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock x:Name="BackupsEmpty" Text="No backups yet. Use Back up now to save a copy of your current progress." IsHitTestVisible="False" Style="{StaticResource Caption}" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="230" Margin="16"/>
+                <TextBlock x:Name="BackupsEmpty" Text="{local:Loc Text_ddf65dfc3807}" IsHitTestVisible="False" Style="{StaticResource Caption}" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="230" Margin="16"/>
               </Grid>
               <Border Grid.Column="2" Style="{StaticResource Card}" Margin="0" Padding="16">
                 <DockPanel>
                   <StackPanel DockPanel.Dock="Top">
-                    <TextBlock Text="Selected backup" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
-                    <WrapPanel><Button x:Name="RestoreBackupButton" Content="Restore saves…" Click="RestoreBackup_Click" IsEnabled="False"/><Button x:Name="DeleteBackupButton" Content="Delete backup…" Click="DeleteBackup_Click" IsEnabled="False"/></WrapPanel>
-                    <Button x:Name="RestoreModChoicesButton" Content="Restore recorded mod choices…" Click="RestoreModChoices_Click" IsEnabled="False" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{local:Loc Text_a501a1aed56f}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                    <WrapPanel><Button x:Name="RestoreBackupButton" Content="{local:Loc Text_1ac6734160c8}" Click="RestoreBackup_Click" IsEnabled="False"/><Button x:Name="DeleteBackupButton" Content="{local:Loc Text_74d9a7c8a656}" Click="DeleteBackup_Click" IsEnabled="False"/></WrapPanel>
+                    <Button x:Name="RestoreModChoicesButton" Content="{local:Loc Text_8bc9335f3b83}" Click="RestoreModChoices_Click" IsEnabled="False" HorizontalAlignment="Left"/>
                     <TextBlock x:Name="BackupActionHint" Style="{StaticResource Caption}" Margin="0,2,0,12"/>
                   </StackPanel>
                   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -336,20 +336,20 @@
               </Border>
             </Grid>
             <StackPanel Grid.Row="3" Margin="0,10,0,0">
-              <CheckBox x:Name="ManagerAutoBackupBox" Content="Automatic save backups" Checked="ManagerBackupPreference_Changed" Unchecked="ManagerBackupPreference_Changed"/>
-              <Expander Header="What backups include">
-                <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto"><TextBlock Text="Automatic backups run before branch/PR activation, builds, Gateway startup/restart, game-data reload, mod changes and save restore. A failed backup blocks the change. Mod history records choices, manifest versions, DLL fingerprints and the last confirmed runtime report. Restoring saves does not switch source, client files, login keys or game-data overrides. Restoring mod choices never installs DLLs or replaces saves. Last launched Gateway is recorded by Waypoint; outside launches and every hot edit are not tracked." Style="{StaticResource Caption}" Margin="0,10,14,0"/></ScrollViewer>
+              <CheckBox x:Name="ManagerAutoBackupBox" Content="{local:Loc Text_7123c07a4c15}" Checked="ManagerBackupPreference_Changed" Unchecked="ManagerBackupPreference_Changed"/>
+              <Expander Header="{local:Loc Text_030d3f415374}">
+                <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto"><TextBlock Text="{local:Loc Text_5634c7509b09}" Style="{StaticResource Caption}" Margin="0,10,14,0"/></ScrollViewer>
               </Expander>
             </StackPanel>
           </Grid>
         </TabItem>
-        <TabItem Header="Performance">
+        <TabItem Header="{local:Loc Text_442aded87a55}">
           <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
             <Border Style="{StaticResource Card}">
               <StackPanel>
-                <TextBlock Text="Live process measurements" FontSize="21" FontWeight="SemiBold"/>
-                <TextBlock Text="CPU is the share of this machine’s total logical processors between refreshes. A dash means no running process or no second sample yet." Foreground="{DynamicResource Muted}" Margin="0,8,0,18"/>
-                <ItemsControl x:Name="PerformanceList" AutomationProperties.Name="Process measurements">
+                <TextBlock Text="{local:Loc Text_3bdee2629899}" FontSize="21" FontWeight="SemiBold"/>
+                <TextBlock Text="{local:Loc Text_64fe832d62f6}" Foreground="{DynamicResource Muted}" Margin="0,8,0,18"/>
+                <ItemsControl x:Name="PerformanceList" AutomationProperties.Name="{local:Loc Text_153565a001f1}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate>
                       <Grid Margin="0,12">
@@ -359,20 +359,20 @@
                           <ColumnDefinition Width="130"/>
                           <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Value.Name}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Value.DisplayName}" FontWeight="SemiBold"/>
                         <TextBlock Grid.Column="1" Text="{Binding Value.Cpu}"/>
                         <TextBlock Grid.Column="2" Text="{Binding Value.Memory}"/>
-                        <TextBlock Grid.Column="3" Text="{Binding Value.Uptime}" Foreground="{DynamicResource Muted}"/>
+                        <TextBlock Grid.Column="3" Text="{Binding Value.DisplayUptime}" Foreground="{DynamicResource Muted}"/>
                       </Grid>
                     </DataTemplate>
                   </ItemsControl.ItemTemplate>
                 </ItemsControl>
               </StackPanel>
             </Border>
-            <TextBlock Text="Gateway phase timings exist in LocalExile’s LocalExile.Gateway meter. Collecting those timings and recording benchmark comparisons are planned separately; these process measurements do not represent time spent in game systems." Foreground="{DynamicResource Muted}"/>
+            <TextBlock Text="{local:Loc Text_1b63be7c9abf}" Foreground="{DynamicResource Muted}"/>
           </StackPanel></ScrollViewer>
         </TabItem>
-        <TabItem Header="Logs" x:Name="LogsPage">
+        <TabItem Header="{local:Loc Text_ea2100dc89ae}" x:Name="LogsPage">
           <Grid>
             <Grid.RowDefinitions>
               <RowDefinition Height="Auto"/>
@@ -380,29 +380,38 @@
               <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel>
-              <TextBlock x:Name="SelectedLogLabel" Text="Operations" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12"/>
+              <TextBlock x:Name="SelectedLogLabel" Text="{local:Loc Text_358cc201f87d}" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12"/>
               <WrapPanel x:Name="LogSources" Margin="0,0,0,4">
-                <RadioButton Content="Operations" Tag="Operations" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click" IsChecked="True"/>
-                <RadioButton Content="Patch" Tag="Patch" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
-                <RadioButton Content="Gateway" Tag="Gateway" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
-                <RadioButton Content="Auth" Tag="Auth" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
-                <RadioButton Content="Game" Tag="Game" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
-                <Button Content="Open folder" Click="OpenLogs_Click"/>
-                <Button Content="Diagnostic report…" Click="DiagnosticReport_Click"/>
+                <RadioButton Content="{local:Loc Text_358cc201f87d}" Tag="Operations" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click" IsChecked="True"/>
+                <RadioButton Content="{local:Loc Text_7e345470de24}" Tag="Patch" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
+                <RadioButton Content="{local:Loc Text_41ed52921661}" Tag="Gateway" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
+                <RadioButton Content="{local:Loc Text_8eb3ea9bbde6}" Tag="Auth" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
+                <RadioButton Content="{local:Loc Text_5c412a262086}" Tag="Game" GroupName="Logs" Style="{StaticResource LogSource}" Click="LogSource_Click"/>
+                <Button Content="{local:Loc Text_6a9084025c4b}" Click="OpenLogs_Click"/>
+                <Button Content="{local:Loc Text_a43b66fb01b9}" Click="DiagnosticReport_Click"/>
               </WrapPanel>
             </StackPanel>
-            <DockPanel Grid.Row="1" Margin="0,0,0,12"><TextBlock Text="Search" Margin="0,0,10,0" VerticalAlignment="Center"/><CheckBox x:Name="WarningsOnlyBox" DockPanel.Dock="Right" Content="Warnings / errors" Margin="14,0,0,0" Checked="LogFilter_Changed" Unchecked="LogFilter_Changed" VerticalAlignment="Center"/><TextBox x:Name="LogSearchBox" AutomationProperties.Name="Search selected log" TextChanged="LogSearch_Changed" ToolTip="Search selected log (case insensitive)"/></DockPanel>
-            <TextBox x:Name="LogText" AutomationProperties.Name="Selected log output" Grid.Row="2" IsReadOnly="True" FontFamily="Cascadia Mono,Consolas" FontSize="12" TextWrapping="NoWrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+            <DockPanel Grid.Row="1" Margin="0,0,0,12"><TextBlock Text="{local:Loc Text_49c266baaaa7}" Margin="0,0,10,0" VerticalAlignment="Center"/><CheckBox x:Name="WarningsOnlyBox" DockPanel.Dock="Right" Content="{local:Loc Text_176b219dca96}" Margin="14,0,0,0" Checked="LogFilter_Changed" Unchecked="LogFilter_Changed" VerticalAlignment="Center"/><TextBox x:Name="LogSearchBox" AutomationProperties.Name="{local:Loc Text_f0911b7e2f8c}" TextChanged="LogSearch_Changed" ToolTip="{local:Loc Text_64a576b180a8}"/></DockPanel>
+            <TextBox x:Name="LogText" AutomationProperties.Name="{local:Loc Text_1826368b30f4}" Grid.Row="2" IsReadOnly="True" FontFamily="Cascadia Mono,Consolas" FontSize="12" TextWrapping="NoWrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
           </Grid>
         </TabItem>
-        <TabItem Header="Settings" x:Name="SettingsPage">
+        <TabItem Header="{local:Loc Text_74a883a037bc}" x:Name="SettingsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
               <Border Style="{StaticResource Card}"><StackPanel>
-                <TextBlock Text="Find your LocalExile checkout" FontSize="21"/>
-                <TextBlock Text="We check the latest upstream commit and look in common local folders. You can always choose a different location. Your saved checkout stays selected." Foreground="{DynamicResource Muted}" Margin="0,8,0,14"/>
-                <WrapPanel><Button x:Name="FindRepositoryButton" Content="Find LocalExile" Click="FindRepository_Click"/><Button Content="Browse for a different location…" Click="Browse_Click"/></WrapPanel>
-                <TextBlock x:Name="DiscoveryStatus" Text="Automatic lookup runs on first use. You can also search again here." Margin="0,14,0,0"/>
+                <TextBlock Text="{local:Loc Text_a4fe65264ef7}" FontSize="21" FontWeight="SemiBold"/>
+                <ListBox x:Name="LanguageBox" AutomationProperties.Name="{local:Loc Text_a4fe65264ef7}" SelectionChanged="Language_Changed" SelectedIndex="0" HorizontalAlignment="Left" Margin="0,12,0,8" KeyboardNavigation.TabNavigation="Once">
+                  <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                  <ListBoxItem Content="English" Tag="en" Padding="16,9"/>
+                  <ListBoxItem Content="Русский" Tag="ru" Padding="16,9"/>
+                </ListBox>
+                <TextBlock Text="{local:Loc Text_cb284ed772cb}" Style="{StaticResource Caption}"/>
+              </StackPanel></Border>
+              <Border Style="{StaticResource Card}"><StackPanel>
+                <TextBlock Text="{local:Loc Text_17f32fa1f4b5}" FontSize="21"/>
+                <TextBlock Text="{local:Loc Text_fbcaf64adc92}" Foreground="{DynamicResource Muted}" Margin="0,8,0,14"/>
+                <WrapPanel><Button x:Name="FindRepositoryButton" Content="{local:Loc Text_fa1e08557af3}" Click="FindRepository_Click"/><Button Content="{local:Loc Text_dc0a0a26052e}" Click="Browse_Click"/></WrapPanel>
+                <TextBlock x:Name="DiscoveryStatus" Text="{local:Loc Text_223e64b8fc5b}" Margin="0,14,0,0"/>
                 <local:CommitText x:Name="UpstreamIdentity" Visibility="Collapsed" Margin="0,8,0,0"/>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250" Margin="0,12,0,0">
                   <ItemsControl x:Name="DiscoveredRepositories"><ItemsControl.ItemTemplate><DataTemplate>
@@ -410,41 +419,41 @@
                       <TextBlock Text="{Binding Summary}" Foreground="{DynamicResource Accent}"/>
                       <TextBlock Text="{Binding Root}" Margin="0,6,0,6" TextWrapping="Wrap"/>
                       <local:CommitText Value="{Binding CommitLabel}" Style="{StaticResource Caption}"/>
-                      <Button Content="Use this checkout" Tag="{Binding}" Click="UseDiscoveredRepository_Click" HorizontalAlignment="Left" Margin="0,10,0,0" Padding="12,7"/>
+                      <Button Content="{local:Loc Text_2004618e77b7}" Tag="{Binding}" Click="UseDiscoveredRepository_Click" HorizontalAlignment="Left" Margin="0,10,0,0" Padding="12,7"/>
                     </StackPanel></Border>
                   </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
                 </ScrollViewer>
               </StackPanel></Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="Connect your checkout" FontSize="21" FontWeight="SemiBold"/>
-                  <TextBlock Text="Select the folder containing GameServer.slnx. The launcher keeps its own settings outside the repository." Foreground="{DynamicResource Muted}" Margin="0,8,0,18"/>
-                  <TextBlock Text="LocalExile repository folder" Margin="0,0,0,8"/>
+                  <TextBlock Text="{local:Loc Text_4ac147b602c9}" FontSize="21" FontWeight="SemiBold"/>
+                  <TextBlock Text="{local:Loc Text_fb26532d9c38}" Foreground="{DynamicResource Muted}" Margin="0,8,0,18"/>
+                  <TextBlock Text="{local:Loc Text_74160bd42b82}" Margin="0,0,0,8"/>
                   <DockPanel>
-                    <Button Content="Browse…" DockPanel.Dock="Right" Click="Browse_Click" Margin="10,0,0,0"/>
-                    <TextBox x:Name="RepositoryPathBox" AutomationProperties.Name="LocalExile repository folder" TextChanged="RepositoryPath_Changed"/>
+                    <Button Content="{local:Loc Text_93c6b664dce6}" DockPanel.Dock="Right" Click="Browse_Click" Margin="10,0,0,0"/>
+                    <TextBox x:Name="RepositoryPathBox" AutomationProperties.Name="{local:Loc Text_74160bd42b82}" TextChanged="RepositoryPath_Changed"/>
                   </DockPanel>
-                  <CheckBox x:Name="UseProfileBox" Content="Use this checkout’s local runtime wrapper when present"/>
-                  <TextBlock Text="Preserves the existing saves and runtime settings from config/runtime.local.ps1. Adapter v1 supports literal Game_* assignments and standard local ports. Unsupported profiles fail with an explanation." Style="{StaticResource Caption}" Margin="0,0,0,18"/>
+                  <CheckBox x:Name="UseProfileBox" Content="{local:Loc Text_9b6f051b7ea9}"/>
+                  <TextBlock Text="{local:Loc Text_2a43880cee01}" Style="{StaticResource Caption}" Margin="0,0,0,18"/>
                   <WrapPanel>
-                    <Button Content="Save and check" Style="{StaticResource Primary}" Click="Save_Click"/>
-                    <Button Content="Open launcher data" Click="OpenData_Click"/>
-                    <Button Content="Open setup guide" Click="OpenGuide_Click"/>
+                    <Button Content="{local:Loc Text_0a9315c001d9}" Style="{StaticResource Primary}" Click="Save_Click"/>
+                    <Button Content="{local:Loc Text_62c95537c69d}" Click="OpenData_Click"/>
+                    <Button Content="{local:Loc Text_8d9f188ce712}" Click="OpenGuide_Click"/>
                   </WrapPanel>
                 </StackPanel>
               </Border>
               <Border Style="{StaticResource Card}">
                 <StackPanel>
-                  <TextBlock Text="What this version manages" FontSize="18"/>
-                  <TextBlock Text="Windows · standalone PoE 3.29.3b · .NET 10 · Debug builds · standard localhost ports. Game launch always passes through live.ps1. Services stop through Ctrl+C; the launcher never force-kills a server or game." Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
-                  <TextBlock Text="Keyboard: Ctrl+1–8 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Appearance follows Waypoint’s dark theme and Windows High Contrast." Style="{StaticResource Caption}" Margin="0,16,0,0"/>
+                  <TextBlock Text="{local:Loc Text_cf47dcf7cadf}" FontSize="18"/>
+                  <TextBlock Text="{local:Loc Text_a129818ff2ac}" Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
+                  <TextBlock Text="{local:Loc Text_20759152bb78}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
                 </StackPanel>
               </Border>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
       </local:PageHost>
-      <TextBlock Grid.Row="3" x:Name="LastCheckedLabel" Text="Checks run locally. No account or game data is uploaded." Style="{StaticResource Caption}" Margin="0,16,0,0"/>
+      <TextBlock Grid.Row="3" x:Name="LastCheckedLabel" Text="{local:Loc Text_a03efc4496c5}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
     </Grid>
   </Grid>
 </Window>
