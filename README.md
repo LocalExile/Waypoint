@@ -39,6 +39,6 @@ dotnet publish src/GameServer.Launcher -o .
 ```
 
 A build from source has no version and never offers updates. Everything else, from the tabs to the code layout and
-how a release is made, is in [docs/launcher.md](docs/launcher.md).
+how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
 
 This project is not affiliated with or endorsed by Grinding Gear Games.

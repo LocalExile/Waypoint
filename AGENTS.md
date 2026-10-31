@@ -1,7 +1,8 @@
 # Agent instructions
 
 LocalExile Launcher is a Windows desktop tool for a [LocalExile](https://github.com/LocalExile/LocalExile) server
-checkout. Read [README.md](README.md) and [docs/launcher.md](docs/launcher.md) first.
+checkout. Read [README.md](README.md) and [docs/launcher.md](docs/launcher.md) first; what to build next is in
+[docs/roadmap.md](docs/roadmap.md).
 
 ## Working on both repositories
 
@@ -25,6 +26,7 @@ git history and rules: the server's are in its `AGENTS.md`.
 - **Write all commit messages and pull request titles and descriptions in English.**
 - **Keep `dotnet build LocalExileLauncher.slnx` warning-free and `dotnet test LocalExileLauncher.slnx` passing**, and
   check a change in the running launcher against a real checkout before calling it done.
-- **Keep [docs/launcher.md](docs/launcher.md) current** in the same change: what a button or tab does and how.
+- **Keep [docs/launcher.md](docs/launcher.md) current** in the same change: what a button or tab does and how. A
+  shipped [roadmap](docs/roadmap.md) item leaves the roadmap in that change.
 - **Releases come only from a `v<major>.<minor>.<patch>` tag** (the release workflow builds and publishes them). Never
   attach a locally built exe to a release: the launcher's self-update trusts the published SHA-256 next to it.
