@@ -69,6 +69,23 @@ the angular footprint, luminous ring and center; individual miniature rune marks
 
 ![Live Light/Ocean preview with the recolored sidebar emblem](screenshots/waypoint-light-preview.jpg)
 
+## Clean portable review package
+
+Built from clean source `cfa3c43a1d2c3c10759b5204e43b8f2f56fcf323` and extracted to a new folder outside the development
+checkout. All **415** payload hashes/sizes, archive checksum, version/source identity, x64 header, resources and
+licenses passed package validation. ZIP SHA-256:
+`194cb8f1c21e7fe80a8bbf2d8f8348657aa74f5f2592f3c823036445292cf666`.
+
+The packaged EXE was launched normally, without a repository override. It used the owner's saved checkout. Native
+captures at 1240×900 and **960×730** confirm the header and all navigation destinations remain usable. The final
+automation tree contains the adjacent product name and no separate decorative emblem peer. Windows' native
+associated-icon API extracted the expected blue waypoint from the actual packaged EXE. No cache reset or shortcut
+replacement was performed. The review app was left open; preferences still match the original bytes.
+
+![Packaged 0.6.1 at minimum window size](screenshots/waypoint-final-minimum.jpg)
+
+![Windows icon extracted from the packaged executable](screenshots/waypoint-executable-icon.png)
+
 The resource/layout checks do not establish physical monitor/DPI transitions, a live Windows High Contrast toggle
-or screen-reader listening. Those physical checks were not performed. The final clean portable package and native
-minimum-window confirmation are recorded with the local review artifacts after packaging.
+or screen-reader listening. Those physical checks were not performed. No game/server lifecycle or account mutation
+was exercised for this artwork-only update, and nothing was pushed or released during this work.
