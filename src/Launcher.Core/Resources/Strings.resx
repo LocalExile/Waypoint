@@ -1406,6 +1406,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
     <value>
 Last reported Gateway event. Open Gateway output for details.</value>
   </data>
+  <data name="Text_c721900cbf6c" xml:space="preserve">
+    <value>Keyboard: Ctrl+1–8 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Change appearance and accessibility preferences in Settings.</value>
+  </data>
   <data xml:space="preserve" name="Text_c7353185b802">
     <value>Use an existing prepared checkout, or prepare a separate client copy in the selected checkout. The supported client is standalone PoE 3.29.3b.</value>
   </data>

@@ -456,7 +456,7 @@
                 <StackPanel>
                   <TextBlock Text="{local:Loc Text_cf47dcf7cadf}" FontSize="{DynamicResource Font18}"/>
                   <TextBlock Text="{local:Loc Text_a129818ff2ac}" Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
-                  <TextBlock Text="{local:Loc Text_20759152bb78}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
+                  <TextBlock Text="{local:Loc Text_c721900cbf6c}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
                 </StackPanel>
               </Border>
             </StackPanel>
