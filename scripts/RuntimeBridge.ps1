@@ -261,6 +261,7 @@ function Start-Services($snapshot, [string[]]$selected) {
             Require ($LASTEXITCODE -eq 0) "Build failed for $name. Open this operation's log."
         }
     }
+    if ('Gateway' -in $missing) { Build-GatewayMods -NoDependencies:([bool]$running.Count) }
     $latest = Get-Snapshot
     Require (-not $latest.Conflicts.Count) ($latest.Conflicts -join "`n")
     Require (-not @($latest.Services | Where-Object { $_.Name -in $missing -and ($_.ProcessId -or $_.WatchProcessId) }).Count) 'A selected service started during preparation. Refresh and retry without restarting it.'
@@ -308,6 +309,24 @@ function Start-Services($snapshot, [string[]]$selected) {
         Start-Sleep -Milliseconds 500
     } while ((Get-Date) -lt $deadline)
     throw 'Servers did not become ready within 60 seconds. Review logs/live-*.log and logs/live-*.err. Partial starts remain visible; use Stop servers to clean up.'
+}
+function Build-GatewayMods([switch]$NoDependencies) {
+    # Match upstream's pre-Gateway mod build without invoking live.ps1's broad process cleanup.
+    # Older revisions have no mod source folder. Binary-only mods and mod-state.txt are not modified here.
+    $source = At 'Mods/Source'
+    if (-not (Test-Path -LiteralPath $source -PathType Container)) { return }
+    Assert-Physical $source
+    $projects = @(Get-ChildItem -LiteralPath $source -Filter *.csproj -File -Recurse | Sort-Object FullName)
+    foreach ($project in $projects) {
+        Assert-Physical $project.FullName
+        Set-Stage 'Building mods' $project.BaseName
+        $arguments = @('build', $project.FullName, '--nologo', '-v', 'minimal')
+        # Beside existing services, reuse the already-built API instead of rebuilding shared assemblies.
+        # If an input is missing, the build fails and the user can stop services and build the checkout.
+        if ($NoDependencies) { $arguments += '--no-dependencies' }
+        & dotnet @arguments
+        Require ($LASTEXITCODE -eq 0) "Build failed for mod $($project.BaseName). Gateway was not started; older mod binaries were not accepted as a fallback. Open this operation's log, fix the error, then retry. If dependencies need rebuilding, stop servers and use Build checkout first."
+    }
 }
 function Server-Command([string]$name, [bool]$watched) {
     Require ($name -in @('Patch','Gateway','Auth')) 'Unknown service command.'

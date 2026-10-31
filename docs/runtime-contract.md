@@ -74,6 +74,13 @@ checkouts. It never needs that cleanup to start a missing service. Normal and wa
 and graceful-stop checks. Upstream extraction and the game/client-only launch workflow remain unchanged.
 Starting another service
 beside live services reuses existing binaries only when the selected source commit matches and tracked source is clean.
+Before starting a missing Gateway, the adapter incrementally builds every `Mods/Source/**/*.csproj`, matching
+upstream's mod preparation. Revisions without that folder require no extra step. A failed mod build blocks the
+requested service launch before any missing service is started; existing services remain running. The named
+Building mods stage retains the compiler output. Beside live services, mod builds use `--no-dependencies` to avoid
+overwriting shared server assemblies; missing dependencies require stopping services and building the checkout.
+The adapter does not edit mod manifests, `mod-state.txt`, binary-only mods or enable/disable preferences.
+This startup fix does not reconcile stale mod folders after a source switch or provide live mod management.
 Stop all services and Build checkout after changing source. V1 does not attest all untracked/ignored build inputs.
 The Builds page shows source and disk-binary identities separately; it is not a full immutable running-build manifest.
 Failed/partial startup stays visible for diagnosis; it does not silently tear down processes that did successfully start.

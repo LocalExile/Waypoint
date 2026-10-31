@@ -20,7 +20,8 @@ No installer is required. The portable launcher includes its .NET Desktop runtim
 you press a runtime action. To upgrade, close Waypoint and extract the newer ZIP into a separate folder; your settings
 and backups are retained. This alpha has no automatic update service.
 
-For release changes and current limits, see [0.3.0 release notes](docs/releases/0.3.0.md).
+For the latest changes, see [0.3.1 release notes](docs/releases/0.3.1.md).
+The [first-alpha release notes](docs/releases/0.3.0.md) describe the original features and compatibility limits.
 
 ## Requirements
 
@@ -171,6 +172,7 @@ manual folder selection remains available without Git. No GitHub sign-in is requ
 dotnet build Launcher.slnx
 dotnet run --project tests/Launcher.Checks --no-build
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Bridge.Tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/Mods.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Source.Tests.ps1
 ```
 
@@ -257,6 +259,7 @@ No telemetry, automatic updates or upload feature is included.
 | Port occupied or another client/server detected | If you started them in Waypoint, select that checkout, use **Close game** then **Stop servers**, and return to your intended checkout; services started elsewhere need that tool's normal shutdown. Then **Refresh** |
 | Branch switch refused due to local changes | Choose another clean checkout through **Change location**, or save the edits with your Git client's **Commit** action before retrying; Waypoint will not discard or stash your work |
 | Build or startup failed | Use **Open failed stage log** or **View operation output**, correct the reported problem, then **Retry operation** |
+| Building mods failed | Gateway was not started. Open the failed stage log, correct the named mod's build error, then retry. If dependencies need rebuilding, stop servers and use **Build checkout** first. Existing mod choices are preserved |
 | Hot-reload compile failure | Fix the reported source error and save again; the old code keeps running |
 | Need to undo a save change | Close the game, open **Backups**, select the intended snapshot and choose **Restore selected…**; source selection is separate |
 | Native game-data reload unavailable | Follow the LocalExile native-helper setup, or enter `/game_data reload` in game on a revision that supports it |
