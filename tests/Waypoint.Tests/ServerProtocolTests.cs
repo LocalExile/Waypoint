@@ -44,6 +44,12 @@ public class ServerProtocolTests
         // The launcher's own catalog reads.
         Assert.Equal(0, gateway.Matches("dotnet.exe", "\"dotnet\" src\\GameServer.Gateway\\bin\\Debug\\net10.0\\GameServer.Gateway.dll commands"));
         Assert.Equal(0, gateway.Matches("dotnet.exe", "dotnet \"src\\GameServer.Gateway\\bin\\Debug\\net10.0\\GameServer.Gateway.dll\" values area"));
+        Assert.Equal(0, gateway.Matches("dotnet.exe", "\"dotnet\" src\\GameServer.Gateway\\bin\\Debug\\net10.0\\GameServer.Gateway.dll crafter"));
+        // A release runs its own executable, for those reads as for playing.
+        Assert.Equal(0, gateway.Matches("GameServer.Gateway.exe", "\"D:\\LocalExile\\app\\GameServer.Gateway.exe\" commands"));
+        Assert.Equal(0, gateway.Matches("GameServer.Gateway.exe", "\"D:\\LocalExile\\app\\GameServer.Gateway.exe\" values area"));
+        Assert.NotEqual(0, gateway.Matches("GameServer.Gateway.exe", "\"D:\\LocalExile\\app\\GameServer.Gateway.exe\""));
+        Assert.NotEqual(0, gateway.Matches("GameServer.Gateway.exe", null));
         Assert.Equal(0, Service.Auth.Matches("GameServer.Gateway.exe", null));
         Assert.Equal(1, Service.Client.Matches("Game.patched.exe", null));
         Assert.Equal(1, Service.Recorder.Matches("python.exe", "python scripts\\walkmaps\\walkmaps.py"));

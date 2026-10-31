@@ -42,14 +42,15 @@ sealed partial record Service(string Name, ServiceKind Kind, int[] Ports, string
         ServiceKind.Client => processName.Equals(Match, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
         ServiceKind.Recorder => processName.StartsWith("python", StringComparison.OrdinalIgnoreCase)
             && commandLine?.Contains(Match, StringComparison.OrdinalIgnoreCase) == true ? 1 : 0,
-        _ when processName.Equals(Executable, StringComparison.OrdinalIgnoreCase) => 2,
-        // The launcher's own short runs of the Gateway's tool modes (`commands`, `values <kind>`) are no server.
+        // The launcher's own short runs of the Gateway's tool modes (`commands`, `values <kind>`, `crafter`) are no server,
+        // through dotnet or, on a release, its own executable.
         _ when commandLine is not null && ToolMode().IsMatch(commandLine) => 0,
+        _ when processName.Equals(Executable, StringComparison.OrdinalIgnoreCase) => 2,
         _ => processName.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase)
             && commandLine?.Contains(Match, StringComparison.OrdinalIgnoreCase) == true ? 1 : 0,
     };
 
-    [System.Text.RegularExpressions.GeneratedRegex(@"GameServer\.\w+\.dll""?\s+(commands|values)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase)]
+    [System.Text.RegularExpressions.GeneratedRegex(@"GameServer\.\w+\.(dll|exe)""?\s+(commands|values|crafter)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase)]
     private static partial System.Text.RegularExpressions.Regex ToolMode();
 }
 
