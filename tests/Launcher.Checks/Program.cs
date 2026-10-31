@@ -65,6 +65,7 @@ File.WriteAllText(Path.Combine(fixture, ".waypoint-test-fixture"), "disposable c
 try
 {
     if (OperatingSystem.IsWindows()) await InstanceChecks.RunAsync(Check);
+    await ServiceExitChecks.RunAsync(Check);
     ModChecks.Run(fixture, Check);
     LocalizationChecks.Run(Check);
     string settingsPath = Path.Combine(fixture, "settings.json");
@@ -73,7 +74,7 @@ try
     File.WriteAllText(settingsPath, "{\"RepositoryPath\":\"older-settings\",\"UseLocalProfile\":false}");
     Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "older settings inherit backup and watch defaults");
     Check(SettingsStore.Load(settingsPath).Language == "en", "older settings default to English without changing the selected checkout");
-    Check(SettingsStore.Load(settingsPath) is { CloseToTray: false, CloseBehaviorConfirmed: false }, "older settings leave tray mode off and offer a first-close choice");
+    Check(SettingsStore.Load(settingsPath) is { CloseToTray: false, CloseBehaviorConfirmed: false, StopServicesOnExit: false }, "older settings leave tray mode and service stopping off and offer a first-close choice");
     var closeSettings = new LauncherSettings();
     Check(WindowClosePolicy.Decide(closeSettings, false, false, false) == WindowCloseAction.Ask, "first close asks without enabling tray mode");
     Check(WindowClosePolicy.Decide(closeSettings, true, false, false) == WindowCloseAction.Ask, "first close can offer to keep an operation running in the tray");
@@ -86,6 +87,8 @@ try
     Check(WindowClosePolicy.Decide(closeSettings, true, false, true) == WindowCloseAction.Exit, "Windows session ending never opens a close prompt or hides instead");
     SettingsStore.Save(traySettings with { RepositoryPath = "preserved-checkout", Language = "ru" }, settingsPath);
     Check(SettingsStore.Load(settingsPath) is { CloseToTray: true, CloseBehaviorConfirmed: true, RepositoryPath: "preserved-checkout", Language: "ru" }, "tray preferences round-trip alongside workspace and language");
+    SettingsStore.Save(traySettings with { StopServicesOnExit = true }, settingsPath);
+    Check(SettingsStore.Load(settingsPath) is { CloseToTray: true, StopServicesOnExit: true }, "tray hiding and full-exit service stopping persist as independent preferences");
     var branches = SourceCatalog.ParseBranches("refs/heads/main\t" + new string('a',40) + "\nrefs/remotes/origin/HEAD\t" + new string('a',40) + "\nrefs/remotes/origin/test\t" + new string('b',40) + "\nrefs/tags/v1\t" + new string('a',40));
     Check(branches.Length == 2 && branches[0].Kind == "Branch" && branches[1].Kind == "Remote", "branch picker retains full unambiguous refs and excludes symbolic remote HEAD/tags");
     Check(SourceCatalog.ParsePullRequests("[{\"number\":12,\"title\":\"Fix portals\",\"head\":{\"sha\":\"" + new string('a',40) + "\",\"label\":\"author:feature\"}}]")[0].Value == "12", "PR picker keeps upstream number, title, author and full head identity");
