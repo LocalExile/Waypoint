@@ -1,0 +1,14 @@
+{
+  "SourceHead": "9bc82f97758133b4d1f7b5faa4072e4f7b36b4aa",
+  "ModifiedWorkingTree": true,
+  "DisplayVersion": "0.4.0",
+  "DllInformationalVersion": "1.0.0+9bc82f97758133b4d1f7b5faa4072e4f7b36b4aa",
+  "DllSha256": "02a3f7c16dad32d1d85f4b1c8dc799da3d0572c6cc218dd15e95f90daf8320ff",
+  "AutomatedAssertions": 254,
+  "DesktopChecks": 158,
+  "CoreChecks": 78,
+  "BridgeChecks": 18,
+  "BuildWarnings": 0,
+  "BuildErrors": 0,
+  "Published": false
+}

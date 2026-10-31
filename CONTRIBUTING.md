@@ -23,4 +23,11 @@ For local UI validation, start the app with `--repo <checkout>`, inspect every c
 window size, and exercise both blocked and ready states. Source control cleanliness does not prove the running DLLs
 match source; record built informational versions too.
 
+UI conventions, reviewed design resources and screenshots are in [the local UI review](docs/ui-review/README.md).
+The project-scoped UI UX Pro Max skill is pinned with its MIT license and file hashes; see
+[design resources](docs/ui-review/design-resources.md) before updating it. Apply its WPF guidance and the existing
+product identity; web/mobile examples do not override native WPF behavior. Run
+`dotnet run --project tests/Launcher.Desktop.Checks` for in-process XAML, navigation, resource and layout checks.
+These checks do not replace a running-app keyboard/screen-reader review or physical DPI/High Contrast testing.
+
 No publishing is authorized for the initial local work. Waypoint is MIT licensed; hosting and release/installer policy remain owner decisions.
