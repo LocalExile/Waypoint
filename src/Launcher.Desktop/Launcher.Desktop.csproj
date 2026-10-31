@@ -13,6 +13,7 @@
     <ProjectReference Include="../Launcher.Core/Launcher.Core.csproj" />
     <Content Include="../../branding/brand.json" Link="brand.json" CopyToOutputDirectory="PreserveNewest" />
     <Resource Include="../../branding/app.ico" Link="app.ico" />
+    <Resource Include="../../branding/waypoint-192.png" Link="waypoint-192.png" />
     <Resource Include="Fonts/*.otf" />
     <Content Include="Fonts/OFL.txt" Link="licenses/OpenDyslexic-OFL.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

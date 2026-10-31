@@ -272,8 +272,10 @@ Repository discovery behavior and its validation are in [repository discovery](d
 
 Edit `branding/brand.json` to change the display name and subtitle, then rebuild.
 Its `executableName` controls the portable release EXE/folder name; the release README is generated from these values.
-Replace `branding/app.ico` for a new window/taskbar/executable icon.
-`scripts/New-Icon.ps1` regenerates the current geometric icon.
+Replace `branding/waypoint-master.png` for new icon artwork, then run `scripts/New-Icon.ps1` to regenerate
+the Windows icon sizes and themeable WPF source. The sidebar recolors this artwork using the selected accent,
+logo background and secondary-text colors, with a crisp Windows High Contrast treatment.
+The window/taskbar/executable icon uses the same artwork with its fixed blue glyph illumination.
 
 The window name, sidebar name and version label read `brand.json`.
 The internal `Launcher.*` project/assembly names can stay unchanged.

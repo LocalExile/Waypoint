@@ -31,11 +31,19 @@ public static class ThemeResources
         bool compact = settings.TextScale >= 125 || settings.Font == "OpenDyslexic";
         Set("SidebarDetailsExpanded", !compact);
         Set("BrandSubtitleVisibility", compact ? Visibility.Collapsed : Visibility.Visible);
-        if (!highContrast) return;
-        foreach (string key in new[] { "Background", "Sidebar", "Surface", "InputSurface", "StatusSurface", "AccentSurface" }) Set(key, SystemColors.WindowBrush);
-        foreach (string key in new[] { "Text", "Muted", "Outline", "Error", "Warning", "Success", "BadgeText", "CaptionIcon" }) Set(key, SystemColors.WindowTextBrush);
-        foreach (string key in new[] { "ControlSurface", "BadgeSurface" }) Set(key, SystemColors.ControlBrush);
-        foreach (string key in new[] { "Accent", "PrimaryFill", "SelectedSurface", "HoverSurface", "Focus", "ScrollThumb", "CloseHover" }) Set(key, SystemColors.HighlightBrush);
-        foreach (string key in new[] { "AccentText", "SelectedText", "CheckMark", "CloseText" }) Set(key, SystemColors.HighlightTextBrush);
+        if (highContrast)
+        {
+            foreach (string key in new[] { "Background", "Sidebar", "Surface", "InputSurface", "StatusSurface", "AccentSurface" }) Set(key, SystemColors.WindowBrush);
+            foreach (string key in new[] { "Text", "Muted", "Outline", "Error", "Warning", "Success", "BadgeText", "CaptionIcon" }) Set(key, SystemColors.WindowTextBrush);
+            foreach (string key in new[] { "ControlSurface", "BadgeSurface" }) Set(key, SystemColors.ControlBrush);
+            foreach (string key in new[] { "Accent", "PrimaryFill", "SelectedSurface", "HoverSurface", "Focus", "ScrollThumb", "CloseHover" }) Set(key, SystemColors.HighlightBrush);
+            foreach (string key in new[] { "AccentText", "SelectedText", "CheckMark", "CloseText" }) Set(key, SystemColors.HighlightTextBrush);
+        }
+        Color Color(string key) => ((SolidColorBrush)resources[key]).Color;
+        var surface = Color("AccentSurface"); var detail = Color("Muted");
+        var ink = highContrast ? SystemColors.WindowTextColor : Color("Accent");
+        if (!highContrast && settings.ProtectContrast)
+            ink = ThemePalette.Ensure(ink, [surface, ThemePalette.Mix(surface, detail, .48), Color("Sidebar")], settings.IncreaseContrast ? 4.5 : 3);
+        Set("BrandArtwork", WaypointArtwork.Create(surface, detail, ink, highContrast, settings.IncreaseContrast));
     }
 }

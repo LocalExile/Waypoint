@@ -174,6 +174,7 @@ static class Program
         ((FrameworkElement)window.Content).LayoutTransform = Transform.Identity;
         new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle();
         AppearanceChecks.Run(app,window,Check);
+        BrandArtworkChecks.Run(app,window,Check);
         DialogFrameChecks.Run(app,window,Check);
         AccountPageChecks.Run(app,window,Check);
         var dialog = new ConfirmationDialog(window, L.Text("Delete only the backup from {0:g}?\n\nCurrent saves are unchanged. This backup will no longer be available to restore.", DateTime.Now), L.Text("Delete selected backup"));
