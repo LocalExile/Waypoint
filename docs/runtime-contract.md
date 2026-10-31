@@ -6,7 +6,9 @@
 one read-only SQLite snapshot; it exposes names, IDs, character summaries and opaque revision tokens, never credential
 verifiers. A snapshot's `AccountWriteBlockedReason` explains runtime blockers, including the account service.
 
-`ManageAccount` accepts a reviewed `AccountDataRequest` on UTF-8 stdin. It shares the global runtime writer mutex,
+`ManageAccount` accepts a reviewed `AccountDataRequest` on UTF-8 stdin. Its required `ExpectedDatabase` must match
+the selected profile's resolved database before backup or mutation; desktop registration requests carry the same
+binding. A profile/location change while a dialog is open requires another review. It shares the global runtime writer mutex,
 requires stopped/known runtime inventory, makes the configured automatic save backup and checks inventory again.
 `AccountBridge.ps1` invokes `AccountData.py` through a UTF-8 stdin pipe, without transcribing passwords. The helper
 checks known tables/fields/import state, starts an immediate transaction, rechecks the selected account revision,

@@ -625,6 +625,7 @@ function Register-Account($snapshot) {
     try { $request = [Console]::In.ReadLine() | ConvertFrom-Json } catch { throw 'Could not read local account request.' }
     Require ($request.Name -is [string] -and $request.Name -match '^[A-Za-z0-9_-]{3,32}$') 'Account name must be 3-32 letters, digits, underscores or hyphens.'
     Require ($request.Password -is [string] -and $request.Password.Length -ge 4 -and $request.Password.Length -le 1024) 'Password must contain 4-1024 characters.'
+    Assert-AccountDatabase $request $false
     Backup-Saves $snapshot
     Set-Stage 'Building account service' 'Preparing the local account service for this checkout.'
     & dotnet build (At 'src/GameServer.Host') --nologo -v minimal | Out-Null

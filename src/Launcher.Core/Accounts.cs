@@ -18,7 +18,8 @@ public sealed record PlayerAccount(string Id, string Name, string CreatedUtc, st
 }
 public sealed record AccountInventory(bool Exists, bool Writable, string Notice, PlayerAccount[] Accounts, bool CanRegister = false);
 public sealed record AccountDataRequest(string Action, string AccountId, string ExpectedRevision, string Name = "",
-    string Password = "", bool IncludeCharacters = true, bool IncludeStash = true, Dictionary<string, string>? CharacterNames = null);
+    string Password = "", bool IncludeCharacters = true, bool IncludeStash = true, Dictionary<string, string>? CharacterNames = null,
+    string ExpectedDatabase = "");
 
 public static class AccountTools
 {

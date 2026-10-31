@@ -4,7 +4,7 @@ $bridge = Join-Path $PSScriptRoot '../scripts/RuntimeBridge.ps1'
 $tokens = $null; $errors = $null
 $ast = [Management.Automation.Language.Parser]::ParseFile($bridge, [ref]$tokens, [ref]$errors)
 if ($errors.Count) { throw ($errors | Out-String) }
-foreach ($name in @('Require','Assert-SetupStopped')) {
+foreach ($name in @('Require','Assert-SetupStopped','Same-Path')) {
     $node = $ast.Find({ param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq $name }, $true)
     . ([scriptblock]::Create($node.Extent.Text))
 }
@@ -17,6 +17,10 @@ function Clean {
     $script:snapshot = [pscustomobject]@{ Conflicts=@(); Services=@() }
 }
 Clean
+$script:savePath = 'C:\Account fixture\saves.db'
+Check (-not (Rejected { Assert-AccountDatabase @{ ExpectedDatabase='c:\account fixture\saves.db' } $true })) 'reviewed database identity uses Windows path comparison'
+Check (Rejected { Assert-AccountDatabase @{ ExpectedDatabase='C:\Other\saves.db' } $true }) 'a changed database selection requires another review'
+Check (Rejected { Assert-AccountDatabase @{} $true }) 'a management request must identify the reviewed save database'
 Check (-not (Rejected { Assert-AccountsStopped $script:snapshot })) 'offline account changes pass only when runtime inventory is clear'
 foreach ($service in @('Game','Auth','Gateway','Patch')) {
     Clean

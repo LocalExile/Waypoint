@@ -27,10 +27,17 @@ function Invoke-AccountData($request) {
     } finally { $env:PYTHONIOENCODING = $oldEncoding }
 }
 
+function Assert-AccountDatabase($request, [bool]$required) {
+    Require ((-not $required -and -not $request.ExpectedDatabase) -or
+        ($request.ExpectedDatabase -is [string] -and $request.ExpectedDatabase.Length -gt 0 -and
+            (Same-Path $request.ExpectedDatabase $script:savePath))) 'The selected save database changed. Reload accounts and review the action again.'
+}
+
 function Manage-Account($snapshot) {
     Assert-AccountsStopped $snapshot
     [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
     try { $request = [Console]::In.ReadLine() | ConvertFrom-Json } catch { throw 'Could not read the local account change request.' }
+    Assert-AccountDatabase $request $true
     Apply-AccountChange $snapshot $request
 }
 

@@ -133,4 +133,4 @@ public sealed class RuntimeClient
     }
 }
 
-public sealed record AccountRequest(string Name, string Password);
+public sealed record AccountRequest(string Name, string Password, string ExpectedDatabase = "");
