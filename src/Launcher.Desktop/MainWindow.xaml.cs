@@ -60,6 +60,7 @@ public partial class MainWindow : Window
         RepositoryPathBox.Text = settings.RepositoryPath;
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         LoadDevelopmentPreferences();
+        InitializeInteraction();
         Pages.SelectionChanged += async (sender, e) =>
         {
             if (e.Source != Pages || !IsLoaded) return;
@@ -103,6 +104,7 @@ public partial class MainWindow : Window
             if (!result.Ok || result.Snapshot is null) throw new IOException(result.Message);
             snapshot = result.Snapshot;
             Render(snapshot);
+            SetFeedback(lastError is not null);
             if (lastError is null) StatusLabel.Text = result.Snapshot.Conflicts.Length > 0
                 ? result.Snapshot.Conflicts[0] : "Environment checked · " + result.Snapshot.Profile;
         }
@@ -113,13 +115,19 @@ public partial class MainWindow : Window
             UpdateBackupSelection();
             HotReloadStateLabel.Text = "Unavailable";
             HotReloadDetail.Text = "Refresh after resolving the installation check failure.";
-            ServiceList.ItemsSource = null;
-            PerformanceList.ItemsSource = null;
-            RequirementList.ItemsSource = null;
-            SetupRequirementList.ItemsSource = null;
+            serviceRows.Clear();
+            requirementRows.Clear();
+            modEntries = [];
+            ApplyModFilter();
+            CheckModsButton.IsEnabled = BuildAllModsButton.IsEnabled = OpenModsButton.IsEnabled = false;
+            ModsStatus.Text = "Workspace inspection failed. Resolve the problem in Settings, then refresh.";
+            RefreshBackups();
             PlayButton.IsEnabled = false;
+            StartServersButton.IsEnabled = StopServersButton.IsEnabled = CloseGameButton.IsEnabled = false;
+            ReadinessTitle.Text = "Workspace needs attention";
             StatusLabel.Text = "Check failed: " + ex.Message;
             ReadinessLabel.Text = "Resolve the check failure in Settings, then refresh.";
+            SetFeedback(true);
         }
         finally { gate.Release(); }
     }
@@ -168,11 +176,17 @@ public partial class MainWindow : Window
             : state.GameRunning ? "Game running. Close it before stopping or restarting services."
             : state.ServersReady ? "Servers are ready. Play opens the prepared client."
             : "Play prepares and starts the servers, then opens the game.";
-        PlayButton.IsEnabled = !busy && state.SafeToLaunch;
+        ReadinessTitle.Text = state.Conflicts.Length > 0 ? "Resolve the workspace conflict" : !state.SetupReady ? "Finish setup to play"
+            : state.GameRunning ? "Game is running" : state.ServersReady ? "Servers ready" : "Ready to play";
+        SetupSummary.Header = state.SetupReady ? "Setup checks · all passed" : $"Setup checks · {state.Requirements.Count(r => !r.Ready)} need attention";
+        StartServersButton.IsEnabled = !busy && state.SafeToLaunch && !state.ServersReady;
+        StopServersButton.IsEnabled = !busy && state.HasServers && !state.GameRunning;
+        StopServersButton.ToolTip = state.GameRunning ? "Close the game before stopping servers." : "Gracefully stop servers for this checkout.";
+        CloseGameButton.IsEnabled = !busy && state.GameRunning;
+        PlayButton.IsEnabled = !busy && state.SafeToLaunch && !state.GameRunning;
         PlayButton.Content = state.GameRunning ? "✓  Game running" : "▶  Play";
         var steps = state.Requirements.Select(r => SetupGuidance.Describe(r, state.Root)).ToArray();
-        RequirementList.ItemsSource = steps;
-        SetupRequirementList.ItemsSource = steps;
+        UiCollection.Reconcile(requirementRows, steps, step => step.Name);
         var rows = new List<ServiceRow>();
         DateTime now = DateTime.UtcNow;
         foreach (var service in state.Services)
@@ -194,8 +208,8 @@ public partial class MainWindow : Window
                 service.ProcessId > 0 ? "#A4E7C4" : "#9DABBE", cpu,
                 service.ProcessId > 0 ? $"{service.MemoryMb:N0} MB" : "—", service.ProcessId > 0 ? service.Uptime : service.IsRunning ? "Waiting for process" : "Stopped"));
         }
-        ServiceList.ItemsSource = rows;
-        PerformanceList.ItemsSource = rows;
+        UiCollection.Reconcile(serviceRows, rows.Select(row => new ServicePresentation(row)), row => row.Value.Name,
+            update: (existing, incoming) => existing.Update(incoming.Value));
         LastCheckedLabel.Text = $"Checked {DateTime.Now:T} · process ownership and required listening ports verified locally";
         RefreshLog();
     }
@@ -217,6 +231,7 @@ public partial class MainWindow : Window
         operationClock.Restart();
         operationTimer.Start();
         BusyProgress.Visibility = Visibility.Visible;
+        SetFeedback();
         UpdateOperationLabel();
         if (snapshot is not null) Render(snapshot);
         try
@@ -241,12 +256,14 @@ public partial class MainWindow : Window
             snapshot = result.Snapshot;
             if (action == "Switch") FreshSavesBox.IsChecked = false;
             StatusLabel.Text = result.Message;
+            AnnounceStatus();
             AppendLog(result.Message);
         }
         catch (Exception ex)
         {
             lastError = ex.Message;
             StatusLabel.Text = currentStage + " failed: " + ex.Message;
+            SetFeedback(true);
             AppendLog("ERROR in " + currentStage + ": " + ex.Message);
             FailureActions.Visibility = Visibility.Visible;
             logSource = "Operations";
@@ -275,6 +292,8 @@ public partial class MainWindow : Window
     }
     void RefreshLog()
     {
+        SelectedLogLabel.Text = logSource == "Operations" ? "Operation output" : logSource + " output";
+        foreach (var choice in LogSources.Children.OfType<RadioButton>()) choice.IsChecked = (string)choice.Tag == logSource;
         if (logSource == "Operations") selectedLogText = operationText;
         else if (logSource == "Game") selectedLogText = LogReader.Tail(LogReader.GameLog(settings.RepositoryPath));
         else
@@ -288,13 +307,24 @@ public partial class MainWindow : Window
     {
         if (LogText is null || LogSearchBox is null || WarningsOnlyBox is null) return;
         string filtered = LogReader.Filter(selectedLogText, LogSearchBox.Text, WarningsOnlyBox.IsChecked == true);
-        if (LogText.Text != filtered) LogText.Text = filtered;
+        if (LogText.Text == filtered) return;
+        bool following = LogText.SelectionLength == 0 && LogText.VerticalOffset >= LogText.ExtentHeight - LogText.ViewportHeight - 2;
+        int start = LogText.SelectionStart, length = LogText.SelectionLength;
+        double offset = LogText.VerticalOffset;
+        LogText.Text = filtered;
+        LogText.Select(Math.Min(start, filtered.Length), Math.Min(length, Math.Max(0, filtered.Length - start)));
+        if (following) Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+        {
+            if (LogText.Text == filtered && LogText.SelectionLength == 0) LogText.ScrollToEnd();
+        }));
+        else LogText.ScrollToVerticalOffset(offset);
     }
 
     void UpdateOperationLabel()
     {
         if (!busy) return;
         StatusLabel.Text = currentStage + "…";
+        AnnounceStatus();
         OperationDetail.Visibility = Visibility.Visible;
         OperationDetail.Text = $"{stageDetail} · elapsed {ElapsedText}";
     }
@@ -460,7 +490,11 @@ public partial class MainWindow : Window
             SourcesList.ItemsSource = null;
             BackupsList.ItemsSource = null;
             SourcesStatus.Text = "Load the list for the selected checkout.";
-            ServiceList.ItemsSource = PerformanceList.ItemsSource = RequirementList.ItemsSource = SetupRequirementList.ItemsSource = null;
+            serviceRows.Clear();
+            requirementRows.Clear();
+            modEntries = [];
+            ApplyModFilter();
+            CheckModsButton.IsEnabled = BuildAllModsButton.IsEnabled = OpenModsButton.IsEnabled = false;
             PlayButton.IsEnabled = false;
             SidebarBranch.Text = "Checking checkout…";
             SourceIdentity.Value = BuildIdentity.Value = EnvironmentIdentity.Text = "";
@@ -480,7 +514,7 @@ public partial class MainWindow : Window
     {
         await SelectRepositoryAsync(RepositoryPathBox.Text);
     }
-    void LogSource_Click(object sender, RoutedEventArgs e) { logSource = (string)((Button)sender).Tag; RefreshLog(); }
+    void LogSource_Click(object sender, RoutedEventArgs e) { logSource = (string)((RadioButton)sender).Tag; RefreshLog(); }
     void OpenLogs_Click(object sender, RoutedEventArgs e) => OpenFolder(Path.Combine(settings.RepositoryPath, "logs"));
     void OpenCheckout_Click(object sender, RoutedEventArgs e) => OpenFolder(settings.RepositoryPath);
     void OpenData_Click(object sender, RoutedEventArgs e) => OpenFolder(SettingsStore.DataDirectory);

@@ -81,7 +81,9 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 
 ## Features
 
-- Dark WPF desktop interface, keyboard focus indication, scalable text, and an original geometric application icon.
+- Dark WPF desktop interface with sidebar navigation, keyboard focus indication, scalable text, Windows High Contrast resources, and an original geometric application icon.
+- Mods and Backups keep their list beside details, with actions above long history. Ctrl+1–8 chooses a page,
+  Ctrl+Tab / Ctrl+Shift+Tab cycles pages, Ctrl+F focuses the page's search, and F5 refreshes local status.
 - Checkout selection and persistent settings; local runtime profile support without executing profile code on inspection.
 - Play, start/stop servers, individual service controls, service restart, and graceful game close.
 - Process ownership checks and readiness based on the verified process owning every required listener.
@@ -126,8 +128,8 @@ Starting Gateway also backs up an existing save database before startup can migr
 
 **Backups** lists date, size, source branch, source commit at backup and the last Gateway build this launcher recorded
 launching with that database. Hashes use seven-character code badges with full hashes on hover. Older/outside launches
-show **unknown**; hot edits do not become fictional Git commits. Select a backup and choose **Restore selected…** or
-**Delete selected…**. Restore requires the game closed, stops owned services, validates the snapshot and automatically
+show **unknown**; hot edits do not become fictional Git commits. Select a backup and choose **Restore saves…** or
+**Delete backup…**. Restore requires the game closed, stops owned services, validates the snapshot and automatically
 backs up current saves when enabled. It changes only the selected save database; choose the matching source yourself
 when restoring an older save. Backups stay in `%LOCALAPPDATA%\EmulatorWorkspaceLauncher\backups` until deleted.
 Fresh/restore operations also move the replaced SQLite file set into that operation's `previous-saves` recovery folder,
@@ -210,6 +212,7 @@ manual folder selection remains available without Git. No GitHub sign-in is requ
 
 ```powershell
 dotnet build Launcher.slnx
+dotnet run --project tests/Launcher.Desktop.Checks --no-build
 dotnet run --project tests/Launcher.Checks --no-build
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Bridge.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Mods.Tests.ps1

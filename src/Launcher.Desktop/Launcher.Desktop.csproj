@@ -7,6 +7,7 @@
     <AssemblyName Condition="'$(LauncherExecutableName)' != ''">$(LauncherExecutableName)</AssemblyName>
     <Product Condition="'$(LauncherExecutableName)' != ''">$(LauncherExecutableName)</Product>
     <ApplicationIcon>../../branding/app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Launcher.Core/Launcher.Core.csproj" />

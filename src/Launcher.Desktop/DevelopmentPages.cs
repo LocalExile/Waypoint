@@ -84,8 +84,10 @@ public partial class MainWindow
         if (SourcesList is null || SourceSearch is null) return;
         string filter = SourceSearch.Text.Trim();
         var selected = SourcesList.SelectedItem as SourceChoice;
-        SourcesList.ItemsSource = sourceChoices.Where(s => s.SearchText.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToArray();
-        if (selected is not null) SourcesList.SelectedItem = sourceChoices.FirstOrDefault(s => s.Kind == selected.Kind && s.Value == selected.Value);
+        var matches = sourceChoices.Where(s => s.SearchText.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToArray();
+        SourcesList.ItemsSource = matches;
+        if (selected is not null) SourcesList.SelectedItem = matches.FirstOrDefault(s => s.Kind == selected.Kind && s.Value == selected.Value);
+        SourcesEmpty.Visibility = matches.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
     void SourceSearch_Changed(object sender, TextChangedEventArgs e) => ApplySourceFilter();
     void SourceSelection_Changed(object sender, SelectionChangedEventArgs e) => UpdateSourceSelection();
@@ -105,7 +107,8 @@ public partial class MainWindow
     async void SwitchPrNumber_Click(object sender, RoutedEventArgs e)
     {
         if (!int.TryParse(PrNumberBox.Text.Trim().TrimStart('#'), out int number) || number <= 0 || number > 999999999)
-        { SourcesStatus.Text = "Enter a positive upstream PR number."; return; }
+        { PrValidation.Text = "Enter a PR number from 1 to 999999999, for example 401."; PrValidation.Visibility = Visibility.Visible; PrNumberBox.Focus(); return; }
+        PrValidation.Visibility = Visibility.Collapsed;
         // Selecting a number previews it first; switching uses the same reviewed options as any other entry.
         var item = sourceChoices.FirstOrDefault(s => s.Kind == "PR" && s.Value == number.ToString())
             ?? new SourceChoice("PR", number.ToString(), $"PR #{number} (fetched when activated)", "", "Upstream LocalExile PR head; may be closed or unmerged");
@@ -118,7 +121,7 @@ public partial class MainWindow
     void RefreshBackups_Click(object sender, RoutedEventArgs e) => RefreshBackups();
     void RefreshBackups()
     {
-        if (snapshot is null) { BackupsStatus.Text = "Select and check an installation to view its backups."; return; }
+        if (snapshot is null) { BackupsStatus.Text = "Select and check an installation to view its backups."; BackupsList.ItemsSource = null; BackupsEmpty.Visibility = Visibility.Visible; BackupsEmpty.Text = "Choose and check a workspace to see its backups."; UpdateBackupSelection(); return; }
         try
         {
             var selected = BackupsList.SelectedItem as SaveBackup;
@@ -126,8 +129,10 @@ public partial class MainWindow
             BackupsList.ItemsSource = backups;
             if (selected is not null) BackupsList.SelectedItem = backups.FirstOrDefault(b => b.Id == selected.Id);
             BackupsStatus.Text = $"{backups.Length} backups for {snapshot.SaveDatabase}";
+            BackupsEmpty.Visibility = backups.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+            BackupsEmpty.Text = "No backups yet. Use Back up now to save a copy of your current progress.";
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException) { BackupsStatus.Text = "Could not read backups: " + ex.Message; }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException) { BackupsList.ItemsSource = null; BackupsStatus.Text = "Could not read backups: " + ex.Message; BackupsEmpty.Visibility = Visibility.Visible; BackupsEmpty.Text = "Backup history could not be read. Check the folder and try Refresh backups."; }
         UpdateBackupSelection();
     }
     void BackupSelection_Changed(object sender, SelectionChangedEventArgs e) => UpdateBackupSelection();
@@ -140,6 +145,9 @@ public partial class MainWindow
         DeleteBackupButton.IsEnabled = !busy && selected is not null;
         RestoreModChoicesButton.IsEnabled = !busy && selected?.HasModChoices == true && snapshot?.ModEnvironment is { Supported: true }
             && snapshot.Services.All(s => s.Name != "Gateway" || !s.IsRunning);
+        BackupActionHint.Text = selected is null ? "Choose a backup to inspect its source and mod history."
+            : snapshot?.GameRunning == true ? "Close the game before restoring saves. Stop Gateway before restoring mod choices."
+            : "Restore saves replaces progress after confirmation. Mod choices restore separately and require Gateway stopped.";
     }
     async void BackupNow_Click(object sender, RoutedEventArgs e) => await OperateAsync("Backup");
     void OpenBackupFolder_Click(object sender, RoutedEventArgs e)

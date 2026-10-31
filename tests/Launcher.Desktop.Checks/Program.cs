@@ -1,0 +1,130 @@
+using System.Collections.ObjectModel;
+using System.Reflection;
+using System.IO;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Launcher.Core;
+using Launcher.Desktop;
+
+static class Program
+{
+    static int passed;
+    static void Check(bool condition, string message)
+    {
+        if (!condition) throw new InvalidOperationException(message);
+        passed++;
+    }
+    static T Element<T>(MainWindow window, string name) where T : FrameworkElement => (T)window.FindName(name);
+    static void Render(MainWindow window, RuntimeSnapshot state)
+    {
+        typeof(MainWindow).GetField("snapshot", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(window, state);
+        typeof(MainWindow).GetMethod("Render", BindingFlags.Instance | BindingFlags.NonPublic, null, [typeof(RuntimeSnapshot)], null)!.Invoke(window, [state]);
+    }
+    static void Layout(MainWindow window, double width, double height)
+    {
+        // Exercise the real XAML without showing a window or starting timers, lookup, Git or runtime actions.
+        var root = (FrameworkElement)window.Content;
+        root.Measure(new Size(width, height));
+        root.Arrange(new Rect(0, 0, width, height));
+        root.UpdateLayout();
+    }
+    static double Luminance(Color c)
+    {
+        static double Linear(byte b) { double v = b / 255d; return v <= .04045 ? v / 12.92 : Math.Pow((v + .055) / 1.055, 2.4); }
+        return .2126 * Linear(c.R) + .7152 * Linear(c.G) + .0722 * Linear(c.B);
+    }
+    static double Contrast(Brush text, Brush background)
+    {
+        double a = Luminance(((SolidColorBrush)text).Color), b = Luminance(((SolidColorBrush)background).Color);
+        return (Math.Max(a, b) + .05) / (Math.Min(a, b) + .05);
+    }
+
+    [STAThread]
+    static void Main()
+    {
+        var app = new App();
+        app.InitializeComponent();
+        var window = new MainWindow();
+        var pages = Element<PageHost>(window, "Pages");
+        var nav = Element<ListBox>(window, "Navigation");
+        Check(pages.SelectedIndex == 0 && nav.SelectedIndex == 0, "Startup must select Play, not an empty page.");
+        Check(nav.Items.Count == 8 && pages.Items.Count == 8, "Every page must be reachable from navigation.");
+        Check(UIElementAutomationPeer.CreatePeerForElement(pages)!.GetAutomationControlType() == AutomationControlType.Pane, "Content-only page host must expose a pane, not hidden tab headers.");
+        for (int i = 0; i < 8; i++)
+        {
+            nav.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, i);
+            window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.DataBind);
+            Check(pages.SelectedIndex == i, "Navigation must select the matching page.");
+            pages.SelectedIndex = (i + 1) % 8;
+            window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.DataBind);
+            Check(nav.SelectedIndex == pages.SelectedIndex, "Programmatic navigation must update the sidebar.");
+        }
+        Check(window.InputBindings.Count == 12, "Page, search, refresh and cycle shortcuts must be registered.");
+        Check(Element<CheckBox>(window, "ModsAutoBackupBox").IsChecked == SettingsStore.Load().AutomaticBackups, "Backup preference must remain the stored choice.");
+        var empty = new RuntimeSnapshot(Path.Combine(Path.GetTempPath(), "Waypoint-UI-Checks-no-install"), "UI fixture", "", "", "main", "",
+            [new("Prepared client", false, "Missing")], [new("Gateway", "Stopped", 0, "", "Stopped", [6112], 0, 0, "")], []);
+        Render(window, empty);
+        Check(Element<TextBlock>(window, "ReadinessTitle").Text == "Finish setup to play", "Readiness must describe the actual state.");
+        Check(!Element<Button>(window, "PlayButton").IsEnabled && !Element<Button>(window, "StopServersButton").IsEnabled, "Unavailable runtime actions must be disabled.");
+        Check(!Element<Button>(window, "ReloadModButton").IsEnabled, "Unsupported/empty mod inventory must not offer reload.");
+        var ready = empty with { Requirements = [new("Prepared client", true, "Ready")] };
+        Render(window, ready);
+        Check(Element<Button>(window, "PlayButton").IsEnabled && Element<Button>(window, "StartServersButton").IsEnabled, "Prepared stopped workspace must offer startup.");
+        var running = ready with { Services = [new("Gateway", "Ready", 123, "", "Ready", [6112], 12, 1, "1m"), new("Game", "Running", 456, "", "In game", [], 12, 1, "1m")] };
+        Render(window, running);
+        Check(!Element<Button>(window, "PlayButton").IsEnabled && !Element<Button>(window, "StopServersButton").IsEnabled && Element<Button>(window, "CloseGameButton").IsEnabled, "Running game must offer close and explain unavailable stop.");
+        Render(window, ready);
+        var services = Element<ItemsControl>(window, "ServiceList");
+        object service = services.Items[0];
+        Render(window, ready with { Services = [ready.Services[0] with { MemoryMb = 25 }] });
+        Check(ReferenceEquals(service, services.Items[0]), "Polling metric changes must retain service containers.");
+        var modSearch = Element<TextBox>(window, "ModSearch");
+        modSearch.Text = "does-not-exist";
+        Check(Element<TextBlock>(window, "ModsEmpty").Text.Contains("Clear"), "No-match mod search must provide a recovery action.");
+        Element<TextBox>(window, "PrNumberBox").Text = "not-a-number";
+        typeof(MainWindow).GetMethod("SwitchPrNumber_Click", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(window, [window, new RoutedEventArgs()]);
+        Check(Element<TextBlock>(window, "PrValidation").Visibility == Visibility.Visible && Element<TextBlock>(window, "PrValidation").Text.Contains("401"), "Invalid PR input must show an inline error with a valid example.");
+        var items = new ObservableCollection<NavigationPage> { new("A", ""), new("B", "") };
+        int changes = 0; items.CollectionChanged += (_, _) => changes++;
+        var first = items[0];
+        UiCollection.Reconcile(items, new[] { new NavigationPage("A", ""), new("B", "") }, p => p.Label);
+        Check(changes == 0 && ReferenceEquals(first, items[0]), "Unchanged polling results must emit no collection resets or replacements.");
+        UiCollection.Reconcile(items, new[] { new NavigationPage("B", ""), new("C", "") }, p => p.Label);
+        Check(items.Select(p => p.Label).SequenceEqual(["B", "C"]), "Reconciliation must handle move, add and delete.");
+        foreach (double scale in new[] { 1d, 1.25, 1.5, 2 })
+        foreach (var size in new[] { new Size(1006, 691), new Size(1226, 861) })
+        {
+            // DPI equivalent DIPs: more physical pixels, same usable logical workspace. Actual monitor changes are a separate manual check.
+            ((FrameworkElement)window.Content).LayoutTransform = new ScaleTransform(scale, scale);
+            foreach (int page in new[] { 0, 3, 4, 5, 6, 7 })
+            {
+                pages.SelectedIndex = page;
+                Layout(window, size.Width * scale, size.Height * scale);
+                Check(pages.ActualWidth > 650 && pages.ActualHeight > 400, $"Page {page} must retain usable content at {scale:P0}.");
+                if (page == 3)
+                {
+                    Check(Element<ListBox>(window, "ModsList").ActualHeight >= 150, "Mod list must retain usable height.");
+                    var action = Element<Button>(window, "ToggleModButton");
+                    Check(action.ActualWidth + action.Margin.Left + action.Margin.Right >= action.DesiredSize.Width - .5, "Mod action must not be clipped.");
+                }
+                if (page == 4) Check(Element<ListBox>(window, "BackupsList").ActualHeight >= 200, "Backup list must use available height.");
+            }
+        }
+        ((FrameworkElement)window.Content).LayoutTransform = Transform.Identity;
+        pages.SelectedIndex = 0;
+        Layout(window, 1006, 691);
+        Check(Contrast(Element<TextBlock>(window, "ReadinessTitle").Foreground, (Brush)app.Resources["Surface"]) >= 4.5, "Page text must retain readable contrast through the tab content host.");
+        foreach (string text in new[] { "Text", "Muted", "BadgeText" })
+            Check(Contrast((Brush)app.Resources[text], (Brush)app.Resources[text == "BadgeText" ? "BadgeSurface" : "Surface"]) >= 4.5, $"{text} contrast must be at least 4.5:1.");
+        app.ApplyContrast(true);
+        Check(ReferenceEquals(app.Resources["Text"], SystemColors.WindowTextBrush) && ReferenceEquals(app.Resources["Background"], SystemColors.WindowBrush), "High Contrast must use system colors.");
+        app.ApplyContrast(false);
+        Check(((SolidColorBrush)app.Resources["Background"]).Color == Color.FromRgb(16, 21, 30), "Leaving High Contrast must restore the dark palette.");
+        Check(AutomationProperties.GetName(modSearch) == "Search mods", "Search must have an accessible name.");
+        window.Close();
+        Console.WriteLine($"PASS: {passed} desktop checks (no runtime actions or saved settings changed).");
+    }
+}
