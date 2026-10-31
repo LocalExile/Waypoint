@@ -15,7 +15,7 @@ public partial class MainWindow
     void LoadDevelopmentPreferences()
     {
         updatingPreferences = true;
-        AutoBackupBox.IsChecked = ManagerAutoBackupBox.IsChecked = settings.AutomaticBackups;
+        AutoBackupBox.IsChecked = ManagerAutoBackupBox.IsChecked = ModsAutoBackupBox.IsChecked = settings.AutomaticBackups;
         HotReloadBox.IsChecked = settings.HotReload;
         updatingPreferences = false;
         BackupModeDetail.Text = settings.AutomaticBackups ? "Backups are on for both current-character and fresh starts. Manage them on Backups." : "Automatic backups are off. Back up manually on Backups before changes you may want to undo.";
@@ -135,9 +135,11 @@ public partial class MainWindow
     {
         if (RestoreBackupButton is null) return;
         var selected = BackupsList.SelectedItem as SaveBackup;
-        BackupDetails.Value = selected?.Identity ?? "Select a backup to restore or delete it.";
+        BackupDetails.Value = selected?.Details ?? "Select a backup to restore or delete it.";
         RestoreBackupButton.IsEnabled = !busy && selected is not null && snapshot is { GameRunning: false };
         DeleteBackupButton.IsEnabled = !busy && selected is not null;
+        RestoreModChoicesButton.IsEnabled = !busy && selected?.HasModChoices == true && snapshot?.ModEnvironment is { Supported: true }
+            && snapshot.Services.All(s => s.Name != "Gateway" || !s.IsRunning);
     }
     async void BackupNow_Click(object sender, RoutedEventArgs e) => await OperateAsync("Backup");
     void OpenBackupFolder_Click(object sender, RoutedEventArgs e)
@@ -159,4 +161,10 @@ public partial class MainWindow
     void GatewayLog_Click(object sender, RoutedEventArgs e) { logSource = "Gateway"; RefreshLog(); Pages.SelectedItem = LogsPage; }
     async void RestartGateway_Click(object sender, RoutedEventArgs e) => await OperateAsync("Restart", "Gateway");
     async void ReloadData_Click(object sender, RoutedEventArgs e) => await OperateAsync("ReloadData");
+    async void RestoreModChoices_Click(object sender, RoutedEventArgs e)
+    {
+        if (busy || BackupsList.SelectedItem is not SaveBackup selected) return;
+        if (MessageBox.Show(this, $"Restore saved mod enable/disable choices from {selected.CreatedUtc.ToLocalTime():g}?\n\n{selected.ModSummary}\n\nThis replaces the saved choices only. Mod DLLs and saves are not restored. The choices take effect at the next Gateway start. Automatic backup is {(settings.AutomaticBackups ? "on" : "OFF")}.", "Restore mod choices", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+            await OperateAsync("RestoreModChoices", backupId: selected.Id);
+    }
 }

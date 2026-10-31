@@ -202,6 +202,30 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
+        <TabItem Header="Mods" x:Name="ModsPage">
+          <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+            <Border Style="{StaticResource Card}"><StackPanel>
+              <TextBlock Text="Mods" FontSize="21" FontWeight="SemiBold"/>
+              <TextBlock x:Name="ModsStatus" Text="Select a checkout to inspect its mods." Foreground="{StaticResource Muted}" Margin="0,8,0,12"/>
+              <CheckBox x:Name="ModsAutoBackupBox" Content="Automatic save backups before mod changes" Checked="ModsBackupPreference_Changed" Unchecked="ModsBackupPreference_Changed"/>
+              <WrapPanel Margin="0,12,0,10"><Button x:Name="CheckModsButton" Content="Check live status" Click="CheckMods_Click" IsEnabled="False"/><Button x:Name="BuildAllModsButton" Content="Build source mods" Click="BuildAllMods_Click" IsEnabled="False"/><Button x:Name="OpenModsButton" Content="Open mods folder" Click="OpenMods_Click" IsEnabled="False"/><Button Content="Manage backups" Click="ShowBackups_Click"/></WrapPanel>
+              <TextBlock Text="Search mods" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
+              <TextBox x:Name="ModSearch" AutomationProperties.Name="Search mods" TextChanged="ModSearch_Changed" ToolTip="Search mod ID, version, kind, status or error" Margin="0,0,0,10"/>
+              <ListBox x:Name="ModsList" Height="190" SelectionChanged="ModSelection_Changed" Background="#10151E" Foreground="#ECF1F8" BorderBrush="#38465B" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8"/></Style></ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Id}" Foreground="{StaticResource Accent}" FontWeight="SemiBold"/><TextBlock Text="{Binding Summary}" Style="{StaticResource Caption}" Margin="0,4,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+              </ListBox>
+              <TextBlock x:Name="ModDetails" Text="Select a mod to view its dependencies and controls." Foreground="{StaticResource Muted}" Margin="0,12,0,12"/>
+              <WrapPanel><Button x:Name="ToggleModButton" Content="Enable mod" Click="ToggleMod_Click" IsEnabled="False"/><Button x:Name="BuildModButton" Content="Build selected" Click="BuildMod_Click" IsEnabled="False"/><Button x:Name="ReloadModButton" Content="Reload selected" Click="ReloadMod_Click" IsEnabled="False"/><Button x:Name="OpenSelectedModButton" Content="Open selected folder" Click="OpenSelectedMod_Click" IsEnabled="False"/><Button Content="Gateway output" Click="GatewayLog_Click"/></WrapPanel>
+              <TextBlock x:Name="ModCommandHint" Style="{StaticResource Caption}" Margin="0,12,0,0"/>
+            </StackPanel></Border>
+            <Border Style="{StaticResource Card}"><StackPanel>
+              <TextBlock Text="Changes while playing" FontSize="17" FontWeight="SemiBold"/>
+              <TextBlock Text="LocalExile watches built mod files independently of Gateway code hot reload. A build or reload resets the mod’s in-memory state and can reload its dependents. Disabling a dependency can unload other mods. These changes apply to this Gateway and all connected characters." Foreground="{StaticResource Muted}" Margin="0,8,0,10"/>
+              <TextBlock Text="Live buttons use LocalExile’s optional native helper (Python + Frida, client in a playable area). With Gateway stopped, enable choices are saved for its next start. While Gateway runs without a usable helper, use the shown command in game or stop Gateway first. Loaded status is the last confirmed /mod reply and expires after two minutes or a binary/configuration change." Style="{StaticResource Caption}"/>
+            </StackPanel></Border>
+          </StackPanel></ScrollViewer>
+        </TabItem>
         <TabItem Header="Backups" x:Name="BackupsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
             <Border Style="{StaticResource Card}"><StackPanel>
@@ -214,9 +238,10 @@
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="8"/><Setter Property="Foreground" Value="#ECF1F8"/></Style></ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/><local:CommitText Value="{Binding Identity}" Margin="0,5,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
               </ListBox>
-              <local:CommitText x:Name="BackupDetails" Margin="0,12,0,12"/>
+              <local:CommitText x:Name="BackupDetails" TextWrapping="Wrap" Margin="0,12,0,12"/>
               <WrapPanel><Button x:Name="RestoreBackupButton" Content="Restore selected…" Click="RestoreBackup_Click" IsEnabled="False"/><Button x:Name="DeleteBackupButton" Content="Delete selected…" Click="DeleteBackup_Click" IsEnabled="False"/></WrapPanel>
-              <TextBlock Text="Automatic backups run before branch/PR activation, builds, Gateway startup/restart, game-data reload and save restore. Failed backups block those changes. Backups stay local until you delete them. Last launched Gateway is recorded by this launcher; it does not track every code edit or launches made elsewhere." Style="{StaticResource Caption}" Margin="0,14,0,0"/>
+              <Button x:Name="RestoreModChoicesButton" Content="Restore recorded mod choices…" Click="RestoreModChoices_Click" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+              <TextBlock Text="Automatic backups run before branch/PR activation, builds, Gateway startup/restart, game-data reload, mod changes and save restore. Failed backups block those changes. Mod history includes saved choices, manifest versions, DLL fingerprints and the last confirmed runtime list when available. Restoring mod choices is separate from restoring saves and never installs DLLs. Last launched Gateway is recorded by this launcher; it does not track every code edit or launches made elsewhere." Style="{StaticResource Caption}" Margin="0,14,0,0"/>
             </StackPanel></Border>
           </StackPanel></ScrollViewer>
         </TabItem>

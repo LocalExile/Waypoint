@@ -44,6 +44,12 @@ try {
     Check ($LASTEXITCODE -eq 0) 'private SQLite save fixture created'
     $switched = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/feature')
     Check $switched.Ok ('branch activates and builds without external client/build paths: ' + $switched.Message)
+    New-Item -ItemType Directory -Path "$root/mods/binaries/external" -Force | Out-Null
+    Set-Content "$root/mods/binaries/external/mod.json" '{"id":"external","version":"untracked external runtime fixture"}'
+    $roundTrip = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/main','-NoBackup')
+    Check ($roundTrip.Ok -and [IO.File]::ReadAllText("$root/mods/binaries/external/mod.json").Contains('runtime fixture')) 'untracked mod binaries survive switching to and from a revision without their gitignore rule'
+    $backToFeature = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/feature','-NoBackup')
+    Check $backToFeature.Ok 'runtime mod files do not block returning to the mod-host branch'
     Check (([string](& git -C $root branch --show-current)) -eq 'feature') 'local branch switch uses normal Git without force/reset'
     $metaFiles = @(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse)
     Check ($metaFiles.Count -eq 1) 'default branch activation automatically backs up current characters'
@@ -69,7 +75,7 @@ try {
     Check ($localAgain.Ok -and $localAgain.Snapshot.SourceLabel -eq 'feature') 'returning to a local branch replaces the detached source label'
     Fixture-Git @('switch','-c','broken')
     Set-Content "$root/src/GameServer.Gateway/Test.cs" 'invalid source fixture'
-    Fixture-Git @('add','.'); Fixture-Git @('commit','-m','broken fixture'); Fixture-Git @('switch','feature')
+    Fixture-Git @('add','src/GameServer.Gateway/Test.cs'); Fixture-Git @('commit','-m','broken fixture'); Fixture-Git @('switch','feature')
     $failedBuild = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/broken')
     Check (-not $failedBuild.Ok -and $failedBuild.Message.Contains('did not build')) 'a failed target build reports the source switch and leaves services stopped'
     & python (Join-Path $PSScriptRoot 'SqliteFixture.py') restored "$root/data/saves.db"
@@ -84,6 +90,15 @@ try {
     Set-Content "$root/src/GameServer.Gateway/Test.cs" 'uncommitted owner work'
     $dirty = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/main')
     Check (-not $dirty.Ok -and $dirty.Message.Contains('local changes') -and (Get-Content "$root/src/GameServer.Gateway/Test.cs" -Raw).Contains('uncommitted owner work')) 'dirty checkout refuses switching without stashing or discarding work'
+    Fixture-Git @('restore','--','src/GameServer.Gateway/Test.cs')
+    Set-Content "$root/OwnerSource.cs" 'untracked owner source'
+    $untracked = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/main')
+    Check (-not $untracked.Ok -and (Test-Path "$root/OwnerSource.cs")) 'untracked owner source outside mod runtime folders still blocks switching'
+    Remove-Item -LiteralPath "$root/OwnerSource.cs"
+    if (-not (Test-Path -LiteralPath "$root/mods/binaries/external/mod.json")) { throw 'The preserved runtime fixture disappeared before the staged-change test.' }
+    Fixture-Git @('add','-f','--',':(icase)mods/binaries/external/mod.json')
+    $trackedRuntime = Operation 'Switch' @('-SourceKind','Branch','-SourceValue','refs/heads/main')
+    Check (-not $trackedRuntime.Ok -and ([string](& git -C $root branch --show-current)) -eq 'feature') 'tracked edits inside mod runtime folders still block source switching'
     $invalid = Operation 'RestoreBackup' @('-BackupId','../../other')
     Check (-not $invalid.Ok) 'backup identifiers cannot escape the selected save store'
     $deleted = Operation 'DeleteBackup' @('-BackupId',$firstId)

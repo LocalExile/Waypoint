@@ -11,9 +11,9 @@ public sealed class RuntimeClient
     public async Task<BridgeResult> RunAsync(LauncherSettings settings, string action, string service = "All",
         Action<string>? log = null, CancellationToken cancellation = default,
         Action<OperationProgress>? progress = null, AccountRequest? account = null,
-        SourceSwitchRequest? source = null, string? backupId = null)
+        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "Switch", "Fetch", "ReloadData", "Backup", "RestoreBackup", "DeleteBackup" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "Switch", "Fetch", "ReloadData", "Backup", "RestoreBackup", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));
@@ -42,6 +42,12 @@ public sealed class RuntimeClient
             if (source.StartFresh) start.ArgumentList.Add("-StartFresh");
         }
         if (backupId is not null) { start.ArgumentList.Add("-BackupId"); start.ArgumentList.Add(backupId); }
+        if (mod is not null)
+        {
+            if (!string.IsNullOrEmpty(mod.Id) && !ModCatalog.ValidId(mod.Id)) throw new ArgumentException("Unsupported mod ID.", nameof(mod));
+            if (mod.Id.Length > 0) { start.ArgumentList.Add("-ModId"); start.ArgumentList.Add(mod.Id); }
+            if (mod.Project.Length > 0) { start.ArgumentList.Add("-ModProject"); start.ArgumentList.Add(mod.Project); }
+        }
         // Never inherit a developer shell's Game_* overrides into an unrelated checkout.
         foreach (string key in start.Environment.Keys.Where(k => k.StartsWith("Game_", StringComparison.OrdinalIgnoreCase)).ToArray())
             start.Environment.Remove(key);

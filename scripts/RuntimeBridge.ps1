@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','DeleteBackup')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -11,8 +11,11 @@ param(
     [switch]$StartFresh,
     [ValidateSet('Branch','Remote','PR')][string]$SourceKind = 'Branch',
     [string]$SourceValue = '',
-    [string]$BackupId = ''
+    [string]$BackupId = '',
+    [string]$ModId = '',
+    [string]$ModProject = ''
 )
+. (Join-Path $PSScriptRoot 'ModBridge.ps1')
 $ErrorActionPreference = 'Stop'
 $result = $null
 $transcribing = $false
@@ -206,7 +209,7 @@ function Get-Snapshot {
         } catch { $sourceLabel = '' }
     }
     @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; SourceCommit=$commit; SourceBranch=$branch;
-       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()) }
+       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); ModEnvironment=(Get-ModEnvironment $services) }
 }
 function Get-SourceSelectionPath {
     $sha = [Security.Cryptography.SHA256]::Create()
@@ -261,7 +264,7 @@ function Start-Services($snapshot, [string[]]$selected) {
             Require ($LASTEXITCODE -eq 0) "Build failed for $name. Open this operation's log."
         }
     }
-    if ('Gateway' -in $missing) { Build-GatewayMods -NoDependencies:([bool]$running.Count) }
+    if ('Gateway' -in $missing) { Build-GatewayMods -NoDependencies:([bool]$running.Count) -AllowRetire -SourceCommit $snapshot.SourceCommit }
     $latest = Get-Snapshot
     Require (-not $latest.Conflicts.Count) ($latest.Conflicts -join "`n")
     Require (-not @($latest.Services | Where-Object { $_.Name -in $missing -and ($_.ProcessId -or $_.WatchProcessId) }).Count) 'A selected service started during preparation. Refresh and retry without restarting it.'
@@ -310,10 +313,11 @@ function Start-Services($snapshot, [string[]]$selected) {
     } while ((Get-Date) -lt $deadline)
     throw 'Servers did not become ready within 60 seconds. Review logs/live-*.log and logs/live-*.err. Partial starts remain visible; use Stop servers to clean up.'
 }
-function Build-GatewayMods([switch]$NoDependencies) {
+function Build-GatewayMods([switch]$NoDependencies, [switch]$AllowRetire, [string]$SourceCommit = '') {
     # Match upstream's pre-Gateway mod build without invoking live.ps1's broad process cleanup.
     # Older revisions have no mod source folder. Binary-only mods and mod-state.txt are not modified here.
     $source = At 'Mods/Source'
+    if ($AllowRetire) { Retire-RemovedManagedMods }
     if (-not (Test-Path -LiteralPath $source -PathType Container)) { return }
     Assert-Physical $source
     $projects = @(Get-ChildItem -LiteralPath $source -Filter *.csproj -File -Recurse | Sort-Object FullName)
@@ -326,6 +330,7 @@ function Build-GatewayMods([switch]$NoDependencies) {
         if ($NoDependencies) { $arguments += '--no-dependencies' }
         & dotnet @arguments
         Require ($LASTEXITCODE -eq 0) "Build failed for mod $($project.BaseName). Gateway was not started; older mod binaries were not accepted as a fallback. Open this operation's log, fix the error, then retry. If dependencies need rebuilding, stop servers and use Build checkout first."
+        Record-ModBuild $project.FullName $SourceCommit
     }
 }
 function Server-Command([string]$name, [bool]$watched) {
@@ -384,7 +389,7 @@ function Assert-Physical([string]$path) {
 function Get-Python {
     $venv = At '.venv/Scripts/python.exe'
     if (Test-Path -LiteralPath $venv) { return $venv }
-    $command = Get-Command python.exe -ErrorAction SilentlyContinue
+    $command = Get-Command python.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
     Require ([bool]$command) 'Python is required to make a consistent save backup. Install Python or disable automatic backups explicitly.'
     return $command.Source
 }
@@ -404,9 +409,11 @@ function Backup-Saves($snapshot) {
         Assert-Physical $historyPath
         try { $lastBuild = (Get-Content -LiteralPath $historyPath -Raw | ConvertFrom-Json).GatewayCommit } catch {}
     }
-    @{ Repository=$script:root; SaveDatabase=$script:savePath; SourceCommit=$snapshot.SourceCommit; SourceBranch=$snapshot.SourceBranch; SourceLabel=$snapshot.SourceLabel;
-       LastBuildCommit=$lastBuild; RequestedKind=$SourceKind; RequestedSource=$SourceValue; StartFresh=[bool]$StartFresh; CreatedUtc=[datetime]::UtcNow.ToString('o') } |
-        ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'backup.json') -Encoding UTF8
+    $metadata = @{ Repository=$script:root; SaveDatabase=$script:savePath; SourceCommit=$snapshot.SourceCommit; SourceBranch=$snapshot.SourceBranch; SourceLabel=$snapshot.SourceLabel;
+       LastBuildCommit=$lastBuild; RequestedKind=$SourceKind; RequestedSource=$SourceValue; StartFresh=[bool]$StartFresh; CreatedUtc=[datetime]::UtcNow.ToString('o'); Mods=(Get-ModBackupMetadata $snapshot) } |
+        ConvertTo-Json -Depth 9
+    Require ($metadata.Length -lt 4 * 1024 * 1024) 'Backup metadata exceeds its size limit; the requested change was not started.'
+    $metadata | Set-Content -LiteralPath (Join-Path $destination 'backup.json') -Encoding UTF8
     Write-Host "Save backup verified: $destination"
 }
 function Get-BackupDirectory {
@@ -434,6 +441,7 @@ function Get-SelectedBackup {
     Assert-Physical (Join-Path $path 'backup.json')
     Assert-Physical (Join-Path $path 'saves.db')
     Require (Test-Path -LiteralPath (Join-Path $path 'backup.json')) 'Backup metadata is missing.'
+    Require ((Get-Item -LiteralPath (Join-Path $path 'backup.json')).Length -lt 4 * 1024 * 1024) 'Backup metadata exceeds its size limit.'
     $meta = Get-Content -LiteralPath (Join-Path $path 'backup.json') -Raw | ConvertFrom-Json
     Require (Same-Path $meta.SaveDatabase $script:savePath) 'This backup belongs to a different save database.'
     Require (Test-Path -LiteralPath (Join-Path $path 'saves.db')) 'Backup database is missing.'
@@ -503,8 +511,14 @@ function Switch-Source($snapshot) {
     Require (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Close the game before switching source. The launcher will stop owned servers gracefully.'
     Require (Test-Sdk) 'Install .NET 10 SDK first.'
     # Refuse tracked edits and untracked source. Never force checkout, reset, clean or stash owner work.
-    $dirty = @(& git -c core.fsmonitor=false -C $script:root status --porcelain --untracked-files=normal)
-    Require ($LASTEXITCODE -eq 0 -and -not $dirty.Count) 'This checkout has local changes. Commit or move them before switching; the launcher will not discard or stash them.'
+    & git -c core.fsmonitor=false -C $script:root diff --no-ext-diff --no-textconv --quiet --cached HEAD --
+    Require ($LASTEXITCODE -eq 0) 'This checkout has local changes. Commit or move them before switching; the launcher will not discard or stash them.'
+    & git -c core.fsmonitor=false -C $script:root diff --no-ext-diff --no-textconv --quiet --
+    Require ($LASTEXITCODE -eq 0) 'This checkout has local changes. Commit or move them before switching; the launcher will not discard or stash them.'
+    # Pre-mod revisions do not gitignore Mods/Binaries. Preserve those runtime files across a round trip.
+    # Tracked changes there are still caught above; every other untracked source path remains a blocker.
+    $untracked = @(& git -c core.fsmonitor=false -C $script:root ls-files --others --exclude-standard -- . ':(top,icase,exclude)Mods/Binaries/**')
+    Require ($LASTEXITCODE -eq 0 -and -not $untracked.Count) 'This checkout has local changes. Commit or move them before switching; the launcher will not discard or stash them.'
     $target = ''
     if ($SourceKind -eq 'PR') {
         Require ($SourceValue -match '^[1-9][0-9]{0,8}$') 'Enter a positive PR number.'
@@ -543,6 +557,7 @@ function Switch-Source($snapshot) {
     New-Item -ItemType Directory -Force -Path (Split-Path $selectionPath) | Out-Null
     @{ Kind=$SourceKind; Value=$SourceValue; Commit=$commit } | ConvertTo-Json | Set-Content -LiteralPath ($selectionPath + '.tmp') -Encoding UTF8
     Move-Item -LiteralPath ($selectionPath + '.tmp') -Destination $selectionPath -Force
+    Retire-RemovedManagedMods
     Set-Stage 'Building selected revision' 'Services remain stopped. A failed build preserves the save database.'
     & dotnet build (At 'GameServer.slnx') --nologo -v minimal
     Require ($LASTEXITCODE -eq 0) 'Source switched, but the new revision did not build. Saves were preserved and services remain stopped. Review the build output or switch back.'
@@ -721,6 +736,7 @@ public static class NativeRuntime {
     $snapshot = Get-Snapshot
     $selected = if ($Service -eq 'All') { $names } else { @($Service) }
     switch ($Action) {
+        { $_ -in @('BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices') } { Invoke-ModOperation $snapshot }
         'Switch' { Switch-Source $snapshot }
         'Fetch' {
             Set-Stage 'Refreshing remote branches' 'Fetching Git objects only; source files, saves and running services are unchanged.'

@@ -44,6 +44,7 @@ string fixture = Path.Combine(Path.GetTempPath(), "Launcher checks " + Guid.NewG
 Directory.CreateDirectory(fixture);
 try
 {
+    ModChecks.Run(fixture, Check);
     string settingsPath = Path.Combine(fixture, "settings.json");
     Check(SettingsStore.Load(settingsPath).RepositoryPath == "", "first run has no machine-specific path");
     Check(SettingsStore.Load(settingsPath) is { AutomaticBackups: true, HotReload: true }, "backups and Gateway watch default on for every save choice");

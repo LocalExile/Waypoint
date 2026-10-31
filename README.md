@@ -20,7 +20,8 @@ No installer is required. The portable launcher includes its .NET Desktop runtim
 you press a runtime action. To upgrade, close Waypoint and extract the newer ZIP into a separate folder; your settings
 and backups are retained. This alpha has no automatic update service.
 
-For the latest changes, see [0.3.1 release notes](docs/releases/0.3.1.md).
+For the latest changes, see [0.4.0 release notes](docs/releases/0.4.0.md).
+The [0.3.1 hotfix notes](docs/releases/0.3.1.md) describe the mod startup compatibility fix.
 The [first-alpha release notes](docs/releases/0.3.0.md) describe the original features and compatibility limits.
 
 ## Requirements
@@ -91,6 +92,7 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 - Readable live service logs, errors, operation output and links to their local folders.
 - Build the selected LocalExile solution; launcher and emulator build independently.
 - Searchable branch/PR selection, Gateway hot-reload monitoring and save backup management.
+- Mod inventory, source builds, persisted enable choices, confirmed live status/reload and mod history in backups.
 - Setup guidance with prerequisite actions, client preparation, extraction dependency installation and first account creation.
 - Named operation stages and elapsed time; a failed operation retains its stage and offers log/output links and retry.
   Account creation requires re-entering details rather than retaining the password for retry.
@@ -108,7 +110,8 @@ Remote branches and PRs use detached source so local branches are not reset. All
 The sidebar keeps the selected remote/PR label when its recorded commit still matches HEAD, including after reopening.
 
 Close the game before **Switch and build**. The launcher refuses local tracked/untracked source changes, gracefully
-stops owned servers, makes a consistent SQLite save backup, switches source and builds it. It never forces checkout,
+stops owned servers, makes a consistent SQLite save backup, switches source and builds it. Untracked files under
+`Mods/Binaries` are preserved as runtime data even on older revisions without the ignore rule. It never forces checkout,
 cleans or stashes your work. A failed build leaves the selected source visible and services stopped; existing saves are
 preserved. Press **Play** after a successful switch. This workflow uses the current standard LocalExile layout and
 does not depend on the unmerged external client/build path PR. Branches changing tracked local runtime profiles are
@@ -150,6 +153,43 @@ Existing servers from other build folders are shown as port conflicts and are no
 Custom ports, custom TLS/CDN settings, complex runtime scripts, remote servers and multiple simultaneous environments
 need additional adapter support. See [the runtime contract](docs/runtime-contract.md).
 
+## Mods
+
+Open **Mods** to search installed/source mods, inspect their versions, dependencies and load errors, and build source
+mods individually or together. LocalExile owns `Mods/Binaries/mod-state.txt`; choices made in game and in Waypoint
+use the same file. **Enable mod / Disable mod** saves the choice immediately when Gateway is stopped.
+With Gateway running, live controls require the supported client in a playable area and LocalExile's Python/Frida
+native helper. Otherwise use the command shown below the selected mod in game, or close the game and stop Gateway
+before changing the saved choice. Waypoint never treats editing the state file as a live runtime change.
+
+**Check live status** reads `/mod` through that helper. Loaded status means the last confirmed runtime reply;
+it expires after two minutes, a Gateway process change or a mod binary/configuration change. A saved enabled choice
+is separate from a successful load. Missing dependencies and load failures stay visible. A mod's version is free text;
+the selected DLL's SHA-256 fingerprint is recorded in backup history. Listing mods never loads their DLLs into Waypoint.
+
+LocalExile watches built mod files independently of **Watch Gateway code while playing**. **Reload selected** uses
+`/mod_reload <id>` and checks the resulting runtime list. Rebuilds/reloads reset the mod's in-memory state and can
+reload its dependents. Disabling a dependency can unload dependent mods. These actions affect the selected Gateway
+and every connected character. Builds beside running services reuse already-built dependencies; stop services and
+use **Build checkout** if a changed API or missing dependency needs rebuilding.
+
+Automatic save backup is on by default before launcher-driven mod changes and can be toggled directly on Mods,
+Builds or Backups. Backups record manifests/versions, DLL hashes, saved choices and a confirmed runtime list when
+available. On Backups, **Restore recorded mod choices…** requires Gateway stopped and restores only enable overrides;
+save restore remains separate, and neither operation installs mod binaries. External edits/watch-triggered reloads
+do not create a backup for every file change.
+
+Waypoint records standard output files it builds. After a source project disappears, its unchanged recorded outputs
+are moved to `%LOCALAPPDATA%\EmulatorWorkspaceLauncher\retired-mods` during stopped-Gateway preparation or source
+activation so they do not keep loading. Changed outputs require review. Unknown third-party mods and extra owner
+files are preserved; their compatibility with another branch is not assumed. Custom output conventions are not
+automatically reconciled. Source-mod build buttons require the normal `Mods/Binaries` runtime folder; binary-only
+mod controls can use a literal `Game_MODS_FOLDER` in a supported local profile.
+
+Mods are executable code: installing a mod grants it the same account access as LocalExile. This release manages
+existing local mods and does not download mods or provide a marketplace, installer, script editor or league selector.
+See [mod management validation](docs/mod-management-validation.md) for the real-client, branch-round-trip and UI checks.
+
 ## Build and check
 
 These steps are for contributors building Waypoint from source. Download users can run the portable EXE directly.
@@ -173,6 +213,8 @@ dotnet build Launcher.slnx
 dotnet run --project tests/Launcher.Checks --no-build
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Bridge.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Mods.Tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/ModControl.Tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/ModTransport.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Source.Tests.ps1
 ```
 

@@ -80,7 +80,7 @@ requested service launch before any missing service is started; existing service
 Building mods stage retains the compiler output. Beside live services, mod builds use `--no-dependencies` to avoid
 overwriting shared server assemblies; missing dependencies require stopping services and building the checkout.
 The adapter does not edit mod manifests, `mod-state.txt`, binary-only mods or enable/disable preferences.
-This startup fix does not reconcile stale mod folders after a source switch or provide live mod management.
+The 0.3.1 startup fix alone does not reconcile stale mod folders or provide live management; the 0.4.0 extension below does.
 Stop all services and Build checkout after changing source. V1 does not attest all untracked/ignored build inputs.
 The Builds page shows source and disk-binary identities separately; it is not a full immutable running-build manifest.
 Failed/partial startup stays visible for diagnosis; it does not silently tear down processes that did successfully start.
@@ -126,7 +126,7 @@ launcher mutations, and no force checkout/reset/clean/stash. PR fetch refs are p
 PR/remote activation detaches at a verified full commit. Local branches use normal switch. Target source must contain
 the supported solution, Gateway and launch markers. Tracked runtime-profile changes are refused.
 
-Activation rejects tracked/untracked edits (ignored runtime files are reused), requires the game closed, stops owned
+Activation rejects tracked edits and untracked source (ignored runtime files are reused), requires the game closed, stops owned
 services, backs up saves by default, switches source and builds. It does not automatically start afterward. Build failure
 preserves saves and leaves explicit selected source/stopped services. This is not an atomic hot branch replacement.
 Hot reload launch preference is passed as `-NoHotReload` only where supported. Gateway's explicit log confirmations
@@ -151,3 +151,35 @@ Explicit game-data reload uses upstream's optional native client helper for the 
 that disposable helper has captured streams (never live.ps1). The adapter waits for `Game data reloaded: revision N`
 in the helper's new Gateway replies. A timeout, missing dependency or missing confirmation reports failure/uncertainty;
 the launcher never assumes submission means application. The helper never starts a game for this operation.
+
+## Mod management (0.4.0)
+
+The typed snapshot includes optional mod capability, effective folder/global enable preference and a bounded cached
+runtime list. Older snapshots/branches remain valid. Core reads JSONC manifests and native saved choices without
+loading assemblies. Source projects follow the documented Mods/Source/<Name>/<Name>.csproj convention.
+
+BuildMod, BuildMods, EnableMod, DisableMod, ReloadMod, QueryMods and RestoreModChoices use the same named mutation
+mutex and process-ownership/conflict checks. Source builds target only physical csproj paths inside Mods/Source,
+reuse dependencies beside running servers, and preserve compiler failures. Mod IDs are bounded single command
+tokens. A stopped Gateway permits atomic state-file replacement; a running Gateway requires native commands.
+The helper receives JSON lines over stdin and captured output, never starts a client and can be terminated on timeout
+without killing the client/server. Acknowledgement alone is insufficient: /mod must confirm the selected outcome.
+Timeout/no-reply errors state that a submitted command may already have applied.
+
+Runtime reports are tied to Gateway PID/start time and a binary/manifest/state-file metadata stamp, expire after
+120 seconds, and are labelled last checked. Regular inspection never attaches to a client. Check live status explicitly
+requests /mod. This external contract cannot attest arbitrary mod writes, forged replies from executable mods or all
+runtime state; it avoids claiming otherwise.
+
+Mod-changing operations use the existing default-on backup preference. Metadata embeds saved choices, manifests,
+DLL SHA-256 hashes and confirmed runtime history, within a 4 MB limit. This adds no files to backup folders, so the
+two-file deletion contract remains intact. RestoreModChoices validates the save association and recorded mod folder,
+requires Gateway stopped, and replaces only native enable overrides after the optional current-save backup.
+
+Standard first-party builds record only their manifest, primary DLL and PDB hashes in a per-checkout launcher
+registry. After their source project disappears, unchanged recorded files are moved individually into new physical
+local recovery folders before a stopped Gateway starts or after source activation. Changed files block preparation.
+No recursive mod-folder deletion or third-party adoption exists. Unrecorded outputs and custom conventions remain
+user-managed; an unchanged project path is not an attestation of third-party compatibility.
+Untracked Mods/Binaries files are treated as runtime data even on older revisions lacking the ignore rule; tracked
+edits anywhere and other untracked source still block activation. No repository ignore file is changed.

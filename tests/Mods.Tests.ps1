@@ -7,10 +7,13 @@ if ($errors.Count) { throw ($errors | Out-String) }
 foreach ($function in $ast.FindAll({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] }, $true)) {
     . ([scriptblock]::Create($function.Extent.Text))
 }
+. (Join-Path $PSScriptRoot '../scripts/ModBridge.ps1')
 $fixture = Join-Path ([IO.Path]::GetTempPath()) ('Launcher-mods-' + [guid]::NewGuid().ToString('N'))
 $script:root = Join-Path $fixture 'Checkout with spaces'
 $script:dotnetPath = (Get-Command dotnet -CommandType Application).Source
 $oldLocation = Get-Location
+$oldData = $env:LOCALAPPDATA
+$env:LOCALAPPDATA = Join-Path $fixture 'launcher-data'
 $script:events = [Collections.Generic.List[string]]::new()
 $script:buildArguments = [Collections.Generic.List[string]]::new()
 $script:passed = 0
@@ -120,6 +123,7 @@ try {
     Write-Host "$script:passed mod startup checks passed."
 } finally {
     Set-Location -LiteralPath $oldLocation.Path
+    $env:LOCALAPPDATA = $oldData
     $resolved = [IO.Path]::GetFullPath($fixture)
     if ($resolved.StartsWith([IO.Path]::GetFullPath([IO.Path]::GetTempPath()), [StringComparison]::OrdinalIgnoreCase) -and (Split-Path $resolved -Leaf) -match '^Launcher-mods-[0-9a-f]{32}$') {
         Remove-Item -LiteralPath $resolved -Recurse -Force

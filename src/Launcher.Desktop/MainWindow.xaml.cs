@@ -38,6 +38,7 @@ public partial class MainWindow : Window
     string stageLogPath = "";
     string selectedLogText = "";
     (string Action, string Service)? retry;
+    ModRequest? retryMod;
     string ElapsedText => $"{(int)operationClock.Elapsed.TotalHours:00}:{operationClock.Elapsed.Minutes:00}:{operationClock.Elapsed.Seconds:00}";
 
     public MainWindow()
@@ -155,6 +156,7 @@ public partial class MainWindow : Window
 
     void Render(RuntimeSnapshot state)
     {
+        RenderMods(state);
         RenderDevelopment(state);
         UpdateWorkspaceHeading(state.Root);
         SidebarBranch.Text = !string.IsNullOrWhiteSpace(state.SourceBranch) ? state.SourceBranch : !string.IsNullOrWhiteSpace(state.SourceLabel) ? state.SourceLabel : "Detached source";
@@ -199,14 +201,15 @@ public partial class MainWindow : Window
     }
 
     async Task OperateAsync(string action, string service = "All", AccountRequest? account = null,
-        SourceSwitchRequest? source = null, string? backupId = null)
+        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null)
     {
         if (busy) return;
         if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) { Pages.SelectedItem = SettingsPage; return; }
         busy = true;
         await gate.WaitAsync();
         lastError = null;
-        retry = action is "Register" or "Switch" or "RestoreBackup" or "DeleteBackup" ? null : (action, service);
+        retry = action is "Register" or "Switch" or "RestoreBackup" or "DeleteBackup" or "RestoreModChoices" ? null : (action, service);
+        retryMod = retry is not null ? mod : null;
         FailureActions.Visibility = Visibility.Collapsed;
         operationLogPath = stageLogPath = "";
         currentStage = "Checking setup";
@@ -229,7 +232,7 @@ public partial class MainWindow : Window
                         if (Path.GetFileName(update.LogPath) == "operation.log") operationLogPath = update.LogPath;
                     }
                     UpdateOperationLabel();
-                }), account: account, source: source, backupId: backupId);
+                }), account: account, source: source, backupId: backupId, mod: mod);
             if (!result.Ok)
             {
                 currentStage = result.FailedStage ?? currentStage;
@@ -358,7 +361,7 @@ public partial class MainWindow : Window
     void ViewOperations_Click(object sender, RoutedEventArgs e) { logSource = "Operations"; RefreshLog(); Pages.SelectedItem = LogsPage; }
     async void Retry_Click(object sender, RoutedEventArgs e)
     {
-        if (retry is { } operation) await OperateAsync(operation.Action, operation.Service);
+        if (retry is { } operation) await OperateAsync(operation.Action, operation.Service, mod: retryMod);
         else StatusLabel.Text = "Select the account, revision or backup action again to review its current options.";
     }
 
