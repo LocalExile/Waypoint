@@ -10,8 +10,6 @@ Order: the collaboration items, then the player's first run, then isolated envir
 
 ## 1. Collaboration
 
-- Agree with the LocalExile maintainers which repository moves to the LocalExile organisation. When it does, change the
-  release lookup (`Updates.cs`, now `evrydayjunglist/Waypoint`) and publish a release before relying on GitHub's redirect.
 - Protect `main`: changes arrive through reviewed pull requests.
 
 ## 2. A simple first run

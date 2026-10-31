@@ -35,7 +35,7 @@ git push origin v0.2.0
 
 The version shows in the window's title. A build from source is 0.0.0 ("built from source") and never offers updates.
 
-A release build asks GitHub's public API for the latest release of `Updates.Repository` (evrydayjunglist/Waypoint until the move to the LocalExile organization) when it starts (**Look for
+A release build asks GitHub's public API for the latest release of `Updates.Repository` (LocalExile/Waypoint) when it starts (**Look for
 updates at start** in Settings; **Check for updates** there asks at once and says what it found). A newer
 version shows a green card floating over the bottom of the window. **Update now**, after a confirmation:
 

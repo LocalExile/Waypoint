@@ -33,7 +33,7 @@ public class UpdatesTests
     public void The_latest_release_gives_its_version_page_notes_and_files()
     {
         var release = Updates.ParseRelease("""
-            {"tag_name":"v0.3.0","html_url":"https://github.com/LocalExile/LocalExile-Launcher/releases/tag/v0.3.0",
+            {"tag_name":"v0.3.0","html_url":"https://github.com/LocalExile/Waypoint/releases/tag/v0.3.0",
              "body":"Faster logs.","assets":[
                {"name":"Waypoint.exe.sha256","browser_download_url":"https://example.test/a.sha256"},
                {"name":"Waypoint.exe","browser_download_url":"https://example.test/a.exe"}]}
