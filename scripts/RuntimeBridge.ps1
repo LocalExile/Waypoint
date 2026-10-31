@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','QueryAccounts','ManageAccount')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -16,11 +16,13 @@ param(
     [string]$ModProject = ''
 )
 . (Join-Path $PSScriptRoot 'ModBridge.ps1')
+. (Join-Path $PSScriptRoot 'AccountBridge.ps1')
 $ErrorActionPreference = 'Stop'
 $result = $null
 $transcribing = $false
 $mutex = $null
 $hasLock = $false
+$script:accountData = $null
 $script:stage = 'Checking setup'
 $names = @('Patch','Gateway','Auth')
 $portMap = @{ Patch = @(12995,8080); Gateway = @(6112); Auth = @(20493,20495) }
@@ -208,7 +210,10 @@ function Get-Snapshot {
             }
         } catch { $sourceLabel = '' }
     }
-    @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; SourceCommit=$commit; SourceBranch=$branch;
+    $accountBlock = ''
+    try { Assert-AccountsStopped ([pscustomobject]@{ Conflicts=$conflicts.ToArray(); Services=$services }) }
+    catch { $accountBlock = $_.Exception.Message }
+    @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; SourceCommit=$commit; SourceBranch=$branch; AccountWriteBlockedReason=$accountBlock;
        SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); ModEnvironment=(Get-ModEnvironment $services) }
 }
 function Get-SourceSelectionPath {
@@ -610,18 +615,21 @@ function Prepare-Client($snapshot) {
     Require ($LASTEXITCODE -eq 0) 'Local gateway setup failed. Close all clients and inspect the operation log.'
 }
 function Register-Account($snapshot) {
-    Assert-SetupStopped $snapshot
+    Assert-AccountsStopped $snapshot
     Require (Test-Sdk) 'Install .NET 10 SDK first.'
     Require (-not ($ResultPath -match '[&|<>^%!"\r\n]')) 'Account setup needs a launcher data path without command-shell metacharacters.'
     Require ((-not $env:Game_DEV_PORT -or $env:Game_DEV_PORT -eq '7000') -and (-not $env:Game_DEV_BIND -or $env:Game_DEV_BIND -eq '127.0.0.1')) 'Account setup requires the default localhost account-service address.'
     Require (-not @($script:listeners | Where-Object LocalPort -eq 7000).Count) 'Port 7000 is in use. Stop the existing account service first; it will not be adopted.'
     # This request arrives through stdin, never a command argument or file. Do not transcribe this action.
+    [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
     try { $request = [Console]::In.ReadLine() | ConvertFrom-Json } catch { throw 'Could not read local account request.' }
     Require ($request.Name -is [string] -and $request.Name -match '^[A-Za-z0-9_-]{3,32}$') 'Account name must be 3-32 letters, digits, underscores or hyphens.'
     Require ($request.Password -is [string] -and $request.Password.Length -ge 4 -and $request.Password.Length -le 1024) 'Password must contain 4-1024 characters.'
+    Backup-Saves $snapshot
     Set-Stage 'Building account service' 'Preparing the local account service for this checkout.'
     & dotnet build (At 'src/GameServer.Host') --nologo -v minimal | Out-Null
     Require ($LASTEXITCODE -eq 0) 'Account service build failed. Run Build checkout to inspect compiler output.'
+    Assert-AccountsStopped (Get-Snapshot)
     $log = Join-Path (Split-Path $ResultPath) 'account-service.log'
     $err = Join-Path (Split-Path $ResultPath) 'account-service.err'
     $line = '/c dotnet src\GameServer.Host\bin\Debug\net10.0\GameServer.Host.dll 1>"' + $log + '" 2>"' + $err + '"'
@@ -722,12 +730,12 @@ public static class NativeRuntime {
 }
 '@
     Import-RuntimeProfile
-    if ($Action -ne 'Inspect') {
+    if ($Action -notin @('Inspect','QueryAccounts')) {
         # One writer across all launcher instances/checkouts: upstream has fixed shared ports.
         $mutex = [Threading.Mutex]::new($false, 'Local\EmulatorWorkspaceLauncher.Runtime.v1')
         try { $hasLock = $mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $hasLock = $true }
         Require $hasLock 'Another launcher operation is in progress. Wait for it to finish.'
-        if ($Action -ne 'Register') {
+        if ($Action -notin @('Register','ManageAccount')) {
             Start-Transcript -LiteralPath (Join-Path (Split-Path $ResultPath) 'operation.log') -Force | Out-Null
             $transcribing = $true
         }
@@ -736,6 +744,8 @@ public static class NativeRuntime {
     $snapshot = Get-Snapshot
     $selected = if ($Service -eq 'All') { $names } else { @($Service) }
     switch ($Action) {
+        'QueryAccounts' { $script:accountData = Invoke-AccountData @{ Action='List' } }
+        'ManageAccount' { Manage-Account $snapshot }
         { $_ -in @('BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices') } { Invoke-ModOperation $snapshot }
         'Switch' { Switch-Source $snapshot }
         'Fetch' {
@@ -805,9 +815,9 @@ public static class NativeRuntime {
             }
         }
     }
-    if ($Action -ne 'Inspect') { $snapshot = Get-Snapshot }
+    if ($Action -notin @('Inspect','QueryAccounts')) { $snapshot = Get-Snapshot }
     Set-Stage 'Completed' "$Action completed."
-    $result = @{ Ok=$true; Message=$(if ($Action -eq 'Inspect') { 'Environment checked.' } elseif ($Action -eq 'Register') { 'Local account created. Sign in inside the game, then create a character there.' } else { "$Action completed." }); Snapshot=$snapshot }
+    $result = @{ Ok=$true; Message=$(if ($Action -eq 'Inspect') { 'Environment checked.' } elseif ($Action -eq 'Register') { 'Local account created. Sign in inside the game, then create a character there.' } elseif ($Action -eq 'ManageAccount') { 'Account data updated.' } elseif ($Action -eq 'QueryAccounts') { 'Accounts refreshed.' } else { "$Action completed." }); Snapshot=$snapshot; AccountData=$script:accountData }
 } catch {
     $result = @{ Ok=$false; Message=$_.Exception.Message; Snapshot=$null; FailedStage=$script:stage }
 } finally {

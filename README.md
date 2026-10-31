@@ -232,6 +232,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tests/Mods.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/ModControl.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/ModTransport.Tests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File tests/Source.Tests.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/Accounts.Tests.ps1
+python tests/AccountData.Tests.py
 ```
 
 The executable checks use private temporary fixtures and never start the real game or servers.

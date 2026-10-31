@@ -9,7 +9,7 @@ public sealed record ServiceStatus(string Name, string Status, int ProcessId, st
     public bool IsRunning => ProcessId != 0 || WatchProcessId != 0;
 }
 public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDatabase, string SourceCommit,
-    string SourceBranch, string BuildCommit, Requirement[] Requirements, ServiceStatus[] Services, string[] Conflicts, string SourceLabel = "", ModEnvironment? ModEnvironment = null)
+    string SourceBranch, string BuildCommit, Requirement[] Requirements, ServiceStatus[] Services, string[] Conflicts, string SourceLabel = "", ModEnvironment? ModEnvironment = null, string AccountWriteBlockedReason = "")
 {
     public bool SetupReady => Requirements.All(r => r.Ready);
     public bool ServersReady => Services.Where(s => s.Name != "Game").All(s => s.Status == "Ready");
@@ -18,7 +18,7 @@ public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDat
     public bool SafeToLaunch => SetupReady && Conflicts.Length == 0;
 }
 
-public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null);
+public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null, AccountInventory? AccountData = null);
 public sealed record LauncherSettings(string RepositoryPath = "", bool UseLocalProfile = true,
     bool AutomaticBackups = true, bool HotReload = true, string Language = "en", AppearanceSettings? Appearance = null);
 

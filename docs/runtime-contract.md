@@ -1,5 +1,27 @@
 # External runtime contract, adapter v1
 
+## Account data operations (0.6.0, local review)
+
+`QueryAccounts` returns an optional typed `AccountData` inventory and never initializes/migrates storage. Browsing uses
+one read-only SQLite snapshot; it exposes names, IDs, character summaries and opaque revision tokens, never credential
+verifiers. A snapshot's `AccountWriteBlockedReason` explains runtime blockers, including the account service.
+
+`ManageAccount` accepts a reviewed `AccountDataRequest` on UTF-8 stdin. It shares the global runtime writer mutex,
+requires stopped/known runtime inventory, makes the configured automatic save backup and checks inventory again.
+`AccountBridge.ps1` invokes `AccountData.py` through a UTF-8 stdin pipe, without transcribing passwords. The helper
+checks known tables/fields/import state, starts an immediate transaction, rechecks the selected account revision,
+validates names/destinations and commits all related row changes together. Unknown layouts are read-only or rejected.
+Password/copy operations additionally recognize the selected checkout's verifier format. LocalExile source and DLLs
+remain independent of the distributable launcher. Registration retains the upstream temporary-service workflow and
+now follows the same backup and account runtime gates.
+
+Every account mutation is offline, including create, rename and password changes. Auth character selection, Gateway,
+watchers between restarts, other installations, a game client, account-service executables and port 7000 can block it.
+No forced shutdown is added. SQLite locks/transactions and revision checks cover competing data writers; manual runtime
+starts outside Waypoint must wait until an offline edit finishes. Browsing remains available while services run.
+Account reads/writes require Python's SQLite 3.37+ support. Tests use disposable data, including an upstream Storage/Core
+harness. No real player account or save is used for mutation validation.
+
 The launcher owns its settings and UI. LocalExile owns preparation, extraction, build semantics, client launch,
 account/storage formats and game behavior. The repositories are independent; no server source changes are required.
 

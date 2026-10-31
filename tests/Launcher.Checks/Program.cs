@@ -3,6 +3,20 @@ using System.Text.Json;
 using Launcher.Core;
 
 var client = new RuntimeClient();
+if (args.Length == 2 && args[0] == "--accounts")
+{
+    var result = await client.RunAsync(new(args[1], UseLocalProfile: false), "QueryAccounts");
+    Console.WriteLine(JsonSerializer.Serialize(result, SettingsStore.JsonOptions));
+    return result.Ok ? 0 : 1;
+}
+if (args.Length == 2 && args[0] == "--account-change")
+{
+    var request = JsonSerializer.Deserialize<AccountDataRequest>(await Console.In.ReadLineAsync() ?? "", SettingsStore.JsonOptions)
+        ?? throw new InvalidDataException("Missing disposable account request");
+    var result = await client.RunAsync(new(args[1], UseLocalProfile: false), "ManageAccount", accountData: request);
+    Console.WriteLine(JsonSerializer.Serialize(result, SettingsStore.JsonOptions));
+    return result.Ok ? 0 : 1;
+}
 if (args.Length > 0 && args[0] == "--discover")
 {
     var roots = args.Length > 1 ? new[] { new RepositorySearchRoot(args[1], 4) }
@@ -42,6 +56,7 @@ void Check(bool condition, string description)
 }
 string fixture = Path.Combine(Path.GetTempPath(), "Launcher checks " + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(fixture);
+File.WriteAllText(Path.Combine(fixture, ".waypoint-test-fixture"), "disposable checks only");
 try
 {
     ModChecks.Run(fixture, Check);
@@ -110,7 +125,8 @@ try
     File.WriteAllText(Path.Combine(unpaired, "Content.ggpk"), "fixture archive");
     File.WriteAllText(Path.Combine(unpaired, "PathOfExile.exe"), "fixture original");
     File.WriteAllText(Path.Combine(unpaired, "Game.patched.exe"), "preserve prepared fixture");
-    var prepare = await client.RunAsync(new(fixture), "PrepareClient");
+    var isolatedPreparation = new RuntimeClient(Path.Combine(AppContext.BaseDirectory, "FixtureRuntimeBridge.ps1"));
+    var prepare = await isolatedPreparation.RunAsync(new(fixture), "PrepareClient");
     Check(!prepare.Ok && prepare.Message.Contains("without keys"), "preparation refuses an executable without matching keys");
     Check(!File.Exists(Path.Combine(unpaired, "Game.exe")) && File.ReadAllText(Path.Combine(unpaired, "Game.patched.exe")) == "preserve prepared fixture",
         "preparation refuses unpaired client before writing anything");
@@ -250,6 +266,17 @@ try
     var matchedLookup = await RepositoryLocator.FindAsync([new(discoveryRoot, 3)], upstreamReader: _ => Task.FromResult<UpstreamHead?>(lookup.Upstream));
     Check(matchedLookup.SingleMatch?.Root == checkoutA && matchedLookup.Repositories[0].MatchesUpstream && matchedLookup.Repositories[0].Head.HasTrackedChanges == true,
         "lookup ranks verified matches first while preserving the modified-files warning");
+    var accountCharacter = new PlayerCharacter("char1", "OriginalHero", 77, "Witch", "Elementalist", "Standard", "", true);
+    var accountFixture = new PlayerAccount("account1", "Original", "", "revision", [accountCharacter, accountCharacter with { Id = "char2" }], 4);
+    var copiedNames = AccountTools.ProposeCharacterNames(accountFixture, "VeryLongAccountNameForCopies", ["OriginalHero_VeryLongAcc"]);
+    Check(copiedNames.Count == 2 && copiedNames.Values.Distinct(StringComparer.OrdinalIgnoreCase).Count() == 2 && copiedNames.Values.All(n => AccountTools.ValidName(n, 23)),
+        "account copy proposes distinct valid character names within the upstream length limit");
+    Check(AccountTools.ValidName("Test_Account-123") && !AccountTools.ValidName("no spaces") && !AccountTools.ValidName("ab") && !AccountTools.ValidName(new string('a', 33)),
+        "new account names follow the launcher's supported registration rules");
+    Check(accountCharacter.DisplayClass == "Elementalist" && (accountCharacter with { Ascendancy = "" }).DisplayClass == L.Text("Witch"),
+        "character rows prefer ascendancy and otherwise show the base class");
+    var accountRoundTrip = JsonSerializer.Deserialize<BridgeResult>(JsonSerializer.Serialize(new BridgeResult(true, "ok", null, AccountData: new(true, true, "", [accountFixture]))), SettingsStore.JsonOptions);
+    Check(accountRoundTrip?.AccountData?.Accounts.Single().Characters[0].Level == 77, "account data has a typed bridge result independent of emulator assemblies");
     Console.WriteLine($"{passed} checks passed.");
     return 0;
 }

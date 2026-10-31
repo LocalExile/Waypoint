@@ -11,14 +11,16 @@ public sealed class RuntimeClient
     public async Task<BridgeResult> RunAsync(LauncherSettings settings, string action, string service = "All",
         Action<string>? log = null, CancellationToken cancellation = default,
         Action<OperationProgress>? progress = null, AccountRequest? account = null,
-        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null)
+        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "Switch", "Fetch", "ReloadData", "Backup", "RestoreBackup", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "Switch", "Fetch", "ReloadData", "Backup", "RestoreBackup", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "QueryAccounts", "ManageAccount" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));
         if (action == "Register" && account is null)
             throw new ArgumentException("Local account details are required.", nameof(account));
+        if (action == "ManageAccount" && accountData is null)
+            throw new ArgumentException("Reviewed account details are required.", nameof(accountData));
         if (action == "Switch" && source is null) throw new ArgumentException("Select a source first.", nameof(source));
         string directory = Path.Combine(SettingsStore.DataDirectory, "operations", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -26,7 +28,8 @@ public sealed class RuntimeClient
         string logFile = Path.Combine(directory, "operation.log");
         var start = new ProcessStartInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe"))
         {
-            UseShellExecute = false, CreateNoWindow = true, RedirectStandardInput = action == "Register",
+            UseShellExecute = false, CreateNoWindow = true, RedirectStandardInput = action is "Register" or "ManageAccount",
+            StandardInputEncoding = action is "Register" or "ManageAccount" ? new System.Text.UTF8Encoding(false) : null,
             // No redirected streams: live.ps1 is explicitly required to run without pipes.
             WorkingDirectory = Directory.Exists(settings.RepositoryPath) ? settings.RepositoryPath : AppContext.BaseDirectory
         };
@@ -54,11 +57,13 @@ public sealed class RuntimeClient
         foreach (string key in start.Environment.Keys.Where(k => k.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray()) start.Environment.Remove(key);
         start.Environment["GIT_TERMINAL_PROMPT"] = "0";
         start.Environment["GCM_INTERACTIVE"] = "never";
-        if (action != "Inspect") log?.Invoke($"{action} {service} · operation log: {Path.Combine(directory, action == "Register" ? "account-service.log" : "operation.log")}");
+        if (action is not ("Inspect" or "QueryAccounts")) log?.Invoke(action == "ManageAccount"
+            ? "ManageAccount · local operation started."
+            : $"{action} {service} · operation log: {Path.Combine(directory, action == "Register" ? "account-service.log" : "operation.log")}");
         using var process = Process.Start(start) ?? throw new IOException("Could not start the LocalExile adapter.");
-        if (action == "Register")
+        if (action is "Register" or "ManageAccount")
         {
-            await process.StandardInput.WriteLineAsync(JsonSerializer.Serialize(account));
+            await process.StandardInput.WriteLineAsync(action == "Register" ? JsonSerializer.Serialize(account) : JsonSerializer.Serialize(accountData));
             process.StandardInput.Close();
         }
         long position = 0;
@@ -101,8 +106,8 @@ public sealed class RuntimeClient
             if (File.Exists(logFile)) position = await ReadNewTextAsync(logFile, position, Output);
             // Cancellation stops waiting only for read-only inspection. Runtime work must finish or report failure;
             // killing the script could leave a build or a half-started environment behind.
-            if (action == "Inspect") cancellation.ThrowIfCancellationRequested();
-            await Task.Delay(300, action == "Inspect" ? cancellation : CancellationToken.None);
+            if (action is "Inspect" or "QueryAccounts") cancellation.ThrowIfCancellationRequested();
+            await Task.Delay(300, action is "Inspect" or "QueryAccounts" ? cancellation : CancellationToken.None);
         }
         if (File.Exists(logFile)) await ReadNewTextAsync(logFile, position, Output);
         await ReadProgress();
