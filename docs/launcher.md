@@ -27,9 +27,9 @@ git push origin v0.2.0
 
 The version shows in the window's title. A build from source is 0.0.0 ("built from source") and never offers updates.
 
-A release build asks GitHub's public API for the latest release of `Updates.Repository` (jetstream1128/LocalExile-Launcher until the move to the LocalExile organization) when it starts (the Control
-tab's **at start**; **Check for updates** asks at once and says what it found). A newer version shows a bar at the
-top of the window. **Update now**, after a confirmation:
+A release build asks GitHub's public API for the latest release of `Updates.Repository` (jetstream1128/LocalExile-Launcher until the move to the LocalExile organization) when it starts (**Look for
+updates at start** in the header's settings; **Check for updates** there asks at once and says what it found). A newer
+version shows a strip under the header. **Update now**, after a confirmation:
 
 1. downloads the release's `.sha256`, then its exe beside the running one (`LocalExileLauncher.exe.new`);
 2. refuses an exe whose SHA-256 differs, changing nothing;
@@ -61,20 +61,39 @@ It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK installs on Windows.
 On its first start the launcher asks for the server checkout: the folder with `GameServer.slnx` and
 `scripts\dev\live.ps1`. The picker starts at a `LocalExile` folder beside this repository when there is one (the usual
 layout: `LocalExile\` and `LocalExile-Launcher\` side by side). A folder that is not a checkout is refused. The choice is
-saved; **Change…** in the Control tab's Setup card picks another one and starts the launcher again on it. Started from a
+saved; **Change…** in the Control section's Setup panel picks another one and starts the launcher again on it. Started from a
 checkout's root (`dotnet run` there), the launcher uses that checkout when none is saved.
 
 At startup the launcher makes the checkout its working directory, so every path it uses (`logs\`, `data\`, `Client\`,
 `src\…\bin\Debug`) is the checkout's, as for the server's own tools.
 
-Its own settings (the server folder, the switches, pinned console lines, the history) are per Windows user in
+Its own settings (the server folder, the switches, the theme, pinned console lines, the history) are per Windows user in
 `%LOCALAPPDATA%\LocalExile\launcher.json`, never in a repository.
 
-## Tabs
+## Look
 
-| Tab | What it does | How |
+The window is a blue sidebar with the sections, a header (the section's name, the checkout's branch, the theme, the
+launcher's settings) and a status strip on every section: whether the servers listen, whether the game runs, whether a
+`live.ps1` run is going on, and a link to the logs. A newer release shows as a strip above it.
+
+The controls are [Material Design in XAML](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)'s,
+restyled flat in `App.xaml`: 30 px buttons with 4 px corners and no shadows, an outlined one by default and one blue
+primary button per view, thin borders, tables with small grey column titles. The launcher's own colours are the
+`Shell.*` brushes: App.xaml holds the light ones and `Theme.cs` swaps every one of them, with Material's base theme and
+primary colour, for the dark theme. Views use them through `DynamicResource` (code through `Theme.Brush`), so a switch
+reaches everything at once; a colour written into a view would stay light in the dark theme.
+
+The theme button in the header goes System → Light → Dark. System follows the Windows app theme, also when it changes
+while the launcher runs; the title bar turns dark with the dark theme (`DWMWA_USE_IMMERSIVE_DARK_MODE`). The choice is
+saved. The branch is read from the checkout's `.git/HEAD` (a short commit when detached); choosing one is on the
+[roadmap](roadmap.md). The settings button holds **Tray while the game runs**, **Look for updates at start** and
+**Check for updates**.
+
+## Sections
+
+| Section | What it does | How |
 |---|---|---|
-| Control | Servers: Start, Stop, Restart Gateway/Auth/Patch and the Walk maps, Skip build, Skip data check and Hot reload switches; Game: Play, Start game only, Close game; Stop all; the services' state; the server folder and the setup checks; the script's output | `live.ps1`, `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`, `-NoHotReload`; Close game ends the client's process, Stop all also the dev host |
+| Control | Play, Start servers, Stop servers, Stop all and the Hot reload, Skip build, Skip data check and Walk maps switches; every service as a table row with its state and one Start/Stop button; the script's output; the server folder and the setup checks | `live.ps1`, `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`, `-NoHotReload`; Close game ends the client's process, Stop all also the dev host |
 | Performance | CPU and memory of every service; for the chosen server, GC heap, allocation rate, collections, time in GC, thread pool, lock contention and exceptions | the processes once a second; the runtime's `System.Runtime` counters through its diagnostics port (what `dotnet-counters` reads), with nothing changed in the servers |
 | Server timings | what each Gateway operation costs over a window (30 s to 15 min, 1 min by default): calls per second, average, p95 and p99 (the worst second's), milliseconds per second; client messages by id, server phases (input queue, handler, send and wire gates, combat lock, surround, blocker build), level generation by area; the five busiest charted (p95 and ms per second) | the Gateway's `LocalExile.Gateway` meter (`localexile.gateway.duration`, ms, tags `phase` and `operation`) through the runtime's `System.Diagnostics.Metrics` event source, in the Gateway's counter session, published once a second; a checkout older than the `Message` and `LevelGen` phases shows only the phases |
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
@@ -83,22 +102,27 @@ Its own settings (the server folder, the switches, pinned console lines, the his
 
 ### Control
 
-- The buttons sit in three cards, coloured by what they do (green starts, red stops, blue is Play): **Servers**,
-  **Game** and **Everything**. Each card's lamp says how many servers listen and whether the game runs.
+- The toolbar holds `live.ps1`'s switches and the actions on everything: **Stop all**, **Stop servers**, **Start
+  servers** and **Play**, the one blue button.
+- Below it every service is a row: its state (running, starting while its port is not open yet, stopped, or its port
+  held by another program), ports, process, uptime, CPU and memory, and one button that starts or stops that service
+  alone. A server's is `live.ps1 -Only <server>` (build and start) or `live.ps1 -Stop -Only <server>`; the client's is
+  Start game only or closing its process; the dev host's builds and starts it or ends it; the walk-map recorder's only
+  stops it (it starts with a run while Walk maps is on). The ⋮ menu restarts a server and opens the service's log.
 - **Play** is plain `live.ps1`: it builds, restarts the servers and starts the client. It asks first if a client is
   running, because `live.ps1` closes it.
 - **Start servers** is `live.ps1 -NoClient`, **Stop servers** `live.ps1 -Stop -NoClient`: the servers and the walk-map
   recorder, the client staying (it drops to the login screen).
-- **Start game only** is `live.ps1 -ClientOnly`, with the unreachable proxy the control bridge also sets for it. It
+- The client row's **Start** is `live.ps1 -ClientOnly`, with the unreachable proxy the control bridge also sets for it. It
   needs the servers running, and `live.ps1` refuses a second client.
 - **Stop all** is `live.ps1 -Stop` (the client, the walk-map recorder and the three servers, a watched Gateway with its
-  `dotnet watch` included, then it waits until their ports are free) and the dev host the Accounts tab started. The
+  `dotnet watch` included, then it waits until their ports are free) and the dev host the Accounts section started. The
   tray's Stop all and closing with "Yes" do the same.
-- **Restart** is `live.ps1 -Only <server>`. With Walk maps on, the restarted Gateway announces area loads to the recorder
+- A server's **Restart** is `live.ps1 -Only <server>`. With Walk maps on, the restarted Gateway announces area loads to the recorder
   that is already running.
 - **Hot reload** (on by default, as in `live.ps1`): the Gateway runs under `dotnet watch`, and saved edits to its code
   apply with the game still running. Off passes `-NoHotReload` to the runs that start a Gateway.
-- Only one `live.ps1` runs at a time; the buttons wait while one does. The launcher runs it with Windows PowerShell and
+- Only one `live.ps1` runs at a time; the buttons wait while one does (the status strip says so). The launcher runs it with Windows PowerShell and
   turns off MSBuild's reused nodes for it, the fix the server's troubleshooting table names for a script that never
   returns. It takes the script's end from the process's exit, not from the end of its output.
 - The **Setup** list checks the server's one-time steps: the client copy, the keys, the patched client, the gateway
@@ -109,7 +133,7 @@ Its own settings (the server folder, the switches, pinned console lines, the his
   command line, the client by `Game.patched.exe`, the recorder by `walkmaps.py`. A port that listens without such a
   process shows as held by another program.
 - Closing the launcher asks whether to stop the servers and the game; "No" leaves them running.
-- **Tray while the game runs** (on by default): when a client starts, the launcher hides in the tray, and when no
+- **Tray while the game runs** (on by default, in the header's settings): when a client starts, the launcher hides in the tray, and when no
   client is left it comes back. A client that Play closes and starts again keeps it in the tray, and a launcher opened
   while the game already runs stays open. The tray icon's menu shows the window, stops everything or closes the
   launcher.
@@ -152,7 +176,7 @@ error. A server that exits while no `live.ps1` run is going on is reported as an
 
 ### Accounts
 
-The list is the dev host's `accounts`: every account with its characters, nothing secret. Showing the tab reads it
+The list is the dev host's `accounts`: every account with its characters, nothing secret. Showing the section reads it
 when the host already runs; **Refresh** starts the host first. Registering and creating a character are the dev
 protocol's `register`, `login` and `create_character` (the server's GettingStarted step 8). The character is created in
 Standard; the game's own creation screen offers the other leagues. The dev host stays running afterwards (it shares
@@ -166,6 +190,7 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `App.xaml.cs`, `Repo.cs` | the server folder (saved, chosen, changed) and the checkout's paths |
 | `LiveScript.cs` | `LiveRequest` (the buttons as `live.ps1` switches) and the PowerShell runner |
 | `ServiceMonitor.cs` | the services, found by WMI every two seconds, sampled every second |
+| `App.xaml`, `Theme.cs`, `MainWindow.xaml` | the look: Material Design's controls restyled, the `Shell.*` colours of each theme, the sidebar, header and status strip |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
 | `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
@@ -173,7 +198,7 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `DevHost.cs`, `AccountList.cs` | the dev host and its account list |
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon, the game's icon from the checkout's client copy) |
-| `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update bar |
+| `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update strip |
 
 Tests: `tests/GameServer.Launcher.Tests` (the `live.ps1` command lines, the server folder, following logs, severities,
 command and argument suggestions, the dev host's account list, finding the services, versions and releases, counter

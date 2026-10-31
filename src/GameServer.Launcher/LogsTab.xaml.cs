@@ -26,6 +26,12 @@ public partial class LogsTab : UserControl
         shared.Logs.Appended += (source, lines, restarted) => Dispatcher.BeginInvoke(() => Appended(source, lines, restarted));
     }
 
+    /// <summary>Selects a source by name (a service's row on the Control section).</summary>
+    internal void Show(string source)
+    {
+        if (_shared?.Logs.Sources.FirstOrDefault(s => s.Name == source) is { } found) SourceList.SelectedItem = found;
+    }
+
     void Appended(LogSource source, IReadOnlyList<LogLine> lines, bool restarted)
     {
         source.DisplayChanged();

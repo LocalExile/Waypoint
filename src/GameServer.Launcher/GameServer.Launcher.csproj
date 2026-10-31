@@ -29,6 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The look: Material Design controls, restyled flat and blue in App.xaml (Theme.cs switches light and dark). -->
+    <PackageReference Include="MaterialDesignThemes" Version="5.4.0" />
     <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.745401" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.8" />
     <PackageReference Include="System.Management" Version="10.0.12" />

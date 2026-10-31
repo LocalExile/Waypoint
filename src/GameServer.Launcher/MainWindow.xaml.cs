@@ -1,7 +1,12 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using MaterialDesignThemes.Wpf;
 
 namespace GameServer.Launcher;
+
+/// <summary>A section of the sidebar and the view it shows.</summary>
+sealed record Section(string Name, PackIconKind Icon, FrameworkElement View);
 
 public partial class MainWindow : Window
 {
@@ -27,13 +32,92 @@ public partial class MainWindow : Window
         _tray.StopAllRequested += async () => await _shared.StopAllAsync(_ => { });
         _tray.ExitRequested += () => { ShowFromTray(); Close(); };
         _shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() =>
-            ClientSeen(samples.Any(s => s.Service == Service.Client && s.Running)));
+        {
+            ClientSeen(samples.Any(s => s.Service == Service.Client && s.Running));
+            ShowStatus(samples);
+        });
+        _shared.LiveRunning += running => Dispatcher.BeginInvoke(() => { _live = running; ShowStatus(_shared.Monitor.Latest); });
+
+        Sections.ItemsSource = new Section[]
+        {
+            new("Control", PackIconKind.ViewDashboardOutline, Control),
+            new("Performance", PackIconKind.ChartLine, Performance),
+            new("Server timings", PackIconKind.TimerOutline, Timings),
+            new("Logs", PackIconKind.TextBoxOutline, LogsView),
+            new("Accounts", PackIconKind.AccountMultipleOutline, Accounts),
+            new("Console", PackIconKind.Console, ConsoleView),
+        };
+        Sections.SelectedIndex = 0;
+        Control.ShowLogRequested += source =>
+        {
+            LogsView.Show(source);
+            OpenLogsSection(this, null!);
+        };
+        string? branch = Repo.Branch();
+        BranchName.Text = branch ?? "no git checkout";
+        BranchChip.ToolTip = $"The server checkout's branch ({Environment.CurrentDirectory}); choosing one comes later (docs/roadmap.md)";
+        TrayWhileGame.IsChecked = _shared.Settings.TrayWhileGameRuns;
+        CheckAtStart.IsChecked = _shared.Settings.CheckForUpdates;
+        ShowTheme();
+        Theme.TitleBar(this);
 
         Title = Updates.IsReleaseBuild ? $"LocalExile Launcher {Updates.Current}" : "LocalExile Launcher (built from source)";
+        Version.Text = Updates.IsReleaseBuild ? $"Launcher {Updates.Current}" : "Launcher (built from source)";
         Updates.CleanUp();
-        Control.CheckForUpdatesRequested += () => _ = CheckForUpdates(manual: true);
         if (_shared.Settings.CheckForUpdates && Updates.IsReleaseBuild) Loaded += (_, _) => _ = CheckForUpdates(manual: false);
     }
+
+    bool _live;
+
+    void SectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Sections.SelectedItem is not Section shown) return;
+        foreach (Section s in Sections.Items) s.View.Visibility = s == shown ? Visibility.Visible : Visibility.Collapsed;
+        SectionTitle.Text = shown.Name;
+    }
+
+    void OpenLogsSection(object sender, RoutedEventArgs e) => Sections.SelectedItem = Sections.Items.Cast<Section>().First(s => s.View == LogsView);
+
+    /// <summary>The status strip: the servers, the game, and a live.ps1 run.</summary>
+    void ShowStatus(IReadOnlyList<ServiceSample> samples)
+    {
+        int up = samples.Count(s => s.Service.Kind == ServiceKind.Server && s.Running && s.Listening);
+        int servers = Service.All.Count(s => s.Kind == ServiceKind.Server);
+        bool game = samples.Any(s => s.Service == Service.Client && s.Running);
+        StatusText.Text = up == servers ? "Servers running" : up == 0 ? "Servers stopped" : $"{up} of {servers} servers up";
+        StatusLamp.Fill = Theme.Brush(up == servers ? "Shell.Good" : up == 0 ? "Shell.Idle" : "Shell.Warning");
+        StatusDetail.Text = $"  ·  game {(game ? "running" : "not running")}" + (_live ? "  ·  live.ps1 is running …" : "");
+    }
+
+    void CycleTheme(object sender, RoutedEventArgs e)
+    {
+        var next = (ThemeChoice)(((int)Theme.Mode + 1) % 3);
+        Theme.Apply(next);
+        _shared.Settings.Theme = next;
+        _shared.Settings.Save();
+        ShowTheme();
+        ShowStatus(_shared.Monitor.Latest);
+    }
+
+    void ShowTheme()
+    {
+        ThemeIcon.Kind = Theme.Mode switch { ThemeChoice.Light => PackIconKind.WhiteBalanceSunny, ThemeChoice.Dark => PackIconKind.WeatherNight, _ => PackIconKind.ThemeLightDark };
+        ThemeButton.ToolTip = $"Theme: {Theme.Mode} (click for {(ThemeChoice)(((int)Theme.Mode + 1) % 3)}); System follows Windows";
+    }
+
+    void TrayChanged(object sender, RoutedEventArgs e)
+    {
+        _shared.Settings.TrayWhileGameRuns = TrayWhileGame.IsChecked == true;
+        _shared.Settings.Save();
+    }
+
+    void CheckAtStartChanged(object sender, RoutedEventArgs e)
+    {
+        _shared.Settings.CheckForUpdates = CheckAtStart.IsChecked == true;
+        _shared.Settings.Save();
+    }
+
+    void CheckUpdatesClicked(object sender, RoutedEventArgs e) => _ = CheckForUpdates(manual: true);
 
     Release? _release;
 

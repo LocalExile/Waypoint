@@ -1,12 +1,12 @@
 <UserControl x:Class="GameServer.Launcher.AccountsTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <DockPanel Margin="10">
+    <DockPanel Margin="20,12,20,12">
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
             <Button DockPanel.Dock="Left" Content="Refresh" Click="Refresh" />
             <Button DockPanel.Dock="Right" x:Name="StopHost" Content="Stop dev host" Click="StopDevHost"
                     ToolTip="GameServer.Host, which the launcher starts to register accounts and create characters" />
-            <TextBlock x:Name="HostState" VerticalAlignment="Center" Margin="8,0,8,6" Foreground="Gray" />
+            <TextBlock x:Name="HostState" VerticalAlignment="Center" Margin="8,0,8,6" Foreground="{DynamicResource Shell.TextSecondary}" />
         </DockPanel>
 
         <Grid DockPanel.Dock="Bottom">

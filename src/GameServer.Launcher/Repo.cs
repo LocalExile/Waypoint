@@ -25,6 +25,30 @@ static class Repo
         return launcherFolder;
     }
 
+    /// <summary>The checkout's branch, from its HEAD file (no git process): a short commit when detached, null when the
+    /// checkout has none (not a git checkout, or unreadable).</summary>
+    public static string? Branch()
+    {
+        try
+        {
+            // A worktree's .git is a file naming its git directory.
+            string git = ".git";
+            if (File.Exists(git) && File.ReadAllText(git).Trim() is var link && link.StartsWith("gitdir:", StringComparison.Ordinal))
+                git = link["gitdir:".Length..].Trim();
+            string head = Path.Combine(git, "HEAD");
+            return File.Exists(head) ? BranchOf(File.ReadAllText(head)) : null;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return null; }
+    }
+
+    internal static string? BranchOf(string head)
+    {
+        head = head.Trim();
+        const string Ref = "ref: refs/heads/";
+        if (head.StartsWith(Ref, StringComparison.Ordinal)) return head[Ref.Length..];
+        return head.Length >= 7 && head.All(Uri.IsHexDigit) ? head[..7] : null;
+    }
+
     public static string LiveScript { get; } = Path.Combine("scripts", "dev", "live.ps1");
     public static string ExtractScript { get; } = Path.Combine("scripts", "dev", "extract-data.ps1");
     public static string ClientControl { get; } = Path.Combine("scripts", "dev", "client_control.py");

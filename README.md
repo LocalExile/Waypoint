@@ -17,17 +17,17 @@ launcher runs on), and a LocalExile server checkout set up as its
 1. Download `LocalExileLauncher.exe` from the latest release on this repository's **Releases** page.
 2. Put it anywhere, for example in a folder beside your `LocalExile` checkout, and start it.
 3. On its first start it asks for the server folder (the one with `GameServer.slnx`); it remembers it, and **Change…**
-   on the Control tab picks another one.
+   in the Control section's Setup panel picks another one.
 
 The exe is not code-signed, so Windows SmartScreen may say "Windows protected your PC" the first time: **More info** →
 **Run anyway**.
 
 ## Updates
 
-A release build looks for a newer release when it starts (**at start** on the Control tab turns that off; **Check for
-updates** looks at once). A newer one shows a bar at the top: **Update now** downloads the new exe, checks it against
-the release's SHA-256, puts it in place of the running one and restarts the launcher. The servers and the game keep
-running. **What's new** opens the release page.
+A release build looks for a newer release when it starts (**Look for updates at start** in the header's settings
+turns that off; **Check for updates** there looks at once). A newer one shows a strip under the header: **Update now**
+downloads the new exe, checks it against the release's SHA-256, puts it in place of the running one and restarts the
+launcher. The servers and the game keep running. **What's new** opens the release page.
 
 ## Build from source
 
@@ -38,7 +38,7 @@ dotnet publish src/GameServer.Launcher -o .
 .\LocalExileLauncher.exe
 ```
 
-A build from source has no version and never offers updates. Everything else, from the tabs to the code layout and
+A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
 how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
 
 This project is not affiliated with or endorsed by Grinding Gear Games.

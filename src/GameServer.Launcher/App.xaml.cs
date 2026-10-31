@@ -15,7 +15,7 @@ public partial class App : Application
         if (root is null)
         {
             MessageBox.Show("Choose the folder of your LocalExile server checkout: the one with GameServer.slnx and " +
-                "scripts\\dev\\live.ps1. The launcher remembers it; Change… on the Control tab picks another one.",
+                "scripts\\dev\\live.ps1. The launcher remembers it; Change… on the Control section picks another one.",
                 "LocalExile Launcher: first start", MessageBoxButton.OK, MessageBoxImage.Information);
             root = ChooseServer(null);
         }
@@ -31,6 +31,7 @@ public partial class App : Application
         }
         // Every path of the server's tools is relative to its root (its AGENTS.md).
         Environment.CurrentDirectory = root;
+        Theme.Apply(settings.Theme);
         DispatcherUnhandledException += Unhandled;
         // Off the UI thread nothing can keep the process alive, but the reason is kept.
         AppDomain.CurrentDomain.UnhandledException += (_, args) => Crashed(args.ExceptionObject);

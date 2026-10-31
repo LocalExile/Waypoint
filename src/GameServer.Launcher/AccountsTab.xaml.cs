@@ -112,6 +112,6 @@ public partial class AccountsTab : UserControl
     void Say(string text, bool error)
     {
         Status.Text = text;
-        Status.Foreground = error ? Brushes.Firebrick : Brushes.SeaGreen;
+        Status.Foreground = Theme.Brush(error ? "Shell.Error" : "Shell.Good");
     }
 }

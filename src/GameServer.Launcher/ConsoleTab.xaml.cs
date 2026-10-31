@@ -194,7 +194,7 @@ public partial class ConsoleTab : UserControl
     {
         Append($"  ! {message}");
         if (message.Contains("not running", StringComparison.OrdinalIgnoreCase))
-            Append("    Start the game (Control tab), log in and enter an area, then send again.");
+            Append("    Start the game (Control section), log in and enter an area, then send again.");
     }
 
     async void GameStatus(object sender, RoutedEventArgs e)

@@ -17,6 +17,9 @@ sealed class Settings
     public bool CheckForUpdates { get; set; } = true;
     /// <summary>Hide in the tray while the game client runs, and come back when it closes.</summary>
     public bool TrayWhileGameRuns { get; set; } = true;
+    /// <summary>Light, dark, or the Windows app theme.</summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<ThemeChoice>))]
+    public ThemeChoice Theme { get; set; } = ThemeChoice.System;
     /// <summary>Pinned console lines, shown as buttons.</summary>
     public List<string> Favorites { get; set; } = ["/commands", "/pos", "/heal", "/god"];
     /// <summary>The console's last lines, newest last.</summary>

@@ -23,7 +23,7 @@ sealed class LineChart : FrameworkElement
     protected override void OnRender(DrawingContext dc)
     {
         double w = ActualWidth, h = ActualHeight;
-        var fg = (Brush?)TryFindResource(SystemColors.ControlTextBrushKey) ?? Brushes.Black;
+        var fg = Theme.Brush("Shell.Text");
         var grid = new Pen(new SolidColorBrush(Color.FromArgb(40, 128, 128, 128)), 1);
         dc.DrawRectangle(Brushes.Transparent, null, new Rect(0, 0, w, h));
         if (w < Left + Right + 20 || h < Top + Bottom + 20) return;

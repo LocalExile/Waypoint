@@ -93,4 +93,22 @@ public class LiveRequestTests
         }
         finally { Directory.Delete(top, recursive: true); }
     }
+
+    [Fact]
+    public void The_checkouts_branch_comes_from_its_HEAD_a_short_commit_when_detached()
+    {
+        Assert.Equal("feat/launcher-support", Repo.BranchOf("ref: refs/heads/feat/launcher-support\n"));
+        Assert.Equal("9297197", Repo.BranchOf("92971976069dc6abacd6d6b351df179fc85b8430\n"));
+        Assert.Null(Repo.BranchOf(""));
+        Assert.Null(Repo.BranchOf("not a head"));
+    }
+
+    [Fact]
+    public void The_theme_is_saved_by_name()
+    {
+        string json = System.Text.Json.JsonSerializer.Serialize(new Settings { Theme = ThemeChoice.Dark });
+        Assert.Contains("\"Theme\":\"Dark\"", json);
+        Assert.Equal(ThemeChoice.Light, System.Text.Json.JsonSerializer.Deserialize<Settings>("{\"Theme\":\"Light\"}")!.Theme);
+        Assert.Equal(ThemeChoice.System, System.Text.Json.JsonSerializer.Deserialize<Settings>("{}")!.Theme);
+    }
 }
