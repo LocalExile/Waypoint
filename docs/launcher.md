@@ -27,7 +27,7 @@ git push origin v0.2.0
 
 The version shows in the window's title. A build from source is 0.0.0 ("built from source") and never offers updates.
 
-A release build asks GitHub's public API for the latest release of `Updates.Repository` when it starts (the Control
+A release build asks GitHub's public API for the latest release of `Updates.Repository` (jetstream1128/LocalExile-Launcher until the move to the LocalExile organization) when it starts (the Control
 tab's **at start**; **Check for updates** asks at once and says what it found). A newer version shows a bar at the
 top of the window. **Update now**, after a confirmation:
 

@@ -18,8 +18,9 @@ sealed record Release(Version Version, string Tag, string Page, string Notes, st
 /// </summary>
 static class Updates
 {
-    /// <summary>Where the releases are published (owner/name). A transferred repository's old name keeps answering.</summary>
-    public const string Repository = "LocalExile/LocalExile-Launcher";
+    /// <summary>Where the releases are published (owner/name). A transferred repository's old name keeps answering, so
+    /// after a move to the LocalExile organization this only needs the new name for builds made from then on.</summary>
+    public const string Repository = "jetstream1128/LocalExile-Launcher";
     public const string ExeName = "LocalExileLauncher.exe";
 
     /// <summary>This build's version: the release's, 0.0.0 for a build from source.</summary>
