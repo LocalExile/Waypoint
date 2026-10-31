@@ -15,6 +15,7 @@ sealed record BranchRow(RemoteBranch Branch, bool Current, bool IsDefault)
     public string Updated => VersionsTab.Ago(Branch.Updated);
     public string UpdatedExact => Branch.Updated.LocalDateTime.ToString("g", CultureInfo.CurrentCulture);
     public Visibility DefaultBadge => IsDefault ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility LocalBadge => Branch.LocalOnly ? Visibility.Visible : Visibility.Collapsed;
     public bool CanSwitch => !Current;
     public string Action => Current ? "Current" : "Switch";
 }
@@ -137,7 +138,8 @@ public partial class VersionsTab : UserControl
         int? currentPull = Git.PullRequestOf(_current);
         var branches = _branches.Where(b => Has(b.Name) || Has(b.Subject) || Has(b.Author))
             .Select(b => new BranchRow(b, b.Name == _current, b.Name == _default))
-            .OrderByDescending(r => r.IsDefault).ToList();
+            // The default branch, then this checkout's own branches (what one works on), then origin's, newest first.
+            .OrderByDescending(r => r.IsDefault).ThenByDescending(r => r.Branch.LocalOnly).ToList();
         var pulls = _pulls.Where(p => Has(p.Title) || Has(p.Author) || Has($"#{p.Number}") || Has(p.Number.ToString(CultureInfo.InvariantCulture)))
             .Select(p => new PullRow(p, p.Number == currentPull)).ToList();
         BranchList.ItemsSource = branches;
@@ -238,7 +240,19 @@ public partial class VersionsTab : UserControl
                     "Gateway would rebuild halfway through it.",
                     update ? "Stop and update" : "Stop and switch")) return;
             RunState.Text = "Stopping the servers and the game …";
-            if (await _shared.StopAllAsync(Log) is null) { RunState.Text = $"{_shared.BusyWith} is running; switch when it is done."; return; }
+            int? stopped = await _shared.StopAllAsync(Log);
+            if (stopped is null) { RunState.Text = $"{_shared.BusyWith} is running; switch when it is done."; return; }
+            // A checkout older than the launcher hooks has a live.ps1 without -Stop: switching to one that has it is the
+            // way out, so the player may go on with the servers still running.
+            if (stopped != 0 && !Dialog.Ask(owner, DialogKind.Warning, "The servers did not stop",
+                    $"live.ps1 -Stop failed (exit {stopped}); the output below says why. This version's live.ps1 may have no " +
+                    "-Stop (older than the launcher hooks). Switch anyway, with the servers still running? A watched Gateway " +
+                    "may rebuild or restart on its own; Stop all works again on a version that has -Stop.",
+                    update ? "Update anyway" : "Switch anyway", cancelByDefault: true))
+            {
+                RunState.Text = "Not switched: the servers did not stop.";
+                return;
+            }
         }
 
         bool ok = false;

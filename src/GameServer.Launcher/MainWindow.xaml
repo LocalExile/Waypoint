@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:l="clr-namespace:GameServer.Launcher"
-        Title="LocalExile Launcher" Width="1280" Height="800" MinWidth="900" MinHeight="560"
+        Title="LocalExile Launcher" Icon="Assets/LocalExile.ico" Width="1280" Height="800" MinWidth="900" MinHeight="560"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource Shell.Background}"
         TextElement.Foreground="{DynamicResource Shell.Text}"
@@ -18,11 +18,9 @@
         <Border Background="{DynamicResource Shell.Sidebar}">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="16,14,0,12">
-                    <Border Width="30" Height="30" CornerRadius="6" Background="White">
-                        <md:PackIcon Kind="ServerNetwork" Width="20" Height="20" Foreground="{DynamicResource Shell.Sidebar}"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <TextBlock Text="LocalExile" FontSize="21" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center" />
+                    <!-- The app icon's source at 128 px: crisp up to 3.5x display scaling. -->
+                    <Image Source="Assets/logo-128.png" Width="34" Height="34" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="LocalExile" FontSize="21" FontWeight="Bold" Foreground="White" Margin="8,0,0,0" VerticalAlignment="Center" />
                 </StackPanel>
                 <Border DockPanel.Dock="Top" Height="1" Background="#33FFFFFF" Margin="10,0,10,10" />
                 <TextBlock x:Name="Version" DockPanel.Dock="Bottom" Foreground="{DynamicResource Shell.SidebarText}" Opacity="0.6"

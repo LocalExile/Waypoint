@@ -29,15 +29,17 @@ sealed class Tray : IDisposable
 
     public void Notify(string text) => _icon.ShowBalloonTip(3000, "LocalExile Launcher", text, Forms.ToolTipIcon.Info);
 
-    /// <summary>The game's own icon, read from the local client copy; the generic one without it.</summary>
+    /// <summary>The launcher's own icon at the tray's size (Assets\LocalExile.ico); the generic one if it cannot be read.</summary>
     static System.Drawing.Icon LoadIcon()
     {
         try
         {
-            string exe = Path.GetFullPath(Path.Combine("Client", "Game.exe"));
-            if (File.Exists(exe) && System.Drawing.Icon.ExtractAssociatedIcon(exe) is { } icon) return icon;
+            var resource = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/Assets/LocalExile.ico"));
+            if (resource is not null)
+                using (var stream = resource.Stream)
+                    return new System.Drawing.Icon(stream, Forms.SystemInformation.SmallIconSize);
         }
-        catch (Exception e) when (e is IOException or ArgumentException or UnauthorizedAccessException) { }
+        catch (Exception e) when (e is IOException or ArgumentException) { }
         return System.Drawing.SystemIcons.Application;
     }
 

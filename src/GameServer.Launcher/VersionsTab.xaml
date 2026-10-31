@@ -106,6 +106,10 @@
                                 <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding DefaultBadge}">
                                     <TextBlock Text="default" />
                                 </Border>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource Shell.Badge}" Visibility="{Binding LocalBadge}"
+                                        BorderBrush="{DynamicResource Shell.Accent}" ToolTip="Only in this checkout: not on origin (not pushed)">
+                                    <TextBlock Text="local" Foreground="{DynamicResource Shell.Accent}" />
+                                </Border>
                                 <TextBlock Text="{Binding Name}" Style="{StaticResource Shell.Cell}" FontWeight="SemiBold" ToolTip="{Binding Name}" />
                             </DockPanel>
                             <TextBlock Grid.Column="1" Text="{Binding Subject}" Style="{StaticResource Shell.Cell}" ToolTip="{Binding Subject}"

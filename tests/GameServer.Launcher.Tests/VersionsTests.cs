@@ -17,6 +17,17 @@ public class VersionsTests
         Assert.Equal("Wrathen", branches[0].Author);
     }
 
+    [Fact]
+    public void Local_branches_keep_their_whole_name_and_are_marked_local()
+    {
+        var branches = Git.ParseBranches(
+            "feat/launcher-support\t2026-10-30T18:00:00+00:00\tBohdan\tAdd hooks for outside tools\n" +
+            "main\t2026-10-30T09:00:00+00:00\tAtakan\tMerge pull request #401\n", remote: null);
+        Assert.Equal(["feat/launcher-support", "main"], branches.Select(b => b.Name));
+        Assert.All(branches, b => Assert.True(b.LocalOnly));
+        Assert.All(Git.ParseBranches("origin/main\t2026-10-30T09:00:00+00:00\tAtakan\tMerge\n"), b => Assert.False(b.LocalOnly));
+    }
+
     [Theory]
     [InlineData("https://github.com/LocalExile/LocalExile", "LocalExile/LocalExile")]
     [InlineData("https://github.com/LocalExile/LocalExile.git\n", "LocalExile/LocalExile")]

@@ -4,8 +4,9 @@ using System.Text;
 
 namespace GameServer.Launcher;
 
-/// <summary>A branch of the server repository (origin's), with its last commit.</summary>
-sealed record RemoteBranch(string Name, DateTimeOffset Updated, string Author, string Subject);
+/// <summary>A branch of the server repository with its last commit: origin's, or <see cref="LocalOnly"/> one that is
+/// only in this checkout (not pushed, such as a feature being worked on).</summary>
+sealed record RemoteBranch(string Name, DateTimeOffset Updated, string Author, string Subject, bool LocalOnly = false);
 
 /// <summary>Changes the launcher stashed when it switched away from <see cref="Branch"/>; <see cref="Ref"/> is
 /// <c>stash@{n}</c>.</summary>
@@ -66,8 +67,16 @@ static class Git
 
     public static Task<Result> FetchAsync(Action<string> log) => RunAsync(log, "fetch", "--prune", "origin");
 
-    public static async Task<List<RemoteBranch>> BranchesAsync() =>
-        ParseBranches((await RunAsync(null, "for-each-ref", $"--format={BranchFormat}", "refs/remotes/origin")).Output);
+    /// <summary>origin's branches, then this checkout's own that origin has not (pull requests' pr/&lt;n&gt; aside: the
+    /// Pull requests list has them).</summary>
+    public static async Task<List<RemoteBranch>> BranchesAsync()
+    {
+        var origin = ParseBranches((await RunAsync(null, "for-each-ref", $"--format={BranchFormat}", "refs/remotes/origin")).Output);
+        var names = origin.Select(b => b.Name).ToHashSet();
+        var local = ParseBranches((await RunAsync(null, "for-each-ref", $"--format={BranchFormat}", "refs/heads")).Output, remote: null)
+            .Where(b => !names.Contains(b.Name) && PullRequestOf(b.Name) is null);
+        return [.. origin, .. local];
+    }
 
     public static async Task<HashSet<string>> LocalBranchesAsync() =>
         [.. Lines((await RunAsync(null, "for-each-ref", "--format=%(refname:short)", "refs/heads")).Output)];
@@ -91,14 +100,16 @@ static class Git
 
     public static Task<Result> RestoreAsync(LauncherStash stash, Action<string> log) => RunAsync(log, "stash", "pop", stash.Ref);
 
-    /// <summary>To origin's <paramref name="branch"/>: a local branch of that name is switched to and moved forward to
-    /// origin's when it can be without losing its own commits; else one is made that tracks origin's.</summary>
+    /// <summary>To <paramref name="branch"/>: a local branch of that name is switched to and moved forward to origin's
+    /// when origin has one and that loses none of its own commits (a branch only in this checkout is just switched to);
+    /// else one is made that tracks origin's.</summary>
     public static async Task<Result> SwitchToBranchAsync(string branch, Action<string> log)
     {
         if (!(await LocalBranchesAsync()).Contains(branch))
             return await RunAsync(log, "switch", "--track", "-c", branch, $"origin/{branch}");
         var switched = await RunAsync(log, "switch", branch);
         if (!switched.Ok) return switched;
+        if (!(await RunAsync(null, "rev-parse", "--verify", "--quiet", $"refs/remotes/origin/{branch}")).Ok) return switched;
         var forward = await RunAsync(log, "merge", "--ff-only", $"origin/{branch}");
         return forward.Ok ? forward
             : new(0, $"{branch} has commits of its own that origin's has not: switched, but left as it is ({forward.Output})");
@@ -150,16 +161,19 @@ static class Git
 
     const string BranchFormat = "%(refname:short)%09%(committerdate:iso-strict)%09%(authorname)%09%(subject)";
 
-    internal static List<RemoteBranch> ParseBranches(string output)
+    /// <summary>for-each-ref's lines, newest first: origin's (<paramref name="remote"/>, its prefix taken off) or, with
+    /// null, local branches, which are then <see cref="RemoteBranch.LocalOnly"/>.</summary>
+    internal static List<RemoteBranch> ParseBranches(string output, string? remote = "origin")
     {
         var branches = new List<RemoteBranch>();
+        string prefix = remote is null ? "" : remote + "/";
         foreach (string line in Lines(output))
         {
             var f = line.Split('\t', 4);
             // origin/HEAD is a pointer, and plain "origin" the same pointer by its short name.
-            if (f.Length < 4 || !f[0].StartsWith("origin/", StringComparison.Ordinal) || f[0] == "origin/HEAD") continue;
+            if (f.Length < 4 || !f[0].StartsWith(prefix, StringComparison.Ordinal) || f[0] == prefix + "HEAD" || f[0].Length == prefix.Length) continue;
             DateTimeOffset.TryParse(f[1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var at);
-            branches.Add(new(f[0]["origin/".Length..], at, f[2], f[3]));
+            branches.Add(new(f[0][prefix.Length..], at, f[2], f[3], LocalOnly: remote is null));
         }
         return [.. branches.OrderByDescending(b => b.Updated)];
     }

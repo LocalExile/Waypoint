@@ -151,14 +151,15 @@ question (a fork's pull request) has Cancel as its default.
 
 ### Versions
 
-- The section lists origin's branches (the default one first) and the open pull requests of the GitHub repository
-  origin points at, with their last commit or title, author, age, and a **draft** or **fork** label. Showing it
-  fetches (`git fetch --prune origin`) when the lists are older than five minutes; **Fetch** does at once. GitHub's API
+- The section lists origin's branches (the default one first), the checkout's own branches origin has not (a **local**
+  label: work not pushed yet; the `pr/<n>` ones stay in the pull requests' list) and the open pull requests of the
+  GitHub repository origin points at, with their last commit or title, author, age, and a **draft** or **fork** label.
+  Showing it fetches (`git fetch --prune origin`) when the lists are older than five minutes; **Fetch** does at once. GitHub's API
   is used without a token (60 requests an hour), so the pull requests are read again only on Fetch or after a minute.
 - **Switch** to a branch switches to the local branch of that name, moved forward to origin's when that loses nothing
-  (a local branch with commits of its own is left as it is), or makes one that tracks origin's. **Switch** to a pull
-  request fetches its head (`pull/<n>/head`) into the local branch `pr/<n>`, again on each switch and on **Update**, so
-  a force-pushed pull request comes in whole. It refuses when `pr/<n>` has commits of the player's own: the launcher
+  (a local branch with commits of its own is left as it is; one origin has not is only switched to), or makes one that
+  tracks origin's. **Switch** to a pull request fetches its head (`pull/<n>/head`) into the local branch `pr/<n>`,
+  again on each switch and on **Update**, so a force-pushed pull request comes in whole. It refuses when `pr/<n>` has commits of the player's own: the launcher
   remembers the head it fetched last (`refs/launcher/pr/<n>`), so commits a force-push left behind are not taken for
   the player's.
 - Every switch has the same guards, in this order. A pull request from a fork (or a deleted one) asks once, with the
@@ -166,7 +167,10 @@ question (a fork's pull request) has Cancel as its default.
   rights. The agreed ones are kept in the settings. Uncommitted changes (the ignored `data\` and `Client\` are not
   any) are listed and stashed as `launcher: <branch> before switching to <target>`; going back to that branch offers
   them back, and **Restore stashed changes** next to the branch's name does it later. Running servers or a running game
-  are stopped first (`live.ps1 -Stop` and the dev host), or a watched Gateway would rebuild halfway through. A switch
+  are stopped first (`live.ps1 -Stop` and the dev host), or a watched Gateway would rebuild halfway through. When the
+  stop fails, most often because the checkout's version is older than the launcher hooks and its `live.ps1` has no
+  `-Stop`, the switch asks before going on with the servers running: switching to a version that has `-Stop` is the way
+  back to stopping them. A switch
   that fails puts the stashed changes back.
 - git and `live.ps1` never run at once: a switch takes the same lock as a `live.ps1` run, and the status strip says
   which one runs. After a switch the header's branch and the setup checks are read again, and the launcher offers Play,
@@ -234,7 +238,8 @@ with "Yes". Its output is the checkout's `logs\launcher-host.log`.
 | `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |
 | `DevHost.cs`, `AccountList.cs` | the dev host and its account list |
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
-| `Tray.cs` | the tray icon (Windows Forms' NotifyIcon, the game's icon from the checkout's client copy) |
+| `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |
+| `Assets\icon.png`, `Assets\LocalExile.ico`, `Assets\logo-128.png` | the launcher's icon: the 1024 px source; the .ico of the exe, the window and the tray (16 to 256 px) and the sidebar's 128 px logo, both made from the source |
 | `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update strip |
 
 Tests: `tests/GameServer.Launcher.Tests` (the `live.ps1` command lines, the server folder, following logs, severities,
