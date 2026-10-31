@@ -95,7 +95,7 @@ It checks structural prerequisites; the upstream preparation tools enforce the s
 ## Features
 
 - Dark WPF desktop interface with sidebar navigation, keyboard focus indication, scalable text, Windows High Contrast resources, and an original geometric application icon.
-- Mods and Backups keep their list beside details, with actions above long history. Ctrl+1–8 chooses a page,
+- Mods, Backups and Accounts keep their list beside details, with actions above long history. Ctrl+1–9 chooses a page,
   Ctrl+Tab / Ctrl+Shift+Tab cycles pages, Ctrl+F focuses the page's search, and F5 refreshes local status.
 - Checkout selection and persistent settings; local runtime profile support without executing profile code on inspection.
 - Play, start/stop servers, individual service controls, service restart, and graceful game close.
@@ -205,6 +205,22 @@ Mods are executable code: installing a mod grants it the same account access as 
 existing local mods and does not download mods or provide a marketplace, installer, script editor or league selector.
 See [mod management validation](docs/mod-management-validation.md) for the real-client, branch-round-trip and UI checks.
 
+## Accounts (0.6.0, local review)
+
+The current source adds **Accounts** beside Backups. Browse accounts and their characters, level, class/ascendancy,
+league and last played; search by account or character details. **Create account**, **Duplicate…**, **Rename…**,
+**Set password…** and **Delete account…** are available when the game and all LocalExile services are stopped.
+Browsing remains available while playing. Full duplication is the default and includes characters, progress and
+personal/guild stashes; **Start empty** creates only a new login. Review the new character names before confirming.
+
+Automatic save backups are on by default and can be disabled directly on this page. They use the existing **Backups**
+manager, including the recorded source commit and last Gateway build used with that database. Deletion requires the
+exact account name and removes its characters and stashes in every league. **Cancel** is the default Enter action.
+Unknown storage formats stay read-only. Python with SQLite 3.37+ is required; no server source changes are needed.
+
+This work is local and awaiting owner review; it has not been pushed or released. See the [account guide and validation](docs/account-management.md)
+for offline safeguards, recovery and the supported storage contract. The latest published download remains 0.5.2.
+
 ## Build and check
 
 These steps are for contributors building Waypoint from source. Download users can run the portable EXE directly.
@@ -305,7 +321,7 @@ The first local package's checksum, external-folder runtime tests and preservati
 - `.local/` is ignored and holds this machine's development/validation artifacts only.
 
 Operation logs contain PowerShell transcript metadata and local paths. They are local diagnostics, not redacted shareable reports.
-Account creation has no transcript: its request travels through stdin and localhost, never command arguments or a request file.
+Account creation and editing have no transcript: requests travel through stdin (and localhost for registration), never command arguments or a request file.
 Diagnostic preview includes only bounded operation output and the selected log, plus setup/service/build metadata; it does
 not collect databases, key files, credential files or client archives. Account/character names can be added to its removal field.
 No telemetry, automatic updates or upload feature is included.

@@ -1,45 +1,71 @@
-# Accounts — planned for 0.6.0
+# Accounts — 0.6.0 local review
 
-This feature is being implemented locally for owner review. No push or publication is authorized.
+Implemented locally, awaiting owner review. No push, tag or publication is authorized for this work.
+This is a minor version because it adds an account-management workflow rather than correcting an existing feature.
 
-## User experience
+## Using Accounts
 
-Accounts belongs beside Backups in the workspace navigation. Use a searchable account list and a character table
-with name, level, ascendancy (falling back to base class), league and last played. Keep the selected account and
-character visible through refreshes. Explain loading, empty, filtered-empty, unsupported and failed states.
-Reuse Waypoint's themes, reading preferences, keyboard navigation and shared modal frame.
+1. Open Waypoint and select the intended LocalExile checkout. The workspace header identifies its location.
+2. Choose **Accounts** in the sidebar, or press **Ctrl+6**. The selected runtime profile determines the save database.
+3. Search by account name, character name, class, ascendancy or league. Select an account to see its characters,
+   levels and class/ascendancy. Select a character for its last-played time. **Reload accounts** or **F5** refreshes data.
+4. For changes, close the game and stop all LocalExile services through the tool that started them. Waypoint keeps
+   account browsing available while playing, but refuses edits while a game, login service, Gateway, watcher,
+   account service or conflicting installation is detected. Keep them stopped until the operation completes.
+5. Leave **Automatic backup before account changes** enabled for recovery. It follows the same global preference
+   as Builds, Mods and Backups, and can be disabled directly here. A required backup failure stops the change.
 
-Initial account actions: Create, Rename, Set password, Duplicate and Delete. Delete requires entering the account
-name and reviewing character/stash impact. Automatic backups follow the existing global preference and can be
-changed on this page. Writes require stopped servers/game, no ownership conflicts and the launcher's global writer
-lock. A failed backup blocks the change. Unknown storage layouts fail closed. Do not modify real player data in tests.
+**Create account** uses LocalExile's existing local registration service, including the first-account setup path.
+Account names accept 3–32 ASCII letters, digits, underscores or hyphens. Passwords require at least four characters;
+Waypoint does not retain them in preferences, command arguments, request files or operation transcripts.
 
-## Storage contract investigated
+**Duplicate…** defaults to **Full copy**: a new login, characters, progress, personal/guild stashes and stash tabs
+in all leagues. Supply a new password and review the proposed unique character names (3–23 allowed characters).
+**Start empty** creates only a login. Full copies receive new account and character identities and clear old
+vitals-session ownership. The source account is retained. Opaque progress/mod fields are preserved; arbitrary
+mod-specific references inside them are not rewritten, so custom mod behavior may need independent validation.
 
-Upstream main was verified at `89b7aa908213ac8eb9b5ac5aa7ae54c14189c3e9` during design, matching the local checkout.
-Reference sources: `GameServer.Storage/SaveDatabase.cs`, `SqliteAccountStore.cs`, account models/service,
+**Rename…** changes the login name and related personal/guild stash keys across leagues. Character names, progress
+and account identity remain attached to the same account. **Set password…** replaces both supported login verifiers;
+enter the new credentials again in a client that saved the previous ones.
+
+**Delete account…** shows the account, character/stash counts, database path and backup policy. Enter the exact account
+name to continue. It removes the login, active character records/progress and related personal/guild stashes in every
+league. Character progress is archived using LocalExile's existing deleted-character table convention. **Enter** defaults
+to **Cancel**; closing the window also cancels. Other accounts are preserved. No character/stat editor is included.
+
+Every confirmation identifies the reviewed database. Changing checkout/profile requires another review. A stale
+account revision, destination name collision, unfamiliar layout or write lock causes a refusal without partial edits.
+Errors keep the account list available for a fresh reload. Manual starts outside Waypoint must wait for the offline
+change to finish; the launcher's mutex cannot prevent another tool from starting a service.
+
+## Backups and recovery
+
+Open **Backups** to manage snapshots. They record the source commit and the last Gateway build Waypoint recorded
+using that database; outside launches remain unknown. Account changes use these same snapshots, not a second backup
+system. To undo an edit, close the game, stop services, select the backup made before the change, and choose
+**Restore saves…**. This restores the entire save database, including other accounts' state at that time. Choose the
+matching source separately if necessary. Disabling automatic backups removes this automatic recovery copy.
+
+## Supported storage contract
+
+LocalExile main was verified at `89b7aa908213ac8eb9b5ac5aa7ae54c14189c3e9`. Reference sources:
+`GameServer.Storage/SaveDatabase.cs`, `SqliteAccountStore.cs`, account models/service,
 `GameServer.Gateway/CharacterSaves.cs`, `AccountStash.cs`, `AscendancyCatalog.cs` and `AscendancyProgress.cs`.
+No LocalExile source changes, DLL references or game assets are added to the production launcher.
 
-Accounts and account-character records are JSON in SQLite rows. Character progress is a separate name-keyed table.
-Personal and guild stashes have account/league keys and separate stash-tab rows. Main ascendancy is a durable
-family/id/revision selection in character progress; display names come from the selected checkout's extracted
-`data/tables/Ascendancy.json`. Use its Name or LeagueName, preserving unknown identifiers honestly when data is absent.
-Do not infer ascendancy from a base class or copy game data into Waypoint.
+Accounts and account-character records are JSON in SQLite rows. Progress is stored separately by character name.
+Personal/guild stashes use account/league keys and separate tab rows. Main ascendancy is a durable family/id/revision
+selection in progress; display names come from this checkout's extracted `data/tables/Ascendancy.json`, using Name
+or LeagueName. Missing display data shows the durable ascendancy ID; absence of a selection falls back to base class.
 
-Read listings use one SQLite snapshot and expose no password verifiers. Mutation requests use stdin, never passwords
-in arguments/logs/files. Retain unknown JSON fields, use parameterized SQL and transactions, check the selected
-account's revision again inside the write transaction, and verify database integrity. Do not initialize/migrate a save
-database behind the owner's back. Keep account creation through LocalExile's supported registration flow.
+Listings use one read-only SQLite snapshot and expose no credential verifiers. Mutations run parameterized SQL in
+one immediate transaction, verify identities, recheck the selected account revision and check database integrity.
+Known tables, columns, types, keys and JSON metadata are required for direct writes. Unknown layouts, extra
+tables/triggers/views or pending legacy imports remain read-only or are rejected when unreadable. This conservative
+contract can disable edits after an upstream/mod schema change until support is reviewed. Waypoint never initializes
+or migrates a database directly. Python with SQLite 3.37+ is required. Querying occurs on entry/reload or context
+change, not on every runtime-status poll. Limits are 2,000 accounts, 48,000 characters and 16 MiB per record.
 
-Full duplication, if selected, needs new account/character identities, reviewed unique character names, copied progress
-and optionally stash data. Clear the cloned progress's old vitals-session ownership. Rename/delete must address the
-same account's personal/guild league stashes and preserve unrelated accounts. Backup recovery uses the existing manager.
-
-## Validation plan
-
-Disposable SQLite fixtures cover consistency, transactional rollback, stale selections, name collisions, malformed/
-unsupported layouts, credentials, class/ascendancy display, cloning and account/stash relationships. Bridge checks cover
-process conflicts, backups and serialization. Cross-check writes against LocalExile's real account/storage classes in
-an isolated test harness without launching a client or changing emulator source. Exercise the WPF page/dialogs at
-minimum size, larger fonts, both languages and themes. Finish with a separate local review package and restored owner
-preferences. No release/push until the owner reviews and authorizes it.
+See [runtime contract](runtime-contract.md) for process gates, stdin transport and database binding, and
+[UI review and validation](ui-review/accounts.md) for the checks performed and their limits.

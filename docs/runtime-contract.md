@@ -31,16 +31,17 @@ account/storage formats and game behavior. The repositories are independent; no 
 No command is assembled from user text for a shell. The upstream script does assemble cmd strings, so the adapter
 refuses checkout paths containing cmd metacharacters; ordinary spaces are supported.
 
-Actions: Inspect, Build, Start, Play, Stop, Restart, CloseGame, PrepareClient, Dependencies, Register.
+Core actions include Inspect, Build, Start, Play, Stop, Restart, CloseGame, PrepareClient, Dependencies, Register,
+QueryAccounts and ManageAccount, plus the source/mod/backup actions described below.
 Service selection: All, Auth, Patch, Gateway.
 Each invocation writes a JSON result containing `Ok`, `Message`, and a typed snapshot. Mutation operations also write
-a local transcript except Register. Failures include `FailedStage`. Mutations replace a `progress.json` containing
+a local transcript except Register and ManageAccount. Failures include `FailedStage`. Mutations replace a `progress.json` containing
 the current named stage, detail and log path. Core also interprets upstream extraction messages into named subtasks.
 Elapsed time is measured locally; no estimated percentage or remaining time is fabricated.
 Read-only inspection never creates data/log directories inside the source checkout.
 
-The helper receives no redirected stdout/stderr. Register alone receives a JSON request through redirected stdin;
-it never invokes live.ps1. This preserves live.ps1's no-pipeline requirement.
+The helper receives no redirected stdout/stderr. Register and ManageAccount receive JSON requests through redirected
+UTF-8 stdin; neither invokes live.ps1. This preserves live.ps1's no-pipeline requirement.
 A Windows named mutex serializes mutations across all launcher instances and checkouts, since this adapter uses fixed ports.
 The desktop also serializes refresh/operations and waits for an active operation to finish before it closes.
 The Core API's cancellation token only cancels read-only waiting, not an in-progress runtime mutation.

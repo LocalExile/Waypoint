@@ -53,7 +53,7 @@ workspace through first use, backup, Play/world entry, data reload, graceful shu
   measurement window, sample counts, durations and waiting separately from process CPU.
 - Record repeatable workloads with area, seed, build hash and scenario metadata; compare duration distributions
   and allocations between environments. No inferred pathfinding/combat timing from process measurements.
-- Broader account management beyond first account creation, including separately designed recovery workflows.
+- Further account tools beyond the offline manager in 0.6.0, such as separately designed character editing and recovery workflows.
 - Native console through `client_control.py --stdio`; represent submission, timeout and no-reply outcomes correctly.
 - Bounded on-disk operation-log retention, optional light/system themes, installer/signing and release automation.
 
