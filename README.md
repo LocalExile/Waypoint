@@ -69,6 +69,7 @@ full control over branches and pull requests. Someone coming from an earlier lau
 | **Performance**, **Server timings** | Live CPU, memory and runtime counters; what each Gateway operation costs |
 | **Logs** | Every server's log, the client's, Waypoint's own, and all errors in one place; a redacted diagnostic report |
 | **Console** | The Gateway's chat commands for the character in game, with suggestions and pinned lines |
+| **Tools** | The item crafter: any base, rarity, modifiers with their values, sockets and influences; saved items; give it to the character in game |
 | **Settings** | Appearance and accessibility, language, what closing the window does, updates, the checkout |
 
 **English and Russian** are in **Settings → Language**, and switch at once. **Settings → Appearance** has 19 color

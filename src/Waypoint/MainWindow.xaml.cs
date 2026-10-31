@@ -99,6 +99,7 @@ public partial class MainWindow : Window
         Timings.Attach(_shared);
         LogsView.Attach(_shared);
         ConsoleView.Attach(_shared);
+        ToolsView.Attach(_shared);
         SettingsView.Attach(_shared);
         Lights.ItemsSource = _lights;
 
@@ -132,6 +133,7 @@ public partial class MainWindow : Window
             new("Server timings", PackIconKind.TimerOutline, Timings),
             new("Logs", PackIconKind.TextBoxOutline, LogsView),
             new("Console", PackIconKind.Console, ConsoleView),
+            new("Tools", PackIconKind.Toolbox, ToolsView),
             new("Settings", PackIconKind.CogOutline, SettingsView),
         ];
         ShowMode();
@@ -182,7 +184,7 @@ public partial class MainWindow : Window
     void ShowMode()
     {
         bool advanced = _shared.Settings.Advanced;
-        var sections = _sections.Where(s => advanced ? s.View != PlayView : s.View is PlayTab or ModsTab or AccountsTab or SettingsTab).ToArray();
+        var sections = _sections.Where(s => advanced ? s.View != PlayView : s.View is PlayTab or ModsTab or ToolsTab or AccountsTab or SettingsTab).ToArray();
         var shown = Sections.SelectedItem as Section;
         Sections.ItemsSource = sections;
         Sections.SelectedItem = sections.Contains(shown) ? shown : sections[0];

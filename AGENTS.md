@@ -16,8 +16,8 @@ rules: the server's are in its `AGENTS.md`.
   `scripts/dev/live.ps1` switch of the checkout (the server's rule: the client starts only through `live.ps1`, one at a
   time). Stopping the client's process or the dev host Waypoint started is fine.
 - **No reference to server projects.** Waypoint talks to the server only through its outside-tool hooks: `live.ps1`,
-  `GameServer.Gateway commands` / `values <kind>`, the dev host's JSON-lines protocol, the client control bridge, the
-  logs. The Versions section also runs git in the checkout and reads GitHub's public API; the adapter in `scripts/` reads
+  `GameServer.Gateway commands` / `values <kind>` / `crafter`, the dev host's JSON-lines protocol, the client control
+  bridge, the logs. The Versions section also runs git in the checkout and reads GitHub's public API; the adapter in `scripts/` reads
   and writes the checkout's saves and mod choices, with the guards in [docs/runtime-contract.md](docs/runtime-contract.md).
   A feature that needs more from the server adds a small hook there first, in the server repository, with its own tests
   and docs.

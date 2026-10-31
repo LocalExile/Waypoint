@@ -133,7 +133,7 @@ question (a fork's pull request) has Cancel as its default.
 
 ## Simple and Advanced modes
 
-A new player starts in **Simple mode**, with four sections (Play, Mods, Accounts, Settings) and no status strip or branch
+A new player starts in **Simple mode**, with five sections (Play, Mods, Tools, Accounts, Settings) and no status strip or branch
 chip: nothing to choose before playing. The **Simple | Advanced** switch at the bottom of the sidebar is always there:
 Advanced gives every section and takes Play away, as the Control section has it. Someone who used an earlier launcher, or
 Waypoint before the modes, starts in Advanced mode (`Settings.Load`).
@@ -171,6 +171,7 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters, searchable; registering an account; creating a character; creating, duplicating, renaming, setting a password and deleting with everything stopped | the list and those changes are the adapter's (`QueryAccounts`, `Register`, `ManageAccount`, `AccountData.py`; [account-management.md](account-management.md)); Register and Create go through the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `register`, `create_character`; Waypoint builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
+| Tools | tools for the game itself, each in its own window: the item crafter | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter` and `/item_give` through the client control bridge |
 | Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
 ### Control
@@ -382,6 +383,37 @@ removed there, and it goes to the clipboard only when asked.
   commands** does it at once. The Gateway's catalogs write their own log lines beside the values ("[gateway] atlas: …"),
   which the launcher skips. The loaded mods' commands are not in the list.
 
+### Tools: the item crafter
+
+**Open item crafter** opens its window (one at a time; the button brings it forward). It makes any item the server can
+write and gives it to the character in game.
+
+- **Base** (left): the item classes as icons (Material Design's, no game artwork), a search and the bases with their
+  class, drop level and attribute requirements. Choosing one puts its implicits on the item; explicit modifiers the new
+  base can have stay.
+- **Add modifiers** (left): one kind at a time: prefixes, suffixes, the bench's crafted modifiers, what each influence
+  on the item adds, corruption and Eldritch implicits, or any modifier without rules. Each shows its tier (T1 the best),
+  its range as the game words it, its affix name and the item level it needs; **Best tier only** keeps the best tier for
+  the item level of each group, **Above item level** also lists those that need more. Double-click, Enter or **+** adds one.
+- The item (middle): rarity, item level, quality, sockets as `/sockets` takes them (shown as coloured, linked circles;
+  empty for what a new item gets), the states and influences, a rare's name from the game's two word lists (or random),
+  and the modifiers. Each modifier has its kind, a tier list to change tier, its line with the current values, a slider
+  and a box per value (any whole number is accepted), and up, down and remove. The prefix and suffix count for the rarity
+  shows above them, and two modifiers of one group are marked; neither is refused.
+- **Preview** (right): the item as text in the game's rarity and modifier colours (readable on every scheme), with its
+  name, item level, requirements, sockets, implicits, modifiers and states.
+- **Save** keeps it in **Saved** (left) with an optional label, in `%LOCALAPPDATA%\Waypoint\crafted-items.json`:
+  Waypoint's own file, never in the checkout. A saved item opens with a click; **Duplicate** and **Delete** act on the
+  selected one, **New item** starts again.
+- **Give item** sends `/item_give <the item as JSON>` through the client control bridge, as the Console does, so the
+  character must be in game; the item goes into the main inventory and the Gateway's reply shows in the status line.
+  The copy button puts that command on the clipboard.
+
+The data is the Gateway's own (`GameServer.Gateway crafter`, read once per Gateway build): the bases, the modifiers each
+can have (the server's own rolling rules), their stat descriptions in English (the checkout's
+`data/stat-descriptions.txt`) and the name words. A checkout without the hook says so; `CrafterCatalog.cs` reads it and
+words the modifiers.
+
 ### Accounts
 
 The list is read from the checkout's save database through the adapter, with nothing running or built: every account with
@@ -410,6 +442,7 @@ adapter does not know can be browsed but not changed.
 | `AppearanceDialog.cs`, `ColorPickerDialog.cs`, `AccountActionDialog.cs`, `WindowBehaviorChoices.cs` | the appearance, an account change, the close choices |
 | `Workspace.cs`, `OutputPanel.xaml` | the app's side of the adapter: the last inspection, the operations and their output |
 | `SetupTab`, `ModsTab`, `BackupsTab`, `SettingsTab` | those sections |
+| `ToolsTab`, `ItemCrafterWindow`, `CrafterCatalog.cs`, `CraftedItems.cs` | the Tools section; the item crafter, the Gateway's crafter data and the game's wording of modifiers, the saved items |
 | `Loc.cs`, `src/Launcher.Core/Localization.cs`, `src/Launcher.Core/Resources/` | interface text in XAML and code, the English and Russian catalogs |
 | `src/Launcher.Core/` | the adapter's client (`RuntimeClient.cs`, `BridgeScripts.cs`), the mods, backups, accounts, setup guidance, checkout discovery, diagnostics, the single instance |
 | `scripts/` | the adapter: `RuntimeBridge.ps1` and its parts, `SaveBackup.py`, `AccountData.py` |

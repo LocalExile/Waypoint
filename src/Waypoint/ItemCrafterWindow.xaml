@@ -1,0 +1,307 @@
+<l:FormWindow x:Class="Waypoint.ItemCrafterWindow"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+              xmlns:l="clr-namespace:Waypoint"
+              Title="{l:Loc 'Item crafter'}" Width="1320" Height="840" MinWidth="1060" MinHeight="620"
+              WindowStartupLocation="CenterOwner" ShowInTaskbar="True">
+    <l:FormWindow.Resources>
+        <!-- A small round tag: a modifier's kind or tier. -->
+        <Style x:Key="Crafter.Tag" TargetType="Border">
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Padding" Value="5,1" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource Shell.RowHover}" />
+        </Style>
+        <Style x:Key="Crafter.Heading" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+            <Setter Property="Margin" Value="0,10,0,4" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+        </Style>
+        <!-- A pill that is on or off: a state, an influence, an item class. -->
+        <Style x:Key="Crafter.Chip" TargetType="ToggleButton">
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Padding" Value="11,0" />
+            <Setter Property="Margin" Value="0,0,6,6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{DynamicResource Shell.Text}" />
+            <Setter Property="Background" Value="{DynamicResource Shell.Background}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource Shell.Focus}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Pill" CornerRadius="13" BorderThickness="1" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource Shell.RowHover}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource Shell.Primary}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource Shell.Primary}" />
+                                <Setter Property="Foreground" Value="{DynamicResource Shell.OnAccent}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value=".5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </l:FormWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="360" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="380" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Left: the base, the modifiers to add, the saved items. -->
+        <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,1,0">
+            <DockPanel Margin="14,10,14,10">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                    <RadioButton x:Name="BasesPage" Style="{StaticResource MaterialDesignTabRadioButton}" IsChecked="True" Checked="PageChanged"
+                                 Content="{l:Loc 'Base'}" Padding="12,6" Margin="0,0,2,0" />
+                    <RadioButton x:Name="ModsPage" Style="{StaticResource MaterialDesignTabRadioButton}" Checked="PageChanged"
+                                 Content="{l:Loc 'Add modifiers'}" Padding="12,6" Margin="0,0,2,0" />
+                    <RadioButton x:Name="SavedPage" Style="{StaticResource MaterialDesignTabRadioButton}" Checked="PageChanged"
+                                 Content="{l:Loc 'Saved'}" Padding="12,6" />
+                </StackPanel>
+
+                <Grid>
+                    <!-- Bases: the classes as icons, a search, the list. -->
+                    <DockPanel x:Name="BasesView">
+                        <WrapPanel x:Name="ClassButtons" DockPanel.Dock="Top" Margin="0,0,0,6" />
+                        <TextBox x:Name="BaseSearch" DockPanel.Dock="Top" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search bases'}"
+                                 md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" md:TextFieldAssist.HasClearButton="True"
+                                 TextChanged="BaseSearchChanged" />
+                        <ListBox x:Name="BaseList" HorizontalContentAlignment="Stretch" SelectionChanged="BaseChosen" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,1">
+                                        <md:PackIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center"
+                                                     Foreground="{DynamicResource Shell.Accent}" />
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Detail}" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <!-- Modifiers that can go on the base: one kind at a time, searched, best tiers first. -->
+                    <DockPanel x:Name="ModsView" Visibility="Collapsed">
+                        <ComboBox x:Name="ModKind" DockPanel.Dock="Top" Margin="0,0,0,6" SelectionChanged="ModFilterChanged"
+                                  md:HintAssist.Hint="{l:Loc 'Kind'}" Style="{StaticResource MaterialDesignOutlinedComboBox}" Padding="10,6" />
+                        <TextBox x:Name="ModSearch" DockPanel.Dock="Top" Margin="0,0,0,4" md:HintAssist.Hint="{l:Loc 'Search modifiers'}"
+                                 md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" md:TextFieldAssist.HasClearButton="True"
+                                 TextChanged="ModFilterChanged" />
+                        <WrapPanel DockPanel.Dock="Top" Margin="0,2,0,2">
+                            <CheckBox x:Name="BestTiers" Content="{l:Loc 'Best tier only'}" IsChecked="True" Checked="ModFilterChanged" Unchecked="ModFilterChanged" />
+                            <CheckBox x:Name="AnyLevel" Content="{l:Loc 'Above item level'}" Checked="ModFilterChanged" Unchecked="ModFilterChanged"
+                                      ToolTip="{l:Loc 'Also list modifiers that need a higher item level than the item has'}" />
+                        </WrapPanel>
+                        <TextBlock x:Name="ModHint" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,4" />
+                        <ListBox x:Name="ModList" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MouseDoubleClick="ModListDoubleClick"
+                                 KeyDown="ModListKeyDown" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,2" Opacity="{Binding Opacity}">
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource Shell.IconButton}" Width="28" Height="28" Click="AddModClicked"
+                                                Tag="{Binding}" ToolTip="{l:Loc 'Add to the item'}" AutomationProperties.Name="{l:Loc 'Add to the item'}" VerticalAlignment="Center">
+                                            <md:PackIcon Kind="Plus" Width="18" Height="18" />
+                                        </Button>
+                                        <Border DockPanel.Dock="Left" Style="{StaticResource Crafter.Tag}" MinWidth="28" ToolTip="{Binding TierHint}">
+                                            <TextBlock Text="{Binding TierText}" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center" TextWrapping="NoWrap" />
+                                        </Border>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Detail}" Style="{StaticResource Shell.Secondary}" FontSize="11" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <!-- Saved items. -->
+                    <DockPanel x:Name="SavedView" Visibility="Collapsed">
+                        <WrapPanel DockPanel.Dock="Top">
+                            <Button Content="{l:Loc 'New item'}" Click="NewItem" />
+                            <Button x:Name="DuplicateButton" Content="{l:Loc 'Duplicate'}" Click="DuplicateItem" IsEnabled="False" />
+                            <Button x:Name="DeleteButton" Content="{l:Loc 'Delete'}" Click="DeleteItem" IsEnabled="False" />
+                        </WrapPanel>
+                        <TextBox x:Name="SavedSearch" DockPanel.Dock="Top" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search saved items'}"
+                                 md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SavedSearchChanged" />
+                        <Grid>
+                            <ListBox x:Name="SavedList" HorizontalContentAlignment="Stretch" SelectionChanged="SavedChosen" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,2">
+                                            <md:PackIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center"
+                                                         Foreground="{Binding Brush}" />
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{Binding Brush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Detail}" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock x:Name="SavedEmpty" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" MaxWidth="240" IsHitTestVisible="False"
+                                       Text="{l:Loc 'No saved items yet. Make one and press Save.'}" />
+                        </Grid>
+                    </DockPanel>
+
+                    <TextBlock x:Name="Loading" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" VerticalAlignment="Center"
+                               HorizontalAlignment="Center" MaxWidth="260" Background="{DynamicResource Shell.Panel}" />
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <!-- Center: the item. -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="Editor" Margin="20,12,20,16" IsEnabled="False">
+                <DockPanel>
+                    <md:PackIcon x:Name="BaseIcon" Kind="Anvil" Width="40" Height="40" Margin="0,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Accent}" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="BaseTitle" Text="{l:Loc 'Choose a base on the left'}" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock x:Name="BaseSummary" Style="{StaticResource Shell.Secondary}" />
+                    </StackPanel>
+                </DockPanel>
+
+                <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'RARITY'}" />
+                <StackPanel x:Name="RarityButtons" Orientation="Horizontal" />
+
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'ITEM LEVEL'}" />
+                        <DockPanel>
+                            <TextBox x:Name="LevelBox" DockPanel.Dock="Right" Width="44" Margin="10,0,0,0" TextAlignment="Center" LostFocus="LevelTyped" KeyDown="NumberKeyDown" />
+                            <Slider x:Name="LevelSlider" Minimum="1" Maximum="100" IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"
+                                    ValueChanged="LevelChanged" />
+                        </DockPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" x:Name="QualityPanel">
+                        <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'QUALITY'}" />
+                        <DockPanel>
+                            <TextBox x:Name="QualityBox" DockPanel.Dock="Right" Width="44" Margin="10,0,0,0" TextAlignment="Center" LostFocus="QualityTyped" KeyDown="NumberKeyDown" />
+                            <Slider x:Name="QualitySlider" Minimum="0" Maximum="30" IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"
+                                    ValueChanged="QualityChanged" />
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel x:Name="SocketPanel">
+                    <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'SOCKETS'}" />
+                    <DockPanel>
+                        <StackPanel x:Name="SocketPalette" DockPanel.Dock="Right" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        <TextBox x:Name="SocketBox" md:HintAssist.Hint="{l:Loc 'Default sockets; e.g. RRGB a 4-link, RR GB two pairs'}" TextChanged="SocketsChanged"
+                                 CharacterCasing="Upper" FontFamily="Consolas" />
+                    </DockPanel>
+                    <TextBlock x:Name="SocketError" Foreground="{DynamicResource Shell.Error}" FontSize="11.5" Visibility="Collapsed" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'STATES AND INFLUENCES'}" />
+                <WrapPanel x:Name="StateButtons" />
+
+                <StackPanel x:Name="NamePanel">
+                    <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'RARE NAME'}" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource Shell.IconButton}" Click="RandomName" ToolTip="{l:Loc 'Random name'}" AutomationProperties.Name="{l:Loc 'Random name'}" Margin="6,0,0,0">
+                            <md:PackIcon Kind="DiceMultiple" Width="20" Height="20" />
+                        </Button>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="NameFirst" IsEditable="True" IsTextSearchEnabled="True" SelectionChanged="NameChanged" md:HintAssist.Hint="{l:Loc 'Random'}" />
+                            <ComboBox x:Name="NameSecond" Grid.Column="2" IsEditable="True" IsTextSearchEnabled="True" SelectionChanged="NameChanged" md:HintAssist.Hint="{l:Loc 'Random'}" />
+                        </Grid>
+                    </DockPanel>
+                </StackPanel>
+
+                <DockPanel Margin="0,14,0,0">
+                    <Button DockPanel.Dock="Right" Click="ClearMods" Content="{l:Loc 'Remove all'}" Margin="0" />
+                    <Button DockPanel.Dock="Right" Click="ShowModPicker" Content="{l:Loc 'Add modifiers'}" Margin="0,0,6,0" />
+                    <TextBlock Style="{StaticResource Crafter.Heading}" Text="{l:Loc 'MODIFIERS'}" VerticalAlignment="Center" Margin="0" />
+                    <TextBlock x:Name="AffixCount" Style="{StaticResource Shell.Secondary}" FontSize="11.5" Margin="12,0,0,0" VerticalAlignment="Center" />
+                </DockPanel>
+                <StackPanel x:Name="ModRows" Margin="0,8,0,0" />
+                <TextBlock x:Name="NoMods" Style="{StaticResource Shell.Secondary}" Margin="0,6,0,0" TextWrapping="Wrap"
+                           Text="{l:Loc 'No modifiers. Add them from the Add modifiers page on the left; double-click or Enter adds the selected one.'}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Right: how the item looks, and what to do with it. -->
+        <Border Grid.Column="2" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1,0,0,0">
+            <DockPanel Margin="16,14,16,12">
+                <StackPanel DockPanel.Dock="Bottom">
+                    <TextBox x:Name="LabelBox" md:HintAssist.Hint="{l:Loc 'Label in the saved list (optional)'}" Margin="0,0,0,8" />
+                    <WrapPanel>
+                        <Button x:Name="SaveButton" Click="SaveItem" IsEnabled="False" ToolTip="{l:Loc 'Keep the item in the saved list to come back to it'}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="ContentSaveOutline" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{l:Loc 'Save'}" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="GiveButton" Style="{StaticResource Shell.PrimaryButton}" Click="GiveItem" IsEnabled="False"
+                                ToolTip="{l:Loc 'Put the item into the inventory of the character in game (the client control bridge)'}"
+                                ToolTipService.ShowOnDisabled="True">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="GiftOutline" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{l:Loc 'Give item'}" />
+                            </StackPanel>
+                        </Button>
+                        <Button Click="CopyCommand" ToolTip="{l:Loc 'Copy the chat command that gives this item'}" AutomationProperties.Name="{l:Loc 'Copy the chat command that gives this item'}" x:Name="CopyButton" IsEnabled="False">
+                            <md:PackIcon Kind="ContentCopy" />
+                        </Button>
+                    </WrapPanel>
+                </StackPanel>
+                <TextBlock Style="{StaticResource Crafter.Heading}" DockPanel.Dock="Top" Text="{l:Loc 'PREVIEW'}" Margin="0,0,0,8" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,10">
+                    <Border x:Name="PreviewCard" CornerRadius="6" BorderThickness="1" Background="{DynamicResource Shell.Background}" VerticalAlignment="Top">
+                        <StackPanel>
+                            <Border x:Name="PreviewHeader" CornerRadius="5,5,0,0" Padding="12,10">
+                                <StackPanel x:Name="PreviewTitle" />
+                            </Border>
+                            <StackPanel x:Name="PreviewBody" Margin="14,8,14,12" />
+                        </StackPanel>
+                    </Border>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- What happened last. -->
+        <Border Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,1,0,0" Padding="14,6">
+            <DockPanel>
+                <md:PackIcon x:Name="StatusIcon" Kind="InformationOutline" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+                <TextBlock x:Name="StatusText" Style="{StaticResource Shell.Secondary}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+    </Grid>
+</l:FormWindow>
