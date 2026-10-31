@@ -28,7 +28,10 @@ public partial class ControlTab : UserControl
         Walkmaps.IsChecked = shared.Settings.Walkmaps;
         NoBuild.IsChecked = shared.Settings.NoBuild;
         NoExtract.IsChecked = shared.Settings.NoExtract;
+        HotReload.IsChecked = shared.Settings.HotReload;
         TrayWhileGame.IsChecked = shared.Settings.TrayWhileGameRuns;
+        ServerFolder.Text = Environment.CurrentDirectory;
+        ServerFolder.ToolTip = Environment.CurrentDirectory;
         shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() => ShowServices(samples));
         shared.LiveRunning += running => Dispatcher.BeginInvoke(() => Actions.IsEnabled = !running);
         _ = RefreshSetup();
@@ -67,8 +70,9 @@ public partial class ControlTab : UserControl
         s.Walkmaps = Walkmaps.IsChecked == true;
         s.NoBuild = NoBuild.IsChecked == true;
         s.NoExtract = NoExtract.IsChecked == true;
+        s.HotReload = HotReload.IsChecked == true;
         s.Save();
-        return new LiveRequest(mode, server, s.Walkmaps, s.NoBuild, s.NoExtract);
+        return new LiveRequest(mode, server, s.Walkmaps, s.NoBuild, s.NoExtract, NoHotReload: !s.HotReload);
     }
 
     void TrayChanged(object sender, RoutedEventArgs e)
@@ -177,5 +181,11 @@ public partial class ControlTab : UserControl
     {
         Directory.CreateDirectory(Repo.Logs);
         Process.Start(new ProcessStartInfo("explorer.exe", Path.GetFullPath(Repo.Logs)) { UseShellExecute = true })?.Dispose();
+    }
+
+    void ChangeServer(object sender, RoutedEventArgs e)
+    {
+        if (_shared.IsLiveRunning) { RunState.Text = "live.ps1 is running; change the server when it is done."; return; }
+        App.SwitchServer(Window.GetWindow(this), _shared.Settings);
     }
 }

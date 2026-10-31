@@ -9,7 +9,7 @@ enum ServiceKind { Server, DevHost, Client, Recorder }
 /// <summary>A process the launcher watches. The servers and the dev host are dotnet processes found by their DLL on the
 /// command line (live.ps1 runs <c>dotnet src\GameServer.X\bin\…\GameServer.X.dll</c>), the client by its executable and the
 /// walk-map recorder by its script.</summary>
-sealed record Service(string Name, ServiceKind Kind, int[] Ports, string Match)
+sealed partial record Service(string Name, ServiceKind Kind, int[] Ports, string Match)
 {
     static int Port(string variable, int fallback) => int.TryParse(Environment.GetEnvironmentVariable(variable), out int p) ? p : fallback;
     static int PatchWebPort => Environment.GetEnvironmentVariable("Game_PATCH_URL") is { } url
@@ -29,14 +29,25 @@ sealed record Service(string Name, ServiceKind Kind, int[] Ports, string Match)
 
     public string PortList => Ports.Length == 0 ? "" : string.Join(", ", Ports);
 
-    public bool Matches(string processName, string? commandLine) => Kind switch
+    /// <summary>A server's own executable: what `dotnet watch` runs for a hot-reloaded Gateway (live.ps1's default).</summary>
+    public string Executable => Path.ChangeExtension(Match, ".exe");
+
+    /// <summary>How well a process is this service: 2 for the server's own executable (a watched Gateway, preferred to
+    /// the `dotnet watch` around it), 1 for the process otherwise, 0 for none.</summary>
+    public int Matches(string processName, string? commandLine) => Kind switch
     {
-        ServiceKind.Client => processName.Equals(Match, StringComparison.OrdinalIgnoreCase),
+        ServiceKind.Client => processName.Equals(Match, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
         ServiceKind.Recorder => processName.StartsWith("python", StringComparison.OrdinalIgnoreCase)
-            && commandLine?.Contains(Match, StringComparison.OrdinalIgnoreCase) == true,
+            && commandLine?.Contains(Match, StringComparison.OrdinalIgnoreCase) == true ? 1 : 0,
+        _ when processName.Equals(Executable, StringComparison.OrdinalIgnoreCase) => 2,
+        // The launcher's own short runs of the Gateway's tool modes (`commands`, `values <kind>`) are no server.
+        _ when commandLine is not null && ToolMode().IsMatch(commandLine) => 0,
         _ => processName.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase)
-            && commandLine?.Contains(Match, StringComparison.OrdinalIgnoreCase) == true,
+            && commandLine?.Contains(Match, StringComparison.OrdinalIgnoreCase) == true ? 1 : 0,
     };
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"GameServer\.\w+\.dll""?\s+(commands|values)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase)]
+    private static partial System.Text.RegularExpressions.Regex ToolMode();
 }
 
 sealed record ServiceSample(Service Service, int? Pid, bool Listening, double CpuPercent, double MemoryMb, int Threads,
@@ -82,10 +93,10 @@ sealed class ServiceMonitor : IDisposable
 
     void Rescan()
     {
-        var found = new Dictionary<Service, int>();
+        var best = new Dictionary<Service, (int Pid, int Score)>();
         using var searcher = new ManagementObjectSearcher(
             "SELECT ProcessId, Name, CommandLine FROM Win32_Process " +
-            "WHERE Name = 'dotnet.exe' OR Name = 'Game.patched.exe' OR Name LIKE 'python%'");
+            "WHERE Name = 'dotnet.exe' OR Name LIKE 'GameServer.%' OR Name = 'Game.patched.exe' OR Name LIKE 'python%'");
         foreach (ManagementBaseObject p in searcher.Get())
         {
             using (p)
@@ -93,10 +104,13 @@ sealed class ServiceMonitor : IDisposable
                 string name = p["Name"] as string ?? "";
                 string? commandLine = p["CommandLine"] as string;
                 int pid = Convert.ToInt32(p["ProcessId"]);
-                if (Service.All.FirstOrDefault(s => s.Matches(name, commandLine)) is { } service && !found.ContainsKey(service))
-                    found[service] = pid;
+                foreach (var service in Service.All)
+                    if (service.Matches(name, commandLine) is int score and > 0
+                        && (!best.TryGetValue(service, out var known) || score > known.Score))
+                        best[service] = (pid, score);
             }
         }
+        var found = best.ToDictionary(kv => kv.Key, kv => kv.Value.Pid);
         lock (_pids)
         {
             foreach (var (service, pid) in _pids.Where(kv => !found.TryGetValue(kv.Key, out int now) || now != kv.Value).ToList())

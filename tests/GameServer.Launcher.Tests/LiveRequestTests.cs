@@ -39,20 +39,58 @@ public class LiveRequestTests
     }
 
     [Fact]
-    public void The_repository_root_is_the_working_directory_or_the_executables_folder_never_a_parent()
+    public void Turning_hot_reload_off_reaches_only_runs_that_start_a_gateway()
     {
-        string root = Path.Combine(Path.GetTempPath(), $"lxroot-{Guid.NewGuid():N}");
-        string inside = Path.Combine(root, "src", "GameServer.Launcher");
-        Directory.CreateDirectory(Path.Combine(root, "scripts", "dev"));
-        Directory.CreateDirectory(inside);
-        File.WriteAllText(Path.Combine(root, "GameServer.slnx"), "");
-        File.WriteAllText(Path.Combine(root, "scripts", "dev", "live.ps1"), "");
+        Assert.Equal(["-NoHotReload"], new LiveRequest(LiveMode.All, NoHotReload: true).Arguments());
+        Assert.Equal(["-NoClient", "-NoHotReload"], new LiveRequest(LiveMode.Servers, NoHotReload: true).Arguments());
+        Assert.Equal(["-Only", "Gateway", "-NoHotReload"], new LiveRequest(LiveMode.Restart, "Gateway", NoHotReload: true).Arguments());
+        Assert.Equal(["-Only", "Auth"], new LiveRequest(LiveMode.Restart, "Auth", NoHotReload: true).Arguments());
+        Assert.Equal(["-ClientOnly"], new LiveRequest(LiveMode.Client, NoHotReload: true).Arguments());
+        Assert.Equal(["-Stop"], new LiveRequest(LiveMode.Stop, NoHotReload: true).Arguments());
+    }
+
+    /// <summary>A folder that looks like a server checkout to the launcher.</summary>
+    static string Checkout(string dir)
+    {
+        Directory.CreateDirectory(Path.Combine(dir, "scripts", "dev"));
+        File.WriteAllText(Path.Combine(dir, "GameServer.slnx"), "");
+        File.WriteAllText(Path.Combine(dir, "scripts", "dev", "live.ps1"), "");
+        return dir;
+    }
+
+    [Fact]
+    public void The_server_is_the_saved_checkout_else_the_working_directory_else_the_players_choice()
+    {
+        string top = Path.Combine(Path.GetTempPath(), $"lxroot-{Guid.NewGuid():N}");
         try
         {
-            Assert.Equal(root, Repo.Find(root, inside));
-            Assert.Equal(root, Repo.Find(inside, root));
-            Assert.Null(Repo.Find(inside, inside));
+            string server = Checkout(Path.Combine(top, "LocalExile"));
+            string other = Checkout(Path.Combine(top, "Other"));
+            string launcher = Path.Combine(top, "LocalExile-Launcher");
+            Directory.CreateDirectory(launcher);
+
+            Assert.Equal(server, Repo.Find(server, other));
+            Assert.Equal(other, Repo.Find(Path.Combine(top, "gone"), other));
+            Assert.Equal(other, Repo.Find(null, other));
+            Assert.Null(Repo.Find(launcher, launcher));
+            Assert.Null(Repo.Find(null, top));
         }
-        finally { Directory.Delete(root, recursive: true); }
+        finally { Directory.Delete(top, recursive: true); }
+    }
+
+    [Fact]
+    public void The_folder_picker_starts_at_a_LocalExile_checkout_beside_the_launchers_repository()
+    {
+        string top = Path.Combine(Path.GetTempPath(), $"lxroot-{Guid.NewGuid():N}");
+        try
+        {
+            string exeFolder = Path.Combine(top, "LocalExile-Launcher", "src", "GameServer.Launcher", "bin");
+            Directory.CreateDirectory(exeFolder);
+            Assert.Equal(exeFolder, Repo.Suggested(exeFolder));
+            string server = Checkout(Path.Combine(top, "LocalExile"));
+            Assert.Equal(server, Repo.Suggested(exeFolder));
+            Assert.Equal(server, Repo.Suggested(Path.Combine(top, "LocalExile-Launcher")));
+        }
+        finally { Directory.Delete(top, recursive: true); }
     }
 }

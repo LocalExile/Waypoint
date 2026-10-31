@@ -56,6 +56,8 @@
                         <CheckBox x:Name="Walkmaps" Content="Walk maps" ToolTip="-Walkmaps: capture each area's walk map with Frida (GettingStarted step 9)" />
                         <CheckBox x:Name="NoBuild" Content="Skip build" ToolTip="-NoBuild" />
                         <CheckBox x:Name="NoExtract" Content="Skip data check" ToolTip="-NoExtract" />
+                        <CheckBox x:Name="HotReload" Content="Hot reload"
+                                  ToolTip="The Gateway runs under dotnet watch, so saved code edits apply with the game still running; off passes -NoHotReload" />
                     </WrapPanel>
                 </Grid>
             </Border>
@@ -148,6 +150,12 @@
 
             <GroupBox Header="Setup" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
                 <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <Button DockPanel.Dock="Right" Content="Change…" Click="ChangeServer" Margin="6,0,0,0" MinWidth="70"
+                                ToolTip="Pick another LocalExile server checkout; the launcher starts again on it" />
+                        <TextBlock Text="Server " VerticalAlignment="Center" Foreground="#546E7A" />
+                        <TextBlock x:Name="ServerFolder" VerticalAlignment="Center" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
                     <WrapPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
                         <Button Content="Check again" Click="CheckSetup" />
                         <Button Content="Game data" Click="CheckData" ToolTip="extract-data.ps1 -List: which extracted files are missing or stale" />

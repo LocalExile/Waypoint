@@ -1,5 +1,5 @@
-using GameServer.Core.Accounts;
-using GameServer.Storage;
+using System.Globalization;
+using System.Text.Json.Nodes;
 
 namespace GameServer.Launcher;
 
@@ -7,24 +7,33 @@ sealed record AccountRow(string Name, string Created, int Characters, IReadOnlyL
 
 sealed record CharacterRow(string Name, string Class, int Level, string League, string LastTown, string LastPlayed, string State);
 
-/// <summary>The accounts and characters in the save database, read only (writes go through the dev host). No database
-/// yet means no accounts: the launcher does not create one.</summary>
+/// <summary>The accounts and their characters, from the dev host's "accounts" (Agents/docs/dev-server.md in the
+/// server): the server owns its save database, the launcher only asks.</summary>
 static class AccountList
 {
-    public static List<AccountRow> Load()
+    /// <summary>The classes the dev host's create_character takes.</summary>
+    public static readonly string[] Classes = ["Scion", "Marauder", "Ranger", "Witch", "Duelist", "Templar", "Shadow"];
+
+    public static async Task<List<AccountRow>> LoadAsync()
     {
-        if (!File.Exists(SaveDatabase.DefaultPath)) return [];
-        using var db = new SaveDatabase(SaveDatabase.DefaultPath);
-        var store = new SqliteAccountStore(db);
-        return [.. store.Accounts().Select(a =>
-        {
-            var characters = store.CharactersOf(a.Id).Select(Row).ToList();
-            return new AccountRow(a.Name, a.CreatedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm"), characters.Count, characters);
-        })];
+        var reply = (await DevHost.RunAsync(new JsonObject { ["op"] = "accounts" }))[0];
+        return Parse(reply);
     }
 
-    static CharacterRow Row(Character c) => new(c.Name, c.Class.ToString(), c.Level, c.League, c.LastTown ?? "(never in town)",
-        c.LastPlayedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm"),
-        c.HardcoreDeath is { PermanentlyDead: true } ? "dead (permanent)"
-            : c.HardcoreDeath is { } death ? $"died in {death.SourceLeague}" : "");
+    internal static List<AccountRow> Parse(JsonObject reply) =>
+        [.. (reply["accounts"]?.AsArray() ?? []).OfType<JsonObject>().Select(a =>
+        {
+            var characters = (a["characters"]?.AsArray() ?? []).OfType<JsonObject>().Select(Row).ToList();
+            return new AccountRow(Text(a, "name"), When(a["created"]), characters.Count, characters);
+        })];
+
+    static CharacterRow Row(JsonObject c) => new(Text(c, "name"), Text(c, "class"), c["level"]?.GetValue<int>() ?? 0,
+        Text(c, "league"), c["last_town"]?.GetValue<string>() ?? "(never in town)", When(c["last_played"]),
+        c["dead"]?.GetValue<string>() is { } dead ? dead == "permanent" ? "dead (permanent)" : $"died in {dead}" : "");
+
+    static string Text(JsonObject o, string key) => o[key]?.GetValue<string>() ?? "";
+
+    static string When(JsonNode? iso) =>
+        DateTimeOffset.TryParse(iso?.GetValue<string>(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var at)
+            ? at.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "";
 }

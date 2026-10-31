@@ -1,0 +1,21 @@
+# The published launcher (dotnet publish src/GameServer.Launcher -o .)
+/LocalExileLauncher.exe
+
+# --- .NET ---
+bin/
+obj/
+*.user
+*.suo
+TestResults/
+
+# --- Machine-local tool config ---
+.vs/
+.vscode/
+.idea/
+.claude/
+.mcp.json
+
+# --- OS ---
+Thumbs.db
+desktop.ini
+.DS_Store

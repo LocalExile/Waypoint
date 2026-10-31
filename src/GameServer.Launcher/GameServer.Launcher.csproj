@@ -1,16 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- The desktop launcher: buttons over scripts/dev/live.ps1, logs, performance, accounts and dev commands
-       (Agents/docs/dev/launcher.md). `dotnet publish src/GameServer.Launcher -o .` puts one LocalExileLauncher.exe in the
-       repository root, where it runs. -->
+  <!-- The desktop launcher for a LocalExile server checkout (docs/launcher.md). `dotnet publish src/GameServer.Launcher -o .`
+       puts one LocalExileLauncher.exe in this repository's root. It references no server project: it drives a checkout
+       through live.ps1, the Gateway's `commands`/`values` modes, the dev host's protocol and the server's logs. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <!-- Only for the tray icon (NotifyIcon); its namespaces stay out of the implicit usings, where they clash with WPF's. -->
     <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <AssemblyName>LocalExileLauncher</AssemblyName>
     <RootNamespace>GameServer.Launcher</RootNamespace>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -18,13 +16,6 @@
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <DebugType>embedded</DebugType>
-    <!-- WPF formats bindings with the UI culture; the solution-wide invariant mode (Directory.Build.props) has none. -->
-    <InvariantGlobalization>false</InvariantGlobalization>
-  </PropertyGroup>
-
-  <!-- Published, the launcher is the one file in the repository root: no symbol files of the referenced projects beside it. -->
-  <PropertyGroup Condition="'$(_IsPublishing)' == 'true'">
-    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,10 +24,6 @@
     <Using Include="System.IO" />
     <Using Remove="System.Windows.Forms" />
     <Using Remove="System.Drawing" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GameServer.Storage\GameServer.Storage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

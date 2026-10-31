@@ -6,9 +6,13 @@ namespace GameServer.Launcher;
 /// repository, and never game data or credentials.</summary>
 sealed class Settings
 {
+    /// <summary>The LocalExile server checkout the launcher drives (chosen on the first start, <see cref="Repo"/>).</summary>
+    public string? ServerPath { get; set; }
     public bool Walkmaps { get; set; }
     public bool NoBuild { get; set; }
     public bool NoExtract { get; set; }
+    /// <summary>The Gateway under `dotnet watch` (live.ps1's default); off passes -NoHotReload.</summary>
+    public bool HotReload { get; set; } = true;
     /// <summary>Hide in the tray while the game client runs, and come back when it closes.</summary>
     public bool TrayWhileGameRuns { get; set; } = true;
     /// <summary>Pinned console lines, shown as buttons.</summary>

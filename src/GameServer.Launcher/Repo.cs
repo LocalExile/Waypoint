@@ -1,17 +1,29 @@
 namespace GameServer.Launcher;
 
 /// <summary>
-/// The checkout the launcher drives. Like every tool here it works from the repository root (AGENTS.md): it accepts its
-/// working directory or its own folder (the published LocalExileLauncher.exe sits in the root), never a parent folder.
+/// The LocalExile server checkout the launcher drives. Its tools work from that checkout's root (its AGENTS.md), so the
+/// launcher makes the root its working directory at startup and every path here is relative to it. Which checkout is
+/// the player's choice, kept in the settings; the launcher never searches for one.
 /// </summary>
 static class Repo
 {
-    public static bool IsRoot(string dir) =>
-        File.Exists(Path.Combine(dir, "GameServer.slnx")) && File.Exists(Path.Combine(dir, LiveScript));
+    /// <summary>A server checkout: its solution and live.ps1 are there.</summary>
+    public static bool IsRoot(string? dir) =>
+        !string.IsNullOrEmpty(dir) && File.Exists(Path.Combine(dir, "GameServer.slnx")) && File.Exists(Path.Combine(dir, LiveScript));
 
-    /// <summary>The root among the working directory and the executable's folder, in that order; null for neither.</summary>
-    public static string? Find(string workingDirectory, string exeDirectory) =>
-        IsRoot(workingDirectory) ? workingDirectory : IsRoot(exeDirectory) ? exeDirectory : null;
+    /// <summary>The checkout to drive: the saved one while it still is one, else the working directory when it is one
+    /// (`dotnet run` from a server checkout); null when the player has to choose.</summary>
+    public static string? Find(string? saved, string workingDirectory) =>
+        IsRoot(saved) ? Path.GetFullPath(saved!) : IsRoot(workingDirectory) ? workingDirectory : null;
+
+    /// <summary>Where the folder picker starts: a "LocalExile" folder beside the launcher's own repository when it is a
+    /// checkout (the usual layout, LocalExile\ and LocalExile-Launcher\ side by side), else the launcher's folder.</summary>
+    public static string Suggested(string launcherFolder)
+    {
+        for (var dir = new DirectoryInfo(launcherFolder); dir?.Parent is not null; dir = dir.Parent)
+            if (Path.Combine(dir.Parent.FullName, "LocalExile") is var sibling && IsRoot(sibling)) return sibling;
+        return launcherFolder;
+    }
 
     public static string LiveScript { get; } = Path.Combine("scripts", "dev", "live.ps1");
     public static string ExtractScript { get; } = Path.Combine("scripts", "dev", "extract-data.ps1");
@@ -22,7 +34,7 @@ static class Repo
     public static string ServerDll(string project) =>
         Path.Combine("src", $"GameServer.{project}", "bin", "Debug", "net10.0", $"GameServer.{project}.dll");
 
-    /// <summary>The repository's virtual environment wins over the python on PATH, as in live.ps1.</summary>
+    /// <summary>The checkout's virtual environment wins over the python on PATH, as in live.ps1.</summary>
     public static string Python => File.Exists(Path.Combine(".venv", "Scripts", "python.exe"))
         ? Path.GetFullPath(Path.Combine(".venv", "Scripts", "python.exe")) : "python";
 

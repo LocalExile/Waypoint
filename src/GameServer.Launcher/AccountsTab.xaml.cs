@@ -1,10 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using GameServer.Core.Accounts;
 
 namespace GameServer.Launcher;
 
+/// <summary>The accounts and characters, through the server's dev host (GameServer.Host): its "accounts" lists them,
+/// "register" and "create_character" make them. The tab starts the host when it needs it.</summary>
 public partial class AccountsTab : UserControl
 {
     Shared _shared = null!;
@@ -14,32 +15,31 @@ public partial class AccountsTab : UserControl
     internal void Attach(Shared shared)
     {
         _shared = shared;
-        CharacterClass.ItemsSource = Enum.GetNames<CharacterClass>();
-        CharacterClass.SelectedItem = nameof(GameServer.Core.Accounts.CharacterClass.Witch);
+        CharacterClass.ItemsSource = AccountList.Classes;
+        CharacterClass.SelectedItem = "Witch";
         shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() =>
         {
             bool up = samples.FirstOrDefault(s => s.Service == Service.DevHost)?.Running == true;
-            HostState.Text = up ? $"Dev host running on port {Service.DevHost.PortList}" : "Dev host stopped (started when needed)";
+            HostState.Text = up ? $"Dev host running on port {Service.DevHost.PortList}" : "Dev host stopped (Refresh starts it)";
             StopHost.IsEnabled = up;
         });
-        IsVisibleChanged += (_, e) => { if ((bool)e.NewValue) Load(); };
-        Load();
+        // Showing the tab reads the list when the host already runs; starting it is the Refresh button's.
+        IsVisibleChanged += async (_, e) =>
+        {
+            if (!(bool)e.NewValue) return;
+            if (DevHost.Listening()) await Load();
+            else if (AccountGrid.Items.Count == 0) Say("The account list comes from the server's dev host: Refresh starts it.", false);
+        };
     }
 
-    void Load(string? select = null)
+    async Task Load(string? select = null)
     {
         string? keep = select ?? (AccountGrid.SelectedItem as AccountRow)?.Name;
-        try
-        {
-            var accounts = AccountList.Load();
-            AccountGrid.ItemsSource = accounts;
-            AccountGrid.SelectedItem = accounts.FirstOrDefault(a => a.Name.Equals(keep, StringComparison.OrdinalIgnoreCase)) ?? accounts.FirstOrDefault();
-            if (accounts.Count == 0) Say("No accounts yet: register one below.", false);
-        }
-        catch (Exception e) when (e is IOException or Microsoft.Data.Sqlite.SqliteException)
-        {
-            Say($"Can't read {GameServer.Storage.SaveDatabase.DefaultPath}: {e.Message}", true);
-        }
+        List<AccountRow>? accounts = null;
+        if (!await Host(async () => accounts = await AccountList.LoadAsync()) || accounts is null) return;
+        AccountGrid.ItemsSource = accounts;
+        AccountGrid.SelectedItem = accounts.FirstOrDefault(a => a.Name.Equals(keep, StringComparison.OrdinalIgnoreCase)) ?? accounts.FirstOrDefault();
+        Say(accounts.Count == 0 ? "No accounts yet: register one below." : $"{accounts.Count} account(s).", false);
     }
 
     void AccountSelected(object sender, SelectionChangedEventArgs e)
@@ -49,7 +49,7 @@ public partial class AccountsTab : UserControl
         ForAccount.Text = account?.Name ?? "(select an account above)";
     }
 
-    void Refresh(object sender, RoutedEventArgs e) => Load();
+    async void Refresh(object sender, RoutedEventArgs e) => await Load();
 
     void StopDevHost(object sender, RoutedEventArgs e) => _shared.StopDevHost();
 
@@ -61,7 +61,7 @@ public partial class AccountsTab : UserControl
         {
             NewPassword.Clear();
             Say($"Account {name} registered: log in with it in the game's Email field.", false);
-            Load(name);
+            await Load(name);
         }
     }
 
@@ -75,7 +75,7 @@ public partial class AccountsTab : UserControl
         {
             CharacterName.Clear();
             Say($"{name} ({characterClass}) created on {account.Name}.", false);
-            Load(account.Name);
+            await Load(account.Name);
         }
     }
 

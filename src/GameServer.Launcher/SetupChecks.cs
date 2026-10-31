@@ -21,12 +21,19 @@ static class SetupChecks
                 : new(null, "game data not extracted yet (step 7)", "Play runs extract-data.ps1 first; it takes a few minutes the first time"),
             OnPath("node.exe") && Directory.Exists("Tools/ooz/node_modules/ooz-wasm") ? new(true, "Node.js and ooz (data extraction)")
                 : new(false, "Node.js or Tools\\ooz\\node_modules missing (step 7)", "install Node.js, then: cd Tools\\ooz; npm install"),
+            ServerHooks(),
             NetworkMode(),
             Frida(),
-            Accounts(),
         };
         return checks;
     }
+
+    /// <summary>The server checkout has what the launcher drives it with (live.ps1 -Stop, the Gateway's commands and
+    /// values, the dev host's accounts; they came together).</summary>
+    static SetupCheck ServerHooks() =>
+        System.IO.File.ReadAllText(Repo.LiveScript).Contains("[switch]$Stop", StringComparison.Ordinal)
+            ? new(true, "server checkout supports the launcher")
+            : new(false, "server checkout too old for the launcher (no live.ps1 -Stop)", "pull the server's main branch");
 
     static SetupCheck File(string path, string what, string hint) =>
         System.IO.File.Exists(path) ? new(true, what) : new(false, $"{what}: {path} missing", hint);
@@ -59,19 +66,6 @@ static class SetupChecks
         catch (System.ComponentModel.Win32Exception)
         {
             return new(null, "Python not found: no walk maps, no console", "install Python 3.9+ from python.org (GettingStarted step 9)");
-        }
-    }
-
-    static SetupCheck Accounts()
-    {
-        try
-        {
-            int count = AccountList.Load().Count;
-            return count > 0 ? new(true, $"{count} account(s)") : new(null, "no account yet: register one in the Accounts tab");
-        }
-        catch (Exception e) when (e is IOException or Microsoft.Data.Sqlite.SqliteException or GameServer.Core.Saves.UnreadableSaveException)
-        {
-            return new(null, $"accounts unreadable: {e.Message}");
         }
     }
 }

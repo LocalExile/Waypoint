@@ -6,7 +6,9 @@ enum LiveMode { All, Servers, Client, Restart, Stop, StopServers }
 
 /// <summary>One run of scripts/dev/live.ps1. The launcher never starts a server or the client itself: every button is a
 /// live.ps1 switch (Agents/GettingStarted.md, "Play"), so the script's checks and the patching-server argument apply.</summary>
-sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = false, bool NoBuild = false, bool NoExtract = false)
+/// <param name="NoHotReload">Starts the built Gateway instead of running it under `dotnet watch` (live.ps1's default).</param>
+sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = false, bool NoBuild = false, bool NoExtract = false,
+    bool NoHotReload = false)
 {
     public static readonly string[] Servers = ["Gateway", "Auth", "Patch"];
 
@@ -29,6 +31,8 @@ sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = 
         if (Walkmaps) args.Add("-Walkmaps");
         if (NoBuild) args.Add("-NoBuild");
         if (NoExtract) args.Add("-NoExtract");
+        // Only where a Gateway starts: a restart of Auth or Patch leaves the running Gateway as it is.
+        if (NoHotReload && (Mode != LiveMode.Restart || Server == "Gateway")) args.Add("-NoHotReload");
         return args;
     }
 
