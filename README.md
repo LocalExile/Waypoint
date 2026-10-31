@@ -20,7 +20,8 @@ No installer is required. The portable launcher includes its .NET Desktop runtim
 you press a runtime action. To upgrade, close Waypoint and extract the newer ZIP into a separate folder; your settings
 and backups are retained. This alpha has no automatic update service.
 
-For the latest changes, see [0.5.1 release notes](docs/releases/0.5.1.md).
+For the latest changes, see [0.5.2 release notes](docs/releases/0.5.2.md).
+The [0.5.1 release notes](docs/releases/0.5.1.md) cover themes and accessibility preferences.
 The [0.5.0 release notes](docs/releases/0.5.0.md) cover desktop improvements and Russian localization.
 The [0.4.0 release notes](docs/releases/0.4.0.md) cover mod management.
 The [0.3.1 hotfix notes](docs/releases/0.3.1.md) describe the mod startup compatibility fix.
