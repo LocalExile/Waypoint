@@ -20,7 +20,9 @@ No installer is required. The portable launcher includes its .NET Desktop runtim
 you press a runtime action. To upgrade, close Waypoint and extract the newer ZIP into a separate folder; your settings
 and backups are retained. This alpha has no automatic update service.
 
-For the latest changes, see [0.5.2 release notes](docs/releases/0.5.2.md).
+For the changes since 0.5.2, see [0.6.4 release notes](docs/releases/0.6.4.md): accounts, the waypoint emblem,
+single-instance startup, tray/exit controls and persistent service lights.
+The [0.5.2 release notes](docs/releases/0.5.2.md) cover consistent dialog windows.
 The [0.5.1 release notes](docs/releases/0.5.1.md) cover themes and accessibility preferences.
 The [0.5.0 release notes](docs/releases/0.5.0.md) cover desktop improvements and Russian localization.
 The [0.4.0 release notes](docs/releases/0.4.0.md) cover mod management.
@@ -222,7 +224,7 @@ Mods are executable code: installing a mod grants it the same account access as 
 existing local mods and does not download mods or provide a marketplace, installer, script editor or league selector.
 See [mod management validation](docs/mod-management-validation.md) for the real-client, branch-round-trip and UI checks.
 
-## Opening Waypoint (0.6.2, local review)
+## Opening Waypoint
 
 Waypoint normally keeps one workspace window per Windows user/logon session. Opening the same build again restores
 and focuses the existing window (or its open dialog), including from another folder or executable name. Windows may
@@ -239,9 +241,9 @@ An older launcher opened afterward cannot be forced to obey a guard it does not 
 Both copies should use the same Windows permission level. The existing runtime operation lock remains in place.
 See [single-instance behavior and validation](single-instance.md).
 
-## Accounts (0.6.0, local review)
+## Accounts
 
-The current source adds **Accounts** beside Backups. Browse accounts and their characters, level, class/ascendancy,
+Open **Accounts** beside Backups. Browse accounts and their characters, level, class/ascendancy,
 league and last played; search by account or character details. **Create account**, **Duplicate…**, **Rename…**,
 **Set password…** and **Delete account…** are available when the game and all LocalExile services are stopped.
 Browsing remains available while playing. Full duplication is the default and includes characters, progress and
@@ -252,8 +254,8 @@ manager, including the recorded source commit and last Gateway build used with t
 exact account name and removes its characters and stashes in every league. **Cancel** is the default Enter action.
 Unknown storage formats stay read-only. Python with SQLite 3.37+ is required; no server source changes are needed.
 
-The 0.6.0 UI and review build are local and awaiting owner review; they have not been pushed or released. See the [account guide and validation](docs/account-management.md)
-for offline safeguards, recovery and the supported storage contract. The latest published download remains 0.5.2.
+See the [account guide and validation](docs/account-management.md)
+for offline safeguards, recovery and the supported storage contract. Account management is included in 0.6.4.
 
 ## Build and check
 

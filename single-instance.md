@@ -1,6 +1,6 @@
-# Single-instance startup — 0.6.2 local review
+# Single-instance startup
 
-This work is local and unpublished. Version 0.6.2 includes the account manager and emblem prepared in 0.6.0/0.6.1.
+Included in Waypoint 0.6.4. The validation records below describe the original 0.6.2 review builds.
 
 ## Normal use
 

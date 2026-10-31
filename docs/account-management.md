@@ -1,7 +1,7 @@
-# Accounts — 0.6.0 local review
+# Accounts
 
-Implemented locally, awaiting owner review. No push, tag or publication is authorized for this work.
-This is a minor version because it adds an account-management workflow rather than correcting an existing feature.
+Included in Waypoint 0.6.4. Account browsing is available while playing; account changes require the game and services
+to be stopped and use the existing automatic-backup preference.
 
 ## Using Accounts
 
