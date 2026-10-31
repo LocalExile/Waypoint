@@ -37,6 +37,16 @@ Open **Settings → Appearance and accessibility → Change appearance…** for:
 profiles, stronger contrast/focus and reduced motion. Preview changes, then choose Apply or Cancel. See
 [appearance and accessibility](docs/appearance.md) for controls, recovery shortcuts and validation limits.
 
+**Closing the window:** on first close, choose **Minimize to tray** (the icon beside the clock), **Exit Waypoint** or
+**Cancel**, and whether a full exit should stop this checkout’s services. Both options default off.
+Keep **Remember my choices** checked to save both choices. You can change them in
+**Settings → Window behavior**. Click the hidden workspace's tray icon to return; right-click it for **Open Waypoint**
+and **Exit Waypoint**. The icon may be under Windows' hidden-icons arrow. Opening Waypoint again also restores the
+existing window. The minimize button still uses the normal taskbar. Hiding keeps services running.
+Optional service shutdown on a full exit uses the existing graceful stop. If the game is open, cancel to close it
+first or choose **Exit and leave running**. A shutdown failure keeps Waypoint open; exit never force-kills a process.
+See [notification-area behavior](docs/tray-behavior.md).
+
 ## Requirements
 
 | Requirement | Used for |

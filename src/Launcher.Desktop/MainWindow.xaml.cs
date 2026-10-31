@@ -91,9 +91,9 @@ public partial class MainWindow : Window
                 }
             }
             if (lastError is not null) StatusLabel.Text = lastError;
-            timer.Start();
+            if (IsVisible) timer.Start();
         };
-        timer.Tick += async (_, _) => { if (!closing && !busy) await RefreshAsync(); };
+        timer.Tick += async (_, _) => { if (IsVisible && !closing && !busy) await RefreshAsync(); };
         operationTimer.Tick += (_, _) => UpdateOperationLabel();
         Closing += OnClosing;
     }
@@ -222,11 +222,12 @@ public partial class MainWindow : Window
         RefreshLog();
     }
 
-    async Task OperateAsync(string action, string service = "All", AccountRequest? account = null,
-        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null)
+    async Task<bool> OperateAsync(string action, string service = "All", AccountRequest? account = null,
+        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null,
+        Func<Func<string, Task<BridgeResult>>, Task<BridgeResult>>? workflow = null)
     {
-        if (busy) return;
-        if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) { Pages.SelectedItem = SettingsPage; return; }
+        if (busy) return false;
+        if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) { Pages.SelectedItem = SettingsPage; return false; }
         busy = true;
         await gate.WaitAsync();
         lastError = null;
@@ -244,7 +245,7 @@ public partial class MainWindow : Window
         if (snapshot is not null) Render(snapshot);
         try
         {
-            var result = await runtime.RunAsync(settings, action, service, text => Dispatcher.Invoke(() => AppendLog(text)),
+            Task<BridgeResult> Execute(string step) => runtime.RunAsync(settings, step, service, text => Dispatcher.Invoke(() => AppendLog(text)),
                 progress: update => Dispatcher.Invoke(() =>
                 {
                     currentStage = update.Stage;
@@ -256,6 +257,7 @@ public partial class MainWindow : Window
                     }
                     UpdateOperationLabel();
                 }), account: account, source: source, backupId: backupId, mod: mod, accountData: accountData);
+            var result = workflow is null ? await Execute(action) : await workflow(Execute);
             if (!result.Ok)
             {
                 currentStage = result.FailedStage ?? currentStage;
@@ -291,6 +293,7 @@ public partial class MainWindow : Window
             RefreshBackups();
             if (lastError is not null) StatusLabel.Text = L.Text(currentStage) + L.Text(" failed: ") + lastError;
         }
+        return lastError is null;
     }
 
     void AppendLog(string text)
@@ -545,11 +548,7 @@ public partial class MainWindow : Window
     }
     void OnClosing(object? sender, CancelEventArgs e)
     {
-        if (busy) { e.Cancel = true; StatusLabel.Text = L.Text("Wait for the current build or runtime operation to finish before closing."); return; }
-        closing = true;
-        discoveryCancellation.Cancel();
-        timer.Stop();
-        operationTimer.Stop();
+        HandleWindowClosing(e);
     }
 }
 

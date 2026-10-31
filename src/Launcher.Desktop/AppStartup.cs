@@ -108,7 +108,7 @@ public partial class MainWindow
     public AppActivationReply ActivateFromLaunch(AppInstanceIdentity identity, AppLaunchRequest request)
     {
         var reply = AppActivationPolicy.Evaluate(identity, request, settings.RepositoryPath, busy, closing);
-        if (!closing) WindowActivation.Focus(this);
+        if (!closing) RestoreFromTray();
         return reply;
     }
 }

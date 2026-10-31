@@ -24,6 +24,9 @@
   <data xml:space="preserve" name="Text_019c527ea981">
     <value>SERVICES</value>
   </data>
+  <data name="Text_01f6aefc4008" xml:space="preserve">
+    <value>Closing the window exits Waypoint completely.</value>
+  </data>
   <data name="Text_01fc520500a2" xml:space="preserve">
     <value>This removes this account, all of its characters and progress, and its personal and guild stashes in every league. Other accounts are unchanged.</value>
   </data>
@@ -114,6 +117,12 @@
   <data xml:space="preserve" name="Text_0cef0d77a2fe">
     <value>View operation output</value>
   </data>
+  <data name="Text_0d9fe2fa20b9" xml:space="preserve">
+    <value>You can change this in Settings → Window behavior.</value>
+  </data>
+  <data name="Text_0da96708cb8a" xml:space="preserve">
+    <value>Stop this checkout’s services when exiting Waypoint</value>
+  </data>
   <data xml:space="preserve" name="Text_0de9f358ad56">
     <value>Borders</value>
   </data>
@@ -125,6 +134,9 @@
   </data>
   <data xml:space="preserve" name="Text_0e9161011702">
     <value>Refresh</value>
+  </data>
+  <data name="Text_0f17c1790f9b" xml:space="preserve">
+    <value>The game or services are still running. Waypoint will stay open. No force termination was attempted.</value>
   </data>
   <data xml:space="preserve" name="Text_0f45e54a225b">
     <value>From Tools/ooz run npm install</value>
@@ -182,6 +194,9 @@
   </data>
   <data xml:space="preserve" name="Text_153565a001f1">
     <value>Process measurements</value>
+  </data>
+  <data name="Text_1551e89173ed" xml:space="preserve">
+    <value>Minimize to tray keeps Waypoint running beside the clock. Click its icon, or open Waypoint again, to return.</value>
   </data>
   <data xml:space="preserve" name="Text_1600160452d4">
     <value>Invalid source</value>
@@ -267,6 +282,9 @@
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>{0} stash tab</value>
   </data>
+  <data name="Text_1fd447009585" xml:space="preserve">
+    <value>Remember my choices</value>
+  </data>
   <data xml:space="preserve" name="Text_1ff335e35fbf">
     <value>No checkout selected</value>
   </data>
@@ -308,6 +326,9 @@
   </data>
   <data xml:space="preserve" name="Text_230841178e46">
     <value>Could not open download page: </value>
+  </data>
+  <data name="Text_2331c395597e" xml:space="preserve">
+    <value>Could not verify services before exiting.</value>
   </data>
   <data xml:space="preserve" name="Text_23c0a4391171">
     <value>Upstream PR number</value>
@@ -364,6 +385,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Get Node.js</value>
   </data>
+  <data name="Text_28fd171b0b6b" xml:space="preserve">
+    <value>Ask again next time</value>
+  </data>
   <data xml:space="preserve" name="Text_292a37482041">
     <value>BUILT COMPONENTS · DEBUG</value>
   </data>
@@ -397,6 +421,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Restore mod choices</value>
   </data>
+  <data name="Text_2b5e770c2b3b" xml:space="preserve">
+    <value>The minimize button still uses the taskbar. When hidden, click the Waypoint icon beside the clock to return. You may find it under the hidden-icons arrow.</value>
+  </data>
   <data name="Text_2b69057ec9ef" xml:space="preserve">
     <value>The password must have at least 4 characters.</value>
   </data>
@@ -405,6 +432,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_2cdf3c95c8a5">
     <value>Closing game</value>
+  </data>
+  <data name="Text_2d0afc98a2dd" xml:space="preserve">
+    <value>Keep services running</value>
   </data>
   <data xml:space="preserve" name="Text_2dafe4f58ab0">
     <value> · tracked files modified</value>
@@ -427,6 +457,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2f444c96f7fb">
     <value>Stronger keyboard focus borders</value>
   </data>
+  <data name="Text_2f5ca4b733a1" xml:space="preserve">
+    <value>Exit Waypoint</value>
+  </data>
   <data xml:space="preserve" name="Text_2fad023a9cbb">
     <value>Prepare local client</value>
   </data>
@@ -435,6 +468,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_2ff6b56154ab">
     <value>Finish setup to play</value>
+  </data>
+  <data name="Text_300f88d55953" xml:space="preserve">
+    <value>Only applies to a full exit, including Exit Waypoint in the tray menu. Hiding to tray keeps services running. If the game is open, you can cancel or leave everything running.</value>
   </data>
   <data xml:space="preserve" name="Text_30cc92d87a1e">
     <value>Monochrome</value>
@@ -558,6 +594,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_3c58451ae577">
     <value>Detached source</value>
   </data>
+  <data name="Text_3d0bd7411efc" xml:space="preserve">
+    <value>Exit and leave running</value>
+  </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Switch completed.</value>
   </data>
@@ -575,6 +614,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_3ea221ce95ba">
     <value>Primary button text</value>
+  </data>
+  <data name="Text_3fa059ee5bd6" xml:space="preserve">
+    <value>Keep Waypoint within reach?</value>
   </data>
   <data xml:space="preserve" name="Text_3fbcbf7d0499">
     <value>Fetch completed.</value>
@@ -596,6 +638,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_42610696b9f9" xml:space="preserve">
     <value>This storage layout can be browsed, but account changes are disabled because its schema or import state is unfamiliar.</value>
+  </data>
+  <data name="Text_431027eb3edb" xml:space="preserve">
+    <value>Open Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_436e61016e26">
     <value>Play</value>
@@ -669,8 +714,14 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_4a9a45318354">
     <value>Different local HEAD</value>
   </data>
+  <data name="Text_4ac0fe518f59" xml:space="preserve">
+    <value>Waypoint will ask what to do the next time you close the window.</value>
+  </data>
   <data xml:space="preserve" name="Text_4ac147b602c9">
     <value>Connect your checkout</value>
+  </data>
+  <data name="Text_4b132b882d17" xml:space="preserve">
+    <value>The notification area is unavailable. Waypoint has reopened so you can still use it.</value>
   </data>
   <data name="Text_4b81201360c2" xml:space="preserve">
     <value>{0} character</value>
@@ -747,6 +798,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_5355e8288662">
     <value>Missing DLL</value>
   </data>
+  <data name="Text_5368ec3622b8" xml:space="preserve">
+    <value>On a full exit</value>
+  </data>
   <data name="Text_53be99dc1380" xml:space="preserve">
     <value>Read-only: {0}</value>
   </data>
@@ -764,6 +818,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_54c4fa1fb963">
     <value>Restore selected save backup</value>
+  </data>
+  <data name="Text_54fb27bce27c" xml:space="preserve">
+    <value>Close window to the notification area (system tray)</value>
   </data>
   <data xml:space="preserve" name="Text_55880f0e7438">
     <value>Operation output</value>
@@ -821,6 +878,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_5c520be69184">
     <value>Choose a local branch, a fetched remote branch or an upstream PR. Switching stops owned servers, backs up saves and builds the revision. Close the game first; press Play afterward.</value>
   </data>
+  <data name="Text_5c69120cac69" xml:space="preserve">
+    <value>Close the game before stopping services</value>
+  </data>
   <data xml:space="preserve" name="Text_5c6b0c0b0420">
     <value>Local account created. Sign in inside the game, then create a character there.</value>
   </data>
@@ -835,6 +895,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data xml:space="preserve" name="Text_5e9647ccdc6e">
     <value>Choose a part of the interface to edit. Light and dark colors are stored separately. Editing a preset creates your Custom scheme.</value>
+  </data>
+  <data name="Text_5ec6014cb5f6" xml:space="preserve">
+    <value>The game is still running</value>
   </data>
   <data xml:space="preserve" name="Text_5f1b134f71ee">
     <value>
@@ -908,6 +971,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_64a576b180a8">
     <value>Search selected log (case insensitive)</value>
+  </data>
+  <data name="Text_64a9b80f4b33" xml:space="preserve">
+    <value>Could not verify that services stopped. Waypoint will stay open.</value>
   </data>
   <data xml:space="preserve" name="Text_64e782b10e68">
     <value>Refresh after resolving the installation check failure.</value>
@@ -1007,6 +1073,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_7034e1d32ac5">
     <value>Create a LocalExile account</value>
+  </data>
+  <data name="Text_7063e226c881" xml:space="preserve">
+    <value>Stop services on exit</value>
   </data>
   <data xml:space="preserve" name="Text_7123c07a4c15">
     <value>Automatic save backups</value>
@@ -1142,6 +1211,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_849335f979c6">
     <value>{0:g} · {1:N0} KB · {2}</value>
+  </data>
+  <data name="Text_84aa1d6f1fba" xml:space="preserve">
+    <value>Closing the window keeps Waypoint running. Use Exit Waypoint in the tray menu to quit.</value>
   </data>
   <data xml:space="preserve" name="Text_84c79505c114">
     <value>Switching source</value>
@@ -1293,8 +1365,17 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_9715f9a3e1c5">
     <value>Upstream {0}: {1} (checked {2:t}).</value>
   </data>
+  <data name="Text_974bad034f90" xml:space="preserve">
+    <value>Remember my choice</value>
+  </data>
   <data xml:space="preserve" name="Text_9777bf4aa207">
     <value>Build selected</value>
+  </data>
+  <data name="Text_9814c443a469" xml:space="preserve">
+    <value>Exit stops this checkout’s services before closing Waypoint. If the game is open, you can cancel or leave everything running.</value>
+  </data>
+  <data name="Text_986739fa4712" xml:space="preserve">
+    <value>Window behavior</value>
   </data>
   <data name="Text_992e854a82a5" xml:space="preserve">
     <value>Choose a checkout and reload its accounts.</value>
@@ -1447,11 +1528,17 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a679c1884503">
     <value>Retaining existing keys and prepared executable; creating only missing files.</value>
   </data>
+  <data name="Text_a67ecaab2e09" xml:space="preserve">
+    <value>Services stopped. Exiting Waypoint.</value>
+  </data>
   <data xml:space="preserve" name="Text_a700e84e04df">
     <value>DeleteBackup completed.</value>
   </data>
   <data name="Text_a704d8d4a818" xml:space="preserve">
     <value>Account name</value>
+  </data>
+  <data name="Text_a7436507dc71" xml:space="preserve">
+    <value>Exiting without stopping the game or services.</value>
   </data>
   <data xml:space="preserve" name="Text_a7626cdbe094">
     <value>Binary-only mod</value>
@@ -1486,6 +1573,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_ab4bdca6bf1a" xml:space="preserve">
     <value>Reload accounts to view the selected database.</value>
   </data>
+  <data name="Text_ab8c3af14fb6" xml:space="preserve">
+    <value>Minimize to tray</value>
+  </data>
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Showing the first 1,000 open PRs. Enter a PR number to fetch another.</value>
   </data>
@@ -1500,6 +1590,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_adb8a7038d6c">
     <value>Select a mod to view its dependencies and controls.</value>
+  </data>
+  <data name="Text_addd1dcb439b" xml:space="preserve">
+    <value>Exiting Waypoint stops this checkout’s services.</value>
   </data>
   <data xml:space="preserve" name="Text_aeed4d26bb5f">
     <value>Starting</value>
@@ -1588,6 +1681,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_b83816513bac">
     <value>Building account service</value>
   </data>
+  <data name="Text_b8436e8702c8" xml:space="preserve">
+    <value>Waypoint — click to open</value>
+  </data>
   <data xml:space="preserve" name="Text_b8a4b320cf19">
     <value>Hex color (#RRGGBB)</value>
   </data>
@@ -1614,6 +1710,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_bc74ef1e258a">
     <value> output</value>
+  </data>
+  <data name="Text_bca0785c9799" xml:space="preserve">
+    <value>Window behavior saved.</value>
   </data>
   <data xml:space="preserve" name="Text_bdd254b65baa">
     <value>Build</value>
@@ -1645,6 +1744,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Needs attention</value>
   </data>
+  <data name="Text_c29f3cadd717" xml:space="preserve">
+    <value>Minimizing to tray always keeps services running. This choice applies to a full exit.</value>
+  </data>
   <data xml:space="preserve" name="Text_c2e0c347e274">
     <value>league</value>
   </data>
@@ -1656,6 +1758,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_c66a58ec272f">
     <value>Maximize Waypoint</value>
+  </data>
+  <data name="Text_c6edad1de780" xml:space="preserve">
+    <value>Could not minimize to tray: </value>
   </data>
   <data xml:space="preserve" name="Text_c6fae2f09ede">
     <value>
@@ -1695,6 +1800,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   </data>
   <data name="Text_c827708ef040" xml:space="preserve">
     <value>Account data updated.</value>
+  </data>
+  <data name="Text_c88f2330c818" xml:space="preserve">
+    <value>Close Waypoint or keep it running?</value>
   </data>
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway started a new process under the same watcher. Sign in again if the game returned to login.</value>
@@ -1740,6 +1848,9 @@ Client: {2}</value>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>Read-only while the game or services are running, or ownership is uncertain. Stop them and reload before changing accounts.</value>
   </data>
+  <data name="Text_cd127b0387bb" xml:space="preserve">
+    <value>Windows could not show the notification area icon.</value>
+  </data>
   <data xml:space="preserve" name="Text_cd27f46c485b">
     <value>Customize colors</value>
   </data>
@@ -1754,6 +1865,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_cf47dcf7cadf">
     <value>What this version manages</value>
+  </data>
+  <data name="Text_cf5c6c0d1737" xml:space="preserve">
+    <value>Exiting Waypoint leaves services running.</value>
   </data>
   <data xml:space="preserve" name="Text_cfa63e97e7e5">
     <value>Enable mod</value>
@@ -1794,6 +1908,9 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_d4d8fd81a610">
     <value>Gateway output</value>
   </data>
+  <data name="Text_d505316d6f5f" xml:space="preserve">
+    <value>Exit closes Waypoint completely. Servers and the game keep running either way.</value>
+  </data>
   <data xml:space="preserve" name="Text_d65fad07874f">
     <value>Install Node.js (the LocalExile setup guide uses Node 24). Close and reopen the launcher after installing, then Recheck setup.</value>
   </data>
@@ -1817,6 +1934,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_d838ad216459">
     <value>✓  Game running</value>
+  </data>
+  <data name="Text_d869e1c9fe5a" xml:space="preserve">
+    <value>Exit cancelled. Close the game before stopping services.</value>
   </data>
   <data xml:space="preserve" name="Text_d8831332ef86">
     <value>{0} local/fetched branches ready. Loading GitHub PRs…</value>
@@ -2149,5 +2269,8 @@ This replaces the saved choices only. Mod DLLs and saves are not restored. The c
   </data>
   <data xml:space="preserve" name="Text_ffa98e02f7ce">
     <value>Remote</value>
+  </data>
+  <data name="Text_ffc0b9c77e4f" xml:space="preserve">
+    <value>Waypoint will not stop services underneath an open game. Cancel to close the game first, or exit Waypoint and leave the game and services running this time.</value>
   </data>
 </root>

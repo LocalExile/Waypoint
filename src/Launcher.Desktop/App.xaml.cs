@@ -11,6 +11,14 @@ public partial class App : Application
     public AppearanceSettings Appearance { get; private set; } = new();
     bool contrast;
     public bool SystemLight { get; private set; }
+    public bool IsSessionEnding { get; private set; }
+
+    protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
+    {
+        IsSessionEnding = true;
+        base.OnSessionEnding(e);
+        if (e.Cancel) IsSessionEnding = false;
+    }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -55,6 +63,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        if (MainWindow is MainWindow workspace) workspace.DisposeTrayIcon();
         desktopInstance?.Dispose();
         SystemParameters.StaticPropertyChanged -= SystemSettingChanged;
         SystemEvents.UserPreferenceChanged -= UserPreferenceChanged;

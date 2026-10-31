@@ -24,6 +24,9 @@
   <data xml:space="preserve" name="Text_019c527ea981">
     <value>СЛУЖБЫ</value>
   </data>
+  <data name="Text_01f6aefc4008" xml:space="preserve">
+    <value>Закрытие окна полностью завершает работу Waypoint.</value>
+  </data>
   <data name="Text_01fc520500a2" xml:space="preserve">
     <value>Будут удалены этот аккаунт, все его персонажи и прогресс, а также его личные и гильдейские тайники во всех лигах. Другие аккаунты не изменятся.</value>
   </data>
@@ -114,6 +117,12 @@
   <data xml:space="preserve" name="Text_0cef0d77a2fe">
     <value>Вывод операции</value>
   </data>
+  <data name="Text_0d9fe2fa20b9" xml:space="preserve">
+    <value>Это можно изменить в разделе «Настройки → Поведение окна».</value>
+  </data>
+  <data name="Text_0da96708cb8a" xml:space="preserve">
+    <value>Останавливать службы этой рабочей копии при выходе из Waypoint</value>
+  </data>
   <data xml:space="preserve" name="Text_0de9f358ad56">
     <value>Границы</value>
   </data>
@@ -125,6 +134,9 @@
   </data>
   <data xml:space="preserve" name="Text_0e9161011702">
     <value>Обновить</value>
+  </data>
+  <data name="Text_0f17c1790f9b" xml:space="preserve">
+    <value>Игра или службы ещё работают. Waypoint останется открытым. Принудительное завершение не выполнялось.</value>
   </data>
   <data xml:space="preserve" name="Text_0f45e54a225b">
     <value>В папке Tools/ooz выполните npm install</value>
@@ -182,6 +194,9 @@
   </data>
   <data xml:space="preserve" name="Text_153565a001f1">
     <value>Показатели процессов</value>
+  </data>
+  <data name="Text_1551e89173ed" xml:space="preserve">
+    <value>При сворачивании в трей Waypoint продолжает работать со значком рядом с часами. Нажмите на значок или снова запустите Waypoint, чтобы вернуться.</value>
   </data>
   <data xml:space="preserve" name="Text_1600160452d4">
     <value>Ошибка исходников</value>
@@ -267,6 +282,9 @@
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>Вкладка тайника: {0}</value>
   </data>
+  <data name="Text_1fd447009585" xml:space="preserve">
+    <value>Запомнить мой выбор</value>
+  </data>
   <data xml:space="preserve" name="Text_1ff335e35fbf">
     <value>Репозиторий не выбран</value>
   </data>
@@ -308,6 +326,9 @@
   </data>
   <data xml:space="preserve" name="Text_230841178e46">
     <value>Не удалось открыть страницу загрузки: </value>
+  </data>
+  <data name="Text_2331c395597e" xml:space="preserve">
+    <value>Не удалось проверить службы перед выходом.</value>
   </data>
   <data xml:space="preserve" name="Text_23c0a4391171">
     <value>Номер PR LocalExile</value>
@@ -364,6 +385,9 @@
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Скачать Node.js</value>
   </data>
+  <data name="Text_28fd171b0b6b" xml:space="preserve">
+    <value>Спросить снова в следующий раз</value>
+  </data>
   <data xml:space="preserve" name="Text_292a37482041">
     <value>СОБРАННЫЕ КОМПОНЕНТЫ · DEBUG</value>
   </data>
@@ -397,6 +421,9 @@
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Восстановить выбор модов</value>
   </data>
+  <data name="Text_2b5e770c2b3b" xml:space="preserve">
+    <value>Кнопка сворачивания по-прежнему сворачивает окно на панель задач. Чтобы открыть скрытое окно, нажмите на значок Waypoint рядом с часами. Он может находиться под стрелкой скрытых значков.</value>
+  </data>
   <data name="Text_2b69057ec9ef" xml:space="preserve">
     <value>Пароль должен содержать не менее 4 символов.</value>
   </data>
@@ -405,6 +432,9 @@
   </data>
   <data xml:space="preserve" name="Text_2cdf3c95c8a5">
     <value>Закрытие игры</value>
+  </data>
+  <data name="Text_2d0afc98a2dd" xml:space="preserve">
+    <value>Оставить службы работать</value>
   </data>
   <data xml:space="preserve" name="Text_2dafe4f58ab0">
     <value> · есть изменения файлов</value>
@@ -427,6 +457,9 @@
   <data xml:space="preserve" name="Text_2f444c96f7fb">
     <value>Более заметная рамка фокуса</value>
   </data>
+  <data name="Text_2f5ca4b733a1" xml:space="preserve">
+    <value>Выйти из Waypoint</value>
+  </data>
   <data xml:space="preserve" name="Text_2fad023a9cbb">
     <value>Подготовить клиент</value>
   </data>
@@ -435,6 +468,9 @@
   </data>
   <data xml:space="preserve" name="Text_2ff6b56154ab">
     <value>Завершите подготовку</value>
+  </data>
+  <data name="Text_300f88d55953" xml:space="preserve">
+    <value>Применяется только при полном выходе, включая пункт «Выйти из Waypoint» в меню трея. При сворачивании в трей службы продолжают работать. Если игра открыта, можно отменить выход или оставить всё работающим.</value>
   </data>
   <data xml:space="preserve" name="Text_30cc92d87a1e">
     <value>Монохромная</value>
@@ -558,6 +594,9 @@
   <data xml:space="preserve" name="Text_3c58451ae577">
     <value>Без привязки к ветке</value>
   </data>
+  <data name="Text_3d0bd7411efc" xml:space="preserve">
+    <value>Выйти и оставить работать</value>
+  </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Переключение завершено.</value>
   </data>
@@ -575,6 +614,9 @@
   </data>
   <data xml:space="preserve" name="Text_3ea221ce95ba">
     <value>Текст основных кнопок</value>
+  </data>
+  <data name="Text_3fa059ee5bd6" xml:space="preserve">
+    <value>Оставить Waypoint под рукой?</value>
   </data>
   <data xml:space="preserve" name="Text_3fbcbf7d0499">
     <value>Ветки получены.</value>
@@ -596,6 +638,9 @@
   </data>
   <data name="Text_42610696b9f9" xml:space="preserve">
     <value>Эти данные можно просматривать, но изменение аккаунтов отключено: схема хранения или состояние импорта не распознаны.</value>
+  </data>
+  <data name="Text_431027eb3edb" xml:space="preserve">
+    <value>Открыть Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_436e61016e26">
     <value>Играть</value>
@@ -669,8 +714,14 @@
   <data xml:space="preserve" name="Text_4a9a45318354">
     <value>Другая локальная ревизия HEAD</value>
   </data>
+  <data name="Text_4ac0fe518f59" xml:space="preserve">
+    <value>При следующем закрытии окна Waypoint спросит, что делать.</value>
+  </data>
   <data xml:space="preserve" name="Text_4ac147b602c9">
     <value>Подключите репозиторий</value>
+  </data>
+  <data name="Text_4b132b882d17" xml:space="preserve">
+    <value>Область уведомлений недоступна. Окно Waypoint снова открыто, чтобы вы могли продолжить работу.</value>
   </data>
   <data name="Text_4b81201360c2" xml:space="preserve">
     <value>Персонаж: {0}</value>
@@ -747,6 +798,9 @@
   <data xml:space="preserve" name="Text_5355e8288662">
     <value>Нет DLL</value>
   </data>
+  <data name="Text_5368ec3622b8" xml:space="preserve">
+    <value>При полном выходе</value>
+  </data>
   <data name="Text_53be99dc1380" xml:space="preserve">
     <value>Только просмотр: {0}</value>
   </data>
@@ -764,6 +818,9 @@
   </data>
   <data xml:space="preserve" name="Text_54c4fa1fb963">
     <value>Восстановить выбранную копию</value>
+  </data>
+  <data name="Text_54fb27bce27c" xml:space="preserve">
+    <value>Сворачивать окно в область уведомлений (системный трей) при закрытии</value>
   </data>
   <data xml:space="preserve" name="Text_55880f0e7438">
     <value>Вывод операции</value>
@@ -821,6 +878,9 @@
   <data xml:space="preserve" name="Text_5c520be69184">
     <value>Выберите локальную ветку, полученную удалённую ветку или PR LocalExile. Переключение останавливает службы этой установки, создаёт копию сохранений и собирает выбранную ревизию. Сначала закройте игру; затем нажмите «Играть».</value>
   </data>
+  <data name="Text_5c69120cac69" xml:space="preserve">
+    <value>Закройте игру перед остановкой служб</value>
+  </data>
   <data xml:space="preserve" name="Text_5c6b0c0b0420">
     <value>Локальная учётная запись создана. Войдите в игру и создайте персонажа там.</value>
   </data>
@@ -835,6 +895,9 @@
   </data>
   <data xml:space="preserve" name="Text_5e9647ccdc6e">
     <value>Выберите часть интерфейса для изменения. Цвета светлой и тёмной тем хранятся отдельно. Изменение готовой схемы создаёт пользовательскую палитру.</value>
+  </data>
+  <data name="Text_5ec6014cb5f6" xml:space="preserve">
+    <value>Игра ещё запущена</value>
   </data>
   <data xml:space="preserve" name="Text_5f1b134f71ee">
     <value>
@@ -908,6 +971,9 @@
   </data>
   <data xml:space="preserve" name="Text_64a576b180a8">
     <value>Поиск в журнале без учёта регистра</value>
+  </data>
+  <data name="Text_64a9b80f4b33" xml:space="preserve">
+    <value>Не удалось убедиться, что службы остановлены. Waypoint останется открытым.</value>
   </data>
   <data xml:space="preserve" name="Text_64e782b10e68">
     <value>Устраните ошибку проверки установки, затем обновите состояние.</value>
@@ -1007,6 +1073,9 @@
   </data>
   <data xml:space="preserve" name="Text_7034e1d32ac5">
     <value>Создать учётную запись LocalExile</value>
+  </data>
+  <data name="Text_7063e226c881" xml:space="preserve">
+    <value>Остановить службы при выходе</value>
   </data>
   <data xml:space="preserve" name="Text_7123c07a4c15">
     <value>Автокопии сохранений</value>
@@ -1142,6 +1211,9 @@
   </data>
   <data xml:space="preserve" name="Text_849335f979c6">
     <value>{0:g} · {1:N0} КБ · {2}</value>
+  </data>
+  <data name="Text_84aa1d6f1fba" xml:space="preserve">
+    <value>При закрытии окна Waypoint продолжает работать. Для выхода выберите «Выйти из Waypoint» в меню значка в трее.</value>
   </data>
   <data xml:space="preserve" name="Text_84c79505c114">
     <value>Переключение исходников</value>
@@ -1293,8 +1365,17 @@
   <data xml:space="preserve" name="Text_9715f9a3e1c5">
     <value>LocalExile {0}: {1} (проверено в {2:t}).</value>
   </data>
+  <data name="Text_974bad034f90" xml:space="preserve">
+    <value>Запомнить мой выбор</value>
+  </data>
   <data xml:space="preserve" name="Text_9777bf4aa207">
     <value>Собрать выбранный</value>
+  </data>
+  <data name="Text_9814c443a469" xml:space="preserve">
+    <value>При выходе Waypoint сначала остановит службы этой рабочей копии. Если игра открыта, можно отменить выход или оставить всё работающим.</value>
+  </data>
+  <data name="Text_986739fa4712" xml:space="preserve">
+    <value>Поведение окна</value>
   </data>
   <data name="Text_992e854a82a5" xml:space="preserve">
     <value>Выберите рабочую папку и обновите список аккаунтов.</value>
@@ -1447,11 +1528,17 @@
   <data xml:space="preserve" name="Text_a679c1884503">
     <value>Существующие ключи и готовый исполняемый файл сохраняются; создаются только недостающие файлы.</value>
   </data>
+  <data name="Text_a67ecaab2e09" xml:space="preserve">
+    <value>Службы остановлены. Выход из Waypoint.</value>
+  </data>
   <data xml:space="preserve" name="Text_a700e84e04df">
     <value>Резервная копия удалена.</value>
   </data>
   <data name="Text_a704d8d4a818" xml:space="preserve">
     <value>Имя аккаунта</value>
+  </data>
+  <data name="Text_a7436507dc71" xml:space="preserve">
+    <value>Выход без остановки игры и служб.</value>
   </data>
   <data xml:space="preserve" name="Text_a7626cdbe094">
     <value>Мод без исходников</value>
@@ -1486,6 +1573,9 @@
   <data name="Text_ab4bdca6bf1a" xml:space="preserve">
     <value>Обновите аккаунты для просмотра выбранной базы.</value>
   </data>
+  <data name="Text_ab8c3af14fb6" xml:space="preserve">
+    <value>Свернуть в трей</value>
+  </data>
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Показаны первые 1000 открытых PR. Введите номер другого PR, чтобы получить его.</value>
   </data>
@@ -1500,6 +1590,9 @@
   </data>
   <data xml:space="preserve" name="Text_adb8a7038d6c">
     <value>Выберите мод, чтобы увидеть зависимости и доступные действия.</value>
+  </data>
+  <data name="Text_addd1dcb439b" xml:space="preserve">
+    <value>При выходе из Waypoint службы этой рабочей копии останавливаются.</value>
   </data>
   <data xml:space="preserve" name="Text_aeed4d26bb5f">
     <value>Запускается</value>
@@ -1588,6 +1681,9 @@
   <data xml:space="preserve" name="Text_b83816513bac">
     <value>Сборка службы учётных записей</value>
   </data>
+  <data name="Text_b8436e8702c8" xml:space="preserve">
+    <value>Waypoint — нажмите, чтобы открыть</value>
+  </data>
   <data xml:space="preserve" name="Text_b8a4b320cf19">
     <value>HEX-цвет (#RRGGBB)</value>
   </data>
@@ -1614,6 +1710,9 @@
   </data>
   <data xml:space="preserve" name="Text_bc74ef1e258a">
     <value> — вывод</value>
+  </data>
+  <data name="Text_bca0785c9799" xml:space="preserve">
+    <value>Настройки поведения окна сохранены.</value>
   </data>
   <data xml:space="preserve" name="Text_bdd254b65baa">
     <value>Сборка</value>
@@ -1645,6 +1744,9 @@
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Требует внимания</value>
   </data>
+  <data name="Text_c29f3cadd717" xml:space="preserve">
+    <value>При сворачивании в трей службы всегда продолжают работать. Этот выбор применяется только при полном выходе.</value>
+  </data>
   <data xml:space="preserve" name="Text_c2e0c347e274">
     <value>Лига</value>
   </data>
@@ -1656,6 +1758,9 @@
   </data>
   <data xml:space="preserve" name="Text_c66a58ec272f">
     <value>Развернуть Waypoint</value>
+  </data>
+  <data name="Text_c6edad1de780" xml:space="preserve">
+    <value>Не удалось свернуть в трей: </value>
   </data>
   <data xml:space="preserve" name="Text_c6fae2f09ede">
     <value>
@@ -1695,6 +1800,9 @@
   </data>
   <data name="Text_c827708ef040" xml:space="preserve">
     <value>Данные аккаунта обновлены.</value>
+  </data>
+  <data name="Text_c88f2330c818" xml:space="preserve">
+    <value>Закрыть Waypoint или оставить работать?</value>
   </data>
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway запустил новый процесс в том же сеансе отслеживания. Войдите повторно, если игра вернулась на экран входа.</value>
@@ -1740,6 +1848,9 @@
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>Доступен только просмотр, пока игра или службы работают либо их принадлежность не подтверждена. Остановите их и обновите данные перед изменением аккаунтов.</value>
   </data>
+  <data name="Text_cd127b0387bb" xml:space="preserve">
+    <value>Windows не удалось отобразить значок в области уведомлений.</value>
+  </data>
   <data xml:space="preserve" name="Text_cd27f46c485b">
     <value>Настроить цвета</value>
   </data>
@@ -1754,6 +1865,9 @@
   </data>
   <data xml:space="preserve" name="Text_cf47dcf7cadf">
     <value>Что поддерживается</value>
+  </data>
+  <data name="Text_cf5c6c0d1737" xml:space="preserve">
+    <value>При выходе из Waypoint службы продолжают работать.</value>
   </data>
   <data xml:space="preserve" name="Text_cfa63e97e7e5">
     <value>Включить мод</value>
@@ -1794,6 +1908,9 @@
   <data xml:space="preserve" name="Text_d4d8fd81a610">
     <value>Вывод Gateway</value>
   </data>
+  <data name="Text_d505316d6f5f" xml:space="preserve">
+    <value>Выход полностью закрывает Waypoint. В обоих случаях серверы и игра продолжают работать.</value>
+  </data>
   <data xml:space="preserve" name="Text_d65fad07874f">
     <value>Установите Node.js (руководство LocalExile использует Node 24). Перезапустите Waypoint после установки и нажмите «Повторить проверку».</value>
   </data>
@@ -1817,6 +1934,9 @@
   </data>
   <data xml:space="preserve" name="Text_d838ad216459">
     <value>✓  Игра запущена</value>
+  </data>
+  <data name="Text_d869e1c9fe5a" xml:space="preserve">
+    <value>Выход отменён. Закройте игру перед остановкой служб.</value>
   </data>
   <data xml:space="preserve" name="Text_d8831332ef86">
     <value>Локальных/полученных веток: {0}. Загружаем PR GitHub…</value>
@@ -2149,5 +2269,8 @@
   </data>
   <data xml:space="preserve" name="Text_ffa98e02f7ce">
     <value>Удалённая ветка</value>
+  </data>
+  <data name="Text_ffc0b9c77e4f" xml:space="preserve">
+    <value>Waypoint не будет останавливать службы при открытой игре. Отмените выход, чтобы сначала закрыть игру, или выйдите из Waypoint, оставив игру и службы работать в этот раз.</value>
   </data>
 </root>

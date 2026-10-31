@@ -25,6 +25,7 @@ public partial class MainWindow
         AccountsPage.Header = L.Text("Accounts");
         AccountsView.RefreshLanguage();
         UpdateAppearanceSummary();
+        UpdateClosePreferences();
         LoadDevelopmentPreferences();
         UpdateWindowFrame();
         BrandSubtitle.Text = L.Text(brandSubtitle);

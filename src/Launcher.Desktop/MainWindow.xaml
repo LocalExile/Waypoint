@@ -37,7 +37,7 @@
           <TextBlock Text="{local:Loc Text_4f4bcbb48773}" Style="{StaticResource Caption}" FontSize="{DynamicResource Font11}"/>
           <TextBlock x:Name="SidebarBranch" Text="{local:Loc Text_1ff335e35fbf}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Margin="0,6,0,14"/>
           <TextBlock x:Name="VersionLabel" Style="{StaticResource Caption}"/>
-          <TextBlock Text="{local:Loc Text_388a0721496d}" Style="{StaticResource Caption}" Margin="0,8,0,0"/>
+          <TextBlock x:Name="SidebarCloseSummary" Style="{StaticResource Caption}" Margin="0,8,0,0"/>
         </StackPanel></Expander>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
           <ListBox x:Name="Navigation" AutomationProperties.Name="{local:Loc Text_db03e3055c5a}" SelectedIndex="{Binding SelectedIndex, ElementName=Pages, Mode=TwoWay}"
@@ -400,6 +400,16 @@
         <TabItem Header="{local:Loc Text_74a883a037bc}" x:Name="SettingsPage">
           <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
+              <Border Style="{StaticResource Card}"><StackPanel>
+                <TextBlock x:Name="WindowBehaviorTitle" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
+                <CheckBox x:Name="CloseToTrayBox" Margin="0,12,0,8" Checked="CloseToTray_Changed" Unchecked="CloseToTray_Changed"/>
+                <TextBlock x:Name="CloseBehaviorHelp" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
+                <TextBlock x:Name="CloseBehaviorState" Margin="0,0,0,12"/>
+                <Button x:Name="AskCloseAgainButton" HorizontalAlignment="Left" Click="AskCloseAgain_Click"/>
+                <Border Height="1" Background="{DynamicResource Outline}" Margin="0,18,0,12"/>
+                <CheckBox x:Name="StopServicesOnExitBox" Checked="StopServicesOnExit_Changed" Unchecked="StopServicesOnExit_Changed"/>
+                <TextBlock x:Name="StopServicesOnExitHelp" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
+              </StackPanel></Border>
               <Border Style="{StaticResource Card}"><StackPanel>
                 <TextBlock Text="{local:Loc Text_9575a529260a}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
                 <TextBlock x:Name="AppearanceSummary" Margin="0,8,0,8"/>

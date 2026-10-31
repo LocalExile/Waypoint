@@ -19,7 +19,7 @@ This is a Windows x64 portable preview. No installer is required.
    immediately and remembers your choice. Logs and technical identifiers
    keep their original text. English is the default.
 
-Use Ctrl+1 through Ctrl+8 to choose a page, Ctrl+Tab or Ctrl+Shift+Tab to
+Use Ctrl+1 through Ctrl+9 to choose a page, Ctrl+Tab or Ctrl+Shift+Tab to
 cycle pages, Ctrl+F to search the current page and F5 to refresh local status.
 On Windows 11, hover over the maximize button to open native Snap Layouts.
 
@@ -37,8 +37,15 @@ Settings, save backups and operation logs live under:
   %LOCALAPPDATA%\EmulatorWorkspaceLauncher
 This identity stays stable across product-name changes and portable upgrades.
 Game files and saves remain in your selected LocalExile installation.
-Closing {{PRODUCT}} leaves running game/server processes alone. Close the game
-and use Stop servers when you want to shut down the local runtime.
+On first close, choose Minimize to tray or Exit and whether a full exit should
+stop this checkout's services. Tray mode and stopping on exit default off.
+Remember my choices saves both; both can be changed in Settings > Window behavior.
+Hiding always keeps services running. Click the icon beside the clock (possibly
+under the hidden-icons arrow) to return, or right-click it for Open and Exit.
+Opening the EXE again also restores the hidden workspace. The normal minimize
+button continues to use the taskbar. With stopping on exit enabled, an open
+game prompts Cancel or Exit and leave running. Services stop gracefully; a
+failure keeps Waypoint open. No game or server is force-killed on exit.
 
 Branch/PR switching requires the game closed. Current characters are kept by
 default and automatic backups are on. Starting fresh replaces accounts and
