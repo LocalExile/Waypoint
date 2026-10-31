@@ -33,18 +33,21 @@ static class ExitLifecycleChecks
         }
         try
         {
-            foreach (var scenario in new[] { "disabled", "stopped", "failed", "game-cancel", "game-leave", "busy", "hide-busy" })
+            foreach (var scenario in new[] { "disabled", "stopped", "failed", "game-cancel", "game-leave", "busy", "hide-busy", "always-ask" })
             {
                 File.WriteAllText(Path.Combine(root, "state.json"), JsonSerializer.Serialize(new { Running = true, Game = scenario.StartsWith("game-"), FailStop = scenario == "failed" }));
                 File.WriteAllText(Path.Combine(root, "calls.txt"), "");
                 var window = new MainWindow();
-                var settings = new LauncherSettings(root, false, CloseToTray: scenario == "hide-busy", CloseBehaviorConfirmed: true, StopServicesOnExit: scenario != "disabled");
+                var settings = new LauncherSettings(root, false, CloseToTray: scenario == "hide-busy", CloseBehaviorConfirmed: true, StopServicesOnExit: scenario != "disabled", AlwaysAskOnClose: scenario == "always-ask");
                 typeof(MainWindow).GetField("settings", fields)!.SetValue(window, settings);
                 typeof(MainWindow).GetField("runtime", fields)!.SetValue(window, new RuntimeClient(Path.Combine(AppContext.BaseDirectory, "ExitFixtureBridge.ps1")));
                 bool closed = false; window.Closed += (_, _) => closed = true;
+                int closePrompts = 0;
                 var answer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) };
                 answer.Tick += (_, _) =>
                 {
+                    if (scenario == "always-ask" && Application.Current.Windows.OfType<CloseBehaviorDialog>().FirstOrDefault() is { } closeDialog)
+                    { closePrompts++; closeDialog.DialogResult = false; }
                     if (Application.Current.Windows.OfType<ExitWithGameDialog>().FirstOrDefault() is { } dialog)
                         dialog.DialogResult = scenario == "game-leave";
                 };
@@ -56,6 +59,13 @@ static class ExitLifecycleChecks
                     File.WriteAllText(Path.Combine(root, "calls.txt"), "");
                     if (scenario is "busy" or "hide-busy") typeof(MainWindow).GetField("busy", fields)!.SetValue(window, true);
                     answer.Start(); window.Close();
+                    if (scenario == "always-ask")
+                    {
+                        Until(() => !(bool)typeof(MainWindow).GetField("decidingClose", fields)!.GetValue(window)!);
+                        window.Close();
+                        Until(() => !(bool)typeof(MainWindow).GetField("decidingClose", fields)!.GetValue(window)!);
+                        check(closePrompts == 2, "Always ask presents a fresh prompt on repeated close attempts without changing preferences.");
+                    }
                     if (scenario == "hide-busy") Until(() => !window.IsVisible);
                     if (scenario != "disabled") Until(() => closed || !(bool)typeof(MainWindow).GetField("preparingExit", fields)!.GetValue(window)!);
                     var actions = File.ReadAllLines(Path.Combine(root, "calls.txt"));
@@ -75,7 +85,7 @@ static class ExitLifecycleChecks
                 {
                     answer.Stop();
                     typeof(MainWindow).GetField("busy", fields)!.SetValue(window, false);
-                    typeof(MainWindow).GetField("settings", fields)!.SetValue(window, settings with { StopServicesOnExit = false, CloseToTray = false });
+                    typeof(MainWindow).GetField("settings", fields)!.SetValue(window, settings with { StopServicesOnExit = false, CloseToTray = false, AlwaysAskOnClose = false });
                     if (!closed) window.Close();
                 }
             }

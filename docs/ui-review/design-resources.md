@@ -10,6 +10,12 @@ Reviewed 2026-10-30 for Waypoint, an existing WPF/.NET 10 Windows desktop tool. 
 
 The skill files were read before application. Search entry point and imports were reviewed: local Python standard-library CSV searches, no package installation, remote evaluation or network calls in the search path. Persistence is opt-in and was not used. Python 3 already existed on this machine. Project product requirements take precedence over generic skill recommendations, including mobile touch metrics, CSS, ARIA and web framework examples.
 
+For the 2026-10-31 close-dialog clarity follow-up, consulted Microsoft's [button-label and action guidance](https://learn.microsoft.com/en-us/windows/apps/design/controls/buttons) and [Windows UI text guidance](https://learn.microsoft.com/en-us/windows/win32/uxguide/text-ui).
+Applied a primary window decision before dependent service options, parallel explicit choices, and one result-specific
+commit button plus Cancel. The installed skill's WPF keyboard/focus results were applicable; its generic decision-order
+search did not produce a relevant match, so the interaction sequence follows the Microsoft guidance and the actual workflow.
+No new skill files, packages or system configuration were installed. The same controls/copy are shared by Settings and the prompt.
+
 The vendored skill subtree is exempt from Git line-ending conversion and whitespace checks in `.gitattributes`. This preserves the exact pinned upstream bytes, including upstream whitespace, so a fresh Windows checkout still matches the lock file. Application source retains the repository's normal formatting checks.
 
 For the custom title-bar follow-up, implementation follows Microsoft's [WPF WindowChrome documentation](https://learn.microsoft.com/en-us/dotnet/api/system.windows.shell.windowchrome?view=windowsdesktop-10.0), [GetSystemMetricsForDpi](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getsystemmetricsfordpi), and [sizing/padded-border metric definitions](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getsystemmetrics), accessed 2026-10-30. The skill's narrow chrome query returned no result; the broader custom-window query returned general commands/property guidance. WindowChrome behavior is based on the official documentation and running-app checks, not a claimed skill database match.

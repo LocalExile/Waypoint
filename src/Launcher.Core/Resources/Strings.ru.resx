@@ -270,6 +270,9 @@
   <data xml:space="preserve" name="Text_1c7e31690f17">
     <value>Установите Python 3.9 или новее с python.org, включив добавление в PATH. Перезапустите Waypoint и нажмите «Повторить проверку». Frida необязательна и не нужна для обычной игры.</value>
   </data>
+  <data name="Text_1c98b88e71b9" xml:space="preserve">
+    <value>Полностью закрыть Waypoint.</value>
+  </data>
   <data xml:space="preserve" name="Text_1d0fae1e7a27">
     <value>Нет модов для отображения.</value>
   </data>
@@ -281,6 +284,9 @@
   </data>
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>Вкладка тайника: {0}</value>
+  </data>
+  <data name="Text_1f8d6be4b386" xml:space="preserve">
+    <value>Оставить Waypoint работать в трее</value>
   </data>
   <data name="Text_1fd447009585" xml:space="preserve">
     <value>Запомнить мой выбор</value>
@@ -384,6 +390,9 @@
   </data>
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Скачать Node.js</value>
+  </data>
+  <data name="Text_288994eb8c4a" xml:space="preserve">
+    <value>Сначала закройте игру. Если безопасно остановить службы не удастся, Waypoint останется открытым.</value>
   </data>
   <data name="Text_28fd171b0b6b" xml:space="preserve">
     <value>Спросить снова в следующий раз</value>
@@ -530,6 +539,9 @@
   <data xml:space="preserve" name="Text_35ed5fa746ff">
     <value>Тёмные цвета</value>
   </data>
+  <data name="Text_3659acba9aa2" xml:space="preserve">
+    <value>Выбранное действие будет выполняться без диалога закрытия.</value>
+  </data>
   <data xml:space="preserve" name="Text_367ae45f5293">
     <value>В игре: /mod показывает состояние модов.</value>
   </data>
@@ -577,6 +589,9 @@
   </data>
   <data xml:space="preserve" name="Text_3b5e2fe4d276">
     <value>Состояние модов проверено.</value>
+  </data>
+  <data name="Text_3b7ffa42c6e0" xml:space="preserve">
+    <value>Также применяется к пункту «Выйти из Waypoint» в меню трея.</value>
   </data>
   <data xml:space="preserve" name="Text_3bd8fd42d412">
     <value>Папка ещё не существует: </value>
@@ -999,6 +1014,9 @@
   <data xml:space="preserve" name="Text_6725e7bbcd28">
     <value>Как в Windows</value>
   </data>
+  <data name="Text_6747464f35f8" xml:space="preserve">
+    <value>Всегда спрашивать при закрытии окна</value>
+  </data>
   <data xml:space="preserve" name="Text_67fdcd462dc5">
     <value>Восстановление сохранений заменяет прогресс после подтверждения. Выбор модов восстанавливается отдельно при остановленном Gateway.</value>
   </data>
@@ -1089,6 +1107,9 @@
   <data xml:space="preserve" name="Text_72356c9e3235">
     <value>Ожидание сохранённых изменений исходников. Для Auth и Patch нужен перезапуск.</value>
   </data>
+  <data name="Text_72db542cccd0" xml:space="preserve">
+    <value>Изменения сохраняются сразу. Кнопка сворачивания по-прежнему сворачивает окно на панель задач.</value>
+  </data>
   <data name="Text_735373328df6" xml:space="preserve">
     <value>В этом аккаунте нет персонажей для копирования.</value>
   </data>
@@ -1112,6 +1133,9 @@
   </data>
   <data name="Text_777a88e600e2" xml:space="preserve">
     <value>Запрошенная сборка</value>
+  </data>
+  <data name="Text_780287165a99" xml:space="preserve">
+    <value>После выхода из Waypoint игра и службы продолжат работать.</value>
   </data>
   <data xml:space="preserve" name="Text_781fab451752">
     <value>состояние включения неизвестно</value>
@@ -1265,6 +1289,9 @@
   </data>
   <data name="Text_8c1304fcac2d" xml:space="preserve">
     <value>Персонажей пока нет. Войдите в игру и создайте персонажа.</value>
+  </data>
+  <data name="Text_8d099abe78af" xml:space="preserve">
+    <value>При закрытии окна</value>
   </data>
   <data xml:space="preserve" name="Text_8d525e5f158b">
     <value>Скопировано</value>
@@ -1480,6 +1507,9 @@
   <data xml:space="preserve" name="Text_a1ac9a887b35">
     <value>Проверка принадлежности каждого необходимого прослушиваемого порта.</value>
   </data>
+  <data name="Text_a25890814951" xml:space="preserve">
+    <value>Остановить службы перед выходом</value>
+  </data>
   <data xml:space="preserve" name="Text_a2b0e1cca90c">
     <value>Перезагрузить включённый мод и зависимые от него моды.</value>
   </data>
@@ -1618,6 +1648,9 @@
   <data xml:space="preserve" name="Text_b2518d20e2cb">
     <value>Запустить серверы</value>
   </data>
+  <data name="Text_b26fa9e01921" xml:space="preserve">
+    <value>Оставить службы LocalExile работать</value>
+  </data>
   <data xml:space="preserve" name="Text_b2cc39e00968">
     <value>Службы запущены.</value>
   </data>
@@ -1659,6 +1692,9 @@
   </data>
   <data xml:space="preserve" name="Text_b66a9733627c">
     <value>Сначала закройте игру и остановите службы. Будут использованы временная локальная служба учётных записей и указанная ниже база данных. После создания войдите в игру и создайте персонажа там.</value>
+  </data>
+  <data name="Text_b670d9ade6d2" xml:space="preserve">
+    <value>При выходе из Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_b6aefbdc998a">
     <value>Используется: </value>
@@ -1729,6 +1765,9 @@
   <data xml:space="preserve" name="Text_bf004e2e67d7">
     <value>Индикаторы ошибок</value>
   </data>
+  <data name="Text_bffd26352bd5" xml:space="preserve">
+    <value>Перед сохранением предпочтения вам один раз предложат выбрать действие при закрытии.</value>
+  </data>
   <data name="Text_c02af3329071" xml:space="preserve">
     <value>Переименовать аккаунт</value>
   </data>
@@ -1744,6 +1783,9 @@
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Требует внимания</value>
   </data>
+  <data name="Text_c2423c59626b" xml:space="preserve">
+    <value>Остановить службы и выйти</value>
+  </data>
   <data name="Text_c29f3cadd717" xml:space="preserve">
     <value>При сворачивании в трей службы всегда продолжают работать. Этот выбор применяется только при полном выходе.</value>
   </data>
@@ -1755,6 +1797,9 @@
   </data>
   <data xml:space="preserve" name="Text_c4ba5e396f03">
     <value>Автокопии сохранений перед изменениями модов</value>
+  </data>
+  <data name="Text_c5132d954d7b" xml:space="preserve">
+    <value>Запомнить для следующего раза</value>
   </data>
   <data xml:space="preserve" name="Text_c66a58ec272f">
     <value>Развернуть Waypoint</value>
@@ -1798,6 +1843,9 @@
   <data xml:space="preserve" name="Text_c7ece59b9c12">
     <value>Создать учётную запись</value>
   </data>
+  <data name="Text_c8207851222b" xml:space="preserve">
+    <value>Выбирайте каждый раз. Сохранение выбора в диалоге отключит этот параметр.</value>
+  </data>
   <data name="Text_c827708ef040" xml:space="preserve">
     <value>Данные аккаунта обновлены.</value>
   </data>
@@ -1809,6 +1857,9 @@
   </data>
   <data xml:space="preserve" name="Text_c9665c96a867">
     <value>Лайм</value>
+  </data>
+  <data name="Text_c9b2c9b72ddd" xml:space="preserve">
+    <value>Что делать при закрытии окна?</value>
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
@@ -2211,6 +2262,15 @@
   </data>
   <data xml:space="preserve" name="Text_fab4753af1e0">
     <value>Доступные моды</value>
+  </data>
+  <data name="Text_fab505904d81" xml:space="preserve">
+    <value>Спрашивать при закрытии окна</value>
+  </data>
+  <data name="Text_fac215487bcb" xml:space="preserve">
+    <value>Скрыть в трей</value>
+  </data>
+  <data name="Text_fb0c0c960b16" xml:space="preserve">
+    <value>Скрыть окно со значком рядом с часами. Waypoint, службы и игра продолжат работать.</value>
   </data>
   <data xml:space="preserve" name="Text_fb1a779f6127">
     <value>Перед пересборкой остановите службы. Запуск остановленной службы рядом с работающими использует её готовую сборку. После изменения исходников сначала остановите все службы и выполните сборку. Игра запускается поддерживаемым скриптом LocalExile.</value>

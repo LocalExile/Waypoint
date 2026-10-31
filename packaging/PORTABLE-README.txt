@@ -37,9 +37,13 @@ Settings, save backups and operation logs live under:
   %LOCALAPPDATA%\EmulatorWorkspaceLauncher
 This identity stays stable across product-name changes and portable upgrades.
 Game files and saves remain in your selected LocalExile installation.
-On first close, choose Minimize to tray or Exit and whether a full exit should
-stop this checkout's services. Tray mode and stopping on exit default off.
-Remember my choices saves both; both can be changed in Settings > Window behavior.
+On first close, choose Keep Waypoint running in the tray or Exit Waypoint.
+Exit reveals whether to leave services running or stop them first. The final
+button names the result: Hide to tray, Exit Waypoint, or Stop services and exit.
+Tray mode and stopping on exit default off. Remember this for next time saves
+the behavior. Settings > Window behavior uses the same choices; enable Always
+ask when I close the window to choose each time. Remember then starts unchecked;
+remembering a choice turns Always ask off.
 Hiding always keeps services running. Click the icon beside the clock (possibly
 under the hidden-icons arrow) to return, or right-click it for Open and Exit.
 Opening the EXE again also restores the hidden workspace. The normal minimize

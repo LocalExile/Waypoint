@@ -37,10 +37,13 @@ Open **Settings → Appearance and accessibility → Change appearance…** for:
 profiles, stronger contrast/focus and reduced motion. Preview changes, then choose Apply or Cancel. See
 [appearance and accessibility](docs/appearance.md) for controls, recovery shortcuts and validation limits.
 
-**Closing the window:** on first close, choose **Minimize to tray** (the icon beside the clock), **Exit Waypoint** or
-**Cancel**, and whether a full exit should stop this checkout’s services. Both options default off.
-Keep **Remember my choices** checked to save both choices. You can change them in
-**Settings → Window behavior**. Click the hidden workspace's tray icon to return; right-click it for **Open Waypoint**
+**Closing the window:** the first-close dialog starts with **Keep Waypoint running in the tray** or **Exit Waypoint**.
+Choosing Exit reveals whether to leave LocalExile services running or stop them first. One final button names the
+result: **Hide to tray**, **Exit Waypoint** or **Stop services and exit**. Cancel leaves everything open.
+Tray mode and stopping services on exit default off. **Remember this for next time** saves the selected behavior.
+Both preferences are also explicit choices in **Settings → Window behavior**. Enable **Always ask when I close the
+window** to choose each time; Remember then starts unchecked. Remembering a choice turns Always ask off.
+Click the hidden workspace's tray icon to return; right-click it for **Open Waypoint**
 and **Exit Waypoint**. The icon may be under Windows' hidden-icons arrow. Opening Waypoint again also restores the
 existing window. The minimize button still uses the normal taskbar. Hiding keeps services running.
 Optional service shutdown on a full exit uses the existing graceful stop. If the game is open, cancel to close it

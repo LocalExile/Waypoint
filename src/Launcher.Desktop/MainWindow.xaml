@@ -402,13 +402,11 @@
             <StackPanel>
               <Border Style="{StaticResource Card}"><StackPanel>
                 <TextBlock x:Name="WindowBehaviorTitle" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>
-                <CheckBox x:Name="CloseToTrayBox" Margin="0,12,0,8" Checked="CloseToTray_Changed" Unchecked="CloseToTray_Changed"/>
-                <TextBlock x:Name="CloseBehaviorHelp" Style="{StaticResource Caption}" Margin="0,0,0,12"/>
-                <TextBlock x:Name="CloseBehaviorState" Margin="0,0,0,12"/>
-                <Button x:Name="AskCloseAgainButton" HorizontalAlignment="Left" Click="AskCloseAgain_Click"/>
-                <Border Height="1" Background="{DynamicResource Outline}" Margin="0,18,0,12"/>
-                <CheckBox x:Name="StopServicesOnExitBox" Checked="StopServicesOnExit_Changed" Unchecked="StopServicesOnExit_Changed"/>
-                <TextBlock x:Name="StopServicesOnExitHelp" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
+                <local:WindowBehaviorChoices x:Name="WindowChoices" Margin="0,16,0,12" ChoiceChanged="WindowChoices_Changed"/>
+                <Border Height="1" Background="{DynamicResource Outline}" Margin="0,4,0,12"/>
+                <CheckBox x:Name="ShowCloseDialogBox" Checked="ShowCloseDialog_Changed" Unchecked="ShowCloseDialog_Changed"/>
+                <TextBlock x:Name="ClosePromptHint" Style="{StaticResource Caption}" Margin="27,0,0,8"/>
+                <TextBlock x:Name="CloseBehaviorState" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
               </StackPanel></Border>
               <Border Style="{StaticResource Card}"><StackPanel>
                 <TextBlock Text="{local:Loc Text_9575a529260a}" FontSize="{DynamicResource Font21}" FontWeight="SemiBold"/>

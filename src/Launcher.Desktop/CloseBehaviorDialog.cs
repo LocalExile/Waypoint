@@ -8,51 +8,40 @@ public sealed class CloseBehaviorDialog : DialogWindow
 {
     public WindowCloseAction? Choice { get; private set; }
     public CheckBox RememberChoice { get; } = new() { IsChecked = true };
-    public RadioButton StopServices { get; } = new() { GroupName = "ExitServices" };
+    public WindowBehaviorChoices Choices { get; } = new() { PromptMode = true };
+    public RadioButton StopServices => Choices.StopServices;
+    public Button ApplyChoice { get; } = new();
 
-    public CloseBehaviorDialog(Window owner, bool stopServicesOnExit = false)
+    public CloseBehaviorDialog(Window owner, bool stopServicesOnExit = false, bool closeToTray = false, bool alwaysAsk = false)
     {
         DialogLayout.Configure(this, owner, L.Text("Close Waypoint"), 640);
         var body = new StackPanel { Margin = new Thickness(24) };
-        body.Children.Add(new TextBlock { Text = L.Text("Close Waypoint or keep it running?"), FontSize = ThemeResources.Font(22), FontWeight = FontWeights.SemiBold });
-        body.Children.Add(new TextBlock { Text = L.Text("Minimize to tray keeps Waypoint running beside the clock. Click its icon, or open Waypoint again, to return."), Margin = new Thickness(0, 14, 0, 12) });
-        body.Children.Add(new TextBlock { Text = L.Text("On a full exit"), FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 4, 0, 4) });
-        var keepServices = new RadioButton { GroupName = "ExitServices", IsChecked = !stopServicesOnExit,
-            Content = new TextBlock { Text = L.Text("Keep services running"), TextWrapping = TextWrapping.Wrap } };
-        keepServices.SetResourceReference(StyleProperty, "ChoiceRadio");
-        body.Children.Add(keepServices);
-        StopServices.Content = new TextBlock { Text = L.Text("Stop services on exit"), TextWrapping = TextWrapping.Wrap };
-        StopServices.IsChecked = stopServicesOnExit;
-        StopServices.SetResourceReference(StyleProperty, "ChoiceRadio");
-        body.Children.Add(StopServices);
-        var exitHelp = new TextBlock { Margin = new Thickness(0, 0, 0, 16) };
-        void UpdateExitHelp() => exitHelp.Text = L.Text(StopServices.IsChecked == true
-            ? "Exit stops this checkout’s services before closing Waypoint. If the game is open, you can cancel or leave everything running."
-            : "Exit closes Waypoint completely. Servers and the game keep running either way.");
-        StopServices.Checked += (_, _) => UpdateExitHelp();
-        StopServices.Unchecked += (_, _) => UpdateExitHelp();
-        UpdateExitHelp();
-        body.Children.Add(exitHelp);
-        var trayHelp = new TextBlock { Text = L.Text("Minimizing to tray always keeps services running. This choice applies to a full exit."), Margin = new Thickness(0, 0, 0, 12) };
-        trayHelp.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
-        body.Children.Add(trayHelp);
-        RememberChoice.Content = new TextBlock { Text = L.Text("Remember my choices"), TextWrapping = TextWrapping.Wrap };
-        body.Children.Add(RememberChoice);
+        body.Children.Add(new TextBlock { Text = L.Text("What should closing the window do?"), FontSize = ThemeResources.Font(22), FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 0, 0, 16) });
+        Choices.Load(closeToTray, stopServicesOnExit);
+        RememberChoice.IsChecked = !alwaysAsk;
+        body.Children.Add(Choices);
+        var footer = new StackPanel { Margin = new Thickness(0, 20, 0, 0) };
+        RememberChoice.Content = new TextBlock { Text = L.Text("Remember this for next time"), TextWrapping = TextWrapping.Wrap };
+        footer.Children.Add(RememberChoice);
         var help = new TextBlock { Text = L.Text("You can change this in Settings → Window behavior."), Margin = new Thickness(0, 4, 0, 18) };
         help.SetResourceReference(TextBlock.ForegroundProperty, "Muted");
-        body.Children.Add(help);
+        footer.Children.Add(help);
         var buttons = new WrapPanel();
-        void Add(string label, WindowCloseAction action)
-        {
-            var button = new Button { Content = L.Text(label) };
-            button.Click += (_, _) => { Choice = action; DialogResult = true; };
-            buttons.Children.Add(button);
-        }
-        Add("Minimize to tray", WindowCloseAction.Hide);
-        Add("Exit Waypoint", WindowCloseAction.Exit);
+        ApplyChoice.Content = Choices.ActionLabel;
+        Choices.ChoiceChanged += _ => ApplyChoice.Content = Choices.ActionLabel;
+        ApplyChoice.Click += (_, _) => { Choice = Choices.CloseToTray ? WindowCloseAction.Hide : WindowCloseAction.Exit; DialogResult = true; };
+        buttons.Children.Add(ApplyChoice);
         var cancel = new Button { Content = L.Text("Cancel"), IsCancel = true, IsDefault = true };
         buttons.Children.Add(cancel);
-        Content = DialogLayout.WithActions(body, buttons);
+        footer.Children.Add(buttons);
+        var layout = new Grid { Margin = body.Margin };
+        body.Margin = new Thickness(0);
+        layout.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        layout.Children.Add(new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
+        Grid.SetRow(footer, 1); layout.Children.Add(footer);
+        Content = layout;
         Loaded += (_, _) => cancel.Focus();
     }
 }
