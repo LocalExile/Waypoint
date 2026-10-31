@@ -20,7 +20,8 @@ public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDat
 
 public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null, AccountInventory? AccountData = null);
 public sealed record LauncherSettings(string RepositoryPath = "", bool UseLocalProfile = true,
-    bool AutomaticBackups = true, bool HotReload = true, string Language = "en", AppearanceSettings? Appearance = null);
+    bool AutomaticBackups = true, bool HotReload = true, string Language = "en", AppearanceSettings? Appearance = null,
+    bool CloseToTray = false, bool CloseBehaviorConfirmed = false);
 
 // Presentation preferences never reach the emulator adapter or game/save data.
 public sealed record AppearanceSettings(string Mode = "Dark", string Scheme = "waypoint", string CustomBase = "waypoint",
