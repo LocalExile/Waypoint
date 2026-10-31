@@ -79,18 +79,18 @@ static class Program
             Check(button.Command is not null && AutomationProperties.GetName(button).Contains("Waypoint"), "Caption controls need routed commands and accessible names.");
         }
         Check(pages.SelectedIndex == 0 && nav.SelectedIndex == 0, "Startup must select Play, not an empty page.");
-        Check(nav.Items.Count == 8 && pages.Items.Count == 8, "Every page must be reachable from navigation.");
+        Check(nav.Items.Count == 9 && pages.Items.Count == 9, "Every page must be reachable from navigation.");
         Check(UIElementAutomationPeer.CreatePeerForElement(pages)!.GetAutomationControlType() == AutomationControlType.Pane, "Content-only page host must expose a pane, not hidden tab headers.");
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < pages.Items.Count; i++)
         {
             nav.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, i);
             window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.DataBind);
             Check(pages.SelectedIndex == i, "Navigation must select the matching page.");
-            pages.SelectedIndex = (i + 1) % 8;
+            pages.SelectedIndex = (i + 1) % pages.Items.Count;
             window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.DataBind);
             Check(nav.SelectedIndex == pages.SelectedIndex, "Programmatic navigation must update the sidebar.");
         }
-        Check(window.InputBindings.Count == 13, "Page, search, refresh and cycle shortcuts must be registered.");
+        Check(window.InputBindings.Count == 14, "Page, search, refresh and cycle shortcuts must be registered.");
         Check(Element<CheckBox>(window, "ModsAutoBackupBox").IsChecked == SettingsStore.Load().AutomaticBackups, "Backup preference must remain the stored choice.");
         var empty = new RuntimeSnapshot(Path.Combine(Path.GetTempPath(), "Waypoint-UI-Checks-no-install"), "UI fixture", "", "", "main", "",
             [new("Prepared client", false, "Missing")], [new("Gateway", "Stopped", 0, "", "Stopped", [6112], 0, 0, "")], []);
@@ -127,7 +127,7 @@ static class Program
         {
             // DPI equivalent DIPs: more physical pixels, same usable logical workspace. Actual monitor changes are a separate manual check.
             ((FrameworkElement)window.Content).LayoutTransform = new ScaleTransform(scale, scale);
-            foreach (int page in new[] { 0, 3, 4, 5, 6, 7 })
+            foreach (int page in new[] { 0, 3, 4, 5, 6, 7, 8 })
             {
                 pages.SelectedIndex = page;
                 Layout(window, size.Width * scale, size.Height * scale);
@@ -156,7 +156,7 @@ static class Program
         Render(window, ready);
         Check(Element<TextBlock>(window, "ReadinessTitle").Text == "Готово к игре", "Russian readiness must reflect current runtime state.");
         Check(AutomationProperties.GetName(modSearch) == "Поиск модов", "Accessible names must switch language live.");
-        Check(((NavigationPage)nav.Items[7]).DisplayLabel == "Настройки", "Navigation must switch language without changing canonical page identities.");
+        Check(((NavigationPage)nav.Items[8]).DisplayLabel == "Настройки", "Navigation must switch language without changing canonical page identities.");
         var translatedRow = (ServicePresentation)services.Items[0];
         Check(translatedRow.Value.Name == "Gateway" && translatedRow.Value.DisplayStatus == "Остановлен" && translatedRow.Value.DisplayAction == "Запустить", "Russian service presentation must preserve canonical action routing.");
         Check(Element<ListBox>(window, "LanguageBox").SelectedIndex == 1, "Selected language must remain discoverable in Settings.");
@@ -164,7 +164,7 @@ static class Program
         foreach (var size in new[] { new Size(960, 730), new Size(1226, 861) })
         {
             ((FrameworkElement)window.Content).LayoutTransform = new ScaleTransform(scale, scale);
-            for (int page = 0; page < 8; page++)
+            for (int page = 0; page < pages.Items.Count; page++)
             {
                 pages.SelectedIndex = page;
                 Layout(window, size.Width * scale, size.Height * scale);
@@ -175,6 +175,7 @@ static class Program
         new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle();
         AppearanceChecks.Run(app,window,Check);
         DialogFrameChecks.Run(app,window,Check);
+        AccountPageChecks.Run(app,window,Check);
         var dialog = new ConfirmationDialog(window, L.Text("Delete only the backup from {0:g}?\n\nCurrent saves are unchanged. This backup will no longer be available to restore.", DateTime.Now), L.Text("Delete selected backup"));
         var buttons = ((System.Windows.Controls.Panel)dialog.Content).Children.OfType<WrapPanel>().Single().Children.OfType<Button>().ToArray();
         Check(buttons.Any(b => b.IsCancel && b.IsDefault && (string)b.Content == "Отмена") && buttons.Any(b => !b.IsDefault && (string)b.Content == "Продолжить"), "Localized destructive confirmations must default to Cancel.");

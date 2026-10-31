@@ -17,6 +17,7 @@ public partial class MainWindow
         updatingPreferences = true;
         AutoBackupBox.IsChecked = ManagerAutoBackupBox.IsChecked = ModsAutoBackupBox.IsChecked = settings.AutomaticBackups;
         HotReloadBox.IsChecked = settings.HotReload;
+        AccountsView.SetRuntime(snapshot, busy, settings.AutomaticBackups);
         updatingPreferences = false;
         BackupModeDetail.Text = settings.AutomaticBackups ? L.Text("Backups are on for both current-character and fresh starts. Manage them on Backups.") : L.Text("Automatic backups are off. Back up manually on Backups before changes you may want to undo.");
     }

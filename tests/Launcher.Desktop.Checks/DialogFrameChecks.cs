@@ -22,7 +22,9 @@ static class DialogFrameChecks
             () => new ConfirmationDialog(owner, new string('x', 2000), L.Text("Delete selected backup")),
             () => new SetupInstructionsDialog(owner, new SetupStep("Git", false, "", "Guide", L.Text("Open setup guide"), new string('x', 2000)), "test checkout"),
             () => new CreateAccountDialog(owner, "test database; no account creation is invoked"),
-            () => new DiagnosticPreviewDialog(owner, _ => "test report; clipboard is not used")
+            () => new DiagnosticPreviewDialog(owner, _ => "test report; clipboard is not used"),
+            .. new[] { "Create", "Duplicate", "Rename", "Password", "Delete" }.Select(action => (Func<DialogWindow>)(() =>
+                new AccountActionDialog(owner, action, action == "Create" ? null : new("fixture", "Example", "", "revision", [], 0), [], true)))
         ];
         try
         {
@@ -48,7 +50,7 @@ static class DialogFrameChecks
                     var close = (Button)dialog.Template.FindName("DialogCloseButton", dialog);
                     var chrome = WindowChrome.GetWindowChrome(dialog);
                     bool actionsVisible = true;
-                    if (dialog is ConfirmationDialog or SetupInstructionsDialog or CreateAccountDialog)
+                    if (dialog is ConfirmationDialog or SetupInstructionsDialog or CreateAccountDialog or AccountActionDialog)
                     {
                         var actions = (FrameworkElement)((DockPanel)dialog.Content).Children[0];
                         double bottom = actions.TranslatePoint(new Point(0, actions.ActualHeight), root).Y;

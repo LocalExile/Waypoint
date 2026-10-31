@@ -46,7 +46,7 @@ static class AppearanceChecks
             foreach (var preference in new[] { new AppearanceSettings(Mode: "Light"), new AppearanceSettings(Font: "Verdana", TextScale: 125), new AppearanceSettings(Mode: "Light", Font: "OpenDyslexic", TextScale: 150) })
             {
                 app.ApplyAppearance(preference);
-                for (int page = 0; page < 8; page++)
+                for (int page = 0; page < host.Items.Count; page++)
                 {
                     host.SelectedIndex = page; var root = (FrameworkElement)owner.Content; root.Measure(new Size(960, 730)); root.Arrange(new Rect(0, 0, 960, 730)); root.UpdateLayout();
                     check(host.ActualHeight > 200 && host.ActualWidth > 650, $"Page {page} remains arranged with {preference.Font} at {preference.TextScale}% in {preference.Mode}.");

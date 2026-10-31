@@ -63,6 +63,7 @@ public partial class MainWindow : Window
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         LoadDevelopmentPreferences();
         InitializeInteraction();
+        InitializeAccounts();
         InitializeWindowFrame();
         InitializeAppearance();
         ApplyLanguage();
@@ -71,6 +72,7 @@ public partial class MainWindow : Window
             if (e.Source != Pages || !IsLoaded) return;
             if (Pages.SelectedItem == BackupsPage) RefreshBackups();
             if (Pages.SelectedItem == BuildsPage) await LoadSourcesAsync(false);
+            if (Pages.SelectedItem == AccountsPage) await LoadAccountsAsync();
         };
         Loaded += async (_, _) =>
         {
@@ -135,6 +137,8 @@ public partial class MainWindow : Window
             SetFeedback(true);
         }
         finally { gate.Release(); }
+        RenderAccounts(snapshot);
+        if (Pages.SelectedItem == AccountsPage && accountsContext.Length == 0) await LoadAccountsAsync();
     }
 
     static string BuildCommitLabels(string components) => string.Join(Environment.NewLine,
@@ -171,6 +175,7 @@ public partial class MainWindow : Window
     {
         RenderMods(state);
         RenderDevelopment(state);
+        RenderAccounts(state);
         UpdateWorkspaceHeading(state.Root);
         SidebarBranch.Text = !string.IsNullOrWhiteSpace(state.SourceBranch) ? state.SourceBranch : !string.IsNullOrWhiteSpace(state.SourceLabel) ? state.SourceLabel : L.Text("Detached source");
         SourceIdentity.Value = $"{SidebarBranch.Text}  ·  {state.SourceCommit}";
@@ -220,14 +225,14 @@ public partial class MainWindow : Window
     }
 
     async Task OperateAsync(string action, string service = "All", AccountRequest? account = null,
-        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null)
+        SourceSwitchRequest? source = null, string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null)
     {
         if (busy) return;
         if (string.IsNullOrWhiteSpace(settings.RepositoryPath)) { Pages.SelectedItem = SettingsPage; return; }
         busy = true;
         await gate.WaitAsync();
         lastError = null;
-        retry = action is "Register" or "Switch" or "RestoreBackup" or "DeleteBackup" or "RestoreModChoices" ? null : (action, service);
+        retry = action is "Register" or "Switch" or "RestoreBackup" or "DeleteBackup" or "RestoreModChoices" or "ManageAccount" ? null : (action, service);
         retryMod = retry is not null ? mod : null;
         FailureActions.Visibility = Visibility.Collapsed;
         operationLogPath = stageLogPath = "";
@@ -252,13 +257,14 @@ public partial class MainWindow : Window
                         if (Path.GetFileName(update.LogPath) == "operation.log") operationLogPath = update.LogPath;
                     }
                     UpdateOperationLabel();
-                }), account: account, source: source, backupId: backupId, mod: mod);
+                }), account: account, source: source, backupId: backupId, mod: mod, accountData: accountData);
             if (!result.Ok)
             {
                 currentStage = result.FailedStage ?? currentStage;
                 throw new IOException(result.Message);
             }
             snapshot = result.Snapshot;
+            if (result.AccountData is not null) { accountsContext = CurrentAccountContext; AccountsView.SetInventory(result.AccountData); }
             if (action == "Switch") FreshSavesBox.IsChecked = false;
             StatusLabel.Text = L.Text(result.Message);
             AnnounceStatus();
@@ -374,11 +380,12 @@ public partial class MainWindow : Window
     {
         if (busy) return;
         if (snapshot is null) { StatusLabel.Text = L.Text("Select and check an installation first."); return; }
+        string reviewedDatabase = snapshot.SaveDatabase;
         var dialog = new CreateAccountDialog(this, snapshot.SaveDatabase);
         if (dialog.ShowDialog() == true && dialog.Request is { } request)
         {
             privateNames.Add(request.Name);
-            await OperateAsync("Register", account: request);
+            await OperateAsync("Register", account: request with { ExpectedDatabase = reviewedDatabase });
         }
     }
     void OpenDownload(string url)
@@ -405,7 +412,7 @@ public partial class MainWindow : Window
     async void Stop_Click(object sender, RoutedEventArgs e) => await OperateAsync("Stop");
     async void CloseGame_Click(object sender, RoutedEventArgs e) => await OperateAsync("CloseGame");
     async void Build_Click(object sender, RoutedEventArgs e) => await OperateAsync("Build");
-    async void Refresh_Click(object sender, RoutedEventArgs e) { lastError = null; await RefreshAsync(); }
+    async void Refresh_Click(object sender, RoutedEventArgs e) { lastError = null; await RefreshAsync(); if (Pages.SelectedItem == AccountsPage) await LoadAccountsAsync(); }
     async void Service_Click(object sender, RoutedEventArgs e)
     {
         string name = (string)((Button)sender).Tag;

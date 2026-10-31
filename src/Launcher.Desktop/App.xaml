@@ -51,6 +51,21 @@
         </ControlTemplate.Triggers>
       </ControlTemplate></Setter.Value></Setter>
     </Style>
+    <DataTemplate x:Key="PlayerAccountTemplate">
+      <StackPanel>
+        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}"/>
+        <TextBlock Text="{Binding Summary}" FontSize="{DynamicResource Font12}" Margin="0,4,0,0"/>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="PlayerCharacterTemplate">
+      <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="1.5*"/><ColumnDefinition Width="56"/><ColumnDefinition Width="1.2*"/><ColumnDefinition Width="1.2*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" Margin="0,0,8,0"/>
+        <TextBlock Grid.Column="1" Text="{Binding Level}"/>
+        <TextBlock Grid.Column="2" Text="{Binding DisplayClass}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding DisplayClass}" Margin="0,0,8,0"/>
+        <TextBlock Grid.Column="3" Text="{Binding League}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding League}"/>
+      </Grid>
+    </DataTemplate>
     <Style TargetType="TextBlock">
       <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>

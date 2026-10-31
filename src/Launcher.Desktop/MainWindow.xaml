@@ -44,7 +44,7 @@
         </StackPanel></Expander>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
           <ListBox x:Name="Navigation" AutomationProperties.Name="{local:Loc Text_db03e3055c5a}" SelectedIndex="{Binding SelectedIndex, ElementName=Pages, Mode=TwoWay}"
-                   BorderThickness="0" Background="Transparent" KeyboardNavigation.TabNavigation="Once" ToolTip="{local:Loc Text_ea41ce555d5c}">
+                   BorderThickness="0" Background="Transparent" KeyboardNavigation.TabNavigation="Once" ToolTip="{local:Loc Text_0e8f55547359}">
             <ListBox.ItemTemplate><DataTemplate><DockPanel>
               <TextBlock Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" Width="28" VerticalAlignment="Center"/>
               <TextBlock Text="{Binding DisplayLabel}" VerticalAlignment="Center"/>
@@ -347,6 +347,7 @@
           </Grid>
                   </local:WorkspaceScroll>
         </TabItem>
+        <TabItem Header="{local:Loc Text_8a7c8b67fe8b}" x:Name="AccountsPage"><local:AccountManagerView x:Name="AccountsView"/></TabItem>
         <TabItem Header="{local:Loc Text_442aded87a55}">
           <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
             <Border Style="{StaticResource Card}">
@@ -456,7 +457,7 @@
                 <StackPanel>
                   <TextBlock Text="{local:Loc Text_cf47dcf7cadf}" FontSize="{DynamicResource Font18}"/>
                   <TextBlock Text="{local:Loc Text_a129818ff2ac}" Foreground="{DynamicResource Muted}" Margin="0,10,0,0"/>
-                  <TextBlock Text="{local:Loc Text_c721900cbf6c}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
+                  <TextBlock Text="{local:Loc Text_b0c35534bd56}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
                 </StackPanel>
               </Border>
             </StackPanel>

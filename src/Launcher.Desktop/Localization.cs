@@ -22,6 +22,8 @@ public partial class MainWindow
         Language = XmlLanguage.GetLanguage(L.Current.Culture.Name);
         // Recreate presentation rows only; repository selection and runtime operations are unchanged.
         RefreshNavigationLabels();
+        AccountsPage.Header = L.Text("Accounts");
+        AccountsView.RefreshLanguage();
         UpdateAppearanceSummary();
         LoadDevelopmentPreferences();
         UpdateWindowFrame();

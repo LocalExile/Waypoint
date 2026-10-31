@@ -102,7 +102,7 @@ public partial class MainWindow
         Navigation.ItemsSource = new NavigationPage[]
         {
             new("Play", "\uE768"), new("Setup", "\uE9F5"), new("Builds", "\uE8AD"), new("Mods", "\uE74C"),
-            new("Backups", "\uE74E"), new("Performance", "\uE9D9"), new("Logs", "\uE8A5"), new("Settings", "\uE713")
+            new("Backups", "\uE74E"), new("Accounts", "\uE77B"), new("Performance", "\uE9D9"), new("Logs", "\uE8A5"), new("Settings", "\uE713")
         };
         ModsList.ItemsSource = visibleMods;
         ServiceList.ItemsSource = serviceRows;
@@ -116,7 +116,7 @@ public partial class MainWindow
         CommandBindings.Add(new(UiCommands.NextPage, (_, _) => NavigateTo((Pages.SelectedIndex + 1) % Pages.Items.Count)));
         CommandBindings.Add(new(UiCommands.PreviousPage, (_, _) => NavigateTo((Pages.SelectedIndex + Pages.Items.Count - 1) % Pages.Items.Count)));
         CommandBindings.Add(new(UiCommands.Search, (_, _) => FocusPageSearch()));
-        CommandBindings.Add(new(UiCommands.Refresh, async (_, _) => { lastError = null; await RefreshAsync(); }, (_, e) => e.CanExecute = !busy));
+        CommandBindings.Add(new(UiCommands.Refresh, async (_, _) => { lastError = null; await RefreshAsync(); if (Pages.SelectedItem == AccountsPage) await LoadAccountsAsync(); }, (_, e) => e.CanExecute = !busy));
         for (int i = 0; i < Pages.Items.Count; i++)
             InputBindings.Add(new KeyBinding(UiCommands.Navigate, new KeyGesture((Key)((int)Key.D1 + i), ModifierKeys.Control)) { CommandParameter = i.ToString() });
         InputBindings.Add(new KeyBinding(UiCommands.NextPage, new KeyGesture(Key.Tab, ModifierKeys.Control)));
@@ -143,7 +143,7 @@ public partial class MainWindow
     {
         TextBox? search = Pages.SelectedItem == ModsPage ? ModSearch
             : Pages.SelectedItem == BuildsPage ? SourceSearch : Pages.SelectedItem == LogsPage ? LogSearchBox
-            : Pages.SelectedItem == SettingsPage ? RepositoryPathBox : null;
+            : Pages.SelectedItem == SettingsPage ? RepositoryPathBox : Pages.SelectedItem == AccountsPage ? AccountsView.SearchBox : null;
         if (search is null) return false;
         search.Focus();
         search.SelectAll();

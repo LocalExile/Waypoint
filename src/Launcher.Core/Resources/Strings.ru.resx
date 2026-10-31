@@ -24,6 +24,9 @@
   <data xml:space="preserve" name="Text_019c527ea981">
     <value>СЛУЖБЫ</value>
   </data>
+  <data name="Text_01fc520500a2" xml:space="preserve">
+    <value>Будут удалены этот аккаунт, все его персонажи и прогресс, а также его личные и гильдейские тайники во всех лигах. Другие аккаунты не изменятся.</value>
+  </data>
   <data xml:space="preserve" name="Text_02262050828b">
     <value>Заменяются только сохранения этой установки; исходники, клиент и ключи не меняются.</value>
   </data>
@@ -75,6 +78,9 @@
   <data xml:space="preserve" name="Text_09a216bf0611">
     <value>Архив клиента</value>
   </data>
+  <data name="Text_09df5fb37bf0" xml:space="preserve">
+    <value>Аккаунты загружены. Обновите список, чтобы проверить изменения.</value>
+  </data>
   <data xml:space="preserve" name="Text_0a9315c001d9">
     <value>Сохранить и проверить</value>
   </data>
@@ -105,6 +111,9 @@
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Локальная оболочка запуска</value>
   </data>
+  <data name="Text_0e8f55547359" xml:space="preserve">
+    <value>Выберите страницу стрелками. Ctrl+1–9 — выбор страницы; Ctrl+Tab — следующая страница.</value>
+  </data>
   <data xml:space="preserve" name="Text_0e9161011702">
     <value>Обновить</value>
   </data>
@@ -123,14 +132,23 @@
   <data xml:space="preserve" name="Text_10ad4c387363">
     <value>Сланцевая</value>
   </data>
+  <data name="Text_10adc7d75e67" xml:space="preserve">
+    <value>Не менее 4 символов. Waypoint не сохраняет учётные данные.</value>
+  </data>
   <data xml:space="preserve" name="Text_10ee94005bb9">
     <value>Цветовая схема</value>
   </data>
   <data xml:space="preserve" name="Text_1180f832c808">
     <value>Не удалось сохранить настройки: </value>
   </data>
+  <data name="Text_11e9fe71c67f" xml:space="preserve">
+    <value>Персонажей: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_122b49fe8f4e">
     <value>Оформление сохранено.</value>
+  </data>
+  <data name="Text_126b8d3e1100" xml:space="preserve">
+    <value>Обновить аккаунты</value>
   </data>
   <data xml:space="preserve" name="Text_130ec7311cce">
     <value>Среда проверена.</value>
@@ -138,11 +156,17 @@
   <data xml:space="preserve" name="Text_13ef73c47f3e">
     <value>Шрифт для чтения</value>
   </data>
+  <data name="Text_1405a63e8a78" xml:space="preserve">
+    <value>Персонаж</value>
+  </data>
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>нет</value>
   </data>
   <data xml:space="preserve" name="Text_143b270a3260">
     <value>Завершено</value>
+  </data>
+  <data name="Text_144d877d3f41" xml:space="preserve">
+    <value>Дублировать аккаунт</value>
   </data>
   <data xml:space="preserve" name="Text_153565a001f1">
     <value>Показатели процессов</value>
@@ -161,6 +185,9 @@
   </data>
   <data xml:space="preserve" name="Text_16fab6cfda80">
     <value>Закройте игру перед восстановлением сохранений. Остановите Gateway перед восстановлением выбора модов.</value>
+  </data>
+  <data name="Text_1709305c9fa9" xml:space="preserve">
+    <value>Уровень</value>
   </data>
   <data xml:space="preserve" name="Text_176b219dca96">
     <value>Предупреждения / ошибки</value>
@@ -185,6 +212,9 @@
   </data>
   <data xml:space="preserve" name="Text_19c29440bac8">
     <value>У этого мода нет исходного проекта в выбранном репозитории.</value>
+  </data>
+  <data name="Text_19fc45efcadf" xml:space="preserve">
+    <value>Имя аккаунта должно совпадать в точности. Ничего не удалено.</value>
   </data>
   <data xml:space="preserve" name="Text_1a4f630ac1b6">
     <value>Остановлен</value>
@@ -219,14 +249,23 @@
   <data xml:space="preserve" name="Text_1ddc54772630">
     <value> · подготовленный клиент найден</value>
   </data>
+  <data name="Text_1f330a2da345" xml:space="preserve">
+    <value>Вкладка тайника: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_1ff335e35fbf">
     <value>Репозиторий не выбран</value>
   </data>
   <data xml:space="preserve" name="Text_2004618e77b7">
     <value>Выбрать этот репозиторий</value>
   </data>
+  <data name="Text_207565e87c76" xml:space="preserve">
+    <value>Список аккаунтов обновлён.</value>
+  </data>
   <data xml:space="preserve" name="Text_20759152bb78">
     <value>Клавиши: Ctrl+1–8 — выбор страницы · Ctrl+Tab / Ctrl+Shift+Tab — следующая / предыдущая страница · Ctrl+F — поиск на странице · F5 — обновить состояние. Используются тёмная тема Waypoint и режим высокой контрастности Windows.</value>
+  </data>
+  <data name="Text_213d05dc1861" xml:space="preserve">
+    <value>Клавиши: Ctrl+1–9 — выбор страницы · Ctrl+Tab / Ctrl+Shift+Tab — следующая / предыдущая страница · Ctrl+F — поиск на странице · F5 — обновить состояние. Используются тёмная тема Waypoint и режим высокой контрастности Windows.</value>
   </data>
   <data xml:space="preserve" name="Text_217526d30143">
     <value>Сборка / перезапуск</value>
@@ -237,11 +276,17 @@
   <data xml:space="preserve" name="Text_223e64b8fc5b">
     <value>При первом запуске выполняется автоматический поиск. Здесь можно запустить его повторно.</value>
   </data>
+  <data name="Text_225ea1a36f00" xml:space="preserve">
+    <value>Сохранённые данные входа в клиенте для этого аккаунта потребуется ввести заново.</value>
+  </data>
   <data xml:space="preserve" name="Text_22a62a64de6a">
     <value>Совместимые изменения кода применяются в игре после сохранения. При ошибках компиляции продолжает работать прежний код. Несовместимые изменения перезапускают Gateway и возвращают на экран входа. Статические данные и изменения Auth/Patch могут требовать перезапуска. Переключение ветки или PR всегда сначала останавливает службы.</value>
   </data>
   <data xml:space="preserve" name="Text_22a970d2e5b1">
     <value>Завершено</value>
+  </data>
+  <data name="Text_22b2a5d05d3a" xml:space="preserve">
+    <value>Данные аккаунтов загружены. Нажмите «Обновить аккаунты», чтобы проверить изменения.</value>
   </data>
   <data xml:space="preserve" name="Text_22dd7af622aa">
     <value>Закрыть Waypoint</value>
@@ -254,6 +299,9 @@
   </data>
   <data xml:space="preserve" name="Text_245c1078b5e7">
     <value>Сведения о моде</value>
+  </data>
+  <data name="Text_2494bdb5bc46" xml:space="preserve">
+    <value>Загрузка аккаунтов…</value>
   </data>
   <data xml:space="preserve" name="Text_2511413756fa">
     <value>Проверьте текст перед копированием. Автоматическое скрытие распознаёт типичные данные; убедитесь, что личных сведений не осталось.</value>
@@ -331,6 +379,9 @@
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Восстановить выбор модов</value>
   </data>
+  <data name="Text_2b69057ec9ef" xml:space="preserve">
+    <value>Пароль должен содержать не менее 4 символов.</value>
+  </data>
   <data xml:space="preserve" name="Text_2cb93bc2b809">
     <value>Введите положительный номер PR LocalExile, включая закрытые PR</value>
   </data>
@@ -348,6 +399,12 @@
   </data>
   <data xml:space="preserve" name="Text_2ee7e02cbde9">
     <value>Сборка репозитория</value>
+  </data>
+  <data name="Text_2eed71190382" xml:space="preserve">
+    <value>Полная копия</value>
+  </data>
+  <data name="Text_2f1395cf5579" xml:space="preserve">
+    <value>Задать пароль…</value>
   </data>
   <data xml:space="preserve" name="Text_2f444c96f7fb">
     <value>Более заметная рамка фокуса</value>
@@ -440,6 +497,9 @@
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Переключение ревизии</value>
   </data>
+  <data name="Text_3a0f7b919840" xml:space="preserve">
+    <value>Изменение данных аккаунта</value>
+  </data>
   <data xml:space="preserve" name="Text_3a361f5a0e7f">
     <value>Рабочая папка требует внимания</value>
   </data>
@@ -483,6 +543,12 @@
   <data xml:space="preserve" name="Text_3d487cea417c">
     <value> · файлы не изменены</value>
   </data>
+  <data name="Text_3dc5a2da83a2" xml:space="preserve">
+    <value>Последняя игра: {0}</value>
+  </data>
+  <data name="Text_3dd9df4441fb" xml:space="preserve">
+    <value>Новый пароль</value>
+  </data>
   <data xml:space="preserve" name="Text_3e9648b06bc7">
     <value>Используется только эта установка. Waypoint не сохраняет данные для входа.</value>
   </data>
@@ -507,8 +573,14 @@
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Язык сохранён.</value>
   </data>
+  <data name="Text_42610696b9f9" xml:space="preserve">
+    <value>Эти данные можно просматривать, но изменение аккаунтов отключено: схема хранения или состояние импорта не распознаны.</value>
+  </data>
   <data xml:space="preserve" name="Text_436e61016e26">
     <value>Играть</value>
+  </data>
+  <data name="Text_437c2cf0cad3" xml:space="preserve">
+    <value>Имена персонажей в копии</value>
   </data>
   <data xml:space="preserve" name="Text_437d2a208b63">
     <value>Локальный профиль использует {0}</value>
@@ -537,14 +609,23 @@
   <data xml:space="preserve" name="Text_477c5451ef0b">
     <value>Очистить поиск модов</value>
   </data>
+  <data name="Text_47c062d35d2c" xml:space="preserve">
+    <value>Совпадений нет</value>
+  </data>
   <data xml:space="preserve" name="Text_47cc14147fa7">
     <value>Сборка завершена.</value>
   </data>
   <data xml:space="preserve" name="Text_47e8b196a14c">
     <value>Обновить копии</value>
   </data>
+  <data name="Text_480189e83289" xml:space="preserve">
+    <value>Персонажей: {0} · Вкладок тайника: {1}</value>
+  </data>
   <data xml:space="preserve" name="Text_4859a908b868">
     <value>Горячая перезагрузка</value>
+  </data>
+  <data name="Text_48ce04a2b2bc" xml:space="preserve">
+    <value>Полная копия включает персонажей, прогресс и все вкладки личных и гильдейских тайников. Пустой аккаунт содержит только новые данные входа.</value>
   </data>
   <data xml:space="preserve" name="Text_49089f5749b2">
     <value>Копировать проверенный отчёт</value>
@@ -570,6 +651,9 @@
   <data xml:space="preserve" name="Text_4ac147b602c9">
     <value>Подключите репозиторий</value>
   </data>
+  <data name="Text_4b81201360c2" xml:space="preserve">
+    <value>Персонаж: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_4b8df1bf034b">
     <value>Инструкция для клиента</value>
   </data>
@@ -578,6 +662,9 @@
   </data>
   <data xml:space="preserve" name="Text_4c5c7d3c9542">
     <value>Выберите и проверьте установку, чтобы увидеть её резервные копии.</value>
+  </data>
+  <data name="Text_4c764cb6248e" xml:space="preserve">
+    <value>Бандит</value>
   </data>
   <data xml:space="preserve" name="Text_4cda809eee92">
     <value>Сборка выбранной ревизии</value>
@@ -612,6 +699,9 @@
   <data xml:space="preserve" name="Text_514d7286b5ae">
     <value>{0} · проверено в {1}</value>
   </data>
+  <data name="Text_5199860e98ea" xml:space="preserve">
+    <value>Новое имя для {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_51b0451ee87b">
     <value>Закрыть игру</value>
   </data>
@@ -620,6 +710,9 @@
   </data>
   <data xml:space="preserve" name="Text_521339c7dbbf">
     <value>Перед закрытием дождитесь завершения текущей сборки или операции.</value>
+  </data>
+  <data name="Text_52134427a938" xml:space="preserve">
+    <value>Дикарь</value>
   </data>
   <data xml:space="preserve" name="Text_524d1e13a5b3">
     <value>Сборка модов</value>
@@ -632,6 +725,9 @@
   </data>
   <data xml:space="preserve" name="Text_5355e8288662">
     <value>Нет DLL</value>
+  </data>
+  <data name="Text_53be99dc1380" xml:space="preserve">
+    <value>Только просмотр: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_54377045445b">
     <value>Сборка инструментов подготовки</value>
@@ -692,6 +788,9 @@
   <data xml:space="preserve" name="Text_5a624ed29811">
     <value>Загрузить / обновить список</value>
   </data>
+  <data name="Text_5a681a15a3d6" xml:space="preserve">
+    <value>Задать пароль аккаунта</value>
+  </data>
   <data xml:space="preserve" name="Text_5b72b116c129">
     <value>Отслеживать код Gateway во время игры</value>
   </data>
@@ -706,6 +805,9 @@
   </data>
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Учётные записи, персонажи и прогресс этой установки. Сохранения и выбор модов восстанавливаются отдельно.</value>
+  </data>
+  <data name="Text_5d202208fa1a" xml:space="preserve">
+    <value>Дублировать…</value>
   </data>
   <data xml:space="preserve" name="Text_5e9647ccdc6e">
     <value>Выберите часть интерфейса для изменения. Цвета светлой и тёмной тем хранятся отдельно. Изменение готовой схемы создаёт пользовательскую палитру.</value>
@@ -735,6 +837,12 @@
   <data xml:space="preserve" name="Text_60be7b4c46e1">
     <value>Репозиторий LocalExile не найден в проверенных папках. Укажите путь вручную.</value>
   </data>
+  <data name="Text_60d8629f9d8c" xml:space="preserve">
+    <value>Поиск аккаунтов или персонажей</value>
+  </data>
+  <data name="Text_619e3be216f3" xml:space="preserve">
+    <value>Удалить аккаунт…</value>
+  </data>
   <data xml:space="preserve" name="Text_61a37b98f3e8">
     <value>HEAD PR LocalExile; PR может быть закрыт или ещё не слит</value>
   </data>
@@ -762,6 +870,9 @@
   <data xml:space="preserve" name="Text_62ec07997eff">
     <value>Gateway остановлен</value>
   </data>
+  <data name="Text_6300ef800bb8" xml:space="preserve">
+    <value>Никогда</value>
+  </data>
   <data xml:space="preserve" name="Text_635484c1543e">
     <value>Обновить игровые данные</value>
   </data>
@@ -780,6 +891,12 @@
   <data xml:space="preserve" name="Text_6561a8925313">
     <value>Ветки и запросы на слияние</value>
   </data>
+  <data name="Text_6662850b5518" xml:space="preserve">
+    <value>Выбранная база сохранений изменилась. Обновите аккаунты и проверьте действие заново.</value>
+  </data>
+  <data name="Text_667d957ad516" xml:space="preserve">
+    <value>Аккаунты игроков</value>
+  </data>
   <data xml:space="preserve" name="Text_667f64085762">
     <value>Выбрать PR</value>
   </data>
@@ -792,6 +909,9 @@
   <data xml:space="preserve" name="Text_67fdcd462dc5">
     <value>Восстановление сохранений заменяет прогресс после подтверждения. Выбор модов восстанавливается отдельно при остановленном Gateway.</value>
   </data>
+  <data name="Text_680551c51283" xml:space="preserve">
+    <value>Для копируемых персонажей нужны уникальные имена из 3–23 латинских букв, цифр, знаков подчёркивания или дефисов.</value>
+  </data>
   <data xml:space="preserve" name="Text_686046d08c9f">
     <value>Сборка/перезапуск; проверьте вывод Gateway на ошибки</value>
   </data>
@@ -803,6 +923,9 @@
   </data>
   <data xml:space="preserve" name="Text_68fce9b8e435">
     <value>Светлая, тёмная или системная тема; цветовые схемы, свои цвета и параметры чтения.</value>
+  </data>
+  <data name="Text_691145a11e9f" xml:space="preserve">
+    <value>Вкладок тайника: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Остановка службы учётных записей</value>
@@ -828,6 +951,9 @@
   <data xml:space="preserve" name="Text_6bb4fd6d399a">
     <value>Удалить выбранную копию</value>
   </data>
+  <data name="Text_6c26340a1b96" xml:space="preserve">
+    <value>База сохранений</value>
+  </data>
   <data xml:space="preserve" name="Text_6dbc080db4ab">
     <value>Готово к игре</value>
   </data>
@@ -842,6 +968,12 @@
   </data>
   <data xml:space="preserve" name="Text_6e58b577a084">
     <value>Моды</value>
+  </data>
+  <data name="Text_6fa62b3dba2f" xml:space="preserve">
+    <value>Переименовать…</value>
+  </data>
+  <data name="Text_6fab7aff6931" xml:space="preserve">
+    <value>Перед управлением аккаунтами проверьте рабочую папку в настройках.</value>
   </data>
   <data xml:space="preserve" name="Text_7013af4c42fe">
     <value>Подготовка</value>
@@ -860,6 +992,12 @@
   </data>
   <data xml:space="preserve" name="Text_72356c9e3235">
     <value>Ожидание сохранённых изменений исходников. Для Auth и Patch нужен перезапуск.</value>
+  </data>
+  <data name="Text_735373328df6" xml:space="preserve">
+    <value>В этом аккаунте нет персонажей для копирования.</value>
+  </data>
+  <data name="Text_738060ca8527" xml:space="preserve">
+    <value>Пока работает служба входа, Gateway или служба аккаунтов LocalExile, доступен только просмотр. Остановите службы, закройте игру и обновите данные. Ничего не изменено.</value>
   </data>
   <data xml:space="preserve" name="Text_74160bd42b82">
     <value>Папка репозитория LocalExile</value>
@@ -892,13 +1030,16 @@
     <value>Вариантов: {0}. Удалённые ветки соответствуют последнему получению. </value>
   </data>
   <data xml:space="preserve" name="Text_798ca2ce18bf">
-    <value>Создать учётную запись</value>
+    <value>Создать аккаунт</value>
   </data>
   <data xml:space="preserve" name="Text_7af959bccf93">
     <value>Скачать SDK</value>
   </data>
   <data xml:space="preserve" name="Text_7b0100d4aa11">
     <value>Предпросмотр диагностики</value>
+  </data>
+  <data name="Text_7b472544bbda" xml:space="preserve">
+    <value>Жрец</value>
   </data>
   <data xml:space="preserve" name="Text_7caa2025f375">
     <value>Поля ввода</value>
@@ -923,6 +1064,9 @@
   </data>
   <data xml:space="preserve" name="Text_7ee581fb2eb4">
     <value>Мод включён.</value>
+  </data>
+  <data name="Text_7f06ea4f0831" xml:space="preserve">
+    <value>Лига</value>
   </data>
   <data xml:space="preserve" name="Text_7fd994d683da">
     <value>Поиск по веткам, заголовкам PR, авторам или хешам коммитов</value>
@@ -1002,6 +1146,9 @@
   <data xml:space="preserve" name="Text_8a63af29f3c4">
     <value>Цветовой круг; ниже доступны варианты управления с клавиатуры.</value>
   </data>
+  <data name="Text_8a7c8b67fe8b" xml:space="preserve">
+    <value>Аккаунты</value>
+  </data>
   <data xml:space="preserve" name="Text_8b2d4fa44372">
     <value>Поиск по ID, версии, типу, состоянию или ошибке мода (Ctrl+F)</value>
   </data>
@@ -1011,8 +1158,14 @@
   <data xml:space="preserve" name="Text_8bc9335f3b83">
     <value>Восстановить выбор модов…</value>
   </data>
+  <data name="Text_8c1304fcac2d" xml:space="preserve">
+    <value>Персонажей пока нет. Войдите в игру и создайте персонажа.</value>
+  </data>
   <data xml:space="preserve" name="Text_8d525e5f158b">
     <value>Скопировано</value>
+  </data>
+  <data name="Text_8d99a834e478" xml:space="preserve">
+    <value>До завершения изменений игра и все службы LocalExile должны оставаться остановленными.</value>
   </data>
   <data xml:space="preserve" name="Text_8d9f188ce712">
     <value>Руководство по настройке</value>
@@ -1031,6 +1184,9 @@
   </data>
   <data xml:space="preserve" name="Text_8eb3ea9bbde6">
     <value>Auth</value>
+  </data>
+  <data name="Text_9045b1ddb963" xml:space="preserve">
+    <value>Новое имя аккаунта</value>
   </data>
   <data xml:space="preserve" name="Text_91bd172009ab">
     <value>Ревизии исходников и собранных компонентов показываются отдельно. Горячая перезагрузка может применить незакоммиченные изменения; хеш сборки указывает на исходную скомпилированную ревизию.</value>
@@ -1080,11 +1236,20 @@
   <data xml:space="preserve" name="Text_964cf7280ca9">
     <value>Дополнительные имена для скрытия через запятую</value>
   </data>
+  <data name="Text_96696ebb5f8d" xml:space="preserve">
+    <value>Что копировать</value>
+  </data>
+  <data name="Text_96850b2f4bd2" xml:space="preserve">
+    <value>Дуэлянт</value>
+  </data>
   <data xml:space="preserve" name="Text_96b40ff2f6d3">
     <value>«Играть» подготавливает и запускает серверы, затем открывает игру.</value>
   </data>
   <data xml:space="preserve" name="Text_96b7cd5714e0">
     <value>Выбор модов восстановлен.</value>
+  </data>
+  <data name="Text_96cedcf686b0" xml:space="preserve">
+    <value>Персонажи выбранного аккаунта</value>
   </data>
   <data xml:space="preserve" name="Text_9701a68fede6">
     <value>Поиск веток и запросов на слияние</value>
@@ -1097,6 +1262,9 @@
   </data>
   <data xml:space="preserve" name="Text_9777bf4aa207">
     <value>Собрать выбранный</value>
+  </data>
+  <data name="Text_992e854a82a5" xml:space="preserve">
+    <value>Выберите рабочую папку и обновите список аккаунтов.</value>
   </data>
   <data xml:space="preserve" name="Text_993f024b650e">
     <value>Насыщенность</value>
@@ -1195,6 +1363,12 @@
   <data xml:space="preserve" name="Text_a2b0e1cca90c">
     <value>Перезагрузить включённый мод и зависимые от него моды.</value>
   </data>
+  <data name="Text_a2e20a335700" xml:space="preserve">
+    <value>Удалить аккаунт</value>
+  </data>
+  <data name="Text_a3b98f7ed11c" xml:space="preserve">
+    <value>Введите допустимое имя аккаунта: от 3 до 32 латинских букв, цифр, знаков подчёркивания или дефисов.</value>
+  </data>
   <data xml:space="preserve" name="Text_a3f721e4f70e">
     <value>Исполняемый файл отдельного клиента 3.29.3b: Client/Game.exe</value>
   </data>
@@ -1228,11 +1402,17 @@
   <data xml:space="preserve" name="Text_a63d0dedb7bb">
     <value>В игре: /mod_{0} {1} · /mod_reload {2}</value>
   </data>
+  <data name="Text_a65a4357e343" xml:space="preserve">
+    <value>После изменения рабочей папки обновите аккаунты.</value>
+  </data>
   <data xml:space="preserve" name="Text_a679c1884503">
     <value>Существующие ключи и готовый исполняемый файл сохраняются; создаются только недостающие файлы.</value>
   </data>
   <data xml:space="preserve" name="Text_a700e84e04df">
     <value>Резервная копия удалена.</value>
+  </data>
+  <data name="Text_a704d8d4a818" xml:space="preserve">
+    <value>Имя аккаунта</value>
   </data>
   <data xml:space="preserve" name="Text_a7626cdbe094">
     <value>Мод без исходников</value>
@@ -1255,8 +1435,17 @@
   <data xml:space="preserve" name="Text_a9ad74159ab1">
     <value>Выберите ревизию выше.</value>
   </data>
+  <data name="Text_a9ada4eade1d" xml:space="preserve">
+    <value>Перед изменением будет создана резервная копия сохранений.</value>
+  </data>
   <data xml:space="preserve" name="Text_aa1bf9baa865">
     <value>Не удалось выбрать репозиторий: </value>
+  </data>
+  <data name="Text_aad03e2b1c5c" xml:space="preserve">
+    <value>Автоматические копии ВЫКЛЮЧЕНЫ. Резервная копия для восстановления создана не будет.</value>
+  </data>
+  <data name="Text_ab4bdca6bf1a" xml:space="preserve">
+    <value>Обновите аккаунты для просмотра выбранной базы.</value>
   </data>
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Показаны первые 1000 открытых PR. Введите номер другого PR, чтобы получить его.</value>
@@ -1278,6 +1467,9 @@
   </data>
   <data xml:space="preserve" name="Text_afb40dbadd2e">
     <value>Изменить оформление…</value>
+  </data>
+  <data name="Text_b0c35534bd56" xml:space="preserve">
+    <value>Клавиатура: Ctrl+1–9 выбирает страницу · Ctrl+Tab / Ctrl+Shift+Tab переключает страницы · Ctrl+F открывает поиск на текущей странице · F5 обновляет локальное состояние. Параметры оформления и доступности можно изменить в настройках.</value>
   </data>
   <data xml:space="preserve" name="Text_b14dcdadc0c3">
     <value>Процесс этой установки; все нужные порты прослушиваются</value>
@@ -1311,6 +1503,9 @@
   </data>
   <data xml:space="preserve" name="Text_b3f384f14d32">
     <value>Сначала скопируйте полный клиент в папку Client этого репозитория. Подготовка создаст недостающие локальные ключи и исполняемый файл, затем выберет локальный шлюз в этой копии. Перед изменениями закройте игру и остановите службы.</value>
+  </data>
+  <data name="Text_b45a804aa67c" xml:space="preserve">
+    <value>Не запускайте игру и службы LocalExile до завершения изменения.</value>
   </data>
   <data xml:space="preserve" name="Text_b460af7eddc8">
     <value>Загрузите список для выбранного репозитория.</value>
@@ -1366,6 +1561,12 @@
   <data xml:space="preserve" name="Text_b9957b371d80">
     <value>Выбор локального шлюза</value>
   </data>
+  <data name="Text_ba849df3b860" xml:space="preserve">
+    <value>{0}, уровень {1}, {2}, {3}</value>
+  </data>
+  <data name="Text_ba89783a339f" xml:space="preserve">
+    <value>Выберите аккаунт</value>
+  </data>
   <data xml:space="preserve" name="Text_baf5d82057e7">
     <value>Орхидея</value>
   </data>
@@ -1378,17 +1579,29 @@
   <data xml:space="preserve" name="Text_bdd254b65baa">
     <value>Сборка</value>
   </data>
+  <data name="Text_be46faa4a87c" xml:space="preserve">
+    <value>Выберите аккаунт из списка или измените запрос поиска.</value>
+  </data>
   <data xml:space="preserve" name="Text_bed8374efd88">
     <value>Gateway работает без отслеживания изменений. Остановите серверы, чтобы изменить режим запуска.</value>
   </data>
+  <data name="Text_bf000421aeb3" xml:space="preserve">
+    <value>Повторите новый пароль</value>
+  </data>
   <data xml:space="preserve" name="Text_bf004e2e67d7">
     <value>Индикаторы ошибок</value>
+  </data>
+  <data name="Text_c02af3329071" xml:space="preserve">
+    <value>Переименовать аккаунт</value>
   </data>
   <data xml:space="preserve" name="Text_c032d8c45d13">
     <value>Выбор установки</value>
   </data>
   <data xml:space="preserve" name="Text_c04a64764afe">
     <value>В выбранном локальном профиле указана несуществующая база данных. Восстановите нужную базу или исправьте config/runtime.local.ps1. Не заменяйте базу существующей установки пустой. При необходимости выберите другой репозиторий или профиль в настройках.</value>
+  </data>
+  <data name="Text_c0adcac645f4" xml:space="preserve">
+    <value>Пустой аккаунт</value>
   </data>
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Требует внимания</value>
@@ -1441,6 +1654,9 @@
   <data xml:space="preserve" name="Text_c7ece59b9c12">
     <value>Создать учётную запись</value>
   </data>
+  <data name="Text_c827708ef040" xml:space="preserve">
+    <value>Данные аккаунта обновлены.</value>
+  </data>
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway запустил новый процесс в том же сеансе отслеживания. Войдите повторно, если игра вернулась на экран входа.</value>
   </data>
@@ -1473,11 +1689,17 @@
   <data xml:space="preserve" name="Text_cba1d9e44ad3">
     <value>Повторно выберите действие с учётной записью, ревизией или копией, чтобы проверить текущие параметры.</value>
   </data>
+  <data name="Text_cba6dec12959" xml:space="preserve">
+    <value>Перед изменением аккаунтов остановите локальную службу аккаунтов.</value>
+  </data>
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | отслеживание изменений, PID {1}</value>
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Зависимости установлены.</value>
+  </data>
+  <data name="Text_cccbd64fecc9" xml:space="preserve">
+    <value>Доступен только просмотр, пока игра или службы работают либо их принадлежность не подтверждена. Остановите их и обновите данные перед изменением аккаунтов.</value>
   </data>
   <data xml:space="preserve" name="Text_cd27f46c485b">
     <value>Настроить цвета</value>
@@ -1584,11 +1806,17 @@
   <data xml:space="preserve" name="Text_ddf65dfc3807">
     <value>Копий пока нет. Нажмите «Создать копию», чтобы сохранить текущий прогресс.</value>
   </data>
+  <data name="Text_de2a5f6b153d" xml:space="preserve">
+    <value>Для начала создайте аккаунт. Персонажи создаются в игре.</value>
+  </data>
   <data xml:space="preserve" name="Text_deba91fae8c8">
     <value>Для распаковки пакетов нужен Node.js</value>
   </data>
   <data xml:space="preserve" name="Text_dec1638d773b">
     <value>Возврат: Escape отменяет предпросмотр. Ctrl+R сбрасывает параметры в этом окне. В рабочем окне Ctrl+Alt+R возвращает стандартное оформление, не меняя репозиторий и сохранения.</value>
+  </data>
+  <data name="Text_df38f1891a79" xml:space="preserve">
+    <value>Перед созданием аккаунта будет сделана копия существующей базы сохранений.</value>
   </data>
   <data xml:space="preserve" name="Text_dfab082d4644">
     <value>Собрать репозиторий</value>
@@ -1599,11 +1827,17 @@
   <data xml:space="preserve" name="Text_e10d850954a8">
     <value>Роза</value>
   </data>
+  <data name="Text_e1ef93197100" xml:space="preserve">
+    <value>Для удаления введите точное имя аккаунта</value>
+  </data>
   <data xml:space="preserve" name="Text_e240e635ff6d">
     <value>Вернуть настройки по умолчанию</value>
   </data>
   <data xml:space="preserve" name="Text_e30ce05d3185">
     <value>Дополнительные цвета интерфейса</value>
+  </data>
+  <data name="Text_e3f02e617e2c" xml:space="preserve">
+    <value>От 3 до 32 латинских букв, цифр, знаков подчёркивания или дефисов.</value>
   </data>
   <data xml:space="preserve" name="Text_e40f307a9136">
     <value>HEAD совпадает с последним коммитом LocalExile</value>
@@ -1616,6 +1850,9 @@
   </data>
   <data xml:space="preserve" name="Text_e6617c8f941d">
     <value>Моды собраны.</value>
+  </data>
+  <data name="Text_e6cd637f954b" xml:space="preserve">
+    <value>Охотница</value>
   </data>
   <data xml:space="preserve" name="Text_e802a1d6a8c0">
     <value>Один репозиторий совпадает с HEAD LocalExile. Выберите его ниже или укажите другую папку.</value>
@@ -1677,6 +1914,9 @@
   <data xml:space="preserve" name="Text_ee32fb834190">
     <value>Не удалось прочитать историю. Проверьте папку и нажмите «Обновить копии».</value>
   </data>
+  <data name="Text_ee80fc3f5cc0" xml:space="preserve">
+    <value>Базы сохранений пока нет. Создайте первый аккаунт для инициализации LocalExile.</value>
+  </data>
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Отслеживание работает, но дочерний процесс Gateway не запущен. Проверьте ошибки сборки в выводе Gateway.</value>
   </data>
@@ -1685,6 +1925,9 @@
   </data>
   <data xml:space="preserve" name="Text_eeaf954d8d43">
     <value>Подготовка и совместимость</value>
+  </data>
+  <data name="Text_eecd85f698cf" xml:space="preserve">
+    <value>Перед изменением аккаунтов закройте игру и остановите службы LocalExile.</value>
   </data>
   <data xml:space="preserve" name="Text_eed88b3afe90">
     <value>Лес</value>
@@ -1722,6 +1965,9 @@
   <data xml:space="preserve" name="Text_f28290933d40">
     <value>Процесс существует; ожидание портов</value>
   </data>
+  <data name="Text_f28854498a03" xml:space="preserve">
+    <value>Ведьма</value>
+  </data>
   <data xml:space="preserve" name="Text_f2b4f43625b6">
     <value>Усиливает контрастность текста; при необходимости меняет фон кнопок.</value>
   </data>
@@ -1744,6 +1990,9 @@
   <data xml:space="preserve" name="Text_f4ccae29e1bb">
     <value>Работает</value>
   </data>
+  <data name="Text_f4f5dca37b59" xml:space="preserve">
+    <value>Аккаунтов: {0} из {1}</value>
+  </data>
   <data xml:space="preserve" name="Text_f50bc20748e3">
     <value>Этой установке принадлежат несколько процессов отслеживания Gateway.</value>
   </data>
@@ -1755,6 +2004,9 @@
   </data>
   <data xml:space="preserve" name="Text_f64a45cd7d47">
     <value>Выберите способ подготовки</value>
+  </data>
+  <data name="Text_f694aaa8da2c" xml:space="preserve">
+    <value>Пароли не совпадают.</value>
   </data>
   <data xml:space="preserve" name="Text_f69dee092bca">
     <value>Готовый клиент</value>
@@ -1783,11 +2035,17 @@
   <data xml:space="preserve" name="Text_fa1e08557af3">
     <value>Найти LocalExile</value>
   </data>
+  <data name="Text_fa3589d27498" xml:space="preserve">
+    <value>Дворянка</value>
+  </data>
   <data xml:space="preserve" name="Text_fab4753af1e0">
     <value>Доступные моды</value>
   </data>
   <data xml:space="preserve" name="Text_fb1a779f6127">
     <value>Перед пересборкой остановите службы. Запуск остановленной службы рядом с работающими использует её готовую сборку. После изменения исходников сначала остановите все службы и выполните сборку. Игра запускается поддерживаемым скриптом LocalExile.</value>
+  </data>
+  <data name="Text_fb25f996f647" xml:space="preserve">
+    <value>Автоматическая копия перед изменением аккаунтов</value>
   </data>
   <data xml:space="preserve" name="Text_fb26532d9c38">
     <value>Выберите папку с файлом GameServer.slnx. Waypoint хранит свои настройки отдельно от репозитория.</value>
@@ -1827,6 +2085,9 @@
   </data>
   <data xml:space="preserve" name="Text_fed12611d2d8">
     <value>Океан</value>
+  </data>
+  <data name="Text_fee9dda2d85a" xml:space="preserve">
+    <value>Класс / восхождение</value>
   </data>
   <data xml:space="preserve" name="Text_ff85a35d337d">
     <value>Восстановить выбор включённых и отключённых модов от {0:g}?

@@ -24,6 +24,9 @@
   <data xml:space="preserve" name="Text_019c527ea981">
     <value>SERVICES</value>
   </data>
+  <data name="Text_01fc520500a2" xml:space="preserve">
+    <value>This removes this account, all of its characters and progress, and its personal and guild stashes in every league. Other accounts are unchanged.</value>
+  </data>
   <data xml:space="preserve" name="Text_02262050828b">
     <value>Replacing only this installation's saves; source, client and keys are unchanged.</value>
   </data>
@@ -75,6 +78,9 @@
   <data xml:space="preserve" name="Text_09a216bf0611">
     <value>Client archive</value>
   </data>
+  <data name="Text_09df5fb37bf0" xml:space="preserve">
+    <value>Accounts loaded. Reload to check for changes.</value>
+  </data>
   <data xml:space="preserve" name="Text_0a9315c001d9">
     <value>Save and check</value>
   </data>
@@ -105,6 +111,9 @@
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Local runtime wrapper</value>
   </data>
+  <data name="Text_0e8f55547359" xml:space="preserve">
+    <value>Use arrows to choose a page. Ctrl+1–9 switches pages; Ctrl+Tab moves to the next page.</value>
+  </data>
   <data xml:space="preserve" name="Text_0e9161011702">
     <value>Refresh</value>
   </data>
@@ -123,14 +132,23 @@
   <data xml:space="preserve" name="Text_10ad4c387363">
     <value>Slate</value>
   </data>
+  <data name="Text_10adc7d75e67" xml:space="preserve">
+    <value>At least 4 characters. Credentials are not saved by Waypoint.</value>
+  </data>
   <data xml:space="preserve" name="Text_10ee94005bb9">
     <value>Color scheme</value>
   </data>
   <data xml:space="preserve" name="Text_1180f832c808">
     <value>Could not save preferences: </value>
   </data>
+  <data name="Text_11e9fe71c67f" xml:space="preserve">
+    <value>{0} characters</value>
+  </data>
   <data xml:space="preserve" name="Text_122b49fe8f4e">
     <value>Appearance saved.</value>
+  </data>
+  <data name="Text_126b8d3e1100" xml:space="preserve">
+    <value>Reload accounts</value>
   </data>
   <data xml:space="preserve" name="Text_130ec7311cce">
     <value>Environment checked.</value>
@@ -138,11 +156,17 @@
   <data xml:space="preserve" name="Text_13ef73c47f3e">
     <value>Reading font</value>
   </data>
+  <data name="Text_1405a63e8a78" xml:space="preserve">
+    <value>Character</value>
+  </data>
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>none</value>
   </data>
   <data xml:space="preserve" name="Text_143b270a3260">
     <value>Complete</value>
+  </data>
+  <data name="Text_144d877d3f41" xml:space="preserve">
+    <value>Duplicate account</value>
   </data>
   <data xml:space="preserve" name="Text_153565a001f1">
     <value>Process measurements</value>
@@ -161,6 +185,9 @@
   </data>
   <data xml:space="preserve" name="Text_16fab6cfda80">
     <value>Close the game before restoring saves. Stop Gateway before restoring mod choices.</value>
+  </data>
+  <data name="Text_1709305c9fa9" xml:space="preserve">
+    <value>Level</value>
   </data>
   <data xml:space="preserve" name="Text_176b219dca96">
     <value>Warnings / errors</value>
@@ -185,6 +212,9 @@
   </data>
   <data xml:space="preserve" name="Text_19c29440bac8">
     <value>This mod has no source project in the selected checkout.</value>
+  </data>
+  <data name="Text_19fc45efcadf" xml:space="preserve">
+    <value>The account name must match exactly. Nothing has been deleted.</value>
   </data>
   <data xml:space="preserve" name="Text_1a4f630ac1b6">
     <value>Stopped</value>
@@ -219,14 +249,23 @@
   <data xml:space="preserve" name="Text_1ddc54772630">
     <value> · prepared client found</value>
   </data>
+  <data name="Text_1f330a2da345" xml:space="preserve">
+    <value>{0} stash tab</value>
+  </data>
   <data xml:space="preserve" name="Text_1ff335e35fbf">
     <value>No checkout selected</value>
   </data>
   <data xml:space="preserve" name="Text_2004618e77b7">
     <value>Use this checkout</value>
   </data>
+  <data name="Text_207565e87c76" xml:space="preserve">
+    <value>Accounts refreshed.</value>
+  </data>
   <data xml:space="preserve" name="Text_20759152bb78">
     <value>Keyboard: Ctrl+1–8 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Appearance follows Waypoint’s dark theme and Windows High Contrast.</value>
+  </data>
+  <data name="Text_213d05dc1861" xml:space="preserve">
+    <value>Keyboard: Ctrl+1–9 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Appearance follows Waypoint’s dark theme and Windows High Contrast.</value>
   </data>
   <data xml:space="preserve" name="Text_217526d30143">
     <value>Building / restarting</value>
@@ -237,11 +276,17 @@
   <data xml:space="preserve" name="Text_223e64b8fc5b">
     <value>Automatic lookup runs on first use. You can also search again here.</value>
   </data>
+  <data name="Text_225ea1a36f00" xml:space="preserve">
+    <value>Saved client credentials for this account will need to be entered again.</value>
+  </data>
   <data xml:space="preserve" name="Text_22a62a64de6a">
     <value>Compatible saved code edits apply in game. Compile errors keep old code running. Incompatible edits restart Gateway and return you to login. Static data and Auth/Patch changes can need a restart. Branch/PR switching always stops services first.</value>
   </data>
   <data xml:space="preserve" name="Text_22a970d2e5b1">
     <value>Completed</value>
+  </data>
+  <data name="Text_22b2a5d05d3a" xml:space="preserve">
+    <value>Account data is up to date. Reload to check for changes.</value>
   </data>
   <data xml:space="preserve" name="Text_22dd7af622aa">
     <value>Close Waypoint</value>
@@ -254,6 +299,9 @@
   </data>
   <data xml:space="preserve" name="Text_245c1078b5e7">
     <value>Mod details</value>
+  </data>
+  <data name="Text_2494bdb5bc46" xml:space="preserve">
+    <value>Loading accounts…</value>
   </data>
   <data xml:space="preserve" name="Text_2511413756fa">
     <value>Review the redacted text before copying. Redaction recognizes common patterns; check for any private details it missed.</value>
@@ -331,6 +379,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Restore mod choices</value>
   </data>
+  <data name="Text_2b69057ec9ef" xml:space="preserve">
+    <value>The password must have at least 4 characters.</value>
+  </data>
   <data xml:space="preserve" name="Text_2cb93bc2b809">
     <value>Enter a positive LocalExile PR number, including closed PRs</value>
   </data>
@@ -348,6 +399,12 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_2ee7e02cbde9">
     <value>Building checkout</value>
+  </data>
+  <data name="Text_2eed71190382" xml:space="preserve">
+    <value>Full copy</value>
+  </data>
+  <data name="Text_2f1395cf5579" xml:space="preserve">
+    <value>Set password…</value>
   </data>
   <data xml:space="preserve" name="Text_2f444c96f7fb">
     <value>Stronger keyboard focus borders</value>
@@ -440,6 +497,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Switch</value>
   </data>
+  <data name="Text_3a0f7b919840" xml:space="preserve">
+    <value>Changing account data</value>
+  </data>
   <data xml:space="preserve" name="Text_3a361f5a0e7f">
     <value>Workspace needs attention</value>
   </data>
@@ -483,6 +543,12 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_3d487cea417c">
     <value> · tracked files unchanged</value>
   </data>
+  <data name="Text_3dc5a2da83a2" xml:space="preserve">
+    <value>Last played: {0}</value>
+  </data>
+  <data name="Text_3dd9df4441fb" xml:space="preserve">
+    <value>New password</value>
+  </data>
   <data xml:space="preserve" name="Text_3e9648b06bc7">
     <value>Using this installation only. Credentials are not saved by the launcher.</value>
   </data>
@@ -507,8 +573,14 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Language saved.</value>
   </data>
+  <data name="Text_42610696b9f9" xml:space="preserve">
+    <value>This storage layout can be browsed, but account changes are disabled because its schema or import state is unfamiliar.</value>
+  </data>
   <data xml:space="preserve" name="Text_436e61016e26">
     <value>Play</value>
+  </data>
+  <data name="Text_437c2cf0cad3" xml:space="preserve">
+    <value>Character names for the copy</value>
   </data>
   <data xml:space="preserve" name="Text_437d2a208b63">
     <value>Local runtime uses {0}</value>
@@ -537,14 +609,23 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_477c5451ef0b">
     <value>Clear mod search</value>
   </data>
+  <data name="Text_47c062d35d2c" xml:space="preserve">
+    <value>No matching accounts</value>
+  </data>
   <data xml:space="preserve" name="Text_47cc14147fa7">
     <value>Build completed.</value>
   </data>
   <data xml:space="preserve" name="Text_47e8b196a14c">
     <value>Refresh backups</value>
   </data>
+  <data name="Text_480189e83289" xml:space="preserve">
+    <value>{0} characters · {1} stash tabs</value>
+  </data>
   <data xml:space="preserve" name="Text_4859a908b868">
     <value>Hot reload</value>
+  </data>
+  <data name="Text_48ce04a2b2bc" xml:space="preserve">
+    <value>Full copy includes characters, progress and all personal/guild stash tabs. Start empty creates only a new login.</value>
   </data>
   <data xml:space="preserve" name="Text_49089f5749b2">
     <value>Copy reviewed report</value>
@@ -570,6 +651,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_4ac147b602c9">
     <value>Connect your checkout</value>
   </data>
+  <data name="Text_4b81201360c2" xml:space="preserve">
+    <value>{0} character</value>
+  </data>
   <data xml:space="preserve" name="Text_4b8df1bf034b">
     <value>Client instructions</value>
   </data>
@@ -578,6 +662,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_4c5c7d3c9542">
     <value>Select and check an installation to view its backups.</value>
+  </data>
+  <data name="Text_4c764cb6248e" xml:space="preserve">
+    <value>Shadow</value>
   </data>
   <data xml:space="preserve" name="Text_4cda809eee92">
     <value>Building selected revision</value>
@@ -612,6 +699,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_514d7286b5ae">
     <value>{0} · Checked {1}</value>
   </data>
+  <data name="Text_5199860e98ea" xml:space="preserve">
+    <value>New name for {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_51b0451ee87b">
     <value>Close game</value>
   </data>
@@ -620,6 +710,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_521339c7dbbf">
     <value>Wait for the current build or runtime operation to finish before closing.</value>
+  </data>
+  <data name="Text_52134427a938" xml:space="preserve">
+    <value>Marauder</value>
   </data>
   <data xml:space="preserve" name="Text_524d1e13a5b3">
     <value>Building mods</value>
@@ -632,6 +725,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_5355e8288662">
     <value>Missing DLL</value>
+  </data>
+  <data name="Text_53be99dc1380" xml:space="preserve">
+    <value>Read-only: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_54377045445b">
     <value>Building preparation tools</value>
@@ -692,6 +788,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_5a624ed29811">
     <value>Load / refresh list</value>
   </data>
+  <data name="Text_5a681a15a3d6" xml:space="preserve">
+    <value>Set account password</value>
+  </data>
   <data xml:space="preserve" name="Text_5b72b116c129">
     <value>Watch Gateway code while playing</value>
   </data>
@@ -706,6 +805,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions.</value>
+  </data>
+  <data name="Text_5d202208fa1a" xml:space="preserve">
+    <value>Duplicate…</value>
   </data>
   <data xml:space="preserve" name="Text_5e9647ccdc6e">
     <value>Choose a part of the interface to edit. Light and dark colors are stored separately. Editing a preset creates your Custom scheme.</value>
@@ -735,6 +837,12 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_60be7b4c46e1">
     <value>No LocalExile checkout found in the searched locations. Browse to your checkout instead.</value>
   </data>
+  <data name="Text_60d8629f9d8c" xml:space="preserve">
+    <value>Search accounts or characters</value>
+  </data>
+  <data name="Text_619e3be216f3" xml:space="preserve">
+    <value>Delete account…</value>
+  </data>
   <data xml:space="preserve" name="Text_61a37b98f3e8">
     <value>Upstream LocalExile PR head; may be closed or unmerged</value>
   </data>
@@ -762,6 +870,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_62ec07997eff">
     <value>Gateway stopped</value>
   </data>
+  <data name="Text_6300ef800bb8" xml:space="preserve">
+    <value>Never</value>
+  </data>
   <data xml:space="preserve" name="Text_635484c1543e">
     <value>Reload game-data overrides</value>
   </data>
@@ -780,6 +891,12 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_6561a8925313">
     <value>Branches and pull requests</value>
   </data>
+  <data name="Text_6662850b5518" xml:space="preserve">
+    <value>The selected save database changed. Reload accounts and review the action again.</value>
+  </data>
+  <data name="Text_667d957ad516" xml:space="preserve">
+    <value>Player accounts</value>
+  </data>
   <data xml:space="preserve" name="Text_667f64085762">
     <value>Use PR number</value>
   </data>
@@ -792,6 +909,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_67fdcd462dc5">
     <value>Restore saves replaces progress after confirmation. Mod choices restore separately and require Gateway stopped.</value>
   </data>
+  <data name="Text_680551c51283" xml:space="preserve">
+    <value>Copied characters need unique names with 3–23 letters, digits, underscores or hyphens.</value>
+  </data>
   <data xml:space="preserve" name="Text_686046d08c9f">
     <value>Watcher is building/restarting; inspect Gateway output for errors</value>
   </data>
@@ -803,6 +923,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_68fce9b8e435">
     <value>Light, dark or Windows appearance; color schemes, custom colors and reading preferences.</value>
+  </data>
+  <data name="Text_691145a11e9f" xml:space="preserve">
+    <value>{0} stash tabs</value>
   </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Closing account service</value>
@@ -828,6 +951,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_6bb4fd6d399a">
     <value>Delete selected backup</value>
   </data>
+  <data name="Text_6c26340a1b96" xml:space="preserve">
+    <value>Save database</value>
+  </data>
   <data xml:space="preserve" name="Text_6dbc080db4ab">
     <value>Ready to play</value>
   </data>
@@ -842,6 +968,12 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_6e58b577a084">
     <value>Mods</value>
+  </data>
+  <data name="Text_6fa62b3dba2f" xml:space="preserve">
+    <value>Rename…</value>
+  </data>
+  <data name="Text_6fab7aff6931" xml:space="preserve">
+    <value>Check your workspace in Settings before managing accounts.</value>
   </data>
   <data xml:space="preserve" name="Text_7013af4c42fe">
     <value>Setup</value>
@@ -860,6 +992,12 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_72356c9e3235">
     <value>Waiting for saved source edits. Auth and Patch require a restart.</value>
+  </data>
+  <data name="Text_735373328df6" xml:space="preserve">
+    <value>This account has no characters to copy.</value>
+  </data>
+  <data name="Text_738060ca8527" xml:space="preserve">
+    <value>Account changes are read-only while any LocalExile login, Gateway or account-service process is running. Stop those services and close the game, then refresh. Nothing was changed.</value>
   </data>
   <data xml:space="preserve" name="Text_74160bd42b82">
     <value>LocalExile repository folder</value>
@@ -900,6 +1038,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_7b0100d4aa11">
     <value>Diagnostic report preview</value>
   </data>
+  <data name="Text_7b472544bbda" xml:space="preserve">
+    <value>Templar</value>
+  </data>
   <data xml:space="preserve" name="Text_7caa2025f375">
     <value>Input fields</value>
   </data>
@@ -923,6 +1064,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_7ee581fb2eb4">
     <value>EnableMod completed.</value>
+  </data>
+  <data name="Text_7f06ea4f0831" xml:space="preserve">
+    <value>League</value>
   </data>
   <data xml:space="preserve" name="Text_7fd994d683da">
     <value>Search branch names, PR titles, authors or commit hashes</value>
@@ -1002,6 +1146,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_8a63af29f3c4">
     <value>Color wheel; keyboard alternatives are below.</value>
   </data>
+  <data name="Text_8a7c8b67fe8b" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
   <data xml:space="preserve" name="Text_8b2d4fa44372">
     <value>Search mod ID, version, kind, status or error (Ctrl+F)</value>
   </data>
@@ -1011,8 +1158,14 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_8bc9335f3b83">
     <value>Restore recorded mod choices…</value>
   </data>
+  <data name="Text_8c1304fcac2d" xml:space="preserve">
+    <value>No characters yet. Sign in and create a character in the game.</value>
+  </data>
   <data xml:space="preserve" name="Text_8d525e5f158b">
     <value>Copied</value>
+  </data>
+  <data name="Text_8d99a834e478" xml:space="preserve">
+    <value>Changes require the game and all LocalExile services to stay stopped until the operation finishes.</value>
   </data>
   <data xml:space="preserve" name="Text_8d9f188ce712">
     <value>Open setup guide</value>
@@ -1031,6 +1184,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_8eb3ea9bbde6">
     <value>Auth</value>
+  </data>
+  <data name="Text_9045b1ddb963" xml:space="preserve">
+    <value>New account name</value>
   </data>
   <data xml:space="preserve" name="Text_91bd172009ab">
     <value>Source and built component identities are separate. Hot reload can apply uncommitted code edits; a build hash identifies the original compiled revision.</value>
@@ -1080,11 +1236,20 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_964cf7280ca9">
     <value>Additional names to remove (comma separated)</value>
   </data>
+  <data name="Text_96696ebb5f8d" xml:space="preserve">
+    <value>What to copy</value>
+  </data>
+  <data name="Text_96850b2f4bd2" xml:space="preserve">
+    <value>Duelist</value>
+  </data>
   <data xml:space="preserve" name="Text_96b40ff2f6d3">
     <value>Play prepares and starts the servers, then opens the game.</value>
   </data>
   <data xml:space="preserve" name="Text_96b7cd5714e0">
     <value>RestoreModChoices completed.</value>
+  </data>
+  <data name="Text_96cedcf686b0" xml:space="preserve">
+    <value>Characters on selected account</value>
   </data>
   <data xml:space="preserve" name="Text_9701a68fede6">
     <value>Search branches and pull requests</value>
@@ -1097,6 +1262,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_9777bf4aa207">
     <value>Build selected</value>
+  </data>
+  <data name="Text_992e854a82a5" xml:space="preserve">
+    <value>Choose a checkout and reload its accounts.</value>
   </data>
   <data xml:space="preserve" name="Text_993f024b650e">
     <value>Saturation</value>
@@ -1195,6 +1363,12 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a2b0e1cca90c">
     <value>Reload this enabled mod and its dependents.</value>
   </data>
+  <data name="Text_a2e20a335700" xml:space="preserve">
+    <value>Delete account</value>
+  </data>
+  <data name="Text_a3b98f7ed11c" xml:space="preserve">
+    <value>Enter a valid account name: 3–32 letters, digits, underscores or hyphens.</value>
+  </data>
   <data xml:space="preserve" name="Text_a3f721e4f70e">
     <value>Standalone 3.29.3b executable at Client/Game.exe</value>
   </data>
@@ -1228,11 +1402,17 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a63d0dedb7bb">
     <value>In game: /mod_{0} {1} · /mod_reload {2}</value>
   </data>
+  <data name="Text_a65a4357e343" xml:space="preserve">
+    <value>Reload accounts after changing the workspace.</value>
+  </data>
   <data xml:space="preserve" name="Text_a679c1884503">
     <value>Retaining existing keys and prepared executable; creating only missing files.</value>
   </data>
   <data xml:space="preserve" name="Text_a700e84e04df">
     <value>DeleteBackup completed.</value>
+  </data>
+  <data name="Text_a704d8d4a818" xml:space="preserve">
+    <value>Account name</value>
   </data>
   <data xml:space="preserve" name="Text_a7626cdbe094">
     <value>Binary-only mod</value>
@@ -1255,8 +1435,17 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a9ad74159ab1">
     <value>Select a revision above.</value>
   </data>
+  <data name="Text_a9ada4eade1d" xml:space="preserve">
+    <value>A save backup will be created before this change.</value>
+  </data>
   <data xml:space="preserve" name="Text_aa1bf9baa865">
     <value>Could not select checkout: </value>
+  </data>
+  <data name="Text_aad03e2b1c5c" xml:space="preserve">
+    <value>Automatic backups are OFF. This change will not create a recovery backup.</value>
+  </data>
+  <data name="Text_ab4bdca6bf1a" xml:space="preserve">
+    <value>Reload accounts to view the selected database.</value>
   </data>
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Showing the first 1,000 open PRs. Enter a PR number to fetch another.</value>
@@ -1278,6 +1467,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_afb40dbadd2e">
     <value>Change appearance…</value>
+  </data>
+  <data name="Text_b0c35534bd56" xml:space="preserve">
+    <value>Keyboard: Ctrl+1–9 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Change appearance and accessibility preferences in Settings.</value>
   </data>
   <data xml:space="preserve" name="Text_b14dcdadc0c3">
     <value>Owned process; all required ports listening</value>
@@ -1311,6 +1503,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b3f384f14d32">
     <value>Copy the complete client into its Client folder first. Preparation creates missing local keys and a prepared executable, then selects the local gateway in that copy. Close the game and stop services before making setup changes.</value>
+  </data>
+  <data name="Text_b45a804aa67c" xml:space="preserve">
+    <value>Keep the game and all LocalExile services stopped until the change finishes.</value>
   </data>
   <data xml:space="preserve" name="Text_b460af7eddc8">
     <value>Load the list for the selected checkout.</value>
@@ -1366,6 +1561,12 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_b9957b371d80">
     <value>Selecting local gateway</value>
   </data>
+  <data name="Text_ba849df3b860" xml:space="preserve">
+    <value>{0}, level {1}, {2}, {3}</value>
+  </data>
+  <data name="Text_ba89783a339f" xml:space="preserve">
+    <value>Select an account</value>
+  </data>
   <data xml:space="preserve" name="Text_baf5d82057e7">
     <value>Orchid</value>
   </data>
@@ -1378,17 +1579,29 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_bdd254b65baa">
     <value>Build</value>
   </data>
+  <data name="Text_be46faa4a87c" xml:space="preserve">
+    <value>Choose an account from the list, or change your search.</value>
+  </data>
   <data xml:space="preserve" name="Text_bed8374efd88">
     <value>Gateway is running without a watcher. Stop servers to change launch mode.</value>
   </data>
+  <data name="Text_bf000421aeb3" xml:space="preserve">
+    <value>Confirm new password</value>
+  </data>
   <data xml:space="preserve" name="Text_bf004e2e67d7">
     <value>Error indicators</value>
+  </data>
+  <data name="Text_c02af3329071" xml:space="preserve">
+    <value>Rename account</value>
   </data>
   <data xml:space="preserve" name="Text_c032d8c45d13">
     <value>Choose installation</value>
   </data>
   <data xml:space="preserve" name="Text_c04a64764afe">
     <value>The selected local runtime profile names a database which does not exist. Restore the intended database or correct config/runtime.local.ps1. Do not create an empty replacement for an existing installation. Open Settings to select a different checkout/profile if needed.</value>
+  </data>
+  <data name="Text_c0adcac645f4" xml:space="preserve">
+    <value>Start empty</value>
   </data>
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Needs attention</value>
@@ -1441,6 +1654,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   <data xml:space="preserve" name="Text_c7ece59b9c12">
     <value>Create local account</value>
   </data>
+  <data name="Text_c827708ef040" xml:space="preserve">
+    <value>Account data updated.</value>
+  </data>
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway started a new process under the same watcher. Sign in again if the game returned to login.</value>
   </data>
@@ -1473,11 +1689,17 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_cba1d9e44ad3">
     <value>Select the account, revision or backup action again to review its current options.</value>
   </data>
+  <data name="Text_cba6dec12959" xml:space="preserve">
+    <value>Stop the local account service before changing player accounts.</value>
+  </data>
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | hot reload watcher PID {1}</value>
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Dependencies completed.</value>
+  </data>
+  <data name="Text_cccbd64fecc9" xml:space="preserve">
+    <value>Read-only while the game or services are running, or ownership is uncertain. Stop them and reload before changing accounts.</value>
   </data>
   <data xml:space="preserve" name="Text_cd27f46c485b">
     <value>Customize colors</value>
@@ -1584,11 +1806,17 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_ddf65dfc3807">
     <value>No backups yet. Use Back up now to save a copy of your current progress.</value>
   </data>
+  <data name="Text_de2a5f6b153d" xml:space="preserve">
+    <value>Create your first account to get started. Characters are created in the game.</value>
+  </data>
   <data xml:space="preserve" name="Text_deba91fae8c8">
     <value>Node.js is required for bundle decompression</value>
   </data>
   <data xml:space="preserve" name="Text_dec1638d773b">
     <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Alt+R restores default appearance without changing your checkout or saves.</value>
+  </data>
+  <data name="Text_df38f1891a79" xml:space="preserve">
+    <value>An existing save database will be backed up before account creation.</value>
   </data>
   <data xml:space="preserve" name="Text_dfab082d4644">
     <value>Build checkout</value>
@@ -1599,11 +1827,17 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_e10d850954a8">
     <value>Rose</value>
   </data>
+  <data name="Text_e1ef93197100" xml:space="preserve">
+    <value>Type the exact account name to delete it</value>
+  </data>
   <data xml:space="preserve" name="Text_e240e635ff6d">
     <value>Reset to defaults</value>
   </data>
   <data xml:space="preserve" name="Text_e30ce05d3185">
     <value>More interface colors</value>
+  </data>
+  <data name="Text_e3f02e617e2c" xml:space="preserve">
+    <value>3–32 letters, digits, underscores or hyphens.</value>
   </data>
   <data xml:space="preserve" name="Text_e40f307a9136">
     <value>HEAD matches latest upstream</value>
@@ -1616,6 +1850,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_e6617c8f941d">
     <value>BuildMods completed.</value>
+  </data>
+  <data name="Text_e6cd637f954b" xml:space="preserve">
+    <value>Ranger</value>
   </data>
   <data xml:space="preserve" name="Text_e802a1d6a8c0">
     <value>One checkout matches upstream HEAD. You can use it below or Browse elsewhere.</value>
@@ -1677,6 +1914,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_ee32fb834190">
     <value>Backup history could not be read. Check the folder and try Refresh backups.</value>
   </data>
+  <data name="Text_ee80fc3f5cc0" xml:space="preserve">
+    <value>No save database exists yet. Create your first account to initialize LocalExile.</value>
+  </data>
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Watcher is alive but Gateway has no running child. Open Gateway output to inspect the build errors.</value>
   </data>
@@ -1685,6 +1925,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_eeaf954d8d43">
     <value>Setup and compatibility</value>
+  </data>
+  <data name="Text_eecd85f698cf" xml:space="preserve">
+    <value>Close the game and stop LocalExile services before changing player accounts.</value>
   </data>
   <data xml:space="preserve" name="Text_eed88b3afe90">
     <value>Forest</value>
@@ -1722,6 +1965,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_f28290933d40">
     <value>Process exists; waiting for listening ports</value>
   </data>
+  <data name="Text_f28854498a03" xml:space="preserve">
+    <value>Witch</value>
+  </data>
   <data xml:space="preserve" name="Text_f2b4f43625b6">
     <value>Targets stronger text contrast and may adjust button fills.</value>
   </data>
@@ -1744,6 +1990,9 @@ Mods at backup: </value>
   <data xml:space="preserve" name="Text_f4ccae29e1bb">
     <value>Running</value>
   </data>
+  <data name="Text_f4f5dca37b59" xml:space="preserve">
+    <value>{0} of {1} accounts</value>
+  </data>
   <data xml:space="preserve" name="Text_f50bc20748e3">
     <value>Multiple Gateway watchers belong to this checkout.</value>
   </data>
@@ -1755,6 +2004,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_f64a45cd7d47">
     <value>Choose how to get ready</value>
+  </data>
+  <data name="Text_f694aaa8da2c" xml:space="preserve">
+    <value>The passwords do not match.</value>
   </data>
   <data xml:space="preserve" name="Text_f69dee092bca">
     <value>Prepared client</value>
@@ -1783,11 +2035,17 @@ Mods at backup: </value>
   <data xml:space="preserve" name="Text_fa1e08557af3">
     <value>Find LocalExile</value>
   </data>
+  <data name="Text_fa3589d27498" xml:space="preserve">
+    <value>Scion</value>
+  </data>
   <data xml:space="preserve" name="Text_fab4753af1e0">
     <value>Available mods</value>
   </data>
   <data xml:space="preserve" name="Text_fb1a779f6127">
     <value>Stop services before rebuilding. Starting a stopped service beside running services reuses its existing build. Stop all services and build first after changing source. Game launch uses the supported upstream script.</value>
+  </data>
+  <data name="Text_fb25f996f647" xml:space="preserve">
+    <value>Automatic backup before account changes</value>
   </data>
   <data xml:space="preserve" name="Text_fb26532d9c38">
     <value>Select the folder containing GameServer.slnx. The launcher keeps its own settings outside the repository.</value>
@@ -1827,6 +2085,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_fed12611d2d8">
     <value>Ocean</value>
+  </data>
+  <data name="Text_fee9dda2d85a" xml:space="preserve">
+    <value>Class / ascendancy</value>
   </data>
   <data xml:space="preserve" name="Text_ff85a35d337d">
     <value>Restore saved mod enable/disable choices from {0:g}?
