@@ -1,4 +1,4 @@
-# Appearance and accessibility (unreleased)
+# Appearance and accessibility
 
 Open **Settings → Appearance and accessibility → Change appearance…**. The complete workspace previews your
 changes. **Apply** saves them; **Cancel**, Escape or closing the editor restores the previous appearance. Runtime

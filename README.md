@@ -20,7 +20,8 @@ No installer is required. The portable launcher includes its .NET Desktop runtim
 you press a runtime action. To upgrade, close Waypoint and extract the newer ZIP into a separate folder; your settings
 and backups are retained. This alpha has no automatic update service.
 
-For the latest changes, see [0.5.0 release notes](docs/releases/0.5.0.md).
+For the latest changes, see [0.5.1 release notes](docs/releases/0.5.1.md).
+The [0.5.0 release notes](docs/releases/0.5.0.md) cover desktop improvements and Russian localization.
 The [0.4.0 release notes](docs/releases/0.4.0.md) cover mod management.
 The [0.3.1 hotfix notes](docs/releases/0.3.1.md) describe the mod startup compatibility fix.
 The [first-alpha release notes](docs/releases/0.3.0.md) describe the original features and compatibility limits.
@@ -30,7 +31,7 @@ immediately; the preference is remembered for the next launch. English is the de
 The selector controls Waypoint's interface. Repository names, paths, commit hashes, in-game commands, raw logs and
 upstream diagnostics retain their original text. Translation maintenance is described in [localization](docs/localization.md).
 
-The **unreleased local appearance update** adds **Settings → Appearance and accessibility → Change appearance…**:
+Open **Settings → Appearance and accessibility → Change appearance…** for:
 18 light/dark/system color schemes, a custom color wheel/hex editor, reading fonts and text size, color-vision
 profiles, stronger contrast/focus and reduced motion. Preview changes, then choose Apply or Cancel. See
 [appearance and accessibility](docs/appearance.md) for controls, recovery shortcuts and validation limits.
