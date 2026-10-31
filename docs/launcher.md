@@ -103,9 +103,11 @@ saved. The branch is read from the checkout's `.git/HEAD` (a short commit when d
 ### Control
 
 - The toolbar holds `live.ps1`'s switches and the actions on everything: **Stop all**, **Stop servers**, **Start
-  servers** and **Play**, the one blue button.
+  servers** and **Play**, the one blue button. While a server runs, Start servers reads **Restart servers**: the same
+  `live.ps1 -NoClient` rebuilds and restarts all three, which is what edits hot reload does not cover need (Auth,
+  Patch, the shared projects, a pull).
 - Below it every service is a row: its state (running, starting while its port is not open yet, stopped, or its port
-  held by another program), ports, process, uptime, CPU and memory, and one button that starts or stops that service
+  held by another program; a Gateway under `dotnet watch` is "Running · hot reload"), ports, process, uptime, CPU and memory, and one button that starts or stops that service
   alone. A server's is `live.ps1 -Only <server>` (build and start) or `live.ps1 -Stop -Only <server>`; the client's is
   Start game only or closing its process; the dev host's builds and starts it or ends it; the walk-map recorder's only
   stops it (it starts with a run while Walk maps is on). The ⋮ menu restarts a server and opens the service's log.

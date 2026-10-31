@@ -50,8 +50,9 @@ sealed partial record Service(string Name, ServiceKind Kind, int[] Ports, string
     private static partial System.Text.RegularExpressions.Regex ToolMode();
 }
 
+/// <param name="HotReload">The server's own executable, which only `dotnet watch` runs: a Gateway with hot reload.</param>
 sealed record ServiceSample(Service Service, int? Pid, bool Listening, double CpuPercent, double MemoryMb, int Threads,
-    int Handles, TimeSpan Uptime)
+    int Handles, TimeSpan Uptime, bool HotReload = false)
 {
     public bool Running => Pid is not null;
 }
@@ -68,6 +69,7 @@ sealed class ServiceMonitor : IDisposable
 
     readonly Timer _timer;
     readonly Dictionary<Service, int> _pids = [];
+    readonly HashSet<Service> _hotReload = [];
     readonly Dictionary<int, (TimeSpan Cpu, long At)> _cpu = [];
     int _ticks, _busy;
 
@@ -116,6 +118,8 @@ sealed class ServiceMonitor : IDisposable
             foreach (var (service, pid) in _pids.Where(kv => !found.TryGetValue(kv.Key, out int now) || now != kv.Value).ToList())
                 Gone(service, pid);
             foreach (var (service, pid) in found) _pids[service] = pid;
+            _hotReload.Clear();
+            _hotReload.UnionWith(best.Where(kv => kv.Value.Score == 2).Select(kv => kv.Key));
         }
     }
 
@@ -130,8 +134,12 @@ sealed class ServiceMonitor : IDisposable
     {
         bool up = service.Ports.Length > 0 && service.Ports.All(listening.Contains);
         int pid;
+        bool hotReload;
         lock (_pids)
+        {
             if (!_pids.TryGetValue(service, out pid)) return new(service, null, up, 0, 0, 0, 0, TimeSpan.Zero);
+            hotReload = _hotReload.Contains(service);
+        }
         try
         {
             using var p = Process.GetProcessById(pid);
@@ -142,7 +150,7 @@ sealed class ServiceMonitor : IDisposable
             if (_cpu.TryGetValue(pid, out var last))
                 percent = CpuPercent(cpu - last.Cpu, Stopwatch.GetElapsedTime(last.At, now), Environment.ProcessorCount);
             _cpu[pid] = (cpu, now);
-            return new(service, pid, up, percent, p.WorkingSet64 / 1048576.0, p.Threads.Count, p.HandleCount, DateTime.Now - p.StartTime);
+            return new(service, pid, up, percent, p.WorkingSet64 / 1048576.0, p.Threads.Count, p.HandleCount, DateTime.Now - p.StartTime, hotReload);
         }
         catch (Exception e) when (e is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception)
         {

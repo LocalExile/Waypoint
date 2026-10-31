@@ -25,6 +25,8 @@ sealed class ServiceRow(Service service, string description, PackIconKind icon) 
     public string Uptime { get; private set; } = "—";
     public string Cpu { get; private set; } = "—";
     public string Memory { get; private set; } = "—";
+    /// <summary>What the state means where it is not obvious: a Gateway under hot reload.</summary>
+    public string? StateTip { get; private set; }
 
     /// <summary>The recorder starts only with a live.ps1 run (Walk maps); the rest start alone.</summary>
     public bool CanAct => !_live && (Running || Service.Kind != ServiceKind.Recorder);
@@ -53,13 +55,17 @@ sealed class ServiceRow(Service service, string description, PackIconKind icon) 
         bool hasPorts = Service.Ports.Length > 0;
         (string lamp, State) = (sample.Running, sample.Listening) switch
         {
-            (true, true) => ("Shell.Good", "Running"),
+            (true, true) => ("Shell.Good", sample.HotReload ? "Running · hot reload" : "Running"),
             (true, false) when !hasPorts => ("Shell.Good", "Running"),
             (true, false) => ("Shell.Warning", "Starting"),
             (false, true) => ("Shell.Error", "Port held by another"),
             _ => ("Shell.Idle", "Stopped"),
         };
         Lamp = Theme.Brush(lamp);
+        StateTip = sample.HotReload
+            ? "Under dotnet watch: a saved edit to the Gateway's code applies within seconds, the game staying in; an edit hot " +
+              "reload cannot apply restarts the Gateway by itself. Edits to Auth, Patch or shared projects need Restart servers."
+            : null;
         Pid = sample.Pid?.ToString() ?? "—";
         Uptime = sample.Running ? $"{(int)sample.Uptime.TotalHours}:{sample.Uptime:mm\\:ss}" : "—";
         Cpu = sample.Running ? $"{sample.CpuPercent:0.0}%" : "—";
@@ -123,6 +129,14 @@ public partial class ControlTab : UserControl
     {
         foreach (var row in _rows)
             row.Update(samples.FirstOrDefault(s => s.Service == row.Service) ?? new(row.Service, null, false, 0, 0, 0, 0, TimeSpan.Zero), _live);
+        // With servers up the same live.ps1 run restarts them: what is needed after edits hot reload does not cover.
+        bool anyUp = samples.Any(s => s.Service.Kind == ServiceKind.Server && s.Running);
+        StartServersText.Text = anyUp ? "Restart servers" : "Start servers";
+        StartServersIcon.Kind = anyUp ? PackIconKind.Refresh : PackIconKind.Play;
+        StartServersButton.ToolTip = anyUp
+            ? "live.ps1 -NoClient: rebuilds and restarts Patch, Auth and Gateway (after a pull, or edits outside the Gateway); " +
+              "the Gateway's own code edits apply by themselves with hot reload. A running client stays."
+            : "live.ps1 -NoClient: builds and starts Patch, Auth and Gateway; a running client stays";
     }
 
     LiveRequest Request(LiveMode mode, string? server = null)

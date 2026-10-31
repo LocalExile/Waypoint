@@ -19,10 +19,11 @@
                             <TextBlock Text="Stop servers" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Click="StartServers" ToolTip="live.ps1 -NoClient: builds and restarts Patch, Auth and Gateway; a running client stays">
+                    <Button x:Name="StartServersButton" Click="StartServers">
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Play" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Good}" />
-                            <TextBlock Text="Start servers" VerticalAlignment="Center" />
+                            <md:PackIcon x:Name="StartServersIcon" Kind="Play" Width="15" Height="15" Margin="0,0,6,0" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource Shell.Good}" />
+                            <TextBlock x:Name="StartServersText" Text="Start servers" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource Shell.PrimaryButton}" Click="Play" Margin="0,0,0,6"
@@ -160,7 +161,7 @@
                                 <TextBlock Text="{Binding Description}" Style="{StaticResource Shell.Cell}" Margin="10,0,0,0"
                                            Foreground="{DynamicResource Shell.TextSecondary}" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" ToolTip="{Binding StateTip}">
                                 <Ellipse Width="8" Height="8" Fill="{Binding Lamp}" Margin="0,0,7,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding State}" Style="{StaticResource Shell.Cell}" />
                             </StackPanel>
