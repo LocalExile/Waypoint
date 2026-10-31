@@ -31,6 +31,7 @@
             <TextBlock x:Name="BrandName" FontSize="23" FontFamily="Segoe UI" FontWeight="SemiBold" VerticalAlignment="Center"/>
           </DockPanel>
           <TextBlock x:Name="BrandSubtitle" Style="{StaticResource Caption}" Visibility="{DynamicResource BrandSubtitleVisibility}"/>
+          <TextBlock x:Name="MultipleInstanceLabel" Style="{StaticResource Caption}" Foreground="{DynamicResource Warning}" Visibility="Collapsed" Margin="0,6,0,0"/>
         </StackPanel>
         <Expander x:Name="SidebarDetails" DockPanel.Dock="Bottom" Header="{local:Loc Text_45989de49fb7}" IsExpanded="{DynamicResource SidebarDetailsExpanded}" Margin="8,16,8,0"><StackPanel Margin="0,8,0,0">
           <TextBlock Text="{local:Loc Text_4f4bcbb48773}" Style="{StaticResource Caption}" FontSize="{DynamicResource Font11}"/>

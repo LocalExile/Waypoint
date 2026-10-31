@@ -28,6 +28,10 @@ public partial class MainWindow
         LoadDevelopmentPreferences();
         UpdateWindowFrame();
         BrandSubtitle.Text = L.Text(brandSubtitle);
+        bool multiple = Application.Current is App { AllowMultipleInstances: true };
+        MultipleInstanceLabel.Text = L.Text("Multiple-instance test mode");
+        MultipleInstanceLabel.Visibility = multiple ? Visibility.Visible : Visibility.Collapsed;
+        Title = BrandName.Text + (multiple ? " — " + L.Text("Multiple-instance test mode") : "");
         VersionLabel.Text = L.Text("Version ") + brandVersion;
         headingRoot = null;
         UpdateWorkspaceHeading(settings.RepositoryPath);

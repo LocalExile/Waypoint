@@ -12,7 +12,7 @@ public partial class App : Application
     bool contrast;
     public bool SystemLight { get; private set; }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         contrast = SystemParameters.HighContrast;
         SystemLight = ReadSystemLight();
@@ -22,7 +22,7 @@ public partial class App : Application
         base.OnStartup(e);
         // Explicit startup also lets in-process checks supply an unshown fixture window
         // before pumping bindings, without starting a second window and its runtime timers.
-        if (MainWindow is null) new MainWindow().Show();
+        if (MainWindow is null) await StartDesktopAsync(e.Args);
     }
 
     public static bool ReadSystemLight()
@@ -55,6 +55,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        desktopInstance?.Dispose();
         SystemParameters.StaticPropertyChanged -= SystemSettingChanged;
         SystemEvents.UserPreferenceChanged -= UserPreferenceChanged;
         base.OnExit(e);

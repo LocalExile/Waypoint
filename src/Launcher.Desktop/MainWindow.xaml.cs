@@ -56,9 +56,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) when (ex is IOException or JsonException or InvalidOperationException)
         { lastError = "Could not load branding/settings: " + ex.Message; }
-        string[] args = Environment.GetCommandLineArgs();
-        int repoArg = Array.IndexOf(args, "--repo");
-        if (repoArg >= 0 && repoArg + 1 < args.Length) settings = settings with { RepositoryPath = args[repoArg + 1] };
+        if (Application.Current is App { StartupRepository: { } requested }) settings = settings with { RepositoryPath = requested };
         RepositoryPathBox.Text = settings.RepositoryPath;
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         LoadDevelopmentPreferences();

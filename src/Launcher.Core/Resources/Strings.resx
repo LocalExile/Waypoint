@@ -63,8 +63,14 @@
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Keyboard focus</value>
   </data>
+  <data name="Text_0601b77efc9d" xml:space="preserve">
+    <value>The running Waypoint could not be contacted. Close it normally and try again. Use the same Windows permission level for both copies.</value>
+  </data>
   <data xml:space="preserve" name="Text_06291e8ea32e">
     <value>Found and using: </value>
+  </data>
+  <data name="Text_070d63bf412e" xml:space="preserve">
+    <value>Another Waypoint build is already open. Close that window normally before opening this build. Existing operations and services have not been stopped.</value>
   </data>
   <data xml:space="preserve" name="Text_07c99f3f9c05">
     <value>Compile failed</value>
@@ -83,6 +89,9 @@
   </data>
   <data xml:space="preserve" name="Text_0a9315c001d9">
     <value>Save and check</value>
+  </data>
+  <data name="Text_0b7dda5c9b90" xml:space="preserve">
+    <value>The running window has an operation in progress. Let it finish before closing or changing checkout.</value>
   </data>
   <data xml:space="preserve" name="Text_0c26cc1e71ab">
     <value>Watcher is alive; waiting for its Gateway child. Open Gateway output if this persists.</value>
@@ -168,6 +177,9 @@
   <data name="Text_144d877d3f41" xml:space="preserve">
     <value>Duplicate account</value>
   </data>
+  <data name="Text_14c1130db95a" xml:space="preserve">
+    <value>An older Waypoint without single-instance support is already open. Close it normally before opening this build. No process has been stopped.</value>
+  </data>
   <data xml:space="preserve" name="Text_153565a001f1">
     <value>Process measurements</value>
   </data>
@@ -249,6 +261,9 @@
   <data xml:space="preserve" name="Text_1ddc54772630">
     <value> · prepared client found</value>
   </data>
+  <data name="Text_1e38f7b99036" xml:space="preserve">
+    <value>Requested checkout</value>
+  </data>
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>{0} stash tab</value>
   </data>
@@ -317,6 +332,9 @@
   </data>
   <data xml:space="preserve" name="Text_263c42bf45e5">
     <value>No mods match your search. Clear it to see all mods.</value>
+  </data>
+  <data name="Text_26a5b26009b2" xml:space="preserve">
+    <value>Current checkout</value>
   </data>
   <data xml:space="preserve" name="Text_26c164899bbb">
     <value>not built</value>
@@ -481,6 +499,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Waypoint mint</value>
+  </data>
+  <data name="Text_381f5c69d6b1" xml:space="preserve">
+    <value>Could not open Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_381fb2297b10">
     <value>Extracting data</value>
@@ -806,6 +827,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions.</value>
   </data>
+  <data name="Text_5d1765a3435c" xml:space="preserve">
+    <value>Supply one folder after --repo.</value>
+  </data>
   <data name="Text_5d202208fa1a" xml:space="preserve">
     <value>Duplicate…</value>
   </data>
@@ -827,6 +851,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_5fb3160f1860">
     <value>Attention indicators</value>
+  </data>
+  <data name="Text_5fd3eedf0f92" xml:space="preserve">
+    <value>Waypoint is already managing a checkout. Use Change location in the running window when you are ready. This launch has not changed its checkout or settings.</value>
   </data>
   <data xml:space="preserve" name="Text_608f1cf89149">
     <value>Login keys</value>
@@ -1014,6 +1041,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_76cde8e5dd63">
     <value>Fetched remote branch</value>
   </data>
+  <data name="Text_777a88e600e2" xml:space="preserve">
+    <value>Requested build</value>
+  </data>
   <data xml:space="preserve" name="Text_781fab451752">
     <value>enable choice unknown</value>
   </data>
@@ -1055,6 +1085,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Close</value>
+  </data>
+  <data name="Text_7e12616f0ba4" xml:space="preserve">
+    <value>The requested checkout path is empty or too long.</value>
   </data>
   <data xml:space="preserve" name="Text_7e345470de24">
     <value>Patch</value>
@@ -1312,6 +1345,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_9cea69fd345a">
     <value>Window controls</value>
   </data>
+  <data name="Text_9cf951e82d56" xml:space="preserve">
+    <value>Multiple-instance test mode</value>
+  </data>
   <data xml:space="preserve" name="Text_9d19ac7b2039">
     <value>Open logs folder</value>
   </data>
@@ -1335,6 +1371,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_9f365252d60f">
     <value>Resolve the check failure in Settings, then refresh.</value>
+  </data>
+  <data name="Text_9f59b95311b3" xml:space="preserve">
+    <value>Waypoint is closing. Wait for it to finish, then open it again.</value>
   </data>
   <data xml:space="preserve" name="Text_a0160f336a55">
     <value>Could not open folder: </value>
@@ -1770,6 +1809,9 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_d81ab149e977">
     <value>Indigo</value>
   </data>
+  <data name="Text_d81f68261ee7" xml:space="preserve">
+    <value>Waypoint is already open</value>
+  </data>
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>GitHub PR list unavailable. Local/fetched branches still work; enter a PR number to try it directly.</value>
   </data>
@@ -1845,6 +1887,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_e4bb9f1ece9a">
     <value>Start</value>
   </data>
+  <data name="Text_e5d5f6f3c0d8" xml:space="preserve">
+    <value>Running build</value>
+  </data>
   <data xml:space="preserve" name="Text_e62daa01ba01">
     <value>Choose and check a workspace to see its backups.</value>
   </data>
@@ -1905,6 +1950,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_eb660ec5bb55">
     <value>Choose the LocalExile folder containing GameServer.slnx</value>
   </data>
+  <data name="Text_ebf30f3177ff" xml:space="preserve">
+    <value>Show running window</value>
+  </data>
   <data xml:space="preserve" name="Text_ec811d30a89c">
     <value>Brightness</value>
   </data>
@@ -1943,6 +1991,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_efb840bd2787">
     <value>Build source mods</value>
+  </data>
+  <data name="Text_eff6e90ea93a" xml:space="preserve">
+    <value>Running executable</value>
   </data>
   <data xml:space="preserve" name="Text_f013cc16ddca">
     <value>Setup needs attention. See the checks below.</value>

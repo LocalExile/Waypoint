@@ -205,6 +205,23 @@ Mods are executable code: installing a mod grants it the same account access as 
 existing local mods and does not download mods or provide a marketplace, installer, script editor or league selector.
 See [mod management validation](docs/mod-management-validation.md) for the real-client, branch-round-trip and UI checks.
 
+## Opening Waypoint (0.6.2, local review)
+
+Waypoint normally keeps one workspace window per Windows user/logon session. Opening the same build again restores
+and focuses the existing window (or its open dialog), including from another folder or executable name. Windows may
+flash its taskbar button when it does not permit a foreground change. A brief second process during this handoff is
+normal; it exits without creating another workspace.
+
+A different build or requested checkout shows a themed notice with the running build/location. Close the notice,
+then use **Change location** in the running window or close that window normally before opening another build.
+No checkout is switched and no operation is interrupted by a repeated launch. A conflict notice has its own temporary
+process until dismissed. After a crash, reopen normally; there is no lock file to delete.
+
+The new launcher also recognizes supported older copies that are already running and asks you to close them.
+An older launcher opened afterward cannot be forced to obey a guard it does not contain. Keep old copies closed.
+Both copies should use the same Windows permission level. The existing runtime operation lock remains in place.
+See [single-instance behavior and validation](single-instance.md).
+
 ## Accounts (0.6.0, local review)
 
 The current source adds **Accounts** beside Backups. Browse accounts and their characters, level, class/ascendancy,

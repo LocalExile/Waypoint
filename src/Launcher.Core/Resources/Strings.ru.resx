@@ -63,8 +63,14 @@
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Фокус клавиатуры</value>
   </data>
+  <data name="Text_0601b77efc9d" xml:space="preserve">
+    <value>Не удалось связаться с запущенным Waypoint. Закройте его обычным способом и попробуйте снова. Обе копии должны запускаться с одинаковым уровнем прав Windows.</value>
+  </data>
   <data xml:space="preserve" name="Text_06291e8ea32e">
     <value>Найден и выбран: </value>
+  </data>
+  <data name="Text_070d63bf412e" xml:space="preserve">
+    <value>Уже открыта другая сборка Waypoint. Закройте её окно обычным способом, прежде чем открывать эту сборку. Выполняемые операции и службы не были остановлены.</value>
   </data>
   <data xml:space="preserve" name="Text_07c99f3f9c05">
     <value>Ошибка компиляции</value>
@@ -83,6 +89,9 @@
   </data>
   <data xml:space="preserve" name="Text_0a9315c001d9">
     <value>Сохранить и проверить</value>
+  </data>
+  <data name="Text_0b7dda5c9b90" xml:space="preserve">
+    <value>В открытом окне выполняется операция. Дождитесь её завершения, прежде чем закрывать окно или менять репозиторий.</value>
   </data>
   <data xml:space="preserve" name="Text_0c26cc1e71ab">
     <value>Отслеживание работает; ожидается дочерний процесс Gateway. Если ожидание затянулось, откройте вывод Gateway.</value>
@@ -168,6 +177,9 @@
   <data name="Text_144d877d3f41" xml:space="preserve">
     <value>Дублировать аккаунт</value>
   </data>
+  <data name="Text_14c1130db95a" xml:space="preserve">
+    <value>Уже открыта старая версия Waypoint без поддержки единственного экземпляра. Закройте её обычным способом, прежде чем открывать эту сборку. Ни один процесс не был остановлен.</value>
+  </data>
   <data xml:space="preserve" name="Text_153565a001f1">
     <value>Показатели процессов</value>
   </data>
@@ -249,6 +261,9 @@
   <data xml:space="preserve" name="Text_1ddc54772630">
     <value> · подготовленный клиент найден</value>
   </data>
+  <data name="Text_1e38f7b99036" xml:space="preserve">
+    <value>Запрошенный репозиторий</value>
+  </data>
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>Вкладка тайника: {0}</value>
   </data>
@@ -317,6 +332,9 @@
   </data>
   <data xml:space="preserve" name="Text_263c42bf45e5">
     <value>Моды не найдены. Очистите поиск, чтобы увидеть все моды.</value>
+  </data>
+  <data name="Text_26a5b26009b2" xml:space="preserve">
+    <value>Текущий репозиторий</value>
   </data>
   <data xml:space="preserve" name="Text_26c164899bbb">
     <value>не собрано</value>
@@ -481,6 +499,9 @@
   </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Мятная Waypoint</value>
+  </data>
+  <data name="Text_381f5c69d6b1" xml:space="preserve">
+    <value>Не удалось открыть Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_381fb2297b10">
     <value>Извлечение данных</value>
@@ -806,6 +827,9 @@
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Учётные записи, персонажи и прогресс этой установки. Сохранения и выбор модов восстанавливаются отдельно.</value>
   </data>
+  <data name="Text_5d1765a3435c" xml:space="preserve">
+    <value>После --repo укажите одну папку.</value>
+  </data>
   <data name="Text_5d202208fa1a" xml:space="preserve">
     <value>Дублировать…</value>
   </data>
@@ -827,6 +851,9 @@
   </data>
   <data xml:space="preserve" name="Text_5fb3160f1860">
     <value>Индикаторы внимания</value>
+  </data>
+  <data name="Text_5fd3eedf0f92" xml:space="preserve">
+    <value>Waypoint уже управляет репозиторием. Когда будете готовы, нажмите «Изменить расположение» в открытом окне. Этот запуск не изменил выбранный репозиторий или настройки.</value>
   </data>
   <data xml:space="preserve" name="Text_608f1cf89149">
     <value>Ключи входа</value>
@@ -1014,6 +1041,9 @@
   <data xml:space="preserve" name="Text_76cde8e5dd63">
     <value>Полученная удалённая ветка</value>
   </data>
+  <data name="Text_777a88e600e2" xml:space="preserve">
+    <value>Запрошенная сборка</value>
+  </data>
   <data xml:space="preserve" name="Text_781fab451752">
     <value>состояние включения неизвестно</value>
   </data>
@@ -1055,6 +1085,9 @@
   </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Закрыть</value>
+  </data>
+  <data name="Text_7e12616f0ba4" xml:space="preserve">
+    <value>Путь к запрошенному репозиторию пуст или слишком длинный.</value>
   </data>
   <data xml:space="preserve" name="Text_7e345470de24">
     <value>Patch</value>
@@ -1312,6 +1345,9 @@
   <data xml:space="preserve" name="Text_9cea69fd345a">
     <value>Кнопки окна</value>
   </data>
+  <data name="Text_9cf951e82d56" xml:space="preserve">
+    <value>Тестовый режим нескольких экземпляров</value>
+  </data>
   <data xml:space="preserve" name="Text_9d19ac7b2039">
     <value>Папка журналов</value>
   </data>
@@ -1335,6 +1371,9 @@
   </data>
   <data xml:space="preserve" name="Text_9f365252d60f">
     <value>Устраните ошибку проверки в настройках, затем обновите состояние.</value>
+  </data>
+  <data name="Text_9f59b95311b3" xml:space="preserve">
+    <value>Waypoint закрывается. Дождитесь завершения, затем откройте его снова.</value>
   </data>
   <data xml:space="preserve" name="Text_a0160f336a55">
     <value>Не удалось открыть папку: </value>
@@ -1770,6 +1809,9 @@
   <data xml:space="preserve" name="Text_d81ab149e977">
     <value>Индиго</value>
   </data>
+  <data name="Text_d81f68261ee7" xml:space="preserve">
+    <value>Waypoint уже открыт</value>
+  </data>
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>Список PR GitHub недоступен. Локальные и полученные ветки доступны; можно ввести номер PR напрямую.</value>
   </data>
@@ -1845,6 +1887,9 @@
   <data xml:space="preserve" name="Text_e4bb9f1ece9a">
     <value>Запустить</value>
   </data>
+  <data name="Text_e5d5f6f3c0d8" xml:space="preserve">
+    <value>Запущенная сборка</value>
+  </data>
   <data xml:space="preserve" name="Text_e62daa01ba01">
     <value>Выберите и проверьте рабочую папку, чтобы увидеть её копии.</value>
   </data>
@@ -1905,6 +1950,9 @@
   <data xml:space="preserve" name="Text_eb660ec5bb55">
     <value>Выберите папку LocalExile с файлом GameServer.slnx</value>
   </data>
+  <data name="Text_ebf30f3177ff" xml:space="preserve">
+    <value>Показать открытое окно</value>
+  </data>
   <data xml:space="preserve" name="Text_ec811d30a89c">
     <value>Яркость</value>
   </data>
@@ -1943,6 +1991,9 @@
   </data>
   <data xml:space="preserve" name="Text_efb840bd2787">
     <value>Собрать моды из исходников</value>
+  </data>
+  <data name="Text_eff6e90ea93a" xml:space="preserve">
+    <value>Запущенный файл</value>
   </data>
   <data xml:space="preserve" name="Text_f013cc16ddca">
     <value>Нужно завершить подготовку. Проверьте пункты ниже.</value>
