@@ -469,7 +469,12 @@
           </ScrollViewer>
         </TabItem>
       </local:PageHost>
-      <TextBlock Grid.Row="3" x:Name="LastCheckedLabel" Text="{local:Loc Text_a03efc4496c5}" Style="{StaticResource Caption}" Margin="0,16,0,0"/>
+      <StackPanel Grid.Row="3" Margin="0,10,0,0">
+        <Border BorderBrush="{DynamicResource Outline}" BorderThickness="0,1,0,0" Padding="0,6,0,4">
+          <UniformGrid x:Name="ServiceIndicatorStrip" Columns="4"/>
+        </Border>
+        <TextBlock x:Name="LastCheckedLabel" Text="{local:Loc Text_a03efc4496c5}" Style="{StaticResource Caption}" Margin="0,4,0,0"/>
+      </StackPanel>
     </Grid>
   </Grid>
 </Window>

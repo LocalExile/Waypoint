@@ -348,6 +348,9 @@
   <data xml:space="preserve" name="Text_2511413756fa">
     <value>Review the redacted text before copying. Redaction recognizes common patterns; check for any private details it missed.</value>
   </data>
+  <data name="Text_25855b01c0a7" xml:space="preserve">
+    <value>Refresh to verify this checkout’s current status.</value>
+  </data>
   <data xml:space="preserve" name="Text_25ce306e93b9">
     <value>Close the game before stopping servers.</value>
   </data>
@@ -1155,6 +1158,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data xml:space="preserve" name="Text_798ca2ce18bf">
     <value>Create account</value>
   </data>
+  <data name="Text_7ac5b6d5456b" xml:space="preserve">
+    <value>Show service details</value>
+  </data>
   <data xml:space="preserve" name="Text_7af959bccf93">
     <value>Get SDK</value>
   </data>
@@ -1788,6 +1794,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c29f3cadd717" xml:space="preserve">
     <value>Minimizing to tray always keeps services running. This choice applies to a full exit.</value>
+  </data>
+  <data name="Text_c2ce3224739f" xml:space="preserve">
+    <value>{0}: {1}. Show service details.</value>
   </data>
   <data xml:space="preserve" name="Text_c2e0c347e274">
     <value>league</value>

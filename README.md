@@ -50,6 +50,10 @@ Optional service shutdown on a full exit uses the existing graceful stop. If the
 first or choose **Exit and leave running**. A shutdown failure keeps Waypoint open; exit never force-kills a process.
 See [notification-area behavior](docs/tray-behavior.md).
 
+The persistent status strip shows **Patch**, **Gateway**, **Auth** and **Game** on every page. Green means ready/running,
+red stopped, amber starting/attention, and neutral unverified. Each light also has a name, state and symbol; accessibility
+palettes and custom status colors apply. Click an indicator to open its service details. See [service indicators](docs/service-indicators.md).
+
 ## Requirements
 
 | Requirement | Used for |

@@ -58,6 +58,7 @@ public partial class App : Application
     {
         Appearance = ThemePalette.Normalize(settings);
         ThemeResources.Apply(Resources, Appearance, SystemLight, contrast);
+        foreach (var window in Windows.OfType<MainWindow>()) window.RefreshServiceIndicatorAppearance();
     }
     public void ApplyContrast(bool enabled) { contrast = enabled; ApplyAppearance(Appearance); }
 

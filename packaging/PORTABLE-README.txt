@@ -22,6 +22,8 @@ This is a Windows x64 portable preview. No installer is required.
 Use Ctrl+1 through Ctrl+9 to choose a page, Ctrl+Tab or Ctrl+Shift+Tab to
 cycle pages, Ctrl+F to search the current page and F5 to refresh local status.
 On Windows 11, hover over the maximize button to open native Snap Layouts.
+Patch, Gateway, Auth and Game status lights stay visible below every page.
+Each has a name, state text and symbol; click one to open its service details.
 
 Keep all files and subfolders together. Moving only the EXE will not work.
 The launcher includes its .NET Desktop runtime. Building/running LocalExile

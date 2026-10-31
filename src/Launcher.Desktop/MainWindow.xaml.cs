@@ -61,6 +61,7 @@ public partial class MainWindow : Window
         UseProfileBox.IsChecked = settings.UseLocalProfile;
         LoadDevelopmentPreferences();
         InitializeInteraction();
+        InitializeServiceIndicators();
         InitializeAccounts();
         InitializeWindowFrame();
         InitializeAppearance();
@@ -116,6 +117,7 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             snapshot = null;
+            UpdateServiceIndicators(null);
             UpdateSourceSelection();
             UpdateBackupSelection();
             HotReloadStateLabel.Text = L.Text("Unavailable");
@@ -171,6 +173,7 @@ public partial class MainWindow : Window
 
     void Render(RuntimeSnapshot state)
     {
+        UpdateServiceIndicators(state);
         RenderMods(state);
         RenderDevelopment(state);
         RenderAccounts(state);
@@ -499,6 +502,7 @@ public partial class MainWindow : Window
             RepositoryPathBox.Text = path;
             samples.Clear();
             snapshot = null;
+            UpdateServiceIndicators(null);
             sourceChoices = [];
             SourcesList.ItemsSource = null;
             BackupsList.ItemsSource = null;

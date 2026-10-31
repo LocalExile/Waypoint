@@ -175,6 +175,7 @@ static class Program
         new System.Windows.Interop.WindowInteropHelper(window).EnsureHandle();
         AppearanceChecks.Run(app,window,Check);
         BrandArtworkChecks.Run(app,window,Check);
+        ServiceIndicatorChecks.Run(app,window,Check);
         StartupChecks.Run(app,window,Check);
         TrayChecks.Run(app,window,Check);
         NativeTrayChecks.Run(window,Check);

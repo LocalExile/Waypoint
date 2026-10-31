@@ -348,6 +348,9 @@
   <data xml:space="preserve" name="Text_2511413756fa">
     <value>Проверьте текст перед копированием. Автоматическое скрытие распознаёт типичные данные; убедитесь, что личных сведений не осталось.</value>
   </data>
+  <data name="Text_25855b01c0a7" xml:space="preserve">
+    <value>Обновите данные, чтобы проверить текущее состояние этой рабочей копии.</value>
+  </data>
   <data xml:space="preserve" name="Text_25ce306e93b9">
     <value>Закройте игру перед остановкой серверов.</value>
   </data>
@@ -1155,6 +1158,9 @@
   <data xml:space="preserve" name="Text_798ca2ce18bf">
     <value>Создать аккаунт</value>
   </data>
+  <data name="Text_7ac5b6d5456b" xml:space="preserve">
+    <value>Показать сведения о службе</value>
+  </data>
   <data xml:space="preserve" name="Text_7af959bccf93">
     <value>Скачать SDK</value>
   </data>
@@ -1788,6 +1794,9 @@
   </data>
   <data name="Text_c29f3cadd717" xml:space="preserve">
     <value>При сворачивании в трей службы всегда продолжают работать. Этот выбор применяется только при полном выходе.</value>
+  </data>
+  <data name="Text_c2ce3224739f" xml:space="preserve">
+    <value>{0}: {1}. Показать сведения о службе.</value>
   </data>
   <data xml:space="preserve" name="Text_c2e0c347e274">
     <value>Лига</value>

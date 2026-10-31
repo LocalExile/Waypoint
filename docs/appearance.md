@@ -45,6 +45,10 @@ color change; Cancel on the parent editor cancels the complete appearance previe
 - Windows High Contrast takes precedence over all palettes, including custom colors, and retains the selected reading
   font/text size. System theme and High Contrast preferences are read only.
 
+The persistent Patch/Gateway/Auth/Game lights use the existing success, error, attention and secondary-text colors.
+Names, state text and distinct symbols keep them readable without color. Custom colors and vision profiles apply live.
+Their glow is static; increased contrast and Windows High Contrast remove it. See [service indicators](service-indicators.md).
+
 Recovery: **Escape** cancels the current preview. **Ctrl+R** resets the appearance editor. In the workspace,
 **Ctrl+Shift+R** saves default appearance preferences without changing the checkout or saves. Existing page/search/refresh
 keyboard shortcuts remain available. The new controls have application-provided accessible names and Russian labels.

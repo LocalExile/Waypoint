@@ -41,6 +41,7 @@ public partial class MainWindow
         RefreshBackups();
         ApplySourceFilter();
         foreach (var row in serviceRows) row.RefreshLanguage();
+        foreach (var indicator in serviceIndicators) indicator.RefreshLanguage();
         ModsList.Items.Refresh();
         DiscoveryStatus.Text = L.Text(discovering
             ? "Checking upstream HEAD and searching common local folders… You can still Browse to choose a location."

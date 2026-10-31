@@ -27,6 +27,7 @@ public static class ThemeResources
         foreach (int size in new[] { 10, 11, 12, 13, 14, 16, 18, 21, 22, 23, 27 }) Set("Font" + size, size * settings.TextScale / 100d);
         Set("FocusThickness", new Thickness(settings.StrongFocus ? 4 : 2));
         Set("AnimateProgress", !settings.ReduceMotion && SystemParameters.ClientAreaAnimation);
+        Set("ServiceGlowEnabled", !highContrast && !settings.IncreaseContrast);
         Set("WorkspaceMinHeight", 380 * Math.Pow(settings.TextScale / 100d, 2) * (settings.Font == "OpenDyslexic" ? 1.3 : 1));
         bool compact = settings.TextScale >= 125 || settings.Font == "OpenDyslexic";
         Set("SidebarDetailsExpanded", !compact);
