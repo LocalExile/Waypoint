@@ -252,6 +252,9 @@
   <data name="Text_0dc3484d5ab2" xml:space="preserve">
     <value>Аккаунтов пока нет: зарегистрируйте первый ниже.</value>
   </data>
+  <data name="Text_0dcc8c70ea9d" xml:space="preserve">
+    <value>Качество {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_0de9f358ad56">
     <value>Границы</value>
   </data>
@@ -429,6 +432,12 @@
   <data name="Text_162f35a6c5a0" xml:space="preserve">
     <value>Подготовка ключей входа</value>
   </data>
+  <data name="Text_162f9d178de0" xml:space="preserve">
+    <value>Гнёзда</value>
+  </data>
+  <data name="Text_16d36906164f" xml:space="preserve">
+    <value>Начать заново с пустого предмета? Изменения в текущем не сохранены.</value>
+  </data>
   <data xml:space="preserve" name="Text_16d6780ed99d">
     <value>Зависимость недоступна</value>
   </data>
@@ -551,6 +560,9 @@
   </data>
   <data xml:space="preserve" name="Text_1c7e31690f17">
     <value>Установите Python 3.9 или новее с python.org, включив добавление в PATH. Перезапустите Waypoint и нажмите «Повторить проверку». Frida необязательна и не нужна для обычной игры.</value>
+  </data>
+  <data name="Text_1c839bb4f712" xml:space="preserve">
+    <value>Сброс конструктора</value>
   </data>
   <data name="Text_1c98b88e71b9" xml:space="preserve">
     <value>Полностью закрыть Waypoint.</value>
@@ -925,6 +937,9 @@
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Полная копия</value>
   </data>
+  <data name="Text_2f0bd5f62bba" xml:space="preserve">
+    <value>Основа: {0}</value>
+  </data>
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>Задать пароль…</value>
   </data>
@@ -1042,6 +1057,9 @@
   </data>
   <data name="Text_34da57ce0a19" xml:space="preserve">
     <value>live.ps1 выполняется; проверьте игровые данные, когда он завершится.</value>
+  </data>
+  <data name="Text_34e060db8ded" xml:space="preserve">
+    <value>Предмет в виде текста</value>
   </data>
   <data name="Text_35045f868d57" xml:space="preserve">
     <value>Python не найден: запись планировок и консоль недоступны</value>
@@ -1278,6 +1296,9 @@
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Язык сохранён.</value>
   </data>
+  <data name="Text_42429a36b8ac" xml:space="preserve">
+    <value>Класс предмета</value>
+  </data>
   <data name="Text_42610696b9f9" xml:space="preserve">
     <value>Эти данные можно просматривать, но изменение аккаунтов отключено: схема хранения или состояние импорта не распознаны.</value>
   </data>
@@ -1347,6 +1368,9 @@
   <data xml:space="preserve" name="Text_4700b9ee6a2f">
     <value>Используйте круг, клавиши со стрелками на ползунке или точный HEX-код. Escape отменяет это изменение цвета.</value>
   </data>
+  <data name="Text_4709a224b4c0" xml:space="preserve">
+    <value>Конструктор не делает зачарования</value>
+  </data>
   <data name="Text_47483ec2a678" xml:space="preserve">
     <value>live.ps1 -ClientOnly: игра с уже запущенными серверами</value>
   </data>
@@ -1358,6 +1382,9 @@
   </data>
   <data xml:space="preserve" name="Text_477c5451ef0b">
     <value>Очистить поиск модов</value>
+  </data>
+  <data name="Text_47b09d87605c" xml:space="preserve">
+    <value>{0}: модификаторов: {1}, все строки найдены.</value>
   </data>
   <data name="Text_47c062d35d2c" xml:space="preserve">
     <value>Совпадений нет</value>
@@ -1718,6 +1745,9 @@
   <data xml:space="preserve" name="Text_5b72b116c129">
     <value>Отслеживать код Gateway во время игры</value>
   </data>
+  <data name="Text_5b8c94f7fd17" xml:space="preserve">
+    <value>ЧЕМ СТАНОВИТСЯ КАЖДАЯ СТРОКА</value>
+  </data>
   <data name="Text_5bb7de320b88" xml:space="preserve">
     <value>В {0} есть собственные коммиты, которых нет в запросе на слияние ({1}); сначала отправьте или перенесите их</value>
   </data>
@@ -1997,6 +2027,9 @@
   <data name="Text_680ce38047bf" xml:space="preserve">
     <value>Охотник</value>
   </data>
+  <data name="Text_68342976d01d" xml:space="preserve">
+    <value>Вставьте текст предмета выше.</value>
+  </data>
   <data xml:space="preserve" name="Text_686046d08c9f">
     <value>Сборка/перезапуск; проверьте вывод Gateway на ошибки</value>
   </data>
@@ -2072,6 +2105,12 @@
   <data name="Text_6cef8efc5471" xml:space="preserve">
     <value>Из {0}</value>
   </data>
+  <data name="Text_6d0e201a1cb9" xml:space="preserve">
+    <value>Импортирован {0}, модификаторов: {1}; пропущено строк: {2}. «Сохранить» оставит его в списке.</value>
+  </data>
+  <data name="Text_6d3add9cf2ef" xml:space="preserve">
+    <value>значения вне тира</value>
+  </data>
   <data name="Text_6dafb2da0b4c" xml:space="preserve">
     <value>★ Закрепить</value>
   </data>
@@ -2116,6 +2155,9 @@
   </data>
   <data name="Text_6f3c603b812d" xml:space="preserve">
     <value>СЛУЖБА</value>
+  </data>
+  <data name="Text_6f6c6e357eab" xml:space="preserve">
+    <value>Импорт предмета</value>
   </data>
   <data name="Text_6f7c506d045e" xml:space="preserve">
     <value>Режим разработчика</value>
@@ -2357,6 +2399,9 @@
   <data xml:space="preserve" name="Text_7caa2025f375">
     <value>Поля ввода</value>
   </data>
+  <data name="Text_7cc42933ec9d" xml:space="preserve">
+    <value>Id модификатора</value>
+  </data>
   <data xml:space="preserve" name="Text_7cd52f8db23c">
     <value>Синий–жёлтый</value>
   </data>
@@ -2576,6 +2621,9 @@
   <data name="Text_88fccfb10a8d" xml:space="preserve">
     <value>Выполняется {0} …</value>
   </data>
+  <data name="Text_8963e750e358" xml:space="preserve">
+    <value>Чтение …</value>
+  </data>
   <data xml:space="preserve" name="Text_898a809683dd">
     <value>Мод перезагружен.</value>
   </data>
@@ -2723,6 +2771,9 @@
   <data name="Text_908eb71d714e" xml:space="preserve">
     <value>Всё готово. Нажмите «Играть» в Waypoint, чтобы запустить игру. Войдите с учётной записью: её имя вводится в поле Email. При первом запуске в игре выберите Options → Game → Network Mode → Predictive.</value>
   </data>
+  <data name="Text_90eb3b815e3e" xml:space="preserve">
+    <value>{0} — уникальный предмет: крафтер делает только обычные, магические и редкие.</value>
+  </data>
   <data name="Text_9158396951bf" xml:space="preserve">
     <value>То же, что «Остановить всё»: игра, запись планировок, серверы и служба аккаунтов.</value>
   </data>
@@ -2731,6 +2782,9 @@
   </data>
   <data xml:space="preserve" name="Text_91bd172009ab">
     <value>Ревизии исходников и собранных компонентов показываются отдельно. Горячая перезагрузка может применить незакоммиченные изменения; хеш сборки указывает на исходную скомпилированную ревизию.</value>
+  </data>
+  <data name="Text_9205e0dd7cb5" xml:space="preserve">
+    <value>Удалить выбранные предметы (клавиша Delete); Ctrl или Shift выбирает несколько</value>
   </data>
   <data name="Text_92646da937a1" xml:space="preserve">
     <value>Запускается кнопками «Играть» или «Запустить серверы», когда включена «Запись планировок»</value>
@@ -2906,6 +2960,9 @@
   <data xml:space="preserve" name="Text_99efec87ba2a">
     <value>Устраните конфликт рабочей папки</value>
   </data>
+  <data name="Text_9a2ad8cb272e" xml:space="preserve">
+    <value>Удалено сохранённых предметов: {0}</value>
+  </data>
   <data name="Text_9a82f40e3cfb" xml:space="preserve">
     <value>это имя аккаунта уже занято</value>
   </data>
@@ -2925,6 +2982,9 @@
 
 Службы этой установки будут остановлены. Автоматическое копирование: {2}. Исходники, клиент и ключи входа останутся прежними; старому сохранению может понадобиться его исходная ревизия.</value>
   </data>
+  <data name="Text_9ac9ed76c86d" xml:space="preserve">
+    <value>Начать заново с пустого предмета: без основы и модификаторов, поиск и фильтры очищены. Сохранённые предметы остаются.</value>
+  </data>
   <data name="Text_9afaaba23e27" xml:space="preserve">
     <value>Учётная запись создана.</value>
   </data>
@@ -2939,6 +2999,9 @@
   </data>
   <data name="Text_9bc7bc6c8d2a" xml:space="preserve">
     <value>Проверка завершена.</value>
+  </data>
+  <data name="Text_9bf4d9a05005" xml:space="preserve">
+    <value>{0}: модификаторов: {1}. Пропущено строк: {2} (красные): у конструктора нет модификатора с таким текстом.</value>
   </data>
   <data xml:space="preserve" name="Text_9c2f5c362587">
     <value>Создание локальной учётной записи</value>
@@ -2970,6 +3033,9 @@
   <data xml:space="preserve" name="Text_9cea69fd345a">
     <value>Кнопки окна</value>
   </data>
+  <data name="Text_9ceecb44ac12" xml:space="preserve">
+    <value>Конструктор сброшен: выберите основу.</value>
+  </data>
   <data name="Text_9cf951e82d56" xml:space="preserve">
     <value>Тестовый режим нескольких экземпляров</value>
   </data>
@@ -2990,6 +3056,9 @@
   </data>
   <data name="Text_9da689a1ee2c" xml:space="preserve">
     <value>Использовать саму эту папку вместо копии. Это экономит место, но LocalExile будет изменять этот клиент.</value>
+  </data>
+  <data name="Text_9da9ae7b30ae" xml:space="preserve">
+    <value>Нет модификатора с таким текстом</value>
   </data>
   <data name="Text_9df4f4d7fd9d" xml:space="preserve">
     <value>Выбрать другой репозиторий сервера LocalExile; Waypoint перезапустится с ним</value>
@@ -3027,8 +3096,14 @@
   <data name="Text_9fa77e063410" xml:space="preserve">
     <value>Вышла версия {0}; текущая: {1}. Серверы и игра продолжат работать во время обновления.</value>
   </data>
+  <data name="Text_9fd728c66c9a" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
   <data name="Text_9ff9b19918a1" xml:space="preserve">
     <value>Скопируйте команду и вставьте её в чат игры сочетанием Ctrl+V.</value>
+  </data>
+  <data name="Text_a01017bcc8cb" xml:space="preserve">
+    <value>В этом Gateway нет модификатора {0}</value>
   </data>
   <data xml:space="preserve" name="Text_a0160f336a55">
     <value>Не удалось открыть папку: </value>
@@ -3098,6 +3173,9 @@
   </data>
   <data name="Text_a3ac0b8d4d94" xml:space="preserve">
     <value>1.  Загружает LocalExile в выбранную папку или находит уже имеющуюся копию</value>
+  </data>
+  <data name="Text_a3b50c476732" xml:space="preserve">
+    <value>Состояние</value>
   </data>
   <data name="Text_a3b98f7ed11c" xml:space="preserve">
     <value>Введите допустимое имя аккаунта: от 3 до 32 латинских букв, цифр, знаков подчёркивания или дефисов.</value>
@@ -3227,6 +3305,9 @@
   </data>
   <data xml:space="preserve" name="Text_a80983dbe5df">
     <value>Нужны запущенный Gateway, включённый собранный мод и клиент в игровой области (Python + Frida).</value>
+  </data>
+  <data name="Text_a8233259d1a0" xml:space="preserve">
+    <value>Уровень предмета {0}</value>
   </data>
   <data xml:space="preserve" name="Text_a86bfd7816e2">
     <value>Скрипт LocalExile live.ps1</value>
@@ -3801,6 +3882,9 @@
   <data name="Text_c827708ef040" xml:space="preserve">
     <value>Данные аккаунта обновлены.</value>
   </data>
+  <data name="Text_c83931177471" xml:space="preserve">
+    <value>Это не предмет: скопируйте его через Ctrl+C в Path of Building или в игре.</value>
+  </data>
   <data name="Text_c888f98938da" xml:space="preserve">
     <value>{0} дн. назад</value>
   </data>
@@ -3904,6 +3988,9 @@
   </data>
   <data xml:space="preserve" name="Text_cd27f46c485b">
     <value>Настроить цвета</value>
+  </data>
+  <data name="Text_cd4b01b8b2e8" xml:space="preserve">
+    <value>Импортирован {0}, модификаторов: {1}. «Сохранить» оставит его в списке.</value>
   </data>
   <data xml:space="preserve" name="Text_cd78b7af946b">
     <value>Управление копиями</value>
@@ -4067,6 +4154,9 @@
   <data name="Text_d6aae160070e" xml:space="preserve">
     <value>Чистые сохранения после переключения</value>
   </data>
+  <data name="Text_d6b74be161c2" xml:space="preserve">
+    <value>В этом Gateway нет основы «{0}».</value>
+  </data>
   <data name="Text_d6d6be81ee89" xml:space="preserve">
     <value>{0}: обновлено. «Перезапустить серверы» (или «Играть») соберёт новую версию.</value>
   </data>
@@ -4129,6 +4219,9 @@
 Зависимости: {2}
 {3}
 {4}</value>
+  </data>
+  <data name="Text_daee7606b339" xml:space="preserve">
+    <value>Сбросить</value>
   </data>
   <data name="Text_daf3be705205" xml:space="preserve">
     <value>В трей на время игры</value>
@@ -4304,6 +4397,9 @@
   </data>
   <data xml:space="preserve" name="Text_e40f307a9136">
     <value>HEAD совпадает с последним коммитом LocalExile</value>
+  </data>
+  <data name="Text_e43b920e4fec" xml:space="preserve">
+    <value>Вставьте предмет, скопированный через Ctrl+C в Path of Building или в игре (Ctrl+Alt+C в игре добавляет каждый модификатор и его тир). Ниже видно, чем становится каждая строка; красные будут пропущены. Клик по строке выделяет её в тексте.</value>
   </data>
   <data name="Text_e448d0ca53ec" xml:space="preserve">
     <value>Получение последнего обновления</value>
@@ -4618,6 +4714,9 @@
   <data xml:space="preserve" name="Text_f4ccae29e1bb">
     <value>Работает</value>
   </data>
+  <data name="Text_f4cd0e6f4e53" xml:space="preserve">
+    <value>Удалить этот предмет</value>
+  </data>
   <data name="Text_f4cebd794740" xml:space="preserve">
     <value>Запись начнётся при нажатии «Играть» или «Запустить серверы».</value>
   </data>
@@ -4647,6 +4746,9 @@
   </data>
   <data xml:space="preserve" name="Text_f5bbcb40056e">
     <value>Перезапустить {0}</value>
+  </data>
+  <data name="Text_f5fbd7219455" xml:space="preserve">
+    <value>Вставить предмет, скопированный через Ctrl+C в Path of Building или в игре (Ctrl+V здесь делает то же самое)</value>
   </data>
   <data xml:space="preserve" name="Text_f6388410aa5a">
     <value> · файлы не проверены</value>
@@ -4813,6 +4915,9 @@
   <data name="Text_fd609750643a" xml:space="preserve">
     <value>не менее 4 символов</value>
   </data>
+  <data name="Text_fd87c0e90567" xml:space="preserve">
+    <value>Удалить сохранённые предметы ({0} шт.)?</value>
+  </data>
   <data name="Text_fdaabbacfdbf" xml:space="preserve">
     <value>dev host закрыл соединение</value>
   </data>
@@ -4836,6 +4941,9 @@
   </data>
   <data xml:space="preserve" name="Text_fed12611d2d8">
     <value>Океан</value>
+  </data>
+  <data name="Text_feddcf308625" xml:space="preserve">
+    <value>Редкость</value>
   </data>
   <data name="Text_fee9dda2d85a" xml:space="preserve">
     <value>Класс / восхождение</value>

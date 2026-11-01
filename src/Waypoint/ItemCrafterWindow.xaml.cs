@@ -43,6 +43,7 @@ public partial class ItemCrafterWindow : FormWindow
     internal ItemCrafterWindow(Shared shared)
     {
         _shared = shared;
+        Standalone = true;
         // The sliders' ranges raise ValueChanged while the window is still being built.
         _updating = true;
         InitializeComponent();
@@ -67,6 +68,7 @@ public partial class ItemCrafterWindow : FormWindow
         ShowSaved();
         MinWidth = Math.Min(MinWidth, SystemParameters.WorkArea.Width);
         MinHeight = Math.Min(MinHeight, SystemParameters.WorkArea.Height);
+        KeyDown += WindowKeyDown;
         Loaded += (_, _) => KeepOnScreen();
         Loaded += async (_, _) => await LoadCatalog();
         L.Current.PropertyChanged += LanguageChanged;
@@ -901,7 +903,13 @@ public partial class ItemCrafterWindow : FormWindow
         SavedList.SelectedItem = rows.FirstOrDefault(r => r.Item.Key == _item.Key);
         _updating = false;
         SavedEmpty.Visibility = _saved.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-        DuplicateButton.IsEnabled = DeleteButton.IsEnabled = SavedList.SelectedItem is not null;
+        ShowSavedButtons();
+    }
+
+    void ShowSavedButtons()
+    {
+        DuplicateButton.IsEnabled = SavedList.SelectedItems.Count == 1;
+        DeleteButton.IsEnabled = SavedList.SelectedItems.Count > 0;
     }
 
     static string RarityName(string rarity) => rarity switch
@@ -920,8 +928,9 @@ public partial class ItemCrafterWindow : FormWindow
 
     void SavedChosen(object sender, SelectionChangedEventArgs e)
     {
-        DuplicateButton.IsEnabled = DeleteButton.IsEnabled = SavedList.SelectedItem is not null;
-        if (_updating || SavedList.SelectedItem is not SavedRow row || _catalog is null) return;
+        ShowSavedButtons();
+        // With several selected (to delete them) the item on screen stays.
+        if (_updating || SavedList.SelectedItems.Count != 1 || SavedList.SelectedItem is not SavedRow row || _catalog is null) return;
         Open(row.Item.Copy());
     }
 
@@ -941,6 +950,54 @@ public partial class ItemCrafterWindow : FormWindow
         BasesPage.IsChecked = true;
     }
 
+    /// <summary>An item pasted as text (<see cref="ItemImportWindow"/>), as a new unsaved item; the clipboard's text is
+    /// put in when it looks like an item.</summary>
+    void ImportItem(object sender, RoutedEventArgs e)
+    {
+        if (_catalog is null) return;
+        string text = "";
+        try
+        {
+            if (Clipboard.ContainsText() && Clipboard.GetText() is { } clipboard && clipboard.Contains("Rarity:", StringComparison.OrdinalIgnoreCase)) text = clipboard;
+        }
+        catch (System.Runtime.InteropServices.ExternalException) { }
+        var dialog = new ItemImportWindow(this, _catalog, text);
+        if (dialog.ShowDialog() != true || dialog.Imported is not { } imported) return;
+        Open(imported.Item);
+        int left = imported.Unmatched.Count;
+        Status(left == 0
+            ? L.Text("Imported {0} with {1} modifiers. Save keeps it in the list.", imported.Name, imported.Item.Mods.Count)
+            : L.Text("Imported {0} with {1} modifiers; {2} lines were left out. Save keeps it in the list.", imported.Name, imported.Item.Mods.Count, left));
+    }
+
+    void WindowKeyDown(object sender, KeyEventArgs e)
+    {
+        // A text box takes Ctrl+V itself; anywhere else it imports.
+        if (e.Key != Key.V || Keyboard.Modifiers != ModifierKeys.Control || e.OriginalSource is TextBoxBase or ComboBox) return;
+        ImportItem(sender, e);
+        e.Handled = true;
+    }
+
+    /// <summary>The crafter as it opens: an empty item, every search and filter cleared, the Base page. Asks first when the
+    /// item on screen has changes no save holds.</summary>
+    void ResetCrafter(object sender, RoutedEventArgs e)
+    {
+        var saved = _saved.FirstOrDefault(i => i.Key == _item.Key);
+        bool unsaved = _base is not null && (saved is null || saved.Spec() != _item.Spec() || saved.Label != _item.Label);
+        if (unsaved && !Dialog.Ask(this, DialogKind.Warning, L.Text("Reset the crafter"),
+            L.Text("Start over with an empty item? The changes to this one are not saved."), L.Text("Reset"), cancelByDefault: true)) return;
+        _class = null;
+        BaseSearch.Text = ModSearch.Text = SavedSearch.Text = "";
+        BestTiers.IsChecked = true;
+        AnyLevel.IsChecked = false;
+        ModKind.SelectedIndex = 0;
+        SavedList.UnselectAll();
+        Open(new CraftedItem());
+        ShowClasses();
+        BasesPage.IsChecked = true;
+        Status(L.Text("The crafter is reset: choose a base."));
+    }
+
     void DuplicateItem(object sender, RoutedEventArgs e)
     {
         if (SavedList.SelectedItem is not SavedRow row) return;
@@ -954,16 +1011,37 @@ public partial class ItemCrafterWindow : FormWindow
         ShowSaved();
     }
 
-    void DeleteItem(object sender, RoutedEventArgs e)
+    void DeleteItem(object sender, RoutedEventArgs e) => Delete([.. SavedList.SelectedItems.OfType<SavedRow>()]);
+
+    void DeleteRowClicked(object sender, RoutedEventArgs e)
     {
-        if (SavedList.SelectedItem is not SavedRow row) return;
-        if (!Dialog.Ask(this, DialogKind.Warning, L.Text("Delete saved item"), L.Text("Delete {0} from the saved items?", row.Name), L.Text("Delete"),
-            cancelByDefault: true)) return;
-        _saved.RemoveAll(i => i.Key == row.Item.Key);
-        Persist();
-        if (_item.Key == row.Item.Key) _item.Key = Guid.NewGuid().ToString("N");
+        if (((FrameworkElement)sender).Tag is SavedRow row) Delete([row]);
+    }
+
+    void SavedListKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Delete || SavedList.SelectedItems.Count == 0) return;
+        DeleteItem(sender, e);
+        e.Handled = true;
+    }
+
+    /// <summary>Saved items out of the list, once asked. The item on screen stays, as a new unsaved one if it was among them.</summary>
+    void Delete(IReadOnlyList<SavedRow> rows)
+    {
+        if (rows.Count == 0) return;
+        string question = rows.Count == 1 ? L.Text("Delete {0} from the saved items?", rows[0].Name) : L.Text("Delete {0} saved items?", rows.Count);
+        if (!Dialog.Ask(this, DialogKind.Warning, L.Text("Delete saved item"), question, L.Text("Delete"), cancelByDefault: true)) return;
+        var keys = rows.Select(r => r.Item.Key).ToHashSet(StringComparer.Ordinal);
+        _saved.RemoveAll(i => keys.Contains(i.Key));
+        if (!Persist())
+        {
+            _saved = CraftedItems.Load();
+            ShowSaved();
+            return;
+        }
+        if (keys.Contains(_item.Key)) _item.Key = Guid.NewGuid().ToString("N");
         ShowSaved();
-        Status(L.Text("Deleted {0}", row.Name));
+        Status(rows.Count == 1 ? L.Text("Deleted {0}", rows[0].Name) : L.Text("Deleted {0} saved items", rows.Count));
     }
 
     void SaveItem(object sender, RoutedEventArgs e)
@@ -1030,6 +1108,7 @@ public partial class ItemCrafterWindow : FormWindow
     void Status(string text, bool error = false)
     {
         StatusText.Text = text;
+        StatusText.ToolTip = text;
         StatusText.Foreground = Theme.Brush(error ? "Shell.Error" : "Shell.TextSecondary");
         StatusIcon.Kind = error ? PackIconKind.AlertCircleOutline : PackIconKind.InformationOutline;
         StatusIcon.Foreground = StatusText.Foreground;

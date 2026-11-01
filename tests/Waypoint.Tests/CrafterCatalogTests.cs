@@ -40,6 +40,75 @@ public class CrafterCatalogTests
     }
 
     [Fact]
+    public void An_item_Path_of_Building_copied_opens_with_its_modifiers_found_by_their_words()
+    {
+        var catalog = CrafterCatalog.Parse(Lines + "\n" + """{"type":"word","list":2,"key":1222507149,"text":" Abyss"}""");
+        // As PoB copies an item it crafted: the prefix's Id, then lines with its tags; the mana mod's two lines go together.
+        var read = ItemImport.Read("""
+            Rarity: RARE
+            Dire Abyss
+            Iron Ring
+            Crafted: true
+            Prefix: {range:0}IncreasedLife7
+            Suffix: None
+            Item Level: 70
+            Implicits: 0
+            {tags:life}{prefix}+100 to maximum Life
+            15% reduced maximum Mana
+            Regenerate 1.2 Mana per second
+            {crafted}Has no modifier in the crafter
+            Corrupted
+            """, catalog);
+        var item = read.Item;
+        Assert.Equal(("Metadata/Items/Rings/Ring1", "rare", 70, "Dire Abyss"), (item.Base, item.Rarity, item.ItemLevel, item.Label));
+        Assert.Equal([4053401100u, 1222507149u], item.Name);
+        Assert.Equal(["corrupted"], item.States);
+        Assert.Equal(["IncreasedLife7", "ReducedMana1"], item.Mods.Select(m => m.Id));
+        Assert.Equal([100], item.Mods[0].Values);
+        Assert.Equal(["15% reduced maximum Mana", "Regenerate 1.2 Mana per second"], catalog.Lines(catalog.Mods["ReducedMana1"], item.Mods[1].Values));
+        Assert.Equal(["{crafted}Has no modifier in the crafter"], read.Unmatched.Select(l => l.Text.Trim()));
+        // A value no tier rolls is kept as it is; a unique is not read.
+        Assert.Equal([130], ItemImport.Read("Rarity: MAGIC\nIron Ring\nImplicits: 0\n+130 to maximum Life", catalog).Item.Mods.Single().Values);
+        Assert.Equal(0, Assert.Throws<ImportException>(() => ItemImport.Read("Doedre's Damning\nIron Ring\nImplicits: 0", catalog)).Line);
+    }
+
+    [Fact]
+    public void An_item_the_game_copied_takes_the_tier_its_ranges_name()
+    {
+        var catalog = CrafterCatalog.Parse(Lines);
+        // The game's Ctrl+Alt+C: a header per modifier, each value with its tier's range. 500 is beyond every tier: the range
+        // picks the tier, and the value stays.
+        var read = ItemImport.Read("""
+            Item Class: Rings
+            Rarity: Rare
+            Sol Hold
+            Iron Ring
+            --------
+            Requirements:
+            Level: 44
+            --------
+            Item Level: 84
+            --------
+            { Prefix Modifier "Robust" (Tier: 2) — Life }
+            +500(80-99) to maximum Life
+            { Suffix Modifier "" — Mana }
+            15(10-20)% reduced maximum Mana
+            Regenerate 1.2(1-1.5) Mana per second
+            (Mana is what skills cost)
+            { Suffix Modifier "of Nothing" — Attribute }
+            Allocates a passive the crafter has no modifier for
+            --------
+            Hunter Item
+            """, catalog);
+        Assert.Equal(("rare", 84, "Sol Hold"), (read.Item.Rarity, read.Item.ItemLevel, read.Item.Label));
+        Assert.Equal(["hunter"], read.Item.States);
+        Assert.Equal(["IncreasedLife6", "ReducedMana1"], read.Item.Mods.Select(m => m.Id));
+        Assert.Equal([500], read.Item.Mods[0].Values);
+        Assert.Equal(["Allocates a passive the crafter has no modifier for"], read.Unmatched.Select(l => l.Text.Trim()));
+        Assert.Equal(ImportStatus.Skipped, read.Lines.Single(l => l.Text.StartsWith('(')).Status);
+    }
+
+    [Fact]
     public void A_line_break_in_a_description_makes_two_lines()
     {
         var description = new StatDescription(["charges"], [new DescriptionVariant(["#"], @"Used {0} times\nDoes not Queue", [])]);

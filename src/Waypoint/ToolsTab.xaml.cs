@@ -29,7 +29,15 @@ public partial class ToolsTab : UserControl
             _crafter.Activate();
             return;
         }
-        _crafter = new ItemCrafterWindow(_shared) { Owner = Window.GetWindow(this) };
+        // A window of its own, not owned by Waypoint's: either can be in front. It opens centred on Waypoint's.
+        _crafter = new ItemCrafterWindow(_shared);
+        if (Window.GetWindow(this) is { WindowState: WindowState.Normal, IsVisible: true } main)
+        {
+            _crafter.WindowStartupLocation = WindowStartupLocation.Manual;
+            _crafter.Left = main.Left + (main.ActualWidth - _crafter.Width) / 2;
+            _crafter.Top = main.Top + (main.ActualHeight - _crafter.Height) / 2;
+        }
+        else _crafter.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _crafter.Closed += (_, _) => _crafter = null;
         _crafter.Show();
     }

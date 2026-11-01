@@ -16,6 +16,12 @@ namespace Waypoint;
 public class FormWindow : Window
 {
     FrameworkElement? _caption;
+    Button? _maximize;
+    Border? _frame;
+
+    /// <summary>A tool's own window rather than a dialog: no owner, in the taskbar, with Minimize and Maximize. Set before
+    /// it is shown.</summary>
+    protected bool Standalone { get; set; }
 
     public FormWindow()
     {
@@ -23,6 +29,10 @@ public class FormWindow : Window
         WindowChrome.SetWindowChrome(this, new WindowChrome { CaptionHeight = 32, ResizeBorderThickness = new Thickness(6),
             GlassFrameThickness = new Thickness(1), CornerRadius = new CornerRadius(0), UseAeroCaptionButtons = false });
         CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, (_, _) => SystemCommands.CloseWindow(this)));
+        CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, (_, _) => SystemCommands.MinimizeWindow(this)));
+        CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, (_, _) => SystemCommands.MaximizeWindow(this)));
+        CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, (_, _) => SystemCommands.RestoreWindow(this)));
+        StateChanged += (_, _) => UpdateState();
         SetResourceReference(BackgroundProperty, "Shell.Background");
         SetResourceReference(ForegroundProperty, "Shell.Text");
         SetResourceReference(FontFamilyProperty, "AppFont");
@@ -48,6 +58,27 @@ public class FormWindow : Window
         }
         if (_caption is not null) _caption.SizeChanged += CaptionSizeChanged;
         UpdateCaption();
+        _frame = GetTemplateChild("DialogFrame") as Border;
+        _maximize = GetTemplateChild("DialogMaximizeButton") as Button;
+        if (Standalone && GetTemplateChild("DialogMinimizeButton") is Button minimize && _maximize is not null)
+        {
+            minimize.Visibility = _maximize.Visibility = Visibility.Visible;
+            minimize.ToolTip = L.Text("Minimize");
+            AutomationProperties.SetName(minimize, L.Text("Minimize"));
+        }
+        UpdateState();
+    }
+
+    /// <summary>Maximize or Restore, and a maximized window kept inside the frame Windows puts beyond the screen.</summary>
+    void UpdateState()
+    {
+        bool maximized = WindowState == WindowState.Maximized;
+        if (_frame is not null) _frame.Margin = maximized ? SystemParameters.WindowResizeBorderThickness : new Thickness(0);
+        if (_maximize is null) return;
+        _maximize.Content = maximized ? "" : "";
+        _maximize.Command = maximized ? SystemCommands.RestoreWindowCommand : SystemCommands.MaximizeWindowCommand;
+        _maximize.ToolTip = maximized ? L.Text("Restore down") : L.Text("Maximize");
+        AutomationProperties.SetName(_maximize, (string)_maximize.ToolTip);
     }
 
     void CaptionSizeChanged(object sender, SizeChangedEventArgs e) => UpdateCaption();
@@ -63,6 +94,7 @@ public class FormWindow : Window
         base.OnSourceInitialized(e);
         // A dialog keeps moving, resizing and the system menu, but does not minimize its blocked owner or offer to maximize
         // without buttons for it.
+        if (Standalone) return;
         nint hwnd = new WindowInteropHelper(this).Handle;
         const int styleIndex = -16;
         long style = GetWindowLongPtr(hwnd, styleIndex).ToInt64();

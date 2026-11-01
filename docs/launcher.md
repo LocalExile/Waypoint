@@ -445,7 +445,8 @@ removed there, and it goes to the clipboard only when asked.
 
 ### Tools: the item crafter
 
-**Open item crafter** opens its window (one at a time; the button brings it forward). It makes any item the server can
+**Open item crafter** opens its window (one at a time; the button brings it forward): a window of its own in the
+taskbar, with Minimize and Maximize, not kept in front of Waypoint's. It makes any item the server can
 write and gives it to the character in game.
 
 - **Base** (left): the item classes as icons (Material Design's, no game artwork), a search and the bases with their
@@ -463,11 +464,25 @@ write and gives it to the character in game.
 - **Preview** (right): the item as text in the game's rarity and modifier colours (readable on every scheme), with its
   name, item level, requirements, sockets, implicits, modifiers and states.
 - **Save** keeps it in **Saved** (left) with an optional label, in `%LOCALAPPDATA%\Waypoint\crafted-items.json`:
-  Waypoint's own file, never in the checkout. A saved item opens with a click; **Duplicate** and **Delete** act on the
-  selected one, **New item** starts again.
+  Waypoint's own file, never in the checkout. A saved item opens with a click; **New item** starts again. The icons
+  beside it duplicate the selected item and delete the selected ones (Ctrl or Shift selects several, the Delete key
+  deletes them too); each row also has its own delete icon under the mouse. Deleting asks first; the item on screen stays.
+- **Import item** (or Ctrl+V outside a text box) opens a window with the item's text: what is on the clipboard when it
+  looks like an item, editable. It takes Path of Building's Ctrl+C and the game's Ctrl+C or Ctrl+Alt+C. Under the text,
+  every line shows what it becomes (a field, a modifier with its affix name and Id, or skipped); the lines left out are
+  red, and so is the line that stops the import (a unique, a base this Gateway lacks). Clicking a line selects it in the
+  text. **Add** opens the item as a new, unsaved one: its base, rarity, item level, quality, sockets, states and
+  influences, a rare's name (as its label, and as the name when it is two of the game's words), and its modifiers.
+  Each line is matched to the modifier the game words that way: the Mods.dat Ids PoB writes for an item crafted in it,
+  and the game's tier ranges and affix names (Ctrl+Alt+C, a header per modifier) come first, then the base's own pools;
+  the values are the ones that give the line's numbers (outside the tier's range only when no tier gives them).
+  Enchantments and lines no modifier words are left out. Uniques are refused: the crafter makes normal, magic and rare
+  items. `ItemImport.cs`, `ItemImportWindow`.
 - **Give item** sends `/item_give <the item as JSON>` through the client control bridge, as the Console does, so the
   character must be in game; the item goes into the main inventory and the Gateway's reply shows in the status line.
   The copy button puts that command on the clipboard.
+- **Reset** starts over as the window opens: an empty item, every search and filter cleared, the Base page. It asks
+  first when the item on screen has changes no save holds; saved items stay.
 
 The data is the Gateway's own (`GameServer.Gateway crafter`, read once per Gateway build): the bases, the modifiers each
 can have (the server's own rolling rules), their stat descriptions in English (the checkout's
@@ -505,7 +520,7 @@ adapter does not know can be browsed but not changed.
 | `AppearanceDialog.cs`, `ColorPickerDialog.cs`, `AccountActionDialog.cs`, `WindowBehaviorChoices.cs` | the appearance, an account change, the close choices |
 | `Workspace.cs`, `OutputPanel.xaml` | the app's side of the adapter: the last inspection, the operations and their output |
 | `SetupTab`, `ModsTab`, `BackupsTab`, `SettingsTab` | those sections |
-| `ToolsTab`, `ItemCrafterWindow`, `CrafterCatalog.cs`, `CraftedItems.cs` | the Tools section; the item crafter, the Gateway's crafter data and the game's wording of modifiers, the saved items |
+| `ToolsTab`, `ItemCrafterWindow`, `CrafterCatalog.cs`, `CraftedItems.cs`, `ItemImport.cs`, `ItemImportWindow` | the Tools section; the item crafter, the Gateway's crafter data and the game's wording of modifiers, the saved items, importing an item copied from Path of Building or the game |
 | `Loc.cs`, `src/Launcher.Core/Localization.cs`, `src/Launcher.Core/Resources/` | interface text in XAML and code, the English and Russian catalogs |
 | `src/Launcher.Core/` | the adapter's client (`RuntimeClient.cs`, `BridgeScripts.cs`), the mods, backups, accounts, setup guidance, checkout discovery, diagnostics, the single instance |
 | `scripts/` | the adapter: `RuntimeBridge.ps1` and its parts, `SaveBackup.py`, `AccountData.py` |

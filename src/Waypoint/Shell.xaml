@@ -356,7 +356,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1">
+                    <Border x:Name="DialogFrame" Background="{TemplateBinding Background}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -366,11 +366,20 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock x:Name="DialogTitle" Text="{TemplateBinding Title}" Foreground="{DynamicResource Shell.Text}" FontSize="{DynamicResource Font12}"
                                            Margin="16,6,12,6" VerticalAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
                                            ToolTip="{TemplateBinding Title}" IsHitTestVisible="False" />
-                                <Button x:Name="DialogCloseButton" Grid.Column="1" Content="&#xE8BB;" Style="{StaticResource Shell.CaptionCloseButton}"
+                                <!-- Only a window that stands on its own shows these (FormWindow.Standalone). -->
+                                <Button x:Name="DialogMinimizeButton" Grid.Column="1" Content="&#xE921;" Style="{StaticResource Shell.CaptionButton}" Visibility="Collapsed"
+                                        Height="Auto" VerticalAlignment="Stretch" WindowChrome.IsHitTestVisibleInChrome="True"
+                                        Command="{x:Static SystemCommands.MinimizeWindowCommand}" />
+                                <Button x:Name="DialogMaximizeButton" Grid.Column="2" Content="&#xE922;" Style="{StaticResource Shell.CaptionButton}" Visibility="Collapsed"
+                                        Height="Auto" VerticalAlignment="Stretch" WindowChrome.IsHitTestVisibleInChrome="True"
+                                        Command="{x:Static SystemCommands.MaximizeWindowCommand}" />
+                                <Button x:Name="DialogCloseButton" Grid.Column="3" Content="&#xE8BB;" Style="{StaticResource Shell.CaptionCloseButton}"
                                         Height="Auto" VerticalAlignment="Stretch" WindowChrome.IsHitTestVisibleInChrome="True"
                                         Command="{x:Static SystemCommands.CloseWindowCommand}" />
                             </Grid>

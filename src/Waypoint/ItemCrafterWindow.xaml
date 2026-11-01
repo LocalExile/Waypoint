@@ -3,8 +3,8 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
               xmlns:l="clr-namespace:Waypoint"
-              Title="{l:Loc 'Item crafter'}" Width="1320" Height="840" MinWidth="1060" MinHeight="620"
-              WindowStartupLocation="CenterOwner" ShowInTaskbar="True">
+              Title="{l:Loc 'Item crafter'}" Width="1440" Height="840" MinWidth="1110" MinHeight="620"
+              ShowInTaskbar="True">
     <l:FormWindow.Resources>
         <!-- A small round tag: a modifier's kind or tier. -->
         <Style x:Key="Crafter.Tag" TargetType="Border">
@@ -64,7 +64,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="27*" MinWidth="290" />
+            <ColumnDefinition Width="27*" MinWidth="340" />
             <ColumnDefinition Width="44*" MinWidth="440" />
             <ColumnDefinition Width="29*" MinWidth="290" />
         </Grid.ColumnDefinitions>
@@ -142,18 +142,48 @@
 
                     <!-- Saved items. -->
                     <DockPanel x:Name="SavedView" Visibility="Collapsed">
-                        <WrapPanel DockPanel.Dock="Top">
-                            <Button Content="{l:Loc 'New item'}" Click="NewItem" />
-                            <Button x:Name="DuplicateButton" Content="{l:Loc 'Duplicate'}" Click="DuplicateItem" IsEnabled="False" />
-                            <Button x:Name="DeleteButton" Content="{l:Loc 'Delete'}" Click="DeleteItem" IsEnabled="False" />
-                        </WrapPanel>
+                        <DockPanel DockPanel.Dock="Top">
+                            <Button x:Name="DeleteButton" DockPanel.Dock="Right" Style="{StaticResource Shell.IconButton}" Click="DeleteItem" IsEnabled="False"
+                                    Margin="0,0,0,6" ToolTip="{l:Loc 'Delete the selected items (Delete key); Ctrl or Shift selects several'}"
+                                    AutomationProperties.Name="{l:Loc 'Delete'}" ToolTipService.ShowOnDisabled="True">
+                                <md:PackIcon Kind="DeleteOutline" Width="20" Height="20" />
+                            </Button>
+                            <Button x:Name="DuplicateButton" DockPanel.Dock="Right" Style="{StaticResource Shell.IconButton}" Click="DuplicateItem" IsEnabled="False"
+                                    Margin="0,0,2,6" ToolTip="{l:Loc 'Duplicate'}" AutomationProperties.Name="{l:Loc 'Duplicate'}" ToolTipService.ShowOnDisabled="True">
+                                <md:PackIcon Kind="ContentCopy" Width="18" Height="18" />
+                            </Button>
+                            <WrapPanel>
+                                <Button Content="{l:Loc 'New item'}" Click="NewItem" />
+                                <Button Content="{l:Loc 'Import item'}" Click="ImportItem"
+                                        ToolTip="{l:Loc 'Paste an item copied with Ctrl+C in Path of Building or in the game (Ctrl+V here does the same)'}" />
+                            </WrapPanel>
+                        </DockPanel>
                         <TextBox x:Name="SavedSearch" DockPanel.Dock="Top" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search saved items'}"
                                  md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SavedSearchChanged" />
                         <Grid>
-                            <ListBox x:Name="SavedList" HorizontalContentAlignment="Stretch" SelectionChanged="SavedChosen" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox x:Name="SavedList" HorizontalContentAlignment="Stretch" SelectionChanged="SavedChosen" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     SelectionMode="Extended" KeyDown="SavedListKeyDown">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <DockPanel Margin="0,2">
+                                            <!-- Shown on the row under the mouse and the selected ones. -->
+                                            <Button DockPanel.Dock="Right" Width="28" Height="28" VerticalAlignment="Center" Click="DeleteRowClicked" Tag="{Binding}"
+                                                    ToolTip="{l:Loc 'Delete this item'}" AutomationProperties.Name="{l:Loc 'Delete this item'}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource Shell.IconButton}">
+                                                        <Setter Property="Visibility" Value="Hidden" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <md:PackIcon Kind="DeleteOutline" Width="18" Height="18" />
+                                            </Button>
                                             <md:PackIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center"
                                                          Foreground="{Binding Brush}" />
                                             <StackPanel>
@@ -282,6 +312,13 @@
                         </Button>
                         <Button Click="CopyCommand" ToolTip="{l:Loc 'Copy the chat command that gives this item'}" AutomationProperties.Name="{l:Loc 'Copy the chat command that gives this item'}" x:Name="CopyButton" IsEnabled="False">
                             <md:PackIcon Kind="ContentCopy" />
+                        </Button>
+                        <Button Click="ResetCrafter" AutomationProperties.Name="{l:Loc 'Reset'}"
+                                ToolTip="{l:Loc 'Start over with an empty item: no base, no modifiers, the searches and filters cleared. Saved items stay.'}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Broom" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="{l:Loc 'Reset'}" />
+                            </StackPanel>
                         </Button>
                     </WrapPanel>
                 </StackPanel>
