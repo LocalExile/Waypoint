@@ -5,6 +5,9 @@ using System.Text.Json.Nodes;
 
 namespace Waypoint;
 
+/// <summary>The one failure of the bridge that a press of a button can mend.</summary>
+sealed class FridaMissingException(string message) : InvalidOperationException(message);
+
 /// <summary>
 /// The native client control bridge (scripts/dev/client_control.py --stdio, Agents/docs/dev/client-control.md) as one
 /// persistent process: a JSON request per line, a JSON result per line. Commands reach the Gateway as the client's own
@@ -40,7 +43,7 @@ sealed class ClientBridge : IDisposable
                 Stop();
                 // Frida is optional for playing, so this one is expected and has a way out.
                 if (error.Contains("No module named 'frida'", StringComparison.Ordinal))
-                    throw new InvalidOperationException(L.Text("the bridge needs Python with frida, which is not installed: the Setup section in Advanced mode shows how"));
+                    throw new FridaMissingException(L.Text("the bridge needs Python with frida, which is not installed: Give item in the item crafter sets it up"));
                 throw new InvalidOperationException(L.Text("the bridge stopped: {0}", Tail(error)));
             }
             return JsonNode.Parse(line)?.AsObject() ?? throw new InvalidOperationException(L.Text("not a result: {0}", line));

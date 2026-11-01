@@ -39,7 +39,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
                 <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Change folder…'}" Margin="0,0,16,0" Click="ChangeFolderClicked" />
                 <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
-                        ToolTip="{l:Loc 'Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests'}" />
+                        ToolTip="{l:Loc 'Sets up a second LocalExile from its source code, which has the item crafter. You can bring your characters.'}" />
             </StackPanel>
         </StackPanel>
         <Border x:Name="Activity" Grid.Row="1" Visibility="Collapsed" Margin="24,8,24,16" Padding="14,10" CornerRadius="6" BorderThickness="1"

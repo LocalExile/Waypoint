@@ -155,6 +155,7 @@ public partial class MainWindow : Window
         InstallView.NewCopyRequested += Setup.SetUpNewCopy;
         ReleasesView.NewCopyRequested += Setup.SetUpNewCopy;
         Control.NewCopyRequested += Setup.SetUpNewCopy;
+        ToolsView.NewCopyRequested += Setup.SetUpNewCopy;
         Control.InstallPlayRequested += () =>
         {
             ShowSection(InstallView);

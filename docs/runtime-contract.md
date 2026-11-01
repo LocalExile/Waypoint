@@ -1,7 +1,7 @@
 # External runtime contract, adapter v1
 
 This describes the adapter in `scripts/`. The app uses it for `Inspect`, `QueryAccounts`, `ManageAccount`, `Register`, the
-mod and backup operations, `PrepareClient`, `Dependencies`, `Build`, `ReloadData` and `FreshSaves`. Starts, stops and
+mod and backup operations, `PrepareClient`, `Dependencies`, `Build`, `ReloadData`, `ImportSaves` and `FreshSaves`. Starts, stops and
 branch switches go through `live.ps1` and git from the app ([launcher.md](launcher.md)); the adapter's own `Start`, `Play`,
 `Stop`, `Restart`, `CloseGame`, `Switch` and capture actions remain, with their tests, but the app does not call them.
 

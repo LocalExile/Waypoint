@@ -29,6 +29,16 @@
             <Button x:Name="DetailsLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" />
             <Button x:Name="StopLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" />
             <Button x:Name="GoBackLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Go back to the version you had'}" Margin="0,18,0,0" Click="GoBackClicked" />
+            <Border x:Name="RemoveOldCard" Visibility="Collapsed" Margin="0,18,0,0" Padding="14,10" CornerRadius="6" BorderThickness="1"
+                    Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
+                <StackPanel>
+                    <TextBlock x:Name="RemoveOldText" TextAlignment="Center" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <Button Content="{l:Loc 'Delete the old one…'}" Click="RemoveOldClicked" Margin="0,0,8,0" />
+                        <Button Content="{l:Loc 'Keep it'}" Click="KeepOldClicked" Margin="0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
             <TextBlock x:Name="FolderText" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,24,0,0" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
                 <Button Style="{StaticResource QuietLink}" Visibility="Visible" Content="{l:Loc 'Change folder…'}" Margin="0,0,16,0" Click="ChangeFolderClicked" />

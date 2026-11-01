@@ -28,6 +28,10 @@ sealed class Settings
     public DateTimeOffset? UpdatesPausedUntil { get; set; }
     /// <summary>The update Play made last, until the player went back from it.</summary>
     public CheckoutUpdate? LastUpdate { get; set; }
+    /// <summary>The guide's "Remove the old one later", until the player has decided on Play.</summary>
+    public ReleaseToRemove? RemoveRelease { get; set; }
+    /// <summary>The guide ended in another folder and an account comes next: the start on that folder opens it.</summary>
+    public bool CreateAccountOnStart { get; set; }
     public bool Walkmaps { get; set; }
     public bool NoBuild { get; set; }
     public bool NoExtract { get; set; }

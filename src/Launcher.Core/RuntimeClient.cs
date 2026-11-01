@@ -15,9 +15,9 @@ public sealed class RuntimeClient
     public async Task<BridgeResult> RunAsync(LauncherSettings settings, string action, string service = "All",
         Action<string>? log = null, CancellationToken cancellation = default,
         Action<OperationProgress>? progress = null, AccountRequest? account = null,
-        string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null, CancellationToken stop = default)
+        string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null, CancellationToken stop = default, string? saveSource = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));
@@ -44,6 +44,7 @@ public sealed class RuntimeClient
         if (!settings.AutomaticBackups) start.ArgumentList.Add("-NoBackup");
         if (settings.CaptureAreaLayouts) start.ArgumentList.Add("-CaptureAreaLayouts");
         if (backupId is not null) { start.ArgumentList.Add("-BackupId"); start.ArgumentList.Add(backupId); }
+        if (saveSource is not null) { start.ArgumentList.Add("-SaveSource"); start.ArgumentList.Add(saveSource); }
         if (mod is not null)
         {
             if (!string.IsNullOrEmpty(mod.Id) && !ModCatalog.ValidId(mod.Id)) throw new ArgumentException("Unsupported mod ID.", nameof(mod));

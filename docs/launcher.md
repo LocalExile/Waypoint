@@ -66,7 +66,8 @@ work from, beside a source checkout. It has no `live.ps1`, source or git, so `Re
 - **Console** lists the release Gateway's commands and copies a line to paste into the game's chat, because a release has no
   client control bridge or Frida. Nothing can read the replies.
 - **Tools** explains why it is unavailable. v0.1.0-beta's Gateway has no `crafter` mode, and asking a Gateway for a mode it lacks
-  starts it serving, so a release's is never asked. Giving an item would need the bridge as well.
+  starts it serving, so a release's is never asked. Giving an item would need the bridge as well. **Get the item crafter…** starts
+  the move to a source copy ([below](#from-a-release-to-a-source-copy)).
 
 Waypoint drives it only through `LocalExile.exe --json` (`LocalExileTool`), one JSON event per line:
 
@@ -120,6 +121,29 @@ It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK installs on Windows.
 **Change folder…** on Play and on a release's Versions, and **Change…** on Control, take a checkout or a release install, and Waypoint
 starts again on it. **Set up a new copy…** there and on Control opens the setup guide on its source route, which clones LocalExile
 with git into a chosen new or empty folder and sets it up.
+
+### From a release to a source copy
+
+A source copy has what no release has yet, such as the item crafter. **Tools → Get the item crafter…**, or **Set up a new copy…** on a
+release, opens the guide's source route with one more page, **Your characters**, after the client (`SwitchToSource.cs`). The release's
+client comes first in the list, and is shared rather than copied when its keys fit.
+
+- **Your characters**: **Bring my characters** copies the database, what a stopped release still holds in `saves.db-wal` included,
+  with the same online backup Waypoint's backups use, and it is checked before anything here changes (the adapter's `ImportSaves`). The
+  mod choices come along; mods the player added do not. Anything already in the folder is backed up and set aside, and
+  `data\saves-brought.json` keeps the guide run again from copying over newer progress. **Start with a new database** copies nothing,
+  and the account dialog opens after Waypoint starts on the copy. The two never share one database: a newer server may write saves
+  an older release cannot read.
+- **Your current LocalExile**: **Keep both** leaves it as it is. **Remove the old one later** leaves it until the player has pressed Play
+  on the copy and closed the game; Play then asks. **Delete the old one…** moves a shared client into the copy when both are on one
+  drive, and deletes the release's program files. Its `data` and `Mods` stay, and so does anything a release does not ship.
+- **Updates**, for a download: **Stay on a tested version** puts the copy on its own branch `waypoint-tested` at
+  `SwitchToSource.TestedCommit`, which Play never moves, because only a plain copy on the default branch is updated. **Get the newest
+  changes** leaves it on `main`. Changing the commit means testing it again: a release's database opened on it, and an item given.
+- **Giving items**: **Set up Give item** installs Frida into the copy's `.venv`, which git ignores. Left out, the crafter offers it
+  again the first time **Give item** is pressed.
+
+The Run page lists what these choices will do instead of its steps until **Start setup**.
 
 On its first start Waypoint asks for the server checkout: the folder with `GameServer.slnx` and
 `scripts\dev\live.ps1`. It searches the usual folders and lists what it finds, marking those at the upstream's HEAD
@@ -480,7 +504,9 @@ write and gives it to the character in game.
   items. `ItemImport.cs`, `ItemImportWindow`.
 - **Give item** sends `/item_give <the item as JSON>` through the client control bridge, as the Console does, so the
   character must be in game; the item goes into the main inventory and the Gateway's reply shows in the status line.
-  The copy button puts that command on the clipboard.
+  Without Frida it offers to install it into the checkout's `.venv`. The copy button puts that command on the clipboard, but
+  the game's chat box stops at 175 characters and a rare's command is about 530, so it says so when the command is too long: the
+  bridge sends the same message without that limit.
 - **Reset** starts over as the window opens: an empty item, every search and filter cleared, the Base page. It asks
   first when the item on screen has changes no save holds; saved items stay.
 
@@ -534,6 +560,7 @@ adapter does not know can be browsed but not changed.
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
 | `SetupWizard.xaml`, `PortCheck.cs` | the setup guide; what holds a server's port, and the question about it |
 | `src/Launcher.Core/SetupGuide.cs`, `ClientLocator.cs`, `ClientCopy.cs` | the guide's engine: tools that can be stopped, the prerequisites, the steps, finding a client, the resumable copy |
+| `src/Launcher.Core/SwitchToSource.cs` | moving from a release to a source copy: what the choices will do, the tested version, Frida, removing the release |
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |
 | `branding\` | the emblem: `waypoint-master.png`, the reviewed source and how it was made (`waypoint-artwork.json`); `app.ico` of the exe, the window and the tray (16 to 256 px) and the 192 px image of the sidebar, both from `scripts\New-Icon.ps1` |
 | `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update strip |

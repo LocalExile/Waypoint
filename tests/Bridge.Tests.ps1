@@ -81,6 +81,16 @@ try {
     Check ($refused -like "Client is a link to $sharedClient,*") 'a linked client that is not ready is refused, and never changed'
     Remove-Item -LiteralPath $sharedClient -Recurse -Force
     Check ((Get-ClientDetail) -eq "Client links to $sharedClient, which has no client. Run the setup guide to replace the link.") 'a link that leads nowhere says so'
+
+    # Nothing may run from the folder the saves come from; that is what could still be writing them.
+    $SaveSource = Join-Path $linkFixture 'release'
+    New-Item -ItemType Directory -Path (Join-Path $SaveSource 'data') | Out-Null
+    Set-Content -LiteralPath (Join-Path $SaveSource 'data\saves.db') -Value 'stand-in'
+    $script:savePath = At 'data/saves.db'
+    $script:processes = @([pscustomobject]@{ ExecutablePath=(Join-Path $SaveSource 'app\GameServer.Gateway.exe') })
+    $refused = $null
+    try { Import-Saves $stopped 6>$null } catch { $refused = $_.Exception.Message }
+    Check ($refused -eq 'Close the game and stop your current LocalExile first.') 'saves are not copied while that LocalExile runs'
 } finally {
     Remove-Item -LiteralPath $linkFixture -Recurse -Force -ErrorAction SilentlyContinue
 }

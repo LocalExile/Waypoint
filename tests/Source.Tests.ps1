@@ -111,6 +111,28 @@ try {
     Check (-not $invalid.Ok) 'backup identifiers cannot escape the selected save store'
     $deleted = Operation 'DeleteBackup' @('-BackupId',$firstId)
     Check ($deleted.Ok -and -not (Test-Path -LiteralPath $metaFiles[0].Directory.FullName)) 'only the selected backup can be deleted; current saves remain'
+    # A release's saves into this copy: what is still in its WAL comes along, what was here goes aside, the release is only read.
+    $release = Join-Path $fixture 'Release'
+    New-Item -ItemType Directory -Force "$release/data", "$release/Mods/Binaries" | Out-Null
+    Set-Content "$release/LocalExile.exe" 'stand-in'
+    Set-Content "$release/release.json" '{}'
+    Set-Content "$release/Mods/Binaries/mod-state.txt" 'disabled fixture'
+    & python (Join-Path $PSScriptRoot 'SqliteFixture.py') stopped "$release/data/saves.db"
+    Check ((Get-Item -LiteralPath "$release/data/saves.db-wal").Length -gt 0) 'a stopped release keeps its newest saves in the WAL'
+    $walBefore = (Get-FileHash -LiteralPath "$release/data/saves.db-wal").Hash
+    $beforeImport = @(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse).Count
+    $imported = Operation 'ImportSaves' @('-SaveSource',$release)
+    Check $imported.Ok ('a release''s saves are copied in: ' + $imported.Message)
+    & python (Join-Path $PSScriptRoot 'SqliteFixture.py') brought "$root/data/saves.db"
+    Check ($LASTEXITCODE -eq 0) 'the copy holds what was still in the release''s WAL'
+    Check (Test-Path -LiteralPath "$root/data/saves-brought.json") 'the copy says it is done, so that the guide never copies over newer progress'
+    Check (@(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse).Count -eq $beforeImport + 1) 'saves already in the copy are backed up first'
+    Check ((Get-Content -LiteralPath "$root/Mods/Binaries/mod-state.txt" -Raw).Trim() -eq 'disabled fixture') 'the mod choices come along'
+    Check ((Get-FileHash -LiteralPath "$release/data/saves.db-wal").Hash -eq $walBefore) 'the release is only read'
+    $own = Operation 'ImportSaves' @('-SaveSource',$root)
+    Check (-not $own.Ok -and $own.Message.Contains('own saves')) 'a folder cannot bring its own saves'
+    $nothing = Operation 'ImportSaves' @('-SaveSource',(Join-Path $fixture 'Nowhere'))
+    Check (-not $nothing.Ok -and $nothing.Message.Contains('no saves')) 'a folder without saves is refused'
     Write-Host "$script:passed source/save integration checks passed."
 } finally {
     Set-Location -LiteralPath $oldLocation.Path

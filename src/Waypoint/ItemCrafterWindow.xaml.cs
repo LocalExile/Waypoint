@@ -1077,8 +1077,12 @@ public partial class ItemCrafterWindow : FormWindow
         if (_base is null) return;
         try
         {
-            Clipboard.SetText(Command());
-            Status(L.Text("The command is on the clipboard."));
+            string command = Command();
+            Clipboard.SetText(command);
+            // The game's chat box loses the rest of a longer line, which would then give nothing.
+            if (command.Length > SwitchToSource.ChatBoxLimit)
+                Status(L.Text("The command is on the clipboard, but it is {0} characters and the game's chat box takes {1}. Use Give item instead.", command.Length, SwitchToSource.ChatBoxLimit), error: true);
+            else Status(L.Text("The command is on the clipboard."));
         }
         catch (System.Runtime.InteropServices.ExternalException ex) { Status(ex.Message, error: true); }
     }
@@ -1098,11 +1102,31 @@ public partial class ItemCrafterWindow : FormWindow
             else Status(reply, error: !ok || !reply.StartsWith("Added", StringComparison.Ordinal));
             _shared.Logs.Write($"item crafter: /item_give {_base.Id}: {reply}", ok ? Severity.Info : Severity.Error);
         }
+        catch (FridaMissingException) { await OfferFridaAsync(); }
         catch (Exception ex) when (ex is InvalidOperationException or TimeoutException or IOException or System.Text.Json.JsonException)
         {
             Status(ex.Message, error: true);
         }
         finally { GiveButton.IsEnabled = _base is not null; }
+    }
+
+    /// <summary>The game's chat box is too short for an item, so Give item has no way round the bridge.</summary>
+    async Task OfferFridaAsync()
+    {
+        if (!Dialog.Ask(this, DialogKind.Question, L.Text("Set up Give item?"),
+                L.Text("Give item needs Frida, a tool that talks to the running game. Waypoint can install it into this LocalExile folder. It takes about 180 MB, and some antivirus programs flag it."),
+                L.Text("Install Frida")))
+        {
+            Status(L.Text("Give item needs Frida."), error: true);
+            return;
+        }
+        Status(L.Text("Installing Frida …"));
+        try
+        {
+            await SwitchToSource.InstallFridaAsync(Environment.CurrentDirectory, line => _shared.Logs.Write($"item crafter: {line}"), CancellationToken.None);
+            Status(L.Text("Frida is installed. Press Give item again."));
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or System.ComponentModel.Win32Exception) { Status(ex.Message, error: true); }
     }
 
     void Status(string text, bool error = false)

@@ -9,6 +9,9 @@ public partial class ToolsTab : UserControl
     Shared _shared = null!;
     ItemCrafterWindow? _crafter;
 
+    /// <summary>The player wants a copy of LocalExile that has the crafter.</summary>
+    internal event Action? NewCopyRequested;
+
     public ToolsTab() => InitializeComponent();
 
     internal void Attach(Shared shared)
@@ -19,6 +22,8 @@ public partial class ToolsTab : UserControl
         CrafterButton.IsEnabled = false;
         ReleaseNote.Visibility = Visibility.Visible;
     }
+
+    void GetCrafterClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
 
     /// <summary>The crafter's window, or the one already open brought forward.</summary>
     void OpenItemCrafter(object sender, RoutedEventArgs e)

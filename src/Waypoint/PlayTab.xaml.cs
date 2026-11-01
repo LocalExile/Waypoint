@@ -68,7 +68,14 @@ public partial class PlayTab : UserControl
         StopLink.Visibility = !busy && AnythingRunning ? Visibility.Visible : Visibility.Collapsed;
         GoBackLink.Visibility = !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow)
             ? Visibility.Visible : Visibility.Collapsed;
+        RemoveOldCard.Visibility = !busy && !AnythingRunning && Replaced is not null ? Visibility.Visible : Visibility.Collapsed;
+        if (Replaced is { } replaced) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
     }
+
+    /// <summary>The release this copy replaces, once the player has played here.</summary>
+    ReleaseToRemove? Replaced => S.RemoveRelease is { Played: true } release && IsThisCopy(release) ? release : null;
+
+    static bool IsThisCopy(ReleaseToRemove release) => release.Copy.Equals(Environment.CurrentDirectory, StringComparison.OrdinalIgnoreCase);
 
     void Say(Func<string> stage)
     {
@@ -105,6 +112,11 @@ public partial class PlayTab : UserControl
             else if (update is not null) _note = () => L.Text("LocalExile was updated.");
             _failed = code is not (null or 0);
             if (_failed) _note = () => L.Text("The game didn't start.");
+            if (code == 0 && S.RemoveRelease is { Played: false } release && IsThisCopy(release))
+            {
+                S.RemoveRelease = release with { Played = true };
+                S.Save();
+            }
         }
         finally
         {
@@ -217,6 +229,45 @@ public partial class PlayTab : UserControl
             _stage = null;
             Show();
         }
+    }
+
+    async void RemoveOldClicked(object sender, RoutedEventArgs e)
+    {
+        if (_working || Replaced is not { } release) return;
+        if (!Dialog.Ask(Window.GetWindow(this), DialogKind.Warning, L.Text("Delete your old LocalExile?"),
+                L.Text("This deletes the program files in {0}, and cannot be undone. Your old saves and mods stay there until you delete them yourself. A game client this copy uses moves here first when it is on the same drive.", release.Old),
+                L.Text("Delete"))) return;
+        _working = true;
+        _failed = false;
+        _note = null;
+        Say(() => L.Text("Deleting your old LocalExile"));
+        try
+        {
+            var removed = await Task.Run(() => SwitchToSource.RemoveRelease(release.Old, Environment.CurrentDirectory));
+            S.RemoveRelease = null;
+            S.Save();
+            _note = removed.ClientMoved ? () => L.Text("Your old LocalExile is deleted, and the game client moved here. Your old saves are still in {0}.", Path.Combine(release.Old, "data"))
+                : () => L.Text("Your old LocalExile is deleted. Your old saves are still in {0}.", Path.Combine(release.Old, "data"));
+            CheckoutChanged?.Invoke();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            _failed = true;
+            _note = () => L.Text("Waypoint couldn't delete your old LocalExile: {0}", ex.Message);
+        }
+        finally
+        {
+            _working = false;
+            _stage = null;
+            Show();
+        }
+    }
+
+    void KeepOldClicked(object sender, RoutedEventArgs e)
+    {
+        S.RemoveRelease = null;
+        S.Save();
+        Show();
     }
 
     void ChangeFolderClicked(object sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();

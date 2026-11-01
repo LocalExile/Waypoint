@@ -22,6 +22,14 @@ sealed record RequirementRow(Prerequisite Item, string Url)
 
 sealed record CheckoutRow(string Root, string Summary);
 
+/// <summary>A line of "What will happen".</summary>
+sealed record SwitchRow(SwitchLine Line)
+{
+    public string Text => Line.Text;
+    public PackIconKind Icon => Line.Attention ? PackIconKind.AlertCircleOutline : PackIconKind.CheckCircleOutline;
+    public Brush Brush => Theme.Brush(Line.Attention ? "Shell.Warning" : "Shell.Accent");
+}
+
 /// <summary>A step of the setup with what is happening in it, updated in place.</summary>
 sealed class StepRow(string name) : INotifyPropertyChanged
 {
@@ -64,7 +72,7 @@ sealed class StepRow(string name) : INotifyPropertyChanged
 /// </summary>
 public partial class SetupWizard : FormWindow
 {
-    enum Page { Welcome, Source, Install, Requirements, Checkout, Client, Account, Run, Done }
+    enum Page { Welcome, Source, Install, Requirements, Checkout, Client, Switch, Account, Run, Done }
 
     /// <summary>Roughly what a checkout takes with its client and generated data.</summary>
     const long NeededBytes = 75_000_000_000;
@@ -87,6 +95,9 @@ public partial class SetupWizard : FormWindow
     readonly bool _newCopy;
     /// <summary>The data folder with the keys that fit the chosen client, when it can be shared.</summary>
     string? _sharedKeys;
+    /// <summary>What the release to leave holds, once read; negative until then.</summary>
+    int _oldAccounts = -1, _oldCharacters = -1;
+    bool _oldRead;
 
     /// <summary>The checkout the guide ended with; null when it ended without one.</summary>
     public string? Checkout { get; private set; }
@@ -128,12 +139,16 @@ public partial class SetupWizard : FormWindow
     /// <summary>The ready-to-play release rather than a source checkout.</summary>
     bool UsingRelease => ReleaseChoice.IsChecked == true;
 
+    /// <summary>The release a player is leaving for a source copy, when the guide started on one.</summary>
+    string? SwitchFrom => !UsingRelease && LocalExileReleases.IsInstall(_current) ? _current : null;
+
     /// <summary>A new install has no saves, so no account yet; LocalExile.exe asks when one with saves has none.</summary>
     bool AccountNeeded => UsingRelease && NoClient.IsChecked != true && (_accountAsked || ChosenCheckout() is not { } folder || !LocalExileReleases.HasSaves(folder));
 
     /// <summary>The pages of the chosen route, in order.</summary>
     Page[] Flow => UsingRelease
         ? AccountNeeded ? [Page.Welcome, Page.Source, Page.Install, Page.Client, Page.Account, Page.Run, Page.Done] : [Page.Welcome, Page.Source, Page.Install, Page.Client, Page.Run, Page.Done]
+        : SwitchFrom is not null ? [Page.Welcome, Page.Source, Page.Requirements, Page.Checkout, Page.Client, Page.Switch, Page.Run, Page.Done]
         : [Page.Welcome, Page.Source, Page.Requirements, Page.Checkout, Page.Client, Page.Run, Page.Done];
 
     static string PageName(Page page) => L.Text(page switch
@@ -143,6 +158,7 @@ public partial class SetupWizard : FormWindow
         Page.Requirements => "Tools",
         Page.Install or Page.Checkout => "LocalExile",
         Page.Client => "Game client",
+        Page.Switch => "Your characters",
         Page.Account => "Account",
         _ => "Set up",
     });
@@ -151,7 +167,7 @@ public partial class SetupWizard : FormWindow
     {
         _page = page;
         (FrameworkElement, Page)[] pages = [(WelcomePage, Page.Welcome), (SourcePage, Page.Source), (InstallPage, Page.Install), (RequirementsPage, Page.Requirements), (CheckoutPage, Page.Checkout),
-            (ClientPage, Page.Client), (AccountPage, Page.Account), (RunPage, Page.Run), (DonePage, Page.Done)];
+            (ClientPage, Page.Client), (SwitchPage, Page.Switch), (AccountPage, Page.Account), (RunPage, Page.Run), (DonePage, Page.Done)];
         foreach (var (element, shown) in pages) element.Visibility = shown == page ? Visibility.Visible : Visibility.Collapsed;
         if (page == Page.Account) _accountAsked = true;
         ShowRail();
@@ -162,6 +178,7 @@ public partial class SetupWizard : FormWindow
             case Page.Requirements: _ = CheckRequirementsAsync(); break;
             case Page.Checkout when !_searchedCheckouts: _ = FindCheckoutsAsync(); break;
             case Page.Client when !_clientsSearched: _ = FindClientsAsync(); break;
+            case Page.Switch: ShowSwitch(); break;
             case Page.Run when !Running && _outcome != SetupOutcome.Finished: PrepareRun(); break;
         }
     }
@@ -214,7 +231,7 @@ public partial class SetupWizard : FormWindow
     {
         switch (_page)
         {
-            case Page.Welcome or Page.Source or Page.Requirements or Page.Client or Page.Account: Show(Next()); break;
+            case Page.Welcome or Page.Source or Page.Requirements or Page.Client or Page.Switch or Page.Account: Show(Next()); break;
             case Page.Install or Page.Checkout:
                 _clientsSearched = false;
                 Show(Next());
@@ -457,7 +474,7 @@ public partial class SetupWizard : FormWindow
         ClientStatus.Text = L.Text("Looking for a game client on this PC…");
         try
         {
-            string[] others = _checkouts.Select(c => c.Root).Where(r => !r.Equals(checkout, StringComparison.OrdinalIgnoreCase)).ToArray();
+            string[] others = OtherFolders(checkout);
             var result = await Task.Run(() => ClientLocator.Find(others, _closing.Token), _closing.Token);
             foreach (var client in result.Clients) _clients.Add(client);
             if (!string.IsNullOrEmpty(_settings.SetupClient) && ClientLocator.Describe(_settings.SetupClient) is { } earlier && !_clients.Any(c => c.Folder.Equals(earlier.Folder, StringComparison.OrdinalIgnoreCase)))
@@ -466,7 +483,7 @@ public partial class SetupWizard : FormWindow
             FoundClient[] ready = _clients.Where(c => c.Kind == ClientKind.Ready).ToArray();
             var shareable = checkout is null ? null : await Task.Run(() => ready.FirstOrDefault(c => ClientCopy.SharedKeys(c.Folder, checkout, others) is not null), _closing.Token);
             ClientList.SelectedItem = _clients.FirstOrDefault(c => c.Folder.Equals(_settings.SetupClient, StringComparison.OrdinalIgnoreCase))
-                ?? shareable ?? _clients.FirstOrDefault(c => c.Usable && c.KnownBuild == true) ?? _clients.FirstOrDefault(c => c.Usable);
+                ?? _clients.FirstOrDefault(IsOldClient) ?? shareable ?? _clients.FirstOrDefault(c => c.Usable && c.KnownBuild == true) ?? _clients.FirstOrDefault(c => c.Usable);
             int usable = _clients.Count(c => c.Usable);
             ClientStatus.Text = usable > 0 ? L.Text("Found {0} on this PC. Choose the one to use.", usable)
                 : L.Text("No usable client was found. Searched {0}.", string.Join(", ", result.Searched));
@@ -483,6 +500,14 @@ public partial class SetupWizard : FormWindow
         SearchAgain.IsEnabled = true;
         UpdateButtons();
     }
+
+    /// <summary>The other LocalExile folders, whose clients are looked at first and can be shared.</summary>
+    string[] OtherFolders(string? checkout) =>
+        [.. _checkouts.Select(c => c.Root).Append(SwitchFrom ?? "").Where(r => r.Length > 0 && !r.Equals(checkout, StringComparison.OrdinalIgnoreCase)).Distinct(StringComparer.OrdinalIgnoreCase)];
+
+    /// <summary>The client of the release being left: the one that already fits its keys and its accounts.</summary>
+    bool IsOldClient(FoundClient client) => SwitchFrom is { } old && client.Usable
+        && Path.TrimEndingDirectorySeparator(ClientLocator.RealPath(client.Folder)).Equals(Path.TrimEndingDirectorySeparator(ClientLocator.RealPath(Path.Combine(old, "Client"))), StringComparison.OrdinalIgnoreCase);
 
     void BrowseClient(object sender, RoutedEventArgs e)
     {
@@ -509,7 +534,7 @@ public partial class SetupWizard : FormWindow
         if (client is not null) ClientNote.Text = ClientWarning(client);
         UpdateButtons();
         if (UsingRelease || client is not { Kind: ClientKind.Ready } || ChosenCheckout() is not { } checkout) return;
-        string[] others = _checkouts.Select(c => c.Root).Where(r => !r.Equals(checkout, StringComparison.OrdinalIgnoreCase)).ToArray();
+        string[] others = OtherFolders(checkout);
         string? keys = await Task.Run(() => ClientCopy.SharedKeys(client.Folder, checkout, others));
         if (keys is null || !Equals(ClientList.SelectedItem, client)) return;
         _sharedKeys = keys;
@@ -544,15 +569,55 @@ public partial class SetupWizard : FormWindow
         UpdateButtons();
     }
 
+    // --- From a release to a source copy ---
+
+    void ShowSwitch()
+    {
+        string old = SwitchFrom!;
+        bool saves = LocalExileReleases.HasSaves(old);
+        OldFolder.Text = old;
+        CharactersChoice.Visibility = saves ? Visibility.Visible : Visibility.Collapsed;
+        if (!saves) NewCharacters.IsChecked = true;
+        UpdatesChoice.Visibility = DownloadChoice.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        GiveItemChoice.Visibility = SwitchToSource.HasFrida(ChosenCheckout() ?? "") ? Visibility.Collapsed : Visibility.Visible;
+        if (saves && !_oldRead) _ = ReadOldCharactersAsync(old);
+    }
+
+    async Task ReadOldCharactersAsync(string old)
+    {
+        _oldRead = true;
+        try
+        {
+            var result = await _bridge.RunAsync(_settings.ForBridge with { RepositoryPath = old }, "QueryAccounts", cancellation: _closing.Token);
+            if (result.AccountData is { Exists: true } found)
+            {
+                _oldAccounts = found.Accounts.Length;
+                _oldCharacters = found.Accounts.Sum(a => a.Characters.Length);
+                OldHolds.Text = L.Text("Accounts: {0}. Characters: {1}.", _oldAccounts, _oldCharacters);
+            }
+        }
+        catch (Exception e) when (e is IOException or OperationCanceledException or InvalidOperationException or System.Text.Json.JsonException) { }
+    }
+
+    SwitchChoices Choices()
+    {
+        string copy = ChosenCheckout() ?? Checkout ?? "";
+        bool copying = NoClient.IsChecked != true && !HasClient(copy) && !Sharing;
+        double gigabytes = copying && ClientList.SelectedItem is FoundClient client ? client.Bytes / 1e9 : 0;
+        return new(copy, SwitchFrom ?? "", DownloadChoice.IsChecked == true, BringCharacters.IsChecked == true, _oldAccounts, _oldCharacters,
+            KeepBoth.IsChecked == true, TestedVersion.IsChecked == true, GiveItem.IsChecked == true || SwitchToSource.HasFrida(copy), Sharing, gigabytes,
+            LocalExileReleases.HasSaves(copy) && !SwitchToSource.SavesBrought(copy));
+    }
+
     // --- Setting up ---
 
     /// <summary>The steps this run will take, in order, for the Run page to show before Start.</summary>
-    IReadOnlyList<SetupTask> Plan(string checkout, bool download, string? client, string? sharedKeys, bool prepare)
+    IReadOnlyList<SetupTask> Plan(string checkout, bool download, string? client, string? sharedKeys, bool prepare, SwitchChoices? switching)
     {
         LauncherSettings Options() => _settings.ForBridge with { RepositoryPath = checkout };
-        async Task Bridge(string action, Action<string> detail, CancellationToken stop)
+        async Task Bridge(string action, Action<string> detail, CancellationToken stop, string? saveSource = null)
         {
-            var result = await _bridge.RunAsync(Options(), action, log: Write, progress: update => detail(L.Text(update.Detail.Length > 0 ? update.Detail : update.Stage)), stop: stop);
+            var result = await _bridge.RunAsync(Options(), action, log: Write, progress: update => detail(L.Text(update.Detail.Length > 0 ? update.Detail : update.Stage)), stop: stop, saveSource: saveSource);
             if (!result.Ok && stop.IsCancellationRequested) throw new OperationCanceledException(stop);
             if (!result.Ok) throw new InvalidOperationException(L.Describe(result.Message));
         }
@@ -564,6 +629,8 @@ public partial class SetupWizard : FormWindow
                 await SetupSequence.CloneAsync(GitRepositoryProbe.UpstreamUrl, checkout, line => { Write(line); detail(line); }, stop);
                 Remember(checkout);
             }));
+        if (switching is { Download: true, TestedVersion: true })
+            tasks.Add(new(L.Text("Choose the tested version"), () => SwitchToSource.OnTestedVersion(checkout), (detail, stop) => SwitchToSource.ChooseTestedVersionAsync(checkout, line => { Write(line); detail(line); }, stop)));
         if (client is not null && sharedKeys is not null)
             tasks.Add(new(L.Text("Share the game client"), () => HasClient(checkout), (detail, stop) => ClientCopy.ShareAsync(client, checkout, sharedKeys, line => { Write(line); detail(line); }, stop)));
         else if (client is not null)
@@ -575,6 +642,10 @@ public partial class SetupWizard : FormWindow
         tasks.Add(new(L.Text("Build LocalExile"), null, (detail, stop) => Bridge("Build", detail, stop)));
         if (prepare)
             tasks.Add(new(L.Text("Extract the game data"), null, (detail, stop) => SetupSequence.ExtractAsync(checkout, line => { Write(line); detail(line); }, stop)));
+        if (switching is { GiveItem: true })
+            tasks.Add(new(L.Text("Set up Give item"), () => SwitchToSource.HasFrida(checkout), (detail, stop) => SwitchToSource.InstallFridaAsync(checkout, line => { Write(line); detail(line); }, stop)));
+        if (switching is { BringCharacters: true })
+            tasks.Add(new(L.Text("Bring your characters"), () => SwitchToSource.SavesBrought(checkout), (detail, stop) => Bridge("ImportSaves", detail, stop, switching.Old)));
         return tasks;
     }
 
@@ -689,7 +760,15 @@ public partial class SetupWizard : FormWindow
         foreach (var task in tasks) _steps.Add(new(task.Name));
         RunTitle.Text = L.Text("Ready to set up");
         RunStatus.Text = L.Text("Start when you are ready. You can stop at any point, and the game can stay closed the whole time.");
+        ShowSummary(SwitchFrom is not null);
         UpdateButtons();
+    }
+
+    void ShowSummary(bool shown)
+    {
+        if (shown) SwitchSummary.ItemsSource = SwitchToSource.Describe(Choices()).Select(line => new SwitchRow(line)).ToList();
+        SwitchSummaryPanel.Visibility = shown ? Visibility.Visible : Visibility.Collapsed;
+        StepList.Visibility = shown ? Visibility.Collapsed : Visibility.Visible;
     }
 
     IReadOnlyList<SetupTask> Tasks()
@@ -698,7 +777,7 @@ public partial class SetupWizard : FormWindow
         var client = NoClient.IsChecked == true ? null : ClientList.SelectedItem as FoundClient;
         bool hasClient = client is not null || HasClient(checkout);
         if (UsingRelease) return ReleasePlan(checkout, HasClient(checkout) ? null : client?.Folder, hasClient);
-        return Plan(checkout, DownloadChoice.IsChecked == true, HasClient(checkout) ? null : client?.Folder, Sharing ? _sharedKeys : null, hasClient);
+        return Plan(checkout, DownloadChoice.IsChecked == true, HasClient(checkout) ? null : client?.Folder, Sharing ? _sharedKeys : null, hasClient, SwitchFrom is null ? null : Choices());
     }
 
     void Remember(string checkout)
@@ -724,6 +803,7 @@ public partial class SetupWizard : FormWindow
         _neededOption = null;
         RunTitle.Text = L.Text("Setting up");
         RunStatus.Text = L.Text("You can stop at any point: what is finished stays finished.");
+        ShowSummary(false);
         Progress.Visibility = Visibility.Visible;
         Progress.IsIndeterminate = !Theme.Current.ReduceMotion;
         // Queued: a step reports from its tool's threads.
@@ -761,6 +841,14 @@ public partial class SetupWizard : FormWindow
                 bool accounts = HasClient(checkout) && !UsingRelease;
                 if (UsingRelease) DoneText.Text = HasClient(checkout) ? L.Text("Everything is in place. Press Play in Waypoint to start the game. Log in with your account: its name goes in the Email field. In the game, set Options → Game → Network Mode to Predictive the first time.")
                     : L.Text("LocalExile is installed. Run this guide again when you have your game client: Play → Finish setup.");
+                if (SwitchFrom is not null)
+                {
+                    var choices = Choices();
+                    DoneText.Text = SwitchToSource.Done(choices);
+                    accounts = !choices.BringCharacters;
+                    _settings.RemoveRelease = choices.KeepOld ? null : new(choices.Old, checkout);
+                    _settings.Save();
+                }
                 CreateAccount.Visibility = accounts ? Visibility.Visible : Visibility.Collapsed;
                 CreateAccount.IsChecked = accounts;
                 ForgetPassword();

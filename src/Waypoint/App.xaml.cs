@@ -74,6 +74,12 @@ public partial class App : Application
         MainWindow = window;
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         window.Show();
+        if (Settings.CreateAccountOnStart)
+        {
+            Settings.CreateAccountOnStart = false;
+            Settings.Save();
+            _createAccount = true;
+        }
         if (_createAccount) window.CreateFirstAccount();
     }
 

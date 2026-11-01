@@ -82,6 +82,7 @@ public partial class SetupTab : UserControl
         {
             // The guide has saved its checkout already; SwitchServer acts on a change.
             _shared.Settings.ServerPath = current;
+            _shared.Settings.CreateAccountOnStart = guide.CreateAccountNext;
             App.SwitchServer(owner, _shared.Settings, checkout);
             return;
         }

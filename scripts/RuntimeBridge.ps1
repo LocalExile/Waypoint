@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -13,6 +13,7 @@ param(
     [ValidateSet('Branch','Remote','PR')][string]$SourceKind = 'Branch',
     [string]$SourceValue = '',
     [string]$BackupId = '',
+    [string]$SaveSource = '',
     [string]$ModId = '',
     [string]$ModProject = ''
 )
@@ -491,6 +492,37 @@ function Restore-SaveBackup($snapshot) {
     if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
     Write-Host 'Save restored. Source was not changed; choose the matching branch/PR before Play if needed.'
 }
+function Import-Saves($snapshot) {
+    # Another LocalExile's saves into this checkout. That folder is only read: an online backup holds what is still in its WAL.
+    Require ([IO.Path]::IsPathRooted($SaveSource)) 'Choose the LocalExile folder to bring the saves from.'
+    $source = [IO.Path]::GetFullPath($SaveSource).TrimEnd('\')
+    $database = Join-Path $source 'data\saves.db'
+    Require (Test-Path -LiteralPath $database -PathType Leaf) 'That LocalExile folder has no saves.'
+    Require (-not (Same-Path $database $script:savePath)) 'Those are this LocalExile''s own saves.'
+    Assert-SetupStopped $snapshot
+    $inside = $source + '\'
+    Require (-not @($script:processes | Where-Object { $_.ExecutablePath -and $_.ExecutablePath.StartsWith($inside, [StringComparison]::OrdinalIgnoreCase) }).Count) 'Close the game and stop your current LocalExile first.'
+    Set-Stage 'Checking your saves' 'Making a consistent copy of your saves and checking it. The originals are not changed.'
+    $staged = Join-Path (Split-Path $ResultPath) 'import.db'
+    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') $database $staged
+    Require ($LASTEXITCODE -eq 0) 'Your saves could not be read. Nothing was changed.'
+    Backup-Saves $snapshot
+    Set-Stage 'Bringing your characters' 'Copying them into this LocalExile; anything already here is set aside.'
+    Move-PreviousSaves
+    New-Item -ItemType Directory -Force -Path (Split-Path $script:savePath) | Out-Null
+    Move-Item -LiteralPath $staged -Destination $script:savePath
+    $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
+    Assert-Physical $history
+    if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
+    $choices = Join-Path $source 'Mods\Binaries\mod-state.txt'
+    if (Test-Path -LiteralPath $choices -PathType Leaf) {
+        New-Item -ItemType Directory -Force -Path (At 'Mods/Binaries') | Out-Null
+        Copy-Item -LiteralPath $choices -Destination (At 'Mods/Binaries/mod-state.txt') -Force
+    }
+    # Last, and what says it is done: a guide run again must not copy over the progress made here since.
+    @{ From=$source; CopiedUtc=[datetime]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path (Split-Path $script:savePath) 'saves-brought.json') -Encoding UTF8
+    Write-Host "Saves copied from $source."
+}
 function Move-PreviousSaves {
     $recovery = Join-Path (Split-Path $ResultPath) 'previous-saves'
     New-Item -ItemType Directory -Path $recovery | Out-Null
@@ -832,6 +864,7 @@ public static class NativeRuntime {
         'ReloadData' { Reload-GameData $snapshot }
         'Backup' { Backup-Saves $snapshot }
         'RestoreBackup' { Restore-SaveBackup $snapshot }
+        'ImportSaves' { Import-Saves $snapshot }
         'DeleteBackup' {
             $path = Get-SelectedBackup
             Set-Stage 'Deleting backup' $BackupId

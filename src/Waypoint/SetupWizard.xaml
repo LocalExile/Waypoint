@@ -156,6 +156,40 @@
                     </ListBox>
                 </DockPanel>
 
+                <!-- What a player on a release wants done with what they have -->
+                <ScrollViewer x:Name="SwitchPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="0,0,8,0">
+                        <StackPanel x:Name="CharactersChoice">
+                            <TextBlock Text="{l:Loc 'Your characters'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" />
+                            <TextBlock x:Name="OldHolds" Style="{StaticResource Caption}" Margin="0,2,0,0" />
+                            <RadioButton x:Name="BringCharacters" GroupName="Characters" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Bring my characters (recommended)'}" IsChecked="True" Margin="0,8,0,4" />
+                            <TextBlock Text="{l:Loc 'Copies your accounts, characters and stash. Your current LocalExile keeps its own copy.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
+                            <RadioButton x:Name="NewCharacters" GroupName="Characters" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Start with a new database'}" />
+                            <TextBlock Text="{l:Loc 'No accounts or characters yet. You create an account at the end.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
+                        </StackPanel>
+                        <TextBlock Text="{l:Loc 'Your current LocalExile'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" />
+                        <TextBlock x:Name="OldFolder" Style="{StaticResource Caption}" Margin="0,2,0,0" />
+                        <TextBlock Text="{l:Loc 'Setup installs a new copy of LocalExile that has the item crafter. What should happen to the one you have now?'}" TextWrapping="Wrap" Margin="0,6,0,6" />
+                        <RadioButton x:Name="KeepBoth" GroupName="Old" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Keep both (recommended)'}" IsChecked="True" />
+                        <TextBlock Text="{l:Loc 'You can go back to your current one at any time. Each has its own characters and progress.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
+                        <RadioButton x:Name="RemoveOldLater" GroupName="Old" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Remove the old one later'}" />
+                        <TextBlock Text="{l:Loc 'Once the new copy has worked for you, Waypoint will ask before deleting the old one.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
+                        <StackPanel x:Name="UpdatesChoice">
+                            <TextBlock Text="{l:Loc 'Updates'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <RadioButton x:Name="TestedVersion" GroupName="Updates" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Stay on a tested version (recommended)'}" IsChecked="True" />
+                            <TextBlock Text="{l:Loc 'A version we have checked. It does not change by itself.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
+                            <RadioButton x:Name="NewestVersion" GroupName="Updates" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Get the newest changes'}" />
+                            <TextBlock Text="{l:Loc 'Updates itself each day, and things can break.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
+                        </StackPanel>
+                        <StackPanel x:Name="GiveItemChoice">
+                            <TextBlock Text="{l:Loc 'Giving items'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <CheckBox x:Name="GiveItem" Content="{l:Loc 'Set up Give item (recommended)'}" IsChecked="True" />
+                            <TextBlock Text="{l:Loc 'Installs Frida, a tool that talks to the running game. It takes about 180 MB, and some antivirus programs flag it. The game\'s chat box is too short for most items, so Give item needs it.'}"
+                                       Style="{StaticResource Caption}" Margin="27,0,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
                 <!-- The account of a release install -->
                 <StackPanel x:Name="AccountPage" Visibility="Collapsed">
                     <TextBlock Text="{l:Loc 'Your local account'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" />
@@ -179,6 +213,21 @@
                     </Expander>
                     <ProgressBar DockPanel.Dock="Bottom" x:Name="Progress" Height="4" Margin="0,6,0,0" Visibility="Hidden" />
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                        <!-- Instead of the steps until Start, for a player leaving a release: what the choices will do. -->
+                        <StackPanel x:Name="SwitchSummaryPanel" Visibility="Collapsed">
+                            <TextBlock Text="{l:Loc 'What will happen'}" FontWeight="SemiBold" Margin="0,0,0,8" />
+                            <ItemsControl x:Name="SwitchSummary">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,0,0,7">
+                                            <md:PackIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="18" Height="18" Margin="0,1,10,0" />
+                                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
                         <ItemsControl x:Name="StepList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -192,13 +241,14 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                        </StackPanel>
                     </ScrollViewer>
                 </DockPanel>
 
                 <!-- Done -->
                 <StackPanel x:Name="DonePage" Visibility="Collapsed">
                     <TextBlock Text="{l:Loc 'LocalExile is ready'}" FontSize="{DynamicResource Font22}" FontWeight="SemiBold" />
-                    <TextBlock x:Name="DoneText" Margin="0,10,0,14" />
+                    <TextBlock x:Name="DoneText" TextWrapping="Wrap" Margin="0,10,0,14" />
                     <CheckBox x:Name="CreateAccount" Content="{l:Loc 'Create my first account next'}" IsChecked="True" />
                 </StackPanel>
             </Grid>

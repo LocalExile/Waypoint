@@ -1,3 +1,4 @@
+import os
 import pathlib
 import runpy
 import sqlite3
@@ -5,7 +6,17 @@ import sys
 
 mode, path = sys.argv[1:3]
 with sqlite3.connect(path) as db:
-    if mode in ("init", "wal"):
+    if mode == "stopped":
+        # As `LocalExile.exe stop` leaves a database: ended outright, with what was saved still in the WAL.
+        db.execute("PRAGMA journal_mode=WAL")
+        db.execute("PRAGMA wal_autocheckpoint=0")
+        db.execute("create table characters(name text)")
+        db.execute("insert into characters values (?)", ("release-character",))
+        db.commit()
+        os._exit(0)
+    elif mode == "brought":
+        assert db.execute("select name from characters").fetchone()[0] == "release-character"
+    elif mode in ("init", "wal"):
         if mode == "wal":
             db.execute("PRAGMA journal_mode=WAL")
             db.execute("PRAGMA wal_autocheckpoint=0")
