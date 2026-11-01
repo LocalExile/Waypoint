@@ -126,7 +126,8 @@ with git into a chosen new or empty folder and sets it up.
 
 A source copy has what no release has yet, such as the item crafter. **Tools → Get the item crafter…**, or **Set up a new copy…** on a
 release, opens the guide's source route with one more page, **Your characters**, after the client (`SwitchToSource.cs`). The release's
-client comes first in the list, and is shared rather than copied when its keys fit.
+client comes first in the list, and is shared rather than copied when its keys fit. **Browse…** on this route refuses a release, which
+has no source to build, and turns to the download instead.
 
 - **Your characters**: **Bring my characters** copies the database, what a stopped release still holds in `saves.db-wal` included,
   with the same online backup Waypoint's backups use, and it is checked before anything here changes (the adapter's `ImportSaves`). The

@@ -1091,6 +1091,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3374c9e93f22" xml:space="preserve">
     <value>You can stop at any point: what is finished stays finished.</value>
   </data>
+  <data name="Text_338c29e24170" xml:space="preserve">
+    <value>A release has no source code to build, so it can't be used here. Download LocalExile into a new or empty folder instead. Your release stays as it is.</value>
+  </data>
   <data name="Text_33a58116eb34" xml:space="preserve">
     <value>Only in this checkout: not on origin (not pushed)</value>
   </data>
@@ -1677,6 +1680,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_524d1e13a5b3">
     <value>Building mods</value>
   </data>
+  <data name="Text_52510d5bd892" xml:space="preserve">
+    <value>This folder is a LocalExile release: it comes built, and has no source code to build.</value>
+  </data>
   <data xml:space="preserve" name="Text_52656e8104ee">
     <value>Branch</value>
   </data>
@@ -2086,6 +2092,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6707ce0b6be2" xml:space="preserve">
     <value>that character name is taken</value>
+  </data>
+  <data name="Text_67181a386da0" xml:space="preserve">
+    <value>That folder is a LocalExile release</value>
   </data>
   <data xml:space="preserve" name="Text_6725e7bbcd28">
     <value>System</value>

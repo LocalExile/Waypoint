@@ -886,6 +886,7 @@ public static class NativeRuntime {
         }
         'Register' { Register-Account $snapshot }
         'Build' {
+            Require (-not $script:isRelease) 'This folder is a LocalExile release: it comes built, and has no source code to build.'
             Require (-not @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and ($_.ProcessId -or $_.WatchProcessId) }).Count) 'Stop this checkout''s services before rebuilding their assemblies.'
             Require (Test-Sdk) 'Install the .NET 10 SDK first.'
             Backup-Saves $snapshot

@@ -443,6 +443,14 @@ public partial class SetupWizard : FormWindow
     void BrowseCheckout(object sender, RoutedEventArgs e)
     {
         if (App.ChooseServer(this) is not { } root) return;
+        // This route builds what it is given, and a release has no source to build.
+        if (LocalExileReleases.IsInstall(root))
+        {
+            Dialog.Tell(this, DialogKind.Warning, L.Text("That folder is a LocalExile release"),
+                L.Text("A release has no source code to build, so it can't be used here. Download LocalExile into a new or empty folder instead. Your release stays as it is."));
+            DownloadChoice.IsChecked = true;
+            return;
+        }
         var row = _checkouts.FirstOrDefault(c => c.Root.Equals(root, StringComparison.OrdinalIgnoreCase));
         if (row is null) _checkouts.Add(row = new(root, L.Text("Chosen by you")));
         CheckoutList.SelectedItem = row;

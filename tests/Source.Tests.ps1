@@ -133,6 +133,12 @@ try {
     Check (-not $own.Ok -and $own.Message.Contains('own saves')) 'a folder cannot bring its own saves'
     $nothing = Operation 'ImportSaves' @('-SaveSource',(Join-Path $fixture 'Nowhere'))
     Check (-not $nothing.Ok -and $nothing.Message.Contains('no saves')) 'a folder without saves is refused'
+    # A release has no GameServer.slnx: a build would only get MSBuild's "Project file does not exist".
+    $checkout = $root
+    $root = $release
+    $built = Operation 'Build' @('-NoBackup')
+    $root = $checkout
+    Check (-not $built.Ok -and $built.Message.Contains('LocalExile release')) 'a release is refused as something to build, and says why'
     Write-Host "$script:passed source/save integration checks passed."
 } finally {
     Set-Location -LiteralPath $oldLocation.Path

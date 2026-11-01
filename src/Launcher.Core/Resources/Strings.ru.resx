@@ -1091,6 +1091,9 @@
   <data name="Text_3374c9e93f22" xml:space="preserve">
     <value>Остановиться можно в любой момент: готовое останется готовым.</value>
   </data>
+  <data name="Text_338c29e24170" xml:space="preserve">
+    <value>В релизе нет исходного кода для сборки, поэтому здесь его использовать нельзя. Скачайте LocalExile в новую или пустую папку. Ваш релиз останется без изменений.</value>
+  </data>
   <data name="Text_33a58116eb34" xml:space="preserve">
     <value>Только в этом репозитории: на origin её нет (не отправлена)</value>
   </data>
@@ -1677,6 +1680,9 @@
   <data xml:space="preserve" name="Text_524d1e13a5b3">
     <value>Сборка модов</value>
   </data>
+  <data name="Text_52510d5bd892" xml:space="preserve">
+    <value>Эта папка — релиз LocalExile: он уже собран, и исходного кода для сборки в нём нет.</value>
+  </data>
   <data xml:space="preserve" name="Text_52656e8104ee">
     <value>Ветка</value>
   </data>
@@ -2086,6 +2092,9 @@
   </data>
   <data name="Text_6707ce0b6be2" xml:space="preserve">
     <value>это имя персонажа уже занято</value>
+  </data>
+  <data name="Text_67181a386da0" xml:space="preserve">
+    <value>Эта папка — релиз LocalExile</value>
   </data>
   <data xml:space="preserve" name="Text_6725e7bbcd28">
     <value>Как в Windows</value>
