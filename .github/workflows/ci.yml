@@ -30,7 +30,7 @@ jobs:
       - name: Adapter checks
         shell: pwsh
         run: |
-          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop') {
+          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop', 'ReleaseTag') {
             powershell -NoProfile -ExecutionPolicy Bypass -File "tests/$test.Tests.ps1"
             if ($LASTEXITCODE -ne 0) { throw "$test.Tests.ps1 failed" }
           }

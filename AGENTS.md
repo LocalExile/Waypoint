@@ -53,4 +53,7 @@ rules: the server's are in its `AGENTS.md`.
 - **Keep [docs/launcher.md](docs/launcher.md) current** in the same change: what a button or section does and how. A shipped
   [roadmap](docs/roadmap.md) item leaves the roadmap in that change.
 - **Releases come only from a `v<major>.<minor>.<patch>` tag** (the release workflow builds and publishes them). Never
-  attach a locally built exe to a release: the self-update trusts the published SHA-256 next to it.
+  attach a locally built exe to a release: the self-update trusts the published SHA-256 next to it. Push the one tag by name,
+  never `git push --tags`: every `v*` tag that reaches the repository publishes at once. The workflow refuses a tag that is not
+  on `main` or not above the latest release (`tools/check-release-tag.ps1`), but it runs as it was in the tagged commit, so a
+  tag on a commit older than that check is not stopped.

@@ -1,5 +1,6 @@
 # A version tag (v1.2.3) publishes a release: the tests, then Waypoint.exe built with that version and its SHA-256, attached
-# to a GitHub release of the tag. Waypoint's update check reads the latest one (Updates.cs).
+# to a GitHub release of the tag. Waypoint's update check reads the latest one (Updates.cs). GitHub runs this file as it was in
+# the tagged commit, so the check below guards tags on commits from its own on, never an older one.
 name: Release
 
 on:
@@ -14,6 +15,17 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Only a new version from main
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $latest = gh api 'repos/${{ github.repository }}/releases/latest' --jq .tag_name
+          git merge-base --is-ancestor HEAD origin/main
+          $onMain = $LASTEXITCODE -eq 0
+          ./tools/check-release-tag.ps1 -Tag '${{ github.ref_name }}' -Latest "$latest" -OnMain:$onMain
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
