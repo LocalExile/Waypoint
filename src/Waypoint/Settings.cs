@@ -68,7 +68,11 @@ sealed class Settings
 
     public const int HistoryMax = 200;
 
+#if WINDOWS
     static string LocalData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+#else
+    static string LocalData => Platform.LocalData;
+#endif
     static string File => Path.Combine(LocalData, "Waypoint", "settings.json");
     static readonly JsonSerializerOptions Options = new() { WriteIndented = true, PropertyNameCaseInsensitive = true };
 

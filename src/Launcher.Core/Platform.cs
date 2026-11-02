@@ -10,6 +10,11 @@ public static class Platform
         ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe")
         : OnPath("pwsh") ?? DotnetTool("pwsh") ?? "pwsh";
 
+    /// <summary>Where a user's data goes. Outside Windows the folder may not exist yet, and .NET then answers with nothing, which
+    /// would put settings in the working directory: the checkout.</summary>
+    public static string LocalData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+        OperatingSystem.IsWindows() ? Environment.SpecialFolderOption.None : Environment.SpecialFolderOption.Create);
+
     /// <summary>The Python on PATH. Some Linux systems only have python3.</summary>
     public static string Python => OperatingSystem.IsWindows() || OnPath("python") is not null ? "python" : "python3";
 

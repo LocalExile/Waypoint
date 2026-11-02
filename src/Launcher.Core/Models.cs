@@ -36,7 +36,7 @@ public sealed record AppearanceSettings(string Mode = "System", string Scheme = 
 public static class SettingsStore
 {
     // This identity is deliberately independent of the product's display name.
-    public static string DataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "EmulatorWorkspaceLauncher");
+    public static string DataDirectory => Path.Combine(Platform.LocalData, "EmulatorWorkspaceLauncher");
     public static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
     public static LauncherSettings Load(string? path = null)
     {
