@@ -4,6 +4,12 @@ Waypoint is a Windows desktop tool for a [LocalExile](https://github.com/LocalEx
 [README.md](README.md) and [docs/launcher.md](docs/launcher.md) first; what to build next is in
 [docs/roadmap.md](docs/roadmap.md).
 
+## Linux
+
+`src/Waypoint` is the Windows app and `src/Waypoint.Linux` the Linux one. The Linux project links the engine's files from
+`src/Waypoint`, so a Linux path in one goes behind `#if WINDOWS`: the Windows app must compile to the same bytes. It builds from
+`Waypoint.Linux.slnx`, never from `Waypoint.slnx`. On Linux the views are copies, so a change to a section's logic goes in both.
+
 ## Working on both repositories
 
 Waypoint drives a server checkout, usually beside this repository (`..\LocalExile`). To see both, open them together (a
