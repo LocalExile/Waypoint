@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:l="clr-namespace:Waypoint" x:Class="Waypoint.SetupTab">
+  <UserControl.Styles>
+    <StyleInclude Source="/Views/Table.axaml" />
+  </UserControl.Styles>
+  <DockPanel>
+    <!-- Which checkout, and the steps that prepare it. -->
+    <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="0,4,0,8" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6">
+          <Button x:Name="GuideButton" Click="RunGuide" />
+          <Button x:Name="FindButton" Click="FindCheckout" />
+          <Button x:Name="ChangeButton" Click="ChangeCheckout" />
+          <Button x:Name="CheckButton" Classes="accent" Click="CheckAgain" />
+        </StackPanel>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,0,10,0">
+          <DockPanel>
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="FolderOutline" Width="18" Height="18" Margin="0,0,8,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+            <TextBlock x:Name="ServerFolder" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+          </DockPanel>
+          <TextBlock x:Name="Summary" Classes="note" Margin="26,0,0,0" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="170" Margin="0,8,0,0" />
+
+    <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+      <Button x:Name="PrepareButton" Click="Prepare" Margin="0,0,6,6" />
+      <Button x:Name="DependenciesButton" Click="Dependencies" Margin="0,0,6,6" />
+      <Button x:Name="CreateAccountButton" Click="CreateAccount" Margin="0,0,6,6" />
+      <Button x:Name="OpenClientButton" Click="OpenClient" Margin="0,0,6,6" />
+      <Button x:Name="OpenGuideButton" Click="OpenGuide" ToolTip.Tip="Agents/GettingStarted.md" Margin="0,0,6,6" />
+    </WrapPanel>
+
+    <!-- Every requirement, with what to do about it. -->
+    <Grid RowDefinitions="Auto,*" Margin="0,4,0,0">
+      <Grid Height="34" Margin="10,0" ColumnDefinitions="26,190,*,150">
+        <TextBlock x:Name="RequirementHeader" Grid.Column="1" Classes="column" />
+        <TextBlock x:Name="DetailHeader" Grid.Column="2" Classes="column" />
+      </Grid>
+      <ListBox x:Name="Steps" Grid.Row="1" Classes="table">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid ColumnDefinitions="26,190,*,150">
+              <icons:MaterialIcon Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="16" Height="16" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="{Binding Step.DisplayName}" Classes="cell" FontWeight="SemiBold" />
+              <TextBlock Grid.Column="2" Text="{Binding Step.DisplayDetail}" Classes="cell muted" Margin="0,0,12,0" ToolTip.Tip="{Binding Step.DisplayDetail}" />
+              <Button Grid.Column="3" HorizontalAlignment="Right" Click="RunStep" Content="{Binding Step.ActionLabel}" IsVisible="{Binding ActionShown}" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <TextBlock x:Name="Empty" Grid.Row="1" Classes="note" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,24,0,0" />
+    </Grid>
+  </DockPanel>
+</UserControl>

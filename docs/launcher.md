@@ -411,6 +411,12 @@ A requirement that is met shows no action, so Setup offers nothing that has noth
 
 The player's own install is only ever read.
 
+On Linux (`src/Waypoint.Linux/Views/SetupWizard.axaml`) the guide is the same, with what running there takes. The release route
+also passes through the Tools page, which lists umu-launcher (or a runner named in `Game_CLIENT_RUNNER`): `LocalExile.exe` runs
+under Proton, and Next waits until it is found. The source route's tools include PowerShell 7, which runs the checkout's scripts.
+The client's folder goes to `LocalExile.exe` as a `Z:\` path: Proton gives the install a drive letter of its own, so an
+unqualified Unix path would land on that drive, while `Z:` is the root in every prefix.
+
 ### Setup
 
 The requirements come from the adapter's inspection, each with what to do about it. **Prepare client** creates what is
