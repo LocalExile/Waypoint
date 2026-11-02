@@ -774,6 +774,9 @@ function Register-Account($snapshot) {
     Require $registered 'Account registration did not finish.'
 }
 
+# After every function above: LinuxBridge.ps1 replaces those that cannot work on Linux. Windows PowerShell has no $IsLinux.
+if ($IsLinux) { . (Join-Path $PSScriptRoot 'LinuxBridge.ps1') }
+
 try {
     Require ([IO.Path]::IsPathRooted($ResultPath)) 'ResultPath must be absolute.'
     $script:root = (Resolve-Path -LiteralPath $RepoRoot).Path.TrimEnd('\')
