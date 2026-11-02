@@ -98,7 +98,11 @@ static class Repo
     public static string Logs { get; } = "logs";
 
     /// <summary>A server's build output, as live.ps1 runs it (Debug, net10.0).</summary>
+#if WINDOWS
     public static string ServerDll(string project) => IsInstall ? Path.Combine("app", $"GameServer.{project}.exe") :
+#else
+    public static string ServerDll(string project) => IsInstall ? Path.Combine("app", $"GameServer.{project}") :
+#endif
         Path.Combine("src", $"GameServer.{project}", "bin", "Debug", "net10.0", $"GameServer.{project}.dll");
 
     /// <summary>The checkout's virtual environment wins over the python on PATH, as in live.ps1.</summary>

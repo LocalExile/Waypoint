@@ -5213,4 +5213,31 @@ This replaces the saved choices only. Mod DLLs and saves are not restored. The c
   <data name="Text_ffd7f7c8013d" xml:space="preserve">
     <value>{0} commit(s) ahead of LocalExile</value>
   </data>
+  <data name="Text_03c9dea7a093" xml:space="preserve">
+    <value>You have the latest version.</value>
+  </data>
+  <data name="Text_0e23f575981d" xml:space="preserve">
+    <value>The command list could not be read. You can still type a command and copy it.</value>
+  </data>
+  <data name="Text_dd051395345d" xml:space="preserve">
+    <value>The clipboard is not available.</value>
+  </data>
+  <data name="Text_f7a7e0898704" xml:space="preserve">
+    <value>Needs umu-launcher, which runs it under Proton. Waypoint tells you when a newer release is out and installs it for you.</value>
+  </data>
+  <data name="Text_8550dd056667" xml:space="preserve">
+    <value>No release for Linux is published yet, so LocalExile is set up from its source code.</value>
+  </data>
+  <data name="Text_ad3c7c6418d1" xml:space="preserve">
+    <value>The item crafter is not available on Linux yet.</value>
+  </data>
+  <data name="Text_3fc597ad27c9" xml:space="preserve">
+    <value>git could not run: {0}. Install Git and start the launcher again.</value>
+  </data>
+  <data name="Text_9bad10eb9ddf" xml:space="preserve">
+    <value>umu-launcher runs the game under Proton</value>
+  </data>
+  <data name="Text_a3986c49db0d" xml:space="preserve">
+    <value>PowerShell 7 runs LocalExile's build and setup scripts</value>
+  </data>
 </root>

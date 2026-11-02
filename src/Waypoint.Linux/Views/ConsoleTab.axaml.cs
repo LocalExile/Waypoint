@@ -54,7 +54,7 @@ partial class ConsoleTab : UserControl
         ToolTip.SetTip(Input, L.Text("/ lists the commands, then each argument's values (areas, monsters, items, gems …): ↑↓ choose, Tab or Enter take one. Without a list ↑↓ go through the history. Text without / is a chat line."));
         ToolTip.SetTip(CommandFilter, L.Text("Filter the commands by name or description"));
         CommandNote.Text = L.Text("Double-click a command to put it in the line.");
-        NoCommands.Text = _noReleaseList ? L.Text("This release's command list cannot be read on Linux yet, because its Gateway is a Windows program. You can still type a command and copy it.") : "";
+        NoCommands.Text = _noReleaseList ? L.Text("The command list could not be read. You can still type a command and copy it.") : "";
         NoCommands.IsVisible = _noReleaseList;
     }
 

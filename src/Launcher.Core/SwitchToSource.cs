@@ -50,7 +50,9 @@ public static class SwitchToSource
     }
 
     public static bool HasFrida(string copy) =>
-        File.Exists(Platform.VenvPython(copy)) && Directory.Exists(Path.Combine(copy, ".venv", "Lib", "site-packages", "frida"));
+        File.Exists(Platform.VenvPython(copy)) && (OperatingSystem.IsWindows()
+            ? Directory.Exists(Path.Combine(copy, ".venv", "Lib", "site-packages", "frida"))
+            : Directory.Exists(Path.Combine(copy, ".venv", "lib")) && Directory.EnumerateDirectories(Path.Combine(copy, ".venv", "lib"), "frida", SearchOption.AllDirectories).Any());
 
     /// <summary>Python with Frida in the checkout's own .venv, where the client control bridge looks. git ignores it.</summary>
     public static async Task InstallFridaAsync(string copy, Action<string> output, CancellationToken stop)

@@ -341,16 +341,26 @@ public partial class SetupWizard : Window
 
     // --- What runs a release ---
 
-    /// <summary>What a release needs here: umu-run, or the runner the player named instead (Platform.WindowsRunner).</summary>
+    /// <summary>What a release needs here for its client: umu-run, or the runner the player named instead.</summary>
     static bool HasReleaseRunner => Environment.GetEnvironmentVariable("Game_CLIENT_RUNNER") is { Length: > 0 } || Platform.OnPath("umu-run") is not null;
 
-    void ShowReleaseNote() => ReleaseNote.Text = HasReleaseRunner
-        ? L.Text("Nothing else to install. Waypoint tells you when a newer release is out and installs it for you.")
-        : L.Text("Needs umu-launcher, which runs it under Proton. Waypoint tells you when a newer release is out and installs it for you.");
-
-    /// <summary>LocalExile.exe is a Windows program started with a Linux working folder, and Proton gives that folder a drive
-    /// letter of its own. Z: is the root in every prefix, so a path written with it means the same thing wherever it runs.</summary>
-    static string WindowsPath(string folder) => "Z:" + folder.Replace('/', '\\');
+    async void ShowReleaseNote()
+    {
+        ReleaseNote.Text = HasReleaseRunner
+            ? L.Text("Nothing else to install. Waypoint tells you when a newer release is out and installs it for you.")
+            : L.Text("Needs umu-launcher, which runs it under Proton. Waypoint tells you when a newer release is out and installs it for you.");
+        // A release without a Linux zip cannot run here: Wine lacks what its login server hashes passwords with. Without an
+        // answer from GitHub the choice stays, and the install says what went wrong.
+        try
+        {
+            using var client = Updates.Client();
+            if (await LocalExileReleases.LatestAsync(client) is not { ZipUrl: null }) return;
+        }
+        catch (Exception e) when (e is System.Net.Http.HttpRequestException or TaskCanceledException or System.Text.Json.JsonException) { return; }
+        ReleaseChoice.IsEnabled = false;
+        SourceChoice.IsChecked = true;
+        ReleaseNote.Text = L.Text("No release for Linux is published yet, so LocalExile is set up from its source code.");
+    }
 
     // --- Where the release goes ---
 
@@ -435,7 +445,7 @@ public partial class SetupWizard : Window
         RequirementList.ItemsSource = null;
         UpdateButtons();
         Prerequisite[] items = release
-            ? [new("umu-launcher", HasReleaseRunner, "umu-launcher runs the release's LocalExile.exe under Proton")]
+            ? [new("umu-launcher", HasReleaseRunner, "umu-launcher runs the game under Proton")]
             : [.. await Prerequisites.CheckAsync(), new("PowerShell 7", await ToolProcess.AskAsync(Platform.PowerShell, "--version") is { Code: 0 }, "PowerShell 7 runs LocalExile's build and setup scripts")];
         // The route changed while the tools answered: the page that shows now has its own check.
         if (release != UsingRelease) return;
@@ -813,7 +823,7 @@ public partial class SetupWizard : Window
     async Task PrepareReleaseAsync(string folder, string? client, Action<string> detail, CancellationToken stop)
     {
         List<string> arguments = ["setup"];
-        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", WindowsPath(client), "--client-mode", LinkClient.IsChecked == true ? "link" : "copy"]);
+        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", LinkClient.IsChecked == true ? "link" : "copy"]);
         string? password = null;
         if (AccountProblem() is null)
         {

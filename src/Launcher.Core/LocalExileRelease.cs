@@ -53,6 +53,10 @@ public sealed record LocalExileRelease(ReleaseVersion Version, string Tag, strin
 public static class LocalExileReleases
 {
     public const string ExeName = "LocalExile.exe";
+    /// <summary>A release's launcher on this system; a Linux release's servers and launcher are native programs.</summary>
+    public static string Launcher => OperatingSystem.IsWindows() ? ExeName : "LocalExile";
+    /// <summary>The end of the name of this system's zip among a release's files.</summary>
+    public static string AssetSuffix => OperatingSystem.IsWindows() ? "-win-x64.zip" : "-linux-x64.zip";
     public const string ManifestName = "release.json";
     public const string LatestUrl = "https://api.github.com/repos/LocalExile/LocalExile/releases/latest";
     public const string ListUrl = "https://api.github.com/repos/LocalExile/LocalExile/releases?per_page=30";
@@ -62,7 +66,7 @@ public static class LocalExileReleases
 
     /// <summary>A release install rather than a source checkout.</summary>
     public static bool IsInstall(string? folder) =>
-        !string.IsNullOrEmpty(folder) && File.Exists(Path.Combine(folder, ExeName)) && File.Exists(Path.Combine(folder, ManifestName))
+        !string.IsNullOrEmpty(folder) && File.Exists(Path.Combine(folder, Launcher)) && File.Exists(Path.Combine(folder, ManifestName))
         && !File.Exists(Path.Combine(folder, "GameServer.slnx"));
 
     /// <summary>The version in an install's release.json; null when it cannot be read.</summary>
@@ -109,7 +113,7 @@ public static class LocalExileReleases
         if (ReleaseVersion.Parse(tag) is not { } version) return null;
         JsonElement[] assets = root.TryGetProperty("assets", out var list) && list.ValueKind == JsonValueKind.Array ? list.EnumerateArray().ToArray() : [];
         string Name(JsonElement a) => a.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
-        var zip = assets.FirstOrDefault(a => Name(a).StartsWith("LocalExile-", StringComparison.OrdinalIgnoreCase) && Name(a).EndsWith("-win-x64.zip", StringComparison.OrdinalIgnoreCase));
+        var zip = assets.FirstOrDefault(a => Name(a).StartsWith("LocalExile-", StringComparison.OrdinalIgnoreCase) && Name(a).EndsWith(AssetSuffix, StringComparison.OrdinalIgnoreCase));
         string? Url(JsonElement a) => a.ValueKind == JsonValueKind.Object && a.TryGetProperty("browser_download_url", out var u) ? u.GetString() : null;
         string? zipName = zip.ValueKind == JsonValueKind.Object ? Name(zip) : null;
         var hash = assets.FirstOrDefault(a => zipName is not null && Name(a).Equals(zipName + ".sha256", StringComparison.OrdinalIgnoreCase));
@@ -152,8 +156,8 @@ public static class LocalExileReleases
             if (playerData) throw new InvalidDataException(L.Text("the release would overwrite {0}, which holds your own data; nothing was changed", name));
             files.Add((entry, Path.Combine(parts)));
         }
-        if (!files.Any(f => f.Item2 == ExeName) || !files.Any(f => f.Item2 == ManifestName)) throw new InvalidDataException(L.Text("the release has no {0} or {1}; nothing was changed", ExeName, ManifestName));
-        return files.OrderBy(f => f.Item2 == ManifestName ? 2 : f.Item2 == ExeName ? 1 : 0).ToList();
+        if (!files.Any(f => f.Item2 == Launcher) || !files.Any(f => f.Item2 == ManifestName)) throw new InvalidDataException(L.Text("the release has no {0} or {1}; nothing was changed", ExeName, ManifestName));
+        return files.OrderBy(f => f.Item2 == ManifestName ? 2 : f.Item2 == Launcher ? 1 : 0).ToList();
     }
 
     /// <summary>Extracts a checked zip into a staging folder, then moves its files into place. A stop or a bad zip during the
@@ -189,7 +193,7 @@ public static class LocalExileReleases
     /// <param name="progress">Bytes so far and of how many; the download first, then, with <paramref name="extracting"/>, the extraction.</param>
     public static async Task InstallAsync(HttpClient client, LocalExileRelease release, string folder, Action<long, long> progress, Action extracting, CancellationToken stop)
     {
-        if (release.ZipUrl is null || release.HashUrl is null) throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, "LocalExile-*-win-x64.zip"));
+        if (release.ZipUrl is null || release.HashUrl is null) throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, "LocalExile-*" + AssetSuffix));
         string expected = HashOf(await client.GetStringAsync(release.HashUrl, stop)) ?? throw new InvalidOperationException(L.Text("the release's .sha256 holds no SHA-256"));
         Directory.CreateDirectory(folder);
         string staging = Path.Combine(folder, StagingName);
@@ -331,15 +335,7 @@ public static class LocalExileTool
         }
         try
         {
-            string runner = Path.Combine(folder, LocalExileReleases.ExeName);
-            IEnumerable<string> command = [.. arguments, "--json"];
-            IReadOnlyDictionary<string, string>? environment = null;
-            if (!OperatingSystem.IsWindows())
-            {
-                command = [runner, .. command];
-                (runner, environment) = Platform.WindowsRunner(folder);
-            }
-            int code = await ToolProcess.RunAsync(runner, command, folder, Line, refuse.Token, input, utf8: true, environment);
+            int code = await ToolProcess.RunAsync(Path.Combine(folder, LocalExileReleases.Launcher), [.. arguments, "--json"], folder, Line, refuse.Token, input, utf8: true);
             return new(code, error, needed, suggestion);
         }
         catch (OperationCanceledException) when (unknownSchema)

@@ -47,6 +47,7 @@ public static class RepositoryDiscovery
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         foreach (string relative in new[] { "source/repos", "source", "repos", "Projects", "dev", "Developer", "GitHub", "Documents/GitHub", "Desktop", "Downloads" })
             Add(System.IO.Path.Combine(home, relative), 3);
+        if (OperatingSystem.IsLinux()) Add(System.IO.Path.Combine(home, "Games"), 3);
         Add(home, 2);
         foreach (var drive in DriveInfo.GetDrives())
         {

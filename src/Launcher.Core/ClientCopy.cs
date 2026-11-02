@@ -56,8 +56,17 @@ public static class ClientCopy
     /// <summary>Free bytes on the drive of a path, which need not exist yet; null when it cannot be told.</summary>
     public static long? FreeSpace(string path)
     {
-        try { return new DriveInfo(Path.GetPathRoot(Path.GetFullPath(path))!).AvailableFreeSpace; }
+        try { return new DriveInfo(OperatingSystem.IsWindows() ? Path.GetPathRoot(Path.GetFullPath(path))! : NearestFolder(path)).AvailableFreeSpace; }
         catch (Exception e) when (e is ArgumentException or IOException or UnauthorizedAccessException) { return null; }
+    }
+
+    /// <summary>On Linux every path's root is /, whichever disk holds it: the folder itself, or the nearest one above it that
+    /// exists yet, tells the disk.</summary>
+    static string NearestFolder(string path)
+    {
+        string folder = Path.GetFullPath(path);
+        while (!Directory.Exists(folder) && Path.GetDirectoryName(folder) is { } parent) folder = parent;
+        return folder;
     }
 
     public static void RequireSpace(ClientCopyPlan plan)

@@ -5213,4 +5213,31 @@
   <data name="Text_ffd7f7c8013d" xml:space="preserve">
     <value>опережает LocalExile на {0} коммит(ов)</value>
   </data>
+  <data name="Text_03c9dea7a093" xml:space="preserve">
+    <value>У вас последняя версия.</value>
+  </data>
+  <data name="Text_0e23f575981d" xml:space="preserve">
+    <value>Не удалось прочитать список команд. Команду всё равно можно ввести и скопировать.</value>
+  </data>
+  <data name="Text_dd051395345d" xml:space="preserve">
+    <value>Буфер обмена недоступен.</value>
+  </data>
+  <data name="Text_f7a7e0898704" xml:space="preserve">
+    <value>Нужен umu-launcher: он запускает игру через Proton. Waypoint сообщит о новом выпуске и установит его.</value>
+  </data>
+  <data name="Text_8550dd056667" xml:space="preserve">
+    <value>Выпуска для Linux пока нет, поэтому LocalExile будет установлен из исходного кода.</value>
+  </data>
+  <data name="Text_ad3c7c6418d1" xml:space="preserve">
+    <value>Конструктор предметов пока недоступен в Linux.</value>
+  </data>
+  <data name="Text_3fc597ad27c9" xml:space="preserve">
+    <value>Не удалось запустить git: {0}. Установите Git и запустите лаунчер снова.</value>
+  </data>
+  <data name="Text_9bad10eb9ddf" xml:space="preserve">
+    <value>umu-launcher запускает игру через Proton</value>
+  </data>
+  <data name="Text_a3986c49db0d" xml:space="preserve">
+    <value>PowerShell 7 выполняет скрипты сборки и настройки LocalExile</value>
+  </data>
 </root>

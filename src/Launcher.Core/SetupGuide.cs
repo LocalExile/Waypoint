@@ -11,7 +11,7 @@ public static class ToolProcess
 {
     /// <param name="input">A line for the tool's standard input, which then closes.</param>
     /// <param name="utf8">The tool writes UTF-8 whatever the console's code page.</param>
-    public static async Task<int> RunAsync(string file, IEnumerable<string> arguments, string? directory, Action<string> output, CancellationToken stop, string? input = null, bool utf8 = false, IReadOnlyDictionary<string, string>? environment = null)
+    public static async Task<int> RunAsync(string file, IEnumerable<string> arguments, string? directory, Action<string> output, CancellationToken stop, string? input = null, bool utf8 = false)
     {
         var info = new ProcessStartInfo(file) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, RedirectStandardInput = input is not null };
         if (utf8) info.StandardOutputEncoding = info.StandardErrorEncoding = System.Text.Encoding.UTF8;
@@ -22,7 +22,6 @@ public static class ToolProcess
         info.Environment["GCM_INTERACTIVE"] = "never";
         info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
-        if (environment is not null) foreach (var (key, value) in environment) info.Environment[key] = value;
         using var process = new Process { StartInfo = info, EnableRaisingEvents = true };
         var exited = new TaskCompletionSource();
         var outDone = new TaskCompletionSource();

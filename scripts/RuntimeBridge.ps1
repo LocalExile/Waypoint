@@ -782,7 +782,7 @@ try {
     $script:root = (Resolve-Path -LiteralPath $RepoRoot).Path.TrimEnd('\')
     Require (-not ($script:root -match '[&|<>^%!"\r\n]')) 'This checkout path contains characters unsupported by upstream live.ps1 command handling. Use a plain path (spaces are supported).'
     # A release install has no source and no live.ps1: its saves, mods and accounts are where a checkout has them.
-    $script:isRelease = (Test-Path -LiteralPath (At 'LocalExile.exe')) -and (Test-Path -LiteralPath (At 'release.json')) -and -not (Test-Path -LiteralPath (At 'GameServer.slnx'))
+    $script:isRelease = (Test-Path -LiteralPath (At $(if ($IsLinux) { 'LocalExile' } else { 'LocalExile.exe' }))) -and (Test-Path -LiteralPath (At 'release.json')) -and -not (Test-Path -LiteralPath (At 'GameServer.slnx'))
     if (-not $script:isRelease) {
         Require (Test-Path -LiteralPath (At 'GameServer.slnx')) 'Choose the LocalExile repository root containing GameServer.slnx.'
         Require (Test-Path -LiteralPath (At 'scripts/dev/live.ps1')) 'The checkout has no scripts/dev/live.ps1.'

@@ -41,7 +41,11 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
         if (!Repo.IsInstall && !Repo.HasLauncherHooks())
             throw new InvalidOperationException(L.Text("This checkout is older than the launcher hooks, so its Gateway cannot list commands: pull the server's main branch."));
         // A release's Gateway is its own executable.
+#if WINDOWS
         bool program = arguments[0].EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+#else
+        bool program = !arguments[0].EndsWith(".dll", StringComparison.OrdinalIgnoreCase);
+#endif
         var info = new ProcessStartInfo(program ? Path.GetFullPath(arguments[0]) : "dotnet") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };
         foreach (string a in program ? arguments.Skip(1) : arguments) info.ArgumentList.Add(a);
         using var process = Process.Start(info)!;

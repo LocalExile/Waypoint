@@ -69,9 +69,9 @@ function Get-NetTCPConnection {
 }
 
 # live.ps1 starts a server on Linux with its dll's absolute path, and no cmd wrapper: the path says whose it is. A release's
-# servers are Windows programs under Proton, from app/.
+# servers are native programs in app/.
 function Owned-Server($process, [string]$name) {
-    if ($script:isRelease) { return $process -and (Same-Path $process.ExecutablePath (At "app/GameServer.$name.exe")) }
+    if ($script:isRelease) { return $process -and (Same-Path $process.ExecutablePath (At "app/GameServer.$name")) }
     if (-not $process -or $process.Name -ine 'dotnet.exe') { return $false }
     $arguments = @(-split "$($process.CommandLine)")
     if ($arguments.Count -ne $(if ($name -eq 'Auth') { 3 } else { 2 })) { return $false }
@@ -101,18 +101,6 @@ function Get-Python {
 }
 function npm.cmd { & npm @args }
 
-# LocalExile.exe of a release is the Windows program, under Proton in the install's prefix (Platform.WindowsRunner).
-function Invoke-Release([string[]]$arguments, [string]$standardInput) {
-    $saved = @{}
-    $settings = @{ WINEPREFIX = (At 'data/wine-prefix'); PROTONPATH = 'GE-Proton'; GAMEID = 'umu-238960'; PROTON_VERB = 'runinprefix' }
-    foreach ($key in $settings.Keys) {
-        $saved[$key] = [Environment]::GetEnvironmentVariable($key)
-        if (-not $saved[$key] -or $key -eq 'PROTON_VERB') { [Environment]::SetEnvironmentVariable($key, $settings[$key]) }
-    }
-    try { $standardInput | & umu-run (At 'LocalExile.exe') @arguments 2>$null }
-    finally { foreach ($key in $saved.Keys) { [Environment]::SetEnvironmentVariable($key, $saved[$key]) } }
-}
-
 # As on Windows, but for how the temporary account service is started and stopped: Ctrl+C is SIGINT, and needs no console.
 function Register-Account($snapshot) {
     Assert-AccountsStopped $snapshot
@@ -128,7 +116,7 @@ function Register-Account($snapshot) {
     if ($script:isRelease) {
         Require ($request.Password -cmatch '^[\x20-\x7E]+$') 'The password can only use English letters, digits and common symbols.'
         Set-Stage 'Creating local account' 'Using this installation only. Credentials are not saved by the launcher.'
-        $lines = @(Invoke-Release @('account', 'create', $request.Name, '--password-stdin', '--json') $request.Password)
+        $lines = @($request.Password | & (At 'LocalExile') account create $request.Name --password-stdin --json)
         $code = $LASTEXITCODE
         $failure = @($lines | ForEach-Object { try { $_ | ConvertFrom-Json } catch { $null } } | Where-Object { $_.event -eq 'error' } | Select-Object -First 1)
         Require ($code -eq 0) $(if ($failure.Count) { [string]$failure[0].message } else { "LocalExile.exe could not create the account (exit $code)." })
