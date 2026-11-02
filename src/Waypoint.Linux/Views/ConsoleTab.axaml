@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Waypoint.ConsoleTab">
+  <UserControl.Styles>
+    <Style Selector=":is(Control).mono">
+      <Setter Property="TextElement.FontFamily" Value="monospace" />
+    </Style>
+    <Style Selector="ListBox#Suggestions ListBoxItem">
+      <Setter Property="Padding" Value="8,3" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Focusable" Value="False" />
+    </Style>
+    <Style Selector="ListBox#CommandList ListBoxItem">
+      <Setter Property="Padding" Value="8,4" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+      <Button x:Name="ReloadButton" DockPanel.Dock="Left" Click="ReloadCommands" Margin="0,0,10,0" />
+      <TextBlock x:Name="State" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" TextTrimming="CharacterEllipsis" />
+    </DockPanel>
+
+    <!-- The input row: the line, its usage under it, the pinned lines above it. -->
+    <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+      <DockPanel Margin="0,0,0,4">
+        <TextBlock x:Name="PinnedLabel" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+        <WrapPanel x:Name="Favorites" />
+      </DockPanel>
+      <DockPanel>
+        <Button x:Name="PinButton" DockPanel.Dock="Right" Click="Pin" Margin="6,0,0,0" />
+        <Button x:Name="SendButton" DockPanel.Dock="Right" Classes="accent" Click="SendClicked" Margin="6,0,0,0" />
+        <TextBox x:Name="Input" Classes="mono" FontSize="13" TextChanged="InputChanged" LostFocus="InputLostFocus" />
+      </DockPanel>
+      <TextBlock x:Name="Hint" Classes="mono" Margin="2,4,0,0" Foreground="{DynamicResource Shell.TextSecondary}" TextWrapping="Wrap" />
+      <Popup x:Name="SuggestionPopup" PlacementTarget="{Binding #Input}" Placement="TopEdgeAlignedLeft" IsLightDismissEnabled="False">
+        <Border BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource Shell.Background}">
+          <ListBox x:Name="Suggestions" MaxHeight="260" MinWidth="420" BorderThickness="0" Focusable="False" Background="Transparent">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock Text="{Binding Label}" Classes="mono" FontWeight="SemiBold" MinWidth="140" />
+                  <TextBlock Text="{Binding Detail}" Classes="mono" Foreground="{DynamicResource Shell.TextSecondary}" Margin="10,0,0,0" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+      </Popup>
+    </StackPanel>
+
+    <Grid ColumnDefinitions="*,8,330">
+      <TextBox x:Name="Output" Classes="mono" IsReadOnly="True" AcceptsReturn="True" FontSize="12" TextWrapping="Wrap"
+               ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" />
+      <DockPanel Grid.Column="2">
+        <TextBox x:Name="CommandFilter" DockPanel.Dock="Top" Margin="0,0,0,4" TextChanged="CommandFilterChanged" />
+        <TextBlock x:Name="CommandNote" DockPanel.Dock="Bottom" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap" />
+        <TextBlock x:Name="NoCommands" DockPanel.Dock="Top" Classes="note" Margin="4,4,4,8" IsVisible="False" />
+        <ListBox x:Name="CommandList" DoubleTapped="CommandPicked" Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel ToolTip.Tip="{Binding Usage}">
+                <TextBlock Text="{Binding Short}" Classes="mono" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Explanation}" Foreground="{DynamicResource Shell.TextSecondary}" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>
