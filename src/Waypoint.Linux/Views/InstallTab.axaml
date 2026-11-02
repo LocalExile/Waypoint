@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:l="clr-namespace:Waypoint"
+             x:Class="Waypoint.InstallTab">
+  <UserControl.Styles>
+    <StyleInclude Source="avares://Waypoint/Views/ViewStyles.axaml" />
+  </UserControl.Styles>
+  <!-- A release install's home, laid out as PlayTab: one sentence, one button. Below them, once Play was pressed, what the run
+       is doing: its steps as on the setup guide, and its output. -->
+  <Grid RowDefinitions="*,Auto">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460">
+      <TextBlock x:Name="Headline" FontSize="24" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,24" />
+      <Button x:Name="MainButton" Classes="accent" Click="MainClicked" HorizontalAlignment="Center" Height="52" MinWidth="200" Padding="40,0" FontSize="18"
+              HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+      <ProgressBar x:Name="Working" Height="4" Width="260" HorizontalAlignment="Center" IsIndeterminate="True" IsVisible="False" />
+      <TextBlock x:Name="Note" Classes="note" TextAlignment="Center" Margin="0,18,0,0" IsVisible="False" />
+      <Button x:Name="DetailsLink" Classes="quiet" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" IsVisible="False" />
+      <Button x:Name="StopLink" Classes="quiet" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" IsVisible="False" />
+      <TextBlock x:Name="VersionText" Classes="note" TextAlignment="Center" Margin="0,24,0,0" />
+      <TextBlock x:Name="FolderText" Classes="note" TextAlignment="Center" Margin="0,2,0,0" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16" Margin="0,4,0,0">
+        <Button Classes="quiet" Content="{l:Loc 'Change folder…'}" Click="ChangeFolderClicked" />
+        <Button Classes="quiet" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
+                ToolTip.Tip="{l:Loc 'Sets up a second LocalExile from its source code, which has the item crafter. You can bring your characters.'}" />
+      </StackPanel>
+    </StackPanel>
+    <Border x:Name="Activity" Grid.Row="1" IsVisible="False" Margin="0,8,0,0" Padding="14,10" CornerRadius="6" BorderThickness="1"
+            BorderBrush="{DynamicResource Shell.Border}">
+      <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+          <TextBlock x:Name="Elapsed" DockPanel.Dock="Right" Classes="note" />
+          <TextBlock Text="{l:Loc 'What is happening'}" FontWeight="SemiBold" />
+        </DockPanel>
+        <Expander DockPanel.Dock="Bottom" Header="{l:Loc 'Details'}" IsExpanded="True" Margin="0,6,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+          <Expander.Resources>
+            <!-- The theme's own panels would stand out from the card around them. -->
+            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="ExpanderContentBackground" Color="Transparent" />
+            <Thickness x:Key="ExpanderContentPadding">0,4,0,0</Thickness>
+          </Expander.Resources>
+          <TextBox x:Name="Log" Classes="output" Height="130" FontSize="11.5" />
+        </Expander>
+        <ScrollViewer x:Name="StepScroll" MaxHeight="170" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl x:Name="StepList">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <DockPanel Margin="0,0,0,7">
+                  <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="18" Height="18" Margin="0,1,10,0" />
+                  <StackPanel>
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Detail}" Classes="note" FontSize="12" TextWrapping="NoWrap" IsVisible="{Binding DetailShown}" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                </DockPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+  </Grid>
+</UserControl>

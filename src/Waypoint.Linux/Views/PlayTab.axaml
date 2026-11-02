@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Waypoint"
+             x:Class="Waypoint.PlayTab">
+  <UserControl.Styles>
+    <StyleInclude Source="avares://Waypoint/Views/ViewStyles.axaml" />
+  </UserControl.Styles>
+  <!-- Simple mode's home: one sentence, one button. Everything else appears only when there is something to say. -->
+  <Grid>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460">
+      <TextBlock x:Name="Headline" FontSize="24" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,24" />
+      <Button x:Name="MainButton" Classes="accent" Click="MainClicked" HorizontalAlignment="Center" Height="52" MinWidth="200" Padding="40,0" FontSize="18"
+              HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+      <ProgressBar x:Name="Working" Height="4" Width="260" HorizontalAlignment="Center" IsIndeterminate="True" IsVisible="False" />
+      <TextBlock x:Name="Note" Classes="note" TextAlignment="Center" Margin="0,18,0,0" IsVisible="False" />
+      <Button x:Name="DetailsLink" Classes="quiet" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" IsVisible="False" />
+      <Button x:Name="StopLink" Classes="quiet" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" IsVisible="False" />
+      <Button x:Name="GoBackLink" Classes="quiet" Content="{l:Loc 'Go back to the version you had'}" Margin="0,18,0,0" Click="GoBackClicked" IsVisible="False" />
+      <Border x:Name="RemoveOldCard" IsVisible="False" Margin="0,18,0,0" Padding="14,10" CornerRadius="6" BorderThickness="1"
+              Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
+        <StackPanel>
+          <TextBlock x:Name="RemoveOldText" TextAlignment="Center" TextWrapping="Wrap" />
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8" Margin="0,10,0,0">
+            <Button Content="{l:Loc 'Delete the old one…'}" Click="RemoveOldClicked" />
+            <Button Content="{l:Loc 'Keep it'}" Click="KeepOldClicked" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <TextBlock x:Name="FolderText" Classes="note" TextAlignment="Center" Margin="0,24,0,0" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16" Margin="0,4,0,0">
+        <Button Classes="quiet" Content="{l:Loc 'Change folder…'}" Click="ChangeFolderClicked" />
+        <Button Classes="quiet" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
+                ToolTip.Tip="{l:Loc 'Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests'}" />
+      </StackPanel>
+    </StackPanel>
+  </Grid>
+</UserControl>

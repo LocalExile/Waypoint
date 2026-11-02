@@ -1,0 +1,79 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- What the sections share that the Windows app has in Shell.xaml. A section takes them with a StyleInclude. -->
+
+  <!-- A quiet action: reads as a link, and takes the keyboard as a button does. The presenter has its own name: the theme's
+       hover colours are for PART_ContentPresenter. -->
+  <Style Selector="Button.quiet">
+    <Setter Property="Foreground" Value="{DynamicResource Shell.Accent}" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="Link" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}"
+                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+  <!-- A titled section (the Windows GroupBox): a small title over a thin-bordered panel. -->
+  <Style Selector="TextBlock.groupTitle">
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+    <Setter Property="Margin" Value="2,0,0,6" />
+  </Style>
+  <Style Selector="Border.group">
+    <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+  </Style>
+
+  <!-- A run's output: read-only, in a fixed-width font, on the panel behind it. A log is written whole on each line, so it keeps
+       no undo history. -->
+  <Style Selector="TextBox.output">
+    <Setter Property="IsReadOnly" Value="True" />
+    <Setter Property="IsUndoEnabled" Value="False" />
+    <Setter Property="FontFamily" Value="monospace" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="AcceptsReturn" Value="True" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+  </Style>
+  <Style Selector="TextBox.output:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="TextBox.output:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+
+  <!-- A table's cells and column titles. -->
+  <Style Selector="TextBlock.columnHeader">
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="TextBlock.cell">
+    <Setter Property="FontSize" Value="12.5" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+  <!-- The rows: 44 px high, every other one shaded, the hovered one tinted; no selection (a row acts through its buttons). -->
+  <Style Selector="Border.row">
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Padding" Value="10,0" />
+    <Setter Property="CornerRadius" Value="3" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ItemsControl.table ContentPresenter:nth-child(2n+1) Border.row">
+    <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
+  </Style>
+  <Style Selector="ItemsControl.table ContentPresenter Border.row:pointerover">
+    <Setter Property="Background" Value="{DynamicResource Shell.Cell}" />
+  </Style>
+</Styles>

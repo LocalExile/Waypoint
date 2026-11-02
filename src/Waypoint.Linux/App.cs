@@ -79,11 +79,18 @@ static class Program
         return 0;
     }
 
-    static Avalonia.Controls.Window Hosting(string section)
+    static Avalonia.Controls.Window Hosting(string section) => new()
     {
-        var view = (Avalonia.Controls.Control)Activator.CreateInstance(typeof(Program).Assembly.GetType("Waypoint." + section, throwOnError: true)!)!;
-        view.GetType().GetMethod("Attach", [typeof(Shared)])?.Invoke(view, [new Shared()]);
-        return new Avalonia.Controls.Window { Width = 970, Height = 700, Content = view };
+        Width = 970, Height = 700, Content = Attached(typeof(Program).Assembly.GetType("Waypoint." + section, throwOnError: true)!, new Shared()),
+    };
+
+    /// <summary>A section attached as the window attaches it: what its Attach takes besides Shared is another section (Play's Control).</summary>
+    static Avalonia.Controls.Control Attached(Type section, Shared shared)
+    {
+        var view = (Avalonia.Controls.Control)Activator.CreateInstance(section)!;
+        var attach = section.GetMethod("Attach");
+        attach?.Invoke(view, [.. attach.GetParameters().Select(p => p.ParameterType == typeof(Shared) ? shared : (object)Attached(p.ParameterType, shared))]);
+        return view;
     }
 
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().LogToTrace();
