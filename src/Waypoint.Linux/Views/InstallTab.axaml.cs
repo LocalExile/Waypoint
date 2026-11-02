@@ -75,8 +75,21 @@ partial class InstallTab : UserControl
     public InstallTab() => InitializeComponent();
 
     Window? Owner => TopLevel.GetTopLevel(this) as Window;
-    bool GameRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Client && s.Running);
-    bool AnythingRunning => _shared.Monitor.Latest.Any(s => s.Running);
+    bool GameRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Client && s.Running && Ours(s));
+    bool AnythingRunning => _shared.Monitor.Latest.Any(s => s.Running && Ours(s));
+
+    /// <summary>The monitor sees the whole machine. A source checkout's servers are no game of this install's: taking them for
+    /// one hides Play and offers a Stop that cannot reach them. An install's programs work from its folder, or its Client.</summary>
+    bool Ours(ServiceSample sample)
+    {
+        try
+        {
+            string? working = new DirectoryInfo($"/proc/{sample.Pid}/cwd").ResolveLinkTarget(false)?.FullName;
+            return working is not null && (working == Folder || working.StartsWith(Folder + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                || working == ClientLocator.RealPath(Path.Combine(Folder, "Client")));
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
+    }
     static string Folder => Environment.CurrentDirectory;
 
     public void Attach(Shared shared)
@@ -136,6 +149,8 @@ partial class InstallTab : UserControl
     async Task RunAsync(string[] arguments, bool withClient)
     {
         if (_working || _shared.IsLiveRunning || !await BackUp()) return;
+        // Another folder's servers on these ports: the same question as a checkout's, instead of a refusal from the run.
+        if (await PortCheck.ClearAsync(ViewTools.Owner(this), PortCheck.ServerPorts, [], line => _shared.Logs.Write(line)) != PortAnswer.Free) return;
         _working = true;
         _failed = false;
         _stopping = false;

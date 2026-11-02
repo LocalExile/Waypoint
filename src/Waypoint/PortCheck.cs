@@ -151,9 +151,27 @@ static class PortCheck
         output($"ending {holder.Name} (pid {holder.Pid})");
         using var process = TryOpen(holder.Pid);
         if (process is null) return;
+#if !WINDOWS
+        // `dotnet watch` is a few dotnet processes above a server here, and would otherwise wait to start it again. Found first:
+        // the processes between them end with the server. Only that chain counts: a shell above it can have any words on its
+        // command line.
+        int top = 0;
+        for (int id = holder.ParentPid, hop = 0; id > 1 && hop < 4; hop++)
+        {
+            var above = Describe(id, []);
+            if (above.Name != "dotnet.exe") break;
+            if (above.CommandLine.Contains("dotnet-watch", StringComparison.Ordinal) || above.CommandLine.Contains(" watch ", StringComparison.Ordinal)) top = id;
+            id = above.ParentPid;
+        }
+#endif
         try
         {
+#if WINDOWS
             if (holder.Name.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase))
+#else
+            // A watched Gateway is its own program here.
+            if (holder.Name.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase) || holder.Name.StartsWith("GameServer.", StringComparison.Ordinal))
+#endif
             {
 #if WINDOWS
                 string helper = Path.Combine(Path.GetDirectoryName(BridgeScripts.Extract())!, "ConsoleSignal.ps1");
@@ -178,6 +196,9 @@ static class PortCheck
         {
             output($"no console stop for pid {holder.Pid}: {e.Message}");
         }
+#if !WINDOWS
+        if (top != 0) TryOpen(top)?.Kill(entireProcessTree: true);
+#endif
         if (process.HasExited) return;
         using var watcher = holder.ParentPid > 0 && Describe(holder.ParentPid, []) is { Name: "dotnet.exe" } parent && parent.CommandLine.Contains(" watch ", StringComparison.Ordinal) ? TryOpen(holder.ParentPid) : null;
         var target = watcher ?? process;
