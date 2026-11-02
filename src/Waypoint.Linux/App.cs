@@ -35,6 +35,18 @@ sealed class App : Avalonia.Application
     public override void OnFrameworkInitializationCompleted()
     {
         Prepare();
+        // As on Windows: a failed click is reported and Waypoint keeps running.
+        Avalonia.Threading.Dispatcher.UIThread.UnhandledException += (_, e) =>
+        {
+            e.Handled = true;
+            try
+            {
+                Directory.CreateDirectory(Repo.Logs);
+                File.AppendAllText(Path.Combine(Repo.Logs, "launcher-crash.log"), $"{DateTime.Now:O}\n{e.Exception}\n\n");
+            }
+            catch (Exception io) when (io is IOException or UnauthorizedAccessException) { }
+            Dialog.Tell(null, DialogKind.Error, L.Text("Unexpected error"), L.Text("Something failed; Waypoint keeps running. The details help a bug report."), e.Exception.ToString());
+        };
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             if (string.IsNullOrEmpty(Repo.Find(Environment.CurrentDirectory, Environment.CurrentDirectory)))
@@ -125,7 +137,7 @@ static class Program
         Rendering = true;
         var app = AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
         ((App)app.Instance!).Prepare();
-        Avalonia.Controls.Window window = section is null ? new MainWindow() : Hosting(section);
+        Avalonia.Controls.Window window = string.IsNullOrEmpty(section) ? new MainWindow() : Hosting(section);
         window.Show();
         for (int i = 0; i < seconds * 20; i++)
         {

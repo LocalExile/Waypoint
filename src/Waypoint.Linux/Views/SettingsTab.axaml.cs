@@ -158,7 +158,8 @@ partial class SettingsTab : UserControl
     {
         if (Busy() || ViewTools.Owner(this) is not { } owner) return;
         var dialog = new CheckoutDialog(owner, S.ServerPath);
-        if (dialog.ShowDialog() == true) await ServerChoice.SwitchAsync(owner, S, dialog.Chosen);
+        await Ui.ShowAsync(dialog, owner);
+        if (dialog.Chosen is not null) await ServerChoice.SwitchAsync(owner, S, dialog.Chosen);
     }
 
     async void ChangeCheckout(object? sender, RoutedEventArgs e)

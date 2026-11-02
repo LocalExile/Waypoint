@@ -38,7 +38,7 @@ static class Dialog
         box.Content = panel;
         var frame = new DispatcherFrame();
         box.Closed += (_, _) => frame.Continue = false;
-        if (owner is { IsVisible: true }) box.Show(owner); else box.Show();
+        if (owner is { IsVisible: true }) _ = box.ShowDialog(owner); else box.Show();
         Dispatcher.UIThread.PushFrame(frame);
         return chosen;
     }

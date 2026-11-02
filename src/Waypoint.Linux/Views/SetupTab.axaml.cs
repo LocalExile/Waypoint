@@ -6,7 +6,7 @@ using Material.Icons;
 
 namespace Waypoint;
 
-sealed record SetupRow(SetupStep Step)
+sealed record SetupStepRow(SetupStep Step)
 {
     public MaterialIconKind Icon => Step.Ready ? MaterialIconKind.CheckCircleOutline : MaterialIconKind.AlertCircleOutline;
     public IBrush Brush => App.Brush(Step.Ready ? "Shell.Good" : "Shell.Warning");
@@ -65,7 +65,7 @@ public partial class SetupTab : UserControl
     {
         ShowText();
         var state = _shared.Workspace.Latest;
-        var rows = state?.Requirements.Select(r => new SetupRow(SetupGuidance.Describe(r, state.Root))).ToList() ?? [];
+        var rows = state?.Requirements.Select(r => new SetupStepRow(SetupGuidance.Describe(r, state.Root))).ToList() ?? [];
         Steps.ItemsSource = rows;
         int missing = rows.Count(r => !r.Step.Ready);
         bool Needs(params string[] names) => state is null || rows.Any(r => !r.Step.Ready && names.Contains(r.Step.Name));
@@ -134,7 +134,7 @@ public partial class SetupTab : UserControl
 
     async void RunStep(object? sender, RoutedEventArgs e)
     {
-        if (((Control)sender!).DataContext is SetupRow row) await RunStepAsync(row.Step);
+        if (((Control)sender!).DataContext is SetupStepRow row) await RunStepAsync(row.Step);
     }
 
     async void Prepare(object? sender, RoutedEventArgs e) => await RunStepAsync(SetupGuidance.Describe(new("Prepared client", false, ""), Environment.CurrentDirectory));
