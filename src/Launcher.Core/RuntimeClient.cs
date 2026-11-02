@@ -29,7 +29,7 @@ public sealed class RuntimeClient
         Directory.CreateDirectory(directory);
         string resultFile = Path.Combine(directory, "result.json");
         string logFile = Path.Combine(directory, "operation.log");
-        var start = new ProcessStartInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe"))
+        var start = new ProcessStartInfo(Platform.PowerShell)
         {
             UseShellExecute = false, CreateNoWindow = true, RedirectStandardInput = action is "Register" or "ManageAccount",
             StandardInputEncoding = action is "Register" or "ManageAccount" ? new System.Text.UTF8Encoding(false) : null,

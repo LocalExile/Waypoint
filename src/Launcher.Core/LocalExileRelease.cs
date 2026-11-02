@@ -331,7 +331,15 @@ public static class LocalExileTool
         }
         try
         {
-            int code = await ToolProcess.RunAsync(Path.Combine(folder, LocalExileReleases.ExeName), [.. arguments, "--json"], folder, Line, refuse.Token, input, utf8: true);
+            string runner = Path.Combine(folder, LocalExileReleases.ExeName);
+            IEnumerable<string> command = [.. arguments, "--json"];
+            IReadOnlyDictionary<string, string>? environment = null;
+            if (!OperatingSystem.IsWindows())
+            {
+                command = [runner, .. command];
+                (runner, environment) = Platform.WindowsRunner(folder);
+            }
+            int code = await ToolProcess.RunAsync(runner, command, folder, Line, refuse.Token, input, utf8: true, environment);
             return new(code, error, needed, suggestion);
         }
         catch (OperationCanceledException) when (unknownSchema)

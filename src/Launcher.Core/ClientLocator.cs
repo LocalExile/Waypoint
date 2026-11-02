@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using Microsoft.Win32;
@@ -94,13 +95,15 @@ public static class ClientLocator
             using var steam = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam");
             if (steam?.GetValue("SteamPath") is string steamPath && steamPath.Length > 0) named.Add(Path.Combine(steamPath, "steamapps", "common", "Path of Exile"));
         }
+        if (OperatingSystem.IsLinux()) named.AddRange(WinePrefixClients());
         foreach (var folder in new[] { Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.ProgramFiles })
         {
             named.Add(Path.Combine(Environment.GetFolderPath(folder), "Grinding Gear Games", "Path of Exile"));
             named.Add(Path.Combine(Environment.GetFolderPath(folder), "Epic Games", "PathOfExile"));
         }
         var drives = new List<string>();
-        foreach (var drive in DriveInfo.GetDrives())
+        if (OperatingSystem.IsLinux()) drives.AddRange(HomeRoots());
+        else foreach (var drive in DriveInfo.GetDrives())
         {
             try { if (drive.DriveType == DriveType.Fixed && drive.IsReady) drives.Add(drive.RootDirectory.FullName); }
             catch (IOException) { }
@@ -125,6 +128,36 @@ public static class ClientLocator
         bool limited = Walk(drives, Consider, cancellation, timeLimit ?? TimeSpan.FromSeconds(8));
         return new(found.Values.OrderBy(c => c.Kind).ThenByDescending(c => c.KnownBuild == true).ThenBy(c => c.Folder, StringComparer.OrdinalIgnoreCase).ToArray(),
             searched.ToArray(), limited);
+    }
+
+    /// <summary>Where a Linux walk starts: a system's other mounts hold no game, and Games goes first, so that its Wine prefixes
+    /// are reached within the walk's depth.</summary>
+    static IEnumerable<string> HomeRoots()
+    {
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        return new[] { Path.Combine(home, "Games"), home }.Where(Directory.Exists);
+    }
+
+    /// <summary>The installer's usual folders in each Wine prefix, and the folder it recorded there: the prefix's user.reg and
+    /// system.reg are the Windows registry's files, with C:\ as drive_c.</summary>
+    static IEnumerable<string> WinePrefixClients()
+    {
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var prefixes = new List<string> { Path.Combine(home, ".wine") };
+        if (Environment.GetEnvironmentVariable("WINEPREFIX") is { Length: > 0 } own) prefixes.Add(own);
+        foreach (string games in new[] { Path.Combine(home, "Games"), Path.Combine(home, "Games", "umu") })
+            if (Directory.Exists(games)) prefixes.AddRange(Directory.EnumerateDirectories(games));
+        foreach (string prefix in prefixes)
+        {
+            string drive = Path.Combine(prefix, "drive_c");
+            if (!Directory.Exists(drive)) continue;
+            yield return Path.Combine(drive, "Path of Exile");
+            yield return Path.Combine(drive, "Program Files (x86)", "Grinding Gear Games", "Path of Exile");
+            foreach (string registry in new[] { "user.reg", "system.reg" })
+                if (Path.Combine(prefix, registry) is var file && File.Exists(file)
+                    && Regex.Match(File.ReadAllText(file), @"(?m)^""InstallLocation""=""[Cc]:\\\\(.+?)(?:\\\\)?""\s*$") is { Success: true } location)
+                    yield return Path.Combine(drive, location.Groups[1].Value.Replace(@"\\", "/"));
+        }
     }
 
     static bool Walk(IEnumerable<string> roots, Action<string> consider, CancellationToken cancellation, TimeSpan limit)

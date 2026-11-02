@@ -50,13 +50,13 @@ public static class SwitchToSource
     }
 
     public static bool HasFrida(string copy) =>
-        File.Exists(Path.Combine(copy, ".venv", "Scripts", "python.exe")) && Directory.Exists(Path.Combine(copy, ".venv", "Lib", "site-packages", "frida"));
+        File.Exists(Platform.VenvPython(copy)) && Directory.Exists(Path.Combine(copy, ".venv", "Lib", "site-packages", "frida"));
 
     /// <summary>Python with Frida in the checkout's own .venv, where the client control bridge looks. git ignores it.</summary>
     public static async Task InstallFridaAsync(string copy, Action<string> output, CancellationToken stop)
     {
-        string python = Path.Combine(copy, ".venv", "Scripts", "python.exe");
-        if (!File.Exists(python) && await ToolProcess.RunAsync("python", ["-m", "venv", Path.Combine(copy, ".venv")], copy, output, stop) != 0)
+        string python = Platform.VenvPython(copy);
+        if (!File.Exists(python) && await ToolProcess.RunAsync(Platform.Python, ["-m", "venv", Path.Combine(copy, ".venv")], copy, output, stop) != 0)
             throw new IOException(L.Text("Python could not make its environment in {0}.", copy));
         if (await ToolProcess.RunAsync(python, ["-m", "pip", "install", "--disable-pip-version-check", "frida"], copy, output, stop) != 0)
             throw new IOException(L.Text("Frida could not be installed. Check your connection and try again."));

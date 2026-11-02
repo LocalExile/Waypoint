@@ -73,7 +73,7 @@ public static class ClientCopy
         if (new DirectoryInfo(target).LinkTarget is null) return;
         if (ClientLocator.Classify(target) is ClientKind.Ready or ClientKind.Standalone)
             throw new IOException(L.Text("Client must be a separate physical copy in this checkout, not a link to another folder."));
-        Directory.Delete(target);
+        if (OperatingSystem.IsWindows()) Directory.Delete(target); else File.Delete(target); // a Unix link is a file
     }
 
     /// <summary>A client patched for a set of keys has their public key in it, as it is, and the original has not: so whether
@@ -116,9 +116,13 @@ public static class ClientCopy
             if (Directory.EnumerateFileSystemEntries(target).Any()) throw new IOException(L.Text("{0} already has files in it, so Waypoint will not replace it with a link.", target));
             Directory.Delete(target);
         }
-        // A junction needs no special rights, which a symbolic link does.
-        int code = await ToolProcess.RunAsync("cmd.exe", ["/c", "mklink", "/J", target, ClientLocator.RealPath(client)], checkout, output, stop);
-        if (code != 0) throw new IOException(L.Text("Windows could not make the link at {0}. Copy the client instead.", target));
+        if (OperatingSystem.IsWindows())
+        {
+            // A junction needs no special rights, which a symbolic link does.
+            int code = await ToolProcess.RunAsync("cmd.exe", ["/c", "mklink", "/J", target, ClientLocator.RealPath(client)], checkout, output, stop);
+            if (code != 0) throw new IOException(L.Text("Windows could not make the link at {0}. Copy the client instead.", target));
+        }
+        else Directory.CreateSymbolicLink(target, ClientLocator.RealPath(client));
         BringKeys(keys, checkout);
     }
 

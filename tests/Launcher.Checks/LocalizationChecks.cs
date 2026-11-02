@@ -32,7 +32,7 @@ static class LocalizationChecks
             check(L.Text(technical) == technical, "unknown repository, command, path and diagnostic text is preserved verbatim");
             check(L.Describe("Needs: Play") == "Требуется: Play" && L.Describe("Local runtime uses C:\\Play\\saves.db").EndsWith(@"C:\Play\saves.db"), "captured mod IDs and paths are never translated even when they match an interface label");
             var step = SetupGuidance.Describe(new("Original client", false, "Ready"), @"C:\Russian check\LocalExile");
-            check(step.Name == "Original client" && step.Action == "ClientFolder" && step.DisplayName == "Исходный клиент" && step.Instructions.Contains(@"C:\Russian check\LocalExile\Client"), "Russian setup guidance preserves action routing and the physical copy destination");
+            check(step.Name == "Original client" && step.Action == "ClientFolder" && step.DisplayName == "Исходный клиент" && step.Instructions.Contains(Path.Combine(@"C:\Russian check\LocalExile", "Client")), "Russian setup guidance preserves action routing and the physical copy destination");
             var mod = new ModEntry("hello", "1.0", "script", [], true, "Not checked", "", "", "", "");
             check(mod.Status == "Not checked" && mod.Summary.Contains("Не проверен"), "Russian mod summaries retain canonical runtime status");
             L.Current.SetLanguage("unsupported");

@@ -11,7 +11,7 @@ public static class ToolProcess
 {
     /// <param name="input">A line for the tool's standard input, which then closes.</param>
     /// <param name="utf8">The tool writes UTF-8 whatever the console's code page.</param>
-    public static async Task<int> RunAsync(string file, IEnumerable<string> arguments, string? directory, Action<string> output, CancellationToken stop, string? input = null, bool utf8 = false)
+    public static async Task<int> RunAsync(string file, IEnumerable<string> arguments, string? directory, Action<string> output, CancellationToken stop, string? input = null, bool utf8 = false, IReadOnlyDictionary<string, string>? environment = null)
     {
         var info = new ProcessStartInfo(file) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, RedirectStandardInput = input is not null };
         if (utf8) info.StandardOutputEncoding = info.StandardErrorEncoding = System.Text.Encoding.UTF8;
@@ -22,6 +22,7 @@ public static class ToolProcess
         info.Environment["GCM_INTERACTIVE"] = "never";
         info.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         info.Environment["DOTNET_CLI_USE_MSBUILD_SERVER"] = "0";
+        if (environment is not null) foreach (var (key, value) in environment) info.Environment[key] = value;
         using var process = new Process { StartInfo = info, EnableRaisingEvents = true };
         var exited = new TaskCompletionSource();
         var outDone = new TaskCompletionSource();
@@ -86,7 +87,7 @@ public static class Prerequisites
         RefreshPath();
         var dotnet = ToolProcess.AskAsync("dotnet", "--list-sdks");
         var git = ToolProcess.AskAsync("git", "--version");
-        var python = ToolProcess.AskAsync("python", "--version");
+        var python = ToolProcess.AskAsync(Platform.Python, "--version");
         var node = ToolProcess.AskAsync("node", "--version");
         await Task.WhenAll(dotnet, git, python, node);
         return
@@ -181,7 +182,7 @@ public static class SetupSequence
     /// <summary>Generates the game data. Each entry is stamped only once it is complete, so an entry cut short runs again.</summary>
     public static async Task ExtractAsync(string checkout, Action<string> output, CancellationToken stop)
     {
-        string powershell = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");
+        string powershell = Platform.PowerShell;
         string last = "";
         int code = await ToolProcess.RunAsync(powershell, ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", Path.Combine("scripts", "dev", "extract-data.ps1")],
             checkout, line => { if (line.Trim().Length > 0) last = line; output(line); }, stop);
