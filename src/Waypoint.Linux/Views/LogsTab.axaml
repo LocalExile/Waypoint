@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Waypoint"
+             x:Class="Waypoint.LogsTab">
+  <UserControl.Styles>
+    <Style Selector="ListBox">
+      <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="ListBox#Lines ListBoxItem">
+      <Setter Property="Padding" Value="6,1" />
+      <Setter Property="MinHeight" Value="0" />
+    </Style>
+    <Style Selector="ListBox#SourceList ListBoxItem">
+      <Setter Property="Padding" Value="10,6" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <ListBox x:Name="SourceList" DisplayMemberBinding="{Binding Display}" DockPanel.Dock="Left" Width="190" Margin="0,0,8,0" SelectionChanged="SourceChanged" />
+    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6" ItemSpacing="8" LineSpacing="6">
+      <TextBlock x:Name="FilterLabel" VerticalAlignment="Center" />
+      <TextBox x:Name="Filter" Width="240" TextChanged="FilterChanged" />
+      <CheckBox x:Name="Problems" IsCheckedChanged="FilterChanged" />
+      <CheckBox x:Name="Follow" IsChecked="True" />
+      <Button x:Name="CopyButton" Click="Copy" />
+      <Button x:Name="OpenFileButton" Click="OpenFile" />
+      <Button x:Name="ClearButton" Click="Clear" />
+      <Button x:Name="ReportButton" Click="DiagnosticReportClicked" />
+      <TextBlock x:Name="Count" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+    </WrapPanel>
+    <ListBox x:Name="Lines" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Text}" FontFamily="monospace" FontSize="12" Foreground="{Binding Severity, Converter={x:Static l:LogsTab.LineBrush}}" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</UserControl>
