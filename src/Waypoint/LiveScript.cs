@@ -52,7 +52,11 @@ static class Scripts
     public static async Task<int> RunAsync(string script, IReadOnlyList<string> arguments, Action<string> output,
         IReadOnlyDictionary<string, string?>? environment = null)
     {
+#if WINDOWS
         var info = new ProcessStartInfo("powershell.exe")
+#else
+        var info = new ProcessStartInfo(Platform.PowerShell)
+#endif
         {
             UseShellExecute = false,
             CreateNoWindow = true,

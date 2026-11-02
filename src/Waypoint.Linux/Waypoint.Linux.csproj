@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Waypoint on Linux: its own executable and interface (Avalonia) over the same engine as the Windows app. The engine's
+       files stay in src/Waypoint and are linked here; Engine/ gives them the few Windows types they name. It is in
+       Waypoint.Linux.slnx, not Waypoint.slnx, so the Windows build and its release are as they were. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Waypoint</AssemblyName>
+    <RootNamespace>Waypoint</RootNamespace>
+    <Version>0.0.0-dev</Version>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <SatelliteResourceLanguages>en;ru</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Waypoint\AccountList.cs;..\Waypoint\CheckoutUpdates.cs;..\Waypoint\ClientBridge.cs;..\Waypoint\CommandCatalog.cs;..\Waypoint\Completion.cs;..\Waypoint\CraftedItems.cs;..\Waypoint\CrafterCatalog.cs;..\Waypoint\DevHost.cs;..\Waypoint\Git.cs;..\Waypoint\LiveScript.cs;..\Waypoint\LogHub.cs;..\Waypoint\LogTail.cs;..\Waypoint\Metrics.cs;..\Waypoint\OperationTimings.cs;..\Waypoint\PortCheck.cs;..\Waypoint\PullRequests.cs;..\Waypoint\Repo.cs;..\Waypoint\RuntimeCounters.cs;..\Waypoint\ServiceMonitor.cs;..\Waypoint\Settings.cs;..\Waypoint\SetupChecks.cs;..\Waypoint\Shared.cs;..\Waypoint\TimeSeries.cs;..\Waypoint\Updates.cs;..\Waypoint\Workspace.cs" Link="Shared\%(Filename)%(Extension)" />
+    <Using Include="System.IO" />
+    <Using Include="Launcher.Core" />
+    <Using Include="Avalonia.Controls.Window" Alias="Window" />
+    <AvaloniaResource Include="..\..\branding\waypoint-192.png" Link="waypoint-192.png" />
+    <ProjectReference Include="..\Launcher.Core\Launcher.Core.csproj" />
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Headless" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Skia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.745401" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.8" />
+  </ItemGroup>
+</Project>

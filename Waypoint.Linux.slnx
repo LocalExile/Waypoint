@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Launcher.Core/Launcher.Core.csproj" />
+    <Project Path="src/Waypoint.Linux/Waypoint.Linux.csproj" />
+  </Folder>
+</Solution>

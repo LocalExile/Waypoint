@@ -36,12 +36,20 @@ static class DevHost
         Directory.CreateDirectory(Repo.Logs);
         // As live.ps1's Start-Detached: through cmd's redirection, inheriting no handles of ours.
         string log = Path.Combine(Repo.Logs, "launcher-host.log"), err = Path.Combine(Repo.Logs, "launcher-host.err");
+#if WINDOWS
         Process.Start(new ProcessStartInfo("cmd.exe", $"/c dotnet \"{Repo.ServerDll("Host")}\" 1>\"{log}\" 2>\"{err}\"")
         {
             UseShellExecute = true,
             WindowStyle = ProcessWindowStyle.Hidden,
             WorkingDirectory = Environment.CurrentDirectory,
         })?.Dispose();
+#else
+        Process.Start(new ProcessStartInfo("setsid", ["sh", "-c", "log=$1; err=$2; shift 2; exec \"$@\" </dev/null >\"$log\" 2>\"$err\"", "sh", log, err, "dotnet", Repo.ServerDll("Host")])
+        {
+            UseShellExecute = false,
+            WorkingDirectory = Environment.CurrentDirectory,
+        })?.Dispose();
+#endif
         var deadline = DateTime.UtcNow.AddSeconds(20);
         while (!Listening())
         {

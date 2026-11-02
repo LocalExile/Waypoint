@@ -102,10 +102,19 @@ static class Repo
         Path.Combine("src", $"GameServer.{project}", "bin", "Debug", "net10.0", $"GameServer.{project}.dll");
 
     /// <summary>The checkout's virtual environment wins over the python on PATH, as in live.ps1.</summary>
+#if WINDOWS
     public static string Python => File.Exists(Path.Combine(".venv", "Scripts", "python.exe"))
         ? Path.GetFullPath(Path.Combine(".venv", "Scripts", "python.exe")) : "python";
+#else
+    public static string Python => File.Exists(Platform.VenvPython(".")) ? Path.GetFullPath(Platform.VenvPython(".")) : Platform.Python;
+#endif
 
     /// <summary>The client's own settings; GettingStarted step 10 needs networking_type=predictive there.</summary>
+#if WINDOWS
     public static string ClientConfig => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games", "Path of Exile", "production_Config.ini");
+#else
+    public static string ClientConfig => Path.Combine(Environment.GetEnvironmentVariable("WINEPREFIX") is { Length: > 0 } own ? own : Path.GetFullPath(Path.Combine("data", "wine-prefix")),
+        "pfx", "drive_c", "users", "steamuser", "Documents", "My Games", "Path of Exile", "production_Config.ini");
+#endif
 }

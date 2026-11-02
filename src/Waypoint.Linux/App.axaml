@@ -1,0 +1,61 @@
+<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="Waypoint.App">
+  <!-- The Windows app's default look (Theme.cs, the "blue" scheme, dark). The names are the same as in its Shell.xaml. -->
+  <Application.Resources>
+    <SolidColorBrush x:Key="Shell.Background" Color="#14161C" />
+    <SolidColorBrush x:Key="Shell.Panel" Color="#1C1F27" />
+    <SolidColorBrush x:Key="Shell.Cell" Color="#232733" />
+    <SolidColorBrush x:Key="Shell.Border" Color="#343A48" />
+    <SolidColorBrush x:Key="Shell.Sidebar" Color="#2442C8" />
+    <SolidColorBrush x:Key="Shell.SidebarText" Color="#D9E0FF" />
+    <SolidColorBrush x:Key="Shell.SidebarStrong" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Shell.SidebarSelected" Color="#3557E0" />
+    <SolidColorBrush x:Key="Shell.Text" Color="#EEF0F6" />
+    <SolidColorBrush x:Key="Shell.TextSecondary" Color="#A4ABBC" />
+    <SolidColorBrush x:Key="Shell.Accent" Color="#7E98FF" />
+    <SolidColorBrush x:Key="Shell.Primary" Color="#3557E0" />
+    <SolidColorBrush x:Key="Shell.Good" Color="#3FBF7F" />
+    <SolidColorBrush x:Key="Shell.Warning" Color="#E5A93B" />
+    <SolidColorBrush x:Key="Shell.Error" Color="#E5625E" />
+    <SolidColorBrush x:Key="Shell.Idle" Color="#6C7385" />
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <materialIcons:MaterialIconStyles />
+    <Style Selector="Button.accent">
+      <Setter Property="Background" Value="{DynamicResource Shell.Primary}" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Window">
+      <Setter Property="Background" Value="{DynamicResource Shell.Background}" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.Text}" />
+    </Style>
+    <Style Selector="ListBox.sections ListBoxItem">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarText}" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="10,7" />
+    </Style>
+    <Style Selector="ListBox.sections ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource Shell.SidebarSelected}" />
+    </Style>
+    <Style Selector="ListBox.sections ListBoxItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarStrong}" />
+    </Style>
+    <Style Selector="TextBlock.note">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.heading">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="16" />
+    </Style>
+  </Application.Styles>
+</Application>

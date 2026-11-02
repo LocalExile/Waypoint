@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="Waypoint.MainWindow" Title="Waypoint" Width="1180" Height="760" MinWidth="820" MinHeight="520">
+  <Grid ColumnDefinitions="210,*">
+    <Border Background="{DynamicResource Shell.Sidebar}">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Waypoint" FontSize="21" FontWeight="Bold" Margin="16,14,0,12" Foreground="{DynamicResource Shell.SidebarStrong}" />
+        <TextBlock x:Name="VersionText" DockPanel.Dock="Bottom" Margin="16,0,0,10" FontSize="11" Foreground="{DynamicResource Shell.SidebarText}" />
+        <Border x:Name="ModeSwitch" DockPanel.Dock="Bottom" Margin="12,0,12,10" IsVisible="False">
+          <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+            <RadioButton x:Name="SimpleMode" GroupName="Mode" Foreground="{DynamicResource Shell.SidebarText}" IsCheckedChanged="ModeChosen" />
+            <RadioButton x:Name="AdvancedMode" GroupName="Mode" Foreground="{DynamicResource Shell.SidebarText}" IsCheckedChanged="ModeChosen" />
+          </StackPanel>
+        </Border>
+        <ListBox x:Name="Sections" Classes="sections" Background="Transparent" Margin="6,0" SelectionChanged="SectionChanged">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <icons:MaterialIcon Kind="{Binding Icon}" Width="18" Height="18" />
+                <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+    <DockPanel Grid.Column="1">
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="22,16,22,10">
+        <TextBlock x:Name="SectionTitle" FontSize="20" FontWeight="SemiBold" />
+        <Border x:Name="BranchChip" Grid.Column="1" Background="{DynamicResource Shell.Cell}" CornerRadius="4" Padding="8,3" VerticalAlignment="Center">
+          <TextBlock x:Name="BranchName" FontSize="12" Foreground="{DynamicResource Shell.TextSecondary}" />
+        </Border>
+      </Grid>
+      <Border x:Name="StatusStrip" DockPanel.Dock="Bottom" Background="{DynamicResource Shell.Panel}" Padding="14,6">
+        <DockPanel>
+          <ItemsControl x:Name="Lights">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="14" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding Shown}" ToolTip.Tip="{Binding Tip}">
+                  <Ellipse Width="9" Height="9" Fill="{Binding Lamp}" VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding Name}" FontSize="12" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock x:Name="StatusText" HorizontalAlignment="Right" FontSize="12" Foreground="{DynamicResource Shell.TextSecondary}" />
+        </DockPanel>
+      </Border>
+      <Panel x:Name="SectionHost" Margin="22,0,22,14" />
+    </DockPanel>
+  </Grid>
+</Window>

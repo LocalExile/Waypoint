@@ -10,7 +10,11 @@ static class SetupChecks
     {
         var checks = new List<SetupCheck>
         {
+#if WINDOWS
             OnPath("dotnet.exe") ? new(true, ".NET SDK") : new(false, L.Text(".NET SDK not found (dotnet)"), "https://dotnet.microsoft.com/download"),
+#else
+            OnPath("dotnet") ? new(true, ".NET SDK") : new(false, L.Text(".NET SDK not found (dotnet)"), "https://dotnet.microsoft.com/download"),
+#endif
             File("Client/Game.exe", L.Text("client copied into Client\\ (step 3)"), L.Text("robocopy your 3.29.3b client to Client, then copy PathOfExile.exe to Game.exe")),
             File("Client/Content.ggpk", L.Text("standalone client layout (Content.ggpk)"), L.Text("Steam installs have no Content.ggpk")),
             File("data/login-keys.json", L.Text("login keys (step 4)"), "dotnet run --project src/GameServer.Auth -- keygen Client/Game.exe"),
@@ -19,7 +23,11 @@ static class SetupChecks
                 : new(null, L.Text("gateway list not patched yet (step 6)"), L.Text("live.ps1 selects the local gateway itself; step 6 keeps a backup")),
             System.IO.File.Exists("data/extract-stamps.json") ? new(true, L.Text("game data extracted (step 7)"))
                 : new(null, L.Text("game data not extracted yet (step 7)"), L.Text("Play runs extract-data.ps1 first; it takes a few minutes the first time")),
+#if WINDOWS
             OnPath("node.exe") && Directory.Exists("Tools/ooz/node_modules/ooz-wasm") ? new(true, L.Text("Node.js and ooz (data extraction)"))
+#else
+            OnPath("node") && Directory.Exists("Tools/ooz/node_modules/ooz-wasm") ? new(true, L.Text("Node.js and ooz (data extraction)"))
+#endif
                 : new(false, L.Text("Node.js or Tools\\ooz\\node_modules missing (step 7)"), L.Text("install Node.js, then: cd Tools\\ooz; npm install")),
             ServerHooks(),
             NetworkMode(),

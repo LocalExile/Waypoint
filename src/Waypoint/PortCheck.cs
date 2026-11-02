@@ -10,7 +10,11 @@ sealed record PortHolder(int Pid, int ParentPid, string Name, string? Path, stri
     static readonly string WindowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 
     /// <summary>Windows' own processes are never Waypoint's to end: PID 4 answers for everything behind http.sys.</summary>
+#if WINDOWS
     public bool CanEnd => Pid > 4 && (Path is null || !Path.StartsWith(WindowsFolder, StringComparison.OrdinalIgnoreCase));
+#else
+    public bool CanEnd => Pid > 1;
+#endif
 
     public string Description
     {
@@ -130,9 +134,13 @@ static class PortCheck
     static void Inspect(PortHolder holder)
     {
         string? folder = holder.Folder;
+#if WINDOWS
         if (folder is not null && Directory.Exists(folder))
             Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { folder }, UseShellExecute = false })?.Dispose();
         else Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true })?.Dispose();
+#else
+        if (folder is not null && Directory.Exists(folder)) Process.Start(new ProcessStartInfo("xdg-open", [folder]) { UseShellExecute = false })?.Dispose();
+#endif
     }
 
     /// <summary>Ctrl+C for a server in its console (the adapter's helper checks the process is the one it was asked about, and
@@ -147,11 +155,17 @@ static class PortCheck
         {
             if (holder.Name.Equals("dotnet.exe", StringComparison.OrdinalIgnoreCase))
             {
+#if WINDOWS
                 string helper = Path.Combine(Path.GetDirectoryName(BridgeScripts.Extract())!, "ConsoleSignal.ps1");
                 string started = holder.Started.ToUniversalTime().ToString("o");
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                 int signal = await ToolProcess.RunAsync("powershell.exe", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", helper,
                     "-TargetId", holder.Pid.ToString(), "-ParentId", holder.ParentPid.ToString(), "-StartedUtc", started], null, output, timeout.Token);
+#else
+                // Ctrl+C is SIGINT here, and needs no console.
+                using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                int signal = await ToolProcess.RunAsync("kill", ["-INT", holder.Pid.ToString()], null, output, timeout.Token);
+#endif
                 if (signal == 0)
                 {
                     using var saving = new CancellationTokenSource(TimeSpan.FromSeconds(20));
