@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Waypoint.ReleasesTab">
+  <!-- A release install's Versions section: what it runs, and what each release brought. -->
+  <DockPanel>
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+      <Button x:Name="CheckButton" DockPanel.Dock="Right" Click="CheckClicked" Margin="8,0,0,0" />
+      <Button x:Name="RefreshButton" DockPanel.Dock="Right" Click="RefreshClicked" Margin="8,0,0,0" />
+      <StackPanel VerticalAlignment="Center">
+        <TextBlock x:Name="Installed" FontSize="15" FontWeight="SemiBold" />
+        <TextBlock x:Name="Status" Classes="note" />
+      </StackPanel>
+    </DockPanel>
+    <Border DockPanel.Dock="Top" Margin="0,0,0,10" Padding="14,10" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource Shell.Border}">
+      <DockPanel>
+        <Button x:Name="NewCopyButton" DockPanel.Dock="Right" Click="NewCopyClicked" Margin="8,0,0,0" />
+        <Button x:Name="ChangeFolderButton" DockPanel.Dock="Right" Click="ChangeFolderClicked" Margin="8,0,0,0" />
+        <TextBlock x:Name="SourceNote" VerticalAlignment="Center" TextWrapping="Wrap" />
+      </DockPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <ItemsControl x:Name="List">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="card" Margin="0,0,0,10" Padding="16,12" CornerRadius="8">
+              <DockPanel>
+                <Button DockPanel.Dock="Right" VerticalAlignment="Top" Content="{Binding OpenPage}" Click="OpenClicked" Margin="12,0,0,0" />
+                <StackPanel>
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="{Binding Tag}" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Badge}" Foreground="{DynamicResource Shell.Accent}" FontWeight="SemiBold" />
+                  </StackPanel>
+                  <TextBlock Text="{Binding Published}" Classes="note" Margin="0,1,0,6" />
+                  <SelectableTextBlock Text="{Binding Notes}" TextWrapping="Wrap" />
+                </StackPanel>
+              </DockPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

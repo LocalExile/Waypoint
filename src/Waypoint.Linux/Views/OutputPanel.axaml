@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Waypoint.OutputPanel">
+  <!-- What an operation of the adapter is doing and printed: on every section that runs one. -->
+  <Border Classes="card" Padding="0">
+    <DockPanel>
+      <DockPanel DockPanel.Dock="Top" Margin="10,6,6,0">
+        <Button x:Name="ClearButton" DockPanel.Dock="Right" Click="ClearOutput" Padding="10,2" />
+        <TextBlock x:Name="Heading" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,0,10,0" VerticalAlignment="Center" />
+        <TextBlock x:Name="RunState" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+      </DockPanel>
+      <TextBox x:Name="Output" IsReadOnly="True" AcceptsReturn="True" FontFamily="monospace" FontSize="12" Margin="8,2,8,6" BorderThickness="0" Background="Transparent"
+               TextWrapping="NoWrap" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+    </DockPanel>
+  </Border>
+</UserControl>

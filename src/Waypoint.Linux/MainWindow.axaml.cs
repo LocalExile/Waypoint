@@ -110,9 +110,3 @@ public partial class MainWindow : Window
         StatusText.Text = _shared.IsLiveRunning ? L.Text("{0} running…", _shared.BusyWith) : "";
     }
 }
-
-/// <summary>Shown when no checkout or release is chosen yet.</summary>
-sealed class FirstStartWindow : Window
-{
-    public FirstStartWindow() { Title = "Waypoint"; Width = 700; Height = 460; }
-}

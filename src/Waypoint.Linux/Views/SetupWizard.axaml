@@ -1,0 +1,261 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="Waypoint.SetupWizard" Icon="/waypoint-192.png">
+  <Window.Styles>
+    <!-- Long sentences wrap in this window, without a setting on each. -->
+    <Style Selector="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.page">
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.note">
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="RadioButton">
+      <Setter Property="Margin" Value="0,2,0,4" />
+    </Style>
+    <Style Selector="TextBlock.folder">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="TextWrapping" Value="NoWrap" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <!-- A Steam or Epic client is listed, but cannot be chosen. -->
+    <Style Selector="TextBlock.folder.unusable">
+      <Setter Property="FontWeight" Value="Normal" />
+      <Setter Property="TextDecorations" Value="Strikethrough" />
+    </Style>
+    <Style Selector="ListBox#ClientList ListBoxItem">
+      <Setter Property="IsEnabled" Value="{Binding Usable}" />
+    </Style>
+  </Window.Styles>
+
+  <Grid ColumnDefinitions="190,*">
+    <!-- The steps of the guide, with where the player is. -->
+    <Border Background="{DynamicResource Shell.Sidebar}" Padding="16,14">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,18">
+          <Image Source="/waypoint-192.png" Width="34" Height="34" />
+          <TextBlock Text="Waypoint" FontSize="19" FontWeight="Bold" Foreground="{DynamicResource Shell.SidebarStrong}" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel x:Name="Rail" />
+      </DockPanel>
+    </Border>
+
+    <DockPanel Grid.Column="1" Margin="24,12,24,16">
+      <DockPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+        <Button x:Name="SkipButton" DockPanel.Dock="Left" Click="SkipClicked" />
+        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+          <Button x:Name="BackButton" Click="BackClicked" />
+          <Button x:Name="NextButton" Classes="accent" Click="NextClicked" />
+        </StackPanel>
+      </DockPanel>
+
+      <Grid>
+        <!-- Welcome -->
+        <StackPanel x:Name="WelcomePage">
+          <TextBlock x:Name="WelcomeTitle" Classes="title" />
+          <TextBlock x:Name="WelcomeText" Margin="0,10,0,14" />
+          <TextBlock x:Name="WelcomeOne" Margin="0,0,0,6" />
+          <TextBlock x:Name="WelcomeTwo" Margin="0,0,0,6" />
+          <TextBlock x:Name="WelcomeThree" Margin="0,0,0,14" />
+          <TextBlock x:Name="WelcomeStop" Classes="note" />
+          <TextBlock x:Name="WelcomeGame" Classes="note" Margin="0,8,0,0" />
+        </StackPanel>
+
+        <!-- Which LocalExile: the release, or a source checkout -->
+        <StackPanel x:Name="SourcePage" IsVisible="False">
+          <TextBlock x:Name="SourceTitle" Classes="page" Margin="0,0,0,12" />
+          <RadioButton x:Name="ReleaseChoice" GroupName="Source" IsCheckedChanged="SourceChanged" />
+          <TextBlock x:Name="ReleaseNote" Classes="note" Margin="27,0,0,14" />
+          <RadioButton x:Name="SourceChoice" GroupName="Source" IsCheckedChanged="SourceChanged" />
+          <TextBlock x:Name="SourceNote" Classes="note" Margin="27,0,0,0" />
+        </StackPanel>
+
+        <!-- Where the release goes -->
+        <StackPanel x:Name="InstallPage" IsVisible="False">
+          <TextBlock x:Name="InstallTitle" Classes="page" />
+          <TextBlock x:Name="InstallText" Margin="0,6,0,10" />
+          <DockPanel>
+            <Button x:Name="ChooseInstall" DockPanel.Dock="Right" Click="ChooseInstallFolder" Margin="8,0,0,0" />
+            <TextBox x:Name="InstallFolder" TextChanged="InstallFolderChanged" />
+          </DockPanel>
+          <TextBlock x:Name="InstallNote" Classes="note" Margin="0,4,0,0" />
+        </StackPanel>
+
+        <!-- Requirements -->
+        <DockPanel x:Name="RequirementsPage" IsVisible="False">
+          <TextBlock x:Name="RequirementsTitle" DockPanel.Dock="Top" Classes="page" />
+          <TextBlock x:Name="RequirementsStatus" DockPanel.Dock="Top" Margin="0,6,0,10" />
+          <Button x:Name="CheckAgain" DockPanel.Dock="Bottom" Click="CheckRequirements" HorizontalAlignment="Left" Margin="0,8,0,0" />
+          <ItemsControl x:Name="RequirementList">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <DockPanel Margin="0,0,0,10">
+                  <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="18" Height="18" Margin="0,2,10,0" VerticalAlignment="Top" />
+                  <Button DockPanel.Dock="Right" Content="{Binding Action}" IsVisible="{Binding ActionShown}" Click="GetRequirement" Margin="10,0,0,0" />
+                  <StackPanel>
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Detail}" Classes="note" />
+                  </StackPanel>
+                </DockPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </DockPanel>
+
+        <!-- The checkout -->
+        <DockPanel x:Name="CheckoutPage" IsVisible="False">
+          <TextBlock x:Name="CheckoutTitle" DockPanel.Dock="Top" Classes="page" />
+          <TextBlock x:Name="CheckoutStatus" DockPanel.Dock="Top" Margin="0,6,0,8" />
+          <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+            <RadioButton x:Name="DownloadChoice" GroupName="Checkout" IsCheckedChanged="CheckoutChoiceChanged" />
+            <DockPanel Margin="27,2,0,0">
+              <Button x:Name="ChooseDownload" DockPanel.Dock="Right" Click="ChooseDownloadFolder" Margin="8,0,0,0" />
+              <TextBox x:Name="DownloadFolder" TextChanged="DownloadFolderChanged" />
+            </DockPanel>
+            <TextBlock x:Name="DownloadNote" Classes="note" Margin="27,4,0,0" />
+          </StackPanel>
+          <RadioButton x:Name="ExistingChoice" DockPanel.Dock="Top" GroupName="Checkout" IsCheckedChanged="CheckoutChoiceChanged" />
+          <Button x:Name="BrowseExisting" DockPanel.Dock="Bottom" Click="BrowseCheckout" HorizontalAlignment="Left" Margin="27,6,0,0" />
+          <ListBox x:Name="CheckoutList" Margin="27,4,0,0" SelectionChanged="CheckoutSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="2,1">
+                  <TextBlock Classes="folder" Text="{Binding Root}" />
+                  <TextBlock Text="{Binding Summary}" Classes="note" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+
+        <!-- The client -->
+        <DockPanel x:Name="ClientPage" IsVisible="False">
+          <TextBlock x:Name="ClientTitle" DockPanel.Dock="Top" Classes="page" />
+          <TextBlock x:Name="ClientStatus" DockPanel.Dock="Top" Margin="0,6,0,8" />
+          <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+            <TextBlock x:Name="ClientNote" Classes="note" Margin="0,0,0,6" />
+            <CheckBox x:Name="ShareClient" IsVisible="False" Margin="0,0,0,6" IsCheckedChanged="ShareChanged" />
+            <CheckBox x:Name="LinkClient" IsVisible="False" Margin="0,0,0,6" IsCheckedChanged="ShareChanged" />
+            <WrapPanel>
+              <Button x:Name="BrowseClientButton" Click="BrowseClient" Margin="0,0,6,6" />
+              <Button x:Name="SearchAgain" Click="SearchClientsClicked" Margin="0,0,6,6" />
+            </WrapPanel>
+            <CheckBox x:Name="NoClient" IsCheckedChanged="NoClientChanged" />
+          </StackPanel>
+          <ListBox x:Name="ClientList" SelectionChanged="ClientSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="2,1">
+                  <TextBlock Classes="folder" Classes.unusable="{Binding !Usable}" Text="{Binding Folder}" />
+                  <TextBlock Text="{Binding Summary}" Classes="note" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+
+        <!-- What a player on a release wants done with what they have -->
+        <ScrollViewer x:Name="SwitchPage" IsVisible="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Margin="0,0,8,0">
+            <StackPanel x:Name="CharactersChoice">
+              <TextBlock x:Name="CharactersTitle" Classes="page" />
+              <TextBlock x:Name="OldHolds" Classes="note" Margin="0,2,0,0" />
+              <RadioButton x:Name="BringCharacters" GroupName="Characters" IsChecked="True" Margin="0,8,0,4" />
+              <TextBlock x:Name="BringNote" Classes="note" Margin="27,0,0,8" />
+              <RadioButton x:Name="NewCharacters" GroupName="Characters" />
+              <TextBlock x:Name="NewNote" Classes="note" Margin="27,0,0,14" />
+            </StackPanel>
+            <TextBlock x:Name="OldTitle" Classes="page" />
+            <TextBlock x:Name="OldFolder" Classes="note" Margin="0,2,0,0" />
+            <TextBlock x:Name="OldText" Margin="0,6,0,6" />
+            <RadioButton x:Name="KeepBoth" GroupName="Old" IsChecked="True" />
+            <TextBlock x:Name="KeepNote" Classes="note" Margin="27,0,0,8" />
+            <RadioButton x:Name="RemoveOldLater" GroupName="Old" />
+            <TextBlock x:Name="RemoveNote" Classes="note" Margin="27,0,0,14" />
+            <StackPanel x:Name="UpdatesChoice">
+              <TextBlock x:Name="UpdatesTitle" Classes="page" Margin="0,0,0,6" />
+              <RadioButton x:Name="TestedVersion" GroupName="Updates" IsChecked="True" />
+              <TextBlock x:Name="TestedNote" Classes="note" Margin="27,0,0,8" />
+              <RadioButton x:Name="NewestVersion" GroupName="Updates" />
+              <TextBlock x:Name="NewestNote" Classes="note" Margin="27,0,0,14" />
+            </StackPanel>
+            <StackPanel x:Name="GiveItemChoice">
+              <TextBlock x:Name="GiveItemTitle" Classes="page" Margin="0,0,0,6" />
+              <CheckBox x:Name="GiveItem" IsChecked="True" />
+              <TextBlock x:Name="GiveItemNote" Classes="note" Margin="27,0,0,0" />
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- The account of a release install -->
+        <StackPanel x:Name="AccountPage" IsVisible="False">
+          <TextBlock x:Name="AccountTitle" Classes="page" />
+          <TextBlock x:Name="AccountText" Margin="0,6,0,12" />
+          <TextBlock x:Name="AccountNameLabel" />
+          <TextBox x:Name="AccountName" MaxLength="32" Margin="0,2,0,8" TextChanged="AccountChanged" />
+          <TextBlock x:Name="PasswordLabel" />
+          <TextBox x:Name="AccountPassword" PasswordChar="•" MaxLength="1024" IsUndoEnabled="False" Margin="0,2,0,8" TextChanged="AccountChanged" />
+          <TextBlock x:Name="AgainLabel" />
+          <TextBox x:Name="AccountAgain" PasswordChar="•" MaxLength="1024" IsUndoEnabled="False" Margin="0,2,0,8" TextChanged="AccountChanged" />
+          <TextBlock x:Name="AccountNote" Classes="note" />
+        </StackPanel>
+
+        <!-- Setting up -->
+        <DockPanel x:Name="RunPage" IsVisible="False">
+          <TextBlock x:Name="RunTitle" DockPanel.Dock="Top" Classes="page" />
+          <TextBlock x:Name="RunStatus" DockPanel.Dock="Top" Margin="0,6,0,10" />
+          <Expander x:Name="Details" DockPanel.Dock="Bottom" Margin="0,8,0,0" HorizontalAlignment="Stretch">
+            <TextBox x:Name="Log" Height="120" IsReadOnly="True" AcceptsReturn="True" FontFamily="monospace" FontSize="11.5" TextWrapping="NoWrap"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+          </Expander>
+          <ProgressBar x:Name="Progress" DockPanel.Dock="Bottom" Height="4" Margin="0,6,0,0" Opacity="0" />
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <!-- Instead of the steps until Start, for a player leaving a release: what the choices will do. -->
+              <StackPanel x:Name="SwitchSummaryPanel" IsVisible="False">
+                <TextBlock x:Name="SummaryTitle" FontWeight="SemiBold" Margin="0,0,0,8" />
+                <ItemsControl x:Name="SwitchSummary">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <DockPanel Margin="0,0,0,7">
+                        <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="18" Height="18" Margin="0,1,10,0" VerticalAlignment="Top" />
+                        <TextBlock Text="{Binding Text}" />
+                      </DockPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+              <ItemsControl x:Name="StepList">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <DockPanel Margin="0,0,0,9">
+                      <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="18" Height="18" Margin="0,1,10,0" VerticalAlignment="Top" />
+                      <StackPanel>
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Detail}" Classes="note" IsVisible="{Binding DetailShown}" />
+                      </StackPanel>
+                    </DockPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </DockPanel>
+
+        <!-- Done -->
+        <StackPanel x:Name="DonePage" IsVisible="False">
+          <TextBlock x:Name="DoneTitle" Classes="title" />
+          <TextBlock x:Name="DoneText" Margin="0,10,0,14" />
+          <CheckBox x:Name="CreateAccount" IsChecked="True" />
+        </StackPanel>
+      </Grid>
+    </DockPanel>
+  </Grid>
+</Window>

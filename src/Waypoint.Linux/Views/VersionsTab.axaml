@@ -1,0 +1,191 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="Waypoint.VersionsTab">
+  <UserControl.Styles>
+    <StyleInclude Source="/Views/Table.axaml" />
+  </UserControl.Styles>
+  <DockPanel>
+    <!-- What the checkout runs now, and the actions on it. Disabled while live.ps1 or git runs. -->
+    <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="0,4,0,8" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6">
+          <Button x:Name="FetchButton" Click="RefreshClicked">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <icons:MaterialIcon Kind="CloudDownloadOutline" Width="15" Height="15" Foreground="{DynamicResource Shell.TextSecondary}" />
+              <TextBlock x:Name="FetchText" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button x:Name="BackButton" Click="BackClicked">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <icons:MaterialIcon Kind="KeyboardReturn" Width="15" Height="15" Foreground="{DynamicResource Shell.TextSecondary}" />
+              <TextBlock x:Name="BackText" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button x:Name="UpdateButton" Classes="accent" Click="UpdateClicked">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <icons:MaterialIcon Kind="Refresh" Width="16" Height="16" />
+              <TextBlock x:Name="UpdateText" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+        <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+          <DockPanel>
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="SourceBranch" Width="18" Height="18" Margin="0,0,8,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+            <TextBlock x:Name="CurrentName" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+          </DockPanel>
+          <StackPanel Orientation="Horizontal" Spacing="12" Margin="26,0,0,0">
+            <TextBlock x:Name="CurrentDetail" Classes="note" VerticalAlignment="Center" />
+            <TextBlock x:Name="RestoreLink" Foreground="{DynamicResource Shell.Accent}" Cursor="Hand" VerticalAlignment="Center" IsVisible="False" PointerReleased="RestoreClicked" />
+          </StackPanel>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- What git did, and what the checkout is built from. -->
+    <Grid DockPanel.Dock="Bottom" Height="190" Margin="0,8,0,0" ColumnDefinitions="3*,12,2*">
+      <Border Classes="card" Padding="0">
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Margin="10,6,6,0">
+            <Button x:Name="ClearButton" DockPanel.Dock="Right" Click="ClearOutput" Padding="10,2" />
+            <TextBlock x:Name="OutputHeading" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,0,10,0" VerticalAlignment="Center" />
+            <TextBlock x:Name="RunState" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+          </DockPanel>
+          <TextBox x:Name="Output" IsReadOnly="True" AcceptsReturn="True" FontFamily="monospace" FontSize="12" Margin="8,2,8,6" BorderThickness="0" Background="Transparent"
+                   TextWrapping="NoWrap" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+        </DockPanel>
+      </Border>
+      <Border x:Name="BuildBox" Grid.Column="2" Classes="card" Padding="12,8">
+        <DockPanel>
+          <TextBlock x:Name="BuildHeading" DockPanel.Dock="Top" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,0,0,4" />
+          <WrapPanel DockPanel.Dock="Bottom" Margin="0,4,0,0">
+            <Button x:Name="BuildButton" Click="BuildClicked" Padding="10,2" Margin="0,0,6,0" ToolTip.ShowOnDisabled="True" />
+            <Button x:Name="ReloadDataButton" Click="ReloadDataClicked" Padding="10,2" ToolTip.ShowOnDisabled="True" />
+          </WrapPanel>
+          <TextBlock x:Name="HotReloadState" DockPanel.Dock="Bottom" Classes="note" FontSize="11.5" Margin="0,4,0,0" />
+          <CheckBox x:Name="FreshSaves" DockPanel.Dock="Bottom" Margin="0,4,0,0" />
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock x:Name="BuildIdentity" TextWrapping="Wrap" FontFamily="monospace" FontSize="11.5" />
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+    </Grid>
+
+    <!-- Branches or pull requests, with a search. -->
+    <DockPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+      <Button x:Name="CleanUpButton" DockPanel.Dock="Right" Click="CleanUpClicked" Margin="8,0,0,0">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <icons:MaterialIcon Kind="Broom" Width="15" Height="15" Foreground="{DynamicResource Shell.TextSecondary}" />
+          <TextBlock x:Name="CleanUpText" VerticalAlignment="Center" />
+        </StackPanel>
+      </Button>
+      <TextBox x:Name="Search" DockPanel.Dock="Right" Width="240" TextChanged="SearchChanged" />
+      <Button x:Name="SwitchByNumber" DockPanel.Dock="Right" Click="SwitchNumberClicked" Margin="0,0,8,0" IsVisible="False" />
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <RadioButton x:Name="ShowBranches" GroupName="List" IsChecked="True" IsCheckedChanged="ListChanged" />
+        <RadioButton x:Name="ShowPulls" GroupName="List" IsCheckedChanged="ListChanged" />
+      </StackPanel>
+    </DockPanel>
+
+    <Grid RowDefinitions="Auto,*" Margin="0,4,0,0">
+      <!-- Branches -->
+      <Grid x:Name="BranchHeader" Height="34" Margin="10,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" MinWidth="200" />
+          <ColumnDefinition Width="1.4*" />
+          <ColumnDefinition Width="140" />
+          <ColumnDefinition Width="90" />
+          <ColumnDefinition Width="110" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="BranchColumn" Classes="column" />
+        <TextBlock x:Name="CommitColumn" Grid.Column="1" Classes="column" />
+        <TextBlock x:Name="BranchAuthorColumn" Grid.Column="2" Classes="column" />
+        <TextBlock x:Name="BranchUpdatedColumn" Grid.Column="3" Classes="column" />
+      </Grid>
+      <ListBox x:Name="BranchList" Grid.Row="1" Classes="table">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="200" />
+                <ColumnDefinition Width="1.4*" />
+                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="110" />
+              </Grid.ColumnDefinitions>
+              <DockPanel Margin="0,0,12,0">
+                <Border DockPanel.Dock="Right" Classes="badge" IsVisible="{Binding DefaultBadge}">
+                  <TextBlock Text="{Binding DefaultLabel}" />
+                </Border>
+                <Border DockPanel.Dock="Right" Classes="badge accent" IsVisible="{Binding LocalBadge}" ToolTip.Tip="{Binding LocalTip}">
+                  <TextBlock Text="{Binding LocalLabel}" />
+                </Border>
+                <Border DockPanel.Dock="Right" Classes="badge accent" IsVisible="{Binding ForkBadge}" ToolTip.Tip="{Binding ForkTip}">
+                  <TextBlock Text="{Binding ForkLabel}" />
+                </Border>
+                <Border DockPanel.Dock="Right" Classes="badge" IsVisible="{Binding UpstreamBadge}" ToolTip.Tip="{Binding UpstreamTip}">
+                  <TextBlock Text="LocalExile" />
+                </Border>
+                <TextBlock Text="{Binding Name}" Classes="cell" FontWeight="SemiBold" ToolTip.Tip="{Binding Name}" />
+              </DockPanel>
+              <TextBlock Grid.Column="1" Text="{Binding Subject}" Classes="cell muted" ToolTip.Tip="{Binding Subject}" Margin="0,0,12,0" />
+              <TextBlock Grid.Column="2" Text="{Binding Author}" Classes="cell" />
+              <TextBlock Grid.Column="3" Text="{Binding Updated}" Classes="cell" ToolTip.Tip="{Binding UpdatedExact}" />
+              <Button Grid.Column="4" HorizontalAlignment="Right" Width="96" HorizontalContentAlignment="Center" Click="SwitchBranch" IsEnabled="{Binding CanSwitch}" Content="{Binding Action}" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <!-- Pull requests -->
+      <Grid x:Name="PullHeader" Height="34" Margin="10,0" IsVisible="False">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="56" />
+          <ColumnDefinition Width="*" MinWidth="240" />
+          <ColumnDefinition Width="130" />
+          <ColumnDefinition Width="90" />
+          <ColumnDefinition Width="142" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="#" Classes="column" />
+        <TextBlock x:Name="PullColumn" Grid.Column="1" Classes="column" />
+        <TextBlock x:Name="PullAuthorColumn" Grid.Column="2" Classes="column" />
+        <TextBlock x:Name="PullUpdatedColumn" Grid.Column="3" Classes="column" />
+      </Grid>
+      <ListBox x:Name="PullList" Grid.Row="1" Classes="table" IsVisible="False">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="56" />
+                <ColumnDefinition Width="*" MinWidth="240" />
+                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="142" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding NumberText}" Classes="cell muted" />
+              <DockPanel Grid.Column="1" Margin="0,0,12,0">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                  <Border Classes="badge" IsVisible="{Binding DraftBadge}">
+                    <TextBlock Text="{Binding DraftLabel}" />
+                  </Border>
+                  <Border Classes="badge warning" IsVisible="{Binding ForkBadge}" ToolTip.Tip="{Binding Source}">
+                    <TextBlock Text="{Binding ForkLabel}" />
+                  </Border>
+                </StackPanel>
+                <TextBlock Text="{Binding Title}" Classes="cell" FontWeight="SemiBold" ToolTip.Tip="{Binding Title}" />
+              </DockPanel>
+              <TextBlock Grid.Column="2" Text="{Binding Author}" Classes="cell" />
+              <TextBlock Grid.Column="3" Text="{Binding Updated}" Classes="cell" ToolTip.Tip="{Binding UpdatedExact}" />
+              <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+                <Button Width="96" HorizontalContentAlignment="Center" Click="SwitchPull" IsEnabled="{Binding CanSwitch}" Content="{Binding Action}" />
+                <Button Padding="6" Click="OpenPull" ToolTip.Tip="{Binding OpenTip}">
+                  <icons:MaterialIcon Kind="OpenInNew" Width="15" Height="15" />
+                </Button>
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <TextBlock x:Name="Empty" Grid.Row="1" Classes="note" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,24,0,0" IsVisible="False" />
+    </Grid>
+  </DockPanel>
+</UserControl>
