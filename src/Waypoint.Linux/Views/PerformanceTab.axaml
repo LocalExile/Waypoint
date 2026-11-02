@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Waypoint"
+             x:Class="Waypoint.PerformanceTab">
+  <DockPanel>
+    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+      <TextBlock x:Name="WindowLabel" VerticalAlignment="Center" Margin="0,0,6,0" />
+      <ComboBox x:Name="WindowPicker" Width="100" SelectionChanged="WindowChanged" Margin="0,0,20,0">
+        <ComboBoxItem Tag="60" />
+        <ComboBoxItem Tag="300" IsSelected="True" />
+        <ComboBoxItem Tag="900" />
+        <ComboBoxItem Tag="3600" />
+      </ComboBox>
+      <TextBlock x:Name="CountersLabel" VerticalAlignment="Center" Margin="0,0,6,0" />
+      <ComboBox x:Name="Server" Width="120" SelectionChanged="ServerChanged" Margin="0,0,12,0" />
+      <TextBlock x:Name="CounterState" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+    </WrapPanel>
+    <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*">
+      <l:LineChart x:Name="CpuChart" Margin="4" />
+      <l:LineChart x:Name="MemoryChart" Grid.Column="1" Format="0" Margin="4" />
+      <l:LineChart x:Name="HeapChart" Grid.Row="1" Margin="4" />
+      <l:LineChart x:Name="GcChart" Grid.Row="1" Grid.Column="1" Title="GC" Margin="4" />
+      <l:LineChart x:Name="PoolChart" Grid.Row="2" Format="0" Margin="4" />
+      <l:LineChart x:Name="ContentionChart" Grid.Row="2" Grid.Column="1" Format="0" Margin="4" />
+    </Grid>
+  </DockPanel>
+</UserControl>

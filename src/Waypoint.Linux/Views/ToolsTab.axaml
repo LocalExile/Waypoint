@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="Waypoint.ToolsTab">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock x:Name="Intro" Classes="note" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left" />
+      <StackPanel x:Name="ReleaseNote" IsVisible="False" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left">
+        <TextBlock x:Name="ReleaseText" TextWrapping="Wrap" />
+        <Button x:Name="GetCrafterButton" HorizontalAlignment="Left" Margin="0,8,0,0" Click="GetCrafterClicked" />
+      </StackPanel>
+      <WrapPanel>
+        <!-- One card per tool. -->
+        <Border Classes="card" Width="340" Margin="0,0,14,14">
+          <DockPanel>
+            <Button x:Name="CrafterButton" Classes="accent" DockPanel.Dock="Bottom" HorizontalAlignment="Left" IsEnabled="False" Margin="0,12,0,0" />
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="Anvil" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                Foreground="{DynamicResource Shell.Accent}" />
+            <StackPanel>
+              <TextBlock x:Name="CrafterTitle" FontSize="15" FontWeight="SemiBold" />
+              <TextBlock x:Name="CrafterText" Classes="note" Margin="0,4,0,0" />
+              <TextBlock x:Name="CrafterMissing" Classes="note" Margin="0,8,0,0" />
+            </StackPanel>
+          </DockPanel>
+        </Border>
+      </WrapPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
