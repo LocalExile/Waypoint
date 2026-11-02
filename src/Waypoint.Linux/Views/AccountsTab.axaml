@@ -1,0 +1,119 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="Waypoint.AccountsTab">
+  <UserControl.Styles>
+    <Style Selector="ListBox">
+      <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="ListBox.rows ListBoxItem">
+      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="Grid.columns TextBlock">
+      <Setter Property="TextWrapping" Value="NoWrap" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <Setter Property="Margin" Value="0,0,8,0" />
+    </Style>
+    <Style Selector="TextBlock.field">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="0,0,8,0" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <Button x:Name="ReloadButton" DockPanel.Dock="Left" Click="Refresh" />
+      <Button x:Name="StopHost" DockPanel.Dock="Right" Click="StopDevHost" ToolTip.ShowOnDisabled="True" />
+      <TextBlock x:Name="HostState" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+    </DockPanel>
+
+    <Grid x:Name="HostTools" DockPanel.Dock="Bottom" ColumnDefinitions="*,12,*">
+      <Border Classes="card" Padding="12">
+        <StackPanel Spacing="6">
+          <TextBlock x:Name="RegisterHeading" Classes="heading" />
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+            <TextBlock x:Name="NewAccountLabel" Classes="field" />
+            <TextBox x:Name="NewAccount" Grid.Column="1" />
+            <TextBlock x:Name="NewPasswordLabel" Classes="field" Grid.Row="1" />
+            <TextBox x:Name="NewPassword" Grid.Row="1" Grid.Column="1" PasswordChar="•" />
+            <Button x:Name="RegisterButton" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="0,2,0,0" Click="Register" />
+          </Grid>
+        </StackPanel>
+      </Border>
+      <Border Grid.Column="2" Classes="card" Padding="12">
+        <StackPanel Spacing="6">
+          <TextBlock x:Name="CreateHeading" Classes="heading" />
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="4">
+            <TextBlock x:Name="ForAccountLabel" Classes="field" />
+            <TextBlock x:Name="ForAccount" Grid.Column="1" FontWeight="SemiBold" VerticalAlignment="Center" />
+            <TextBlock x:Name="AccountPasswordLabel" Classes="field" Grid.Row="1" />
+            <TextBox x:Name="AccountPassword" Grid.Row="1" Grid.Column="1" PasswordChar="•" />
+            <TextBlock x:Name="CharacterNameLabel" Classes="field" Grid.Row="2" />
+            <TextBox x:Name="CharacterName" Grid.Row="2" Grid.Column="1" />
+            <TextBlock x:Name="CharacterClassLabel" Classes="field" Grid.Row="3" />
+            <ComboBox x:Name="CharacterClass" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" />
+            <Button x:Name="CreateCharacterButton" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Margin="0,2,0,0" Click="Create" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <TextBlock x:Name="Access" DockPanel.Dock="Bottom" Margin="0,4,0,8" TextWrapping="Wrap" FontSize="11.5" Foreground="{DynamicResource Shell.TextSecondary}" />
+    <TextBlock x:Name="Status" DockPanel.Dock="Bottom" Margin="0,4,0,0" TextWrapping="Wrap" />
+
+    <Grid ColumnDefinitions="2*,8,3*">
+      <DockPanel>
+        <TextBox x:Name="Search" DockPanel.Dock="Top" Margin="0,0,0,6" TextChanged="SearchChanged">
+          <TextBox.InnerLeftContent>
+            <icons:MaterialIcon Kind="Magnify" Width="16" Height="16" Margin="8,0,0,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+          </TextBox.InnerLeftContent>
+        </TextBox>
+        <Grid Classes="columns" DockPanel.Dock="Top" ColumnDefinitions="*,1.4*" Margin="8,0,8,4">
+          <TextBlock x:Name="AccountHeader" Classes="note" />
+          <TextBlock x:Name="CharactersHeader" Classes="note" Grid.Column="1" />
+        </Grid>
+        <ListBox x:Name="AccountGrid" Classes="rows" SelectionChanged="AccountSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid Classes="columns" ColumnDefinitions="*,1.4*">
+                <TextBlock Text="{Binding Name}" />
+                <TextBlock Text="{Binding Summary}" Grid.Column="1" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+      <DockPanel Grid.Column="2">
+        <WrapPanel x:Name="AccountActions" DockPanel.Dock="Top" ItemSpacing="6" LineSpacing="6" Margin="0,0,0,6">
+          <Button x:Name="CreateButton" Click="CreateAccountClicked" />
+          <Button x:Name="DuplicateButton" Click="Change" Tag="Duplicate" />
+          <Button x:Name="RenameButton" Click="Change" Tag="Rename" />
+          <Button x:Name="PasswordButton" Click="Change" Tag="Password" />
+          <Button x:Name="DeleteButton" Click="Change" Tag="Delete" Foreground="{DynamicResource Shell.Error}" />
+        </WrapPanel>
+        <Grid Classes="columns" DockPanel.Dock="Top" ColumnDefinitions="*,1.1*,68,*,1.2*" Margin="8,0,8,4">
+          <TextBlock x:Name="CharacterHeader" Classes="note" />
+          <TextBlock x:Name="ClassHeader" Classes="note" Grid.Column="1" />
+          <TextBlock x:Name="LevelHeader" Classes="note" Grid.Column="2" />
+          <TextBlock x:Name="LeagueHeader" Classes="note" Grid.Column="3" />
+          <TextBlock x:Name="PlayedHeader" Classes="note" Grid.Column="4" />
+        </Grid>
+        <ListBox x:Name="CharacterGrid" Classes="rows" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid Classes="columns" ColumnDefinitions="*,1.1*,68,*,1.2*">
+                <TextBlock Text="{Binding Name}" />
+                <TextBlock Text="{Binding DisplayClass}" Grid.Column="1" />
+                <TextBlock Text="{Binding Level}" Grid.Column="2" />
+                <TextBlock Text="{Binding League}" Grid.Column="3" />
+                <TextBlock Text="{Binding Played}" Grid.Column="4" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>

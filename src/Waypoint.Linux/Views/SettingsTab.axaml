@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Waypoint.SettingsTab">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel MaxWidth="820" HorizontalAlignment="Left" Spacing="12" Margin="0,0,14,0">
+      <Border Classes="card">
+        <StackPanel Spacing="6">
+          <TextBlock x:Name="LanguageHeading" Classes="heading" />
+          <StackPanel Orientation="Horizontal" Spacing="20">
+            <RadioButton x:Name="English" Content="English" GroupName="Language" IsCheckedChanged="LanguageChanged" />
+            <RadioButton x:Name="Russian" Content="Русский" GroupName="Language" IsCheckedChanged="LanguageChanged" />
+          </StackPanel>
+          <TextBlock x:Name="LanguageNote" Classes="note" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="4">
+          <TextBlock x:Name="WindowHeading" Classes="heading" />
+          <TextBlock x:Name="ExitHeading" FontWeight="SemiBold" Margin="0,2,0,2" />
+          <RadioButton x:Name="LeaveServices" GroupName="ServiceExit" IsCheckedChanged="ServicesChanged" />
+          <RadioButton x:Name="StopServices" GroupName="ServiceExit" IsCheckedChanged="ServicesChanged" />
+          <TextBlock x:Name="ServicesHelp" Classes="note" Margin="0,0,0,6" />
+          <Border Height="1" Background="{DynamicResource Shell.Border}" Margin="0,2,0,6" />
+          <CheckBox x:Name="AlwaysAsk" IsCheckedChanged="AlwaysAskChanged" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <DockPanel>
+          <Button x:Name="CheckUpdatesButton" DockPanel.Dock="Right" Click="CheckUpdates" Margin="12,0,0,0" VerticalAlignment="Top" />
+          <StackPanel Spacing="4">
+            <TextBlock x:Name="UpdatesHeading" Classes="heading" />
+            <CheckBox x:Name="CheckAtStart" IsCheckedChanged="CheckAtStartChanged" />
+            <CheckBox x:Name="KeepUpToDate" IsCheckedChanged="KeepUpToDateChanged" />
+          </StackPanel>
+        </DockPanel>
+      </Border>
+
+      <Border x:Name="DeveloperGroup" Classes="card">
+        <StackPanel Spacing="4">
+          <TextBlock x:Name="DeveloperHeading" Classes="heading" />
+          <CheckBox x:Name="DeveloperMode" IsCheckedChanged="DeveloperModeClicked" />
+          <TextBlock x:Name="DeveloperNote" Classes="note" />
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="CheckoutGroup" Classes="card">
+        <StackPanel Spacing="6">
+          <TextBlock x:Name="CheckoutHeading" Classes="heading" />
+          <TextBlock x:Name="ServerFolder" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+          <CheckBox x:Name="UseProfile" ToolTip.Tip="scripts/dev/live.local.ps1, config/runtime.local.ps1" IsCheckedChanged="ProfileChanged" />
+          <WrapPanel ItemSpacing="6" LineSpacing="6">
+            <Button x:Name="FindButton" Click="FindCheckout" />
+            <Button x:Name="ChangeButton" Click="ChangeCheckout" />
+            <Button x:Name="OpenDataButton" Click="OpenData" />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
