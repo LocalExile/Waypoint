@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Waypoint;
 
+sealed record MapLayerSettings(bool Walkability = true, bool Grid = false, bool Markers = true, bool TeleportLinks = false,
+    bool MonsterPacks = false, bool Encounters = false, bool InternalMarkers = false, bool AllTiles = false);
+
 /// <summary>Waypoint's own choices, per Windows user (%LOCALAPPDATA%\Waypoint\settings.json): never in the repository, and
 /// never game data or credentials. The first start takes over what LocalExile Launcher and earlier Waypoint builds kept.</summary>
 sealed class Settings
@@ -58,6 +61,8 @@ sealed class Settings
     public bool HotReload { get; set; } = true;
     /// <summary>The Gateway serves a client in the Lockstep network mode on this PC. The game's own setting is the player's.</summary>
     public bool LockstepServer { get; set; }
+    /// <summary>Display layers in the map viewer.</summary>
+    public MapLayerSettings MapLayers { get; set; } = new();
     /// <summary>Look for a newer release at startup (a release build only).</summary>
     public bool CheckForUpdates { get; set; } = true;
     /// <summary>Hide in the tray while the game client runs, and come back when it closes.</summary>

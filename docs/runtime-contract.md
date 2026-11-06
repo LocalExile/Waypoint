@@ -21,6 +21,11 @@ The desktop owns one normal workspace per Windows user/logon session, independen
 or installation folder. Core supplies a kernel mutex lifetime and a bounded, same-user/session named-pipe activation
 protocol. Ownership is held on a dedicated thread so async startup/disposal cannot release a mutex on the wrong
 thread. Process exit/crash releases kernel ownership; no persistent marker file controls startup.
+Clients can retain a disconnected pipe handle after a crash, including its original server PID in Windows. The stable
+discovery pipe advertises an unpredictable endpoint for this owner; new clients verify the matching greeting and OS
+server PID there before sending an activation or allowing foreground focus. The stable pipe also accepts older clients,
+and new clients still authenticate older owners that do not advertise a private endpoint. Both endpoints close before
+ownership is released. The mutex admits one owner, and that owner may start coordination only once.
 
 Activation carries only build identity and an optional normalized checkout path. It cannot execute runtime actions,
 save preferences or change the active checkout. The owner reports focus, build/checkout conflict, starting or closing,
@@ -60,6 +65,13 @@ harness. No real player account or save is used for mutation validation.
 
 The launcher owns its settings and UI. LocalExile owns preparation, extraction, build semantics, client launch,
 account/storage formats and game behavior. The repositories are independent; no server source changes are required.
+
+The Windows map viewer embeds its own helper source in Waypoint. Under the checkout operation lock it builds the selected
+checkout's existing GameServer.Data project and the helper into a private directory under Waypoint's data folder, with
+restore/intermediate outputs there too. Only the isolated helper references those built assemblies; the desktop has no
+server project dependency. It reads the existing game pack, tables and seed baseline and exposes map data on loopback.
+The viewer ends its helper process and removes its private build on close. It does not start gameplay servers or the client,
+write game data or saves, or require LocalExile's map-service hook. Generator API compatibility belongs to Waypoint's helper.
 
 `Launcher.Core.RuntimeClient` starts `RuntimeBridge.ps1` with structured `ProcessStartInfo.ArgumentList` arguments.
 No command is assembled from user text for a shell. The upstream script does assemble cmd strings, so the adapter

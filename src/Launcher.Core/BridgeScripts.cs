@@ -10,7 +10,7 @@ public static class BridgeScripts
     const string Prefix = "Bridge/";
 
     /// <summary>Unpacks the scripts when this version's folder is not there yet; the path of RuntimeBridge.ps1.</summary>
-    public static string Extract()
+    public static string Extract(string? dataDirectory = null)
     {
         var assembly = typeof(BridgeScripts).Assembly;
         var files = assembly.GetManifestResourceNames().Where(n => n.StartsWith(Prefix, StringComparison.Ordinal)).Order(StringComparer.Ordinal)
@@ -21,7 +21,7 @@ public static class BridgeScripts
             hash.AppendData(System.Text.Encoding.UTF8.GetBytes(name));
             hash.AppendData(bytes);
         }
-        string folder = Path.Combine(SettingsStore.DataDirectory, "adapter", Convert.ToHexStringLower(hash.GetHashAndReset())[..16]);
+        string folder = Path.Combine(dataDirectory ?? SettingsStore.DataDirectory, "adapter", Convert.ToHexStringLower(hash.GetHashAndReset())[..16]);
         string bridge = Path.Combine(folder, "RuntimeBridge.ps1");
         if (File.Exists(bridge)) return bridge;
         string staging = folder + "." + Guid.NewGuid().ToString("N");

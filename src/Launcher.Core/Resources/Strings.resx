@@ -5837,4 +5837,108 @@ This replaces the saved choices only. Mod DLLs and saves are not restored. The c
   <data name="Text_ffd7f7c8013d" xml:space="preserve">
     <value>{0} commit(s) ahead of LocalExile</value>
   </data>
+  <data name="Text_8876f4fff1c8" xml:space="preserve"><value>Map viewer</value></data>
+  <data name="Text_024dc204d7ba" xml:space="preserve"><value>Area</value></data>
+  <data name="Text_367ef06b8fbf" xml:space="preserve"><value>Seed</value></data>
+  <data name="Text_262be24adfee" xml:space="preserve"><value>Area level</value></data>
+  <data name="Text_f95b3eb4bed4" xml:space="preserve"><value>Generate map</value></data>
+  <data name="Text_4da22a362d38" xml:space="preserve"><value>Tiles</value></data>
+  <data name="Text_e21fcb6a2746" xml:space="preserve"><value>Objects and exits</value></data>
+  <data name="Text_9f872ed43d00" xml:space="preserve"><value>Fit</value></data>
+  <data name="Text_17705384c701" xml:space="preserve"><value>Starting map viewer …</value></data>
+  <data name="Text_a61d83f60984" xml:space="preserve"><value>Map viewer failed to start.</value></data>
+  <data name="Text_76d53e715312" xml:space="preserve"><value>Enter a valid seed and area level.</value></data>
+  <data name="Text_ce6e37f200be" xml:space="preserve"><value>Generating map …</value></data>
+  <data name="Text_a0b30cecbd04" xml:space="preserve"><value>Open map viewer</value></data>
+  <data name="Text_19376ffd346d" xml:space="preserve"><value>Inspect generated maps, tiles, walkability and points of interest.</value></data>
+  <data name="Text_1c96653d8b48" xml:space="preserve"><value>Walkability</value></data>
+  <data name="Text_0d7d12ac624c" xml:space="preserve"><value>Grid</value></data>
+  <data name="Text_4e8d1a726078" xml:space="preserve"><value>Markers</value></data>
+  <data name="Text_6eb2be9cdbcc" xml:space="preserve"><value>Entrance {0}</value></data>
+  <data name="Text_8a91c3ae834f" xml:space="preserve"><value>Random seed</value></data>
+  <data name="Text_62a6da8735c1" xml:space="preserve"><value>Object</value></data>
+  <data name="Text_f2d1dab08310" xml:space="preserve"><value>NPC</value></data>
+  <data name="Text_6a6ac8386005" xml:space="preserve"><value>Boss</value></data>
+  <data name="Text_81571a390103" xml:space="preserve"><value>Entrance and exit</value></data>
+  <data name="Text_7a72f4199ba7" xml:space="preserve"><value>Loading areas …</value></data>
+  <data name="Text_9bf1a4ccdf90" xml:space="preserve"><value>Select an area.</value></data>
+  <data name="Text_045923f3710f" xml:space="preserve"><value>Sort areas</value></data>
+  <data name="Text_7f8ae4a819fb" xml:space="preserve"><value>Area teleport</value></data>
+  <data name="Text_1f88699e6094" xml:space="preserve"><value>Previous map</value></data>
+  <data name="Text_7a2cc9a9efb4" xml:space="preserve"><value>Teleport links</value></data>
+  <data name="Text_3864a7129335" xml:space="preserve"><value>Open connected area</value></data>
+  <data name="Text_c45aa0aa9d4a" xml:space="preserve"><value>Target: {0}, {1}</value></data>
+  <data name="Text_b29966d03734" xml:space="preserve"><value>Arrival only</value></data>
+  <data name="Text_e855c484ad39" xml:space="preserve"><value>Coordinates: {0}, {1}</value></data>
+  <data name="Text_2007994f658d" xml:space="preserve"><value>Possible: {0}</value></data>
+  <data name="Text_d7cfab3c32d0" xml:space="preserve"><value>Waypoint</value></data>
+  <data name="Text_615f66d220ae" xml:space="preserve"><value>Crafting unlock</value></data>
+  <data name="Text_72ac0d580f8c" xml:space="preserve"><value>Copy ID</value></data>
+  <data name="Text_338e02304930" xml:space="preserve"><value>Seed {0} was replaced with {1}.</value></data>
+  <data name="Text_eef9456154d0" xml:space="preserve"><value>Could not copy to clipboard.</value></data>
+  <data name="Text_08834c1903a5" xml:space="preserve"><value>Area level can affect map generation. Leave blank to use the default level.</value></data>
+  <data name="Text_1c2f5126ca58" xml:space="preserve">
+    <value>The map viewer needs a source checkout with the terrain generator and extracted game data.</value>
+  </data>
+  <data name="Text_934125e5bec1" xml:space="preserve">
+    <value>Could not prepare the map viewer.
+{0}</value>
+  </data>
+  <data name="Text_ea2772aa96dc" xml:space="preserve"><value>Area level: {0}</value></data>
+  <data name="Text_a540e34f130b" xml:space="preserve"><value>Area: {0} ({1})</value></data>
+  <data name="Text_0ee67faf52dd" xml:space="preserve"><value>Authored anchors only; actual spawns may differ. Scattered monsters are not shown.</value></data>
+  <data name="Text_9fd8a334357b" xml:space="preserve"><value>Base pack size: {0}–{1}</value></data>
+  <data name="Text_f4ba436410ce" xml:space="preserve"><value>Blight</value></data>
+  <data name="Text_a637dd7dba81" xml:space="preserve"><value>Breach</value></data>
+  <data name="Text_4854bd9995ea" xml:space="preserve"><value>Checkout revision: {0}</value></data>
+  <data name="Text_2eb5f87b62ec" xml:space="preserve"><value>Choose a marker ({0})</value></data>
+  <data name="Text_79c2f38c55c2" xml:space="preserve"><value>Copy map details</value></data>
+  <data name="Text_f4ed6bccdcb2" xml:space="preserve"><value>Delirium</value></data>
+  <data name="Text_34e108c0896d" xml:space="preserve"><value>Display</value></data>
+  <data name="Text_71fd53f4a18f" xml:space="preserve"><value>Encounter</value></data>
+  <data name="Text_0e70993a9229" xml:space="preserve"><value>Encounter anchor; this does not guarantee an encounter will spawn.</value></data>
+  <data name="Text_536325061125" xml:space="preserve"><value>Encounters</value></data>
+  <data name="Text_5b5f557d2188" xml:space="preserve"><value>Encounter anchors: {0}</value></data>
+  <data name="Text_e252d0b058d9" xml:space="preserve"><value>Essence</value></data>
+  <data name="Text_6e3fcc16c2bb" xml:space="preserve"><value>Expedition</value></data>
+  <data name="Text_20e2cdc29506" xml:space="preserve"><value>Full tile catalog</value></data>
+  <data name="Text_e0bfbac4f14b" xml:space="preserve"><value>Harbinger</value></data>
+  <data name="Text_a4ebb3c81b2c" xml:space="preserve"><value>Include environment helpers, critters and unused exits.</value></data>
+  <data name="Text_8a31165e1fc4" xml:space="preserve"><value>Include unused and blank tiles in the list.</value></data>
+  <data name="Text_b3919f6581ff" xml:space="preserve"><value>Internal markers</value></data>
+  <data name="Text_2ae8aced0bae" xml:space="preserve"><value>Landmarks</value></data>
+  <data name="Text_88aa5090fa37" xml:space="preserve"><value>Layout: {0} × {1} tiles</value></data>
+  <data name="Text_8b99483221c4" xml:space="preserve"><value>Legion</value></data>
+  <data name="Text_ec42c86a9adb" xml:space="preserve"><value>Magic pack anchor</value></data>
+  <data name="Text_a6d635a3b2fa" xml:space="preserve"><value>Map details copied.</value></data>
+  <data name="Text_eef2ab9b4334" xml:space="preserve"><value>Monster pack</value></data>
+  <data name="Text_f90e7ce6613d" xml:space="preserve"><value>Monster pack data unavailable or incomplete: {0}</value></data>
+  <data name="Text_ea044783b897" xml:space="preserve"><value>Monster pack: {0}</value></data>
+  <data name="Text_2743551363a4" xml:space="preserve"><value>Monster packs</value></data>
+  <data name="Text_6cc4fac6c312" xml:space="preserve"><value>Monster pack anchors: {0}</value></data>
+  <data name="Text_e6b997d9bc50" xml:space="preserve"><value>No matching pack data is available for this anchor.</value></data>
+  <data name="Text_dc937b598926" xml:space="preserve"><value>None</value></data>
+  <data name="Text_45eb89ba5c93" xml:space="preserve"><value>Normal pack anchor</value></data>
+  <data name="Text_0e1336597d20" xml:space="preserve"><value>Placed encounter object; this is not live server state.</value></data>
+  <data name="Text_3cdb8050a820" xml:space="preserve"><value>Possible monsters: {0}</value></data>
+  <data name="Text_722ddecd794e" xml:space="preserve"><value>Possible pack leaders: {0}</value></data>
+  <data name="Text_b86414f34662" xml:space="preserve"><value>Rare pack anchor</value></data>
+  <data name="Text_ef2063b60cb3" xml:space="preserve"><value>Requested seed: {0}</value></data>
+  <data name="Text_da79ad6da3cf" xml:space="preserve"><value>Rogue exile</value></data>
+  <data name="Text_e2db0b44df99" xml:space="preserve"><value>Room-authored anchor; actual monsters and positions may differ.</value></data>
+  <data name="Text_fb05bf5a9f8f" xml:space="preserve"><value>Seed: {0}</value></data>
+  <data name="Text_4ffa280fce8b" xml:space="preserve"><value>Show encounter objects and explicit anchors in the generated layout.</value></data>
+  <data name="Text_7f6f5ad78d7c" xml:space="preserve"><value>Show room-authored pack anchors, not individual or scattered monster positions.</value></data>
+  <data name="Text_f28b9ca197d4" xml:space="preserve"><value>Shrine</value></data>
+  <data name="Text_3c30154b1459" xml:space="preserve"><value>Strongbox</value></data>
+  <data name="Text_8329588880a4" xml:space="preserve"><value>Tormented spirit</value></data>
+  <data name="Text_ad050d3449ef" xml:space="preserve"><value>Tracked files modified</value></data>
+  <data name="Text_bf0983d8b412" xml:space="preserve"><value>Tracked files unchanged</value></data>
+  <data name="Text_b764cdc0eab7" xml:space="preserve"><value>Unknown</value></data>
+  <data name="Text_e8545ec7e575" xml:space="preserve"><value>Unresolved pack anchor</value></data>
+  <data name="Text_66f77bd49259" xml:space="preserve"><value>Unused exit</value></data>
+  <data name="Text_971bc2700a18" xml:space="preserve"><value>Warnings: {0}</value></data>
+  <data name="Text_8eebbaa1dbe0" xml:space="preserve"><value>Working files: {0}</value></data>
+  <data name="Text_72f399f8decf" xml:space="preserve"><value>{0} (arrival only)</value></data>
+  <data name="Text_0df1356837a1" xml:space="preserve"><value>{0} (disabled)</value></data>
 </root>

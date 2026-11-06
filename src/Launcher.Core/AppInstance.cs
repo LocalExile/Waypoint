@@ -63,12 +63,12 @@ public static class AppActivationPolicy
 public sealed class AppInstance : IDisposable
 {
     const int Protocol = 1, MaximumPacket = 16384;
-    readonly string name;
+    readonly string name, endpointName;
     readonly InstanceLock ownership;
     readonly CancellationTokenSource lifetime = new();
     readonly object pipeGate = new();
-    NamedPipeServerStream? currentPipe;
-    bool disposed;
+    NamedPipeServerStream? currentPipe, currentEndpoint;
+    bool disposed, listening;
     public AppInstanceIdentity Identity { get; }
     public bool IsPrimary => ownership.IsPrimary;
     public static string DefaultName
@@ -86,6 +86,7 @@ public sealed class AppInstance : IDisposable
         Identity = identity; name = instanceName ?? DefaultName;
         if (name.Length > 120 || name.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not '.' and not '-'))
             throw new ArgumentException("Unsupported app-instance identifier.", nameof(instanceName));
+        endpointName = name + "." + identity.ProcessId + "." + Guid.NewGuid().ToString("N");
         ownership = new("Local\\" + name);
     }
 
@@ -95,14 +96,24 @@ public sealed class AppInstance : IDisposable
         lock (pipeGate)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
-            if (currentPipe is not null) throw new InvalidOperationException("The activation listener is already running.");
-            currentPipe = CreatePipe(); // Publish before constructing the workspace; second launches may arrive immediately.
+            if (listening) throw new InvalidOperationException("The activation listener is already running.");
+            try
+            {
+                currentEndpoint = CreatePipe(endpointName);
+                currentPipe = CreatePipe(name); // Publish before constructing the workspace; second launches may arrive immediately.
+            }
+            catch { currentEndpoint?.Dispose(); currentEndpoint = null; throw; }
+            listening = true;
         }
-        _ = ListenAsync(activate);
+        _ = ListenAsync(activate, dedicated: false);
+        _ = ListenAsync(activate, dedicated: true);
     }
-    NamedPipeServerStream CreatePipe() => new(name, PipeDirection.InOut, 1, PipeTransmissionMode.Byte,
+    // A retained client handle can preserve both a crashed pipe and its original server PID in Windows. The stable
+    // name discovers a fresh, unpredictable endpoint; authenticate the OS PID there before sending any activation.
+    // Keep the stable endpoint's request handling for older launchers that do not understand redirection.
+    NamedPipeServerStream CreatePipe(string pipeName) => new(pipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte,
         PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly, MaximumPacket, MaximumPacket);
-    async Task ListenAsync(Func<AppLaunchRequest, CancellationToken, Task<AppActivationReply>> activate)
+    async Task ListenAsync(Func<AppLaunchRequest, CancellationToken, Task<AppActivationReply>> activate, bool dedicated)
     {
         while (!lifetime.IsCancellationRequested)
         {
@@ -110,14 +121,14 @@ public sealed class AppInstance : IDisposable
             lock (pipeGate)
             {
                 if (disposed) return;
-                pipe = currentPipe ??= CreatePipe();
+                pipe = dedicated ? currentEndpoint ??= CreatePipe(endpointName) : currentPipe ??= CreatePipe(name);
             }
             try
             {
                 await pipe.WaitForConnectionAsync(lifetime.Token).ConfigureAwait(false);
                 using var timeout = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);
                 timeout.CancelAfter(TimeSpan.FromSeconds(3));
-                await WriteAsync(pipe, new Greeting(Protocol, Identity), timeout.Token).ConfigureAwait(false);
+                await WriteAsync(pipe, new Greeting(Protocol, Identity, endpointName), timeout.Token).ConfigureAwait(false);
                 var request = await ReadAsync<AppLaunchRequest>(pipe, timeout.Token).ConfigureAwait(false);
                 Validate(request);
                 if (!GetNamedPipeClientProcessId(pipe.SafePipeHandle, out uint client) || request.Sender.ProcessId != client)
@@ -129,7 +140,12 @@ public sealed class AppInstance : IDisposable
             { /* A timed-out, truncated or unsupported client cannot terminate the workspace listener. */ }
             finally
             {
-                lock (pipeGate) { pipe.Dispose(); if (ReferenceEquals(currentPipe, pipe)) currentPipe = null; }
+                lock (pipeGate)
+                {
+                    pipe.Dispose();
+                    if (ReferenceEquals(currentPipe, pipe)) currentPipe = null;
+                    if (ReferenceEquals(currentEndpoint, pipe)) currentEndpoint = null;
+                }
             }
         }
     }
@@ -142,12 +158,27 @@ public sealed class AppInstance : IDisposable
         {
             try
             {
-                using var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
-                await pipe.ConnectAsync(deadline.Token).ConfigureAwait(false);
-                var greeting = await ReadAsync<Greeting>(pipe, deadline.Token).ConfigureAwait(false);
-                if (greeting.Protocol != Protocol || !GetNamedPipeServerProcessId(pipe.SafePipeHandle, out uint server) ||
-                    greeting.Identity is null || greeting.Identity.ProcessId != server)
+                using var discovery = new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
+                await discovery.ConnectAsync(deadline.Token).ConfigureAwait(false);
+                var greeting = await ReadAsync<Greeting>(discovery, deadline.Token).ConfigureAwait(false);
+                if (greeting.Protocol != Protocol || greeting.Identity is null || greeting.Identity.ProcessId <= 0)
                     throw new InvalidDataException("The running app uses an unsupported activation protocol.");
+                string prefix = name + "." + greeting.Identity.ProcessId + ".";
+                if (greeting.Endpoint is { } advertised && (!advertised.StartsWith(prefix, StringComparison.Ordinal)
+                    || !Guid.TryParseExact(advertised[prefix.Length..], "N", out _)))
+                    throw new InvalidDataException("Invalid app activation endpoint.");
+                using var endpoint = greeting.Endpoint is { } target
+                    ? new NamedPipeClientStream(".", target, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly) : null;
+                if (endpoint is not null)
+                {
+                    discovery.Dispose();
+                    await endpoint.ConnectAsync(deadline.Token).ConfigureAwait(false);
+                    var confirmed = await ReadAsync<Greeting>(endpoint, deadline.Token).ConfigureAwait(false);
+                    if (confirmed != greeting) throw new InvalidDataException("The activation endpoint does not identify the running app.");
+                }
+                var pipe = endpoint ?? discovery;
+                if (!GetNamedPipeServerProcessId(pipe.SafePipeHandle, out uint server) || greeting.Identity.ProcessId != server)
+                    throw new InvalidDataException("The activation endpoint does not identify its server process.");
                 allowForeground?.Invoke(greeting.Identity.ProcessId);
                 await WriteAsync(pipe, request, deadline.Token).ConfigureAwait(false);
                 var reply = await ReadAsync<AppActivationReply>(pipe, deadline.Token).ConfigureAwait(false);
@@ -187,11 +218,12 @@ public sealed class AppInstance : IDisposable
         {
             if (disposed) return;
             disposed = true; lifetime.Cancel(); currentPipe?.Dispose(); currentPipe = null;
+            currentEndpoint?.Dispose(); currentEndpoint = null;
         }
         // Close the endpoint before releasing ownership, so a replacement can bind immediately.
         ownership.Dispose();
     }
-    sealed record Greeting(int Protocol, AppInstanceIdentity Identity);
+    sealed record Greeting(int Protocol, AppInstanceIdentity Identity, string? Endpoint = null);
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)] static extern bool GetNamedPipeServerProcessId(SafePipeHandle pipe, out uint processId);
     [DllImport("kernel32.dll", SetLastError = true)]

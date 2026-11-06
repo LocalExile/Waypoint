@@ -20,6 +20,36 @@ folder ([Folders and tools](#folders-and-tools)), so a self-update, which replac
 `Workspace.cs` is the app's side of it. The adapter still has its own start, stop and branch-switch actions, covered by its
 tests; the app does not use them.
 
+The Windows Tools section opens the map viewer when the selected source checkout has the terrain generator and extracted
+game data. Waypoint carries its own read-only map helper, builds it against that checkout's existing generator libraries,
+and closes it with the viewer. No LocalExile map-service hook or source changes are needed. The helper and all build outputs
+stay in Waypoint's data folder; closing the viewer discards its private build.
+The area list loads first; generation starts only when requested. Search
+matches every space-separated term against the area name or ID; Enter selects the first match. The list can sort by name or
+natural ID order. The native view displays the generated tiles and walkability at 45 degrees, plus distinct markers for
+area transitions, internal teleports, bosses, NPCs and other known objects. Selecting a marker opens its details; known
+connected areas can be opened and the previous map restored. Clicking overlapping markers opens a compact picker.
+The default view hides grid lines, environment helpers, critters and unused exits; the tile list contains used, nonblank
+tiles. **Display** controls walkability, landmarks, grid and teleport links, plus **Internal markers** and the **Full tile
+catalog** for inspection. These choices are remembered; saved grid choices from earlier versions are preserved.
+**Copy map details** beside the title copies the area, actual and substituted seed, actual level, layout dimensions,
+generator checkout revision, tracked-change state and warnings. It describes the displayed map even after inputs change.
+**Monster packs** is off by default. It shows one marker per authored pack anchor in a placed room, with configured rarity
+when specified, possible monsters, base pack size and possible leaders from the extracted tables. It does not run the
+server's population planner or show individual, scattered or live monsters. Generic room anchors are possibilities; the
+server may use only some of them. Missing pack tables leave the map usable and are reported beside the optional layer.
+**Encounters**, also off by default, shows explicit mechanic objects and named anchors in generated rooms: supported
+classifications include shrines, strongboxes, tormented spirits, rogue exiles and several league encounters. It uses
+specific object types and point names, not scenery names. An anchor or placed object does not establish live gameplay
+support or activation. Client catalogs alone cannot predict random ghost, strongbox or exile locations from a map seed;
+unidentified league-chance columns are not presented as probabilities.
+Numbered boss points show their WorldAreas boss names and IDs when available; unnumbered points show candidates.
+The catalog and placement coverage depend on the server's generator; release installs and
+older checkouts without the generator do not offer this tool. An incompatible generator reports a preparation error.
+When generation substitutes a seed, the viewer briefly displays the original and actual seed without interrupting the map.
+The random seed button uses the server's normal instance seed range; manually entered seeds may use the full unsigned
+32-bit range. Area level can affect generation and defaults to the area's data when left blank.
+
 ## Releases and updates
 
 A release is a git tag `v<major>.<minor>.<patch>` pushed to GitHub. The release workflow

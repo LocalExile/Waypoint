@@ -77,6 +77,7 @@ try
     await FridaChecks.RunAsync(fixture, Check);
     if (args is ["--frida-checks"]) return 0;
     if (OperatingSystem.IsWindows()) await InstanceChecks.RunAsync(Check);
+    if (args is ["--instance-checks"]) { Console.WriteLine($"{passed} instance checks passed."); return 0; }
     ModChecks.Run(fixture, Check);
     LocalizationChecks.Run(Check);
     await SetupChecks.RunAsync(fixture, Check);
