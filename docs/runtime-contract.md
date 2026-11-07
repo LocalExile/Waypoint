@@ -277,6 +277,26 @@ unknown because they have no source. Saved choices are not proof of a runtime lo
 Workspace operations return null only for lock contention. Declined preparation returns a non-success `Cancelled` result,
 without raising the failure dialog. The mod queue completes that job rather than retrying the preparation prompt.
 
+### Module and league configuration
+
+`Content` in an inspection names the selected profile's `Game_MODULES_FOLDER`, `Game_LEAGUES_FOLDER` and
+`Game_LEAGUE_MODULES` paths (default Modules, Leagues and data/league-modules.json). `CanEditSettings` requires the source
+shared settings hook, and `CanChoose` the source league-override hook. Releases advertise neither: the current release
+predates the downloadable-mod update and remains read-only for the new controls. InstallMod, UninstallMod and
+SaveModSettings are also refused on release installs, in both the adapter and the UI.
+
+`SaveContentSettings` takes a staged JSON object, ModId, ModTarget (Modules or Leagues) and ModExpectedHash. It verifies a
+unique physical manifest and declaration before writing only data/modules/<id>.json or data/leagues/<id>.json.
+`SaveLeagueModules` takes a reviewed staged override object and expected hash; it verifies the capability, array/path
+shape and protection of Core/Game, then writes only the configured user override file. The UI's planner additionally
+checks installed modules and dependencies and preserves the choices of other leagues. Neither action starts or stops a
+server. Membership is a next-start choice, never a claim that the running server applied it.
+
+Both actions hold the existing writer lock and reject ownership conflicts. A failed optional save backup blocks the write;
+the expected hash is checked again after backup. Before replacement, the previous configuration is copied to a unique
+Waypoint config-history directory. Staging is accepted only from physical files under Waypoint's mod-downloads directory.
+SaveModSettings also accepts the reviewed expected hash and preserves the previous values file in config-history.
+
 Interface language is a launcher-only optional settings field (`Language`: a tag of `L.Languages`, `en`, `ru` or `zh-CN`;
 Waypoint's own settings leave it empty until the player picks one, which follows the system's display language). It is never
 forwarded to the runtime adapter, used to rewrite action/status tokens, or stored in LocalExile saves or backup metadata.

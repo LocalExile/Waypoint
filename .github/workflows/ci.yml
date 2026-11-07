@@ -30,7 +30,7 @@ jobs:
       - name: Adapter checks
         shell: pwsh
         run: |
-          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModBrowser', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop', 'ReleaseTag') {
+          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModBrowser', 'ContentBridge', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop', 'ReleaseTag') {
             powershell -NoProfile -ExecutionPolicy Bypass -File "tests/$test.Tests.ps1"
             if ($LASTEXITCODE -ne 0) { throw "$test.Tests.ps1 failed" }
           }
@@ -47,4 +47,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Mod install, update, settings and uninstall
         shell: pwsh
-        run: ./tests/ModBrowser.Tests.ps1
+        run: |
+          ./tests/ModBrowser.Tests.ps1
+          ./tests/ContentBridge.Tests.ps1

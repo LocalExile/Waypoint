@@ -17,7 +17,8 @@ Order: the collaboration items, then Simple mode, then isolated environments, th
 
 ## 2. Simple mode
 
-- Leagues on Simple mode's sections, from JetStream's plan for one simple view.
+- Safe league presentation editing: descriptions already live in `league.json`, but a display name independent of saved
+  league identity needs a server hook. The existing card preview remains read-only.
 
 ## 3. Isolated environments
 

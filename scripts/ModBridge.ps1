@@ -290,6 +290,16 @@ function Save-ModSettings($snapshot) {
     New-Item -ItemType Directory -Path $folder -Force | Out-Null
     $path = Join-Path $folder "$ModId.json"
     Assert-Physical $path
+    if ($ModExpectedHash) {
+        $hash = if (Test-Path -LiteralPath $path -PathType Leaf) { Get-ModFileHash $path } else { 'missing' }
+        Require ($hash -ceq $ModExpectedHash) 'Settings changed since they were opened. Refresh before saving.'
+    }
+    if (Test-Path -LiteralPath $path -PathType Leaf) {
+        $history = Join-Path (Get-WaypointData) ('config-history/' + [guid]::NewGuid().ToString('N'))
+        Assert-Physical $history
+        New-Item -ItemType Directory -Path $history -Force | Out-Null
+        Copy-Item -LiteralPath $path -Destination (Join-Path $history ($ModId + '.json'))
+    }
     $temporary = Join-Path $folder ('waypoint-' + [guid]::NewGuid().ToString('N') + '.tmp')
     [IO.File]::WriteAllText($temporary, $json, [Text.UTF8Encoding]::new($false))
     Move-Item -LiteralPath $temporary -Destination $path -Force
@@ -325,6 +335,9 @@ function Uninstall-Mod($snapshot) {
     Write-Host ("Uninstalled " + ($ids -join ', ') + '.')
 }
 function Invoke-ModOperation($snapshot) {
+    if ($Action -in @('InstallMod','SaveModSettings','UninstallMod')) {
+        Require (-not $script:isRelease) 'This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.'
+    }
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
     $environment = Get-ModEnvironment $snapshot.Services
     Require $environment.Supported 'This LocalExile revision has no supported mod host.'

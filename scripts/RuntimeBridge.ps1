@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod','SaveContentSettings','SaveLeagueModules','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -21,11 +21,13 @@ param(
     [string]$ModStageds = '',
     [string]$ModTargets = '',
     [string]$ModStaged = '',
-    [ValidateSet('','Binaries','Source')][string]$ModTarget = ''
+    [ValidateSet('','Binaries','Source','Modules','Leagues')][string]$ModTarget = '',
+    [string]$ModExpectedHash = ''
 )
 . (Join-Path $PSScriptRoot 'ModBridge.ps1')
 . (Join-Path $PSScriptRoot 'AccountBridge.ps1')
 . (Join-Path $PSScriptRoot 'CaptureBridge.ps1')
+. (Join-Path $PSScriptRoot 'ContentBridge.ps1')
 $ErrorActionPreference = 'Stop'
 $result = $null
 $transcribing = $false
@@ -85,6 +87,20 @@ function Import-RuntimeProfile {
     }
     Require (-not $env:Game_TLS_PFX -and -not $env:Game_CDN_PASSTHROUGH -and -not $env:Game_PATCH_WEB_ROOT -and -not $env:Game_PATCH_BACKUP_WEB_ROOT) 'Custom TLS/CDN patch settings are not supported by adapter v1.'
     $script:savePath = if ($env:Game_SAVES_DB) { [IO.Path]::GetFullPath((Join-Relative $env:Game_SAVES_DB)) } else { At 'data/saves.db' }
+}
+function Get-ContentEnvironment {
+    $modules = if ($env:Game_MODULES_FOLDER) { Join-Relative $env:Game_MODULES_FOLDER } else { At 'Modules' }
+    $leagues = if ($env:Game_LEAGUES_FOLDER) { Join-Relative $env:Game_LEAGUES_FOLDER } else { At 'Leagues' }
+    $choices = if ($env:Game_LEAGUE_MODULES) { Join-Relative $env:Game_LEAGUE_MODULES } else { At 'data/league-modules.json' }
+    $hook = At 'src/GameServer.Core/Accounts/LeagueCatalog.cs'
+    $canChoose = $false
+    if (Test-Path -LiteralPath $hook -PathType Leaf) {
+        Assert-Physical $hook
+        if ((Get-Item -LiteralPath $hook).Length -lt 1048576) { $canChoose = [IO.File]::ReadAllText($hook).Contains('Game_LEAGUE_MODULES') }
+    }
+    $settingsHook = At 'src/GameServer.Gateway/Modding/ModSettings.cs'
+    $canEditSettings = (-not $script:isRelease) -and (Test-Path -LiteralPath $settingsHook -PathType Leaf)
+    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=($canChoose -and -not $script:isRelease); CanEditSettings=$canEditSettings }
 }
 function Join-Relative([string]$path) { if ([IO.Path]::IsPathRooted($path)) { $path } else { At $path } }
 function Get-Inventory {
@@ -227,7 +243,7 @@ function Get-Snapshot {
     try { Assert-AccountsStopped ([pscustomobject]@{ Conflicts=$conflicts.ToArray(); Services=$services }) }
     catch { $accountBlock = $_.Exception.Message }
     @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; SourceCommit=$commit; SourceBranch=$branch; AccountWriteBlockedReason=$accountBlock;
-       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); ModEnvironment=(Get-ModEnvironment $services); Capture=(Get-CaptureSnapshot $services) }
+       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); ModEnvironment=(Get-ModEnvironment $services); Capture=(Get-CaptureSnapshot $services); Content=(Get-ContentEnvironment) }
 }
 function Get-SourceSelectionPath {
     $sha = [Security.Cryptography.SHA256]::Create()
@@ -881,6 +897,7 @@ public static class NativeRuntime {
         'StopCapture' { Stop-Capture }
         'QueryAccounts' { $script:accountData = Invoke-AccountData @{ Action='List' } }
         'ManageAccount' { Manage-Account $snapshot }
+        { $_ -in @('SaveContentSettings','SaveLeagueModules') } { Save-ContentFile $snapshot }
         { $_ -in @('BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod') } { Invoke-ModOperation $snapshot }
         'Switch' { Switch-Source $snapshot }
         'FreshSaves' { Start-FreshSaves $snapshot }

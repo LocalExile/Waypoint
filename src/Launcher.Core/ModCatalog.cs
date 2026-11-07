@@ -11,7 +11,7 @@ public sealed record ModEnvironment(bool Supported, string Folder, bool Enabled,
 /// <summary>A mod operation's mod; <paramref name="Batch"/> names several at once, for one InstallMod, UninstallMod or
 /// BuildMod run over all of them.</summary>
 public sealed record ModRequest(string Id = "", string Project = "", string Staged = "", string Target = "",
-    IReadOnlyList<ModRequest>? Batch = null);
+    IReadOnlyList<ModRequest>? Batch = null, string ExpectedHash = "");
 public sealed record ModEntry(string Id, string Version, string Kind, string[] Depends, bool Enabled, string Status,
     string Detail, string Folder, string Project, string Fingerprint, string Name = "", string Description = "", string Author = "",
     bool IsScript = false)

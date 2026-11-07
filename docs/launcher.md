@@ -598,10 +598,59 @@ one at a time. Installs, uninstalls and builds waiting together run as one opera
 in parallel. A failed one opens the operation log.
 
 Clicking a row opens the mod's page: its README (Overview, drawn as GitHub-flavoured Markdown with Markdig; images
-show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its settings form for the common `settings.json` types
-(on/off, numbers, choices, text; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
+show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its shared settings editor
+(all declared types below; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
 and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
 actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
+
+An existing LocalExile release does not declare compatibility with the newer downloadable mods. Waypoint leaves its
+existing saved mod switches available (an older server applies them at its next start), but disables install, update,
+uninstall and settings editing on release installs. Use a current source checkout for these tools. This is checked in the
+adapter as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
+for read-only inspection in Advanced mode.
+
+### Modules and Leagues
+
+**Modules** lists gameplay systems from the selected checkout's `Modules/`, without loading server assemblies. Select one
+to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
+settings are shared by every league using that module, rather than being separate per league.
+
+**Leagues** lists existing leagues. Select one to change its module choices. The Game module is required; saving refuses
+missing dependencies and modules. Ended leagues and leagues that cannot create characters are read-only. Choices are saved
+in the user's `data/league-modules.json` overrides (or the selected profile's `Game_LEAGUE_MODULES` path), preserving other
+leagues and leaving shipped manifests unchanged. Auth and Gateway read these choices at startup: Waypoint says to restart
+the servers when ready and never restarts them automatically. Existing characters stay in their league. Creating, deleting
+or migrating leagues is not part of these controls.
+
+**League card preview** shows the definition's name, description, Hardcore/SSF/form flags and linked mode variants in a
+collapsed, read-only panel. It reads files, not the running server's startup snapshot. LocalExile already reads descriptions
+from `league.json` after a restart; no server code change is needed to edit that file. A name also identifies saved characters
+and stashes, and mode links select real gameplay variants. There is no separate display-name override. Waypoint therefore
+does not edit league presentation or rewrite these definitions.
+
+The adapter supplies the selected profile's module, league and override paths. A source checkout must expose the shared
+settings hook before editing settings, and the league-override hook before editing membership. An older checkout or release
+with no verified hook remains read-only. No listing command or server startup is used to discover these capabilities.
+
+### Shared settings editor
+
+Mods, modules and leagues use the same editor on Windows and Linux:
+
+- On/off switches; text with length and pattern checks; single and multiple choices, including typed game-value sources.
+- Numbers with exact-value boxes and sliders when bounded; percentages and multipliers are displayed in their declared units,
+  and durations are edited in seconds. Step sizes and integer restrictions are checked before saving.
+- Ranges have separate minimum and maximum controls; low cannot exceed high.
+- Lists and maps have expandable, typed rows with Add and Remove. Map keys must be non-empty and unique; declared key
+  options and value types are checked. Groups can contain further controls, lists, maps and groups.
+- Advanced controls are hidden until requested. A setting's `when` conditions follow the other fields as they are edited.
+- Descriptions and apply timing stay with each setting. A module reload, next-area change and restart are distinguished.
+
+The editor preserves unknown values, including inside nested groups, applies declared renames, and stores only overrides.
+Unreadable existing user files block editing instead of being silently replaced. Forms stay intact during background refresh;
+Modules and Leagues ask before discarding a draft when switching selection or refreshing. Saving checks the reviewed file's
+hash, so another tool's changes require a refresh. Changes use the shared workspace lock and the normal optional save backup.
+Previous configuration files are copied to Waypoint's `config-history/<id>/` before replacement, separately from save backups.
+Reset to defaults asks first. Mod values use `data/mods/`, module values `data/modules/`, and league values `data/leagues/`.
 
 ### Backups
 
