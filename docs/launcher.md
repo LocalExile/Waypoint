@@ -628,7 +628,8 @@ migrating leagues is not part of these controls.
 The module list appears below the mode selector. **Find a module** searches names, IDs and descriptions without changing
 the selection. Required modules stay readable and cannot be disabled; modules not defined for the mode are grouped under
 **Unavailable modules**. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
-preview and league settings are expandable. Refreshing or applying a change locks editing until the operation finishes;
+preview and league settings are expandable. Search hides an empty unavailable group and updates its matching count.
+Refreshing or applying a change locks editing until the operation finishes;
 switching league or mode asks before discarding a draft.
 
 **Visible to new characters** / **Hidden from new characters** reflects LocalExile's global creation list (`creatable` and

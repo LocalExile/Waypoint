@@ -237,7 +237,7 @@ public sealed partial class GameSystemsTab : UserControl
         var search = new TextBox { Margin = new Thickness(0, 0, 0, 10) };
         panel.Children.Add(LabelFor(search, L.Text("Find a module"))); panel.Children.Add(search);
         var count = SettingsEditor.Note(""); panel.Children.Add(count);
-        var rows = new List<(AccessibleElement Row, string Text)>();
+        var rows = new List<(AccessibleElement Row, string Text, bool Unavailable)>();
         var unavailable = new StackPanel { Margin = new Thickness(12, 6, 0, 6) };
         var required = _catalog!.RequiredModules(league);
         void Count() => count.Text = L.Text("{0} modules enabled · {1} required", _checks.Count(p => p.Value.IsChecked == true), required.Count);
@@ -267,24 +267,35 @@ public sealed partial class GameSystemsTab : UserControl
                 if (_creating) { _draftModules.Clear(); foreach (var path in _checks.Where(p => p.Value.IsChecked == true).Select(p => p.Key)) _draftModules.Add(path); }
                 Count(); UpdateFeedback();
             };
-            (selected || offered || locked ? panel : unavailable).Children.Add(holder);
-            rows.Add((holder, name + " " + module.Id + " " + module.Description));
+            bool isUnavailable = !selected && !offered && !locked;
+            (isUnavailable ? unavailable : panel).Children.Add(holder);
+            rows.Add((holder, name + " " + module.Id + " " + module.Description, isUnavailable));
         }
         foreach (string path in (_creating ? _draftModules : league.Systems.AsEnumerable()).Where(p => !_checks.ContainsKey(p)))
         {
             // Retain unresolved choices in the draft. A missing installation must never silently remove a saved module.
             _checks[path] = new CheckBox { IsChecked = true, IsEnabled = false };
             var missing = SettingsEditor.Note(L.Text("Missing module: {0}. Restore it before changing this league.", path));
-            panel.Children.Add(missing); rows.Add((missing, path));
+            panel.Children.Add(missing); rows.Add((missing, path, false));
         }
         Expander? unavailableGroup = null;
         if (unavailable.Children.Count > 0) { unavailableGroup = new Expander { Header = L.Text("Unavailable modules ({0})", unavailable.Children.Count), Content = unavailable, IsExpanded = false }; panel.Children.Add(unavailableGroup); }
         var empty = SettingsEditor.Note(L.Text("No modules match your search.")); SettingsEditor.Show(empty, false); panel.Children.Add(empty);
         search.TextChanged += (_, _) =>
         {
-            var words = (search.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries); int shown = 0;
-            foreach (var row in rows) { bool match = words.All(w => row.Text.Contains(w, StringComparison.CurrentCultureIgnoreCase)); SettingsEditor.Show(row.Row, match); if (match) shown++; }
-            if (unavailableGroup is not null) unavailableGroup.IsExpanded = words.Length > 0;
+            var words = (search.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries); int shown = 0, unavailableShown = 0;
+            foreach (var row in rows)
+            {
+                bool match = words.All(w => row.Text.Contains(w, StringComparison.CurrentCultureIgnoreCase));
+                SettingsEditor.Show(row.Row, match);
+                if (match) { shown++; if (row.Unavailable) unavailableShown++; }
+            }
+            if (unavailableGroup is not null)
+            {
+                SettingsEditor.Show(unavailableGroup, unavailableShown > 0);
+                unavailableGroup.Header = L.Text("Unavailable modules ({0})", unavailableShown);
+                unavailableGroup.IsExpanded = words.Length > 0;
+            }
             SettingsEditor.Show(empty, shown == 0);
         };
         Count(); return search;
