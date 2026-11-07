@@ -392,18 +392,16 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
   that is already running.
 - **Hot reload** (on by default, as in `live.ps1`): the Gateway runs under `dotnet watch`, and saved edits to its code
   apply with the game still running. Off passes `-NoHotReload` to the runs that start a Gateway.
-- **Lockstep** (off by default, shown only when the checkout's server has `LockstepLink.cs`): the runs that start a Gateway get
-  `Game_LOCKSTEP=1`, so the server serves a client in the Lockstep network mode on this PC. Off removes the variable. It is the
-  server's half only: the game's `networking_type` stays the player's, and a Predictive client plays as before. A running
-  Gateway keeps what it started with, so after a flip Play does a full run instead of starting only the game. A local launch
-  profile that sets `Game_LOCKSTEP` runs later and has the last word: the switch then shows what it says and can't be changed.
+- The network mode is the game's own setting (`networking_type`), and there is no switch for it here: a current Gateway serves
+  whichever the client picks (LocalExile #684), so a player changes it in game and enters again. Runs set no variable for it.
 - Only one `live.ps1` runs at a time; the buttons wait while one does (the status strip says so). The launcher runs it with Windows PowerShell and
   turns off MSBuild's reused nodes for it, the fix the server's troubleshooting table names for a script that never
   returns. It takes the script's end from the process's exit, not from the end of its output.
 - The **Setup** list checks the server's one-time steps (**Guided setup** opens the Setup section): the client copy, the keys, the patched client, the gateway
   list, the extracted data, Node and ooz, whether the checkout has the launcher hooks, whether the game settings are separate
-  from the normal game's, the network mode in the settings file this client really uses (Predictive, or any while the server
-  serves lockstep), and Python with Frida. **Game data** runs `extract-data.ps1 -List`.
+  from the normal game's, the network mode in the settings file this client really uses (Predictive is preferred; Lockstep or
+  "auto" passes with a hint on a server that serves any mode, and fails on an older one that serves only Predictive), and
+  Python with Frida. **Game data** runs `extract-data.ps1 -List`.
 - The services are found by process: a hot-reloaded Gateway by its own `GameServer.Gateway.exe` (rather than the
   `dotnet watch` around it), the other servers and a Gateway without hot reload by `GameServer.<Name>.dll` on a dotnet
   command line, the client by `Game.patched.exe`, the recorder by `walkmaps.py`. A port that listens without such a
@@ -537,7 +535,8 @@ naming other files. A client started by LocalExile, from either a checkout or a 
 | A link, or a `config.json` it can't read | Asks on **Game settings**: anything else started from a linked folder would use the same settings. Leaving it changes nothing |
 
 A new settings file starts as a copy of the shared one without its `[LOGIN]` section, or empty on a PC that never ran the game,
-with `networking_type=predictive`, so the player no longer sets the network mode by hand. A file that already exists there is
+with `networking_type=predictive`, the preferred mode, so the player no longer sets it by hand (they can still pick another in
+game: the server follows it). A file that already exists there is
 kept, with only that line changed. The shared files are only ever read. `config.json` is written last, so a stop leaves the
 client as it was, and other keys in it stay; one that can't be parsed is kept as `config.json.old`.
 

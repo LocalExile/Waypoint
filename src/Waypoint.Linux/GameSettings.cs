@@ -24,7 +24,7 @@ static class GameSettings
         Environment.SetEnvironmentVariable("WINEPREFIX", prefix);
     }
 
-    /// <summary>The first settings: this install's own from before, when it has them, and the network mode the server needs. Once
+    /// <summary>The first settings: this install's own from before, when it has them, and Predictive, the preferred network mode. Once
     /// the file exists nothing here touches it, so what the player sets in game stays.</summary>
     internal static void Initialize(string prefix, string install)
     {

@@ -291,9 +291,6 @@
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>Fetches pull request #{0} again: its newest commits, also after a force-push</value>
   </data>
-  <data name="Text_0d21277e3dc4" xml:space="preserve">
-    <value>Set by this checkout's local launch profile, config/runtime.local.ps1. Remove it there to use this switch.</value>
-  </data>
   <data name="Text_0d422d261e8b" xml:space="preserve">
     <value>Backing up your saves</value>
   </data>
@@ -1271,9 +1268,6 @@ This checkout has modified tracked files.</value>
   <data name="Text_35a86201334e" xml:space="preserve">
     <value>Checking Python 3.9+ and Frida without installing packages.</value>
   </data>
-  <data name="Text_35b31d20f9a2" xml:space="preserve">
-    <value>Lockstep changes when the Gateway starts again: Play restarts the servers.</value>
-  </data>
   <data name="Text_35dd8b832082" xml:space="preserve">
     <value>Show Waypoint</value>
   </data>
@@ -1799,9 +1793,6 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4df36313ae04" xml:space="preserve">
     <value>2.  Finds your game client, or lets you point to it</value>
-  </data>
-  <data name="Text_4df4a74256c7" xml:space="preserve">
-    <value>network mode {0}: the server serves it</value>
   </data>
   <data xml:space="preserve" name="Text_4df57ea533cf">
     <value>Checking restore</value>
@@ -3194,9 +3185,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8db991f463fe" xml:space="preserve">
     <value>{0} has room for at most {1} sockets</value>
   </data>
-  <data name="Text_8de109f741c7" xml:space="preserve">
-    <value>Lockstep</value>
-  </data>
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>gen 2</value>
   </data>
@@ -4349,9 +4337,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_bf009459884a" xml:space="preserve">
     <value>Reload game data</value>
-  </data>
-  <data name="Text_bf91cdb0ca76" xml:space="preserve">
-    <value>Serves a game set to the Lockstep network mode, on this PC only (Game_LOCKSTEP=1). The game's own setting stays as it is. Applies when the Gateway next starts.</value>
   </data>
   <data name="Text_bffd26352bd5" xml:space="preserve">
     <value>You’ll be asked once before a closing preference is saved.</value>
@@ -5941,4 +5926,5 @@ This replaces the saved choices only. Mod DLLs and saves are not restored. The c
   <data name="Text_8eebbaa1dbe0" xml:space="preserve"><value>Working files: {0}</value></data>
   <data name="Text_72f399f8decf" xml:space="preserve"><value>{0} (arrival only)</value></data>
   <data name="Text_0df1356837a1" xml:space="preserve"><value>{0} (disabled)</value></data>
+  <data name="Text_0accac4403f2" xml:space="preserve"><value>network mode {0}: served, but Predictive is preferred</value></data>
 </root>

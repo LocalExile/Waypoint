@@ -38,7 +38,6 @@
                 <WrapPanel x:Name="RunOptions" VerticalAlignment="Center">
                     <CheckBox x:Name="HotReload" Content="{l:Loc 'Hot reload'}"
                               ToolTip="{l:Loc 'The Gateway runs under dotnet watch, so saved code edits apply with the game still running; off passes -NoHotReload'}" />
-                    <CheckBox x:Name="Lockstep" Content="{l:Loc 'Lockstep'}" Checked="LockstepChanged" Unchecked="LockstepChanged" Visibility="Collapsed" />
                     <CheckBox x:Name="NoBuild" Content="{l:Loc 'Skip build'}" ToolTip="-NoBuild" />
                     <CheckBox x:Name="NoExtract" Content="{l:Loc 'Skip data check'}" ToolTip="-NoExtract" />
                     <CheckBox x:Name="Walkmaps" Content="{l:Loc 'Walk maps'}" ToolTip="{l:Loc '-Walkmaps: capture each area\'s walk map with Frida (GettingStarted step 9)'}" />

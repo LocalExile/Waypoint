@@ -53,7 +53,6 @@
           <CheckBox x:Name="NoExtract" Content="{l:Loc 'Skip data check'}" ToolTip.Tip="-NoExtract" />
           <!-- live.ps1 refuses -Walkmaps on Linux: Frida's recorder cannot run there. Off and out of sight, so the logic stays as on Windows. -->
           <CheckBox x:Name="Walkmaps" Content="{l:Loc 'Walk maps'}" IsVisible="False" />
-          <CheckBox x:Name="Lockstep" IsVisible="False" IsCheckedChanged="LockstepChanged" />
         </WrapPanel>
       </DockPanel>
     </Border>
