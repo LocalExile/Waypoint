@@ -24,7 +24,7 @@ public sealed partial class GameSystemsTab
     {
         if (_catalog is null || Busy || !Discard()) return;
         if (!_catalog.Environment.CanCreate) { SetStatus(L.Text("This checkout does not expose supported league creation. Existing leagues remain available for inspection.")); return; }
-        _draftCandidates = _catalog.Leagues.Where(l => !l.Custom && _catalog.Configurable(l) && GameSystems.EmptyTemplate(l.Folder)).ToArray();
+        _draftCandidates = _catalog.Leagues.Where(l => !l.Custom && _catalog.Configurable(l) && _catalog.FlagOf(l) is not null && GameSystems.EmptyTemplate(l.Folder)).ToArray();
         if (_draftCandidates.Length == 0) { SetStatus(L.Text("This league has custom code or no reusable source template. It cannot be safely copied.")); return; }
         if (origin is not null && !_draftCandidates.Contains(origin)) { SetStatus(L.Text("This league has custom code or no reusable source template. It cannot be safely copied.")); return; }
         _draftTemplate = origin ?? _draftCandidates[0];
@@ -48,15 +48,16 @@ public sealed partial class GameSystemsTab
     {
         _detail.Children.Add(new TextBlock { Text = L.Text("1 of 2 · League and mode"), FontSize = 20, Margin = new Thickness(0, 0, 0, 8) });
         _detail.Children.Add(SettingsEditor.Note(L.Text("Start with an existing league, choose its mode, then give your custom league a name.")));
-        var families = _draftCandidates.GroupBy(l => _catalog!.SourceFamilyName(l), StringComparer.OrdinalIgnoreCase).Select(g => new GameLeagueFamily(g.Key, g.ToArray())).ToArray();
+        var families = _catalog!.Cards.Select(c => new GameLeagueCard(c.Name, c.Variants.Where(_draftCandidates.Contains).ToArray()))
+            .Where(c => c.Variants.Length > 0).ToArray();
         var currentFamily = families.First(f => f.Variants.Contains(_draftTemplate!));
         var familySelector = new ComboBox { ItemsSource = families, SelectedItem = currentFamily, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 0, 0, 12) };
-        _detail.Children.Add(LabelFor(familySelector, L.Text("Starting league"))); _detail.Children.Add(familySelector);
+        _detail.Children.Add(LabelFor(familySelector, L.Text("Starting flag"))); _detail.Children.Add(familySelector);
         var modes = new ComboBox { HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 0, 0, 8) };
         _detail.Children.Add(LabelFor(modes, L.Text("Game mode"))); _detail.Children.Add(modes);
         var modeHint = SettingsEditor.Note(""); _detail.Children.Add(modeHint);
         bool choosing = false;
-        void FillModes(GameLeagueFamily family, GameLeague? selected)
+        void FillModes(GameLeagueCard family, GameLeague? selected)
         {
             choosing = true; modes.Items.Clear();
             foreach (var profile in family.Variants) modes.Items.Add(ModeItem(profile, family.Variants));
@@ -77,7 +78,7 @@ public sealed partial class GameSystemsTab
         }
         familySelector.SelectionChanged += (_, _) =>
         {
-            if (choosing || familySelector.SelectedItem is not GameLeagueFamily next) return;
+            if (choosing || familySelector.SelectedItem is not GameLeagueCard next) return;
             if (!Switch(next.Primary)) { choosing = true; familySelector.SelectedItem = currentFamily; choosing = false; return; }
             currentFamily = next; FillModes(next, next.Primary);
         };
@@ -97,7 +98,8 @@ public sealed partial class GameSystemsTab
     {
         _nameFeedback = null;
         _detail.Children.Add(new TextBlock { Text = L.Text("2 of 2 · Modules and review"), FontSize = 20, Margin = new Thickness(0, 0, 0, 6) });
-        _detail.Children.Add(SettingsEditor.Label(_draftName!.Text + " · " + _catalog!.SourceFamilyName(_draftTemplate!) + " · " + _catalog.Modes(_draftTemplate!)));
+        _detail.Children.Add(SettingsEditor.Label(_draftName!.Text + " · " + _catalog!.FlagOf(_draftTemplate!)!.Name + " · " + _catalog.Modes(_draftTemplate!)));
+        _detail.Children.Add(SettingsEditor.Note(L.Text("Creates one separate flag named {0}. Its chosen mode is fixed; no mode checkboxes are added.", _draftName.Text ?? "")));
         _detail.Children.Add(SettingsEditor.Note(_draftTemplate!.Hardcore ? L.Text("This league stays separate from Standard. Hardcore death is permanent.")
             : L.Text("This league has its own characters and stash. Nothing will migrate into Standard.")));
         var search = AddModuleChoices(_detail, _draftTemplate, editable: true);
@@ -146,7 +148,7 @@ public sealed partial class GameSystemsTab
             var result = await SaveAsync("CreateLeague", request);
             if (result?.Ok != true) return;
             _creating = false; _choicesDirty = false; await RefreshAsync();
-            _list.SelectedItem = _list.Items.OfType<GameLeagueFamily>().FirstOrDefault(f => f.Variants.Any(l => l.Name == name));
+            _list.SelectedItem = _list.Items.OfType<GameLeagueCard>().FirstOrDefault(f => f.Variants.Any(l => l.Name == name));
             SetStatus(L.Text("League created. It becomes available after the next server start."));
         }
         catch (Exception e) when (e is IOException or InvalidDataException or InvalidOperationException or UnauthorizedAccessException) { SetStatus(e.Message); }

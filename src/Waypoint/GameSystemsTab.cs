@@ -19,7 +19,7 @@ using LiveSetting = Avalonia.Automation.AutomationLiveSetting;
 
 namespace Waypoint;
 
-/// <summary>League families, their modes and guarded public-file customization. The same view serves both front ends.</summary>
+/// <summary>Declared player flags, linked modes and guarded public-file customization, shared by both front ends.</summary>
 public sealed partial class GameSystemsTab : UserControl
 {
     public bool LeagueView { get; set; }
@@ -31,6 +31,9 @@ public sealed partial class GameSystemsTab : UserControl
     readonly StackPanel _actions = new() { Orientation = Orientation.Horizontal };
     readonly ListBox _list = new() { Width = 220, Margin = new Thickness(0, 0, 22, 0) };
     readonly TextBlock _status = SettingsEditor.Note(""), _validation = SettingsEditor.Note("");
+    readonly TextBlock _flagSummary = SettingsEditor.Note("");
+    readonly CheckBox _hiddenDefinitions = new();
+    bool _changingFilter;
     readonly Dictionary<string, CheckBox> _checks = new(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> _draftModules = new(StringComparer.OrdinalIgnoreCase);
     SettingsEditor? _editor;
@@ -58,7 +61,17 @@ public sealed partial class GameSystemsTab : UserControl
         heading.Children.Add(_header); UpdateHeading();
         _toolbar.Children.Add(SettingsEditor.Button(L.Text("Refresh"), () => _ = RefreshAsync(discard: true)));
         if (LeagueView) { _newAction = SettingsEditor.Button(L.Text("New league"), () => StartCreate()); _toolbar.Children.Add(_newAction); }
+        if (LeagueView)
+        {
+            _hiddenDefinitions.Content = L.Text("Show hidden definitions");
+            Named(_hiddenDefinitions, L.Text("Show hidden definitions"));
+            _hiddenDefinitions.Margin = new Thickness(18, 0, 0, 0);
+            _hiddenDefinitions.VerticalAlignment = VerticalAlignment.Center;
+            _hiddenDefinitions.Click += (_, _) => ChangePresentationFilter();
+            _toolbar.Children.Add(_hiddenDefinitions);
+        }
         heading.Children.Add(_toolbar);
+        if (LeagueView) heading.Children.Add(_flagSummary);
         DockPanel.SetDock(heading, Dock.Top); shell.Children.Add(heading);
         var footer = new StackPanel { Margin = new Thickness(0, 10, 0, 0) };
         footer.Children.Add(_validation); footer.Children.Add(_status); footer.Children.Add(_actions);
@@ -82,7 +95,7 @@ public sealed partial class GameSystemsTab : UserControl
     {
         _header.Children.Clear();
         _header.Children.Add(new TextBlock { Text = L.Text(LeagueView ? "Leagues" : "Modules"), FontSize = 22 });
-        _header.Children.Add(SettingsEditor.Note(LeagueView ? L.Text("Choose a league, then manage its game mode and modules.")
+        _header.Children.Add(SettingsEditor.Note(LeagueView ? L.Text("League flags and mode options as declared for character creation.")
             : L.Text("Modules provide gameplay systems. Their settings are shared by every league using them.")));
     }
     static T Named<T>(T control, string name) where T : AccessibleElement { A11y.SetName(control, name); return control; }
@@ -135,13 +148,14 @@ public sealed partial class GameSystemsTab : UserControl
             string? previous = _selected?.ToString();
             _catalog = new GameSystems(environment);
             _selecting = true;
-            var items = LeagueView ? _catalog.Families.Where(f => f.Variants.Any(_catalog.Configurable)).Cast<object>().ToArray() : _catalog.Systems.Cast<object>().ToArray();
+            var items = LeagueView ? PresentationCards().Cast<object>().ToArray() : _catalog.Systems.Cast<object>().ToArray();
             _list.ItemsSource = items;
             var previousLeague = _catalog.Leagues.FirstOrDefault(l => l.Name == previous);
-            _list.SelectedItem = LeagueView ? items.OfType<GameLeagueFamily>().FirstOrDefault(f => f.Variants.Any(l => l.Name == previous)) ?? items.FirstOrDefault()
+            _list.SelectedItem = LeagueView ? items.OfType<GameLeagueCard>().FirstOrDefault(f => f.Variants.Any(l => l.Name == previous)) ?? items.FirstOrDefault()
                 : items.FirstOrDefault(i => i.ToString() == previous) ?? items.FirstOrDefault();
             _selectedRow = _list.SelectedItem;
-            _selected = _selectedRow is GameLeagueFamily family ? previousLeague is not null && family.Variants.Contains(previousLeague) ? previousLeague : family.Primary : _selectedRow;
+            _selected = _selectedRow is GameLeagueCard card ? previousLeague is not null && CardModes(card).Contains(previousLeague) ? previousLeague : card.Primary : _selectedRow;
+            UpdateFlagSummary();
             _selecting = false; RenderSelection();
             if (_selected is null) SetStatus(L.Text("No modules or leagues were found in this installation."));
         }
@@ -154,7 +168,7 @@ public sealed partial class GameSystemsTab : UserControl
         if (_selecting || Busy || ReferenceEquals(_list.SelectedItem, _selectedRow)) return;
         if (!Discard()) { _selecting = true; _list.SelectedItem = _selectedRow; _selecting = false; return; }
         _selectedRow = _list.SelectedItem;
-        _selected = _selectedRow is GameLeagueFamily family ? family.Primary : _selectedRow;
+        _selected = _selectedRow is GameLeagueCard card ? card.Primary : _selectedRow;
         RenderSelection();
     }
     void ClearView()
@@ -182,11 +196,58 @@ public sealed partial class GameSystemsTab : UserControl
         UpdateFeedback(); UpdateLock();
         if (focusMode && _modeSelector is not null) Dispatch(() => _modeSelector.Focus());
     }
+    IEnumerable<GameLeagueCard> PresentationCards() => _catalog!.Cards.Where(c => c.Visible || _hiddenDefinitions.IsChecked == true);
+    GameLeague[] CardModes(GameLeagueCard card) => card.Variants.Where(l => _hiddenDefinitions.IsChecked == true || _catalog!.ReachableMode(l)).ToArray();
+    void UpdateFlagSummary()
+    {
+        if (!LeagueView || _catalog is null) return;
+        _flagSummary.Text = L.Text("{0} flags at the next server start. The running game may still use earlier definitions.", _catalog.Cards.Count(c => c.Visible));
+        if (_catalog.Leagues.Any(l => _catalog.OfferedDefinition(l) && !_catalog.ReachableMode(l)))
+            _flagSummary.Text += "\n" + L.Text("Some mode links cannot be previewed reliably. Show hidden definitions to inspect them.");
+    }
+    void ChangePresentationFilter()
+    {
+        if (_catalog is null || _changingFilter) return;
+        if (!Discard())
+        {
+            _changingFilter = true; _hiddenDefinitions.IsChecked = _hiddenDefinitions.IsChecked != true; _changingFilter = false; return;
+        }
+        string? previous = (_selected as GameLeague)?.Name;
+        _selecting = true;
+        var cards = PresentationCards().ToArray(); _list.ItemsSource = cards;
+        var selectedCard = cards.FirstOrDefault(c => CardModes(c).Any(l => l.Name == previous)) ?? cards.FirstOrDefault();
+        _list.SelectedItem = selectedCard; _selectedRow = selectedCard;
+        _selected = selectedCard is null ? null : CardModes(selectedCard).FirstOrDefault(l => l.Name == previous) ?? selectedCard.Primary;
+        _selecting = false; RenderSelection();
+    }
+    void AddFlagPreview(GameLeagueCard? card, GameLeague league)
+    {
+        if (card is null || _catalog is null) return;
+        var root = card.Primary;
+        _detail.Children.Add(SettingsEditor.Note(card.IsFlag ? L.Text("Separate flag at character creation")
+            : L.Text("Unlinked mode definition — this is not a player flag.")));
+        _detail.Children.Add(SettingsEditor.Note(root.Description.StartsWith('#')
+            ? L.Text("Description uses the game's text key: {0}", root.Description) : root.Description));
+        if (!_catalog.ReachableMode(league)) _detail.Children.Add(SettingsEditor.Note(L.Text("Not offered: hidden, ended, unloaded or unreachable through valid mode links. Inspect this definition before showing it.")));
+        _detail.Children.Add(SettingsEditor.Note(L.Text("Selected league: {0} · {1}", league.Name, _catalog.Modes(league))));
+        var links = card.Variants.Where(l => !l.IsMain && (_hiddenDefinitions.IsChecked == true || _catalog.ReachableMode(l))).ToArray();
+        bool uncertainLinks = card.Variants.Any(l => !l.IsMain && _catalog.OfferedDefinition(l) && !_catalog.ReachableMode(l));
+        if (links.Length == 0 && !uncertainLinks) _detail.Children.Add(SettingsEditor.Note(L.Text("No linked mode options on this flag.")));
+        else
+        {
+            var options = new StackPanel { Margin = new Thickness(12, 4, 0, 8) };
+            foreach (var variant in links)
+                options.Children.Add(SettingsEditor.Note(L.Text("{0}: {1}", _catalog.ModePath(variant), variant.Name)
+                    + (_catalog.ReachableMode(variant) ? "" : " · " + L.Text("Not shown"))));
+            _detail.Children.Add(new Expander { Header = L.Text("In-game mode links and combinations ({0})", links.Count(_catalog.ReachableMode)), Content = options });
+        }
+    }
     void RenderLeague(GameLeague league)
     {
-        var family = _selectedRow as GameLeagueFamily;
-        _detail.Children.Add(new TextBlock { Text = family?.Name ?? league.Name, FontSize = 20, Margin = new Thickness(0, 0, 0, 6) });
-        var variants = family?.Variants ?? [league];
+        var card = _selectedRow as GameLeagueCard;
+        _detail.Children.Add(new TextBlock { Text = card?.Name ?? league.Name, FontSize = 20, Margin = new Thickness(0, 0, 0, 6) });
+        AddFlagPreview(card, league);
+        var variants = card is null ? [league] : CardModes(card);
         _modeSelector = new ComboBox { HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 0, 0, 10) };
         _detail.Children.Add(LabelFor(_modeSelector, L.Text("Game mode")));
         A11y.SetHelpText(_modeSelector, L.Text("Choose a mode to manage its modules and availability. Each mode keeps its own characters and stash."));
@@ -201,7 +262,7 @@ public sealed partial class GameSystemsTab : UserControl
         };
         _detail.Children.Add(_modeSelector);
         var availability = new StackPanel { Orientation = Orientation.Horizontal };
-        availability.Children.Add(new TextBlock { Text = L.Text(league.Creatable && !league.Ended ? "Visible to new characters" : "Hidden from new characters"), Margin = new Thickness(0, 10, 18, 0) });
+        availability.Children.Add(new TextBlock { Text = L.Text(_catalog!.ReachableMode(league) ? "Visible to new characters" : "Not shown at character creation"), Margin = new Thickness(0, 10, 18, 0) });
         _availabilityAction = SettingsEditor.Button(L.Text(league.Creatable ? "Hide…" : "Show…"), () => _ = SetVisibilityAsync(league));
         Named(_availabilityAction, L.Text(league.Creatable ? "Hide from new characters" : "Show for new characters"));
         availability.Children.Add(_availabilityAction); _detail.Children.Add(availability);
@@ -216,8 +277,7 @@ public sealed partial class GameSystemsTab : UserControl
         customize.IsEnabled = reusable && _catalog.Environment.CanCreate; details.Children.Add(customize);
         if (!reusable) details.Children.Add(SettingsEditor.Note(L.Text("This league has custom code or no reusable source template. It cannot be safely copied.")));
         details.Children.Add(SettingsEditor.Note(L.Text("Only combinations defined for this league and mode are allowed. Dedicated gameplay bundles stay together; unknown compatibility is blocked.")));
-        details.Children.Add(SettingsEditor.Label(L.Text("League card preview")));
-        details.Children.Add(SettingsEditor.Note(league.Name + "\n" + league.Description));
+        details.Children.Add(SettingsEditor.Label(L.Text("Selected league definition: {0}", league.Name)));
         if (league.EntryOf.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("Shown as a mode of: {0}", league.EntryOf)));
         if (league.Parent.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("Parent league: {0}", league.Parent)));
         _detail.Children.Add(new Expander { Header = L.Text("League details and compatibility"), Content = details, IsExpanded = false, Margin = new Thickness(0, 12, 0, 8) });
@@ -302,7 +362,8 @@ public sealed partial class GameSystemsTab : UserControl
     }
     string[] SelectedModules() => _creating ? _draftModules.ToArray() : _checks.Where(p => p.Value.IsChecked == true).Select(p => p.Key).ToArray();
     ComboBoxItem ModeItem(GameLeague league, IReadOnlyList<GameLeague> variants) => new()
-    { Content = _catalog!.Modes(league) + (variants.Count(l => _catalog.Modes(l) == _catalog.Modes(league)) > 1 ? " (" + league.Name + ")" : ""), Tag = league };
+    { Content = _catalog!.ModePath(league) + (variants.Count(l => _catalog.ModePath(l) == _catalog.ModePath(league)) > 1 ? " (" + league.Name + ")" : "")
+        + (_catalog.ReachableMode(league) ? "" : " · " + L.Text("Not shown")), Tag = league };
     void UpdateFeedback()
     {
         if (_catalog is null) { UpdateLock(); return; }

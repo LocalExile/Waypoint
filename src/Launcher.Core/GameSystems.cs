@@ -11,15 +11,16 @@ public sealed record GameSystem(string Id, string Path, string Name, string Desc
 }
 public sealed record GameLeague(string Name, string Folder, string[] BaseSystems, string[] Systems, string Description, bool Creatable, bool Ended,
     bool Hardcore = false, bool Ssf = false, string Form = "", string Parent = "", string EntryOf = "", string EntryKind = "",
-    string Base = "", string DataSet = "", bool Custom = false, string Template = "")
+    string Base = "", string DataSet = "", bool Custom = false, string Template = "", bool HasEntryOf = false)
 {
     public string SettingsFile => Path.Combine(Folder, "settings.json");
+    public bool IsMain => !HasEntryOf && EntryOf.Length == 0;
     public override string ToString() => Name;
 }
-public sealed record GameLeagueFamily(string Name, GameLeague[] Variants)
+public sealed record GameLeagueCard(string Name, GameLeague[] Variants, bool Visible = true, bool IsFlag = true)
 {
     public GameLeague Primary => Variants.FirstOrDefault(l => l.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)) ?? Variants[0];
-    public override string ToString() => Name;
+    public override string ToString() => Visible ? Name : L.Text("{0} (not shown)", Name);
 }
 
 /// <summary>Read-only public manifests. No server assemblies are loaded. User overrides are planned against the reviewed file.</summary>
@@ -27,9 +28,7 @@ public sealed partial class GameSystems
 {
     public IReadOnlyList<GameSystem> Systems { get; }
     public IReadOnlyList<GameLeague> Leagues { get; }
-    public IReadOnlyList<GameLeagueFamily> Families => Leagues.GroupBy(l => (l.Custom ? "custom/" + l.Name : "family/" + SourceFamilyName(l)), StringComparer.OrdinalIgnoreCase)
-        .Select(g => new GameLeagueFamily(g.First().Custom ? g.First().Name : SourceFamilyName(g.First()), g.ToArray()))
-        .OrderBy(f => f.Name == "Standard" ? "" : f.Name).ToArray();
+    readonly string[] _definitionOrder;
     public JsonObject Choices { get; }
     public string ChoicesHash { get; }
     public ContentEnvironment Environment { get; }
@@ -68,6 +67,7 @@ public sealed partial class GameSystems
     {
         Environment = environment;
         var reviewed = CaptureReview(environment);
+        _definitionOrder = Directory.Exists(environment.Leagues) ? Directory.GetDirectories(environment.Leagues) : [];
         var systems = new List<GameSystem>();
         foreach (string file in Manifests(environment.Modules, "module.json"))
         {
@@ -96,10 +96,11 @@ public sealed partial class GameSystems
                 foreach (string removed in Strings(changes["remove"])) if (!Id(removed).Equals("Game", StringComparison.OrdinalIgnoreCase)) selected.RemoveAll(p => Id(p).Equals(Id(removed), StringComparison.OrdinalIgnoreCase));
                 foreach (string added in Strings(changes["add"])) if (!selected.Any(p => Id(p).Equals(Id(added), StringComparison.OrdinalIgnoreCase))) selected.Add(Normal(added));
             }
-            leagues.Add(new(name, folder, original, selected.ToArray(), Text(json, "description", "The " + name + " league."), json["creatable"]?.GetValue<bool>() ?? true, json["ended"]?.GetValue<bool>() ?? false,
+            string description = Text(json, "description");
+            leagues.Add(new(name, folder, original, selected.ToArray(), description.Length > 0 ? description : "The " + name + " league.", json["creatable"]?.GetValue<bool>() ?? true, json["ended"]?.GetValue<bool>() ?? false,
                 json["hardcore"]?.GetValue<bool>() ?? false, json["ssf"]?.GetValue<bool>() ?? false, Text(json, "form"), Text(json, "parent"), Text(json, "entryOf"), Text(json, "entryKind"),
                 Text(json, "base", name), Text(json, "dataSet"), File.Exists(Path.Combine(folder, ".waypoint-league.json")),
-                File.Exists(Path.Combine(folder, ".waypoint-league.json")) ? Text(Read(Path.Combine(folder, ".waypoint-league.json")), "template") : ""));
+                File.Exists(Path.Combine(folder, ".waypoint-league.json")) ? Text(Read(Path.Combine(folder, ".waypoint-league.json")), "template") : "", json["entryOf"] is JsonValue));
         }
         Leagues = leagues.OrderBy(l => l.Name == "Standard" ? "" : l.Name).ToArray();
         if (!JsonNode.DeepEquals(reviewed, CaptureReview(environment))) throw new IOException(L.Text("Settings changed while reading. Refresh before editing."));

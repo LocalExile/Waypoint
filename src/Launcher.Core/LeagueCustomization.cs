@@ -183,7 +183,8 @@ public sealed partial class GameSystems
         if (NewNameError(name) is { } nameError) throw new InvalidOperationException(nameError);
         if (template.Custom || !Configurable(template) || !EmptyTemplate(template.Folder))
             throw new InvalidOperationException(L.Text("This league has custom code or no reusable source template. It cannot be safely copied."));
-        if (!Leagues.Any(l => l.Name.Equals("Void", StringComparison.OrdinalIgnoreCase) && l.Parent.Length == 0 && !l.Creatable && l.BaseSystems.Length == 0
+        if (!Leagues.Any(l => l.Name.Equals("Void", StringComparison.OrdinalIgnoreCase) && l.Parent.Length == 0 && !l.Creatable
+            && l.BaseSystems.All(p => p.Equals("Core/Game", StringComparison.OrdinalIgnoreCase))
             && (Directory.Exists(Path.Combine(l.Folder, "Source")) || File.Exists(Path.Combine(l.Folder, "Binaries/league.dll")))))
             throw new InvalidOperationException(L.Text("The Void destination is missing. Restore it before creating an isolated league."));
         if (string.IsNullOrWhiteSpace(description) || description.Length > 2000 || description.Any(c => char.IsControl(c) && c is not ('\r' or '\n' or '\t')))

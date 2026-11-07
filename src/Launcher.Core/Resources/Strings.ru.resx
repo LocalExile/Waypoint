@@ -390,6 +390,9 @@
   <data name="Text_0dcc8c70ea9d" xml:space="preserve">
     <value>Качество {0}</value>
   </data>
+  <data name="Text_0ddc1c3f7a9b" xml:space="preserve">
+    <value>Определение режима без связи — это не флаг для игрока.</value>
+  </data>
   <data xml:space="preserve" name="Text_0de9f358ad56">
     <value>Границы</value>
   </data>
@@ -542,6 +545,9 @@
   </data>
   <data name="Text_131dac929d6e" xml:space="preserve">
     <value>Применение проверенного изменения одной транзакцией SQLite. Учётные данные не записываются в журнал.</value>
+  </data>
+  <data name="Text_1348e93e812c" xml:space="preserve">
+    <value>Некоторые связи режимов нельзя надёжно показать. Включите показ скрытых определений, чтобы проверить их.</value>
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>Что нового</value>
@@ -852,6 +858,9 @@
   <data name="Text_1f08634207ab" xml:space="preserve">
     <value>Показать журнал операций</value>
   </data>
+  <data name="Text_1f27728ea921" xml:space="preserve">
+    <value>Неизвестная связь режима</value>
+  </data>
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>Секция тайника: {0}</value>
   </data>
@@ -932,6 +941,9 @@
   </data>
   <data xml:space="preserve" name="Text_21a0270b7f66">
     <value>Скрипт</value>
+  </data>
+  <data name="Text_21c327c53339" xml:space="preserve">
+    <value>При следующем запуске сервера будет флагов: {0}. Запущенная игра может ещё использовать прежние определения.</value>
   </data>
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile собран. Когда появится игровой клиент, добавьте его с помощью этого мастера: Подготовка → Запустить мастер настройки.</value>
@@ -1155,6 +1167,9 @@
   </data>
   <data name="Text_2810e56a442d" xml:space="preserve">
     <value>Некоторые старые файлы остались</value>
+  </data>
+  <data name="Text_2820a4305e74" xml:space="preserve">
+    <value>Режим флага по умолчанию</value>
   </data>
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Скачать Node.js</value>
@@ -1517,6 +1532,9 @@
   <data name="Text_3497ee23c710" xml:space="preserve">
     <value>Отсутствует модуль: {0}. Восстановите его перед изменением этой лиги.</value>
   </data>
+  <data name="Text_349999ba0325" xml:space="preserve">
+    <value>Недоступно: скрыто, завершено, не загружено или нет корректного пути через режимы. Проверьте определение, прежде чем включать показ.</value>
+  </data>
   <data xml:space="preserve" name="Text_34a4bac9ef24">
     <value>Проверка подготовки</value>
   </data>
@@ -1631,6 +1649,9 @@
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>Мастер настройки скачает новейшую версию LocalExile, соберёт её и может перенести ваших персонажей.</value>
   </data>
+  <data name="Text_393d8d4eecb9" xml:space="preserve">
+    <value>У этого флага нет связанных вариантов режима.</value>
+  </data>
   <data name="Text_3950dabf770c" xml:space="preserve">
     <value>Режимы существующих персонажей не меняются. Чтобы выбрать другой определённый режим, создайте отдельную лигу.</value>
   </data>
@@ -1739,6 +1760,9 @@
   </data>
   <data name="Text_3d0bd7411efc" xml:space="preserve">
     <value>Выйти и оставить работать</value>
+  </data>
+  <data name="Text_3d1e378e3637" xml:space="preserve">
+    <value>Связи и сочетания режимов в игре ({0})</value>
   </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Переключение завершено.</value>
@@ -1992,6 +2016,9 @@
   <data name="Text_47b09d87605c" xml:space="preserve">
     <value>{0}: свойств: {1}, все строки найдены.</value>
   </data>
+  <data name="Text_47c0465c0b40" xml:space="preserve">
+    <value>Описание использует текстовый ключ игры: {0}</value>
+  </data>
   <data name="Text_47c062d35d2c" xml:space="preserve">
     <value>Совпадений нет</value>
   </data>
@@ -2057,6 +2084,9 @@
   </data>
   <data xml:space="preserve" name="Text_49dad9577c46">
     <value>Не удалось проверить моды: </value>
+  </data>
+  <data name="Text_49e80827caaf" xml:space="preserve">
+    <value>Показать скрытые определения</value>
   </data>
   <data name="Text_49f37ddfa13f" xml:space="preserve">
     <value>Скрытие лиги влияет только на создание персонажей. Существующие персонажи и тайники сохраняются.</value>
@@ -3398,6 +3428,9 @@
   <data name="Text_7c5cd03233bd" xml:space="preserve">
     <value>{0}: выберите от {1} до {2}</value>
   </data>
+  <data name="Text_7c6e4479d407" xml:space="preserve">
+    <value>Не отображается при создании персонажа</value>
+  </data>
   <data name="Text_7ca41615c19b" xml:space="preserve">
     <value>Выбрать…</value>
   </data>
@@ -3496,6 +3529,9 @@
   </data>
   <data xml:space="preserve" name="Text_7fd994d683da">
     <value>Поиск по веткам, заголовкам PR, авторам или хешам коммитов</value>
+  </data>
+  <data name="Text_7fefa2a00ff5" xml:space="preserve">
+    <value>{0} (не отображается)</value>
   </data>
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>Этот выпуск не заявляет совместимость с загружаемыми модами. Для установки и обновления модов используйте актуальную копию исходного кода.</value>
@@ -4406,6 +4442,9 @@
   <data xml:space="preserve" name="Text_a06db67ffa92">
     <value>Проверяем выбранную установку…</value>
   </data>
+  <data name="Text_a08f0f94673a" xml:space="preserve">
+    <value>Не отображается</value>
+  </data>
   <data name="Text_a09188c15b56" xml:space="preserve">
     <value>Не устанавливать Frida. Waypoint снова предложит её при нажатии «Выдать предмет».</value>
   </data>
@@ -4567,6 +4606,9 @@
   </data>
   <data xml:space="preserve" name="Text_a5cccbcead7d">
     <value>Янтарь</value>
+  </data>
+  <data name="Text_a5d1a1dfe250" xml:space="preserve">
+    <value>Отдельный флаг при создании персонажа</value>
   </data>
   <data xml:space="preserve" name="Text_a5eeb9656c5c">
     <value>Подготовка локальной службы учётных записей для этой установки.</value>
@@ -4774,6 +4816,9 @@
   </data>
   <data name="Text_ad56e3fa73f0" xml:space="preserve">
     <value>Перенести и перезапустить</value>
+  </data>
+  <data name="Text_ad6e2a06e006" xml:space="preserve">
+    <value>Исходный флаг</value>
   </data>
   <data name="Text_ad909a80eb9a" xml:space="preserve">
     <value>Открытых запросов на слияние нет.</value>
@@ -6125,6 +6170,9 @@
   <data name="Text_e20846d20bcd" xml:space="preserve">
     <value>Готово.</value>
   </data>
+  <data name="Text_e20fabf6c46b" xml:space="preserve">
+    <value>Определение выбранной лиги: {0}</value>
+  </data>
   <data name="Text_e21cbdbe5596" xml:space="preserve">
     <value>В LocalExile</value>
   </data>
@@ -6400,6 +6448,9 @@
   </data>
   <data xml:space="preserve" name="Text_eb3ab0ad976b">
     <value>Ветки и PR не найдены. Очистите или измените поиск либо введите номер PR ниже.</value>
+  </data>
+  <data name="Text_eb42d8ed08e7" xml:space="preserve">
+    <value>Создаёт отдельный флаг «{0}». Выбранный режим фиксирован; переключатели режимов не добавляются.</value>
   </data>
   <data name="Text_eb4431518740" xml:space="preserve">
     <value>Произошёл сбой; Waypoint продолжает работать. Подробности пригодятся для отчёта об ошибке.</value>
@@ -6690,6 +6741,12 @@
   <data name="Text_f5387f9bb6ed" xml:space="preserve">
     <value>Тип</value>
   </data>
+  <data name="Text_f549a65bb648" xml:space="preserve">
+    <value>Выбранная лига: {0} · {1}</value>
+  </data>
+  <data name="Text_f55c33b0abbd" xml:space="preserve">
+    <value>Флаги лиг и режимы, определённые для создания персонажа.</value>
+  </data>
   <data name="Text_f57fa4ab0ce7" xml:space="preserve">
     <value>Папки и программы</value>
   </data>
@@ -6890,6 +6947,9 @@
   </data>
   <data xml:space="preserve" name="Text_fb5b3abf52be">
     <value>Обновляется только скопированный архив клиента.</value>
+  </data>
+  <data name="Text_fb62fe2ae6b2" xml:space="preserve">
+    <value>{0}: {1}</value>
   </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>Проверить снова</value>

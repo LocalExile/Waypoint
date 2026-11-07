@@ -390,6 +390,9 @@
   <data name="Text_0dcc8c70ea9d" xml:space="preserve">
     <value>品质 {0}</value>
   </data>
+  <data name="Text_0ddc1c3f7a9b" xml:space="preserve">
+    <value>未关联的模式定义 — 不是玩家可见的旗帜。</value>
+  </data>
   <data name="Text_0de9f358ad56" xml:space="preserve">
     <value>边框</value>
   </data>
@@ -542,6 +545,9 @@
   </data>
   <data name="Text_131dac929d6e" xml:space="preserve">
     <value>正在通过单个 SQLite 事务应用已确认的更改。凭据不会记录到日志中。</value>
+  </data>
+  <data name="Text_1348e93e812c" xml:space="preserve">
+    <value>某些模式关联无法可靠预览。请显示隐藏的定义以进行检查。</value>
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>更新内容</value>
@@ -852,6 +858,9 @@
   <data name="Text_1f08634207ab" xml:space="preserve">
     <value>显示操作日志</value>
   </data>
+  <data name="Text_1f27728ea921" xml:space="preserve">
+    <value>未知模式关联</value>
+  </data>
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>{0} 个仓库页</value>
   </data>
@@ -932,6 +941,9 @@
   </data>
   <data name="Text_21a0270b7f66" xml:space="preserve">
     <value>脚本模组</value>
+  </data>
+  <data name="Text_21c327c53339" xml:space="preserve">
+    <value>下次服务器启动时将有 {0} 面旗帜。运行中的游戏可能仍在使用之前的定义。</value>
   </data>
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile 已构建完成。有了游戏客户端后，可通过此向导添加：安装 → 运行安装向导。</value>
@@ -1155,6 +1167,9 @@
   </data>
   <data name="Text_2810e56a442d" xml:space="preserve">
     <value>部分旧文件仍留在原处</value>
+  </data>
+  <data name="Text_2820a4305e74" xml:space="preserve">
+    <value>旗帜默认模式</value>
   </data>
   <data name="Text_282b08d0523c" xml:space="preserve">
     <value>获取 Node.js</value>
@@ -1517,6 +1532,9 @@
   <data name="Text_3497ee23c710" xml:space="preserve">
     <value>缺少模块：{0}。更改此联盟前请先恢复该模块。</value>
   </data>
+  <data name="Text_349999ba0325" xml:space="preserve">
+    <value>不可选：已隐藏、已结束、未加载或无法通过有效模式关联到达。请先检查此定义，再启用显示。</value>
+  </data>
   <data name="Text_34a4bac9ef24" xml:space="preserve">
     <value>正在检查安装</value>
   </data>
@@ -1631,6 +1649,9 @@
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>安装向导会下载并构建 LocalExile 的最新版本，还可以迁移你的角色。</value>
   </data>
+  <data name="Text_393d8d4eecb9" xml:space="preserve">
+    <value>此旗帜没有关联的模式选项。</value>
+  </data>
   <data name="Text_3950dabf770c" xml:space="preserve">
     <value>现有角色的模式保持固定。请选择创建独立联赛以使用其他已定义的模式。</value>
   </data>
@@ -1739,6 +1760,9 @@
   </data>
   <data name="Text_3d0bd7411efc" xml:space="preserve">
     <value>退出并保持运行</value>
+  </data>
+  <data name="Text_3d1e378e3637" xml:space="preserve">
+    <value>游戏内模式关联与组合（{0}）</value>
   </data>
   <data name="Text_3d246cebf3ac" xml:space="preserve">
     <value>切换完成。</value>
@@ -1992,6 +2016,9 @@
   <data name="Text_47b09d87605c" xml:space="preserve">
     <value>{0}：{1} 个词缀，所有行均已识别。</value>
   </data>
+  <data name="Text_47c0465c0b40" xml:space="preserve">
+    <value>描述使用游戏文本键：{0}</value>
+  </data>
   <data name="Text_47c062d35d2c" xml:space="preserve">
     <value>没有匹配的账号</value>
   </data>
@@ -2057,6 +2084,9 @@
   </data>
   <data name="Text_49dad9577c46" xml:space="preserve">
     <value>无法检查模组：</value>
+  </data>
+  <data name="Text_49e80827caaf" xml:space="preserve">
+    <value>显示隐藏的定义</value>
   </data>
   <data name="Text_49f37ddfa13f" xml:space="preserve">
     <value>隐藏联赛仅影响角色创建。现有角色和仓库将保留。</value>
@@ -3398,6 +3428,9 @@
   <data name="Text_7c5cd03233bd" xml:space="preserve">
     <value>{0}：请选择 {1} 到 {2} 项</value>
   </data>
+  <data name="Text_7c6e4479d407" xml:space="preserve">
+    <value>角色创建时不显示</value>
+  </data>
   <data name="Text_7ca41615c19b" xml:space="preserve">
     <value>选择…</value>
   </data>
@@ -3496,6 +3529,9 @@
   </data>
   <data name="Text_7fd994d683da" xml:space="preserve">
     <value>搜索分支名称、PR 标题、作者或提交哈希</value>
+  </data>
+  <data name="Text_7fefa2a00ff5" xml:space="preserve">
+    <value>{0}（不显示）</value>
   </data>
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>此发行版未声明与可下载模组兼容。请使用最新源码副本安装或更新模组。</value>
@@ -4406,6 +4442,9 @@
   <data name="Text_a06db67ffa92" xml:space="preserve">
     <value>正在检查所选安装…</value>
   </data>
+  <data name="Text_a08f0f94673a" xml:space="preserve">
+    <value>不显示</value>
+  </data>
   <data name="Text_a09188c15b56" xml:space="preserve">
     <value>不安装 Frida。当你点击“发放物品”时，Waypoint 会再次提供安装。</value>
   </data>
@@ -4567,6 +4606,9 @@
   </data>
   <data name="Text_a5cccbcead7d" xml:space="preserve">
     <value>琥珀</value>
+  </data>
+  <data name="Text_a5d1a1dfe250" xml:space="preserve">
+    <value>角色创建时的独立旗帜</value>
   </data>
   <data name="Text_a5eeb9656c5c" xml:space="preserve">
     <value>正在为此源码副本准备本地账号服务。</value>
@@ -4774,6 +4816,9 @@
   </data>
   <data name="Text_ad56e3fa73f0" xml:space="preserve">
     <value>移动并重新启动</value>
+  </data>
+  <data name="Text_ad6e2a06e006" xml:space="preserve">
+    <value>基础旗帜</value>
   </data>
   <data name="Text_ad909a80eb9a" xml:space="preserve">
     <value>没有打开的拉取请求。</value>
@@ -6125,6 +6170,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e20846d20bcd" xml:space="preserve">
     <value>就绪。</value>
   </data>
+  <data name="Text_e20fabf6c46b" xml:space="preserve">
+    <value>所选赛季定义：{0}</value>
+  </data>
   <data name="Text_e21cbdbe5596" xml:space="preserve">
     <value>在 LocalExile 上</value>
   </data>
@@ -6400,6 +6448,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eb3ab0ad976b" xml:space="preserve">
     <value>没有匹配的分支或 PR。请清除或更改搜索，或使用下方的 PR 编号。</value>
+  </data>
+  <data name="Text_eb42d8ed08e7" xml:space="preserve">
+    <value>创建一面名为“{0}”的独立旗帜。所选模式固定，不会添加模式复选框。</value>
   </data>
   <data name="Text_eb4431518740" xml:space="preserve">
     <value>出现故障；Waypoint 仍在运行。这些详细信息有助于撰写错误报告。</value>
@@ -6690,6 +6741,12 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f5387f9bb6ed" xml:space="preserve">
     <value>类型</value>
   </data>
+  <data name="Text_f549a65bb648" xml:space="preserve">
+    <value>所选赛季：{0} · {1}</value>
+  </data>
+  <data name="Text_f55c33b0abbd" xml:space="preserve">
+    <value>按角色创建配置显示赛季旗帜与模式选项。</value>
+  </data>
   <data name="Text_f57fa4ab0ce7" xml:space="preserve">
     <value>文件夹和工具</value>
   </data>
@@ -6890,6 +6947,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fb5b3abf52be" xml:space="preserve">
     <value>仅更新复制的客户端资源包。</value>
+  </data>
+  <data name="Text_fb62fe2ae6b2" xml:space="preserve">
+    <value>{0}：{1}</value>
   </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>再次检查</value>

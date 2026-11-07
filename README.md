@@ -99,7 +99,7 @@ full control over branches and pull requests. Someone coming from an earlier lau
 | **Versions** | LocalExile's branches and pull requests and your own, how far you are from LocalExile, with every switch guarded; build, hot reload status, fresh saves |
 | **Mods** | The checkout's mods: build, enable, disable, reload, live status |
 | **Modules** | Gameplay modules, the leagues using them, and shared settings |
-| **Leagues** | Dependency-checked module choices, isolated custom leagues from defined modes, league settings and card previews; changes apply at the next server start |
+| **Leagues** | The game's declared flags and linked mode options, guarded module choices, isolated custom flags and league settings; changes apply at the next server start |
 | **Backups** | Consistent copies of the saves, made automatically before risky steps; restore, delete, saved mod choices |
 | **Accounts** | Accounts and characters, read from the saves; register, create a character, duplicate, rename, set a password, delete |
 | **Performance**, **Server timings** | Live CPU, memory and runtime counters; what each Gateway operation costs |

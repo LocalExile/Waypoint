@@ -615,10 +615,23 @@ for read-only inspection in Advanced mode.
 to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
 settings are shared by every league using that module, rather than being separate per league.
 
-**Leagues** lists league families, such as Standard, Allflame and Survivors. Select a family, then choose **Game mode**
-to manage Normal, Hardcore, SSF or Ruthless variants where defined. Modes stay separate internally for characters, stashes
-and death rules; they are not presented as unrelated top-level leagues. Waypoint-created custom leagues remain distinct
-entries. Choosing a mode here browses that existing variant; it does not convert any characters. The Game module is required; saving refuses
+**Leagues** lists the separate flags declared for the game's character-creation screen. Only explicit `entryOf` / `entryKind`
+links make another definition a mode option on that flag. Sharing a game base, migration destination or Hardcore death
+destination never merges flags: Hardcore Allflame remains separate from Allflame when its definition has no `entryOf`.
+The flag count and order follow the checkout's startup catalogue (Standard first). Names and descriptions come from the
+definitions; a description beginning with `#` is identified as a game text key rather than pretending to resolve client text.
+This is a structural preview, not a copy of the game's artwork or a query of a running server's cached catalogue.
+
+Select a flag, then choose **Game mode** to manage its default or an explicitly linked combination. **In-game mode links
+and combinations** shows each exact checkbox path and destination league, including nested SSF/Hardcore/Ruthless links.
+Hardcore or SSF already fixed on a separate flag does not become an invented checkbox. **Show hidden definitions** exposes
+hidden/ended/unloaded cards and modes for inspection, clearly marked **not shown**; broken, cyclic or ambiguous links never
+appear as selectable player modes. Unlinked modes are labelled as definitions, not invented flags. A mode with a hidden
+ancestor is not offered as reachable. The default list includes only offered flags and reachable modes; editing compatibility
+families remain a separate safety concern and never determine the player-facing grouping.
+
+Modes stay separate internally for characters, stashes and death rules. Choosing a mode here browses that existing variant;
+it does not convert any characters. The Game module is required; saving refuses
 missing dependencies and modules. Ended and non-playable leagues are read-only. Hidden leagues remain configurable and usable as templates; hiding affects only creation availability. Choices are saved
 in the user's `data/league-modules.json` overrides (or the selected profile's `Game_LEAGUE_MODULES` path), preserving other
 leagues and leaving shipped manifests unchanged. Auth and Gateway read these choices at startup: Waypoint says to restart
@@ -654,13 +667,15 @@ The backend repeats these checks, even if an outside caller bypasses the interfa
 
 **New league** creates a separate league in two steps. First choose the starting league and game mode, then enter a new
 name and description. **Next: modules** opens the module choices and review; **Back to name and mode** keeps the draft.
+Starting profiles use the same explicit flag grouping. Review states that creation adds one independent flag with the
+chosen mode fixed, rather than adding mode checkboxes or rewriting another flag's links.
 **Customize as a new league** starts with the selected profile and its current module choices. Profiles with custom code
 or no reusable source template disable this action and explain why. A family with no SSF, Hardcore or Ruthless variant says that the option is unavailable: Waypoint never
 invents unsupported flags. Modes of an existing league are not changed underneath its characters; another mode creates
 another identity and card. New cards are independent, so they cannot displace an existing card's mode checkboxes.
 
 Custom leagues use Void as their parent and, for Hardcore, their death destination. A valid isolated Void definition must
-exist. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
+exist, hidden and without a parent; its module list may be empty or contain only the core Game foundation. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
 all save writers stopped, uses the normal optional save backup, and checks the writers again afterward. A read-only save
 inspection refuses names retained by characters, deleted-character records or stashes, and blocks unfamiliar schemas and
 pending imports rather than guessing. Names use 3–48 English letters, digits, spaces, underscores or hyphens.

@@ -390,6 +390,9 @@
   <data name="Text_0dcc8c70ea9d" xml:space="preserve">
     <value>Quality {0}</value>
   </data>
+  <data name="Text_0ddc1c3f7a9b" xml:space="preserve">
+    <value>Unlinked mode definition — this is not a player flag.</value>
+  </data>
   <data xml:space="preserve" name="Text_0de9f358ad56">
     <value>Borders</value>
   </data>
@@ -542,6 +545,9 @@
   </data>
   <data name="Text_131dac929d6e" xml:space="preserve">
     <value>Applying the reviewed change in one SQLite transaction. Credentials are not logged.</value>
+  </data>
+  <data name="Text_1348e93e812c" xml:space="preserve">
+    <value>Some mode links cannot be previewed reliably. Show hidden definitions to inspect them.</value>
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>What's new</value>
@@ -852,6 +858,9 @@
   <data name="Text_1f08634207ab" xml:space="preserve">
     <value>Show operation log</value>
   </data>
+  <data name="Text_1f27728ea921" xml:space="preserve">
+    <value>Unknown mode link</value>
+  </data>
   <data name="Text_1f330a2da345" xml:space="preserve">
     <value>{0} stash tab</value>
   </data>
@@ -932,6 +941,9 @@
   </data>
   <data xml:space="preserve" name="Text_21a0270b7f66">
     <value>script</value>
+  </data>
+  <data name="Text_21c327c53339" xml:space="preserve">
+    <value>{0} flags at the next server start. The running game may still use earlier definitions.</value>
   </data>
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile is built. Add your game client with this guide when you have it: Setup → Run setup guide.</value>
@@ -1155,6 +1167,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2810e56a442d" xml:space="preserve">
     <value>Some old files stayed behind</value>
+  </data>
+  <data name="Text_2820a4305e74" xml:space="preserve">
+    <value>Flag default</value>
   </data>
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Get Node.js</value>
@@ -1517,6 +1532,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3497ee23c710" xml:space="preserve">
     <value>Missing module: {0}. Restore it before changing this league.</value>
   </data>
+  <data name="Text_349999ba0325" xml:space="preserve">
+    <value>Not offered: hidden, ended, unloaded or unreachable through valid mode links. Inspect this definition before showing it.</value>
+  </data>
   <data xml:space="preserve" name="Text_34a4bac9ef24">
     <value>Checking setup</value>
   </data>
@@ -1631,6 +1649,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>The setup guide downloads LocalExile's newest version and builds it, and can bring your characters.</value>
   </data>
+  <data name="Text_393d8d4eecb9" xml:space="preserve">
+    <value>No linked mode options on this flag.</value>
+  </data>
   <data name="Text_3950dabf770c" xml:space="preserve">
     <value>Modes are fixed for existing characters. Create a separate league to choose another defined mode.</value>
   </data>
@@ -1739,6 +1760,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3d0bd7411efc" xml:space="preserve">
     <value>Exit and leave running</value>
+  </data>
+  <data name="Text_3d1e378e3637" xml:space="preserve">
+    <value>In-game mode links and combinations ({0})</value>
   </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Switch completed.</value>
@@ -1992,6 +2016,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_47b09d87605c" xml:space="preserve">
     <value>{0}: {1} modifiers, every line found.</value>
   </data>
+  <data name="Text_47c0465c0b40" xml:space="preserve">
+    <value>Description uses the game's text key: {0}</value>
+  </data>
   <data name="Text_47c062d35d2c" xml:space="preserve">
     <value>No matching accounts</value>
   </data>
@@ -2057,6 +2084,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_49dad9577c46">
     <value>Could not inspect mods: </value>
+  </data>
+  <data name="Text_49e80827caaf" xml:space="preserve">
+    <value>Show hidden definitions</value>
   </data>
   <data name="Text_49f37ddfa13f" xml:space="preserve">
     <value>Hiding a league only changes character creation. Existing characters and stashes are preserved.</value>
@@ -3398,6 +3428,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7c5cd03233bd" xml:space="preserve">
     <value>{0}: choose from {1} to {2}</value>
   </data>
+  <data name="Text_7c6e4479d407" xml:space="preserve">
+    <value>Not shown at character creation</value>
+  </data>
   <data name="Text_7ca41615c19b" xml:space="preserve">
     <value>Choose…</value>
   </data>
@@ -3496,6 +3529,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_7fd994d683da">
     <value>Search branch names, PR titles, authors or commit hashes</value>
+  </data>
+  <data name="Text_7fefa2a00ff5" xml:space="preserve">
+    <value>{0} (not shown)</value>
   </data>
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.</value>
@@ -4406,6 +4442,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a06db67ffa92">
     <value>Checking the selected installation…</value>
   </data>
+  <data name="Text_a08f0f94673a" xml:space="preserve">
+    <value>Not shown</value>
+  </data>
   <data name="Text_a09188c15b56" xml:space="preserve">
     <value>Leave out Frida. Waypoint offers it again when you press Give item.</value>
   </data>
@@ -4567,6 +4606,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_a5cccbcead7d">
     <value>Amber</value>
+  </data>
+  <data name="Text_a5d1a1dfe250" xml:space="preserve">
+    <value>Separate flag at character creation</value>
   </data>
   <data xml:space="preserve" name="Text_a5eeb9656c5c">
     <value>Preparing the local account service for this checkout.</value>
@@ -4774,6 +4816,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_ad56e3fa73f0" xml:space="preserve">
     <value>Move and start again</value>
+  </data>
+  <data name="Text_ad6e2a06e006" xml:space="preserve">
+    <value>Starting flag</value>
   </data>
   <data name="Text_ad909a80eb9a" xml:space="preserve">
     <value>No open pull requests.</value>
@@ -6125,6 +6170,9 @@ Dependencies: {2}
   <data name="Text_e20846d20bcd" xml:space="preserve">
     <value>Ready.</value>
   </data>
+  <data name="Text_e20fabf6c46b" xml:space="preserve">
+    <value>Selected league definition: {0}</value>
+  </data>
   <data name="Text_e21cbdbe5596" xml:space="preserve">
     <value>On LocalExile</value>
   </data>
@@ -6400,6 +6448,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_eb3ab0ad976b">
     <value>No branches or PRs match. Clear or change your search, or use a PR number below.</value>
+  </data>
+  <data name="Text_eb42d8ed08e7" xml:space="preserve">
+    <value>Creates one separate flag named {0}. Its chosen mode is fixed; no mode checkboxes are added.</value>
   </data>
   <data name="Text_eb4431518740" xml:space="preserve">
     <value>Something failed; Waypoint keeps running. The details help a bug report.</value>
@@ -6690,6 +6741,12 @@ Mods at backup: </value>
   <data name="Text_f5387f9bb6ed" xml:space="preserve">
     <value>Kind</value>
   </data>
+  <data name="Text_f549a65bb648" xml:space="preserve">
+    <value>Selected league: {0} · {1}</value>
+  </data>
+  <data name="Text_f55c33b0abbd" xml:space="preserve">
+    <value>League flags and mode options as declared for character creation.</value>
+  </data>
   <data name="Text_f57fa4ab0ce7" xml:space="preserve">
     <value>Folders and tools</value>
   </data>
@@ -6890,6 +6947,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_fb5b3abf52be">
     <value>Only the copied client archive is updated.</value>
+  </data>
+  <data name="Text_fb62fe2ae6b2" xml:space="preserve">
+    <value>{0}: {1}</value>
   </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>Check again</value>

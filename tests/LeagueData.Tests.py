@@ -94,6 +94,14 @@ class LeagueDataTests(unittest.TestCase):
         with self.assertRaisesRegex(data.AccountError, "Modes must"):
             self.run_request(request)
 
+    def test_isolated_void_can_keep_only_its_core_game_foundation(self):
+        self.write(self.leagues / "Void/modules.json", {"modules": ["Core/Game"]})
+        self.run_request(self.request())
+        self.assertEqual(data.read_json(self.leagues / "My League/league.json")["parent"], "Void")
+        self.write(self.leagues / "Void/modules.json", {"modules": ["Core/Game", "Core/Vendors"]})
+        with self.assertRaisesRegex(data.AccountError, "Void"):
+            self.run_request(self.request(name="Other League"))
+
     def test_cross_family_and_unobserved_whole_combinations_are_blocked(self):
         request = self.request("Survivors")
         request["modules"].append("Core/Vendors")

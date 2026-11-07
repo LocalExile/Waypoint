@@ -391,7 +391,8 @@ def run(modules, leagues, choices, database, history, action, request, apply=Fal
     destination = physical(leagues / name)
     require(not destination.exists() and all(p["name"].casefold() != name.casefold() and p["folder"].name.casefold() != name.casefold() for p in profiles)
             and all(k.casefold() != name.casefold() for k in current), "That league name is already in use.")
-    require(any(p["name"] == "Void" and not p["data"].get("parent") and not p["data"].get("creatable", True) and not p["modules"]
+    require(any(p["name"] == "Void" and not p["data"].get("parent") and not p["data"].get("creatable", True)
+                and all(path.casefold() == "core/game" for path in p["modules"])
                 and ((p["folder"] / "Source").is_dir() or (p["folder"] / "Binaries/league.dll").is_file()) for p in profiles), "The Void destination is missing or not isolated.")
     unused_saved_name(database, name)
     selected = paths(request.get("modules"))
