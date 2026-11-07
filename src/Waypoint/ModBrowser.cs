@@ -339,11 +339,13 @@ sealed class ModBrowser(Shared shared)
     }
 
     /// <summary>Turns an installed mod on or off: its line in the server's mod-state.txt, at once (no backup, no client).</summary>
-    public void SetEnabled(ModEntry mod, bool enabled)
+    public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), () =>
     {
+        if (shared.Workspace.Latest is { Conflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.Conflicts));
         if (shared.Workspace.Latest?.ModEnvironment is not { Supported: true } environment) throw new InvalidOperationException(L.Text("This revision does not have a supported mod host."));
         ModCatalog.WriteChoice(environment.Folder, mod.Id, enabled);
-    }
+        return Task.CompletedTask;
+    });
 
     /// <summary>Uninstalls a mod: the adapter's UninstallMod moves its folders to Mods/.replaced/.</summary>
     public async Task<BridgeResult?> UninstallAsync(ModEntry mod)
@@ -428,16 +430,11 @@ sealed class ModBrowser(Shared shared)
                 string name = batch.Count == 1 ? first.Name : L.Text("{0} ({1} mods)", first.Name, batch.Count);
                 try
                 {
-                    var deadline = DateTime.UtcNow.AddMinutes(30);
-                    BridgeResult? result;
-                    while (true)
+                    var result = await WaitForWorkspaceAsync(
+                        () => shared.Workspace.OperateAsync(first.Action, name, mod: request), waiting =>
                     {
-                        foreach (var p in batch) p.Job?.Show(p.Running, 0, indeterminate: true);
-                        result = await shared.Workspace.OperateAsync(first.Action, name, mod: request);
-                        if (result is not null || DateTime.UtcNow > deadline) break;
-                        foreach (var p in batch) p.Job?.Show(L.Text("Waiting…"), 0, indeterminate: true);
-                        await Task.Delay(500);
-                    }
+                        foreach (var p in batch) p.Job?.Show(waiting ? L.Text("Waiting…") : p.Running, 0, indeterminate: true);
+                    });
                     foreach (var p in batch) p.Done.TrySetResult(result);
                 }
                 catch (Exception e)
@@ -447,6 +444,21 @@ sealed class ModBrowser(Shared shared)
             }
         }
         finally { _pumping = false; }
+    }
+
+    /// <summary>Only a busy workspace is retried. Cancellation and failures complete the job and release the queue.</summary>
+    internal static async Task<BridgeResult?> WaitForWorkspaceAsync(Func<Task<BridgeResult?>> run, Action<bool> waiting,
+        Func<Task>? pause = null)
+    {
+        var deadline = DateTime.UtcNow.AddMinutes(30);
+        while (true)
+        {
+            waiting(false);
+            var result = await run();
+            if (result is not null || DateTime.UtcNow > deadline) return result;
+            waiting(true);
+            await (pause?.Invoke() ?? Task.Delay(500));
+        }
     }
 
     /// <summary>Adds a repository by its URL or "owner/name"; false for text that names none, or one already there.</summary>
@@ -540,6 +552,12 @@ sealed class ModBrowser(Shared shared)
 /// <summary>The Mods section's text and form reading, the same in both apps' views.</summary>
 static class ModsText
 {
+    /// <summary>Choices are saved even on an older Gateway; do not imply its running mods changed.</summary>
+    public static string ChoicesNotice(RuntimeSnapshot? state) =>
+        state is { ModEnvironment.Supported: true } && state.Services.Any(s => s.Name == "Gateway" && s.IsRunning)
+            && !ModCatalog.SupportsLiveChoices(state.Root)
+            ? L.Text("Live mod switches could not be verified for this server. Choices are saved; restart Gateway to apply them.") : "";
+
     /// <summary>A mod page's labels: where it comes from, what it is.</summary>
     public static IReadOnlyList<string> Tags(BrowseItem? item, ModEntry? installed)
     {

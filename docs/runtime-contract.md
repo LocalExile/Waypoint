@@ -259,7 +259,8 @@ user-managed; an unchanged project path is not an attestation of third-party com
 Untracked Mods/Binaries files are treated as runtime data even on older revisions lacking the ignore rule; tracked
 edits anywhere and other untracked source still block activation. No repository ignore file is changed.
 
-InstallMod copies a folder staged by Core (only under Waypoint's `mod-downloads` folder) into `Mods/Binaries/<id>`
+InstallMod copies a folder staged by Core (only under Waypoint's `mod-downloads` folder, using native separators and
+case-sensitive containment on Linux) into `Mods/Binaries/<id>`
 (`-ModTarget Binaries`: a release or script mod) or `Mods/Source/<id>` (`Source`: a project, not built: the player's
 BuildMod or live.ps1 builds it; refused on release installs). Under the mutex and after the optional backup, an existing copy, and
 `Mods/Source/<id>` when installing a binary, is moved to `Mods/.replaced/<stamp>/` and its managed-registry entry
@@ -269,7 +270,12 @@ InstallMod adds `-ModStageds` and `-ModTargets` in the same order, and BuildMod'
 parallel MSBuild run over a temporary traversal project. SaveModSettings atomically writes `data/mods/<id>.json` from
 validated values. Core reads `settings.json` and the user file itself; script mods are fingerprinted by their scripts'
 hashes. The one checkout write outside the adapter is the on/off switch: Core replaces `mod-state.txt` atomically
-(`ModCatalog.WriteChoice`), so a switch is instant; EnableMod and DisableMod remain for other callers.
+(`ModCatalog.WriteChoice`) while holding Shared's workspace lock, so a switch is instant; EnableMod and DisableMod remain
+for other callers. A running server with no verified source hook gets a restart notice in both interfaces; releases are
+unknown because they have no source. Saved choices are not proof of a runtime load.
+
+Workspace operations return null only for lock contention. Declined preparation returns a non-success `Cancelled` result,
+without raising the failure dialog. The mod queue completes that job rather than retrying the preparation prompt.
 
 Interface language is a launcher-only optional settings field (`Language`: a tag of `L.Languages`, `en`, `ru` or `zh-CN`;
 Waypoint's own settings leave it empty until the player picks one, which follows the system's display language). It is never

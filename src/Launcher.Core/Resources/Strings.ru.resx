@@ -147,6 +147,9 @@
   <data xml:space="preserve" name="Text_057fd24429fa">
     <value>Перезапустить службу</value>
   </data>
+  <data name="Text_058d82af4063" xml:space="preserve">
+    <value>Сохранить выбор мода</value>
+  </data>
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Фокус клавиатуры</value>
   </data>
@@ -407,6 +410,9 @@
   </data>
   <data name="Text_0ee67faf52dd" xml:space="preserve">
     <value>Показаны только точки из комнат; реальные появления могут отличаться. Случайно размещённые монстры не показаны.</value>
+  </data>
+  <data name="Text_0ef5f0485db2" xml:space="preserve">
+    <value>Не удалось проверить, поддерживает ли этот сервер переключение модов на ходу. Выбор сохранён; перезапустите Gateway, чтобы применить его.</value>
   </data>
   <data name="Text_0f044feb6ca7" xml:space="preserve">
     <value>Операция</value>
@@ -1489,6 +1495,9 @@
   </data>
   <data name="Text_3864a7129335" xml:space="preserve">
     <value>Открыть соседнюю область</value>
+  </data>
+  <data name="Text_386cf3b4f8ac" xml:space="preserve">
+    <value>Операция отменена.</value>
   </data>
   <data name="Text_388192a83182" xml:space="preserve">
     <value>Найдено на этом ПК: {0}. Выберите нужный.</value>

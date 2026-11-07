@@ -92,6 +92,7 @@ public partial class ModsTab : UserControl
             notice = L.Text("Could not inspect mods: ") + ex.Message;
         }
         if (state is not null && supported && !state.ModEnvironment!.Enabled) notice = L.Text("Mods off in launch profile (Game_MODS=0)");
+        notice = string.Join("\n", new[] { notice, ModsText.ChoicesNotice(state) }.Where(s => s.Length > 0));
         Notice.Text = notice;
         Notice.Visibility = notice.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
         _offers = _browser.Offers(_entries);
@@ -228,13 +229,14 @@ public partial class ModsTab : UserControl
         if (_pageEntry is { } entry) Toggle(entry, !entry.Enabled);
     }
 
-    /// <summary>Turns a mod on or off at once: a line in mod-state.txt, which a running Gateway applies within a second.</summary>
-    void Toggle(ModEntry entry, bool enabled)
+    /// <summary>Saves a choice under the workspace lock. The notice explains servers that need a restart.</summary>
+    async void Toggle(ModEntry entry, bool enabled)
     {
         try
         {
             if (entry.Fingerprint.Length == 0) throw new InvalidOperationException(L.Text("Build or install this mod first; its binary manifest is missing."));
-            _browser.SetEnabled(entry, enabled);
+            if (!await _browser.SetEnabledAsync(entry, enabled))
+                Dialog.Tell(Owner, DialogKind.Warning, entry.Title, L.Text("A workspace operation is in progress."));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
         {

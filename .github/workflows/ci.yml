@@ -30,7 +30,7 @@ jobs:
       - name: Adapter checks
         shell: pwsh
         run: |
-          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop', 'ReleaseTag') {
+          foreach ($test in 'Bridge', 'Mods', 'ModControl', 'ModBrowser', 'ModTransport', 'Source', 'Accounts', 'Capture', 'SetupStop', 'ReleaseTag') {
             powershell -NoProfile -ExecutionPolicy Bypass -File "tests/$test.Tests.ps1"
             if ($LASTEXITCODE -ne 0) { throw "$test.Tests.ps1 failed" }
           }
@@ -40,3 +40,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Capture.Tests.py failed' }
       - name: Translations
         run: python tools/missing-translations.py
+
+  linux-mod-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mod install, update, settings and uninstall
+        shell: pwsh
+        run: ./tests/ModBrowser.Tests.ps1

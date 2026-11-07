@@ -147,6 +147,9 @@
   <data xml:space="preserve" name="Text_057fd24429fa">
     <value>Restart service</value>
   </data>
+  <data name="Text_058d82af4063" xml:space="preserve">
+    <value>Save mod choice</value>
+  </data>
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Keyboard focus</value>
   </data>
@@ -407,6 +410,9 @@
   </data>
   <data name="Text_0ee67faf52dd" xml:space="preserve">
     <value>Authored anchors only; actual spawns may differ. Scattered monsters are not shown.</value>
+  </data>
+  <data name="Text_0ef5f0485db2" xml:space="preserve">
+    <value>Live mod switches could not be verified for this server. Choices are saved; restart Gateway to apply them.</value>
   </data>
   <data name="Text_0f044feb6ca7" xml:space="preserve">
     <value>Operation</value>
@@ -1489,6 +1495,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3864a7129335" xml:space="preserve">
     <value>Open connected area</value>
+  </data>
+  <data name="Text_386cf3b4f8ac" xml:space="preserve">
+    <value>Operation cancelled.</value>
   </data>
   <data name="Text_388192a83182" xml:space="preserve">
     <value>Found {0} on this PC. Choose the one to use.</value>

@@ -566,8 +566,9 @@ PATH) and wants a 3.9 or newer, so the Microsoft Store's python shortcut does no
 
 Frida is optional for ordinary play. On Windows, direct console commands and game status, Give item, walk maps, live mod
 controls and game-data reload offer **Install Frida** when their Python cannot load it. Declining leaves the requested action
-unstarted; Console keeps the unsent text. Installation uses the checkout's `.venv`, shows output in the requesting tool and
-Logs, and verifies that Frida loads before continuing. It shares the checkout lock with other operations and changes no global
+unstarted; Console keeps the unsent text. A queued mod build ends when preparation is declined or fails; only a busy
+workspace is retried, so **Not now** does not reopen the prompt. Installation uses the checkout's `.venv`, shows output in
+the requesting tool and Logs, and verifies that Frida loads before continuing. It shares the checkout lock with other operations and changes no global
 Python packages. Linux explains that its game-control integrations are unavailable and does not offer installation for them.
 
 ### Mods
@@ -576,7 +577,10 @@ Laid out like an addon manager, in two tables. **My Mods** lists the installed m
 `Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their version,
 the latest one a repository offers, and the author. A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
-applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). **Update** and
+applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
+Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs
+also show the notice because they have no source to verify. The checkbox represents the saved choice, not proof of a live
+load. A switch holds the workspace lock and is refused while another operation holds it. **Update** and
 **Update all** appear when a repository has a newer version. The ⋮ menu holds the rarer tools: Install from folder…,
 Build all mods, Check live status (Python with Frida), Gateway log, the operation log, and the backup choice.
 
@@ -584,7 +588,8 @@ Build all mods, Check live status (Python with Frida), Gateway log, the operatio
 from its ⋮ menu by URL and get a trust warning) and its GitHub releases. **Install** and **Update** prefer a release asset
 `<id>-<version>.zip` from the tag `<id>-v<version>`, checked against its SHA-256; a mod without a release is
 installed as source (a source checkout only, after asking) and built when the player presses **Build** in My Mods,
-which needs the .NET 10 SDK. Downloads are staged in Waypoint's `mod-downloads` folder.
+which needs the .NET 10 SDK. Downloads are staged in Waypoint's `mod-downloads` folder. Install and settings-save paths
+are checked using the platform's separators and path casing; sibling directories and parent traversal are refused.
 
 Each install, build or uninstall shows on its mod's row in place of the button: a box that fills with the download,
 then "Installing…", "Building…" or "Uninstalling…"; then the row shows the mod's state again (Up to date, as text, once it is built). Several can start at once (Update all

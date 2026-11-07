@@ -28,6 +28,18 @@ public sealed record ModEntry(string Id, string Version, string Kind, string[] D
 /// <summary>Reads LocalExile's public mod file contract without loading mod assemblies or running project code.</summary>
 public static class ModCatalog
 {
+    /// <summary>The source hook added in LocalExile #685. A release or unreadable/older source is unknown, not assumed live.</summary>
+    public static bool SupportsLiveChoices(string root)
+    {
+        string path = Path.Combine(root, "src", "GameServer.Gateway", "Modding", "ModHost.cs");
+        try
+        {
+            return File.Exists(path) && Regex.IsMatch(Read(path),
+                @"\belse\s+if\s*\(\s*id\s*==\s*StateFile\s*\)\s*busy\s*=\s*!\s*ChoicesChanged\s*\(");
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
+    }
+
     static readonly ConcurrentDictionary<string, (long Length, DateTime Written, string Hash)> Fingerprints = new(StringComparer.OrdinalIgnoreCase);
     static readonly JsonDocumentOptions JsonOptions = new() { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
     public static bool ValidId(string value) => Regex.IsMatch(value, @"\A[A-Za-z0-9][A-Za-z0-9_.-]{0,127}\z") && value is not "." and not "..";

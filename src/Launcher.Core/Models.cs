@@ -18,7 +18,8 @@ public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDat
     public bool SafeToLaunch => SetupReady && Conflicts.Length == 0;
 }
 
-public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null, AccountInventory? AccountData = null);
+public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null, AccountInventory? AccountData = null,
+    bool Cancelled = false);
 public sealed record LauncherSettings(string RepositoryPath = "", bool UseLocalProfile = true,
     bool AutomaticBackups = true, bool HotReload = true, string Language = "en", AppearanceSettings? Appearance = null,
     bool CloseToTray = false, bool CloseBehaviorConfirmed = false, bool StopServicesOnExit = false, bool AlwaysAskOnClose = false,
