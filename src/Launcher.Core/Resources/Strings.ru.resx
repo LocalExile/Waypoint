@@ -726,6 +726,9 @@
   <data name="Text_17a007daa2f8" xml:space="preserve">
     <value>Отключение инструмента без закрытия игры и удаления записанных файлов.</value>
   </data>
+  <data name="Text_17b78022cd38" xml:space="preserve">
+    <value>Описание настроек успешно загружено и не содержит редактируемых параметров.</value>
+  </data>
   <data name="Text_17cebc83e8bd" xml:space="preserve">
     <value>Серверы не остановились</value>
   </data>
@@ -1917,6 +1920,9 @@
   <data name="Text_3c25c5fd139b" xml:space="preserve">
     <value>/ показывает команды, затем значения каждого аргумента (области, монстры, предметы, камни …): ↑↓ — выбор, Tab или Enter — подставить значение. Без списка ↑↓ листают историю. Текст без / — это строка чата.</value>
   </data>
+  <data name="Text_3c285116701e" xml:space="preserve">
+    <value>Нет редактируемых настроек</value>
+  </data>
   <data name="Text_3c30154b1459" xml:space="preserve">
     <value>Ларец</value>
   </data>
@@ -2162,6 +2168,9 @@
   </data>
   <data name="Text_45eb89ba5c93" xml:space="preserve">
     <value>Точка обычной группы</value>
+  </data>
+  <data name="Text_45fcf6cb9e71" xml:space="preserve">
+    <value>Здесь нет описания настроек для Waypoint. В этой версии LocalExile всё ещё могут быть отдельные файлы конфигурации.</value>
   </data>
   <data name="Text_45fd5081ff0d" xml:space="preserve">
     <value>Не удалось проверить обновления</value>
@@ -2502,6 +2511,9 @@
   <data name="Text_5010cae2d615" xml:space="preserve">
     <value>Waypoint скачает новую версию и перезапустится; серверы и игра продолжат работать.</value>
   </data>
+  <data name="Text_502c65a190a0" xml:space="preserve">
+    <value>Поддержка настроек недоступна</value>
+  </data>
   <data name="Text_5045659cf175" xml:space="preserve">
     <value>{0}  (ошибок: {1})</value>
   </data>
@@ -2800,6 +2812,9 @@
   </data>
   <data name="Text_5b18a6940649" xml:space="preserve">
     <value>Пароль ещё раз</value>
+  </data>
+  <data name="Text_5b546022750c" xml:space="preserve">
+    <value>Подробности ошибки</value>
   </data>
   <data name="Text_5b5f557d2188" xml:space="preserve">
     <value>Точек событий: {0}</value>
@@ -4001,6 +4016,9 @@
   <data name="Text_85329688700b" xml:space="preserve">
     <value>В ветке {2} репозитория {0} нет {1}</value>
   </data>
+  <data name="Text_8536f2185d06" xml:space="preserve">
+    <value>Описание настроек есть, но эта версия LocalExile не поддерживает изменение общих настроек через Waypoint.</value>
+  </data>
   <data name="Text_853c6a3cc7ff" xml:space="preserve">
     <value>Обновить и перезапустить</value>
   </data>
@@ -4018,6 +4036,9 @@
   </data>
   <data name="Text_8624ca0fcb3c" xml:space="preserve">
     <value>Кисть</value>
+  </data>
+  <data name="Text_865fa5f68659" xml:space="preserve">
+    <value>Настройки не предоставлены для Waypoint</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>Сохранённых предметов пока нет. Соберите предмет и нажмите «Сохранить».</value>
@@ -4681,6 +4702,9 @@
   </data>
   <data name="Text_9bb353315acb" xml:space="preserve">
     <value>Выбранные модули соответствуют объявленным зависимостям и проверкам существующих профилей.</value>
+  </data>
+  <data name="Text_9bb6d5b5cc7b" xml:space="preserve">
+    <value>Waypoint нашёл описание настроек, но не смог его загрузить. Нажмите «Обновить», чтобы повторить попытку. Ничего не изменено.</value>
   </data>
   <data name="Text_9bc57fc48f3b" xml:space="preserve">
     <value>Поиск свойств</value>
@@ -5680,6 +5704,9 @@
   </data>
   <data name="Text_bb7234ec1245" xml:space="preserve">
     <value>Зарегистрировать</value>
+  </data>
+  <data name="Text_bbab9192a19e" xml:space="preserve">
+    <value>Не удалось загрузить настройки</value>
   </data>
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>Запуск игры</value>

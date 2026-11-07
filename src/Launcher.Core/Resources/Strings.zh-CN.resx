@@ -726,6 +726,9 @@
   <data name="Text_17a007daa2f8" xml:space="preserve">
     <value>正在分离记录器，不会关闭游戏，也不会删除已采集的文件。</value>
   </data>
+  <data name="Text_17b78022cd38" xml:space="preserve">
+    <value>设置声明已成功加载，其中没有可编辑的设置。</value>
+  </data>
   <data name="Text_17cebc83e8bd" xml:space="preserve">
     <value>服务器未能停止</value>
   </data>
@@ -1917,6 +1920,9 @@
   <data name="Text_3c25c5fd139b" xml:space="preserve">
     <value>/ 会列出命令，然后列出每个参数的可选值（区域、怪物、物品、宝石…）：↑↓ 选择，Tab 或 Enter 选用。没有列表时，↑↓ 浏览历史记录。不带 / 的文本是聊天消息。</value>
   </data>
+  <data name="Text_3c285116701e" xml:space="preserve">
+    <value>没有可编辑的设置</value>
+  </data>
   <data name="Text_3c30154b1459" xml:space="preserve">
     <value>保险箱</value>
   </data>
@@ -2162,6 +2168,9 @@
   </data>
   <data name="Text_45eb89ba5c93" xml:space="preserve">
     <value>普通怪物群锚点</value>
+  </data>
+  <data name="Text_45fcf6cb9e71" xml:space="preserve">
+    <value>此处没有可供 Waypoint 使用的设置声明。此 LocalExile 版本仍可能有单独的配置文件。</value>
   </data>
   <data name="Text_45fd5081ff0d" xml:space="preserve">
     <value>检查更新失败</value>
@@ -2502,6 +2511,9 @@
   <data name="Text_5010cae2d615" xml:space="preserve">
     <value>Waypoint 会下载新版本并重启；服务器和游戏会继续运行。</value>
   </data>
+  <data name="Text_502c65a190a0" xml:space="preserve">
+    <value>设置支持不可用</value>
+  </data>
   <data name="Text_5045659cf175" xml:space="preserve">
     <value>{0}（{1} 个错误）</value>
   </data>
@@ -2800,6 +2812,9 @@
   </data>
   <data name="Text_5b18a6940649" xml:space="preserve">
     <value>再次输入密码</value>
+  </data>
+  <data name="Text_5b546022750c" xml:space="preserve">
+    <value>错误详情</value>
   </data>
   <data name="Text_5b5f557d2188" xml:space="preserve">
     <value>遭遇：{0} 个锚点</value>
@@ -4001,6 +4016,9 @@
   <data name="Text_85329688700b" xml:space="preserve">
     <value>{0} 的 {2} 分支上没有 {1}</value>
   </data>
+  <data name="Text_8536f2185d06" xml:space="preserve">
+    <value>设置声明已存在，但此 LocalExile 版本不支持通过 Waypoint 编辑共享设置。</value>
+  </data>
   <data name="Text_853c6a3cc7ff" xml:space="preserve">
     <value>更新并重启</value>
   </data>
@@ -4018,6 +4036,9 @@
   </data>
   <data name="Text_8624ca0fcb3c" xml:space="preserve">
     <value>画笔</value>
+  </data>
+  <data name="Text_865fa5f68659" xml:space="preserve">
+    <value>未向 Waypoint 提供设置</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>还没有已保存的物品。制作一个物品并按“保存”。</value>
@@ -4681,6 +4702,9 @@
   </data>
   <data name="Text_9bb353315acb" xml:space="preserve">
     <value>所选模块符合已声明的依赖关系，并通过现有配置检查。</value>
+  </data>
+  <data name="Text_9bb6d5b5cc7b" xml:space="preserve">
+    <value>Waypoint 找到了设置声明，但无法加载。请点击“刷新”重试。未作任何更改。</value>
   </data>
   <data name="Text_9bc57fc48f3b" xml:space="preserve">
     <value>搜索词缀</value>
@@ -5680,6 +5704,9 @@
   </data>
   <data name="Text_bb7234ec1245" xml:space="preserve">
     <value>注册</value>
+  </data>
+  <data name="Text_bbab9192a19e" xml:space="preserve">
+    <value>无法加载设置</value>
   </data>
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>正在启动游戏</value>

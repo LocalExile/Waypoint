@@ -619,7 +619,11 @@ The module navigator uses the same selectable cards and icon defaults as the mod
 searches its display name, ID, path and description; the count and empty state reflect the filter. Filtering preserves the
 current form while its module still matches, and asks before discarding an unsaved form if the filter would switch modules.
 The selected module has a clear heading and icon, a **Shared settings** card, **League usage**, and collapsible dependencies.
-Modules with settings show that card first; modules without settings explain that no editable settings are declared.
+Modules with settings show that card first. **Settings not exposed to Waypoint** means there is no declaration for the
+launcher; separate module configuration files may still exist. **Settings support unavailable** means a declaration exists
+but the selected LocalExile version lacks the supported shared-settings hook. **No editable settings** is shown only when
+a declaration loads successfully and is empty. **Settings could not be loaded** identifies a reading or validation failure
+inside the settings card, with expandable error details and a Refresh suggestion. These states never enable save/reset.
 League usage counts definitions, including linked modes, rather than claiming they are separate player flags. The first
 five names are visible and the remaining definitions expand on demand. Save and Discard stay in the fixed footer.
 

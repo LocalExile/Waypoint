@@ -490,20 +490,48 @@ public sealed partial class GameSystemsTab : UserControl
     }
     void OpenSettings(StackPanel panel, string id, string declarations, string kind)
     {
-        if (!File.Exists(declarations)) { panel.Children.Add(SettingsEditor.Note(L.Text("This module declares no editable settings."))); return; }
-        if (_catalog?.Environment.CanEditSettings != true) { panel.Children.Add(SettingsEditor.Note(L.Text("This installation does not expose the shared settings contract. Settings are read-only."))); return; }
+        void Notice(string heading, string explanation)
+        {
+            panel.Children.Add(Type(heading, 14, true));
+            var note = Type(explanation, 12, false, "Shell.TextSecondary"); note.Margin = new Thickness(0, 6, 0, 0); panel.Children.Add(note);
+        }
         try
         {
+            // File.Exists also returns false for access failures; do not mislabel those as an absent declaration.
+            try { _ = File.GetAttributes(declarations); }
+            catch (IOException e) when (e is FileNotFoundException or DirectoryNotFoundException)
+            {
+                Notice(L.Text("Settings not exposed to Waypoint"),
+                    L.Text("No settings declaration is available for Waypoint here. Separate configuration files may still exist in this LocalExile version."));
+                return;
+            }
+            if (_catalog?.Environment.CanEditSettings != true)
+            {
+                Notice(L.Text("Settings support unavailable"),
+                    L.Text("A settings declaration is present, but this LocalExile version does not support editing shared settings through Waypoint."));
+                return;
+            }
             string path = Path.Combine(_shared.Workspace.Latest!.Root, ModSettingsForm.UserFile(id, kind));
             _settingsHash = GameSystems.Hash(path);
             var form = ModSettingsForm.Load(id, declarations, _shared.Workspace.Latest.Root, kind);
             if (_settingsHash != GameSystems.Hash(path)) throw new IOException(L.Text("Settings changed while reading. Refresh before editing."));
+            if (form.Settings.Count == 0)
+            {
+                Notice(L.Text("No editable settings"), L.Text("The settings declaration was loaded successfully and contains no editable settings."));
+                return;
+            }
             _settingsId = id; _settingsKind = kind; _editor = new SettingsEditor(form); panel.Children.Add(_editor);
             _editor.Edited += UpdateFeedback;
             _settingsAction = FooterButton(L.Text("Save settings"), () => _ = SaveSettingsAsync(), primary: !LeagueView);
             panel.Children.Add(SettingsEditor.Button(L.Text("Reset to defaults"), () => _ = SaveSettingsAsync(defaults: true)));
         }
-        catch (Exception e) when (e is IOException or InvalidDataException or System.Text.Json.JsonException or UnauthorizedAccessException) { SetStatus(e.Message); }
+        catch (Exception e) when (e is IOException or InvalidDataException or System.Text.Json.JsonException or UnauthorizedAccessException)
+        {
+            Notice(L.Text("Settings could not be loaded"),
+                L.Text("Waypoint found a settings declaration but could not load it. Refresh to try again. Nothing was changed."));
+            panel.Children.Add(new Expander { Header = L.Text("Error details"), Content = Type(e.Message, 12, false, "Shell.TextSecondary"), Margin = new Thickness(0, 8, 0, 0) });
+            SetStatus(L.Text("Settings could not be loaded"));
+        }
     }
     async Task SaveSettingsAsync(bool defaults = false)
     {

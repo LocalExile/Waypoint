@@ -726,6 +726,9 @@
   <data name="Text_17a007daa2f8" xml:space="preserve">
     <value>Detaching the recorder without closing the game or removing captured files.</value>
   </data>
+  <data name="Text_17b78022cd38" xml:space="preserve">
+    <value>The settings declaration was loaded successfully and contains no editable settings.</value>
+  </data>
   <data name="Text_17cebc83e8bd" xml:space="preserve">
     <value>The servers did not stop</value>
   </data>
@@ -1917,6 +1920,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3c25c5fd139b" xml:space="preserve">
     <value>/ lists the commands, then each argument's values (areas, monsters, items, gems …): ↑↓ choose, Tab or Enter take one. Without a list ↑↓ go through the history. Text without / is a chat line.</value>
   </data>
+  <data name="Text_3c285116701e" xml:space="preserve">
+    <value>No editable settings</value>
+  </data>
   <data name="Text_3c30154b1459" xml:space="preserve">
     <value>Strongbox</value>
   </data>
@@ -2162,6 +2168,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_45eb89ba5c93" xml:space="preserve">
     <value>Normal pack anchor</value>
+  </data>
+  <data name="Text_45fcf6cb9e71" xml:space="preserve">
+    <value>No settings declaration is available for Waypoint here. Separate configuration files may still exist in this LocalExile version.</value>
   </data>
   <data name="Text_45fd5081ff0d" xml:space="preserve">
     <value>Update check failed</value>
@@ -2502,6 +2511,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_5010cae2d615" xml:space="preserve">
     <value>Waypoint downloads the new version and restarts; the servers and the game keep running.</value>
   </data>
+  <data name="Text_502c65a190a0" xml:space="preserve">
+    <value>Settings support unavailable</value>
+  </data>
   <data name="Text_5045659cf175" xml:space="preserve">
     <value>{0}  ({1} errors)</value>
   </data>
@@ -2800,6 +2812,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5b18a6940649" xml:space="preserve">
     <value>Password again</value>
+  </data>
+  <data name="Text_5b546022750c" xml:space="preserve">
+    <value>Error details</value>
   </data>
   <data name="Text_5b5f557d2188" xml:space="preserve">
     <value>Encounter anchors: {0}</value>
@@ -4001,6 +4016,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_85329688700b" xml:space="preserve">
     <value>{0} has no {1} on its {2} branch</value>
   </data>
+  <data name="Text_8536f2185d06" xml:space="preserve">
+    <value>A settings declaration is present, but this LocalExile version does not support editing shared settings through Waypoint.</value>
+  </data>
   <data name="Text_853c6a3cc7ff" xml:space="preserve">
     <value>Update and restart</value>
   </data>
@@ -4018,6 +4036,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8624ca0fcb3c" xml:space="preserve">
     <value>Brush</value>
+  </data>
+  <data name="Text_865fa5f68659" xml:space="preserve">
+    <value>Settings not exposed to Waypoint</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>No saved items yet. Make one and press Save.</value>
@@ -4681,6 +4702,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9bb353315acb" xml:space="preserve">
     <value>The selected modules satisfy the declared dependencies and existing profile checks.</value>
+  </data>
+  <data name="Text_9bb6d5b5cc7b" xml:space="preserve">
+    <value>Waypoint found a settings declaration but could not load it. Refresh to try again. Nothing was changed.</value>
   </data>
   <data name="Text_9bc57fc48f3b" xml:space="preserve">
     <value>Search modifiers</value>
@@ -5680,6 +5704,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_bb7234ec1245" xml:space="preserve">
     <value>Register</value>
+  </data>
+  <data name="Text_bbab9192a19e" xml:space="preserve">
+    <value>Settings could not be loaded</value>
   </data>
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>Starting the game</value>
