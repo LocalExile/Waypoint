@@ -48,6 +48,9 @@
   <data name="Text_01aebd706520" xml:space="preserve">
     <value>Тир {0} из {1}</value>
   </data>
+  <data name="Text_01b37566bb22" xml:space="preserve">
+    <value>Список модулей доступен только для чтения. Обновите LocalExile, чтобы изменить выбор.</value>
+  </data>
   <data name="Text_01bb939bdbc2" xml:space="preserve">
     <value>Пожиратель</value>
   </data>
@@ -174,6 +177,9 @@
   <data name="Text_0656d2bfebf7" xml:space="preserve">
     <value>Начать с чистыми сохранениями</value>
   </data>
+  <data name="Text_0664b63da0eb" xml:space="preserve">
+    <value>Для изменения доступности лиги нужна более новая версия исходников.</value>
+  </data>
   <data name="Text_066985b08f1e" xml:space="preserve">
     <value>Patch, Auth и Gateway без игры. Чтобы играть, остановите их и нажмите «Играть»: одна установка работает только с одним LocalExile.exe.</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="Text_069d94390a6c" xml:space="preserve">
     <value>Проверить Frida</value>
+  </data>
+  <data name="Text_06afb73ab20b" xml:space="preserve">
+    <value>Шаг 1 из 2 · Лига и режим</value>
   </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: не целое число</value>
@@ -459,8 +468,14 @@
   <data xml:space="preserve" name="Text_10384cde3c85">
     <value>Выберите и проверьте рабочую папку, чтобы увидеть её моды.</value>
   </data>
+  <data name="Text_10429657a38b" xml:space="preserve">
+    <value>Обязателен для набора игровых модулей этой лиги.</value>
+  </data>
   <data xml:space="preserve" name="Text_108040ac289a">
     <value>Рубин</value>
+  </data>
+  <data name="Text_10903dcdc444" xml:space="preserve">
+    <value>Выбор модулей не сохранён — вступит в силу после перезапуска сервера.</value>
   </data>
   <data xml:space="preserve" name="Text_10ad4c387363">
     <value>Сланцевая</value>
@@ -615,6 +630,12 @@
   <data name="Text_162f9d178de0" xml:space="preserve">
     <value>Гнёзда</value>
   </data>
+  <data name="Text_1640b0da3e69" xml:space="preserve">
+    <value>Проверить сведения</value>
+  </data>
+  <data name="Text_16cd278f7e3d" xml:space="preserve">
+    <value>Всё готово к созданию. Существующие лиги и сохранения будут сохранены.</value>
+  </data>
   <data name="Text_16d36906164f" xml:space="preserve">
     <value>Начать заново с пустого предмета? Изменения в текущем не сохранены.</value>
   </data>
@@ -738,6 +759,9 @@
   <data name="Text_1b39c7a894cf" xml:space="preserve">
     <value>Вы сможете вернуться к текущей в любой момент. У каждой свои персонажи и прогресс.</value>
   </data>
+  <data name="Text_1b4bd711ec92" xml:space="preserve">
+    <value>По вашему запросу модули не найдены.</value>
+  </data>
   <data name="Text_1b5b97571feb" xml:space="preserve">
     <value>Это не репозиторий GitHub: укажите github.com/owner/name или owner/name.</value>
   </data>
@@ -765,6 +789,9 @@
   <data xml:space="preserve" name="Text_1c304451f9d9">
     <value>Отметки флажков</value>
   </data>
+  <data name="Text_1c487bf88ba7" xml:space="preserve">
+    <value>Скрыта для новых персонажей</value>
+  </data>
   <data name="Text_1c54b5836312" xml:space="preserve">
     <value>Не запущено: порт сервера всё ещё занят.</value>
   </data>
@@ -791,6 +818,9 @@
   </data>
   <data name="Text_1d6ca631e720" xml:space="preserve">
     <value>! команды не загружены: {0}</value>
+  </data>
+  <data name="Text_1d80f4055524" xml:space="preserve">
+    <value>Включено модулей: {0} · Обязательных: {1}</value>
   </data>
   <data name="Text_1dcfc8d6f905" xml:space="preserve">
     <value>Имя нового профиля на основе ваших обычных настроек игры:</value>
@@ -893,6 +923,9 @@
   </data>
   <data name="Text_2141a1190cb3" xml:space="preserve">
     <value>Аккаунт изменён.</value>
+  </data>
+  <data name="Text_2164116b1adb" xml:space="preserve">
+    <value>Не удалось продолжить: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_217526d30143">
     <value>Сборка / перезапуск</value>
@@ -1077,6 +1110,12 @@
   <data xml:space="preserve" name="Text_26c164899bbb">
     <value>не собрано</value>
   </data>
+  <data name="Text_26c452056aad" xml:space="preserve">
+    <value>Эта лига остаётся отдельной от Standard. Смерть в режиме Hardcore окончательна.</value>
+  </data>
+  <data name="Text_27122bb3324c" xml:space="preserve">
+    <value>Выберите лигу, затем настройте её режим игры и модули.</value>
+  </data>
   <data name="Text_2718304a70c3" xml:space="preserve">
     <value>Настройки игры не изменены</value>
   </data>
@@ -1240,11 +1279,17 @@
   <data name="Text_2bed223c0514" xml:space="preserve">
     <value>в загрузке небезопасный путь, {0}; ничего не установлено</value>
   </data>
+  <data name="Text_2bf6b86144e2" xml:space="preserve">
+    <value>Закройте игру и остановите службы, чтобы создать лигу. Черновик сохранён в форме.</value>
+  </data>
   <data name="Text_2c2da2a749f0" xml:space="preserve">
     <value>dev host не запустился (logs\launcher-host.err): {0}</value>
   </data>
   <data name="Text_2c4117e5b038" xml:space="preserve">
     <value>Обновить до {0}?</value>
+  </data>
+  <data name="Text_2c4f75f49897" xml:space="preserve">
+    <value>Существующие лиги, персонажи и тайники останутся без изменений.</value>
   </data>
   <data name="Text_2c5c517cb9a3" xml:space="preserve">
     <value>До тех пор Waypoint работает со значениями по умолчанию. Измените или очистите их в разделе «Настройки» → «Папки и программы».</value>
@@ -1535,6 +1580,9 @@
   <data name="Text_367ef06b8fbf" xml:space="preserve">
     <value>Зерно</value>
   </data>
+  <data name="Text_36f3a6809445" xml:space="preserve">
+    <value>Найти модуль</value>
+  </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Мятная Waypoint</value>
   </data>
@@ -1543,6 +1591,9 @@
   </data>
   <data name="Text_37b8ab518ec4" xml:space="preserve">
     <value>Поиск баз</value>
+  </data>
+  <data name="Text_3803e51fb720" xml:space="preserve">
+    <value>Сохранить выбор модулей</value>
   </data>
   <data name="Text_381f5c69d6b1" xml:space="preserve">
     <value>Не удалось открыть Waypoint</value>
@@ -1674,6 +1725,9 @@
   <data xml:space="preserve" name="Text_3c58451ae577">
     <value>Без привязки к ветке</value>
   </data>
+  <data name="Text_3cc7bdb1ec13" xml:space="preserve">
+    <value>Необязательный модуль для этого режима.</value>
+  </data>
   <data name="Text_3cd54602c9df" xml:space="preserve">
     <value>Загрузка: {0:0} из {1:0} МБ</value>
   </data>
@@ -1688,6 +1742,9 @@
   </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Переключение завершено.</value>
+  </data>
+  <data name="Text_3d31dc6f3ec1" xml:space="preserve">
+    <value>Это имя не используется существующими лигами.</value>
   </data>
   <data xml:space="preserve" name="Text_3d487cea417c">
     <value> · файлы не изменены</value>
@@ -1914,6 +1971,9 @@
   <data name="Text_4709a224b4c0" xml:space="preserve">
     <value>Конструктор не делает зачарования</value>
   </data>
+  <data name="Text_47453cf73f56" xml:space="preserve">
+    <value>Изменения доступности вступят в силу при следующем запуске сервера.</value>
+  </data>
   <data name="Text_47483ec2a678" xml:space="preserve">
     <value>live.ps1 -ClientOnly: игра с уже запущенными серверами</value>
   </data>
@@ -2051,6 +2111,9 @@
   </data>
   <data xml:space="preserve" name="Text_4b8df1bf034b">
     <value>Инструкция для клиента</value>
+  </data>
+  <data name="Text_4bcfdfe3c64c" xml:space="preserve">
+    <value>Скрыть…</value>
   </data>
   <data xml:space="preserve" name="Text_4bdd511d381b">
     <value>Инструкция</value>
@@ -2246,6 +2309,9 @@
   </data>
   <data name="Text_52c821f5742b" xml:space="preserve">
     <value>у {0} нет mod.json; ничего не установлено</value>
+  </data>
+  <data name="Text_52e01b2df16d" xml:space="preserve">
+    <value>Не удалось создать: {0}</value>
   </data>
   <data name="Text_52ec94a020a9" xml:space="preserve">
     <value>Последняя запись: {0} · {1:g}</value>
@@ -2516,6 +2582,9 @@
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>В этом репозитории нет модов.</value>
   </data>
+  <data name="Text_5f1211a139b0" xml:space="preserve">
+    <value>Показать…</value>
+  </data>
   <data xml:space="preserve" name="Text_5f1b134f71ee">
     <value>
 Достигнут лимит поиска; другие репозитории могут остаться ненайденными. Вы можете выбрать любую папку вручную.</value>
@@ -2546,6 +2615,9 @@
   </data>
   <data name="Text_5fdc6c8aaff9" xml:space="preserve">
     <value>Ветки ({0})</value>
+  </data>
+  <data name="Text_60013d44d694" xml:space="preserve">
+    <value>Доступны только режимы, определённые для этой лиги.</value>
   </data>
   <data name="Text_60174772db52" xml:space="preserve">
     <value>Порт всё ещё занят, поэтому Waypoint не стал продолжать.</value>
@@ -3155,6 +3227,9 @@
   <data name="Text_75adbad9edb8" xml:space="preserve">
     <value>1 мин</value>
   </data>
+  <data name="Text_75d79f0a2f2e" xml:space="preserve">
+    <value>Нет несохранённых изменений.</value>
+  </data>
   <data name="Text_76087b2f89df" xml:space="preserve">
     <value>Получать последние изменения?</value>
   </data>
@@ -3214,6 +3289,9 @@
   </data>
   <data xml:space="preserve" name="Text_781fab451752">
     <value>состояние включения неизвестно</value>
+  </data>
+  <data name="Text_783678c4c546" xml:space="preserve">
+    <value>Не удалось сохранить: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_7839ccd6957a">
     <value>Используется выбранный репозиторий. Вы можете изменить путь или повторить поиск в любое время.</value>
@@ -3407,6 +3485,9 @@
   <data name="Text_7f743d4cc54a" xml:space="preserve">
     <value>Копировать…</value>
   </data>
+  <data name="Text_7f762e8224d7" xml:space="preserve">
+    <value>Заполните сведения о лиге, чтобы продолжить.</value>
+  </data>
   <data name="Text_7f8ae4a819fb" xml:space="preserve">
     <value>Телепорт в области</value>
   </data>
@@ -3449,6 +3530,9 @@
   <data xml:space="preserve" name="Text_8190281db975">
     <value>Восстановить размер</value>
   </data>
+  <data name="Text_819282fd4810" xml:space="preserve">
+    <value>Создать лигу «{0}» в режиме «{1}»? {2} Существующие лиги и сохранения будут сохранены.</value>
+  </data>
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! нет подсказок {0}: {1}</value>
   </data>
@@ -3481,6 +3565,9 @@
   </data>
   <data xml:space="preserve" name="Text_838557924a5c">
     <value>Резервное копирование</value>
+  </data>
+  <data name="Text_8386a4dafcc0" xml:space="preserve">
+    <value>Назад к имени и режиму</value>
   </data>
   <data xml:space="preserve" name="Text_83b12c2216ef">
     <value>Очистить</value>
@@ -3536,6 +3623,9 @@
   <data xml:space="preserve" name="Text_850ce372f459">
     <value>Этой установке принадлежат несколько процессов {0}.</value>
   </data>
+  <data name="Text_8520c2f3c841" xml:space="preserve">
+    <value>Сохранение настроек лиги…</value>
+  </data>
   <data name="Text_85329688700b" xml:space="preserve">
     <value>В ветке {2} репозитория {0} нет {1}</value>
   </data>
@@ -3562,6 +3652,9 @@
   </data>
   <data name="Text_8703b1f43ea7" xml:space="preserve">
     <value>нет локальных изменений</value>
+  </data>
+  <data name="Text_87044ee57fb3" xml:space="preserve">
+    <value>Основные правила игры</value>
   </data>
   <data name="Text_8730d3c2022a" xml:space="preserve">
     <value>Новейшая</value>
@@ -4379,6 +4472,9 @@
   <data name="Text_a3986c49db0d" xml:space="preserve">
     <value>PowerShell 7 выполняет скрипты сборки и настройки LocalExile</value>
   </data>
+  <data name="Text_a3aa09c05cf6" xml:space="preserve">
+    <value>Описание в игре</value>
+  </data>
   <data name="Text_a3ac0b8d4d94" xml:space="preserve">
     <value>1.  Загружает LocalExile в выбранную папку или находит уже имеющуюся копию</value>
   </data>
@@ -4465,6 +4561,9 @@
   </data>
   <data name="Text_a591820dd8c5" xml:space="preserve">
     <value>Сначала выберите базу: от неё зависит, что может выпасть.</value>
+  </data>
+  <data name="Text_a59d7373b9f4" xml:space="preserve">
+    <value>Сведения о лиге и совместимости</value>
   </data>
   <data xml:space="preserve" name="Text_a5cccbcead7d">
     <value>Янтарь</value>
@@ -4612,6 +4711,9 @@
   </data>
   <data name="Text_aaebb3beb0a2" xml:space="preserve">
     <value>Недопустимый путь модуля.</value>
+  </data>
+  <data name="Text_aaffde82ab98" xml:space="preserve">
+    <value>Выберите существующую лигу и её режим, затем задайте имя своей лиги.</value>
   </data>
   <data name="Text_ab04a325f523" xml:space="preserve">
     <value>На запрос версии программа не ответила. Всё равно использовать её?</value>
@@ -4817,6 +4919,9 @@
   <data name="Text_b2feff991def" xml:space="preserve">
     <value>Войдите с учётной записью LocalExile: её имя вводится в поле «Эл. почта» (Email). Когда игра закроется, серверы остановятся.</value>
   </data>
+  <data name="Text_b30dfedf1111" xml:space="preserve">
+    <value>Далее: модули</value>
+  </data>
   <data name="Text_b3432a3b987f" xml:space="preserve">
     <value>Эту настройку меняйте в файле настроек мода (Открыть папку): Waypoint пока не редактирует настройки типа {0}.</value>
   </data>
@@ -4849,6 +4954,9 @@
   </data>
   <data xml:space="preserve" name="Text_b46871152667">
     <value>Нужен перезапуск</value>
+  </data>
+  <data name="Text_b47fb352feff" xml:space="preserve">
+    <value>Её персонажи и тайник остаются отдельными от Standard.</value>
   </data>
   <data xml:space="preserve" name="Text_b4a5df23dc4d">
     <value>Ошибка манифеста</value>
@@ -5026,6 +5134,9 @@
   </data>
   <data xml:space="preserve" name="Text_bb0b660ccd9d">
     <value>Отправка /game_data reload через встроенный помощник выбранного репозитория; ожидание подтверждения Gateway.</value>
+  </data>
+  <data name="Text_bb5e603fa102" xml:space="preserve">
+    <value>Далее выберите модули и проверьте свою лигу.</value>
   </data>
   <data name="Text_bb612d263d60" xml:space="preserve">
     <value>АВТОР</value>
@@ -5240,6 +5351,9 @@
   <data xml:space="preserve" name="Text_c4ba5e396f03">
     <value>Автокопии сохранений перед изменениями модов</value>
   </data>
+  <data name="Text_c4f598c6c316" xml:space="preserve">
+    <value>Шаг 2 из 2 · Модули и проверка</value>
+  </data>
   <data name="Text_c50ae6b7f77e" xml:space="preserve">
     <value>Dev host работает на порту {0}</value>
   </data>
@@ -5446,6 +5560,9 @@
   <data name="Text_cba6dec12959" xml:space="preserve">
     <value>Перед изменением аккаунтов остановите локальную службу аккаунтов.</value>
   </data>
+  <data name="Text_cba975052fbd" xml:space="preserve">
+    <value>Сохраните настройки лиги перед применением выбора модулей.</value>
+  </data>
   <data name="Text_cbd8e345bf34" xml:space="preserve">
     <value>Сначала закройте игру и остановите текущий LocalExile.</value>
   </data>
@@ -5454,6 +5571,9 @@
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Зависимости установлены.</value>
+  </data>
+  <data name="Text_cc4a7b5f5a97" xml:space="preserve">
+    <value>Для этой лиги определён только режим «{0}». Другие режимы выбрать нельзя.</value>
   </data>
   <data name="Text_cc94d46f213b" xml:space="preserve">
     <value>Удалить старый…</value>
@@ -5617,6 +5737,9 @@
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>Выбранные режимы: {0}</value>
   </data>
+  <data name="Text_d44e7c1b6628" xml:space="preserve">
+    <value>Выберите исходную лигу.</value>
+  </data>
   <data xml:space="preserve" name="Text_d452583a74d0">
     <value>Кнопки</value>
   </data>
@@ -5658,6 +5781,9 @@
   </data>
   <data name="Text_d5a68e116be7" xml:space="preserve">
     <value>В этой копии есть ваши собственные изменения</value>
+  </data>
+  <data name="Text_d5b3d9ec5cda" xml:space="preserve">
+    <value>Обновление лиг и модулей…</value>
   </data>
   <data name="Text_d5b898262c7c" xml:space="preserve">
     <value>Что произойдёт</value>
@@ -5701,6 +5827,9 @@
   <data name="Text_d7329bd6c77b" xml:space="preserve">
     <value>Не удалось безопасно прочитать текущие настройки. Ничего не изменено.</value>
   </data>
+  <data name="Text_d762e323adff" xml:space="preserve">
+    <value>Игровые модули</value>
+  </data>
   <data name="Text_d7967cfaaec9" xml:space="preserve">
     <value>Выберите новую или пустую папку либо уже установленный выпуск. Клиент игры тоже будет скопирован сюда.</value>
   </data>
@@ -5718,6 +5847,9 @@
   </data>
   <data name="Text_d7dcc7b1ae21" xml:space="preserve">
     <value>Используют: {0}</value>
+  </data>
+  <data name="Text_d7e4d0635215" xml:space="preserve">
+    <value>Задайте имя лиги, чтобы продолжить.</value>
   </data>
   <data xml:space="preserve" name="Text_d81ab149e977">
     <value>Индиго</value>
@@ -5884,6 +6016,9 @@
   <data name="Text_de6933c6727c" xml:space="preserve">
     <value>Сохраните или отмените изменения настроек лиги перед изменением выбора модулей.</value>
   </data>
+  <data name="Text_de86c9b49a36" xml:space="preserve">
+    <value>Смерть в режиме Hardcore в этой пользовательской лиге окончательна.</value>
+  </data>
   <data name="Text_de8ce4325230" xml:space="preserve">
     <value>Когда новая копия заработает, спросить перед удалением старой.</value>
   </data>
@@ -6004,6 +6139,9 @@
   </data>
   <data name="Text_e252d0b058d9" xml:space="preserve">
     <value>Сущность</value>
+  </data>
+  <data name="Text_e25f42ce196b" xml:space="preserve">
+    <value>Закройте игру и остановите службы, чтобы изменить доступность.</value>
   </data>
   <data name="Text_e262c148bad6" xml:space="preserve">
     <value>Куча GC и выделение</value>
@@ -6185,6 +6323,9 @@
   <data xml:space="preserve" name="Text_e97166b54500">
     <value>enable</value>
   </data>
+  <data name="Text_e984e8f6d556" xml:space="preserve">
+    <value>У этой лиги свои персонажи и тайник. Ничего не будет перенесено в Standard.</value>
+  </data>
   <data name="Text_e9988a42ca34" xml:space="preserve">
     <value>Waypoint не удалось найти свой исполняемый файл.</value>
   </data>
@@ -6304,6 +6445,9 @@
   </data>
   <data name="Text_eca8f3a20a81" xml:space="preserve">
     <value>Показывать и свойства, которым нужен уровень предмета выше текущего</value>
+  </data>
+  <data name="Text_ecd6c716704c" xml:space="preserve">
+    <value>Новая лига: {0}</value>
   </data>
   <data name="Text_ed059fe4e0d0" xml:space="preserve">
     <value>Отражённый</value>
@@ -6654,6 +6798,9 @@
   <data name="Text_f938c3286fd7" xml:space="preserve">
     <value>Очистить</value>
   </data>
+  <data name="Text_f955eb1cea98" xml:space="preserve">
+    <value>Доступна для новых персонажей</value>
+  </data>
   <data name="Text_f95b3eb4bed4" xml:space="preserve">
     <value>Создать карту</value>
   </data>
@@ -6662,6 +6809,9 @@
   </data>
   <data xml:space="preserve" name="Text_f9b4581c3058">
     <value>Совпадений с HEAD LocalExile нет. Другие найденные репозитории показаны ниже; выберите любой или укажите другую папку.</value>
+  </data>
+  <data name="Text_f9bfa3dc7c8f" xml:space="preserve">
+    <value>Отменить изменения</value>
   </data>
   <data xml:space="preserve" name="Text_f9ce6b13b19a">
     <value>Основные кнопки</value>

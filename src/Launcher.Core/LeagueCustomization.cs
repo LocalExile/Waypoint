@@ -168,13 +168,19 @@ public sealed partial class GameSystems
     public static bool SafeLeagueName(string name) => Regex.IsMatch(name, @"\A[A-Za-z][A-Za-z0-9 _-]{2,47}\z") && name == name.Trim()
         && !Regex.IsMatch(name, @"\A(?:CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])\z", RegexOptions.IgnoreCase);
 
+    public string? NewNameError(string name)
+    {
+        if (!SafeLeagueName(name)) return L.Text("Use 3–48 English letters, numbers, spaces, underscores or hyphens, starting with a letter.");
+        if (Leagues.Any(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || Path.GetFileName(l.Folder).Equals(name, StringComparison.OrdinalIgnoreCase))
+            || Choices.Any(p => p.Key.Equals(name, StringComparison.OrdinalIgnoreCase)) || Directory.Exists(Path.Combine(Environment.Leagues, name))
+            || File.Exists(Path.Combine(Environment.Leagues, name))) return L.Text("That league name is already in use. Choose a new name.");
+        return null;
+    }
+
     public JsonObject PlanCreate(GameLeague template, string name, string description, IEnumerable<string> selected)
     {
         if (!Environment.CanCreate) throw new InvalidOperationException(L.Text("This checkout does not expose supported league creation. Existing leagues remain available for inspection."));
-        if (!SafeLeagueName(name)) throw new InvalidOperationException(L.Text("Use 3–48 English letters, numbers, spaces, underscores or hyphens, starting with a letter."));
-        if (Leagues.Any(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || Path.GetFileName(l.Folder).Equals(name, StringComparison.OrdinalIgnoreCase))
-            || Choices.Any(p => p.Key.Equals(name, StringComparison.OrdinalIgnoreCase)) || Directory.Exists(Path.Combine(Environment.Leagues, name))
-            || File.Exists(Path.Combine(Environment.Leagues, name))) throw new InvalidOperationException(L.Text("That league name is already in use. Choose a new name."));
+        if (NewNameError(name) is { } nameError) throw new InvalidOperationException(nameError);
         if (template.Custom || !Configurable(template) || !EmptyTemplate(template.Folder))
             throw new InvalidOperationException(L.Text("This league has custom code or no reusable source template. It cannot be safely copied."));
         if (!Leagues.Any(l => l.Name.Equals("Void", StringComparison.OrdinalIgnoreCase) && l.Parent.Length == 0 && !l.Creatable && l.BaseSystems.Length == 0

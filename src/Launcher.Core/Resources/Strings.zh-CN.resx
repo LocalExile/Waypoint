@@ -48,6 +48,9 @@
   <data name="Text_01aebd706520" xml:space="preserve">
     <value>第 {0} 阶（共 {1} 阶）</value>
   </data>
+  <data name="Text_01b37566bb22" xml:space="preserve">
+    <value>模块列表为只读。请更新 LocalExile 以编辑这些选项。</value>
+  </data>
   <data name="Text_01bb939bdbc2" xml:space="preserve">
     <value>吞噬天地</value>
   </data>
@@ -174,6 +177,9 @@
   <data name="Text_0656d2bfebf7" xml:space="preserve">
     <value>使用全新存档开始</value>
   </data>
+  <data name="Text_0664b63da0eb" xml:space="preserve">
+    <value>更改赛季可用性需要更新的源码版本。</value>
+  </data>
   <data name="Text_066985b08f1e" xml:space="preserve">
     <value>Patch、Auth 和 Gateway，不含游戏。要开始游戏，请先停止它们，再按“开始游戏”：一个安装同一时间只能由一个 LocalExile.exe 运行。</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="Text_069d94390a6c" xml:space="preserve">
     <value>检查 Frida</value>
+  </data>
+  <data name="Text_06afb73ab20b" xml:space="preserve">
+    <value>第 1 步，共 2 步 · 赛季与模式</value>
   </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}：不是整数</value>
@@ -459,8 +468,14 @@
   <data name="Text_10384cde3c85" xml:space="preserve">
     <value>请选择并检查一个工作区以查看其模组。</value>
   </data>
+  <data name="Text_10429657a38b" xml:space="preserve">
+    <value>此赛季的玩法组合需要此模块。</value>
+  </data>
   <data name="Text_108040ac289a" xml:space="preserve">
     <value>红宝石</value>
+  </data>
+  <data name="Text_10903dcdc444" xml:space="preserve">
+    <value>模块选择尚未保存 — 保存后将在服务器重启时生效。</value>
   </data>
   <data name="Text_10ad4c387363" xml:space="preserve">
     <value>石板灰</value>
@@ -615,6 +630,12 @@
   <data name="Text_162f9d178de0" xml:space="preserve">
     <value>插槽</value>
   </data>
+  <data name="Text_1640b0da3e69" xml:space="preserve">
+    <value>查看详情</value>
+  </data>
+  <data name="Text_16cd278f7e3d" xml:space="preserve">
+    <value>可以创建。现有赛季和存档会保留。</value>
+  </data>
   <data name="Text_16d36906164f" xml:space="preserve">
     <value>要从空白物品重新开始吗？当前物品的更改尚未保存。</value>
   </data>
@@ -738,6 +759,9 @@
   <data name="Text_1b39c7a894cf" xml:space="preserve">
     <value>你随时可以回到当前这份。两份各有自己的角色和进度。</value>
   </data>
+  <data name="Text_1b4bd711ec92" xml:space="preserve">
+    <value>没有与搜索条件匹配的模块。</value>
+  </data>
   <data name="Text_1b5b97571feb" xml:space="preserve">
     <value>这不是 GitHub 仓库：请使用 github.com/owner/name 或 owner/name。</value>
   </data>
@@ -765,6 +789,9 @@
   <data name="Text_1c304451f9d9" xml:space="preserve">
     <value>复选框勾选标记</value>
   </data>
+  <data name="Text_1c487bf88ba7" xml:space="preserve">
+    <value>对新角色隐藏</value>
+  </data>
   <data name="Text_1c54b5836312" xml:space="preserve">
     <value>未启动：某个服务器端口仍被占用。</value>
   </data>
@@ -791,6 +818,9 @@
   </data>
   <data name="Text_1d6ca631e720" xml:space="preserve">
     <value>! 命令未加载：{0}</value>
+  </data>
+  <data name="Text_1d80f4055524" xml:space="preserve">
+    <value>已启用 {0} 个模块 · {1} 个必需模块</value>
   </data>
   <data name="Text_1dcfc8d6f905" xml:space="preserve">
     <value>新配置文件的名称（基于你平常的游戏设置）：</value>
@@ -893,6 +923,9 @@
   </data>
   <data name="Text_2141a1190cb3" xml:space="preserve">
     <value>账号已更新。</value>
+  </data>
+  <data name="Text_2164116b1adb" xml:space="preserve">
+    <value>无法继续：{0}</value>
   </data>
   <data name="Text_217526d30143" xml:space="preserve">
     <value>构建中 / 重启中</value>
@@ -1077,6 +1110,12 @@
   <data name="Text_26c164899bbb" xml:space="preserve">
     <value>未构建</value>
   </data>
+  <data name="Text_26c452056aad" xml:space="preserve">
+    <value>此赛季与 Standard 相互独立。专家模式下的死亡是永久的。</value>
+  </data>
+  <data name="Text_27122bb3324c" xml:space="preserve">
+    <value>选择一个赛季，然后管理其游戏模式和模块。</value>
+  </data>
   <data name="Text_2718304a70c3" xml:space="preserve">
     <value>游戏设置未更改</value>
   </data>
@@ -1240,11 +1279,17 @@
   <data name="Text_2bed223c0514" xml:space="preserve">
     <value>下载内容包含不安全的路径 {0}；未安装任何内容</value>
   </data>
+  <data name="Text_2bf6b86144e2" xml:space="preserve">
+    <value>请关闭游戏并停止服务以创建此赛季。表单中的草稿会保留。</value>
+  </data>
   <data name="Text_2c2da2a749f0" xml:space="preserve">
     <value>dev host 未能启动（logs\launcher-host.err）：{0}</value>
   </data>
   <data name="Text_2c4117e5b038" xml:space="preserve">
     <value>要更新到 {0} 吗？</value>
+  </data>
+  <data name="Text_2c4f75f49897" xml:space="preserve">
+    <value>现有赛季、角色和仓库将保持原样。</value>
   </data>
   <data name="Text_2c5c517cb9a3" xml:space="preserve">
     <value>在此之前 Waypoint 使用默认值。可以在“设置”→“文件夹和工具”中更改或清除它们。</value>
@@ -1535,6 +1580,9 @@
   <data name="Text_367ef06b8fbf" xml:space="preserve">
     <value>种子</value>
   </data>
+  <data name="Text_36f3a6809445" xml:space="preserve">
+    <value>查找模块</value>
+  </data>
   <data name="Text_375e15d846ce" xml:space="preserve">
     <value>Waypoint 薄荷绿</value>
   </data>
@@ -1543,6 +1591,9 @@
   </data>
   <data name="Text_37b8ab518ec4" xml:space="preserve">
     <value>搜索基础类型</value>
+  </data>
+  <data name="Text_3803e51fb720" xml:space="preserve">
+    <value>保存模块选择</value>
   </data>
   <data name="Text_381f5c69d6b1" xml:space="preserve">
     <value>无法打开 Waypoint</value>
@@ -1674,6 +1725,9 @@
   <data name="Text_3c58451ae577" xml:space="preserve">
     <value>未关联分支</value>
   </data>
+  <data name="Text_3cc7bdb1ec13" xml:space="preserve">
+    <value>此模式的可选模块。</value>
+  </data>
   <data name="Text_3cd54602c9df" xml:space="preserve">
     <value>正在下载：{0:0} / {1:0} MB</value>
   </data>
@@ -1688,6 +1742,9 @@
   </data>
   <data name="Text_3d246cebf3ac" xml:space="preserve">
     <value>切换完成。</value>
+  </data>
+  <data name="Text_3d31dc6f3ec1" xml:space="preserve">
+    <value>当前赛季尚未使用此名称。</value>
   </data>
   <data name="Text_3d487cea417c" xml:space="preserve">
     <value> · 已跟踪的文件无修改</value>
@@ -1914,6 +1971,9 @@
   <data name="Text_4709a224b4c0" xml:space="preserve">
     <value>物品制作器不制作附魔</value>
   </data>
+  <data name="Text_47453cf73f56" xml:space="preserve">
+    <value>可用性更改将在下次服务器启动时生效。</value>
+  </data>
   <data name="Text_47483ec2a678" xml:space="preserve">
     <value>live.ps1 -ClientOnly：游戏，连接正在运行的服务器</value>
   </data>
@@ -2051,6 +2111,9 @@
   </data>
   <data name="Text_4b8df1bf034b" xml:space="preserve">
     <value>客户端说明</value>
+  </data>
+  <data name="Text_4bcfdfe3c64c" xml:space="preserve">
+    <value>隐藏…</value>
   </data>
   <data name="Text_4bdd511d381b" xml:space="preserve">
     <value>查看说明</value>
@@ -2246,6 +2309,9 @@
   </data>
   <data name="Text_52c821f5742b" xml:space="preserve">
     <value>{0} 没有 mod.json；未安装任何内容</value>
+  </data>
+  <data name="Text_52e01b2df16d" xml:space="preserve">
+    <value>无法创建：{0}</value>
   </data>
   <data name="Text_52ec94a020a9" xml:space="preserve">
     <value>上次采集：{0} · {1:g}</value>
@@ -2516,6 +2582,9 @@
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>此仓库没有列出模组。</value>
   </data>
+  <data name="Text_5f1211a139b0" xml:space="preserve">
+    <value>显示…</value>
+  </data>
   <data name="Text_5f1b134f71ee" xml:space="preserve">
     <value>
 已达到搜索上限；可能还有其他源码副本。可“浏览”到任意位置。</value>
@@ -2546,6 +2615,9 @@
   </data>
   <data name="Text_5fdc6c8aaff9" xml:space="preserve">
     <value>分支（{0}）</value>
+  </data>
+  <data name="Text_60013d44d694" xml:space="preserve">
+    <value>仅提供此赛季已定义的模式。</value>
   </data>
   <data name="Text_60174772db52" xml:space="preserve">
     <value>端口仍被占用，因此 Waypoint 没有继续。</value>
@@ -3155,6 +3227,9 @@
   <data name="Text_75adbad9edb8" xml:space="preserve">
     <value>1 分钟</value>
   </data>
+  <data name="Text_75d79f0a2f2e" xml:space="preserve">
+    <value>没有未保存的更改。</value>
+  </data>
   <data name="Text_76087b2f89df" xml:space="preserve">
     <value>获取最新更改？</value>
   </data>
@@ -3214,6 +3289,9 @@
   </data>
   <data name="Text_781fab451752" xml:space="preserve">
     <value>启用状态未知</value>
+  </data>
+  <data name="Text_783678c4c546" xml:space="preserve">
+    <value>无法保存：{0}</value>
   </data>
   <data name="Text_7839ccd6957a" xml:space="preserve">
     <value>正在使用你选择的源码副本。你可以随时更改位置或重新搜索。</value>
@@ -3407,6 +3485,9 @@
   <data name="Text_7f743d4cc54a" xml:space="preserve">
     <value>复制…</value>
   </data>
+  <data name="Text_7f762e8224d7" xml:space="preserve">
+    <value>请填写赛季详情以继续。</value>
+  </data>
   <data name="Text_7f8ae4a819fb" xml:space="preserve">
     <value>区域内传送</value>
   </data>
@@ -3449,6 +3530,9 @@
   <data name="Text_8190281db975" xml:space="preserve">
     <value>向下还原</value>
   </data>
+  <data name="Text_819282fd4810" xml:space="preserve">
+    <value>以“{1}”模式创建“{0}”？{2} 现有赛季和存档会保留。</value>
+  </data>
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! 没有 {0} 建议：{1}</value>
   </data>
@@ -3481,6 +3565,9 @@
   </data>
   <data name="Text_838557924a5c" xml:space="preserve">
     <value>备份</value>
+  </data>
+  <data name="Text_8386a4dafcc0" xml:space="preserve">
+    <value>返回名称与模式</value>
   </data>
   <data name="Text_83b12c2216ef" xml:space="preserve">
     <value>清除</value>
@@ -3536,6 +3623,9 @@
   <data name="Text_850ce372f459" xml:space="preserve">
     <value>此源码副本有多个 {0} 进程。</value>
   </data>
+  <data name="Text_8520c2f3c841" xml:space="preserve">
+    <value>正在保存赛季配置…</value>
+  </data>
   <data name="Text_85329688700b" xml:space="preserve">
     <value>{0} 的 {2} 分支上没有 {1}</value>
   </data>
@@ -3562,6 +3652,9 @@
   </data>
   <data name="Text_8703b1f43ea7" xml:space="preserve">
     <value>无本地更改</value>
+  </data>
+  <data name="Text_87044ee57fb3" xml:space="preserve">
+    <value>核心游戏规则</value>
   </data>
   <data name="Text_8730d3c2022a" xml:space="preserve">
     <value>最新版</value>
@@ -4379,6 +4472,9 @@
   <data name="Text_a3986c49db0d" xml:space="preserve">
     <value>PowerShell 7 用于运行 LocalExile 的构建和安装脚本</value>
   </data>
+  <data name="Text_a3aa09c05cf6" xml:space="preserve">
+    <value>游戏中显示的描述</value>
+  </data>
   <data name="Text_a3ac0b8d4d94" xml:space="preserve">
     <value>1.  将 LocalExile 获取到你选择的文件夹中，或找到你已有的副本</value>
   </data>
@@ -4465,6 +4561,9 @@
   </data>
   <data name="Text_a591820dd8c5" xml:space="preserve">
     <value>请先选择基础类型：能出现哪些词缀取决于它。</value>
+  </data>
+  <data name="Text_a59d7373b9f4" xml:space="preserve">
+    <value>赛季详情与兼容性</value>
   </data>
   <data name="Text_a5cccbcead7d" xml:space="preserve">
     <value>琥珀</value>
@@ -4612,6 +4711,9 @@
   </data>
   <data name="Text_aaebb3beb0a2" xml:space="preserve">
     <value>模块路径无效。</value>
+  </data>
+  <data name="Text_aaffde82ab98" xml:space="preserve">
+    <value>以现有赛季为基础，选择其模式，然后为自定义赛季命名。</value>
   </data>
   <data name="Text_ab04a325f523" xml:space="preserve">
     <value>查询版本时它没有响应。仍然使用它吗？</value>
@@ -4817,6 +4919,9 @@
   <data name="Text_b2feff991def" xml:space="preserve">
     <value>使用你的 LocalExile 账号登录：在“电邮”（Email）字段中填写账号名称。关闭游戏会停止服务器。</value>
   </data>
+  <data name="Text_b30dfedf1111" xml:space="preserve">
+    <value>下一步：模块</value>
+  </data>
   <data name="Text_b3432a3b987f" xml:space="preserve">
     <value>请在模组的设置文件中修改此设置（打开文件夹）：Waypoint 暂不支持编辑 {0} 类型的设置。</value>
   </data>
@@ -4849,6 +4954,9 @@
   </data>
   <data name="Text_b46871152667" xml:space="preserve">
     <value>需要重启</value>
+  </data>
+  <data name="Text_b47fb352feff" xml:space="preserve">
+    <value>其角色和仓库与 Standard 相互独立。</value>
   </data>
   <data name="Text_b4a5df23dc4d" xml:space="preserve">
     <value>清单无效</value>
@@ -5026,6 +5134,9 @@
   </data>
   <data name="Text_bb0b660ccd9d" xml:space="preserve">
     <value>正在通过所选源码副本的原生客户端辅助程序发送 /game_data reload；正在等待 Gateway 确认。</value>
+  </data>
+  <data name="Text_bb5e603fa102" xml:space="preserve">
+    <value>接下来请选择模块并确认赛季配置。</value>
   </data>
   <data name="Text_bb612d263d60" xml:space="preserve">
     <value>作者</value>
@@ -5240,6 +5351,9 @@
   <data name="Text_c4ba5e396f03" xml:space="preserve">
     <value>模组更改前自动备份存档</value>
   </data>
+  <data name="Text_c4f598c6c316" xml:space="preserve">
+    <value>第 2 步，共 2 步 · 模块与确认</value>
+  </data>
   <data name="Text_c50ae6b7f77e" xml:space="preserve">
     <value>Dev host 正在端口 {0} 上运行</value>
   </data>
@@ -5446,6 +5560,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cba6dec12959" xml:space="preserve">
     <value>更改玩家账号前，请停止本地账号服务。</value>
   </data>
+  <data name="Text_cba975052fbd" xml:space="preserve">
+    <value>请先保存赛季设置，再应用模块选择。</value>
+  </data>
   <data name="Text_cbd8e345bf34" xml:space="preserve">
     <value>请先关闭游戏并停止当前的 LocalExile。</value>
   </data>
@@ -5454,6 +5571,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cc490cdeff7b" xml:space="preserve">
     <value>依赖项已安装。</value>
+  </data>
+  <data name="Text_cc4a7b5f5a97" xml:space="preserve">
+    <value>此赛季仅定义了“{0}”模式，无法选择其他模式。</value>
   </data>
   <data name="Text_cc94d46f213b" xml:space="preserve">
     <value>删除旧副本…</value>
@@ -5617,6 +5737,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>所选模式：{0}</value>
   </data>
+  <data name="Text_d44e7c1b6628" xml:space="preserve">
+    <value>请选择基础赛季。</value>
+  </data>
   <data name="Text_d452583a74d0" xml:space="preserve">
     <value>按钮</value>
   </data>
@@ -5658,6 +5781,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d5a68e116be7" xml:space="preserve">
     <value>这个副本有你自己的更改</value>
+  </data>
+  <data name="Text_d5b3d9ec5cda" xml:space="preserve">
+    <value>正在刷新赛季和模块…</value>
   </data>
   <data name="Text_d5b898262c7c" xml:space="preserve">
     <value>将要进行的操作</value>
@@ -5701,6 +5827,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d7329bd6c77b" xml:space="preserve">
     <value>无法安全读取现有设置。未作任何更改。</value>
   </data>
+  <data name="Text_d762e323adff" xml:space="preserve">
+    <value>玩法模块</value>
+  </data>
   <data name="Text_d7967cfaaec9" xml:space="preserve">
     <value>选择一个新的或空的文件夹，或你已安装的发行版。你的游戏客户端也会复制到这里。</value>
   </data>
@@ -5718,6 +5847,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d7dcc7b1ae21" xml:space="preserve">
     <value>使用方：{0}</value>
+  </data>
+  <data name="Text_d7e4d0635215" xml:space="preserve">
+    <value>请为赛季命名以继续。</value>
   </data>
   <data name="Text_d81ab149e977" xml:space="preserve">
     <value>靛蓝</value>
@@ -5884,6 +6016,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_de6933c6727c" xml:space="preserve">
     <value>更改模块选择前，请先保存或放弃联盟设置更改。</value>
   </data>
+  <data name="Text_de86c9b49a36" xml:space="preserve">
+    <value>此自定义赛季中，专家模式下的死亡是永久的。</value>
+  </data>
   <data name="Text_de8ce4325230" xml:space="preserve">
     <value>新副本可以正常使用后，删除旧副本前先询问。</value>
   </data>
@@ -6004,6 +6139,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e252d0b058d9" xml:space="preserve">
     <value>精华</value>
+  </data>
+  <data name="Text_e25f42ce196b" xml:space="preserve">
+    <value>请关闭游戏并停止服务，以更改可用性。</value>
   </data>
   <data name="Text_e262c148bad6" xml:space="preserve">
     <value>GC 堆和分配</value>
@@ -6185,6 +6323,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e97166b54500" xml:space="preserve">
     <value>enable</value>
   </data>
+  <data name="Text_e984e8f6d556" xml:space="preserve">
+    <value>此赛季拥有独立的角色和仓库，不会迁移至 Standard。</value>
+  </data>
   <data name="Text_e9988a42ca34" xml:space="preserve">
     <value>Waypoint 找不到自身的可执行文件。</value>
   </data>
@@ -6304,6 +6445,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eca8f3a20a81" xml:space="preserve">
     <value>也列出所需物品等级高于此物品的词缀</value>
+  </data>
+  <data name="Text_ecd6c716704c" xml:space="preserve">
+    <value>新赛季：{0}</value>
   </data>
   <data name="Text_ed059fe4e0d0" xml:space="preserve">
     <value>已复制</value>
@@ -6654,6 +6798,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f938c3286fd7" xml:space="preserve">
     <value>清理</value>
   </data>
+  <data name="Text_f955eb1cea98" xml:space="preserve">
+    <value>对新角色可见</value>
+  </data>
   <data name="Text_f95b3eb4bed4" xml:space="preserve">
     <value>生成地图</value>
   </data>
@@ -6662,6 +6809,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f9b4581c3058" xml:space="preserve">
     <value>未找到与上游 HEAD 一致的源码副本。下方列出了其他 LocalExile 源码副本；你可以使用其中任意一个，或“浏览”其他位置。</value>
+  </data>
+  <data name="Text_f9bfa3dc7c8f" xml:space="preserve">
+    <value>放弃更改</value>
   </data>
   <data name="Text_f9ce6b13b19a" xml:space="preserve">
     <value>主要按钮</value>

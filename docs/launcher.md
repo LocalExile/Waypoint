@@ -625,9 +625,15 @@ leagues and leaving shipped manifests unchanged. Auth and Gateway read these cho
 the servers when ready and never restarts them automatically. Existing characters stay in their league. Deleting or
 migrating leagues is not part of these controls.
 
-**Available for new characters** reflects LocalExile's global creation list (`creatable` and not `ended`), not an
-account-specific permission. **Hide from new characters** hides the selected league and its linked mode descendants;
-**Show for new characters** also restores any parent cards it needs. Independent cards stay independent. At least one
+The module list appears below the mode selector. **Find a module** searches names, IDs and descriptions without changing
+the selection. Required modules stay readable and cannot be disabled; modules not defined for the mode are grouped under
+**Unavailable modules**. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
+preview and league settings are expandable. Refreshing or applying a change locks editing until the operation finishes;
+switching league or mode asks before discarding a draft.
+
+**Visible to new characters** / **Hidden from new characters** reflects LocalExile's global creation list (`creatable` and
+not `ended`), not an account-specific permission. **Hide…** hides the selected league and its linked mode descendants;
+**Show…** also restores any parent cards it needs. Independent cards stay independent. At least one
 playable main card must remain visible, and visible mode options cannot lose their parent. Hiding changes only `creatable`:
 it does not end the league or prevent existing characters from entering it. Existing saves and stashes are not opened or
 changed by visibility edits. Void and ended leagues cannot be offered with these controls.
@@ -645,17 +651,21 @@ their dependencies, stay together. Unverified modules are labelled and cannot be
 module can be deselected to repair a draft; invalid selections cannot be saved. Parent chains must lead to Standard or Void.
 The backend repeats these checks, even if an outside caller bypasses the interface.
 
-**New league** creates a separate league from an existing profile. Choose the starting league and game mode in separate
-selectors, enter a new name and description, and select its allowed modules. **Customize as a new league** limits the starting choices to the selected
-league's family. A family with no SSF, Hardcore or Ruthless variant says that the option is unavailable: Waypoint never
+**New league** creates a separate league in two steps. First choose the starting league and game mode, then enter a new
+name and description. **Next: modules** opens the module choices and review; **Back to name and mode** keeps the draft.
+**Customize as a new league** starts with the selected profile and its current module choices. Profiles with custom code
+or no reusable source template disable this action and explain why. A family with no SSF, Hardcore or Ruthless variant says that the option is unavailable: Waypoint never
 invents unsupported flags. Modes of an existing league are not changed underneath its characters; another mode creates
 another identity and card. New cards are independent, so they cannot displace an existing card's mode checkboxes.
 
 Custom leagues use Void as their parent and, for Hardcore, their death destination. A valid isolated Void definition must
-exist. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
+exist. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
 all save writers stopped, uses the normal optional save backup, and checks the writers again afterward. A read-only save
 inspection refuses names retained by characters, deleted-character records or stashes, and blocks unfamiliar schemas and
 pending imports rather than guessing. Names use 3–48 English letters, digits, spaces, underscores or hyphens.
+The final Create action and availability controls explain when running services block them; a creation draft remains
+editable while services run. Name feedback catches invalid or currently used names before proceeding; retained save names
+are checked again by the adapter before creation.
 
 Only an existing empty league marker class is reusable. A profile with custom league code or only prebuilt binaries is
 not silently cloned. Waypoint writes a known empty marker into the new league's Source folder, its module list, optional
