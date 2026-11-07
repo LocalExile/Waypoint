@@ -6,11 +6,21 @@ using System.Text.RegularExpressions;
 namespace Launcher.Core;
 
 public sealed record ModEnvironment(bool Supported, string Folder, bool Enabled, string RuntimeReport = "", string CheckedUtc = "");
-public sealed record ModRequest(string Id = "", string Project = "");
+/// <summary>A mod operation's arguments. <paramref name="Staged"/> is a checked folder (InstallMod) or values file
+/// (SaveModSettings) under Waypoint's own data folder; <paramref name="Target"/> is Binaries or Source.</summary>
+/// <summary>A mod operation's mod; <paramref name="Batch"/> names several at once, for one InstallMod, UninstallMod or
+/// BuildMod run over all of them.</summary>
+public sealed record ModRequest(string Id = "", string Project = "", string Staged = "", string Target = "",
+    IReadOnlyList<ModRequest>? Batch = null);
 public sealed record ModEntry(string Id, string Version, string Kind, string[] Depends, bool Enabled, string Status,
-    string Detail, string Folder, string Project, string Fingerprint)
+    string Detail, string Folder, string Project, string Fingerprint, string Name = "", string Description = "", string Author = "",
+    bool IsScript = false)
 {
-    public string SearchText => $"{Id} {Version} {Kind} {Status} {Detail}";
+    /// <summary>The manifest's name, or the id for a mod without one.</summary>
+    public string Title => Name.Length > 0 ? Name : Id;
+    /// <summary>The declarations of its settings (settings.json beside its mod.json), when it has any.</summary>
+    public string SettingsFile => Folder.Length > 0 && File.Exists(Path.Combine(Folder, ModSettingsForm.DeclarationsFile)) ? Path.Combine(Folder, ModSettingsForm.DeclarationsFile) : "";
+    public string SearchText => $"{Id} {Name} {Author} {Description} {Version} {Kind} {Status} {Detail}";
     public string DisplayDetail => L.Describe(Detail);
     public string Summary => $"{Version} · {L.Text(Kind)} · " + (Status == "Disabled" ? L.Text("Disabled") : $"{L.Text(Enabled ? "Enabled" : "Disabled")} · {L.Text(Status)}");
 }
@@ -43,7 +53,10 @@ public static class ModCatalog
         Fingerprints[path] = (info.Length, info.LastWriteTimeUtc, hash);
         return hash;
     }
-    sealed record Manifest(string Id, string Version, string Kind, string[] Depends, string Assembly, bool Enabled);
+    sealed record Manifest(string Id, string Version, string Kind, string[] Depends, string Assembly, bool Enabled,
+        string Name = "", string Description = "", string Author = "");
+    /// <summary>The assembly a manifest names (its id's .dll by default).</summary>
+    internal static string AssemblyName(string folderId, string json) => ParseJson(folderId, json).Assembly;
     static Manifest Parse(string folderId, string path) => ParseJson(folderId, Read(path));
     internal static (string Version, bool Enabled) ManifestDefaults(string folderId, string json)
     {
@@ -70,7 +83,9 @@ public static class ModCatalog
         if (enabled.ValueKind is not (JsonValueKind.Undefined or JsonValueKind.True or JsonValueKind.False)) throw new InvalidDataException("enabled must be true or false.");
         string assembly = Text("assembly", id + ".dll");
         if (Path.GetFileName(assembly) != assembly || assembly.IndexOfAny(['/', '\\', ':']) >= 0 || !assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Assembly must be a DLL in the mod folder.");
-        return new(id, Text("version", "0"), kind, dependencies, assembly, enabled.ValueKind != JsonValueKind.False);
+        // name, description and author are Waypoint's (LocalExile-Mods' AGENTS.md); the Gateway ignores them.
+        return new(id, Text("version", "0"), kind, dependencies, assembly, enabled.ValueKind != JsonValueKind.False,
+            Text("name", ""), Text("description", ""), Text("author", ""));
     }
     public static ModEntry[] Read(RuntimeSnapshot snapshot)
     {
@@ -93,7 +108,8 @@ public static class ModCatalog
                         var manifest = Parse(id, manifestPath);
                         if (!source.TryAdd(manifest.Id, Path.GetRelativePath(snapshot.Root, project))) throw new InvalidDataException("Multiple source projects use this ID.");
                         entries[manifest.Id] = new(manifest.Id, manifest.Version, manifest.Kind, manifest.Depends, manifest.Enabled,
-                            "Not built", "Build this source mod before enabling it.", Path.Combine(environment.Folder, manifest.Id), source[manifest.Id], "");
+                            "Not built", "Build this source mod before enabling it.", Path.Combine(environment.Folder, manifest.Id), source[manifest.Id], "",
+                            manifest.Name, manifest.Description, manifest.Author);
                     }
                     catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                     { entries[id] = new(id, "?", "?", [], false, "Invalid source", ex.Message, folder, "", ""); }
@@ -106,17 +122,25 @@ public static class ModCatalog
             foreach (string folder in Directory.EnumerateDirectories(environment.Folder).Take(512))
             {
                 string id = Path.GetFileName(folder);
-                if (!File.Exists(Path.Combine(folder, "mod.json"))) continue;
+                if (!Physical(folder)) continue;
+                // A script mod: loose .cs files the Gateway compiles when it loads the folder, with or without a mod.json.
+                string[] scripts = Directory.EnumerateFiles(folder, "*.cs", SearchOption.TopDirectoryOnly).Take(256).Order(StringComparer.Ordinal).ToArray();
+                bool hasManifest = File.Exists(Path.Combine(folder, "mod.json"));
+                if (!hasManifest && scripts.Length == 0) continue;
                 try
                 {
-                    var manifest = Parse(id, Path.Combine(folder, "mod.json"));
-                    if (manifest.Id != id) throw new InvalidDataException("Manifest ID does not match its folder name.");
+                    var manifest = hasManifest ? Parse(id, Path.Combine(folder, "mod.json")) : new Manifest(id, "0", "script", [], id + ".dll", true);
+                    if (!ValidId(id) || manifest.Id != id) throw new InvalidDataException("Manifest ID does not match its folder name.");
                     string dll = Path.Combine(folder, manifest.Assembly);
                     bool enabled = choices.GetValueOrDefault(id, manifest.Enabled);
-                    bool built = File.Exists(dll) && Physical(dll);
-                    string hash = built ? Fingerprint(dll) : "";
+                    bool assembly = File.Exists(dll) && Physical(dll);
+                    bool script = !assembly && scripts.Length > 0 && scripts.All(Physical);
+                    bool built = assembly || script;
+                    string hash = assembly ? Fingerprint(dll) : script ? Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(
+                        string.Join('\n', scripts.Select(f => Path.GetFileName(f) + "|" + Fingerprint(f)))))) : "";
                     entries[id] = new(id, manifest.Version, manifest.Kind, manifest.Depends, enabled, built ? "Not checked" : "Missing DLL",
-                        built ? "Runtime status has not been confirmed." : "Build this mod or install its DLL.", folder, source.GetValueOrDefault(id, ""), hash);
+                        built ? "Runtime status has not been confirmed." : "Build this mod or install its DLL.", folder, source.GetValueOrDefault(id, ""), hash,
+                        manifest.Name, manifest.Description, manifest.Author, script);
                 }
                 catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                 { entries[id] = new(id, "?", "?", [], false, "Invalid manifest", ex.Message, folder, source.GetValueOrDefault(id, ""), ""); }
@@ -141,6 +165,25 @@ public static class ModCatalog
         }
         return entries.Values.OrderBy(e => e.Id, StringComparer.Ordinal).ToArray();
     }
+    /// <summary>Turns a mod on or off in the server's own choices file (<c>mod-state.txt</c>), replacing the file at once. A
+    /// stopped Gateway reads it at its next start; a running one that watches the file (LocalExile since 2026-11-07) loads or
+    /// unloads the mod within a second. Its other lines stay as they are.</summary>
+    public static void WriteChoice(string folder, string id, bool enabled)
+    {
+        if (!ValidId(id)) throw new ArgumentException(L.Text("{0} is not a mod id Waypoint can use", id));
+        if (!Physical(folder)) throw new IOException("Redirected mod paths are not supported.");
+        Directory.CreateDirectory(folder);
+        string path = Path.Combine(folder, "mod-state.txt");
+        var lines = new List<string>();
+        if (File.Exists(path))
+            lines.AddRange(Read(path).Split('\n').Select(l => l.TrimEnd('\r')).Where(l => l.Length > 0
+                && (l.Split(' ', StringSplitOptions.RemoveEmptyEntries) is not [var other, "on" or "off"] || other != id)));
+        lines.Add(id + (enabled ? " on" : " off"));
+        string temporary = Path.Combine(folder, "waypoint-choices-" + Guid.NewGuid().ToString("N") + ".tmp");
+        File.WriteAllLines(temporary, lines, new System.Text.UTF8Encoding(false));
+        File.Move(temporary, path, overwrite: true);
+    }
+
     public static Dictionary<string, bool> ReadChoices(string folder)
     {
         var choices = new Dictionary<string, bool>(StringComparer.Ordinal);

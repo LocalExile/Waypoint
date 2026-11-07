@@ -92,6 +92,8 @@ sealed class Settings
     public List<string> Favorites { get; set; } = ["/commands", "/pos", "/heal", "/god"];
     /// <summary>The console's last lines, newest last.</summary>
     public List<string> History { get; set; } = [];
+    /// <summary>Mod repositories the player added to Browse ("owner/name" or "owner/name/tree/branch"), beside the official one.</summary>
+    public List<string> ModRepositories { get; set; } = [];
 
     public const int HistoryMax = 200;
 

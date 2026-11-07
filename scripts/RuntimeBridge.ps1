@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -15,7 +15,13 @@ param(
     [string]$BackupId = '',
     [string]$SaveSource = '',
     [string]$ModId = '',
-    [string]$ModProject = ''
+    [string]$ModProject = '',
+    [string]$ModIds = '',
+    [string]$ModProjects = '',
+    [string]$ModStageds = '',
+    [string]$ModTargets = '',
+    [string]$ModStaged = '',
+    [ValidateSet('','Binaries','Source')][string]$ModTarget = ''
 )
 . (Join-Path $PSScriptRoot 'ModBridge.ps1')
 . (Join-Path $PSScriptRoot 'AccountBridge.ps1')
@@ -875,7 +881,7 @@ public static class NativeRuntime {
         'StopCapture' { Stop-Capture }
         'QueryAccounts' { $script:accountData = Invoke-AccountData @{ Action='List' } }
         'ManageAccount' { Manage-Account $snapshot }
-        { $_ -in @('BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices') } { Invoke-ModOperation $snapshot }
+        { $_ -in @('BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod') } { Invoke-ModOperation $snapshot }
         'Switch' { Switch-Source $snapshot }
         'FreshSaves' { Start-FreshSaves $snapshot }
         'Fetch' {

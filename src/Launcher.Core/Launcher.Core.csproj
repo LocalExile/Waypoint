@@ -9,4 +9,7 @@
     <EmbeddedResource Include="MapSpawnCatalog.cs" LogicalName="Bridge/MapSpawnCatalog.cs" />
     <EmbeddedResource Include="../../scripts/map-viewer/MapViewer.cs;../../scripts/map-viewer/MapViewer.csproj" LogicalName="Bridge/%(Filename)%(Extension)" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.40.0" />
+  </ItemGroup>
 </Project>
