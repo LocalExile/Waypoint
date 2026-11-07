@@ -620,9 +620,30 @@ links make another definition a mode option on that flag. Sharing a game base, m
 destination never merges flags: Hardcore Allflame remains separate from Allflame when its definition has no `entryOf`.
 The flag count and order follow the checkout's startup catalogue (Standard first). Names and descriptions come from the
 definitions; a description beginning with `#` is identified as a game text key rather than pretending to resolve client text.
-This is a structural preview, not a copy of the game's artwork or a query of a running server's cached catalogue.
+The list uses selectable flag tiles with the native Standard/Hardcore banner artwork when it can be verified from the
+selected client. The flag image is literal; surrounding controls do not attempt to copy the whole character-creation screen.
+This is not a query of a running server's cached catalogue.
 
-Select a flag, then choose **Game mode** to manage its default or an explicitly linked combination. **In-game mode links
+Artwork is read through the checkout's already-built `PoEDataExtractor cat` tool, never through a build or a server/client
+launch. The optional reader needs Python with Pillow and the checkout's existing Node/ooz dependency. It validates the known
+banner-selection contract, reads `LeagueFlag.datc64` and the atlas, resolves explicit selectors or the native generic fallback,
+and crops the inclusive sprite rectangle from the DDS texture. Thus a custom league uses the same generic flag the client
+would use, rather than invented art. Unsupported contracts or unavailable tools show an explicitly labelled placeholder.
+No dependency is installed automatically. Extracted artwork stays in Waypoint's `league-art` cache, outside its source;
+the client GGPK is only read. Cache identity includes client size/time, the presentation contract, helper and decoder version;
+the reader rejects a changing client and rechecks cached image hashes.
+
+The selected flag has a distinct heading and banner; secondary text is muted, and module rows use small consistent icons
+with separate selection/required states. Neutral badges avoid competing status colours. **League settings** is
+expandable so the flag and gameplay modules remain the main focus. Save/Discard stay in a fixed footer.
+
+The flag's gear button opens **League settings → Flag appearance in Waypoint**. Automatic uses the theme accent for normal
+flags and theme red for Hardcore. Theme accent, theme red, neutral and a custom colour are available per flag and checkout.
+These personal choices apply immediately and are stored only in Waypoint's settings, not league manifests. They colour the
+frame/fallback emblem, never tint the original artwork or affect the game. Frames adapt for contrast, grayscale and Windows
+High Contrast; theme changes update them without dropping a draft. In-game artwork editing remains separate future work.
+
+Select a flag, expand **League settings**, then choose **Game mode** to manage its default or an explicitly linked combination. **In-game mode links
 and combinations** shows each exact checkbox path and destination league, including nested SSF/Hardcore/Ruthless links.
 Hardcore or SSF already fixed on a separate flag does not become an invented checkbox. **Show hidden definitions** exposes
 hidden/ended/unloaded cards and modes for inspection, clearly marked **not shown**; broken, cyclic or ambiguous links never

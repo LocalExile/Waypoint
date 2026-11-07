@@ -279,6 +279,14 @@ without raising the failure dialog. The mod queue completes that job rather than
 
 ### Module and league configuration
 
+Flag artwork is optional inspection, separate from configuration mutations. `LeagueArt.py` invokes only a verified,
+already-built `PoEDataExtractor cat` command with explicit output files in Waypoint's cache. It never builds a project,
+installs a dependency, starts a game/server, or writes a GGPK. The supported source presentation contract supplies a
+constant LeagueFlag selector and generic family; unknown implementations are refused rather than inferred from names.
+The flag table, atlas key and inclusive texture rectangle determine the actual image, including native fallback for custom
+leagues. A source/archive identity check precedes cache publication, and hashes verify cached previews. Personal frame
+colours live solely in Waypoint's settings, scoped by checkout and flag; they never enter the adapter's write requests.
+
 `Content` in an inspection names the selected profile's `Game_MODULES_FOLDER`, `Game_LEAGUES_FOLDER` and
 `Game_LEAGUE_MODULES` paths (default Modules, Leagues and data/league-modules.json). `CanEditSettings` requires the source
 shared settings hook, `CanChoose` the source league-override hook, and `CanCreate` the source league loader for creation and

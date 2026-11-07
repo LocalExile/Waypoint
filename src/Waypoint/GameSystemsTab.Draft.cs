@@ -46,7 +46,7 @@ public sealed partial class GameSystemsTab
     }
     void RenderDraftBasics()
     {
-        _detail.Children.Add(new TextBlock { Text = L.Text("1 of 2 · League and mode"), FontSize = 20, Margin = new Thickness(0, 0, 0, 8) });
+        var title = Type(L.Text("1 of 2 · League and mode"), 20, true); title.Margin = new Thickness(0, 0, 0, 8); _detail.Children.Add(title);
         _detail.Children.Add(SettingsEditor.Note(L.Text("Start with an existing league, choose its mode, then give your custom league a name.")));
         var families = _catalog!.Cards.Select(c => new GameLeagueCard(c.Name, c.Variants.Where(_draftCandidates.Contains).ToArray()))
             .Where(c => c.Variants.Length > 0).ToArray();
@@ -97,7 +97,7 @@ public sealed partial class GameSystemsTab
     void RenderDraftModules()
     {
         _nameFeedback = null;
-        _detail.Children.Add(new TextBlock { Text = L.Text("2 of 2 · Modules and review"), FontSize = 20, Margin = new Thickness(0, 0, 0, 6) });
+        var title = Type(L.Text("2 of 2 · Modules and review"), 20, true); title.Margin = new Thickness(0, 0, 0, 6); _detail.Children.Add(title);
         _detail.Children.Add(SettingsEditor.Label(_draftName!.Text + " · " + _catalog!.FlagOf(_draftTemplate!)!.Name + " · " + _catalog.Modes(_draftTemplate!)));
         _detail.Children.Add(SettingsEditor.Note(L.Text("Creates one separate flag named {0}. Its chosen mode is fixed; no mode checkboxes are added.", _draftName.Text ?? "")));
         _detail.Children.Add(SettingsEditor.Note(_draftTemplate!.Hardcore ? L.Text("This league stays separate from Standard. Hardcore death is permanent.")

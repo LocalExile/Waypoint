@@ -801,6 +801,9 @@
   <data name="Text_1c54b5836312" xml:space="preserve">
     <value>未启动：某个服务器端口仍被占用。</value>
   </data>
+  <data name="Text_1c6ac69f1e5d" xml:space="preserve">
+    <value>中性色</value>
+  </data>
   <data name="Text_1c839bb4f712" xml:space="preserve">
     <value>重置物品制作器</value>
   </data>
@@ -1601,6 +1604,9 @@
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>查找模块</value>
   </data>
+  <data name="Text_36ff2cadeff0" xml:space="preserve">
+    <value>赛季旗帜</value>
+  </data>
   <data name="Text_375e15d846ce" xml:space="preserve">
     <value>Waypoint 薄荷绿</value>
   </data>
@@ -2205,6 +2211,9 @@
   <data name="Text_4da22a362d38" xml:space="preserve">
     <value>图块</value>
   </data>
+  <data name="Text_4dc176316802" xml:space="preserve">
+    <value>游戏模式与可见性</value>
+  </data>
   <data name="Text_4de3fe11186f" xml:space="preserve">
     <value>每个映射条目都需要一个非空且唯一的键。</value>
   </data>
@@ -2360,6 +2369,9 @@
   </data>
   <data name="Text_5368ec3622b8" xml:space="preserve">
     <value>完全退出时</value>
+  </data>
+  <data name="Text_53b11eec6104" xml:space="preserve">
+    <value>赛季旗帜</value>
   </data>
   <data name="Text_53bc57cdb692" xml:space="preserve">
     <value>5 分钟</value>
@@ -3491,6 +3503,9 @@
   <data name="Text_7e7214cd5b49" xml:space="preserve">
     <value>正在安装…</value>
   </data>
+  <data name="Text_7e9975b1f2e4" xml:space="preserve">
+    <value>旗帜外观已保存在 Waypoint 中。LocalExile 未更改。</value>
+  </data>
   <data name="Text_7ec064d1790d" xml:space="preserve">
     <value>live.ps1 -Stop 失败（退出代码 {0}）；原因见下方输出。此版本的 live.ps1 可能没有 -Stop（早于启动器钩子）。仍要在服务器运行时切换吗？受监视的 Gateway 可能会自行重新构建或重启；切换到带有 -Stop 的版本后，“全部停止”即可再次使用。</value>
   </data>
@@ -3728,8 +3743,17 @@
   <data name="Text_8876f4fff1c8" xml:space="preserve">
     <value>地图查看器</value>
   </data>
+  <data name="Text_887d20992895" xml:space="preserve">
+    <value>主题红色</value>
+  </data>
+  <data name="Text_889cb7596e7f" xml:space="preserve">
+    <value>选择颜色…</value>
+  </data>
   <data name="Text_88aa5090fa37" xml:space="preserve">
     <value>布局：{0} × {1} 个地块</value>
+  </data>
+  <data name="Text_88aee7bfcacf" xml:space="preserve">
+    <value>Waypoint 中的旗帜外观</value>
   </data>
   <data name="Text_88b2f4aa5837" xml:space="preserve">
     <value>查看安装指南</value>
@@ -4598,6 +4622,9 @@
   <data name="Text_a58b335cdd9f" xml:space="preserve">
     <value>安装数据提取所需的依赖项</value>
   </data>
+  <data name="Text_a58cfa65ebef" xml:space="preserve">
+    <value>旗帜边框颜色</value>
+  </data>
   <data name="Text_a591820dd8c5" xml:space="preserve">
     <value>请先选择基础类型：能出现哪些词缀取决于它。</value>
   </data>
@@ -5405,6 +5432,9 @@
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>下次记住此选择</value>
   </data>
+  <data name="Text_c53e89986e05" xml:space="preserve">
+    <value>更改会立即应用于 Waypoint 中此旗帜的边框。原始游戏素材保持不变。</value>
+  </data>
   <data name="Text_c54387284052" xml:space="preserve">
     <value>回应的是 Microsoft Store 的 python 快捷方式，而不是 Python。请从 python.org 安装 Python 3.9 或更高版本，并勾选“Add python.exe to PATH”。</value>
   </data>
@@ -5580,6 +5610,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cb284ed772cb" xml:space="preserve">
     <value>语言会立即更改。日志和上游诊断信息保留原文。</value>
+  </data>
+  <data name="Text_cb28f32f6b85" xml:space="preserve">
+    <value>自定义颜色…</value>
   </data>
   <data name="Text_cb4371ac1b6b" xml:space="preserve">
     <value>通过 dev host：服务器运行时也可使用</value>
@@ -6124,6 +6157,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e0bfbac4f14b" xml:space="preserve">
     <value>先驱者</value>
   </data>
+  <data name="Text_e0c12fac7ae5" xml:space="preserve">
+    <value>主题强调色</value>
+  </data>
   <data name="Text_e0d1b68224bf" xml:space="preserve">
     <value>当前</value>
   </data>
@@ -6575,6 +6611,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ef2063b60cb3" xml:space="preserve">
     <value>请求的种子：{0}</value>
   </data>
+  <data name="Text_ef31cc33ab5a" xml:space="preserve">
+    <value>游戏素材不可用 — 当前显示占位旗帜。</value>
+  </data>
   <data name="Text_ef6691545d2c" xml:space="preserve">
     <value>标准</value>
   </data>
@@ -6986,6 +7025,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fd4d54ace369" xml:space="preserve">
     <value>物品等级：{0}</value>
+  </data>
+  <data name="Text_fd4e1cdec85d" xml:space="preserve">
+    <value>自动 — 使用主题默认值</value>
   </data>
   <data name="Text_fd609750643a" xml:space="preserve">
     <value>至少 4 个字符</value>

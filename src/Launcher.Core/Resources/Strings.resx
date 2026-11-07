@@ -801,6 +801,9 @@
   <data name="Text_1c54b5836312" xml:space="preserve">
     <value>Not started: a server port is still in use.</value>
   </data>
+  <data name="Text_1c6ac69f1e5d" xml:space="preserve">
+    <value>Neutral</value>
+  </data>
   <data name="Text_1c839bb4f712" xml:space="preserve">
     <value>Reset the crafter</value>
   </data>
@@ -1601,6 +1604,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>Find a module</value>
   </data>
+  <data name="Text_36ff2cadeff0" xml:space="preserve">
+    <value>League flag</value>
+  </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Waypoint mint</value>
   </data>
@@ -2205,6 +2211,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4da22a362d38" xml:space="preserve">
     <value>Tiles</value>
   </data>
+  <data name="Text_4dc176316802" xml:space="preserve">
+    <value>Game mode and visibility</value>
+  </data>
   <data name="Text_4de3fe11186f" xml:space="preserve">
     <value>Every map entry needs a unique, non-empty key.</value>
   </data>
@@ -2360,6 +2369,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_5368ec3622b8" xml:space="preserve">
     <value>On a full exit</value>
+  </data>
+  <data name="Text_53b11eec6104" xml:space="preserve">
+    <value>League flags</value>
   </data>
   <data name="Text_53bc57cdb692" xml:space="preserve">
     <value>5 min</value>
@@ -3491,6 +3503,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7e7214cd5b49" xml:space="preserve">
     <value>installing …</value>
   </data>
+  <data name="Text_7e9975b1f2e4" xml:space="preserve">
+    <value>Flag appearance saved in Waypoint. LocalExile was not changed.</value>
+  </data>
   <data name="Text_7ec064d1790d" xml:space="preserve">
     <value>live.ps1 -Stop failed (exit {0}); the output below says why. This version's live.ps1 may have no -Stop (older than the launcher hooks). Switch anyway, with the servers still running? A watched Gateway may rebuild or restart on its own; Stop all works again on a version that has -Stop.</value>
   </data>
@@ -3728,8 +3743,17 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8876f4fff1c8" xml:space="preserve">
     <value>Map viewer</value>
   </data>
+  <data name="Text_887d20992895" xml:space="preserve">
+    <value>Theme red</value>
+  </data>
+  <data name="Text_889cb7596e7f" xml:space="preserve">
+    <value>Choose color…</value>
+  </data>
   <data name="Text_88aa5090fa37" xml:space="preserve">
     <value>Layout: {0} × {1} tiles</value>
+  </data>
+  <data name="Text_88aee7bfcacf" xml:space="preserve">
+    <value>Flag appearance in Waypoint</value>
   </data>
   <data xml:space="preserve" name="Text_88b2f4aa5837">
     <value>View setup guide</value>
@@ -4598,6 +4622,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a58b335cdd9f" xml:space="preserve">
     <value>Install the extraction dependency</value>
   </data>
+  <data name="Text_a58cfa65ebef" xml:space="preserve">
+    <value>Flag frame color</value>
+  </data>
   <data name="Text_a591820dd8c5" xml:space="preserve">
     <value>Choose a base first: what can roll depends on it.</value>
   </data>
@@ -5405,6 +5432,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>Remember this for next time</value>
   </data>
+  <data name="Text_c53e89986e05" xml:space="preserve">
+    <value>Changes apply immediately to this flag's frame in Waypoint only. The native game artwork stays unchanged.</value>
+  </data>
   <data name="Text_c54387284052" xml:space="preserve">
     <value>The Microsoft Store's python shortcut answered, not a Python. Install Python 3.9 or newer from python.org and tick 'Add python.exe to PATH'.</value>
   </data>
@@ -5580,6 +5610,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_cb284ed772cb">
     <value>The language changes immediately. Logs and upstream diagnostics keep their original text.</value>
+  </data>
+  <data name="Text_cb28f32f6b85" xml:space="preserve">
+    <value>Custom color…</value>
   </data>
   <data name="Text_cb4371ac1b6b" xml:space="preserve">
     <value>Through the dev host: works beside running servers</value>
@@ -6124,6 +6157,9 @@ Dependencies: {2}
   <data name="Text_e0bfbac4f14b" xml:space="preserve">
     <value>Harbinger</value>
   </data>
+  <data name="Text_e0c12fac7ae5" xml:space="preserve">
+    <value>Theme accent</value>
+  </data>
   <data name="Text_e0d1b68224bf" xml:space="preserve">
     <value>Current</value>
   </data>
@@ -6575,6 +6611,9 @@ Dependencies: {2}
   <data name="Text_ef2063b60cb3" xml:space="preserve">
     <value>Requested seed: {0}</value>
   </data>
+  <data name="Text_ef31cc33ab5a" xml:space="preserve">
+    <value>Game artwork unavailable — placeholder flag shown.</value>
+  </data>
   <data xml:space="preserve" name="Text_ef6691545d2c">
     <value>Standard</value>
   </data>
@@ -6986,6 +7025,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fd4d54ace369" xml:space="preserve">
     <value>Item Level: {0}</value>
+  </data>
+  <data name="Text_fd4e1cdec85d" xml:space="preserve">
+    <value>Automatic — theme default</value>
   </data>
   <data name="Text_fd609750643a" xml:space="preserve">
     <value>at least 4 characters</value>
