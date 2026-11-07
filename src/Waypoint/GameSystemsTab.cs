@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 #if WINDOWS
 using System.Windows;
 using System.Windows.Controls;
+using TextWrapping = System.Windows.TextWrapping;
 using AccessibleElement = System.Windows.FrameworkElement;
 using A11y = System.Windows.Automation.AutomationProperties;
 using LiveSetting = System.Windows.Automation.AutomationLiveSetting;
@@ -12,6 +13,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using TextWrapping = Avalonia.Media.TextWrapping;
 using AccessibleElement = Avalonia.Controls.Control;
 using A11y = Avalonia.Automation.AutomationProperties;
 using LiveSetting = Avalonia.Automation.AutomationLiveSetting;
@@ -85,15 +87,26 @@ public sealed partial class GameSystemsTab : UserControl
         var footerCard = Card(footer, 10); footerCard.Margin = new Thickness(238, 12, 0, 0);
         DockPanel.SetDock(footerCard, Dock.Bottom); shell.Children.Add(footerCard);
         Named(_list, L.Text(LeagueView ? "Leagues" : "Modules"));
+        DressNavigation();
         if (LeagueView)
         {
-            DressFlagList();
             var navigation = new DockPanel { Width = 218, Margin = new Thickness(0, 0, 20, 0) };
             var caption = Type(L.Text("League flags"), 12, true, "Shell.TextSecondary"); caption.Margin = new Thickness(0, 0, 0, 10);
             DockPanel.SetDock(caption, Dock.Top); navigation.Children.Add(caption); navigation.Children.Add(_list);
             DockPanel.SetDock(navigation, Dock.Left); shell.Children.Add(navigation);
         }
-        else { _list.Margin = new Thickness(0, 0, 20, 0); DockPanel.SetDock(_list, Dock.Left); shell.Children.Add(_list); }
+        else
+        {
+            var navigation = new DockPanel { Width = 218, Margin = new Thickness(0, 0, 20, 0) };
+            var filters = new StackPanel();
+            filters.Children.Add(LabelFor(_moduleSearch, L.Text("Find a module"))); filters.Children.Add(Card(_moduleSearch, 6, "Shell.Background"));
+            _moduleCount.FontSize = 12; Ink(_moduleCount, "Shell.TextSecondary"); _moduleCount.Margin = new Thickness(0, 10, 0, 10); filters.Children.Add(_moduleCount);
+            DockPanel.SetDock(filters, Dock.Top); navigation.Children.Add(filters);
+            _moduleEmpty.Text = L.Text("No modules match your search."); _moduleEmpty.TextWrapping = TextWrapping.Wrap; Ink(_moduleEmpty, "Shell.TextSecondary");
+            SettingsEditor.Show(_moduleEmpty, false); DockPanel.SetDock(_moduleEmpty, Dock.Top); navigation.Children.Add(_moduleEmpty);
+            navigation.Children.Add(_list); DockPanel.SetDock(navigation, Dock.Left); shell.Children.Add(navigation);
+            _moduleSearch.TextChanged += (_, _) => FilterModules();
+        }
         _contentScroll.Content = _detail; shell.Children.Add(_contentScroll);
         Content = shell;
         _list.SelectionChanged += (_, _) => SelectionChanged();
@@ -138,7 +151,7 @@ public sealed partial class GameSystemsTab : UserControl
     }
     void UpdateLock()
     {
-        _detail.IsEnabled = _list.IsEnabled = _toolbar.IsEnabled = _actions.IsEnabled = !Busy;
+        _detail.IsEnabled = _list.IsEnabled = _toolbar.IsEnabled = _actions.IsEnabled = _moduleSearch.IsEnabled = !Busy;
         if (_newAction is not null) _newAction.IsEnabled = !_creating && _catalog?.Environment.CanCreate == true;
     }
     Button FooterButton(string text, Action action, bool primary = false)
@@ -161,10 +174,11 @@ public sealed partial class GameSystemsTab : UserControl
             if (_shared.Workspace.Latest?.Content is not { } environment) { SetStatus(L.Text("Refresh the workspace to inspect modules and leagues.")); return; }
             string? previous = _selected?.ToString();
             _catalog = new GameSystems(environment);
+            RefreshModuleIcons();
             RefreshFlagColors();
             if (LeagueView) _nativeArtwork = await LeagueArtwork.LoadAsync(_shared.Workspace.Latest.Root);
             _selecting = true;
-            var items = LeagueView ? PresentationCards().Cast<object>().ToArray() : _catalog.Systems.Cast<object>().ToArray();
+            var items = LeagueView ? PresentationCards().Cast<object>().ToArray() : MatchingModules().Cast<object>().ToArray();
             _list.ItemsSource = items;
             var previousLeague = _catalog.Leagues.FirstOrDefault(l => l.Name == previous);
             _list.SelectedItem = LeagueView ? items.OfType<GameLeagueCard>().FirstOrDefault(f => f.Variants.Any(l => l.Name == previous)) ?? items.FirstOrDefault()
@@ -172,8 +186,9 @@ public sealed partial class GameSystemsTab : UserControl
             _selectedRow = _list.SelectedItem;
             _selected = _selectedRow is GameLeagueCard card ? previousLeague is not null && CardModes(card).Contains(previousLeague) ? previousLeague : card.Primary : _selectedRow;
             UpdateFlagSummary();
+            if (!LeagueView) UpdateModuleCount(items.Length);
             _selecting = false; RenderSelection();
-            if (_selected is null) SetStatus(L.Text("No modules or leagues were found in this installation."));
+            if (_selected is null && (LeagueView || _catalog.Systems.Count == 0)) SetStatus(L.Text("No modules or leagues were found in this installation."));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException or InvalidOperationException or ArgumentException)
         { _selecting = false; SetStatus(e.Message); }
@@ -203,16 +218,7 @@ public sealed partial class GameSystemsTab : UserControl
     {
         _creating = false; _choicesDirty = false; ClearView();
         if (_catalog is null || _selected is null) return;
-        if (_selected is GameSystem system)
-        {
-            _detail.Children.Add(new TextBlock { Text = ModuleTitle(system), FontSize = 20 });
-            if (system.Description.Length > 0) _detail.Children.Add(SettingsEditor.Note(system.Description));
-            var used = _catalog.Leagues.Where(l => l.Systems.Contains(system.Path, StringComparer.OrdinalIgnoreCase)).Select(l => l.Name).ToArray();
-            _detail.Children.Add(SettingsEditor.Note(L.Text("Used by: {0}", used.Length > 0 ? string.Join(", ", used) : L.Text("No leagues"))));
-            _detail.Children.Add(SettingsEditor.Note(L.Text("Shared settings: changes affect every league using this module.")));
-            _detail.Children.Add(SettingsEditor.Button(L.Text("Choose leagues for this module"), () => OpenLeaguesRequested?.Invoke()));
-            OpenSettings(_detail, system.Id, system.SettingsFile, "modules");
-        }
+        if (_selected is GameSystem system) RenderModule(system);
         else if (_selected is GameLeague league) RenderLeague(league);
         _discardAction = FooterButton(L.Text("Discard changes"), DiscardCurrent);
         UpdateFeedback(); UpdateLock();
@@ -484,8 +490,8 @@ public sealed partial class GameSystemsTab : UserControl
     }
     void OpenSettings(StackPanel panel, string id, string declarations, string kind)
     {
-        if (_catalog?.Environment.CanEditSettings != true) { panel.Children.Add(SettingsEditor.Note(L.Text("This installation does not expose the shared settings contract. Settings are read-only."))); return; }
         if (!File.Exists(declarations)) { panel.Children.Add(SettingsEditor.Note(L.Text("This module declares no editable settings."))); return; }
+        if (_catalog?.Environment.CanEditSettings != true) { panel.Children.Add(SettingsEditor.Note(L.Text("This installation does not expose the shared settings contract. Settings are read-only."))); return; }
         try
         {
             string path = Path.Combine(_shared.Workspace.Latest!.Root, ModSettingsForm.UserFile(id, kind));
@@ -531,7 +537,7 @@ public sealed partial class GameSystemsTab : UserControl
     async Task<BridgeResult?> SaveAsync(string action, JsonObject values, string id = "", string target = "", string expected = "")
     {
         if (Busy) return null;
-        _applying = true; UpdateLock(); SetStatus(L.Text("Saving league configuration…"));
+        _applying = true; UpdateLock(); SetStatus(L.Text(LeagueView ? "Saving league configuration…" : "Saving module settings…"));
         string folder = Path.Combine(ModRepository.DownloadsFolder, Guid.NewGuid().ToString("N")); string file = Path.Combine(folder, "values.json");
         try
         {

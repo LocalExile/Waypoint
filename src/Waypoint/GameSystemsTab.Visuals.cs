@@ -108,10 +108,10 @@ public sealed partial class GameSystemsTab
     // Keep the data objects as list items: selection and draft guards continue to use the original model.
     public sealed class FlagTile : ContentControl
     {
-        public FlagTile() { DataContextChanged += (_, _) => Content = DataContext is GameLeagueCard card ? FlagTileVisual(card) : null; }
+        public FlagTile() { DataContextChanged += (_, _) => Content = DataContext switch { GameLeagueCard card => FlagTileVisual(card), GameSystem module => ModuleTileVisual(module), _ => null }; }
     }
 #endif
-    void DressFlagList()
+    void DressNavigation()
     {
 #if WINDOWS
         _list.ItemTemplate = new DataTemplate { VisualTree = new FrameworkElementFactory(typeof(FlagTile)) };
@@ -136,7 +136,7 @@ public sealed partial class GameSystemsTab
         focus.Setters.Add(new Setter(Control.BorderThicknessProperty, new DynamicResourceExtension("FocusThickness"))); style.Triggers.Add(focus);
         _list.ItemContainerStyle = style;
 #else
-        _list.ItemTemplate = new FuncDataTemplate<GameLeagueCard>((card, _) => FlagTileVisual(card));
+        _list.ItemTemplate = new FuncDataTemplate<object>((item, _) => item is GameLeagueCard card ? FlagTileVisual(card) : ModuleTileVisual((GameSystem)item));
         var style = new Style(s => s.OfType<ListBoxItem>());
         style.Setters.Add(new Setter(TemplatedControl.PaddingProperty, new Thickness(12)));
         style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, 8)));
@@ -152,20 +152,17 @@ public sealed partial class GameSystemsTab
     }
     static Element ModuleLabel(GameSystem module)
     {
-        string data = module.Id switch
-        {
-            "Game" => "M10,1 L18,4 L17,12 Q15,17 10,20 Q5,17 3,12 L2,4 Z M6,10 L9,13 L14,7",
-            "Vendors" => "M3,7 L17,7 L18,19 L2,19 Z M6,7 L6,4 Q10,-1 14,4 L14,7",
-            "Atlas" => "M1,4 L7,1 L13,4 L19,1 L19,16 L13,19 L7,16 L1,19 Z M7,1 L7,16 M13,4 L13,19",
-            "Harvest" => "M3,18 Q0,3 18,2 Q19,17 3,18 Z M3,18 L14,6",
-            "Delve" => "M2,7 Q10,0 18,7 M10,5 L10,19 M5,14 L15,14",
-            "Commands" => "M2,5 L7,10 L2,15 M10,15 L18,15",
-            "Bench" => "M3,3 L8,3 L12,7 L8,11 L4,7 Z M10,9 L18,17",
-            _ => "M2,2 L8,2 L8,8 L2,8 Z M12,2 L18,2 L18,8 L12,8 Z M2,12 L8,12 L8,18 L2,18 Z M12,12 L18,12 L18,18 L12,18 Z"
-        };
         var row = new DockPanel { LastChildFill = true, VerticalAlignment = VerticalAlignment.Center };
-        var icon = LineIcon(data, "Shell.TextSecondary", 18, 18); icon.Margin = new Thickness(0, 0, 12, 0);
+        var icon = new ModuleGlyph(module.Id, 18); icon.Margin = new Thickness(0, 0, 12, 0);
         DockPanel.SetDock(icon, Dock.Left); row.Children.Add(icon); row.Children.Add(Type(ModuleTitle(module), 13, true));
+        return row;
+    }
+    static Element ModuleTileVisual(GameSystem module)
+    {
+        var row = new DockPanel { LastChildFill = true };
+        var icon = Card(new ModuleGlyph(module.Id, 22), 8, "Shell.Background"); icon.Margin = new Thickness(0, 0, 10, 0);
+        DockPanel.SetDock(icon, Dock.Left); row.Children.Add(icon);
+        row.Children.Add(Type(ModuleTitle(module), 13, true));
         return row;
     }
     void Primary(Button button)

@@ -615,6 +615,24 @@ for read-only inspection in Advanced mode.
 to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
 settings are shared by every league using that module, rather than being separate per league.
 
+The module navigator uses the same selectable cards and icon defaults as the module rows in Leagues. **Find a module**
+searches its display name, ID, path and description; the count and empty state reflect the filter. Filtering preserves the
+current form while its module still matches, and asks before discarding an unsaved form if the filter would switch modules.
+The selected module has a clear heading and icon, a **Shared settings** card, **League usage**, and collapsible dependencies.
+Modules with settings show that card first; modules without settings explain that no editable settings are declared.
+League usage counts definitions, including linked modes, rather than claiming they are separate player flags. The first
+five names are visible and the remaining definitions expand on demand. Save and Discard stay in the fixed footer.
+
+**Choose icon…** opens a shared library of 184 symbols with search and category filters, covering existing and possible
+future modules (combat, magic, loot, crafting, exploration, encounters, progression, companions, nature, building and
+administration). All 24 known modules have distinct defaults; the seven original distinctive icons are retained. Unknown
+modules use the generic modules icon until the player chooses another. **Apply** changes that module's icon throughout
+Modules and Leagues immediately, without rebuilding or discarding an unsaved settings form. **Cancel** keeps the previous
+choice; **Use module default** selects its default for review before Apply. Icons use theme resources in both front ends.
+The preference is scoped by checkout and module ID and saved only in Waypoint's settings, never in module manifests,
+league choices or the client. Existing releases keep their capability guards, and icon selection does not enable editing
+unsupported gameplay settings.
+
 **Leagues** lists the separate flags declared for the game's character-creation screen. Only explicit `entryOf` / `entryKind`
 links make another definition a mode option on that flag. Sharing a game base, migration destination or Hardcore death
 destination never merges flags: Hardcore Allflame remains separate from Allflame when its definition has no `entryOf`.

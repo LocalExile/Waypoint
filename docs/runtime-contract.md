@@ -337,3 +337,7 @@ It records the appearance mode, scheme, separate custom light/dark role colors, 
 These settings are not passed to LocalExile. Theme detection reads the Windows application-theme preference and
 listens for changes; it never writes Windows registry values or installs fonts. Appearance previews write no settings
 until Apply; Cancel restores the prior appearance. The embedded OpenDyslexic font retains its OFL notice in packages.
+
+`ModuleIcons` is a launcher-only map of checkout and module ID to a stable library key. Missing or unknown choices use
+the module's default icon. These preferences are never forwarded to the runtime adapter or stored in LocalExile files;
+changing an icon performs no checkout operation and does not reload gameplay code or settings.

@@ -69,6 +69,8 @@ sealed class Settings
     public AppearanceSettings? Appearance { get; set; }
     /// <summary>Waypoint-only flag-frame colours, scoped by checkout and league identity. Never sent to LocalExile.</summary>
     public Dictionary<string, Dictionary<string, string>> LeagueFlagColors { get; set; } = [];
+    /// <summary>Waypoint-only module icons, scoped by checkout and module ID; shared by Modules and Leagues.</summary>
+    public Dictionary<string, Dictionary<string, string>> ModuleIcons { get; set; } = [];
     /// <summary>The interface's language, a tag of <see cref="L.Languages"/>; empty until the player picks one, which follows
     /// Windows' display language (<see cref="L.SetLanguage"/>).</summary>
     public string Language { get; set; } = "";
