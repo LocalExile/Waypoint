@@ -17,6 +17,7 @@ __pycache__/
 .idea/
 .claude/
 .mcp.json
+skills-lock.json
 
 # --- OS ---
 Thumbs.db
