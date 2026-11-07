@@ -21,6 +21,9 @@
   <data name="Text_00d1a1e34df7" xml:space="preserve">
     <value>Back up and switch</value>
   </data>
+  <data name="Text_00e2d1f0bf57" xml:space="preserve">
+    <value>Hide from new characters</value>
+  </data>
   <data name="Text_00e933211986" xml:space="preserve">
     <value>Mod not installed</value>
   </data>
@@ -98,6 +101,9 @@
   </data>
   <data xml:space="preserve" name="Text_030d3f415374">
     <value>What backups include</value>
+  </data>
+  <data name="Text_03341d673f63" xml:space="preserve">
+    <value>{0}: no variant is defined for this league family; this option is unavailable.</value>
   </data>
   <data name="Text_035485f7a61d" xml:space="preserve">
     <value>Pinned:</value>
@@ -191,6 +197,9 @@
   </data>
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>Use the game client of your current LocalExile, so it takes no extra space.</value>
+  </data>
+  <data name="Text_07e9e8fac2d4" xml:space="preserve">
+    <value>Show for new characters</value>
   </data>
   <data name="Text_0858184ec92d" xml:space="preserve">
     <value>pid {0}</value>
@@ -507,6 +516,12 @@
   <data name="Text_12f9d7bebcb6" xml:space="preserve">
     <value>The pull requests could not be read from GitHub (see the output).</value>
   </data>
+  <data name="Text_130a06ad07ab" xml:space="preserve">
+    <value>Customize as a new league</value>
+  </data>
+  <data name="Text_130b793948fa" xml:space="preserve">
+    <value>The Void destination is missing. Restore it before creating an isolated league.</value>
+  </data>
   <data xml:space="preserve" name="Text_130ec7311cce">
     <value>Environment checked.</value>
   </data>
@@ -674,6 +689,9 @@
   </data>
   <data name="Text_199082434dfe" xml:space="preserve">
     <value>(random name)</value>
+  </data>
+  <data name="Text_19a2d233bcfd" xml:space="preserve">
+    <value>Starting league and mode</value>
   </data>
   <data xml:space="preserve" name="Text_19c29440bac8">
     <value>This mod has no source project in the selected checkout.</value>
@@ -999,6 +1017,9 @@
   <data name="Text_258cdfb8102c" xml:space="preserve">
     <value>loading {0} values …</value>
   </data>
+  <data name="Text_25a194bf63fe" xml:space="preserve">
+    <value>Change character-creation availability for: {0}? Linked mode options and parent cards are kept consistent. Existing characters are preserved. This applies after a server restart.</value>
+  </data>
   <data name="Text_25bf8e1a2393" xml:space="preserve">
     <value>local</value>
   </data>
@@ -1046,6 +1067,9 @@
   </data>
   <data name="Text_26776921d6a2" xml:space="preserve">
     <value>Guided setup → Use separate game settings…</value>
+  </data>
+  <data name="Text_268a710aa7e8" xml:space="preserve">
+    <value>That league name is already in use. Choose a new name.</value>
   </data>
   <data name="Text_26a5b26009b2" xml:space="preserve">
     <value>Current checkout</value>
@@ -1493,6 +1517,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_35ed5fa746ff">
     <value>Dark colors</value>
   </data>
+  <data name="Text_35f1c8c13fd5" xml:space="preserve">
+    <value>This checkout does not expose supported league creation. Existing leagues remain available for inspection.</value>
+  </data>
   <data name="Text_360fe2a32742" xml:space="preserve">
     <value>Calls per second over the window</value>
   </data>
@@ -1552,6 +1579,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>The setup guide downloads LocalExile's newest version and builds it, and can bring your characters.</value>
+  </data>
+  <data name="Text_3950dabf770c" xml:space="preserve">
+    <value>Modes are fixed for existing characters. Create a separate league to choose another defined mode.</value>
   </data>
   <data name="Text_396bc690d5bd" xml:space="preserve">
     <value>Frida is ready.</value>
@@ -1935,6 +1965,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_48ce04a2b2bc" xml:space="preserve">
     <value>Full copy includes characters, progress and all personal/guild stash tabs. Start empty creates only a new login.</value>
   </data>
+  <data name="Text_48fe4f837791" xml:space="preserve">
+    <value>League created. It becomes available after the next server start.</value>
+  </data>
   <data xml:space="preserve" name="Text_49089f5749b2">
     <value>Copy reviewed report</value>
   </data>
@@ -1964,6 +1997,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_49dad9577c46">
     <value>Could not inspect mods: </value>
+  </data>
+  <data name="Text_49f37ddfa13f" xml:space="preserve">
+    <value>Hiding a league only changes character creation. Existing characters and stashes are preserved.</value>
   </data>
   <data name="Text_49fc111261b6" xml:space="preserve">
     <value>LocalExile update</value>
@@ -2057,6 +2093,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_4d2fc504a139">
     <value> · client setup needed</value>
+  </data>
+  <data name="Text_4d628612e2b6" xml:space="preserve">
+    <value>Discard the module choices in this draft and use the selected profile?</value>
   </data>
   <data name="Text_4d68e465fa3f" xml:space="preserve">
     <value>This server does not expose supported league system overrides. Update LocalExile to edit these choices.</value>
@@ -2160,6 +2199,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_514d7286b5ae">
     <value>{0} · Checked {1}</value>
   </data>
+  <data name="Text_514fd120949c" xml:space="preserve">
+    <value>New league draft — nothing is saved yet.</value>
+  </data>
   <data name="Text_515509f0e334" xml:space="preserve">
     <value>{0:0} MB</value>
   </data>
@@ -2195,6 +2237,12 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_526ba7a26daf">
     <value>Wait for the current operation before changing checkout.</value>
+  </data>
+  <data name="Text_526e0087cc3f" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Text_52797c44d495" xml:space="preserve">
+    <value>Unavailable modules ({0})</value>
   </data>
   <data name="Text_52c821f5742b" xml:space="preserve">
     <value>{0} has no mod.json; nothing was installed</value>
@@ -2383,6 +2431,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5a681a15a3d6" xml:space="preserve">
     <value>Set account password</value>
+  </data>
+  <data name="Text_5a7b893e6881" xml:space="preserve">
+    <value>The league card links contain a cycle.</value>
   </data>
   <data name="Text_5aeae0f3a80d" xml:space="preserve">
     <value>.NET counters of</value>
@@ -2681,6 +2732,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>Server time per second, all connections together; waits (queues, gates, locks) count their waiting time</value>
   </data>
+  <data name="Text_65cbeb090b74" xml:space="preserve">
+    <value>Starting league</value>
+  </data>
   <data name="Text_6662850b5518" xml:space="preserve">
     <value>The selected save database changed. Reload accounts and review the action again.</value>
   </data>
@@ -2761,6 +2815,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_686046d08c9f">
     <value>Watcher is building/restarting; inspect Gateway output for errors</value>
+  </data>
+  <data name="Text_68838bcd7761" xml:space="preserve">
+    <value>Choose an existing league profile and its mode. New leagues have their own characters and stashes. Nothing is migrated or renamed.</value>
   </data>
   <data xml:space="preserve" name="Text_688ed737c588">
     <value>Starting services</value>
@@ -3179,6 +3236,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_796489077045">
     <value>Scrollbars</value>
   </data>
+  <data name="Text_7968e299c0d9" xml:space="preserve">
+    <value>Custom leagues are isolated: their parent and Hardcore death destination are Void. Rewards cannot flow into Standard through a league transition. Creation requires the game and services to be stopped.</value>
+  </data>
   <data xml:space="preserve" name="Text_796ab9431174">
     <value>Recheck setup</value>
   </data>
@@ -3392,6 +3452,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! no {0} suggestions: {1}</value>
   </data>
+  <data name="Text_827f97b449fa" xml:space="preserve">
+    <value>This league has a missing or cyclic parent chain. Restore its definition before editing.</value>
+  </data>
   <data xml:space="preserve" name="Text_82855c11ae69">
     <value>Sand</value>
   </data>
@@ -3433,6 +3496,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_83cfb8ea3107" xml:space="preserve">
     <value>Builds from source</value>
+  </data>
+  <data name="Text_83e5d63b7b18" xml:space="preserve">
+    <value>Create a mode variant</value>
   </data>
   <data xml:space="preserve" name="Text_83f9b9c05a55">
     <value>Increase text contrast</value>
@@ -3545,6 +3611,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_88d371c5b388" xml:space="preserve">
     <value>LocalExile couldn't be updated now. Play starts the version you have.</value>
   </data>
+  <data name="Text_88e65a6c7315" xml:space="preserve">
+    <value>Save or discard the current draft before changing league visibility.</value>
+  </data>
   <data name="Text_88fccfb10a8d" xml:space="preserve">
     <value>Running {0} …</value>
   </data>
@@ -3553,6 +3622,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8963e750e358" xml:space="preserve">
     <value>Reading …</value>
+  </data>
+  <data name="Text_896a0650d1eb" xml:space="preserve">
+    <value>Create {0} with modes {1}? It will be a separate league, with Void as its destination. Existing leagues and saves are preserved.</value>
   </data>
   <data name="Text_897b35f13239" xml:space="preserve">
     <value>{0}: from {1} to {2}</value>
@@ -3776,6 +3848,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>Delete the selected items (Delete key); Ctrl or Shift selects several</value>
   </data>
+  <data name="Text_920e9e98bd8c" xml:space="preserve">
+    <value>Choose a mode to manage its modules and availability. Each mode keeps its own characters and stash.</value>
+  </data>
   <data name="Text_923f66176454" xml:space="preserve">
     <value>Downloading {0} … {1:N0} KB</value>
   </data>
@@ -3815,6 +3890,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_93638ea9e0b0">
     <value>Grayscale</value>
+  </data>
+  <data name="Text_9373ec518492" xml:space="preserve">
+    <value>New league name</value>
   </data>
   <data xml:space="preserve" name="Text_9381b171923f">
     <value>This revision has no supported mod host. Older LocalExile revisions can still be launched normally.</value>
@@ -3900,6 +3978,9 @@ Dependencies: {3}
   </data>
   <data name="Text_96696ebb5f8d" xml:space="preserve">
     <value>What to copy</value>
+  </data>
+  <data name="Text_966e3d979990" xml:space="preserve">
+    <value>Use 3–48 English letters, numbers, spaces, underscores or hyphens, starting with a letter.</value>
   </data>
   <data name="Text_96850b2f4bd2" xml:space="preserve">
     <value>Duelist</value>
@@ -4073,6 +4154,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9bad10eb9ddf" xml:space="preserve">
     <value>umu-launcher runs the game under Proton</value>
   </data>
+  <data name="Text_9bb353315acb" xml:space="preserve">
+    <value>The selected modules satisfy the declared dependencies and existing profile checks.</value>
+  </data>
   <data name="Text_9bc57fc48f3b" xml:space="preserve">
     <value>Search modifiers</value>
   </data>
@@ -4129,6 +4213,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_9d19ac7b2039">
     <value>Open logs folder</value>
+  </data>
+  <data name="Text_9d312d6843db" xml:space="preserve">
+    <value>Not defined for this mode</value>
   </data>
   <data xml:space="preserve" name="Text_9d39a3628a49">
     <value>Retry operation</value>
@@ -4195,6 +4282,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9fa77e063410" xml:space="preserve">
     <value>Version {0} is out; this is {1}. The servers and the game keep running while it updates.</value>
+  </data>
+  <data name="Text_9fbb51827afb" xml:space="preserve">
+    <value>Save module choices for {0}? They apply after a server restart. Existing characters and other leagues are preserved.</value>
   </data>
   <data name="Text_9fd728c66c9a" xml:space="preserve">
     <value>Add</value>
@@ -4367,6 +4457,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a540e34f130b" xml:space="preserve">
     <value>Area: {0} ({1})</value>
   </data>
+  <data name="Text_a549da446e61" xml:space="preserve">
+    <value>Create league</value>
+  </data>
   <data name="Text_a58b335cdd9f" xml:space="preserve">
     <value>Install the extraction dependency</value>
   </data>
@@ -4505,6 +4598,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_aa1bf9baa865">
     <value>Could not select checkout: </value>
   </data>
+  <data name="Text_aa3410e05ed5" xml:space="preserve">
+    <value>This league cannot change creation visibility.</value>
+  </data>
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>The servers are not running</value>
   </data>
@@ -4568,6 +4664,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_ad050d3449ef" xml:space="preserve">
     <value>Tracked files modified</value>
   </data>
+  <data name="Text_ad2479c9496b" xml:space="preserve">
+    <value>Changing availability requires stopped game and services, and applies at the next server start.</value>
+  </data>
   <data name="Text_ad3c7c6418d1" xml:space="preserve">
     <value>The item crafter is not available on Linux yet.</value>
   </data>
@@ -4624,6 +4723,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_af20391b2b63" xml:space="preserve">
     <value>The game is running: Play closes it and starts it again; the servers keep running.</value>
+  </data>
+  <data name="Text_af3356b2f35a" xml:space="preserve">
+    <value>Available for new characters</value>
   </data>
   <data name="Text_af86ecd2ae72" xml:space="preserve">
     <value>{0} ({1}) created on {2}.</value>
@@ -4757,6 +4859,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b4bc18631d5c" xml:space="preserve">
     <value>League choices saved. Restart servers when you are ready to apply them.</value>
   </data>
+  <data name="Text_b4fe28945512" xml:space="preserve">
+    <value>League visibility saved. It applies after the next server start.</value>
+  </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>Scroll to each new line</value>
   </data>
@@ -4765,6 +4870,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_b5c120b316c2" xml:space="preserve">
     <value>Saved</value>
+  </data>
+  <data name="Text_b61789ae5217" xml:space="preserve">
+    <value>Keep at least one playable league card available for new characters.</value>
   </data>
   <data xml:space="preserve" name="Text_b61d4817d0f1">
     <value>Follow Agents/GettingStarted.md steps 4-5 to prepare Game.patched.exe</value>
@@ -4907,6 +5015,12 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_baaf468928e9" xml:space="preserve">
     <value>Check the server ports</value>
   </data>
+  <data name="Text_bac82328e0cd" xml:space="preserve">
+    <value>This module combination is not defined for this league and mode. Unknown combinations are blocked.</value>
+  </data>
+  <data name="Text_bae1e8710ff4" xml:space="preserve">
+    <value>Keep the required gameplay bundle enabled. Its modules are not declared independently optional.</value>
+  </data>
   <data xml:space="preserve" name="Text_baf5d82057e7">
     <value>Orchid</value>
   </data>
@@ -5041,6 +5155,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c11c363d0402" xml:space="preserve">
     <value>the release would overwrite {0}, which holds your own data; nothing was changed</value>
+  </data>
+  <data name="Text_c11f5de55114" xml:space="preserve">
+    <value>Only combinations defined for this league and mode are allowed. Dedicated gameplay bundles stay together; unknown compatibility is blocked.</value>
   </data>
   <data name="Text_c12805c5fe6e" xml:space="preserve">
     <value>Quality: +{0}%</value>
@@ -5261,6 +5378,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   <data xml:space="preserve" name="Text_c9665c96a867">
     <value>Lime</value>
   </data>
+  <data name="Text_c9aea31b5411" xml:space="preserve">
+    <value>This league has custom code or no reusable source template. It cannot be safely copied.</value>
+  </data>
   <data name="Text_c9b2c9b72ddd" xml:space="preserve">
     <value>What should closing the window do?</value>
   </data>
@@ -5383,6 +5503,9 @@ Client: {2}</value>
   <data name="Text_ce8272ce39a9" xml:space="preserve">
     <value>Could not read the releases: {0}</value>
   </data>
+  <data name="Text_cee432038152" xml:space="preserve">
+    <value>Ended or non-playable league definitions are read-only.</value>
+  </data>
   <data name="Text_cef20f906175" xml:space="preserve">
     <value>{0} lines</value>
   </data>
@@ -5490,6 +5613,9 @@ Client: {2}</value>
   </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>League settings</value>
+  </data>
+  <data name="Text_d43f97686636" xml:space="preserve">
+    <value>Selected modes: {0}</value>
   </data>
   <data xml:space="preserve" name="Text_d452583a74d0">
     <value>Buttons</value>
@@ -5806,6 +5932,9 @@ Dependencies: {2}
   <data name="Text_e020e3c67bd0" xml:space="preserve">
     <value>Release</value>
   </data>
+  <data name="Text_e0283282bcfd" xml:space="preserve">
+    <value>Enter a description of 1–2000 characters.</value>
+  </data>
   <data name="Text_e0a8b24caf7e" xml:space="preserve">
     <value>Warlord</value>
   </data>
@@ -5894,6 +6023,9 @@ Dependencies: {2}
   <data name="Text_e2d0a54968ea" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="Text_e2d7e028d41a" xml:space="preserve">
+    <value>New league</value>
+  </data>
   <data name="Text_e2db0b44df99" xml:space="preserve">
     <value>Room-authored anchor; actual monsters and positions may differ.</value>
   </data>
@@ -5968,6 +6100,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_e62daa01ba01">
     <value>Choose and check a workspace to see its backups.</value>
+  </data>
+  <data name="Text_e64333c8348f" xml:space="preserve">
+    <value>A visible mode option needs its parent card.</value>
   </data>
   <data name="Text_e64a3e6ff925" xml:space="preserve">
     <value>Area layout capture</value>
@@ -6196,6 +6331,9 @@ Dependencies: {2}
   </data>
   <data name="Text_eddcb59d5cb7" xml:space="preserve">
     <value>Only a profile made here, and not the active one.</value>
+  </data>
+  <data name="Text_ede76ceab6f1" xml:space="preserve">
+    <value>Game mode</value>
   </data>
   <data name="Text_ee21b15cbfce" xml:space="preserve">
     <value>Updating {0} …</value>
@@ -6629,6 +6767,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_fcd4fe1982a4">
     <value>npm ci in this checkout's Tools/ooz directory</value>
+  </data>
+  <data name="Text_fd0559e88480" xml:space="preserve">
+    <value>The selected modules contain a dependency cycle.</value>
   </data>
   <data name="Text_fd249743c184" xml:space="preserve">
     <value>{0} new change(s) in LocalExile since your version.</value>

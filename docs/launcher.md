@@ -615,12 +615,62 @@ for read-only inspection in Advanced mode.
 to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
 settings are shared by every league using that module, rather than being separate per league.
 
-**Leagues** lists existing leagues. Select one to change its module choices. The Game module is required; saving refuses
-missing dependencies and modules. Ended leagues and leagues that cannot create characters are read-only. Choices are saved
+**Leagues** lists league families, such as Standard, Allflame and Survivors. Select a family, then choose **Game mode**
+to manage Normal, Hardcore, SSF or Ruthless variants where defined. Modes stay separate internally for characters, stashes
+and death rules; they are not presented as unrelated top-level leagues. Waypoint-created custom leagues remain distinct
+entries. Choosing a mode here browses that existing variant; it does not convert any characters. The Game module is required; saving refuses
+missing dependencies and modules. Ended and non-playable leagues are read-only. Hidden leagues remain configurable and usable as templates; hiding affects only creation availability. Choices are saved
 in the user's `data/league-modules.json` overrides (or the selected profile's `Game_LEAGUE_MODULES` path), preserving other
 leagues and leaving shipped manifests unchanged. Auth and Gateway read these choices at startup: Waypoint says to restart
-the servers when ready and never restarts them automatically. Existing characters stay in their league. Creating, deleting
-or migrating leagues is not part of these controls.
+the servers when ready and never restarts them automatically. Existing characters stay in their league. Deleting or
+migrating leagues is not part of these controls.
+
+**Available for new characters** reflects LocalExile's global creation list (`creatable` and not `ended`), not an
+account-specific permission. **Hide from new characters** hides the selected league and its linked mode descendants;
+**Show for new characters** also restores any parent cards it needs. Independent cards stay independent. At least one
+playable main card must remain visible, and visible mode options cannot lose their parent. Hiding changes only `creatable`:
+it does not end the league or prevent existing characters from entering it. Existing saves and stashes are not opened or
+changed by visibility edits. Void and ended leagues cannot be offered with these controls.
+
+Visibility editing requires stopped services/game and the source league-definition hook. After the optional backup,
+Waypoint checks writers and the full reviewed inventory again. Multi-file edits preserve comments and formatting, retain
+the original files in configuration history, apply children before hiding parents (parents before showing children), and
+roll back their own writes on failure without overwriting another tool's changes. Visibility takes effect at the next
+server start. Per-account visibility requires a separate LocalExile hook and is not implied by this global control.
+
+Module selection is conservative. The whole selection must fit at least one existing non-Waypoint league definition with
+the same mode-linked family, game base and exact mode flags/data set, rather than combining modules merely because each appears somewhere.
+Dependencies must be present and acyclic. Game is required; dedicated non-Core bundles from the starting profile, and
+their dependencies, stay together. Unverified modules are labelled and cannot be added. An already selected incompatible
+module can be deselected to repair a draft; invalid selections cannot be saved. Parent chains must lead to Standard or Void.
+The backend repeats these checks, even if an outside caller bypasses the interface.
+
+**New league** creates a separate league from an existing profile. Choose the starting league and game mode in separate
+selectors, enter a new name and description, and select its allowed modules. **Customize as a new league** limits the starting choices to the selected
+league's family. A family with no SSF, Hardcore or Ruthless variant says that the option is unavailable: Waypoint never
+invents unsupported flags. Modes of an existing league are not changed underneath its characters; another mode creates
+another identity and card. New cards are independent, so they cannot displace an existing card's mode checkboxes.
+
+Custom leagues use Void as their parent and, for Hardcore, their death destination. A valid isolated Void definition must
+exist. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
+all save writers stopped, uses the normal optional save backup, and checks the writers again afterward. A read-only save
+inspection refuses names retained by characters, deleted-character records or stashes, and blocks unfamiliar schemas and
+pending imports rather than guessing. Names use 3–48 English letters, digits, spaces, underscores or hyphens.
+
+Only an existing empty league marker class is reusable. A profile with custom league code or only prebuilt binaries is
+not silently cloned. Waypoint writes a known empty marker into the new league's Source folder, its module list, optional
+settings declarations, and its own `.waypoint-league.json` marker. It publishes the complete league manifest last, without
+replacing an existing directory. It never builds or starts LocalExile. The new league is available on the next server start.
+
+New league files and visibility edits are the player's own checkout changes. Simple mode's existing update guard keeps
+such a customized checkout in place instead of automatically moving it to newer source. Module overrides in ignored data
+files keep their existing behavior.
+
+Drafts review the complete relevant manifest/source inventory and user overrides. Adding, removing or changing a definition
+invalidates the draft; the backend checks again after backup. These checks enforce the declared structure, not every hidden
+assumption in arbitrary module code. LocalExile currently has no complete conflicts/supported-modes metadata contract.
+Broader cross-profile combinations need explicit compatibility declarations from LocalExile or the modules; unknown
+combinations remain blocked. The implemented controls require no LocalExile source changes.
 
 **League card preview** shows the definition's name, description, Hardcore/SSF/form flags and linked mode variants in a
 collapsed, read-only panel. It reads files, not the running server's startup snapshot. LocalExile already reads descriptions

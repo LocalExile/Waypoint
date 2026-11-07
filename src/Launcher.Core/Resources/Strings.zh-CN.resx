@@ -21,6 +21,9 @@
   <data name="Text_00d1a1e34df7" xml:space="preserve">
     <value>备份并切换</value>
   </data>
+  <data name="Text_00e2d1f0bf57" xml:space="preserve">
+    <value>从新角色创建界面隐藏</value>
+  </data>
   <data name="Text_00e933211986" xml:space="preserve">
     <value>模组未安装</value>
   </data>
@@ -98,6 +101,9 @@
   </data>
   <data name="Text_030d3f415374" xml:space="preserve">
     <value>备份包含的内容</value>
+  </data>
+  <data name="Text_03341d673f63" xml:space="preserve">
+    <value>{0}：此联赛系列未定义相应变体，该选项不可用。</value>
   </data>
   <data name="Text_035485f7a61d" xml:space="preserve">
     <value>已固定：</value>
@@ -191,6 +197,9 @@
   </data>
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>使用你当前 LocalExile 的游戏客户端，不占用额外空间。</value>
+  </data>
+  <data name="Text_07e9e8fac2d4" xml:space="preserve">
+    <value>在新角色创建界面显示</value>
   </data>
   <data name="Text_0858184ec92d" xml:space="preserve">
     <value>PID {0}</value>
@@ -507,6 +516,12 @@
   <data name="Text_12f9d7bebcb6" xml:space="preserve">
     <value>无法从 GitHub 读取拉取请求（请查看输出）。</value>
   </data>
+  <data name="Text_130a06ad07ab" xml:space="preserve">
+    <value>自定义为新联赛</value>
+  </data>
+  <data name="Text_130b793948fa" xml:space="preserve">
+    <value>缺少目标联赛 Void。请先恢复它，再创建独立联赛。</value>
+  </data>
   <data name="Text_130ec7311cce" xml:space="preserve">
     <value>环境已检查。</value>
   </data>
@@ -674,6 +689,9 @@
   </data>
   <data name="Text_199082434dfe" xml:space="preserve">
     <value>（随机名称）</value>
+  </data>
+  <data name="Text_19a2d233bcfd" xml:space="preserve">
+    <value>初始联赛与模式</value>
   </data>
   <data name="Text_19c29440bac8" xml:space="preserve">
     <value>所选源码副本中没有此模组的源码项目。</value>
@@ -999,6 +1017,9 @@
   <data name="Text_258cdfb8102c" xml:space="preserve">
     <value>正在加载 {0} 的可选值…</value>
   </data>
+  <data name="Text_25a194bf63fe" xml:space="preserve">
+    <value>更改以下联赛在角色创建界面的可用性：{0}？关联的模式选项及父卡片将保持一致，现有角色将保留。更改将在服务器重启后生效。</value>
+  </data>
   <data name="Text_25bf8e1a2393" xml:space="preserve">
     <value>本地</value>
   </data>
@@ -1046,6 +1067,9 @@
   </data>
   <data name="Text_26776921d6a2" xml:space="preserve">
     <value>引导式安装 → 使用独立的游戏设置…</value>
+  </data>
+  <data name="Text_268a710aa7e8" xml:space="preserve">
+    <value>此联赛名称已被使用。请选择新名称。</value>
   </data>
   <data name="Text_26a5b26009b2" xml:space="preserve">
     <value>当前源码副本</value>
@@ -1493,6 +1517,9 @@
   <data name="Text_35ed5fa746ff" xml:space="preserve">
     <value>深色模式颜色</value>
   </data>
+  <data name="Text_35f1c8c13fd5" xml:space="preserve">
+    <value>此源码副本未提供受支持的联赛创建方式。仍可查看现有联赛。</value>
+  </data>
   <data name="Text_360fe2a32742" xml:space="preserve">
     <value>时间窗口内的每秒调用次数</value>
   </data>
@@ -1552,6 +1579,9 @@
   </data>
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>安装向导会下载并构建 LocalExile 的最新版本，还可以迁移你的角色。</value>
+  </data>
+  <data name="Text_3950dabf770c" xml:space="preserve">
+    <value>现有角色的模式保持固定。请选择创建独立联赛以使用其他已定义的模式。</value>
   </data>
   <data name="Text_396bc690d5bd" xml:space="preserve">
     <value>Frida 已就绪。</value>
@@ -1935,6 +1965,9 @@
   <data name="Text_48ce04a2b2bc" xml:space="preserve">
     <value>“完整复制”包括角色、进度以及所有个人/公会仓库页。“从空白开始”仅创建新的登录账号。</value>
   </data>
+  <data name="Text_48fe4f837791" xml:space="preserve">
+    <value>联赛已创建，将在下次启动服务器后可用。</value>
+  </data>
   <data name="Text_49089f5749b2" xml:space="preserve">
     <value>复制已检查的报告</value>
   </data>
@@ -1964,6 +1997,9 @@
   </data>
   <data name="Text_49dad9577c46" xml:space="preserve">
     <value>无法检查模组：</value>
+  </data>
+  <data name="Text_49f37ddfa13f" xml:space="preserve">
+    <value>隐藏联赛仅影响角色创建。现有角色和仓库将保留。</value>
   </data>
   <data name="Text_49fc111261b6" xml:space="preserve">
     <value>LocalExile 更新</value>
@@ -2057,6 +2093,9 @@
   </data>
   <data name="Text_4d2fc504a139" xml:space="preserve">
     <value> · 需要设置客户端</value>
+  </data>
+  <data name="Text_4d628612e2b6" xml:space="preserve">
+    <value>放弃此草稿中的模块选择并使用所选配置吗？</value>
   </data>
   <data name="Text_4d68e465fa3f" xml:space="preserve">
     <value>此服务器不支持覆盖联盟模块选择。请更新 LocalExile 后再编辑。</value>
@@ -2160,6 +2199,9 @@
   <data name="Text_514d7286b5ae" xml:space="preserve">
     <value>{0} · 检查于 {1}</value>
   </data>
+  <data name="Text_514fd120949c" xml:space="preserve">
+    <value>新联赛草稿——尚未保存任何内容。</value>
+  </data>
   <data name="Text_515509f0e334" xml:space="preserve">
     <value>{0:0} MB</value>
   </data>
@@ -2195,6 +2237,12 @@
   </data>
   <data name="Text_526ba7a26daf" xml:space="preserve">
     <value>请等待当前操作完成后再更换源码副本。</value>
+  </data>
+  <data name="Text_526e0087cc3f" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="Text_52797c44d495" xml:space="preserve">
+    <value>不可用的模块（{0}）</value>
   </data>
   <data name="Text_52c821f5742b" xml:space="preserve">
     <value>{0} 没有 mod.json；未安装任何内容</value>
@@ -2383,6 +2431,9 @@
   </data>
   <data name="Text_5a681a15a3d6" xml:space="preserve">
     <value>设置账号密码</value>
+  </data>
+  <data name="Text_5a7b893e6881" xml:space="preserve">
+    <value>联赛卡片的关联存在循环。</value>
   </data>
   <data name="Text_5aeae0f3a80d" xml:space="preserve">
     <value>.NET 计数器：</value>
@@ -2681,6 +2732,9 @@
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>所有连接合计的每秒服务器耗时；等待（队列、门控、锁）按其等待时间计入</value>
   </data>
+  <data name="Text_65cbeb090b74" xml:space="preserve">
+    <value>初始联赛</value>
+  </data>
   <data name="Text_6662850b5518" xml:space="preserve">
     <value>所选的存档数据库已更改。请重新加载账号，并再次确认此操作。</value>
   </data>
@@ -2761,6 +2815,9 @@
   </data>
   <data name="Text_686046d08c9f" xml:space="preserve">
     <value>监视进程正在构建/重启；请在 Gateway 输出中查看错误</value>
+  </data>
+  <data name="Text_68838bcd7761" xml:space="preserve">
+    <value>请选择现有联赛配置及其模式。新联赛拥有独立的角色和仓库，不会迁移或重命名现有内容。</value>
   </data>
   <data name="Text_688ed737c588" xml:space="preserve">
     <value>正在启动服务</value>
@@ -3179,6 +3236,9 @@
   <data name="Text_796489077045" xml:space="preserve">
     <value>滚动条</value>
   </data>
+  <data name="Text_7968e299c0d9" xml:space="preserve">
+    <value>自定义联赛相互独立：其父联赛以及专家模式死亡后的目标联赛均为 Void。奖励无法通过联赛转移进入 Standard。创建前必须关闭游戏并停止服务。</value>
+  </data>
   <data name="Text_796ab9431174" xml:space="preserve">
     <value>重新检查</value>
   </data>
@@ -3392,6 +3452,9 @@
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! 没有 {0} 建议：{1}</value>
   </data>
+  <data name="Text_827f97b449fa" xml:space="preserve">
+    <value>此联赛的父联赛链缺失或存在循环。请先恢复其定义再编辑。</value>
+  </data>
   <data name="Text_82855c11ae69" xml:space="preserve">
     <value>沙色</value>
   </data>
@@ -3433,6 +3496,9 @@
   </data>
   <data name="Text_83cfb8ea3107" xml:space="preserve">
     <value>从源码构建</value>
+  </data>
+  <data name="Text_83e5d63b7b18" xml:space="preserve">
+    <value>创建模式变体</value>
   </data>
   <data name="Text_83f9b9c05a55" xml:space="preserve">
     <value>提高文字对比度</value>
@@ -3545,6 +3611,9 @@
   <data name="Text_88d371c5b388" xml:space="preserve">
     <value>暂时无法更新 LocalExile。“开始游戏”会启动你现有的版本。</value>
   </data>
+  <data name="Text_88e65a6c7315" xml:space="preserve">
+    <value>请先保存或放弃当前草稿，再更改联赛可见性。</value>
+  </data>
   <data name="Text_88fccfb10a8d" xml:space="preserve">
     <value>正在运行 {0} …</value>
   </data>
@@ -3553,6 +3622,9 @@
   </data>
   <data name="Text_8963e750e358" xml:space="preserve">
     <value>正在读取…</value>
+  </data>
+  <data name="Text_896a0650d1eb" xml:space="preserve">
+    <value>使用模式 {1} 创建 {0} 吗？这将是一个以 Void 为目标的独立联赛，现有联赛和存档将保留。</value>
   </data>
   <data name="Text_897b35f13239" xml:space="preserve">
     <value>{0}：从 {1} 到 {2}</value>
@@ -3776,6 +3848,9 @@
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>删除所选物品（Delete 键）；按住 Ctrl 或 Shift 可多选</value>
   </data>
+  <data name="Text_920e9e98bd8c" xml:space="preserve">
+    <value>选择模式以管理其模块和可用性。每个模式拥有独立的角色和仓库。</value>
+  </data>
   <data name="Text_923f66176454" xml:space="preserve">
     <value>正在下载 {0} … {1:N0} KB</value>
   </data>
@@ -3815,6 +3890,9 @@
   </data>
   <data name="Text_93638ea9e0b0" xml:space="preserve">
     <value>灰度</value>
+  </data>
+  <data name="Text_9373ec518492" xml:space="preserve">
+    <value>新联赛名称</value>
   </data>
   <data name="Text_9381b171923f" xml:space="preserve">
     <value>此修订版本没有受支持的模组宿主。较早的 LocalExile 修订版本仍可正常启动。</value>
@@ -3900,6 +3978,9 @@
   </data>
   <data name="Text_96696ebb5f8d" xml:space="preserve">
     <value>复制内容</value>
+  </data>
+  <data name="Text_966e3d979990" xml:space="preserve">
+    <value>请输入 3–48 个英文字母、数字、空格、下划线或连字符，并以字母开头。</value>
   </data>
   <data name="Text_96850b2f4bd2" xml:space="preserve">
     <value>决斗者</value>
@@ -4073,6 +4154,9 @@
   <data name="Text_9bad10eb9ddf" xml:space="preserve">
     <value>umu-launcher 通过 Proton 运行游戏</value>
   </data>
+  <data name="Text_9bb353315acb" xml:space="preserve">
+    <value>所选模块符合已声明的依赖关系，并通过现有配置检查。</value>
+  </data>
   <data name="Text_9bc57fc48f3b" xml:space="preserve">
     <value>搜索词缀</value>
   </data>
@@ -4129,6 +4213,9 @@
   </data>
   <data name="Text_9d19ac7b2039" xml:space="preserve">
     <value>打开日志文件夹</value>
+  </data>
+  <data name="Text_9d312d6843db" xml:space="preserve">
+    <value>此模式未定义</value>
   </data>
   <data name="Text_9d39a3628a49" xml:space="preserve">
     <value>重试操作</value>
@@ -4195,6 +4282,9 @@
   </data>
   <data name="Text_9fa77e063410" xml:space="preserve">
     <value>版本 {0} 已发布；当前为 {1}。更新期间，服务器和游戏会继续运行。</value>
+  </data>
+  <data name="Text_9fbb51827afb" xml:space="preserve">
+    <value>保存 {0} 的模块选择吗？更改将在服务器重启后生效，现有角色和其他联赛将保留。</value>
   </data>
   <data name="Text_9fd728c66c9a" xml:space="preserve">
     <value>添加</value>
@@ -4367,6 +4457,9 @@
   <data name="Text_a540e34f130b" xml:space="preserve">
     <value>区域：{0}（{1}）</value>
   </data>
+  <data name="Text_a549da446e61" xml:space="preserve">
+    <value>创建联赛</value>
+  </data>
   <data name="Text_a58b335cdd9f" xml:space="preserve">
     <value>安装数据提取所需的依赖项</value>
   </data>
@@ -4505,6 +4598,9 @@
   <data name="Text_aa1bf9baa865" xml:space="preserve">
     <value>无法选择源码副本：</value>
   </data>
+  <data name="Text_aa3410e05ed5" xml:space="preserve">
+    <value>无法更改此联赛在角色创建界面的可见性。</value>
+  </data>
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>服务器未运行</value>
   </data>
@@ -4568,6 +4664,9 @@
   <data name="Text_ad050d3449ef" xml:space="preserve">
     <value>已跟踪文件有修改</value>
   </data>
+  <data name="Text_ad2479c9496b" xml:space="preserve">
+    <value>更改可用性前必须关闭游戏并停止服务，更改将在下次启动服务器后生效。</value>
+  </data>
   <data name="Text_ad3c7c6418d1" xml:space="preserve">
     <value>物品制作器暂不支持 Linux。</value>
   </data>
@@ -4624,6 +4723,9 @@
   </data>
   <data name="Text_af20391b2b63" xml:space="preserve">
     <value>游戏正在运行：“开始游戏”会将其关闭并重新启动；服务器保持运行。</value>
+  </data>
+  <data name="Text_af3356b2f35a" xml:space="preserve">
+    <value>可用于创建新角色</value>
   </data>
   <data name="Text_af86ecd2ae72" xml:space="preserve">
     <value>已在账号 {2} 中创建 {0}（{1}）。</value>
@@ -4757,6 +4859,9 @@
   <data name="Text_b4bc18631d5c" xml:space="preserve">
     <value>联盟选择已保存。准备应用时请重启服务器。</value>
   </data>
+  <data name="Text_b4fe28945512" xml:space="preserve">
+    <value>联赛可见性已保存，将在下次启动服务器后生效。</value>
+  </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>滚动到每一条新行</value>
   </data>
@@ -4765,6 +4870,9 @@
   </data>
   <data name="Text_b5c120b316c2" xml:space="preserve">
     <value>已保存</value>
+  </data>
+  <data name="Text_b61789ae5217" xml:space="preserve">
+    <value>请至少保留一个可供新角色选择的可玩联赛卡片。</value>
   </data>
   <data name="Text_b61d4817d0f1" xml:space="preserve">
     <value>按照 Agents/GettingStarted.md 第 4-5 步准备 Game.patched.exe</value>
@@ -4907,6 +5015,12 @@
   <data name="Text_baaf468928e9" xml:space="preserve">
     <value>检查服务器端口</value>
   </data>
+  <data name="Text_bac82328e0cd" xml:space="preserve">
+    <value>此联赛和模式未定义这一模块组合。未知组合已被阻止。</value>
+  </data>
+  <data name="Text_bae1e8710ff4" xml:space="preserve">
+    <value>请保持必需的玩法模块组启用。这些模块未声明可以单独禁用。</value>
+  </data>
   <data name="Text_baf5d82057e7" xml:space="preserve">
     <value>兰花紫</value>
   </data>
@@ -5041,6 +5155,9 @@
   </data>
   <data name="Text_c11c363d0402" xml:space="preserve">
     <value>发行版会覆盖存有你自己数据的 {0}；未做任何更改</value>
+  </data>
+  <data name="Text_c11f5de55114" xml:space="preserve">
+    <value>仅允许此联赛和模式中已定义的组合。专用玩法模块组必须保持完整；兼容性未知的组合会被阻止。</value>
   </data>
   <data name="Text_c12805c5fe6e" xml:space="preserve">
     <value>品质：+{0}%</value>
@@ -5261,6 +5378,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c9665c96a867" xml:space="preserve">
     <value>青柠</value>
   </data>
+  <data name="Text_c9aea31b5411" xml:space="preserve">
+    <value>此联赛包含自定义代码，或没有可复用的源码模板，无法安全复制。</value>
+  </data>
   <data name="Text_c9b2c9b72ddd" xml:space="preserve">
     <value>关闭窗口时要执行什么操作？</value>
   </data>
@@ -5383,6 +5503,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ce8272ce39a9" xml:space="preserve">
     <value>无法读取发行版：{0}</value>
   </data>
+  <data name="Text_cee432038152" xml:space="preserve">
+    <value>已结束或不可玩的联赛定义为只读。</value>
+  </data>
   <data name="Text_cef20f906175" xml:space="preserve">
     <value>{0} 行</value>
   </data>
@@ -5490,6 +5613,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>联盟设置</value>
+  </data>
+  <data name="Text_d43f97686636" xml:space="preserve">
+    <value>所选模式：{0}</value>
   </data>
   <data name="Text_d452583a74d0" xml:space="preserve">
     <value>按钮</value>
@@ -5806,6 +5932,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e020e3c67bd0" xml:space="preserve">
     <value>发布版</value>
   </data>
+  <data name="Text_e0283282bcfd" xml:space="preserve">
+    <value>请输入 1–2000 个字符的描述。</value>
+  </data>
   <data name="Text_e0a8b24caf7e" xml:space="preserve">
     <value>总督军</value>
   </data>
@@ -5894,6 +6023,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e2d0a54968ea" xml:space="preserve">
     <value>删除</value>
   </data>
+  <data name="Text_e2d7e028d41a" xml:space="preserve">
+    <value>新建联赛</value>
+  </data>
   <data name="Text_e2db0b44df99" xml:space="preserve">
     <value>房间预设锚点；实际怪物及其位置可能不同。</value>
   </data>
@@ -5968,6 +6100,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e62daa01ba01" xml:space="preserve">
     <value>选择并检查一个工作区，以查看其备份。</value>
+  </data>
+  <data name="Text_e64333c8348f" xml:space="preserve">
+    <value>可见的模式选项需要其父卡片。</value>
   </data>
   <data name="Text_e64a3e6ff925" xml:space="preserve">
     <value>区域布局采集</value>
@@ -6196,6 +6331,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eddcb59d5cb7" xml:space="preserve">
     <value>仅限在此创建且不是当前使用的配置文件。</value>
+  </data>
+  <data name="Text_ede76ceab6f1" xml:space="preserve">
+    <value>游戏模式</value>
   </data>
   <data name="Text_ee21b15cbfce" xml:space="preserve">
     <value>正在更新 {0}…</value>
@@ -6629,6 +6767,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fcd4fe1982a4" xml:space="preserve">
     <value>在此源码副本的 Tools/ooz 目录中执行 npm ci</value>
+  </data>
+  <data name="Text_fd0559e88480" xml:space="preserve">
+    <value>所选模块存在循环依赖。</value>
   </data>
   <data name="Text_fd249743c184" xml:space="preserve">
     <value>自你的版本以来，LocalExile 有 {0} 项新更改。</value>

@@ -3,24 +3,33 @@ using System.Text.Json.Nodes;
 
 namespace Launcher.Core;
 
-public sealed record ContentEnvironment(string Modules, string Leagues, string Choices, bool CanChoose, bool CanEditSettings = false);
+public sealed record ContentEnvironment(string Modules, string Leagues, string Choices, bool CanChoose, bool CanEditSettings = false, bool CanCreate = false);
 public sealed record GameSystem(string Id, string Path, string Name, string Description, string[] Depends, string Folder)
 {
     public string SettingsFile => System.IO.Path.Combine(Folder, "settings.json");
     public override string ToString() => Name;
 }
 public sealed record GameLeague(string Name, string Folder, string[] BaseSystems, string[] Systems, string Description, bool Creatable, bool Ended,
-    bool Hardcore = false, bool Ssf = false, string Form = "", string Parent = "", string EntryOf = "", string EntryKind = "")
+    bool Hardcore = false, bool Ssf = false, string Form = "", string Parent = "", string EntryOf = "", string EntryKind = "",
+    string Base = "", string DataSet = "", bool Custom = false, string Template = "")
 {
     public string SettingsFile => Path.Combine(Folder, "settings.json");
     public override string ToString() => Name;
 }
+public sealed record GameLeagueFamily(string Name, GameLeague[] Variants)
+{
+    public GameLeague Primary => Variants.FirstOrDefault(l => l.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)) ?? Variants[0];
+    public override string ToString() => Name;
+}
 
 /// <summary>Read-only public manifests. No server assemblies are loaded. User overrides are planned against the reviewed file.</summary>
-public sealed class GameSystems
+public sealed partial class GameSystems
 {
     public IReadOnlyList<GameSystem> Systems { get; }
     public IReadOnlyList<GameLeague> Leagues { get; }
+    public IReadOnlyList<GameLeagueFamily> Families => Leagues.GroupBy(l => (l.Custom ? "custom/" + l.Name : "family/" + SourceFamilyName(l)), StringComparer.OrdinalIgnoreCase)
+        .Select(g => new GameLeagueFamily(g.First().Custom ? g.First().Name : SourceFamilyName(g.First()), g.ToArray()))
+        .OrderBy(f => f.Name == "Standard" ? "" : f.Name).ToArray();
     public JsonObject Choices { get; }
     public string ChoicesHash { get; }
     public ContentEnvironment Environment { get; }
@@ -58,6 +67,7 @@ public sealed class GameSystems
     public GameSystems(ContentEnvironment environment)
     {
         Environment = environment;
+        var reviewed = CaptureReview(environment);
         var systems = new List<GameSystem>();
         foreach (string file in Manifests(environment.Modules, "module.json"))
         {
@@ -87,21 +97,26 @@ public sealed class GameSystems
                 foreach (string added in Strings(changes["add"])) if (!selected.Any(p => Id(p).Equals(Id(added), StringComparison.OrdinalIgnoreCase))) selected.Add(Normal(added));
             }
             leagues.Add(new(name, folder, original, selected.ToArray(), Text(json, "description", "The " + name + " league."), json["creatable"]?.GetValue<bool>() ?? true, json["ended"]?.GetValue<bool>() ?? false,
-                json["hardcore"]?.GetValue<bool>() ?? false, json["ssf"]?.GetValue<bool>() ?? false, Text(json, "form"), Text(json, "parent"), Text(json, "entryOf"), Text(json, "entryKind")));
+                json["hardcore"]?.GetValue<bool>() ?? false, json["ssf"]?.GetValue<bool>() ?? false, Text(json, "form"), Text(json, "parent"), Text(json, "entryOf"), Text(json, "entryKind"),
+                Text(json, "base", name), Text(json, "dataSet"), File.Exists(Path.Combine(folder, ".waypoint-league.json")),
+                File.Exists(Path.Combine(folder, ".waypoint-league.json")) ? Text(Read(Path.Combine(folder, ".waypoint-league.json")), "template") : ""));
         }
         Leagues = leagues.OrderBy(l => l.Name == "Standard" ? "" : l.Name).ToArray();
+        if (!JsonNode.DeepEquals(reviewed, CaptureReview(environment))) throw new IOException(L.Text("Settings changed while reading. Refresh before editing."));
+        Review = reviewed;
     }
     public JsonObject Plan(GameLeague league, IEnumerable<string> selected)
     {
         if (!Environment.CanChoose) throw new InvalidOperationException(L.Text("This server does not expose supported league system overrides. Update LocalExile to edit these choices."));
         if (league.Systems.Any(p => !Systems.Any(s => s.Path.Equals(p, StringComparison.OrdinalIgnoreCase)))) throw new InvalidOperationException(L.Text("A selected module is missing."));
-        if (!league.Creatable || league.Ended) throw new InvalidOperationException(L.Text("This league is ended or does not allow new characters. Module choices are read-only."));
+        if (!Configurable(league)) throw new InvalidOperationException(L.Text("Ended or non-playable league definitions are read-only."));
         var paths = selected.Select(Normal).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
         var active = paths.Select(p => Systems.SingleOrDefault(s => s.Path.Equals(p, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(L.Text("A selected module is missing."))).ToArray();
         if (league.Creatable && !active.Any(s => s.Id.Equals("Game", StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException(L.Text("The Game module is required for a playable league."));
         foreach (var system in active)
             foreach (string dependency in system.Depends)
                 if (!active.Any(s => s.Id.Equals(dependency, StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException(L.Text("{0} needs {1}. Enable the required module first.", system.Name, dependency));
+        ValidateComposition(league, paths);
         var result = (JsonObject)Choices.DeepClone();
         string key = result.Select(p => p.Key).FirstOrDefault(k => k.Equals(league.Name, StringComparison.OrdinalIgnoreCase)) ?? league.Name;
         var change = result[key] as JsonObject ?? new JsonObject();

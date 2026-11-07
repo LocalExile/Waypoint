@@ -1,7 +1,7 @@
 # Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
-    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod','SaveContentSettings','SaveLeagueModules','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
+    [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod','SaveContentSettings','SaveLeagueModules','CreateLeague','SetLeagueVisibility','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
     [Parameter(Mandatory=$true)][string]$RepoRoot,
     [ValidateSet('All','Auth','Patch','Gateway')][string]$Service = 'All',
     [Parameter(Mandatory=$true)][string]$ResultPath,
@@ -100,7 +100,13 @@ function Get-ContentEnvironment {
     }
     $settingsHook = At 'src/GameServer.Gateway/Modding/ModSettings.cs'
     $canEditSettings = (-not $script:isRelease) -and (Test-Path -LiteralPath $settingsHook -PathType Leaf)
-    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=($canChoose -and -not $script:isRelease); CanEditSettings=$canEditSettings }
+    $hostHook = At 'src/GameServer.Gateway/Modding/ModHost.cs'
+    $canCreate = $false
+    if (-not $script:isRelease -and (Test-Path -LiteralPath $hostHook -PathType Leaf)) {
+        Assert-Physical $hostHook
+        if ((Get-Item -LiteralPath $hostHook).Length -lt 1048576) { $canCreate = [IO.File]::ReadAllText($hostHook).Contains('ReadLeagueImages') }
+    }
+    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=($canChoose -and -not $script:isRelease); CanEditSettings=$canEditSettings; CanCreate=$canCreate }
 }
 function Join-Relative([string]$path) { if ([IO.Path]::IsPathRooted($path)) { $path } else { At $path } }
 function Get-Inventory {
@@ -897,7 +903,7 @@ public static class NativeRuntime {
         'StopCapture' { Stop-Capture }
         'QueryAccounts' { $script:accountData = Invoke-AccountData @{ Action='List' } }
         'ManageAccount' { Manage-Account $snapshot }
-        { $_ -in @('SaveContentSettings','SaveLeagueModules') } { Save-ContentFile $snapshot }
+        { $_ -in @('SaveContentSettings','SaveLeagueModules','CreateLeague','SetLeagueVisibility') } { Save-ContentFile $snapshot }
         { $_ -in @('BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod') } { Invoke-ModOperation $snapshot }
         'Switch' { Switch-Source $snapshot }
         'FreshSaves' { Start-FreshSaves $snapshot }
