@@ -4,67 +4,149 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:l="clr-namespace:Waypoint">
     <DockPanel>
-        <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="20,10,14,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
-            <DockPanel>
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button x:Name="OpenModsButton" Content="{l:Loc 'Open mods folder'}" Click="OpenMods" IsEnabled="False" />
-                    <Button x:Name="CheckModsButton" Content="{l:Loc 'Check live status'}" Click="CheckMods" IsEnabled="False"
-                            ToolTipService.ShowOnDisabled="True" />
-                    <Button x:Name="BuildAllButton" Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Build all mods'}" Click="BuildAll" IsEnabled="False"
-                            Margin="0,0,0,6" />
-                </StackPanel>
-                <TextBlock x:Name="Status" Style="{StaticResource Shell.Secondary}" Margin="0,0,12,6" TextTrimming="CharacterEllipsis" />
-            </DockPanel>
-        </Border>
+        <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="150" Margin="20,8,20,12" />
 
-        <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="170" Margin="20,8,20,12" />
-
-        <Grid Margin="20,10,20,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
-            <DockPanel>
-                <TextBox x:Name="Search" DockPanel.Dock="Top" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search'}"
-                         md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SearchChanged" />
-                <Grid>
-                    <ListBox x:Name="ModList" SelectionChanged="SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="2,2">
-                                    <TextBlock Text="{Binding Id}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock Text="{Binding Summary}" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <TextBlock x:Name="Empty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="240" Margin="16" />
-                </Grid>
-            </DockPanel>
-            <GroupBox Grid.Column="2" Margin="0">
-                <GroupBox.Header>
-                    <TextBlock x:Name="Selected" Text="{l:Loc 'Mod details'}" />
-                </GroupBox.Header>
+        <TabControl x:Name="Pages" Margin="12,6,12,0">
+            <!-- The installed mods: on and off, details and settings. -->
+            <TabItem x:Name="InstalledPage" Header="{l:Loc 'Mods'}">
                 <DockPanel>
-                    <WrapPanel DockPanel.Dock="Top">
-                        <Button x:Name="ToggleButton" Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Enable mod'}" Click="Toggle" IsEnabled="False"
-                                ToolTipService.ShowOnDisabled="True" />
-                        <Button x:Name="BuildButton" Content="{l:Loc 'Build selected'}" Click="BuildSelected" IsEnabled="False" ToolTipService.ShowOnDisabled="True" />
-                        <Button x:Name="ReloadButton" Content="{l:Loc 'Reload mod'}" Click="Reload" IsEnabled="False" ToolTipService.ShowOnDisabled="True" />
-                        <Button x:Name="OpenButton" Content="{l:Loc 'Open folder'}" Click="OpenSelected" IsEnabled="False" />
-                        <Button Content="{l:Loc 'Gateway log'}" Click="GatewayLog" />
-                    </WrapPanel>
-                    <TextBlock x:Name="Hint" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,8" />
-                    <CheckBox x:Name="AutoBackup" DockPanel.Dock="Bottom" Content="{l:Loc 'Automatic backup before mod changes'}" Margin="0,6,0,0"
-                              Checked="BackupChanged" Unchecked="BackupChanged" />
-                    <TextBlock x:Name="CommandHint" DockPanel.Dock="Bottom" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,8,0,0" />
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <TextBlock x:Name="Details" TextWrapping="Wrap" />
-                    </ScrollViewer>
+                    <Border DockPanel.Dock="Top" Padding="8,10,2,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button x:Name="InstallFolderButton" Content="{l:Loc 'Install from folder…'}" Click="InstallFolder" IsEnabled="False"
+                                        ToolTipService.ShowOnDisabled="True" />
+                                <Button x:Name="OpenModsButton" Content="{l:Loc 'Open mods folder'}" Click="OpenMods" IsEnabled="False" />
+                                <Button x:Name="CheckModsButton" Content="{l:Loc 'Check live status'}" Click="CheckMods" IsEnabled="False"
+                                        ToolTipService.ShowOnDisabled="True" />
+                                <Button x:Name="BuildAllButton" Content="{l:Loc 'Build all mods'}" Click="BuildAll" IsEnabled="False" Margin="0,0,0,6" />
+                            </StackPanel>
+                            <TextBlock x:Name="Status" Style="{StaticResource Shell.Secondary}" Margin="0,0,12,6" TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+                    </Border>
+                    <Grid Margin="8,10,8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+                        <DockPanel>
+                            <TextBox x:Name="Search" DockPanel.Dock="Top" Margin="0,0,0,6" md:HintAssist.Hint="{l:Loc 'Search'}"
+                                     md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SearchChanged" />
+                            <Grid>
+                                <ListBox x:Name="ModList" SelectionChanged="SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         HorizontalContentAlignment="Stretch">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="2,3">
+                                                <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,1,8,0" IsChecked="{Binding Enabled, Mode=OneWay}"
+                                                          Click="ToggleFromList" ToolTip="{l:Loc 'On or off'}" />
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxHeight="34" TextTrimming="CharacterEllipsis"
+                                                               FontSize="12" Margin="0,1,0,0" />
+                                                    <TextBlock Text="{Binding Summary}" Style="{StaticResource Shell.Secondary}" FontSize="11.5"
+                                                               TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <TextBlock x:Name="Empty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center"
+                                           VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="260" Margin="16" />
+                            </Grid>
+                        </DockPanel>
+                        <GroupBox Grid.Column="2" Margin="0">
+                            <GroupBox.Header>
+                                <TextBlock x:Name="Selected" Text="{l:Loc 'Mod details'}" />
+                            </GroupBox.Header>
+                            <DockPanel>
+                                <WrapPanel DockPanel.Dock="Top">
+                                    <Button x:Name="ToggleButton" Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Enable mod'}" Click="Toggle"
+                                            IsEnabled="False" ToolTipService.ShowOnDisabled="True" />
+                                    <Button x:Name="BuildButton" Content="{l:Loc 'Build selected'}" Click="BuildSelected" IsEnabled="False" ToolTipService.ShowOnDisabled="True" />
+                                    <Button x:Name="ReloadButton" Content="{l:Loc 'Reload mod'}" Click="Reload" IsEnabled="False" ToolTipService.ShowOnDisabled="True" />
+                                    <Button x:Name="OpenButton" Content="{l:Loc 'Open folder'}" Click="OpenSelected" IsEnabled="False" />
+                                    <Button Content="{l:Loc 'Gateway log'}" Click="GatewayLog" />
+                                </WrapPanel>
+                                <TextBlock x:Name="Hint" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,8" />
+                                <CheckBox x:Name="AutoBackup" DockPanel.Dock="Bottom" Content="{l:Loc 'Automatic backup before mod changes'}" Margin="0,6,0,0"
+                                          Checked="BackupChanged" Unchecked="BackupChanged" />
+                                <TextBlock x:Name="CommandHint" DockPanel.Dock="Bottom" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,8,0,0" />
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <TextBlock x:Name="Details" TextWrapping="Wrap" />
+                                        <!-- The mod's settings, drawn from its settings.json. -->
+                                        <StackPanel x:Name="SettingsArea" Margin="0,14,0,0" Visibility="Collapsed">
+                                            <TextBlock Text="{l:Loc 'Settings'}" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                            <StackPanel x:Name="SettingsPanel" />
+                                            <WrapPanel Margin="0,8,0,0">
+                                                <Button x:Name="SaveSettingsButton" Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Save settings'}"
+                                                        Click="SaveSettings" ToolTipService.ShowOnDisabled="True" />
+                                                <Button x:Name="ResetSettingsButton" Content="{l:Loc 'Reset to defaults'}" Click="ResetSettings" />
+                                            </WrapPanel>
+                                            <TextBlock x:Name="SettingsHint" Style="{StaticResource Shell.Secondary}" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </DockPanel>
+                        </GroupBox>
+                    </Grid>
                 </DockPanel>
-            </GroupBox>
-        </Grid>
+            </TabItem>
+
+            <!-- A repository's mods: install, update. -->
+            <TabItem x:Name="BrowsePage" Header="{l:Loc 'Browse'}">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Padding="8,10,2,4" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+                        <StackPanel>
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                    <Button x:Name="RefreshButton" Content="{l:Loc 'Refresh'}" Click="RefreshBrowse" />
+                                    <Button Content="{l:Loc 'Open on GitHub'}" Click="OpenRepository" />
+                                    <Button x:Name="RemoveRepositoryButton" Content="{l:Loc 'Remove repository'}" Click="RemoveRepository" IsEnabled="False" />
+                                </StackPanel>
+                                <ComboBox x:Name="SourcePicker" MinWidth="260" HorizontalAlignment="Left" SelectionChanged="SourceChanged"
+                                          md:HintAssist.Hint="{l:Loc 'Repository'}" />
+                            </DockPanel>
+                            <DockPanel Margin="0,6,0,4">
+                                <Button DockPanel.Dock="Right" Content="{l:Loc 'Add repository'}" Click="AddRepository" />
+                                <TextBox x:Name="RepositoryUrl" md:HintAssist.Hint="{l:Loc 'Another mod repository: github.com/owner/name'}" Margin="0,0,8,0"
+                                         KeyDown="RepositoryUrlKey" />
+                            </DockPanel>
+                            <TextBlock x:Name="BrowseStatus" Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,2,0,6" />
+                        </StackPanel>
+                    </Border>
+                    <TextBox x:Name="BrowseSearch" DockPanel.Dock="Top" Margin="8,8,8,6" md:HintAssist.Hint="{l:Loc 'Search'}"
+                             md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="BrowseSearchChanged" />
+                    <Grid Margin="8,0,8,0">
+                        <ListBox x:Name="BrowseList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="4,6" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+                                        <DockPanel>
+                                            <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" MinWidth="120" Margin="12,0,0,0">
+                                                <Button Content="{Binding ActionText}" Click="InstallFromBrowse" Tag="{Binding}" IsEnabled="{Binding CanAct}" />
+                                                <TextBlock Text="{Binding VersionText}" Style="{StaticResource Shell.Secondary}" FontSize="11.5"
+                                                           HorizontalAlignment="Center" Margin="0,2,0,0" />
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" />
+                                                    <TextBlock Text="{Binding Byline}" Style="{StaticResource Shell.Secondary}" FontSize="12" Margin="8,2,0,0" />
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Listing.Description}" TextWrapping="Wrap" Margin="0,3,0,0" />
+                                                <TextBlock Text="{Binding Origin}" Style="{StaticResource Shell.Secondary}" FontSize="11.5" Margin="0,3,0,0" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBlock x:Name="BrowseEmpty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="320" Margin="16" />
+                    </Grid>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
     </DockPanel>
 </UserControl>

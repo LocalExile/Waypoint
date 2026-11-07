@@ -209,6 +209,82 @@ function Get-ModBackupMetadata($snapshot) {
     }
     return @{ Folder=$folder; Enabled=$environment.Enabled; Choices=$choices; Inventory=$inventory; RuntimeReport=$environment.RuntimeReport; CheckedUtc=$environment.CheckedUtc }
 }
+function Get-StagedModPath([string]$path, [switch]$File) {
+    # Only what Waypoint checked into its own downloads folder; never a path elsewhere on the disk.
+    Require ($path -and [IO.Path]::IsPathRooted($path)) 'The mod was not prepared by Waypoint.'
+    $downloads = [IO.Path]::GetFullPath((Join-Path (Get-WaypointData) 'mod-downloads')).TrimEnd('') + ''
+    $full = [IO.Path]::GetFullPath($path)
+    Require ($full.StartsWith($downloads, [StringComparison]::OrdinalIgnoreCase)) 'The mod was not prepared by Waypoint.'
+    Assert-Physical $full
+    if ($File) { Require (Test-Path -LiteralPath $full -PathType Leaf) 'The prepared mod file is missing.' }
+    else { Require (Test-Path -LiteralPath $full -PathType Container) 'The prepared mod folder is missing.' }
+    return $full
+}
+function Move-ModAside([string]$folder, [string]$target) {
+    # Never deleted: the previous copy of a mod moves to Mods/.replaced/, where the Gateway does not look.
+    if (-not (Test-Path -LiteralPath $folder)) { return }
+    Assert-Physical $folder
+    $aside = At ('Mods/.replaced/' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8) + '/' + $target + '/' + $ModId)
+    Assert-Physical $aside
+    New-Item -ItemType Directory -Path (Split-Path $aside) -Force | Out-Null
+    Move-Item -LiteralPath $folder -Destination $aside
+    Write-Host "The previous Mods/$target/$ModId is kept at $aside."
+}
+function Install-StagedMod($snapshot) {
+    Assert-ModId $ModId
+    Require ($ModTarget -in @('Binaries','Source')) 'Choose where the mod goes.'
+    Require (-not $script:isRelease -or $ModTarget -eq 'Binaries') 'A release install cannot build a mod from source. Install a release of this mod instead.'
+    $staged = Get-StagedModPath $ModStaged
+    Require ((Split-Path $staged -Leaf) -ceq $ModId) 'The prepared mod folder does not match its id.'
+    $hasProject = [bool]@(Get-ChildItem -LiteralPath $staged -Filter *.csproj -File).Count
+    if ($ModTarget -eq 'Source') {
+        Require $hasProject 'Only a project mod is installed as source.'
+        Require (Test-Sdk) 'Building this mod needs the .NET 10 SDK. Install it, or install a release of this mod instead.'
+        Require (Same-Path (Get-ModFolder) (At 'Mods/Binaries')) 'Source mods build into Mods/Binaries, but this profile selects another mod folder.'
+    } else {
+        Require ((Test-Path -LiteralPath (Join-Path $staged 'mod.json') -PathType Leaf) -or [bool]@(Get-ChildItem -LiteralPath $staged -Filter *.cs -File).Count) 'The prepared mod has no mod.json and no scripts.'
+    }
+    Backup-Saves $snapshot
+    $script:modBackedUp = $true
+    $root = if ($ModTarget -eq 'Source') { At 'Mods/Source' } else { Get-ModFolder }
+    Assert-Physical $root
+    New-Item -ItemType Directory -Path $root -Force | Out-Null
+    $destination = Join-Path $root $ModId
+    Set-Stage 'Installing mod' "$ModId into Mods/$ModTarget"
+    Move-ModAside $destination $ModTarget
+    # A release replaces a source install of the same mod, which live.ps1 would otherwise build over it.
+    if ($ModTarget -eq 'Binaries' -and -not $script:isRelease) { Move-ModAside (At "Mods/Source/$ModId") 'Source' }
+    # The launcher's record of what it built for this id no longer describes the new files.
+    if (-not $script:isRelease) { Write-ManagedMods @(Read-ManagedMods | Where-Object { $_.Id -cne $ModId }) }
+    Copy-Item -LiteralPath $staged -Destination $destination -Recurse
+    Remove-Item -LiteralPath $staged -Recurse -Force
+    Write-Host "Installed $ModId into Mods/$ModTarget."
+    if ($ModTarget -eq 'Source') {
+        $project = @(Get-ChildItem -LiteralPath $destination -Filter *.csproj -File)[0].FullName
+        return $project.Substring($script:root.Length).TrimStart('','/')
+    }
+    return ''
+}
+function Save-ModSettings($snapshot) {
+    Assert-ModId $ModId
+    $staged = Get-StagedModPath $ModStaged -File
+    Require ((Get-Item -LiteralPath $staged).Length -lt 262144) 'Mod settings exceed their size limit.'
+    $json = [IO.File]::ReadAllText($staged)
+    $parsed = $json | ConvertFrom-Json
+    Require ($parsed -is [Management.Automation.PSCustomObject]) 'Mod settings must be a JSON object.'
+    Backup-Saves $snapshot
+    Set-Stage 'Saving mod settings' $ModId
+    $folder = At 'data/mods'
+    Assert-Physical $folder
+    New-Item -ItemType Directory -Path $folder -Force | Out-Null
+    $path = Join-Path $folder "$ModId.json"
+    Assert-Physical $path
+    $temporary = Join-Path $folder ('waypoint-' + [guid]::NewGuid().ToString('N') + '.tmp')
+    [IO.File]::WriteAllText($temporary, $json, [Text.UTF8Encoding]::new($false))
+    Move-Item -LiteralPath $temporary -Destination $path -Force
+    Remove-Item -LiteralPath $staged -Force
+    Write-Host "Saved the settings of $ModId; a running Gateway reloads the mod."
+}
 function Invoke-ModOperation($snapshot) {
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
     $environment = Get-ModEnvironment $snapshot.Services
@@ -228,6 +304,12 @@ function Invoke-ModOperation($snapshot) {
         Set-Stage 'Restoring mod choices' 'Replacing saved enable/disable overrides only; no mod binaries or save restore.'
         Write-ModChoices $lines
         return
+    }
+    if ($Action -eq 'SaveModSettings') { Save-ModSettings $snapshot; return }
+    $installed = ''
+    if ($Action -eq 'InstallMod') {
+        $installed = Install-StagedMod $snapshot
+        if (-not $installed) { return }
     }
     if ($Action -in @('EnableMod','DisableMod','ReloadMod')) { $null = Get-ModBinaryFolder $ModId }
     if ($Action -eq 'ReloadMod') {
@@ -262,14 +344,15 @@ function Invoke-ModOperation($snapshot) {
     Require (Same-Path (Get-ModFolder) (At 'Mods/Binaries')) 'Source mods build into Mods/Binaries, but this profile selects another mod folder. Select the normal mod folder before using launcher builds; no files were copied between folders.'
     $running = @($snapshot.Services | Where-Object { $_.Name -ne 'Game' -and ($_.ProcessId -or $_.WatchProcessId) })
     if ($gatewayRunning) { Require ($gateway.Status -eq 'Ready') 'Wait for Gateway to finish starting/restarting before building mods.' }
-    if ($Action -eq 'BuildMod') {
-        Require ($ModProject -and -not [IO.Path]::IsPathRooted($ModProject)) 'Select a source mod project from this checkout.'
-        $project = [IO.Path]::GetFullPath((At $ModProject))
+    if ($Action -eq 'BuildMod' -or $installed) {
+        $projectPath = if ($installed) { $installed } else { $ModProject }
+        Require ($projectPath -and -not [IO.Path]::IsPathRooted($projectPath)) 'Select a source mod project from this checkout.'
+        $project = [IO.Path]::GetFullPath((At $projectPath))
         Require ($project.StartsWith([IO.Path]::GetFullPath((At 'Mods/Source')).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase) -and $project.EndsWith('.csproj', [StringComparison]::OrdinalIgnoreCase)) 'The mod project must be inside this checkout''s Mods/Source folder.'
         Assert-Physical $project
         Require (Test-Path -LiteralPath $project -PathType Leaf) 'The selected mod project is missing.'
-        Backup-Saves $snapshot
-        Set-Stage 'Building mod' $ModProject
+        if (-not $script:modBackedUp) { Backup-Saves $snapshot }
+        Set-Stage 'Building mod' $projectPath
         $arguments = @('build', $project, '--nologo', '-v', 'minimal')
         if ($running.Count) { $arguments += '--no-dependencies' }
         & dotnet @arguments

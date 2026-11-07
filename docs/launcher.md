@@ -576,6 +576,18 @@ The list comes from the mods' manifests under `Mods/Binaries` and `Mods/Source`.
 applies at its next start; with a client in a playable area, **Enable**, **Disable** and **Reload** act on the running
 Gateway through the client control bridge, and affect every character on it. Live status needs Python with Frida.
 
+**Mods** lists the installed mods (projects, built mods and script mods: loose `.cs` files in `Mods/Binaries/<id>/`)
+with the name, description, author and version from `mod.json`. The row's check box turns a mod on or off. A mod with a
+`settings.json` shows a form for the common setting types (on/off, numbers, choices, text); the values go to
+`data/mods/<id>.json`, which holds only what differs from the defaults, and a running Gateway reloads the mod. Other types
+are edited in the file. **Install from folder…** copies a built or script mod, or builds a project.
+
+**Browse** reads a repository's `mods.json` index (the official one is `LocalExile/LocalExile-Mods`; others are added
+by URL and get a trust warning) and its GitHub releases. **Install** and **Update** prefer a release asset
+`<id>-<version>.zip` from the tag `<id>-v<version>`, checked against its SHA-256; a mod without a release is
+downloaded as source and built, which needs the .NET 10 SDK and a source checkout, and asks first. A replaced mod is
+moved to `Mods/.replaced/<time>/`, never deleted. Downloads are staged in Waypoint's `mod-downloads` folder.
+
 ### Backups
 
 Automatic backups run before a Gateway start, a switch of the checkout, and an account or mod change. A backup is a

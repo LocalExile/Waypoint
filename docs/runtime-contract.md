@@ -233,8 +233,8 @@ runtime list. Older snapshots/branches remain valid. A source checkout has a mod
 2026-10-31) or in `src/GameServer.Gateway/` (before). Core reads JSONC manifests and native saved choices without
 loading assemblies. Source projects follow the documented Mods/Source/<Name>/<Name>.csproj convention.
 
-BuildMod, BuildMods, EnableMod, DisableMod, ReloadMod, QueryMods and RestoreModChoices use the same named mutation
-mutex and process-ownership/conflict checks. Source builds target only physical csproj paths inside Mods/Source,
+BuildMod, BuildMods, InstallMod, SaveModSettings, EnableMod, DisableMod, ReloadMod, QueryMods and RestoreModChoices use the same
+named mutation mutex and process-ownership/conflict checks. Source builds target only physical csproj paths inside Mods/Source,
 reuse dependencies beside running servers, and preserve compiler failures. Mod IDs are bounded single command
 tokens. A stopped Gateway permits atomic state-file replacement; a running Gateway requires native commands.
 The helper receives JSON lines over stdin and captured output, never starts a client and can be terminated on timeout
@@ -258,6 +258,13 @@ No recursive mod-folder deletion or third-party adoption exists. Unrecorded outp
 user-managed; an unchanged project path is not an attestation of third-party compatibility.
 Untracked Mods/Binaries files are treated as runtime data even on older revisions lacking the ignore rule; tracked
 edits anywhere and other untracked source still block activation. No repository ignore file is changed.
+
+InstallMod copies a folder staged by Core (only under Waypoint's `mod-downloads` folder) into `Mods/Binaries/<id>`
+(`-ModTarget Binaries`: a release or script mod) or `Mods/Source/<id>` (`Source`: a project, then built as BuildMod;
+refused on release installs and without the SDK). Under the mutex and after the optional backup, an existing copy, and
+`Mods/Source/<id>` when installing a binary, is moved to `Mods/.replaced/<stamp>/` and its managed-registry entry
+dropped. SaveModSettings atomically writes `data/mods/<id>.json` from validated values. Core reads `settings.json`
+and the user file itself; script mods are fingerprinted by their scripts' hashes.
 
 Interface language is a launcher-only optional settings field (`Language`: a tag of `L.Languages`, `en`, `ru` or `zh-CN`;
 Waypoint's own settings leave it empty until the player picks one, which follows the system's display language). It is never

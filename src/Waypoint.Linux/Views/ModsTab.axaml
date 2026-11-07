@@ -10,59 +10,135 @@
     </Style>
   </UserControl.Styles>
   <DockPanel>
-    <Border x:Name="Toolbar" DockPanel.Dock="Top" Padding="0,0,0,8" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
-      <DockPanel>
-        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top">
-          <Button x:Name="OpenModsButton" Click="OpenMods" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
-          <Button x:Name="CheckModsButton" Click="CheckMods" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
-          <Button x:Name="BuildAllButton" Classes="accent" Click="BuildAll" IsEnabled="False" />
-        </StackPanel>
-        <TextBlock x:Name="Status" Classes="note" Margin="0,0,12,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
-      </DockPanel>
-    </Border>
+    <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="150" Margin="0,8,0,0" />
 
-    <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="170" Margin="0,8,0,0" />
-
-    <Grid Margin="0,10,0,0" ColumnDefinitions="2*,12,3*">
-      <DockPanel>
-        <TextBox x:Name="Search" DockPanel.Dock="Top" Margin="0,0,0,6" TextChanged="SearchChanged">
-          <TextBox.InnerLeftContent>
-            <icons:MaterialIcon Kind="Magnify" Width="16" Height="16" Margin="8,0,0,0" Foreground="{DynamicResource Shell.TextSecondary}" />
-          </TextBox.InnerLeftContent>
-        </TextBox>
-        <Grid>
-          <ListBox x:Name="ModList" SelectionChanged="SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Margin="2">
-                  <TextBlock Text="{Binding Id}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                  <TextBlock Text="{Binding Summary}" Classes="note" FontSize="11.5" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-                </StackPanel>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-          <TextBlock x:Name="Empty" Classes="note" IsHitTestVisible="False" TextAlignment="Center"
-                     VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="240" Margin="16" />
-        </Grid>
-      </DockPanel>
-      <Border Grid.Column="2" Classes="card">
+    <TabControl x:Name="Pages">
+      <!-- The installed mods: on and off, details and settings. -->
+      <TabItem x:Name="InstalledPage">
         <DockPanel>
-          <TextBlock x:Name="Selected" Classes="heading" DockPanel.Dock="Top" Margin="0,0,0,10" TextTrimming="CharacterEllipsis" />
-          <WrapPanel DockPanel.Dock="Top" ItemSpacing="6" LineSpacing="6" Margin="0,0,0,6">
-            <Button x:Name="ToggleButton" Classes="accent" Click="Toggle" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
-            <Button x:Name="BuildButton" Click="BuildSelected" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
-            <Button x:Name="ReloadButton" Click="Reload" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
-            <Button x:Name="OpenButton" Click="OpenSelected" IsEnabled="False" />
-            <Button x:Name="GatewayLogButton" Click="GatewayLog" />
-          </WrapPanel>
-          <TextBlock x:Name="Hint" DockPanel.Dock="Top" Classes="note" FontSize="11.5" Margin="0,0,0,8" />
-          <CheckBox x:Name="AutoBackup" DockPanel.Dock="Bottom" Margin="0,6,0,0" IsCheckedChanged="BackupChanged" />
-          <TextBlock x:Name="CommandHint" DockPanel.Dock="Bottom" Classes="note" FontSize="11.5" Margin="0,8,0,0" />
-          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <TextBlock x:Name="Details" TextWrapping="Wrap" />
-          </ScrollViewer>
+          <Border DockPanel.Dock="Top" Padding="0,0,0,8" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+            <DockPanel>
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top">
+                <Button x:Name="InstallFolderButton" Click="InstallFolder" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
+                <Button x:Name="OpenModsButton" Click="OpenMods" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
+                <Button x:Name="CheckModsButton" Click="CheckMods" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
+                <Button x:Name="BuildAllButton" Click="BuildAll" IsEnabled="False" />
+              </StackPanel>
+              <TextBlock x:Name="Status" Classes="note" Margin="0,0,12,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+            </DockPanel>
+          </Border>
+          <Grid Margin="0,10,0,0" ColumnDefinitions="2*,12,3*">
+            <DockPanel>
+              <TextBox x:Name="Search" DockPanel.Dock="Top" Margin="0,0,0,6" TextChanged="SearchChanged">
+                <TextBox.InnerLeftContent>
+                  <icons:MaterialIcon Kind="Magnify" Width="16" Height="16" Margin="8,0,0,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+                </TextBox.InnerLeftContent>
+              </TextBox>
+              <Grid>
+                <ListBox x:Name="ModList" SelectionChanged="SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate>
+                      <DockPanel Margin="2">
+                        <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,0,8,0" IsChecked="{Binding Enabled, Mode=OneWay}" Click="ToggleFromList" />
+                        <StackPanel>
+                          <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxHeight="34" TextTrimming="CharacterEllipsis" FontSize="12" Margin="0,1,0,0" />
+                          <TextBlock Text="{Binding Summary}" Classes="note" FontSize="11.5" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                        </StackPanel>
+                      </DockPanel>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="Empty" Classes="note" IsHitTestVisible="False" TextAlignment="Center"
+                           VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="260" Margin="16" />
+              </Grid>
+            </DockPanel>
+            <Border Grid.Column="2" Classes="card">
+              <DockPanel>
+                <TextBlock x:Name="Selected" Classes="heading" DockPanel.Dock="Top" Margin="0,0,0,10" TextTrimming="CharacterEllipsis" />
+                <WrapPanel DockPanel.Dock="Top" ItemSpacing="6" LineSpacing="6" Margin="0,0,0,6">
+                  <Button x:Name="ToggleButton" Classes="accent" Click="Toggle" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
+                  <Button x:Name="BuildButton" Click="BuildSelected" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
+                  <Button x:Name="ReloadButton" Click="Reload" IsEnabled="False" ToolTip.ShowOnDisabled="True" />
+                  <Button x:Name="OpenButton" Click="OpenSelected" IsEnabled="False" />
+                  <Button x:Name="GatewayLogButton" Click="GatewayLog" />
+                </WrapPanel>
+                <TextBlock x:Name="Hint" DockPanel.Dock="Top" Classes="note" FontSize="11.5" Margin="0,0,0,8" />
+                <CheckBox x:Name="AutoBackup" DockPanel.Dock="Bottom" Margin="0,6,0,0" IsCheckedChanged="BackupChanged" />
+                <TextBlock x:Name="CommandHint" DockPanel.Dock="Bottom" Classes="note" FontSize="11.5" Margin="0,8,0,0" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                  <StackPanel>
+                    <TextBlock x:Name="Details" TextWrapping="Wrap" />
+                    <!-- The mod's settings, drawn from its settings.json. -->
+                    <StackPanel x:Name="SettingsArea" Margin="0,14,0,0" IsVisible="False">
+                      <TextBlock x:Name="SettingsHeading" FontWeight="SemiBold" Margin="0,0,0,6" />
+                      <StackPanel x:Name="SettingsPanel" />
+                      <WrapPanel ItemSpacing="6" Margin="0,8,0,0">
+                        <Button x:Name="SaveSettingsButton" Classes="accent" Click="SaveSettings" />
+                        <Button x:Name="ResetSettingsButton" Click="ResetSettings" />
+                      </WrapPanel>
+                      <TextBlock x:Name="SettingsHint" Classes="note" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0" />
+                    </StackPanel>
+                  </StackPanel>
+                </ScrollViewer>
+              </DockPanel>
+            </Border>
+          </Grid>
         </DockPanel>
-      </Border>
-    </Grid>
+      </TabItem>
+
+      <!-- A repository's mods: install, update. -->
+      <TabItem x:Name="BrowsePage">
+        <DockPanel>
+          <Border DockPanel.Dock="Top" Padding="0,0,0,8" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,0,1">
+            <StackPanel Spacing="6">
+              <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6">
+                  <Button x:Name="RefreshButton" Click="RefreshBrowse" />
+                  <Button x:Name="RepositoryPageButton" Click="OpenRepository" />
+                  <Button x:Name="RemoveRepositoryButton" Click="RemoveRepository" IsEnabled="False" />
+                </StackPanel>
+                <ComboBox x:Name="SourcePicker" MinWidth="260" SelectionChanged="SourceChanged" />
+              </DockPanel>
+              <DockPanel>
+                <Button DockPanel.Dock="Right" x:Name="AddRepositoryButton" Click="AddRepository" />
+                <TextBox x:Name="RepositoryUrl" Margin="0,0,8,0" KeyDown="RepositoryUrlKey" />
+              </DockPanel>
+              <TextBlock x:Name="BrowseStatus" Classes="note" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+          <TextBox x:Name="BrowseSearch" DockPanel.Dock="Top" Margin="0,8,0,6" TextChanged="BrowseSearchChanged">
+            <TextBox.InnerLeftContent>
+              <icons:MaterialIcon Kind="Magnify" Width="16" Height="16" Margin="8,0,0,0" Foreground="{DynamicResource Shell.TextSecondary}" />
+            </TextBox.InnerLeftContent>
+          </TextBox>
+          <Grid>
+            <ListBox x:Name="BrowseList" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <DockPanel Margin="2,4">
+                    <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" MinWidth="120" Margin="12,0,0,0" Spacing="2">
+                      <Button Content="{Binding ActionText}" Click="InstallFromBrowse" Tag="{Binding}" IsEnabled="{Binding CanAct}" HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Center" />
+                      <TextBlock Text="{Binding VersionText}" Classes="note" FontSize="11.5" HorizontalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel>
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="{Binding Byline}" Classes="note" FontSize="12" VerticalAlignment="Bottom" />
+                      </StackPanel>
+                      <TextBlock Text="{Binding Listing.Description}" TextWrapping="Wrap" Margin="0,3,0,0" />
+                      <TextBlock Text="{Binding Origin}" Classes="note" FontSize="11.5" Margin="0,3,0,0" />
+                    </StackPanel>
+                  </DockPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock x:Name="BrowseEmpty" Classes="note" IsHitTestVisible="False" TextAlignment="Center" TextWrapping="Wrap"
+                       VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="320" Margin="16" />
+          </Grid>
+        </DockPanel>
+      </TabItem>
+    </TabControl>
   </DockPanel>
 </UserControl>

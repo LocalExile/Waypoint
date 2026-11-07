@@ -17,7 +17,7 @@ public sealed class RuntimeClient
         Action<OperationProgress>? progress = null, AccountRequest? account = null,
         string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null, CancellationToken stop = default, string? saveSource = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "InstallMod", "SaveModSettings", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));
@@ -50,6 +50,8 @@ public sealed class RuntimeClient
             if (!string.IsNullOrEmpty(mod.Id) && !ModCatalog.ValidId(mod.Id)) throw new ArgumentException("Unsupported mod ID.", nameof(mod));
             if (mod.Id.Length > 0) { start.ArgumentList.Add("-ModId"); start.ArgumentList.Add(mod.Id); }
             if (mod.Project.Length > 0) { start.ArgumentList.Add("-ModProject"); start.ArgumentList.Add(mod.Project); }
+            if (mod.Staged.Length > 0) { start.ArgumentList.Add("-ModStaged"); start.ArgumentList.Add(mod.Staged); }
+            if (mod.Target is "Binaries" or "Source") { start.ArgumentList.Add("-ModTarget"); start.ArgumentList.Add(mod.Target); }
         }
         // Never inherit a developer shell's Game_* overrides into an unrelated checkout.
         foreach (string key in start.Environment.Keys.Where(k => k.StartsWith("Game_", StringComparison.OrdinalIgnoreCase)).ToArray())
