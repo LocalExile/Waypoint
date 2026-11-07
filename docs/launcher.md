@@ -566,8 +566,9 @@ PATH) and wants a 3.9 or newer, so the Microsoft Store's python shortcut does no
 
 Frida is optional for ordinary play. On Windows, direct console commands and game status, Give item, walk maps, live mod
 controls and game-data reload offer **Install Frida** when their Python cannot load it. Declining leaves the requested action
-unstarted; Console keeps the unsent text. Installation uses the checkout's `.venv`, shows output in the requesting tool and
-Logs, and verifies that Frida loads before continuing. It shares the checkout lock with other operations and changes no global
+unstarted; Console keeps the unsent text. A queued mod build ends when preparation is declined or fails; only a busy
+workspace is retried, so **Not now** does not reopen the prompt. Installation uses the checkout's `.venv`, shows output in
+the requesting tool and Logs, and verifies that Frida loads before continuing. It shares the checkout lock with other operations and changes no global
 Python packages. Linux explains that its game-control integrations are unavailable and does not offer installation for them.
 
 ### Mods
@@ -576,7 +577,10 @@ Laid out like an addon manager, in two tables. **My Mods** lists the installed m
 `Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their version,
 the latest one a repository offers, and the author. A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
-applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). **Update** and
+applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
+Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs
+also show the notice because they have no source to verify. The checkbox represents the saved choice, not proof of a live
+load. A switch holds the workspace lock and is refused while another operation holds it. **Update** and
 **Update all** appear when a repository has a newer version. The ⋮ menu holds the rarer tools: Install from folder…,
 Build all mods, Check live status (Python with Frida), Gateway log, the operation log, and the backup choice.
 
@@ -584,7 +588,8 @@ Build all mods, Check live status (Python with Frida), Gateway log, the operatio
 from its ⋮ menu by URL and get a trust warning) and its GitHub releases. **Install** and **Update** prefer a release asset
 `<id>-<version>.zip` from the tag `<id>-v<version>`, checked against its SHA-256; a mod without a release is
 installed as source (a source checkout only, after asking) and built when the player presses **Build** in My Mods,
-which needs the .NET 10 SDK. Downloads are staged in Waypoint's `mod-downloads` folder.
+which needs the .NET 10 SDK. Downloads are staged in Waypoint's `mod-downloads` folder. Install and settings-save paths
+are checked using the platform's separators and path casing; sibling directories and parent traversal are refused.
 
 Each install, build or uninstall shows on its mod's row in place of the button: a box that fills with the download,
 then "Installing…", "Building…" or "Uninstalling…"; then the row shows the mod's state again (Up to date, as text, once it is built). Several can start at once (Update all
@@ -593,10 +598,59 @@ one at a time. Installs, uninstalls and builds waiting together run as one opera
 in parallel. A failed one opens the operation log.
 
 Clicking a row opens the mod's page: its README (Overview, drawn as GitHub-flavoured Markdown with Markdig; images
-show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its settings form for the common `settings.json` types
-(on/off, numbers, choices, text; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
+show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its shared settings editor
+(all declared types below; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
 and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
 actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
+
+An existing LocalExile release does not declare compatibility with the newer downloadable mods. Waypoint leaves its
+existing saved mod switches available (an older server applies them at its next start), but disables install, update,
+uninstall and settings editing on release installs. Use a current source checkout for these tools. This is checked in the
+adapter as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
+for read-only inspection in Advanced mode.
+
+### Modules and Leagues
+
+**Modules** lists gameplay systems from the selected checkout's `Modules/`, without loading server assemblies. Select one
+to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
+settings are shared by every league using that module, rather than being separate per league.
+
+**Leagues** lists existing leagues. Select one to change its module choices. The Game module is required; saving refuses
+missing dependencies and modules. Ended leagues and leagues that cannot create characters are read-only. Choices are saved
+in the user's `data/league-modules.json` overrides (or the selected profile's `Game_LEAGUE_MODULES` path), preserving other
+leagues and leaving shipped manifests unchanged. Auth and Gateway read these choices at startup: Waypoint says to restart
+the servers when ready and never restarts them automatically. Existing characters stay in their league. Creating, deleting
+or migrating leagues is not part of these controls.
+
+**League card preview** shows the definition's name, description, Hardcore/SSF/form flags and linked mode variants in a
+collapsed, read-only panel. It reads files, not the running server's startup snapshot. LocalExile already reads descriptions
+from `league.json` after a restart; no server code change is needed to edit that file. A name also identifies saved characters
+and stashes, and mode links select real gameplay variants. There is no separate display-name override. Waypoint therefore
+does not edit league presentation or rewrite these definitions.
+
+The adapter supplies the selected profile's module, league and override paths. A source checkout must expose the shared
+settings hook before editing settings, and the league-override hook before editing membership. An older checkout or release
+with no verified hook remains read-only. No listing command or server startup is used to discover these capabilities.
+
+### Shared settings editor
+
+Mods, modules and leagues use the same editor on Windows and Linux:
+
+- On/off switches; text with length and pattern checks; single and multiple choices, including typed game-value sources.
+- Numbers with exact-value boxes and sliders when bounded; percentages and multipliers are displayed in their declared units,
+  and durations are edited in seconds. Step sizes and integer restrictions are checked before saving.
+- Ranges have separate minimum and maximum controls; low cannot exceed high.
+- Lists and maps have expandable, typed rows with Add and Remove. Map keys must be non-empty and unique; declared key
+  options and value types are checked. Groups can contain further controls, lists, maps and groups.
+- Advanced controls are hidden until requested. A setting's `when` conditions follow the other fields as they are edited.
+- Descriptions and apply timing stay with each setting. A module reload, next-area change and restart are distinguished.
+
+The editor preserves unknown values, including inside nested groups, applies declared renames, and stores only overrides.
+Unreadable existing user files block editing instead of being silently replaced. Forms stay intact during background refresh;
+Modules and Leagues ask before discarding a draft when switching selection or refreshing. Saving checks the reviewed file's
+hash, so another tool's changes require a refresh. Changes use the shared workspace lock and the normal optional save backup.
+Previous configuration files are copied to Waypoint's `config-history/<id>/` before replacement, separately from save backups.
+Reset to defaults asks first. Mod values use `data/mods/`, module values `data/modules/`, and league values `data/leagues/`.
 
 ### Backups
 

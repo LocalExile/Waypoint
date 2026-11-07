@@ -166,7 +166,7 @@ try
     File.WriteAllText(Path.Combine(unpaired, "Game.patched.exe"), "preserve prepared fixture");
     var isolatedPreparation = new RuntimeClient(Path.Combine(AppContext.BaseDirectory, "FixtureRuntimeBridge.ps1"));
     var prepare = await isolatedPreparation.RunAsync(new(fixture), "PrepareClient");
-    Check(!prepare.Ok && prepare.Message.Contains("without keys"), "preparation refuses an executable without matching keys");
+    Check(!prepare.Ok && prepare.Message.Contains("without keys"), "preparation refuses an executable without matching keys: " + prepare.Message);
     Check(!File.Exists(Path.Combine(unpaired, "Game.exe")) && File.ReadAllText(Path.Combine(unpaired, "Game.patched.exe")) == "preserve prepared fixture",
         "preparation refuses unpaired client before writing anything");
 

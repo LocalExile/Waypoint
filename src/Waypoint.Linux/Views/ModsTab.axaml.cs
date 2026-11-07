@@ -32,6 +32,7 @@ partial class ModsTab : UserControl
     ModEntry? _pageEntry;
     string _pageReadme = "";
     ModSettingsForm? _form;
+    SettingsEditor? _settingsEditor;
     ModJob? _pageJob;
     readonly Dictionary<string, Func<object?>> _inputs = new(StringComparer.Ordinal);
 
@@ -133,6 +134,8 @@ partial class ModsTab : UserControl
             notice = L.Text("Could not inspect mods: ") + ex.Message;
         }
         if (state is not null && supported && !state.ModEnvironment!.Enabled) notice = L.Text("Mods off in launch profile (Game_MODS=0)");
+        notice = string.Join("\n", new[] { notice, ModsText.ChoicesNotice(state) }.Where(s => s.Length > 0));
+        if (Repo.IsInstall) notice = L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.");
         Notice.Text = notice;
         Notice.IsVisible = notice.Length > 0;
         _offers = _browser.Offers(_entries);
@@ -152,7 +155,7 @@ partial class ModsTab : UserControl
     }
 
     /// <summary>Whether a mod operation can start: a checkout with a mod host, nothing else running, no conflicts.</summary>
-    bool CanUse => State is { ModEnvironment.Supported: true, Conflicts.Length: 0 } && !_busy;
+    bool CanUse => State is { ModEnvironment.Supported: true, Conflicts.Length: 0 } && !_busy && !Repo.IsInstall;
 
     void Filter()
     {
@@ -179,6 +182,7 @@ partial class ModsTab : UserControl
     {
         if (e.Source != Pages || _shared is null) return;
         ClosePage(this, e);
+        if (PageOpen) return;
         bool browse = Pages.SelectedItem == BrowsePage;
         InstalledView.IsVisible = !browse;
         BrowseView.IsVisible = browse;
@@ -260,13 +264,14 @@ partial class ModsTab : UserControl
         if (_pageEntry is { } entry) Toggle(entry, !entry.Enabled);
     }
 
-    /// <summary>Turns a mod on or off at once: a line in mod-state.txt, which a running Gateway applies within a second.</summary>
-    void Toggle(ModEntry entry, bool enabled)
+    /// <summary>Saves a choice under the workspace lock. The notice explains servers that need a restart.</summary>
+    async void Toggle(ModEntry entry, bool enabled)
     {
         try
         {
             if (entry.Fingerprint.Length == 0) throw new InvalidOperationException(L.Text("Build or install this mod first; its binary manifest is missing."));
-            _browser.SetEnabled(entry, enabled);
+            if (!await _browser.SetEnabledAsync(entry, enabled))
+                Dialog.Tell(Owner, DialogKind.Warning, entry.Title, L.Text("A workspace operation is in progress."));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
         {
@@ -508,9 +513,14 @@ partial class ModsTab : UserControl
 
     // ---- A mod's page ----
 
+    bool DiscardSettings() => _settingsEditor?.Dirty != true || Dialog.Ask(Owner, DialogKind.Question,
+        L.Text("Unsaved changes"), L.Text("Discard the changes you have not saved?"), L.Text("Discard"), L.Text("Cancel"));
+
     void OpenPage(BrowseItem? item, ModEntry? entry)
     {
         if (item is null && entry is null) return;
+        if (!DiscardSettings()) return;
+        _settingsEditor = null;
         _pageItem = item;
         _pageEntry = entry;
         _form = null;
@@ -525,6 +535,8 @@ partial class ModsTab : UserControl
     void ClosePage(object? sender, RoutedEventArgs e)
     {
         if (!PageOpen) return;
+        if (!DiscardSettings()) return;
+        _settingsEditor = null;
         ModPage.IsVisible = false;
         _pageItem = null;
         _pageEntry = null;
@@ -612,7 +624,7 @@ partial class ModsTab : UserControl
     void ShowSettings(ModEntry? entry)
     {
         string? shown = _form?.Id;
-        if (entry is null || entry.SettingsFile.Length == 0 || State is not { } state)
+        if (Repo.IsInstall || entry is null || entry.SettingsFile.Length == 0 || State is not { } state)
         {
             _form = null;
             SettingsPanel.Children.Clear();
@@ -631,7 +643,8 @@ partial class ModsTab : UserControl
             SaveSettingsButton.IsEnabled = ResetSettingsButton.IsEnabled = false;
             return;
         }
-        foreach (var setting in _form.Settings) SettingsPanel.Children.Add(Field(_form, setting));
+        _settingsEditor = new SettingsEditor(_form);
+        SettingsPanel.Children.Add(_settingsEditor);
         SettingsHint.Text = L.Text("Saved for this checkout in {0}; a running Gateway reloads the mod.", ModSettingsForm.UserFile(entry.Id));
     }
 
@@ -642,97 +655,19 @@ partial class ModsTab : UserControl
         return note;
     }
 
-    /// <summary>The control of one setting, and how to read it back.</summary>
-    Control Field(ModSettingsForm form, ModSetting setting)
-    {
-        var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 12) };
-        var current = form.Current(setting);
-        if (setting.Type != "bool") panel.Children.Add(new TextBlock { Text = ModsText.Heading(setting), FontWeight = FontWeight.Medium });
-        switch (setting.Type)
-        {
-            case "bool":
-            {
-                var box = new CheckBox { Content = setting.Title, IsChecked = current is JsonValue v && v.TryGetValue(out bool b) && b };
-                panel.Children.Add(box);
-                _inputs[setting.Name] = () => box.IsChecked == true;
-                break;
-            }
-            case "integer" or "number" or "text":
-            {
-                var box = new TextBox { Text = ModSettingsForm.Show(current, setting), Margin = new Thickness(0, 2, 0, 0) };
-                panel.Children.Add(box);
-                _inputs[setting.Name] = () => box.Text;
-                break;
-            }
-            case "choice" when setting.Source.Length > 0:
-            {
-                // Any of the game's values of its kind (an item, a monster), typed; the Gateway checks the name when the mod loads.
-                var box = new AutoCompleteBox { Text = ModSettingsForm.Show(current), FilterMode = AutoCompleteFilterMode.ContainsOrdinal, Margin = new Thickness(0, 2, 0, 0) };
-                _ = FillValuesAsync(box, setting.Source);
-                panel.Children.Add(box);
-                _inputs[setting.Name] = () => box.Text;
-                break;
-            }
-            case "choice":
-            {
-                var box = new ComboBox { HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(0, 2, 0, 0) };
-                foreach (var option in setting.Options) box.Items.Add(new ComboBoxItem { Content = option.Label, Tag = option.Value });
-                box.SelectedItem = box.Items.OfType<ComboBoxItem>().FirstOrDefault(i => JsonNode.DeepEquals((JsonNode)i.Tag!, current));
-                panel.Children.Add(box);
-                _inputs[setting.Name] = () => box.SelectedItem is ComboBoxItem { Tag: JsonNode chosen } ? chosen : "";
-                break;
-            }
-            case "choices" when setting.Options.Count > 0:
-            {
-                var chosen = current as JsonArray ?? [];
-                var boxes = setting.Options.Select(o => (o.Value, Box: new CheckBox { Content = o.Label, IsChecked = chosen.Any(c => JsonNode.DeepEquals(c, o.Value)) })).ToList();
-                var wrap = new WrapPanel { ItemSpacing = 12 };
-                foreach (var (_, box) in boxes) wrap.Children.Add(box);
-                panel.Children.Add(wrap);
-                _inputs[setting.Name] = () => boxes.Where(b => b.Box.IsChecked == true).Select(b => b.Value).ToList();
-                break;
-            }
-            case "choices":
-            {
-                var box = new TextBox { Text = string.Join("\n", (current as JsonArray ?? []).Select(n => ModSettingsForm.Show(n))), AcceptsReturn = true,
-                    MinHeight = 60, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0) };
-                panel.Children.Add(box);
-                panel.Children.Add(Note(L.Text("One per line.")));
-                _inputs[setting.Name] = () => box.Text;
-                break;
-            }
-            default:
-                panel.Children.Add(Note(ModsText.NotEditable(setting)));
-                break;
-        }
-        if (ModsText.Note(setting) is { Length: > 0 } note) panel.Children.Add(Note(note));
-        return panel;
-    }
-
-    /// <summary>The game's values of a kind, when the Gateway can list them.</summary>
-    static async Task FillValuesAsync(AutoCompleteBox box, string kind)
-    {
-        try { box.ItemsSource = (await CommandCatalog.ValuesAsync(kind)).Take(5000).Select(v => v.Value).ToList(); }
-        catch (Exception e) when (e is IOException or InvalidOperationException or System.ComponentModel.Win32Exception or System.Text.Json.JsonException or TimeoutException) { }
-    }
-
     async void SaveSettings(object? sender, RoutedEventArgs e)
     {
         if (_form is null || _pageEntry is not { } entry) return;
-        var (values, errors) = ModsText.Collect(_form, _inputs);
-        if (errors.Count > 0)
-        {
-            Dialog.Tell(Owner, DialogKind.Warning, L.Text("Settings not saved"), string.Join("\n", errors));
-            return;
-        }
-        await SaveValuesAsync(entry.Id, values);
+        try { if (_settingsEditor is not null) await SaveValuesAsync(entry.Id, _settingsEditor.Values()); }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or System.Text.Json.JsonException)
+        { Dialog.Tell(Owner, DialogKind.Warning, L.Text("Settings not saved"), ex.Message); }
     }
 
     async void ResetSettings(object? sender, RoutedEventArgs e)
     {
         if (_form is null || _pageEntry is not { } entry) return;
         if (!Dialog.Ask(Owner, DialogKind.Question, L.Text("Reset to defaults"), L.Text("Put every setting Waypoint edits back to its default?"), L.Text("Reset"), L.Text("Cancel"))) return;
-        await SaveValuesAsync(entry.Id, ModsText.Defaults(_form, _inputs));
+        if (_settingsEditor is not null) await SaveValuesAsync(entry.Id, _settingsEditor.Values(defaults: true));
     }
 
     /// <summary>Reset settings from a row's menu: the defaults of what Waypoint edits, read from the mod's declarations.</summary>
@@ -744,7 +679,7 @@ partial class ModsTab : UserControl
         {
             var form = ModSettingsForm.Load(entry.Id, entry.SettingsFile, state.Root);
             var editable = form.Settings.Where(s => s.Editable).ToDictionary(s => s.Name, s => (Func<object?>)(() => null), StringComparer.Ordinal);
-            await SaveValuesAsync(entry.Id, ModsText.Defaults(form, editable));
+            await SaveValuesAsync(entry.Id, ModsText.Defaults(form, editable), form.UserHash);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException)
         {
@@ -752,9 +687,9 @@ partial class ModsTab : UserControl
         }
     }
 
-    async Task SaveValuesAsync(string id, JsonObject values)
+    async Task SaveValuesAsync(string id, JsonObject values, string? expectedHash = null)
     {
-        var result = await _browser.SaveSettingsAsync(id, values);
+        var result = await _browser.SaveSettingsAsync(id, values, expectedHash ?? _form?.UserHash ?? "missing");
         if (result is { Ok: false }) ShowLog(true);
         if (result?.Ok == true && _pageEntry?.Id == id)
         {

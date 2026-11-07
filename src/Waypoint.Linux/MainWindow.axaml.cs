@@ -59,6 +59,8 @@ public partial class MainWindow : Window
     readonly VersionsTab Versions = new();
     readonly ReleasesTab ReleasesView = new();
     readonly ModsTab Mods = new();
+    readonly GameSystemsTab ModulesView = new();
+    readonly GameSystemsTab LeaguesView = new() { LeagueView = true };
     readonly BackupsTab Backups = new();
     readonly AccountsTab Accounts = new();
     readonly PerformanceTab Performance = new();
@@ -83,6 +85,9 @@ public partial class MainWindow : Window
         Setup.Attach(_shared);
         Versions.Attach(_shared);
         Mods.Attach(_shared);
+        ModulesView.Attach(_shared);
+        ModulesView.OpenLeaguesRequested += () => ShowSection(LeaguesView);
+        LeaguesView.Attach(_shared);
         Backups.Attach(_shared);
         Accounts.Attach(_shared);
         Performance.Attach(_shared);
@@ -100,6 +105,8 @@ public partial class MainWindow : Window
             new("Versions", MaterialIconKind.SourceBranch, Versions),
             new("Versions", MaterialIconKind.SourceBranch, ReleasesView),
             new("Mods", MaterialIconKind.PuzzleOutline, Mods),
+            new("Modules", MaterialIconKind.ViewGridOutline, ModulesView),
+            new("Leagues", MaterialIconKind.FlagOutline, LeaguesView),
             new("Backups", MaterialIconKind.BackupRestore, Backups),
             new("Accounts", MaterialIconKind.AccountMultipleOutline, Accounts),
             new("Performance", MaterialIconKind.ChartLine, Performance),
@@ -179,7 +186,7 @@ public partial class MainWindow : Window
         Control[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
             ? s.View is not (PlayTab or InstallTab or SetupTab) || s.View == Setup
-            : s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
+            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
         ModeSwitch.IsVisible = _shared.Settings.Developer;
         var shown = Sections.SelectedItem as Section;
         Sections.ItemsSource = sections;

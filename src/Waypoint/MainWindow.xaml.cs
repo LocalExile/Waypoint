@@ -95,6 +95,9 @@ public partial class MainWindow : Window
         Setup.Attach(_shared);
         Versions.Attach(_shared);
         Mods.Attach(_shared);
+        ModulesView.Attach(_shared);
+        ModulesView.OpenLeaguesRequested += () => ShowSection(LeaguesView);
+        LeaguesView.Attach(_shared);
         Backups.Attach(_shared);
         Accounts.Attach(_shared);
         Performance.Attach(_shared);
@@ -131,6 +134,8 @@ public partial class MainWindow : Window
             new("Versions", PackIconKind.SourceBranch, Versions),
             new("Versions", PackIconKind.SourceBranch, ReleasesView),
             new("Mods", PackIconKind.PuzzleOutline, Mods),
+            new("Modules", PackIconKind.ViewGridOutline, ModulesView),
+            new("Leagues", PackIconKind.FlagOutline, LeaguesView),
             new("Backups", PackIconKind.BackupRestore, Backups),
             new("Accounts", PackIconKind.AccountMultipleOutline, Accounts),
             new("Performance", PackIconKind.ChartLine, Performance),
@@ -237,8 +242,8 @@ public partial class MainWindow : Window
         // Play and Versions each have a checkout's view and a release install's.
         FrameworkElement[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
-            ? s.View is ControlTab or VersionsTab or ReleasesTab or ModsTab or BackupsTab or AccountsTab or PerformanceTab or TimingsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab
-            : s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
+            ? s.View is GameSystemsTab || s.View is ControlTab or VersionsTab or ReleasesTab or ModsTab or BackupsTab or AccountsTab or PerformanceTab or TimingsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab
+            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
         // Developer Mode (Settings) unlocks the switch.
         ModeSwitch.Visibility = _shared.Settings.Developer ? Visibility.Visible : Visibility.Collapsed;
         var shown = Sections.SelectedItem as Section;

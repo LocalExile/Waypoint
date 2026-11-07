@@ -82,6 +82,9 @@ start, Waypoint goes back to the version you had and starts that. **Go back to t
 update, and **Settings → Keep LocalExile up to date** turns updates off. An update is the latest code, not a release; a bug
 inside the game is what the way back is for.
 
+Source checkouts also show **Modules** and **Leagues**, with editing enabled only when the checkout exposes the supported
+settings and league-choice hooks. The league card's name, description and mode links have a read-only preview.
+
 A copy with anything of your own (another branch, a fork as `origin`, changes, your own commits) is never updated by itself.
 
 **Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
@@ -95,6 +98,8 @@ full control over branches and pull requests. Someone coming from an earlier lau
 | **Setup** | What the checkout still needs, each requirement with its next step; the setup guide, which does all of it in one go |
 | **Versions** | LocalExile's branches and pull requests and your own, how far you are from LocalExile, with every switch guarded; build, hot reload status, fresh saves |
 | **Mods** | The checkout's mods: build, enable, disable, reload, live status |
+| **Modules** | Gameplay modules, the leagues using them, and shared settings |
+| **Leagues** | Per-league module choices and declared league settings; choices apply after a server restart |
 | **Backups** | Consistent copies of the saves, made automatically before risky steps; restore, delete, saved mod choices |
 | **Accounts** | Accounts and characters, read from the saves; register, create a character, duplicate, rename, set a password, delete |
 | **Performance**, **Server timings** | Live CPU, memory and runtime counters; what each Gateway operation costs |

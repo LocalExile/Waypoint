@@ -39,7 +39,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public ModJob? Job { get; init; }
     public bool HasJob => Job is not null;
     public bool ShowButton => Job is null;
-    public bool CanAct => Offer != ModOffer.Installed && Job is null;
+    public bool CanAct => !Repo.IsInstall && Offer != ModOffer.Installed && Job is null;
     public string ActionText => Offer switch { ModOffer.Install => L.Text("Install"), ModOffer.Update => L.Text("Update"), _ => L.Text("Installed") };
     public string Origin => Release is not null ? L.Text("Release {0}", Release.Tag)
         : Listing.IsProject ? L.Text("No release: installs the source") : L.Text("Scripts: no build needed");
@@ -67,7 +67,7 @@ sealed record VersionRow(BrowseItem Item, ModRelease Release)
         }
     }
     public bool IsInstalled => Item.InstalledVersion is { } installed && !installed.IsNewerThan(Release.Version) && !Release.Version.IsNewerThan(installed);
-    public bool CanAct => !IsInstalled;
+    public bool CanAct => !Repo.IsInstall && !IsInstalled;
     public string ActionText => IsInstalled ? L.Text("Installed") : L.Text("Install");
 }
 
@@ -176,7 +176,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     /// <summary>The Action column as text, not a button: Up to date, or Not loaded.</summary>
     public bool UpToDate => !HasButton && Job is null;
     /// <summary>Build compiles the source project (a source checkout), or installs the repository's copy when there is none.</summary>
-    public bool CanAct => Job is null && Action switch
+    public bool CanAct => !Repo.IsInstall && Job is null && Action switch
     {
         RowAction.Update or RowAction.Reinstall => true,
         RowAction.Build => (Entry.Project.Length > 0 && !Repo.IsInstall) || Offer is not null,
@@ -339,15 +339,18 @@ sealed class ModBrowser(Shared shared)
     }
 
     /// <summary>Turns an installed mod on or off: its line in the server's mod-state.txt, at once (no backup, no client).</summary>
-    public void SetEnabled(ModEntry mod, bool enabled)
+    public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), () =>
     {
+        if (shared.Workspace.Latest is { Conflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.Conflicts));
         if (shared.Workspace.Latest?.ModEnvironment is not { Supported: true } environment) throw new InvalidOperationException(L.Text("This revision does not have a supported mod host."));
         ModCatalog.WriteChoice(environment.Folder, mod.Id, enabled);
-    }
+        return Task.CompletedTask;
+    });
 
     /// <summary>Uninstalls a mod: the adapter's UninstallMod moves its folders to Mods/.replaced/.</summary>
     public async Task<BridgeResult?> UninstallAsync(ModEntry mod)
     {
+        RequireModernMods();
         var job = Begin(mod.Id, L.Text("Uninstalling…"));
         if (job is null) return null;
         try { return await Finish(job, await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(mod.Id), L.Text("Uninstalling…"))); }
@@ -428,16 +431,11 @@ sealed class ModBrowser(Shared shared)
                 string name = batch.Count == 1 ? first.Name : L.Text("{0} ({1} mods)", first.Name, batch.Count);
                 try
                 {
-                    var deadline = DateTime.UtcNow.AddMinutes(30);
-                    BridgeResult? result;
-                    while (true)
+                    var result = await WaitForWorkspaceAsync(
+                        () => shared.Workspace.OperateAsync(first.Action, name, mod: request), waiting =>
                     {
-                        foreach (var p in batch) p.Job?.Show(p.Running, 0, indeterminate: true);
-                        result = await shared.Workspace.OperateAsync(first.Action, name, mod: request);
-                        if (result is not null || DateTime.UtcNow > deadline) break;
-                        foreach (var p in batch) p.Job?.Show(L.Text("Waiting…"), 0, indeterminate: true);
-                        await Task.Delay(500);
-                    }
+                        foreach (var p in batch) p.Job?.Show(waiting ? L.Text("Waiting…") : p.Running, 0, indeterminate: true);
+                    });
                     foreach (var p in batch) p.Done.TrySetResult(result);
                 }
                 catch (Exception e)
@@ -447,6 +445,21 @@ sealed class ModBrowser(Shared shared)
             }
         }
         finally { _pumping = false; }
+    }
+
+    /// <summary>Only a busy workspace is retried. Cancellation and failures complete the job and release the queue.</summary>
+    internal static async Task<BridgeResult?> WaitForWorkspaceAsync(Func<Task<BridgeResult?>> run, Action<bool> waiting,
+        Func<Task>? pause = null)
+    {
+        var deadline = DateTime.UtcNow.AddMinutes(30);
+        while (true)
+        {
+            waiting(false);
+            var result = await run();
+            if (result is not null || DateTime.UtcNow > deadline) return result;
+            waiting(true);
+            await (pause?.Invoke() ?? Task.Delay(500));
+        }
     }
 
     /// <summary>Adds a repository by its URL or "owner/name"; false for text that names none, or one already there.</summary>
@@ -490,6 +503,7 @@ sealed class ModBrowser(Shared shared)
     /// InstallMod, or null when it did not run (one already runs for this mod).</summary>
     public async Task<BridgeResult?> InstallAsync(BrowseItem item, CancellationToken stop = default)
     {
+        RequireModernMods();
         var job = Begin(item.Listing.Id, L.Text("Downloading…"));
         if (job is null) return null;
         try
@@ -512,6 +526,7 @@ sealed class ModBrowser(Shared shared)
     /// <summary>Installs a mod folder from the player's disk: a project's source is installed, not built.</summary>
     public async Task<BridgeResult?> InstallFolderAsync(string folder)
     {
+        RequireModernMods();
         var staged = ModRepository.StageFolder(folder);
         try
         {
@@ -526,20 +541,32 @@ sealed class ModBrowser(Shared shared)
 
     /// <summary>Writes a mod's settings: the values file is checked into Waypoint's folder, and the adapter's SaveModSettings
     /// puts it in the checkout's data/mods/.</summary>
-    public async Task<BridgeResult?> SaveSettingsAsync(string id, JsonObject values)
+    public async Task<BridgeResult?> SaveSettingsAsync(string id, JsonObject values, string expectedHash)
     {
+        RequireModernMods();
         string folder = Path.Combine(ModRepository.DownloadsFolder, Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(folder);
         string file = Path.Combine(folder, id + ".json");
         await File.WriteAllTextAsync(file, values.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-        try { return await QueuedAsync(null, "SaveModSettings", L.Text("Save mod settings"), new(id, Staged: file), ""); }
+        try { return await QueuedAsync(null, "SaveModSettings", L.Text("Save mod settings"), new(id, Staged: file, ExpectedHash: expectedHash), ""); }
         finally { try { Directory.Delete(folder, recursive: true); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { } }
+    }
+
+    internal static void RequireModernMods()
+    {
+        if (Repo.IsInstall) throw new InvalidOperationException(L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods."));
     }
 }
 
 /// <summary>The Mods section's text and form reading, the same in both apps' views.</summary>
 static class ModsText
 {
+    /// <summary>Choices are saved even on an older Gateway; do not imply its running mods changed.</summary>
+    public static string ChoicesNotice(RuntimeSnapshot? state) =>
+        state is { ModEnvironment.Supported: true } && state.Services.Any(s => s.Name == "Gateway" && s.IsRunning)
+            && !ModCatalog.SupportsLiveChoices(state.Root)
+            ? L.Text("Live mod switches could not be verified for this server. Choices are saved; restart Gateway to apply them.") : "";
+
     /// <summary>A mod page's labels: where it comes from, what it is.</summary>
     public static IReadOnlyList<string> Tags(BrowseItem? item, ModEntry? installed)
     {

@@ -100,8 +100,8 @@ sealed class Workspace(Shared shared)
     }
 
     /// <summary>Runs one adapter operation; null when a live.ps1 run, git or another operation holds the checkout. A failure
-    /// is in the returned result, and reported through <see cref="Failed"/> unless the caller asks a question about it itself
-    /// (<paramref name="quiet"/>).</summary>
+    /// is in the returned result; declining preparation returns Cancelled, never the busy/null result. A failure is reported
+    /// through <see cref="Failed"/> unless the caller asks a question about it itself (<paramref name="quiet"/>).</summary>
     public async Task<BridgeResult?> OperateAsync(string action, string name, ModRequest? mod = null, string? backupId = null,
         AccountRequest? account = null, AccountDataRequest? accountData = null, bool quiet = false)
     {
@@ -109,34 +109,41 @@ sealed class Workspace(Shared shared)
         string stage = name, logPath = "";
         bool ran = await shared.RunExclusiveAsync(name, async () =>
         {
-#if WINDOWS
-            bool needsFrida = !Repo.IsInstall && (action is "QueryMods" or "ReloadMod" or "ReloadData"
-                || (action is "EnableMod" or "DisableMod") && Latest?.Services.Any(s => s.Name == "Gateway" && s.IsRunning) == true
-                || (action is "BuildMod" or "BuildMods") && Latest is { GameRunning: true }
-                    && Latest.Services.Any(s => s.Name == "Gateway" && s.Status == "Ready"));
-            if (needsFrida && !await FridaSetup.PrepareAsync(shared, System.Windows.Application.Current.MainWindow, name, Write)) return;
-#endif
             LastFailure = null;
-            Write($"> {name}");
-            Stage?.Invoke(name, "");
-            try
+            result = await RunPreparedAsync(async () =>
             {
-                result = await _client.RunAsync(shared.Settings.ForBridge, action, log: Write, progress: update =>
+#if WINDOWS
+                bool needsFrida = !Repo.IsInstall && (action is "QueryMods" or "ReloadMod" or "ReloadData"
+                    || (action is "EnableMod" or "DisableMod") && Latest?.Services.Any(s => s.Name == "Gateway" && s.IsRunning) == true
+                    || (action is "BuildMod" or "BuildMods") && Latest is { GameRunning: true }
+                        && Latest.Services.Any(s => s.Name == "Gateway" && s.Status == "Ready"));
+                return !needsFrida || await FridaSetup.PrepareAsync(shared, System.Windows.Application.Current.MainWindow, name, Write);
+#else
+                return await Task.FromResult(true);
+#endif
+            }, async () =>
+            {
+                Write($"> {name}");
+                Stage?.Invoke(name, "");
+                try
                 {
-                    stage = update.Stage;
-                    if (!string.IsNullOrEmpty(update.LogPath)) logPath = update.LogPath;
-                    Stage?.Invoke(update.Stage, update.Detail);
-                }, account: account, backupId: backupId, mod: mod, accountData: accountData);
-            }
-            catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or System.Text.Json.JsonException or System.ComponentModel.Win32Exception)
-            {
-                result = new(false, e.Message, null, stage);
-            }
+                    return await _client.RunAsync(shared.Settings.ForBridge, action, log: Write, progress: update =>
+                    {
+                        stage = update.Stage;
+                        if (!string.IsNullOrEmpty(update.LogPath)) logPath = update.LogPath;
+                        Stage?.Invoke(update.Stage, update.Detail);
+                    }, account: account, backupId: backupId, mod: mod, accountData: accountData);
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or System.Text.Json.JsonException or System.ComponentModel.Win32Exception)
+                {
+                    return new(false, e.Message, null, stage);
+                }
+            });
             if (result.Snapshot is not null) Latest = result.Snapshot;
         });
         if (!ran || result is null) return null;
         Stage?.Invoke("", "");
-        if (result.Ok) Write(result.Message);
+        if (result.Ok || result.Cancelled) Write(result.Message);
         else
         {
             LastFailure = result.Message;
@@ -147,6 +154,10 @@ sealed class Workspace(Shared shared)
         Changed?.Invoke();
         return result;
     }
+
+    /// <summary>Preparation may ask the player a question. Declining is a completed attempt, not lock contention.</summary>
+    internal static async Task<BridgeResult> RunPreparedAsync(Func<Task<bool>> prepare, Func<Task<BridgeResult>> run) =>
+        await prepare() ? await run() : new(false, L.Text("Operation cancelled."), null, Cancelled: true);
 
     void Write(string text)
     {

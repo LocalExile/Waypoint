@@ -48,6 +48,9 @@
   <data name="Text_01bb939bdbc2" xml:space="preserve">
     <value>吞噬天地</value>
   </data>
+  <data name="Text_01c618fd5db4" xml:space="preserve">
+    <value>所选模块缺失。</value>
+  </data>
   <data name="Text_01deefe59ede" xml:space="preserve">
     <value>正在读取 {0} …</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="Text_057fd24429fa" xml:space="preserve">
     <value>重启服务</value>
+  </data>
+  <data name="Text_058d82af4063" xml:space="preserve">
+    <value>保存模组选择</value>
   </data>
   <data name="Text_05d3ec58206c" xml:space="preserve">
     <value>键盘焦点</value>
@@ -408,6 +414,9 @@
   <data name="Text_0ee67faf52dd" xml:space="preserve">
     <value>仅显示房间预设锚点；实际生成可能不同。不显示随机散布的怪物。</value>
   </data>
+  <data name="Text_0ef5f0485db2" xml:space="preserve">
+    <value>无法确认此服务器是否支持实时切换模组。选择已保存；请重启 Gateway 以应用更改。</value>
+  </data>
   <data name="Text_0f044feb6ca7" xml:space="preserve">
     <value>操作</value>
   </data>
@@ -455,6 +464,9 @@
   </data>
   <data name="Text_10ee94005bb9" xml:space="preserve">
     <value>配色方案</value>
+  </data>
+  <data name="Text_110ca02d1eab" xml:space="preserve">
+    <value>保存联盟选择</value>
   </data>
   <data name="Text_112d64cc9b85" xml:space="preserve">
     <value>正在获取…</value>
@@ -852,6 +864,9 @@
   <data name="Text_210c94b4b726" xml:space="preserve">
     <value>游戏设置：</value>
   </data>
+  <data name="Text_2116693c448c" xml:space="preserve">
+    <value>此联盟已结束或不允许创建新角色。模块选择为只读。</value>
+  </data>
   <data name="Text_2125db5eddda" xml:space="preserve">
     <value>LocalExile 已就绪</value>
   </data>
@@ -921,6 +936,9 @@
   <data name="Text_2331c395597e" xml:space="preserve">
     <value>退出前无法验证服务状态。</value>
   </data>
+  <data name="Text_237ce534dbd1" xml:space="preserve">
+    <value>联赛无效或重复。</value>
+  </data>
   <data name="Text_23a7fbf942ec" xml:space="preserve">
     <value>该更新未成功，因此你仍在使用之前的版本。</value>
   </data>
@@ -932,6 +950,9 @@
   </data>
   <data name="Text_240f51c01b28" xml:space="preserve">
     <value>密码只能使用英文字母、数字和常用符号。</value>
+  </data>
+  <data name="Text_241b991ef5b7" xml:space="preserve">
+    <value>联盟卡片预览</value>
   </data>
   <data name="Text_24532939f9d0" xml:space="preserve">
     <value>请换一个名称</value>
@@ -1011,6 +1032,9 @@
   <data name="Text_263c42bf45e5" xml:space="preserve">
     <value>没有与搜索匹配的模组。清除搜索即可查看所有模组。</value>
   </data>
+  <data name="Text_2649e082d9a2" xml:space="preserve">
+    <value>条目</value>
+  </data>
   <data name="Text_265db6150f68" xml:space="preserve">
     <value>正在保存模组选择</value>
   </data>
@@ -1056,6 +1080,9 @@
   </data>
   <data name="Text_277db01efc29" xml:space="preserve">
     <value>这两个文件夹中一个位于另一个之内：{0}，{1}。</value>
+  </data>
+  <data name="Text_278c98f757be" xml:space="preserve">
+    <value>不支持重定向的模块路径。</value>
   </data>
   <data name="Text_279d233b3ee4" xml:space="preserve">
     <value>更改位置</value>
@@ -1171,6 +1198,9 @@
   <data name="Text_2b5e770c2b3b" xml:space="preserve">
     <value>最小化按钮仍会最小化到任务栏。隐藏后，点击时钟旁的 Waypoint 图标即可返回。该图标可能位于隐藏图标箭头下。</value>
   </data>
+  <data name="Text_2b5ee1db6952" xml:space="preserve">
+    <value>模块提供游戏系统。使用同一模块的所有联盟共用其设置。</value>
+  </data>
   <data name="Text_2b69057ec9ef" xml:space="preserve">
     <value>密码必须至少包含 4 个字符。</value>
   </data>
@@ -1275,6 +1305,9 @@
   </data>
   <data name="Text_2f6a2e837148" xml:space="preserve">
     <value>从源码构建</value>
+  </data>
+  <data name="Text_2f8121891c12" xml:space="preserve">
+    <value>{0} 需要 {1}。请先启用所需模块。</value>
   </data>
   <data name="Text_2fad023a9cbb" xml:space="preserve">
     <value>准备本地客户端</value>
@@ -1412,6 +1445,9 @@
   <data name="Text_348e16b56997" xml:space="preserve">
     <value>Waypoint（从源码构建）</value>
   </data>
+  <data name="Text_3497ee23c710" xml:space="preserve">
+    <value>缺少模块：{0}。更改此联盟前请先恢复该模块。</value>
+  </data>
   <data name="Text_34a4bac9ef24" xml:space="preserve">
     <value>正在检查安装</value>
   </data>
@@ -1487,8 +1523,17 @@
   <data name="Text_381fb2297b10" xml:space="preserve">
     <value>正在提取数据</value>
   </data>
+  <data name="Text_3829bf0ef80f" xml:space="preserve">
+    <value>此安装中未找到模块或联盟。</value>
+  </data>
   <data name="Text_3864a7129335" xml:space="preserve">
     <value>打开相邻区域</value>
+  </data>
+  <data name="Text_386cf3b4f8ac" xml:space="preserve">
+    <value>操作已取消。</value>
+  </data>
+  <data name="Text_387daf04d6be" xml:space="preserve">
+    <value>不支持的设置 ID。</value>
   </data>
   <data name="Text_388192a83182" xml:space="preserve">
     <value>在此电脑上找到 {0} 个客户端。请选择要使用的那个。</value>
@@ -1534,6 +1579,9 @@
   </data>
   <data name="Text_3a495eb5b8fb" xml:space="preserve">
     <value>主文本</value>
+  </data>
+  <data name="Text_3a4afd0467f5" xml:space="preserve">
+    <value>请输入以下类型的游戏值：{0}</value>
   </data>
   <data name="Text_3a6e351b6aa6" xml:space="preserve">
     <value>更新时间</value>
@@ -1770,6 +1818,9 @@
   <data name="Text_4406ed643196" xml:space="preserve">
     <value>{0} 的副本名称：</value>
   </data>
+  <data name="Text_4426efcaf970" xml:space="preserve">
+    <value>请刷新工作区以查看模块和联盟。</value>
+  </data>
   <data name="Text_442aded87a55" xml:space="preserve">
     <value>性能</value>
   </data>
@@ -1865,6 +1916,9 @@
   </data>
   <data name="Text_480189e83289" xml:space="preserve">
     <value>{0} 个角色 · {1} 个仓库页</value>
+  </data>
+  <data name="Text_4850b174b713" xml:space="preserve">
+    <value>必需</value>
   </data>
   <data name="Text_4854bd9995ea" xml:space="preserve">
     <value>工作副本版本：{0}</value>
@@ -1995,11 +2049,17 @@
   <data name="Text_4cefcb025be3" xml:space="preserve">
     <value>LocalExile 已更新。点击“开始游戏”启动。</value>
   </data>
+  <data name="Text_4d0e0d0e73a3" xml:space="preserve">
+    <value>依赖项：{0}</value>
+  </data>
   <data name="Text_4d2ee5a61d29" xml:space="preserve">
     <value>Gateway 已重启</value>
   </data>
   <data name="Text_4d2fc504a139" xml:space="preserve">
     <value> · 需要设置客户端</value>
+  </data>
+  <data name="Text_4d68e465fa3f" xml:space="preserve">
+    <value>此服务器不支持覆盖联盟模块选择。请更新 LocalExile 后再编辑。</value>
   </data>
   <data name="Text_4d7056f0e9be" xml:space="preserve">
     <value>色调</value>
@@ -2012,6 +2072,9 @@
   </data>
   <data name="Text_4da22a362d38" xml:space="preserve">
     <value>图块</value>
+  </data>
+  <data name="Text_4de3fe11186f" xml:space="preserve">
+    <value>每个映射条目都需要一个非空且唯一的键。</value>
   </data>
   <data name="Text_4df1cf29668a" xml:space="preserve">
     <value>游戏已启动。</value>
@@ -2036,6 +2099,9 @@
   </data>
   <data name="Text_4e80063a06ed" xml:space="preserve">
     <value> · 监视器已启用</value>
+  </data>
+  <data name="Text_4e8909f82cd7" xml:space="preserve">
+    <value>设置过大或嵌套层级过深。</value>
   </data>
   <data name="Text_4e8d1a726078" xml:space="preserve">
     <value>标记</value>
@@ -2267,6 +2333,9 @@
   <data name="Text_58b1306d2f1d" xml:space="preserve">
     <value>存档备份</value>
   </data>
+  <data name="Text_58cfea949da3" xml:space="preserve">
+    <value>不支持的设置类型：{0}</value>
+  </data>
   <data name="Text_58fc561ca474" xml:space="preserve">
     <value>安装解包依赖项</value>
   </data>
@@ -2291,6 +2360,9 @@
   <data name="Text_59e693cdbc2c" xml:space="preserve">
     <value>跳过安装</value>
   </data>
+  <data name="Text_59f006d63bd0" xml:space="preserve">
+    <value>秒</value>
+  </data>
   <data name="Text_59fc6e9d24f1" xml:space="preserve">
     <value>游戏正在运行。请先关闭游戏，再停止或重启服务。</value>
   </data>
@@ -2302,6 +2374,9 @@
   </data>
   <data name="Text_5a3f8a56fafe" xml:space="preserve">
     <value>Steam 和 Epic 版本没有 Content.ggpk，无法使用。请选择独立版安装。</value>
+  </data>
+  <data name="Text_5a56864947f6" xml:space="preserve">
+    <value>无联盟</value>
   </data>
   <data name="Text_5a624ed29811" xml:space="preserve">
     <value>加载 / 刷新列表</value>
@@ -2335,6 +2410,9 @@
   </data>
   <data name="Text_5c4824060366" xml:space="preserve">
     <value>你可以自己删除该文件夹：{0}</value>
+  </data>
+  <data name="Text_5c4902df399e" xml:space="preserve">
+    <value>模块选择尚未保存。离开此联盟前请先保存。</value>
   </data>
   <data name="Text_5c520be69184" xml:space="preserve">
     <value>选择本地分支、已获取的远程分支或上游 PR。切换时会停止所属的服务器、备份存档并构建该修订版本。请先关闭游戏，之后再点击“开始游戏”。</value>
@@ -2597,6 +2675,9 @@
   <data name="Text_657233ccc108" xml:space="preserve">
     <value>服务器端口被占用</value>
   </data>
+  <data name="Text_6599eee43908" xml:space="preserve">
+    <value>独狼模式</value>
+  </data>
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>所有连接合计的每秒服务器耗时；等待（队列、门控、锁）按其等待时间计入</value>
   </data>
@@ -2614,6 +2695,9 @@
   </data>
   <data name="Text_66bfcf020fee" xml:space="preserve">
     <value>安装检查 · 全部通过</value>
+  </data>
+  <data name="Text_66c9ab177708" xml:space="preserve">
+    <value>最大值</value>
   </data>
   <data name="Text_66d94a7468b2" xml:space="preserve">
     <value>Windows 注册表</value>
@@ -2879,6 +2963,9 @@
   <data name="Text_708dc8aff75e" xml:space="preserve">
     <value>准备 LocalExile</value>
   </data>
+  <data name="Text_709e77536bf1" xml:space="preserve">
+    <value>无效设置：{0}</value>
+  </data>
   <data name="Text_70b4554c1108" xml:space="preserve">
     <value>你的旧角色会保留在 {0} 中，直到你删除该文件夹。</value>
   </data>
@@ -2948,8 +3035,14 @@
   <data name="Text_73035f026e9f" xml:space="preserve">
     <value>添加仓库…</value>
   </data>
+  <data name="Text_730840dd1dd4" xml:space="preserve">
+    <value>共用设置：更改会影响使用此模块的所有联盟。</value>
+  </data>
   <data name="Text_735373328df6" xml:space="preserve">
     <value>此账号没有可复制的角色。</value>
+  </data>
+  <data name="Text_735beee2e390" xml:space="preserve">
+    <value>最小值</value>
   </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>只要有 LocalExile 登录、Gateway 或账号服务进程在运行，账号就只能查看、不能更改。请停止这些服务并关闭游戏，然后刷新。未做任何更改。</value>
@@ -3020,6 +3113,9 @@
   <data name="Text_76b9740eaf62" xml:space="preserve">
     <value>PATH 中没有 Python。请通过包管理器安装 Python 3.9 或更高版本（python3）。</value>
   </data>
+  <data name="Text_76c86c4c3243" xml:space="preserve">
+    <value>模块</value>
+  </data>
   <data name="Text_76cde8e5dd63" xml:space="preserve">
     <value>已获取的远程分支</value>
   </data>
@@ -3055,6 +3151,9 @@
   </data>
   <data name="Text_780d9cbbad69" xml:space="preserve">
     <value>已被玩家停止。</value>
+  </data>
+  <data name="Text_7816d8d1f138" xml:space="preserve">
+    <value>联赛定义的只读预览。名称用于标识已保存角色的联赛；模式选项关联实际的玩法变体。</value>
   </data>
   <data name="Text_781fab451752" xml:space="preserve">
     <value>启用状态未知</value>
@@ -3257,6 +3356,9 @@
   <data name="Text_7fd994d683da" xml:space="preserve">
     <value>搜索分支名称、PR 标题、作者或提交哈希</value>
   </data>
+  <data name="Text_8042721ff5f2" xml:space="preserve">
+    <value>此发行版未声明与可下载模组兼容。请使用最新源码副本安装或更新模组。</value>
+  </data>
   <data name="Text_8084a51b3c64" xml:space="preserve">
     <value>力量</value>
   </data>
@@ -3334,6 +3436,12 @@
   </data>
   <data name="Text_83f9b9c05a55" xml:space="preserve">
     <value>提高文字对比度</value>
+  </data>
+  <data name="Text_8417a4bb1fb2" xml:space="preserve">
+    <value>模块列表无效。</value>
+  </data>
+  <data name="Text_842e70aacb24" xml:space="preserve">
+    <value>未保存的设置</value>
   </data>
   <data name="Text_849335f979c6" xml:space="preserve">
     <value>{0:g} · {1:N0} KB · {2}</value>
@@ -3488,6 +3596,9 @@
   <data name="Text_8a91c3ae834f" xml:space="preserve">
     <value>随机种子</value>
   </data>
+  <data name="Text_8ad2eaa716dc" xml:space="preserve">
+    <value>可游玩的联盟必须包含 Game 模块。</value>
+  </data>
   <data name="Text_8ad920a3b55b" xml:space="preserve">
     <value>塑界者</value>
   </data>
@@ -3581,6 +3692,9 @@
   <data name="Text_8e29cf69a571" xml:space="preserve">
     <value>游戏未能启动。</value>
   </data>
+  <data name="Text_8e37953d23da" xml:space="preserve">
+    <value>值</value>
+  </data>
   <data name="Text_8e3cda3b4f8b" xml:space="preserve">
     <value>本地 HEAD 不可用</value>
   </data>
@@ -3625,6 +3739,9 @@
   </data>
   <data name="Text_8ffde53885bf" xml:space="preserve">
     <value>构建模组需要 .NET 10 SDK。请先安装（“设置”列出了检出所需的组件），然后重试。</value>
+  </data>
+  <data name="Text_900760e70a57" xml:space="preserve">
+    <value>模块 ID 无效或重复。</value>
   </data>
   <data name="Text_902bf1204f8a" xml:space="preserve">
     <value>跳过构建</value>
@@ -3756,6 +3873,9 @@
   <data name="Text_95c48d9aaf34" xml:space="preserve">
     <value>你的备份文件夹位于其中</value>
   </data>
+  <data name="Text_95de366fb6a9" xml:space="preserve">
+    <value>保存游戏配置</value>
+  </data>
   <data name="Text_95e50255e771" xml:space="preserve">
     <value>全部更新</value>
   </data>
@@ -3795,6 +3915,9 @@
   </data>
   <data name="Text_969ebdae3c68" xml:space="preserve">
     <value>让服务器和游戏继续运行</value>
+  </data>
+  <data name="Text_96acf3e37ff5" xml:space="preserve">
+    <value>要放弃未保存的更改吗？</value>
   </data>
   <data name="Text_96b40ff2f6d3" xml:space="preserve">
     <value>“开始游戏”会准备并启动服务器，然后打开游戏。</value>
@@ -3862,6 +3985,9 @@
   <data name="Text_98a95c9d60d7" xml:space="preserve">
     <value>“{0}”需要 Frida 才能与运行中的游戏交互。正常游戏不需要 Frida。要将其安装到此 LocalExile 文件夹中吗？不会更改全局 Python 软件包。</value>
   </data>
+  <data name="Text_98d234d4a19d" xml:space="preserve">
+    <value>保存的选择将在下次重启服务器后生效。现有角色仍留在原联盟。</value>
+  </data>
   <data name="Text_98d3dd871595" xml:space="preserve">
     <value>最新 {0}</value>
   </data>
@@ -3891,6 +4017,9 @@
   </data>
   <data name="Text_998195e4aaa2" xml:space="preserve">
     <value>重新搜索</value>
+  </data>
+  <data name="Text_99a52df3ff3d" xml:space="preserve">
+    <value>键</value>
   </data>
   <data name="Text_99cc5fa5fefe" xml:space="preserve">
     <value>本地服务</value>
@@ -4025,6 +4154,9 @@
   <data name="Text_9da9ae7b30ae" xml:space="preserve">
     <value>没有词缀的文本与此相符</value>
   </data>
+  <data name="Text_9dc3902589e5" xml:space="preserve">
+    <value>设置已保存。各项设置均标有生效时间。</value>
+  </data>
   <data name="Text_9df4f4d7fd9d" xml:space="preserve">
     <value>选择另一个 LocalExile 服务器源码副本；Waypoint 将以它重新启动</value>
   </data>
@@ -4114,6 +4246,9 @@
   </data>
   <data name="Text_a129818ff2ac" xml:space="preserve">
     <value>Windows · 独立版 PoE 3.29.3b · .NET 10 · Debug 构建 · 标准 localhost 端口。游戏始终通过 live.ps1 启动。服务通过 Ctrl+C 停止；启动器从不强制结束服务器或游戏。</value>
+  </data>
+  <data name="Text_a18f084c69b0" xml:space="preserve">
+    <value>此模块未声明可编辑设置。</value>
   </data>
   <data name="Text_a1ac9a887b35" xml:space="preserve">
     <value>正在验证每个必需监听端口的归属。</value>
@@ -4283,6 +4418,9 @@
   <data name="Text_a704d8d4a818" xml:space="preserve">
     <value>账号名</value>
   </data>
+  <data name="Text_a710c2b90913" xml:space="preserve">
+    <value>未保存的更改</value>
+  </data>
   <data name="Text_a71162b3bbb4" xml:space="preserve">
     <value>连线模式为 {0}：角色将无法移动</value>
   </data>
@@ -4376,6 +4514,9 @@
   <data name="Text_aad03e2b1c5c" xml:space="preserve">
     <value>自动备份已关闭。此更改不会创建用于恢复的备份。</value>
   </data>
+  <data name="Text_aaebb3beb0a2" xml:space="preserve">
+    <value>模块路径无效。</value>
+  </data>
   <data name="Text_ab04a325f523" xml:space="preserve">
     <value>查询版本时它没有响应。仍然使用它吗？</value>
   </data>
@@ -4405,6 +4546,9 @@
   </data>
   <data name="Text_ac00a70dabb9" xml:space="preserve">
     <value>Windows 无法在 {0} 创建链接。请改为复制客户端。</value>
+  </data>
+  <data name="Text_ac00cc972e64" xml:space="preserve">
+    <value>{0}：值不符合设置声明</value>
   </data>
   <data name="Text_ac15c0c9a3e0" xml:space="preserve">
     <value>显示前 1000 个打开的 PR。输入 PR 编号以获取其他 PR。</value>
@@ -4610,6 +4754,9 @@
   <data name="Text_b4bb971e7efe" xml:space="preserve">
     <value>增加服务器、分支和拉取请求、备份、性能、日志和控制台。此后 Waypoint 不会再自行更新 LocalExile。</value>
   </data>
+  <data name="Text_b4bc18631d5c" xml:space="preserve">
+    <value>联盟选择已保存。准备应用时请重启服务器。</value>
+  </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>滚动到每一条新行</value>
   </data>
@@ -4808,6 +4955,9 @@
   <data name="Text_bd19f1c3f750" xml:space="preserve">
     <value>游戏设置配置文件</value>
   </data>
+  <data name="Text_bd37103a446e" xml:space="preserve">
+    <value>不支持重定向的设置路径。</value>
+  </data>
   <data name="Text_bd72c01ccb05" xml:space="preserve">
     <value>无法读取你的存档。未做任何更改。</value>
   </data>
@@ -4817,8 +4967,14 @@
   <data name="Text_bd814d6ca441" xml:space="preserve">
     <value>“{0}”不是插槽颜色（R、G、B 或 W）</value>
   </data>
+  <data name="Text_bdb03ff604f8" xml:space="preserve">
+    <value>残酷模式</value>
+  </data>
   <data name="Text_bdd254b65baa" xml:space="preserve">
     <value>构建</value>
+  </data>
+  <data name="Text_be330ee79b3c" xml:space="preserve">
+    <value>联盟</value>
   </data>
   <data name="Text_be3ff8326226" xml:space="preserve">
     <value>你的游戏客户端</value>
@@ -4871,8 +5027,14 @@
   <data name="Text_c09afdde42f0" xml:space="preserve">
     <value>打开物品制作器</value>
   </data>
+  <data name="Text_c0a394371e3c" xml:space="preserve">
+    <value>设置的默认值无效：{0}</value>
+  </data>
   <data name="Text_c0adcac645f4" xml:space="preserve">
     <value>从空白开始</value>
+  </data>
+  <data name="Text_c0d5bf6b1b74" xml:space="preserve">
+    <value>显示高级设置</value>
   </data>
   <data name="Text_c0fa1dcd67a3" xml:space="preserve">
     <value>已完成的部分会保留，已复制的部分也会保留。点击“继续”即可从此处接着进行，现在或改天都可以。</value>
@@ -5326,6 +5488,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>此处已安装 LocalExile {0}。</value>
   </data>
+  <data name="Text_d3d8d0a92084" xml:space="preserve">
+    <value>联盟设置</value>
+  </data>
   <data name="Text_d452583a74d0" xml:space="preserve">
     <value>按钮</value>
   </data>
@@ -5407,6 +5572,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d72e311c4dda" xml:space="preserve">
     <value>最小化</value>
   </data>
+  <data name="Text_d7329bd6c77b" xml:space="preserve">
+    <value>无法安全读取现有设置。未作任何更改。</value>
+  </data>
   <data name="Text_d7967cfaaec9" xml:space="preserve">
     <value>选择一个新的或空的文件夹，或你已安装的发行版。你的游戏客户端也会复制到这里。</value>
   </data>
@@ -5421,6 +5589,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d7cfab3c32d0" xml:space="preserve">
     <value>传送点</value>
+  </data>
+  <data name="Text_d7dcc7b1ae21" xml:space="preserve">
+    <value>使用方：{0}</value>
   </data>
   <data name="Text_d81ab149e977" xml:space="preserve">
     <value>靛蓝</value>
@@ -5557,11 +5728,17 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_dd0abeaace42" xml:space="preserve">
     <value>工艺前缀</value>
   </data>
+  <data name="Text_dd3db6ac0dfb" xml:space="preserve">
+    <value>添加条目</value>
+  </data>
   <data name="Text_dd41095c1e2a" xml:space="preserve">
     <value>确定要卸载 {0} 吗？其文件会移到 Mods/.replaced/，可以从那里恢复；其设置会保留。</value>
   </data>
   <data name="Text_dd543c81626e" xml:space="preserve">
     <value>Frida 是可选组件；Linux 暂不支持其游戏控制功能。</value>
+  </data>
+  <data name="Text_dd78b6f9dc9e" xml:space="preserve">
+    <value>模式选项：{0}</value>
   </data>
   <data name="Text_ddbbe6445504" xml:space="preserve">
     <value>将 {0} 快进到 LocalExile 的版本；如果它有自己的提交，则会拒绝</value>
@@ -5577,6 +5754,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_de357fde69bf" xml:space="preserve">
     <value>这个游戏客户端与其他 LocalExile 副本共用，它们也会使用 {0}。</value>
+  </data>
+  <data name="Text_de6933c6727c" xml:space="preserve">
+    <value>更改模块选择前，请先保存或放弃联盟设置更改。</value>
   </data>
   <data name="Text_de8ce4325230" xml:space="preserve">
     <value>新副本可以正常使用后，删除旧副本前先询问。</value>
@@ -5613,6 +5793,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_dfc29a65920b" xml:space="preserve">
     <value>{0} 大于 256 KB</value>
+  </data>
+  <data name="Text_dfedb7e84453" xml:space="preserve">
+    <value>未知的设置类别。</value>
   </data>
   <data name="Text_dffad4c20029" xml:space="preserve">
     <value>请选择支持模组的工作区，并等待当前操作完成。</value>
@@ -5726,6 +5909,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e36274578842" xml:space="preserve">
     <value>{0} 不是空文件夹。请选择一个空文件夹用于下载。</value>
   </data>
+  <data name="Text_e3a640bd65b5" xml:space="preserve">
+    <value>选择各联盟使用的模块。模块选择更改需要重启服务器。</value>
+  </data>
   <data name="Text_e3b7b1ed944d" xml:space="preserve">
     <value>已发布的 LocalExile：经过测试，在你同意时更新。</value>
   </data>
@@ -5795,6 +5981,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e684c2284663" xml:space="preserve">
     <value>Steam 安装版没有 Content.ggpk</value>
   </data>
+  <data name="Text_e6acd5da3a93" xml:space="preserve">
+    <value>显示为以下联盟的模式：{0}</value>
+  </data>
   <data name="Text_e6b997d9bc50" xml:space="preserve">
     <value>此锚点没有匹配的怪物群数据。</value>
   </data>
@@ -5852,6 +6041,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e8def7f2e04e" xml:space="preserve">
     <value>浅色模式颜色</value>
   </data>
+  <data name="Text_e913447f262a" xml:space="preserve">
+    <value>专家模式</value>
+  </data>
   <data name="Text_e9182bbf5cec" xml:space="preserve">
     <value>正在删除备份</value>
   </data>
@@ -5878,6 +6070,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e9e895e3c405" xml:space="preserve">
     <value>进入可游玩区域以使用实时控制，或停止 Gateway 以保存启用设置。</value>
+  </data>
+  <data name="Text_e9ff4eed6056" xml:space="preserve">
+    <value>父联盟：{0}</value>
   </data>
   <data name="Text_ea044783b897" xml:space="preserve">
     <value>怪物群：{0}</value>
@@ -5920,6 +6115,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eaee391f73bd" xml:space="preserve">
     <value>正在检查游戏客户端</value>
+  </data>
+  <data name="Text_eb1a70e39274" xml:space="preserve">
+    <value>放弃更改</value>
   </data>
   <data name="Text_eb24997abb6c" xml:space="preserve">
     <value>请在“设置”中选择 LocalExile 源码副本。</value>
@@ -5980,6 +6178,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ed1a5a81b812" xml:space="preserve">
     <value>魔法</value>
+  </data>
+  <data name="Text_ed4afa1606a0" xml:space="preserve">
+    <value>设置必须为 JSON 对象。</value>
   </data>
   <data name="Text_ed5eb9a37e2d" xml:space="preserve">
     <value>现在</value>
@@ -6174,6 +6375,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
     <value>
 备份时的模组：</value>
   </data>
+  <data name="Text_f4a639914413" xml:space="preserve">
+    <value>要将所有设置恢复为默认值吗？</value>
+  </data>
   <data name="Text_f4ba436410ce" xml:space="preserve">
     <value>凋落</value>
   </data>
@@ -6233,6 +6437,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f65c3ff46b08" xml:space="preserve">
     <value>该更新未成功。正在回到之前的版本</value>
+  </data>
+  <data name="Text_f668438a7cb1" xml:space="preserve">
+    <value>此安装未提供共用设置接口。设置为只读。</value>
   </data>
   <data name="Text_f6777141eaf7" xml:space="preserve">
     <value>“安装”页面：列出每项要求及其下一步</value>
@@ -6351,6 +6558,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_fac215487bcb" xml:space="preserve">
     <value>隐藏到托盘</value>
   </data>
+  <data name="Text_fac527da85f5" xml:space="preserve">
+    <value>选择使用此模块的联盟</value>
+  </data>
   <data name="Text_fac63f370862" xml:space="preserve">
     <value>{0} 中没有游戏设置。</value>
   </data>
@@ -6368,6 +6578,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fb11eb6ebc15" xml:space="preserve">
     <value>在左侧选择基础类型</value>
+  </data>
+  <data name="Text_fb1218a1729e" xml:space="preserve">
+    <value>读取期间设置已更改。编辑前请先刷新。</value>
   </data>
   <data name="Text_fb1a779f6127" xml:space="preserve">
     <value>重新构建前请先停止服务。在其他服务运行时启动已停止的服务，会沿用其现有构建。更改源码后，请先停止所有服务并构建。游戏启动使用受支持的上游脚本。</value>

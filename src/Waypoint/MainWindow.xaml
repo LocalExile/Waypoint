@@ -189,6 +189,8 @@
                 <l:VersionsTab x:Name="Versions" Visibility="Collapsed" />
                 <l:ReleasesTab x:Name="ReleasesView" Visibility="Collapsed" />
                 <l:ModsTab x:Name="Mods" Visibility="Collapsed" />
+                <l:GameSystemsTab x:Name="ModulesView" Visibility="Collapsed" />
+                <l:GameSystemsTab x:Name="LeaguesView" LeagueView="True" Visibility="Collapsed" />
                 <l:BackupsTab x:Name="Backups" Visibility="Collapsed" />
                 <l:AccountsTab x:Name="Accounts" Visibility="Collapsed" />
                 <l:PerformanceTab x:Name="Performance" Visibility="Collapsed" />

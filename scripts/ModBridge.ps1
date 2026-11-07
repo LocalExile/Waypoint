@@ -1,4 +1,10 @@
 # LocalExile mod control uses its files and chat commands. No mod assembly is loaded into Waypoint.
+function Test-ModChildPath([string]$path, [string]$parent) {
+    $separator = [IO.Path]::DirectorySeparatorChar
+    $comparison = if ($separator -eq '/') { [StringComparison]::Ordinal } else { [StringComparison]::OrdinalIgnoreCase }
+    $prefix = [IO.Path]::GetFullPath($parent).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + $separator
+    return [IO.Path]::GetFullPath($path).StartsWith($prefix, $comparison)
+}
 function Get-ModFolder {
     if ($env:Game_MODS_FOLDER) { return [IO.Path]::GetFullPath((Join-Relative $env:Game_MODS_FOLDER)) }
     return At 'Mods/Binaries'
@@ -53,7 +59,7 @@ function Retire-RemovedManagedMods {
     foreach ($entry in $entries) {
         Assert-ModId $entry.Id
         $project = [IO.Path]::GetFullPath((At $entry.Project))
-        Require ($project.StartsWith([IO.Path]::GetFullPath((At 'Mods/Source')).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) 'Managed mod source path is outside Mods/Source.'
+        Require (Test-ModChildPath $project (At 'Mods/Source')) 'Managed mod source path is outside Mods/Source.'
         if (Test-Path -LiteralPath $project -PathType Leaf) { $remaining += $entry; continue }
         $folder = At ("Mods/Binaries/" + $entry.Id)
         Assert-Physical $folder
@@ -212,9 +218,9 @@ function Get-ModBackupMetadata($snapshot) {
 function Get-StagedModPath([string]$path, [switch]$File) {
     # Only what Waypoint checked into its own downloads folder; never a path elsewhere on the disk.
     Require ($path -and [IO.Path]::IsPathRooted($path)) 'The mod was not prepared by Waypoint.'
-    $downloads = [IO.Path]::GetFullPath((Join-Path (Get-WaypointData) 'mod-downloads')).TrimEnd('\') + '\'
+    $downloads = Join-Path (Get-WaypointData) 'mod-downloads'
     $full = [IO.Path]::GetFullPath($path)
-    Require ($full.StartsWith($downloads, [StringComparison]::OrdinalIgnoreCase)) 'The mod was not prepared by Waypoint.'
+    Require (Test-ModChildPath $full $downloads) 'The mod was not prepared by Waypoint.'
     Assert-Physical $full
     if ($File) { Require (Test-Path -LiteralPath $full -PathType Leaf) 'The prepared mod file is missing.' }
     else { Require (Test-Path -LiteralPath $full -PathType Container) 'The prepared mod folder is missing.' }
@@ -284,6 +290,16 @@ function Save-ModSettings($snapshot) {
     New-Item -ItemType Directory -Path $folder -Force | Out-Null
     $path = Join-Path $folder "$ModId.json"
     Assert-Physical $path
+    if ($ModExpectedHash) {
+        $hash = if (Test-Path -LiteralPath $path -PathType Leaf) { Get-ModFileHash $path } else { 'missing' }
+        Require ($hash -ceq $ModExpectedHash) 'Settings changed since they were opened. Refresh before saving.'
+    }
+    if (Test-Path -LiteralPath $path -PathType Leaf) {
+        $history = Join-Path (Get-WaypointData) ('config-history/' + [guid]::NewGuid().ToString('N'))
+        Assert-Physical $history
+        New-Item -ItemType Directory -Path $history -Force | Out-Null
+        Copy-Item -LiteralPath $path -Destination (Join-Path $history ($ModId + '.json'))
+    }
     $temporary = Join-Path $folder ('waypoint-' + [guid]::NewGuid().ToString('N') + '.tmp')
     [IO.File]::WriteAllText($temporary, $json, [Text.UTF8Encoding]::new($false))
     Move-Item -LiteralPath $temporary -Destination $path -Force
@@ -319,6 +335,9 @@ function Uninstall-Mod($snapshot) {
     Write-Host ("Uninstalled " + ($ids -join ', ') + '.')
 }
 function Invoke-ModOperation($snapshot) {
+    if ($Action -in @('InstallMod','SaveModSettings','UninstallMod')) {
+        Require (-not $script:isRelease) 'This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.'
+    }
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
     $environment = Get-ModEnvironment $snapshot.Services
     Require $environment.Supported 'This LocalExile revision has no supported mod host.'
@@ -381,7 +400,7 @@ function Invoke-ModOperation($snapshot) {
         $projects = @(foreach ($name in $names) {
             Require ($name -and -not [IO.Path]::IsPathRooted($name)) 'Select a source mod project from this checkout.'
             $project = [IO.Path]::GetFullPath((At $name))
-            Require ($project.StartsWith([IO.Path]::GetFullPath((At 'Mods/Source')).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase) -and $project.EndsWith('.csproj', [StringComparison]::OrdinalIgnoreCase)) 'The mod project must be inside this checkout''s Mods/Source folder.'
+            Require ((Test-ModChildPath $project (At 'Mods/Source')) -and $project.EndsWith('.csproj', [StringComparison]::OrdinalIgnoreCase)) 'The mod project must be inside this checkout''s Mods/Source folder.'
             Assert-Physical $project
             Require (Test-Path -LiteralPath $project -PathType Leaf) "The mod project $name is missing."
             $project
