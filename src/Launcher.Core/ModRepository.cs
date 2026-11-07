@@ -17,6 +17,9 @@ public sealed record ModSource(string Owner, string Name, string Branch = "main"
     internal string IndexUrl => $"https://raw.githubusercontent.com/{Owner}/{Name}/{Branch}/{ModRepository.IndexName}";
     internal string ReleasesUrl => $"https://api.github.com/repos/{Owner}/{Name}/releases?per_page=100";
     internal string SourceZipUrl => $"https://codeload.github.com/{Owner}/{Name}/zip/refs/heads/{Branch}";
+    internal string FileUrl(string path) => $"https://raw.githubusercontent.com/{Owner}/{Name}/{Branch}/{path}";
+    /// <summary>A mod's folder on GitHub.</summary>
+    public string ModPage(ModListing mod) => $"{Page}/tree/{Branch}/{mod.Path}";
 
     /// <summary>"owner/name", or a github.com URL of the repository (a trailing ".git", "/tree/&lt;branch&gt;" or slash is fine);
     /// null for anything else.</summary>
@@ -40,11 +43,15 @@ public sealed record ModListing(string Id, string Name, string Description, stri
 
 /// <summary>A mod's published release: its zip and the SHA-256 GitHub records for it (or a ".sha256" file beside it).</summary>
 public sealed record ModRelease(string Id, ReleaseVersion Version, string Tag, string Page, string ZipName, string ZipUrl, long ZipBytes,
-    string? Sha256, string? HashUrl);
+    string? Sha256, string? HashUrl, DateTimeOffset? Published = null, string Notes = "");
 
-/// <summary>A repository's mods as Browse shows them: the index, and the newest release of each mod that has one.</summary>
-public sealed record ModRepositoryView(ModSource Source, IReadOnlyList<ModListing> Mods, IReadOnlyDictionary<string, ModRelease> Releases,
-    DateTimeOffset Read, string? ReleasesError = null);
+/// <summary>A repository's mods as Browse shows them: the index, and each mod's releases, newest first.</summary>
+public sealed record ModRepositoryView(ModSource Source, IReadOnlyList<ModListing> Mods, IReadOnlyDictionary<string, IReadOnlyList<ModRelease>> History,
+    DateTimeOffset Read, string? ReleasesError = null)
+{
+    /// <summary>The newest release of each mod that has one.</summary>
+    public IReadOnlyDictionary<string, ModRelease> Releases { get; } = History.Where(h => h.Value.Count > 0).ToDictionary(h => h.Key, h => h.Value[0], StringComparer.Ordinal);
+}
 
 /// <summary>A downloaded mod, checked and waiting in Waypoint's own folder for the adapter to put it in the checkout:
 /// <c>Mods/Binaries/&lt;id&gt;/</c> for a release or a script mod, <c>Mods/Source/&lt;id&gt;/</c> for a project to build.</summary>
@@ -90,13 +97,17 @@ public static class ModRepository
         return result;
     }
 
-    /// <summary>The newest release of each mod: tags <c>&lt;id&gt;-v&lt;version&gt;</c> with a <c>&lt;id&gt;-&lt;version&gt;.zip</c>;
+    /// <summary>The newest release of each mod.</summary>
+    public static IReadOnlyDictionary<string, ModRelease> ParseReleases(string json) =>
+        ParseHistory(json).ToDictionary(h => h.Key, h => h.Value[0], StringComparer.Ordinal);
+
+    /// <summary>Each mod's releases, newest first: tags <c>&lt;id&gt;-v&lt;version&gt;</c> with a <c>&lt;id&gt;-&lt;version&gt;.zip</c>;
     /// drafts, pre-releases and releases without their zip are left out.</summary>
-    public static IReadOnlyDictionary<string, ModRelease> ParseReleases(string json)
+    public static IReadOnlyDictionary<string, IReadOnlyList<ModRelease>> ParseHistory(string json)
     {
         using var document = JsonDocument.Parse(json);
-        var newest = new Dictionary<string, ModRelease>(StringComparer.Ordinal);
-        if (document.RootElement.ValueKind != JsonValueKind.Array) return newest;
+        var all = new Dictionary<string, List<ModRelease>>(StringComparer.Ordinal);
+        if (document.RootElement.ValueKind != JsonValueKind.Array) return new Dictionary<string, IReadOnlyList<ModRelease>>();
         foreach (var release in document.RootElement.EnumerateArray())
         {
             if (release.ValueKind != JsonValueKind.Object) continue;
@@ -116,10 +127,24 @@ public static class ModRepository
             var hash = assets.FirstOrDefault(a => Name(a) == zipName + ".sha256");
             var candidate = new ModRelease(id, version, tag, release.TryGetProperty("html_url", out var page) ? page.GetString() ?? "" : "",
                 zipName, zipUrl, zip.TryGetProperty("size", out var size) && size.TryGetInt64(out long bytes) ? bytes : 0,
-                digest, hash.ValueKind == JsonValueKind.Object ? Url(hash) : null);
-            if (!newest.TryGetValue(id, out var known) || version.IsNewerThan(known.Version)) newest[id] = candidate;
+                digest, hash.ValueKind == JsonValueKind.Object ? Url(hash) : null,
+                release.TryGetProperty("published_at", out var at) && at.ValueKind == JsonValueKind.String && at.TryGetDateTimeOffset(out var when) ? when : null,
+                release.TryGetProperty("body", out var body) && body.ValueKind == JsonValueKind.String ? body.GetString() ?? "" : "");
+            if (!all.TryGetValue(id, out var list2)) all[id] = list2 = [];
+            if (!list2.Any(r => !r.Version.IsNewerThan(version) && !version.IsNewerThan(r.Version))) list2.Add(candidate);
         }
-        return newest;
+        return all.ToDictionary(a => a.Key, a => (IReadOnlyList<ModRelease>)[.. a.Value.OrderByDescending(r => r.Version, Comparer<ReleaseVersion>.Create((x, y) => x.IsNewerThan(y) ? 1 : y.IsNewerThan(x) ? -1 : 0))],
+            StringComparer.Ordinal);
+    }
+
+    /// <summary>A mod's README.md from its repository, or "" when it has none.</summary>
+    public static async Task<string> ReadmeAsync(HttpClient client, ModSource source, ModListing mod, CancellationToken stop = default)
+    {
+        using var response = await client.GetAsync(source.FileUrl(mod.Path + "/README.md"), HttpCompletionOption.ResponseHeadersRead, stop);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return "";
+        response.EnsureSuccessStatusCode();
+        string text = await response.Content.ReadAsStringAsync(stop);
+        return text.Length > 256 * 1024 ? text[..(256 * 1024)] : text;
     }
 
     /// <summary>The repository's index and releases. The index comes from raw.githubusercontent.com; the releases from
@@ -131,13 +156,13 @@ public static class ModRepository
         response.EnsureSuccessStatusCode();
         if (response.Content.Headers.ContentLength > MaxIndexBytes) throw new InvalidDataException(L.Text("{0} is larger than 1 MB", IndexName));
         var mods = ParseIndex(await response.Content.ReadAsStringAsync(stop));
-        IReadOnlyDictionary<string, ModRelease> releases = new Dictionary<string, ModRelease>();
+        IReadOnlyDictionary<string, IReadOnlyList<ModRelease>> releases = new Dictionary<string, IReadOnlyList<ModRelease>>();
         string? releasesError = null;
         try
         {
             using var list = await client.GetAsync(source.ReleasesUrl, stop);
             list.EnsureSuccessStatusCode();
-            releases = ParseReleases(await list.Content.ReadAsStringAsync(stop));
+            releases = ParseHistory(await list.Content.ReadAsStringAsync(stop));
         }
         catch (Exception e) when (e is HttpRequestException or JsonException or TaskCanceledException && !stop.IsCancellationRequested)
         {

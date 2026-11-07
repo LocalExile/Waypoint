@@ -572,21 +572,31 @@ Python packages. Linux explains that its game-control integrations are unavailab
 
 ### Mods
 
-The list comes from the mods' manifests under `Mods/Binaries` and `Mods/Source`. A choice made with the Gateway stopped
-applies at its next start; with a client in a playable area, **Enable**, **Disable** and **Reload** act on the running
-Gateway through the client control bridge, and affect every character on it. Live status needs Python with Frida.
-
-**Mods** lists the installed mods (projects, built mods and script mods: loose `.cs` files in `Mods/Binaries/<id>/`)
-with the name, description, author and version from `mod.json`. The row's check box turns a mod on or off. A mod with a
-`settings.json` shows a form for the common setting types (on/off, numbers, choices, text); the values go to
-`data/mods/<id>.json`, which holds only what differs from the defaults, and a running Gateway reloads the mod. Other types
-are edited in the file. **Install from folder…** copies a built or script mod, or builds a project.
+Laid out like an addon manager, in two tables. **My Mods** lists the installed mods (from the manifests under
+`Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their version,
+the latest one a repository offers, and the author. A row's check box turns the mod on or off at once: Waypoint rewrites
+the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
+applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). **Update** and
+**Update all** appear when a repository has a newer version. The ⋮ menu holds the rarer tools: Install from folder…,
+Build all mods, Check live status (Python with Frida), Gateway log, the operation log, and the backup choice.
 
 **Browse** reads a repository's `mods.json` index (the official one is `LocalExile/LocalExile-Mods`; others are added
-by URL and get a trust warning) and its GitHub releases. **Install** and **Update** prefer a release asset
+from its ⋮ menu by URL and get a trust warning) and its GitHub releases. **Install** and **Update** prefer a release asset
 `<id>-<version>.zip` from the tag `<id>-v<version>`, checked against its SHA-256; a mod without a release is
-downloaded as source and built, which needs the .NET 10 SDK and a source checkout, and asks first. A replaced mod is
-moved to `Mods/.replaced/<time>/`, never deleted. Downloads are staged in Waypoint's `mod-downloads` folder.
+installed as source (a source checkout only, after asking) and built when the player presses **Build** in My Mods,
+which needs the .NET 10 SDK. Downloads are staged in Waypoint's `mod-downloads` folder.
+
+Each install, build or uninstall shows on its mod's row in place of the button: a box that fills with the download,
+then "Installing…", "Building…" or "Uninstalling…"; then the row shows the mod's state again (Up to date, as text, once it is built). Several can start at once (Update all
+starts every update): downloads run side by side, and the checkout operations wait their turn, since the adapter runs
+one at a time. Installs, uninstalls and builds waiting together run as one operation of their kind: one save backup, and the builds
+in parallel. A failed one opens the operation log.
+
+Clicking a row opens the mod's page: its README (Overview, drawn as GitHub-flavoured Markdown with Markdig; images
+show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its settings form for the common `settings.json` types
+(on/off, numbers, choices, text; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
+and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
+actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
 
 ### Backups
 

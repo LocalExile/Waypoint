@@ -8,7 +8,10 @@ namespace Launcher.Core;
 public sealed record ModEnvironment(bool Supported, string Folder, bool Enabled, string RuntimeReport = "", string CheckedUtc = "");
 /// <summary>A mod operation's arguments. <paramref name="Staged"/> is a checked folder (InstallMod) or values file
 /// (SaveModSettings) under Waypoint's own data folder; <paramref name="Target"/> is Binaries or Source.</summary>
-public sealed record ModRequest(string Id = "", string Project = "", string Staged = "", string Target = "");
+/// <summary>A mod operation's mod; <paramref name="Batch"/> names several at once, for one InstallMod, UninstallMod or
+/// BuildMod run over all of them.</summary>
+public sealed record ModRequest(string Id = "", string Project = "", string Staged = "", string Target = "",
+    IReadOnlyList<ModRequest>? Batch = null);
 public sealed record ModEntry(string Id, string Version, string Kind, string[] Depends, bool Enabled, string Status,
     string Detail, string Folder, string Project, string Fingerprint, string Name = "", string Description = "", string Author = "",
     bool IsScript = false)
@@ -162,6 +165,25 @@ public static class ModCatalog
         }
         return entries.Values.OrderBy(e => e.Id, StringComparer.Ordinal).ToArray();
     }
+    /// <summary>Turns a mod on or off in the server's own choices file (<c>mod-state.txt</c>), replacing the file at once. A
+    /// stopped Gateway reads it at its next start; a running one that watches the file (LocalExile since 2026-11-07) loads or
+    /// unloads the mod within a second. Its other lines stay as they are.</summary>
+    public static void WriteChoice(string folder, string id, bool enabled)
+    {
+        if (!ValidId(id)) throw new ArgumentException(L.Text("{0} is not a mod id Waypoint can use", id));
+        if (!Physical(folder)) throw new IOException("Redirected mod paths are not supported.");
+        Directory.CreateDirectory(folder);
+        string path = Path.Combine(folder, "mod-state.txt");
+        var lines = new List<string>();
+        if (File.Exists(path))
+            lines.AddRange(Read(path).Split('\n').Select(l => l.TrimEnd('\r')).Where(l => l.Length > 0
+                && (l.Split(' ', StringSplitOptions.RemoveEmptyEntries) is not [var other, "on" or "off"] || other != id)));
+        lines.Add(id + (enabled ? " on" : " off"));
+        string temporary = Path.Combine(folder, "waypoint-choices-" + Guid.NewGuid().ToString("N") + ".tmp");
+        File.WriteAllLines(temporary, lines, new System.Text.UTF8Encoding(false));
+        File.Move(temporary, path, overwrite: true);
+    }
+
     public static Dictionary<string, bool> ReadChoices(string folder)
     {
         var choices = new Dictionary<string, bool>(StringComparer.Ordinal);

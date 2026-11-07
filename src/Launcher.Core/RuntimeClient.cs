@@ -17,7 +17,7 @@ public sealed class RuntimeClient
         Action<OperationProgress>? progress = null, AccountRequest? account = null,
         string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null, CancellationToken stop = default, string? saveSource = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "InstallMod", "SaveModSettings", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "InstallMod", "SaveModSettings", "UninstallMod", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));
@@ -50,6 +50,21 @@ public sealed class RuntimeClient
             if (!string.IsNullOrEmpty(mod.Id) && !ModCatalog.ValidId(mod.Id)) throw new ArgumentException("Unsupported mod ID.", nameof(mod));
             if (mod.Id.Length > 0) { start.ArgumentList.Add("-ModId"); start.ArgumentList.Add(mod.Id); }
             if (mod.Project.Length > 0) { start.ArgumentList.Add("-ModProject"); start.ArgumentList.Add(mod.Project); }
+            // A batch goes as ';'-separated lists in the same order: -ModIds, and the projects, staged folders and targets it has.
+            if (mod.Batch is { Count: > 0 } batch)
+            {
+                if (!batch.All(m => ModCatalog.ValidId(m.Id))) throw new ArgumentException("Unsupported mod ID.", nameof(mod));
+                void List(string name, Func<ModRequest, string> part)
+                {
+                    if (batch.All(m => part(m).Length == 0)) return;
+                    if (batch.Any(m => part(m).Length == 0 || part(m).Contains(';'))) throw new ArgumentException("Unsupported mod batch.", nameof(mod));
+                    start.ArgumentList.Add(name); start.ArgumentList.Add(string.Join(';', batch.Select(part)));
+                }
+                List("-ModIds", m => m.Id);
+                List("-ModProjects", m => m.Project);
+                List("-ModStageds", m => m.Staged);
+                List("-ModTargets", m => m.Target);
+            }
             if (mod.Staged.Length > 0) { start.ArgumentList.Add("-ModStaged"); start.ArgumentList.Add(mod.Staged); }
             if (mod.Target is "Binaries" or "Source") { start.ArgumentList.Add("-ModTarget"); start.ArgumentList.Add(mod.Target); }
         }
