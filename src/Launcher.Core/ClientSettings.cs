@@ -93,7 +93,8 @@ public static class ClientSettings
     public static bool IsPredictive(string configFile) => string.Equals(NetworkMode(configFile), "predictive", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>Gives the client LocalExile's own files. A new settings file starts as a copy of the shared one without its saved
-    /// login, and the client needs Predictive whichever it is. config.json goes last, so a stop leaves the client as it was.</summary>
+    /// login, set to Predictive, the preferred network mode (the server follows whichever the game picks, and the player can
+    /// change it in game). config.json goes last, so a stop leaves the client as it was.</summary>
     public static void UseOwn(string client, string? documents = null)
     {
         documents ??= Documents;

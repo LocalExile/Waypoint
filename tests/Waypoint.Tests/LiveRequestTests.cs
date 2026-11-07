@@ -6,42 +6,17 @@ namespace Waypoint.Tests;
 public class LiveRequestTests
 {
     [Fact]
-    public void A_run_that_starts_a_Gateway_says_whether_it_serves_lockstep()
+    public void A_run_leaves_the_network_mode_to_the_game()
     {
-        foreach (var request in new LiveRequest[] { new(LiveMode.All), new(LiveMode.Servers), new(LiveMode.Restart, "Gateway") })
+        // The Gateway follows the mode the game picks, so no run sets a server variable for it.
+        foreach (var request in new LiveRequest[] { new(LiveMode.All), new(LiveMode.Servers), new(LiveMode.Restart, "Gateway"), new(LiveMode.Restart, "Auth"), new(LiveMode.Stop) })
         {
-            Assert.Equal("1", (request with { Lockstep = true }).Variables()!["Game_LOCKSTEP"]);
-            // Off removes the variable, so that one left in a shell cannot turn it on.
-            var off = request.Variables()!;
-            Assert.True(off.ContainsKey("Game_LOCKSTEP"));
-            Assert.Null(off["Game_LOCKSTEP"]);
+            Assert.Null(request.Variables());
+            Assert.DoesNotContain("Game_LOCKSTEP", request.Describe());
         }
+        Assert.Equal("live.ps1 -NoClient", new LiveRequest(LiveMode.Servers).Describe());
+        Assert.False(new LiveRequest(LiveMode.Client).Variables()!.ContainsKey("Game_LOCKSTEP"));
     }
-
-    [Fact]
-    public void A_run_that_starts_no_Gateway_leaves_lockstep_alone()
-    {
-        Assert.Null(new LiveRequest(LiveMode.Restart, "Auth", Lockstep: true).Variables());
-        Assert.Null(new LiveRequest(LiveMode.Stop, Lockstep: true).Variables());
-        Assert.False(new LiveRequest(LiveMode.Client, Lockstep: true).Variables()!.ContainsKey("Game_LOCKSTEP"));
-    }
-
-    [Fact]
-    public void The_run_says_when_it_serves_lockstep()
-    {
-        Assert.Equal("live.ps1 -NoClient (Game_LOCKSTEP=1)", new LiveRequest(LiveMode.Servers, Lockstep: true).Describe());
-        Assert.Equal("live.ps1 -Stop", new LiveRequest(LiveMode.Stop, Lockstep: true).Describe());
-        Assert.Empty(new LiveRequest(LiveMode.All, Lockstep: true).Arguments());
-    }
-
-    [Theory]
-    [InlineData("$env:Game_LOCKSTEP = '1'", "1")]
-    [InlineData("$env:Game_FOO = 'x'\r\n  $env:game_lockstep=\"network\"\r\n", "network")]
-    [InlineData("$env:Game_LOCKSTEP = '1'\n$env:Game_LOCKSTEP = ''", "")]
-    [InlineData("# $env:Game_LOCKSTEP = '1'", null)]
-    [InlineData("$env:Game_MODS = '0'", null)]
-    public void A_local_profile_is_read_for_what_it_sets(string profile, string? expected) =>
-        Assert.Equal(expected, Repo.ProfileLockstep(profile));
 
     [Fact]
     public void Play_passes_the_chosen_options()

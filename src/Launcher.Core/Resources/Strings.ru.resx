@@ -291,9 +291,6 @@
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>Заново получает запрос на слияние #{0}: его новейшие коммиты, в том числе после force-push</value>
   </data>
-  <data name="Text_0d21277e3dc4" xml:space="preserve">
-    <value>Задано локальным профилем запуска этой копии, config/runtime.local.ps1. Уберите это оттуда, чтобы пользоваться переключателем.</value>
-  </data>
   <data name="Text_0d422d261e8b" xml:space="preserve">
     <value>Резервное копирование сохранений</value>
   </data>
@@ -1271,9 +1268,6 @@
   <data name="Text_35a86201334e" xml:space="preserve">
     <value>Проверка Python 3.9+ и Frida без установки пакетов.</value>
   </data>
-  <data name="Text_35b31d20f9a2" xml:space="preserve">
-    <value>«Синхронизация» изменится при следующем запуске Gateway: «Играть» перезапустит серверы.</value>
-  </data>
   <data name="Text_35dd8b832082" xml:space="preserve">
     <value>Показать Waypoint</value>
   </data>
@@ -1799,9 +1793,6 @@
   </data>
   <data name="Text_4df36313ae04" xml:space="preserve">
     <value>2.  Находит клиент игры или позволяет указать его</value>
-  </data>
-  <data name="Text_4df4a74256c7" xml:space="preserve">
-    <value>режим работы сети {0}: сервер его обслуживает</value>
   </data>
   <data xml:space="preserve" name="Text_4df57ea533cf">
     <value>Проверка восстановления</value>
@@ -3194,9 +3185,6 @@
   <data name="Text_8db991f463fe" xml:space="preserve">
     <value>У {0} может быть не больше {1} гнёзд</value>
   </data>
-  <data name="Text_8de109f741c7" xml:space="preserve">
-    <value>Синхронизация</value>
-  </data>
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>пок. 2</value>
   </data>
@@ -4349,9 +4337,6 @@
   </data>
   <data name="Text_bf009459884a" xml:space="preserve">
     <value>Обновить игровые данные</value>
-  </data>
-  <data name="Text_bf91cdb0ca76" xml:space="preserve">
-    <value>Обслуживает игру с режимом работы сети «Синхронизация» (Lockstep), только на этом компьютере (Game_LOCKSTEP=1). Настройка самой игры не меняется. Применяется при следующем запуске Gateway.</value>
   </data>
   <data name="Text_bffd26352bd5" xml:space="preserve">
     <value>Перед сохранением предпочтения вам один раз предложат выбрать действие при закрытии.</value>
@@ -5941,4 +5926,5 @@
   <data name="Text_8eebbaa1dbe0" xml:space="preserve"><value>Рабочие файлы: {0}</value></data>
   <data name="Text_72f399f8decf" xml:space="preserve"><value>{0} (только прибытие)</value></data>
   <data name="Text_0df1356837a1" xml:space="preserve"><value>{0} (отключено)</value></data>
+  <data name="Text_0accac4403f2" xml:space="preserve"><value>режим работы сети {0}: обслуживается, но предпочтителен «Рассинхронизация»</value></data>
 </root>

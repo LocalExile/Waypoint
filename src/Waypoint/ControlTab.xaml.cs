@@ -100,8 +100,6 @@ public partial class ControlTab : UserControl
         new(Service.Recorder, () => L.Text("Records each area's walk map with Frida"), PackIconKind.MapMarkerPath),
     ];
     bool _live;
-    /// <summary>The Lockstep switch differs from what the running Gateway started with.</summary>
-    bool _lockstepChanged;
 
     /// <summary>The status line as a function, so that a language change says it again.</summary>
     Func<string> _state = () => L.Text("Ready.");
@@ -180,7 +178,7 @@ public partial class ControlTab : UserControl
             ? L.Text("live.ps1 -NoClient: rebuilds and restarts Patch, Auth and Gateway (after a pull, or edits outside the Gateway); " +
               "the Gateway's own code edits apply by themselves with hot reload. A running client stays.")
             : L.Text("live.ps1 -NoClient: builds and starts Patch, Auth and Gateway; a running client stays");
-        PlayButton.ToolTip = !_lockstepChanged && PlaysOnlyTheGame(samples, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps())
+        PlayButton.ToolTip = PlaysOnlyTheGame(samples, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps())
             ? L.Text("live.ps1 -ClientOnly: starts the game against the running servers (Restart servers rebuilds them)")
             : L.Text("live.ps1: builds and starts the servers, then the game (closes a running one)");
     }
@@ -193,44 +191,10 @@ public partial class ControlTab : UserControl
         s.NoExtract = NoExtract.IsChecked == true;
         s.HotReload = HotReload.IsChecked == true;
         s.Save();
-        return new LiveRequest(mode, server, s.Walkmaps, s.NoBuild, s.NoExtract, NoHotReload: !s.HotReload, Lockstep: Repo.ServesLockstep);
+        return new LiveRequest(mode, server, s.Walkmaps, s.NoBuild, s.NoExtract, NoHotReload: !s.HotReload);
     }
 
     bool ClientRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Client && s.Running);
-    bool GatewayRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Gateway && s.Running);
-
-    /// <summary>The switch as the checkout has it. A local launch profile that sets lockstep decides, so the switch only shows that.</summary>
-    void ShowLockstep()
-    {
-        string? profile = Repo.ProfileLockstep();
-        _showingLockstep = true;
-        Lockstep.Visibility = Repo.HasLockstep() ? Visibility.Visible : Visibility.Collapsed;
-        Lockstep.IsEnabled = profile is null;
-        Lockstep.IsChecked = Repo.ServesLockstep;
-        Lockstep.ToolTip = profile is null
-            ? L.Text("Serves a game set to the Lockstep network mode, on this PC only (Game_LOCKSTEP=1). The game's own setting stays as it is. Applies when the Gateway next starts.")
-            : L.Text("Set by this checkout's local launch profile, config/runtime.local.ps1. Remove it there to use this switch.");
-        _showingLockstep = false;
-    }
-
-    bool _showingLockstep;
-
-    /// <summary>The player's flip, by mouse, keyboard or screen reader. A running Gateway keeps what it started with: until it
-    /// starts again, Play restarts the servers instead of only starting the game. Flipped back, nothing needs to change.</summary>
-    void LockstepChanged(object sender, RoutedEventArgs e)
-    {
-        if (_showingLockstep || _shared is null) return;
-        Repo.LockstepSwitch = _shared.Settings.LockstepServer = Lockstep.IsChecked == true;
-        _shared.Settings.Save();
-        if (GatewayRunning)
-        {
-            _lockstepChanged = !_lockstepChanged;
-            if (_lockstepChanged) Say(() => L.Text("Lockstep changes when the Gateway starts again: Play restarts the servers."));
-            else Say(() => L.Text("Ready."));
-        }
-        ShowServices(_shared.Monitor.Latest);
-        _ = RefreshSetup();
-    }
 
     Task<int?> Run(LiveRequest request, bool fridaReady = false) => Run(request, _shared.RunLiveAsync, fridaReady);
 
@@ -272,7 +236,6 @@ public partial class ControlTab : UserControl
         var started = Stopwatch.StartNew();
         int? code = await run(request, line => Dispatcher.BeginInvoke(() => Append(line)));
         double seconds = started.Elapsed.TotalSeconds;
-        if (code == 0 && request.StartsGateway) _lockstepChanged = false;
         Say(() => code switch
         {
             null => L.Text("live.ps1 is already running."),
@@ -296,7 +259,7 @@ public partial class ControlTab : UserControl
     internal async Task<int?> PlayAsync()
     {
         if (Walkmaps.IsChecked == true && !await PrepareWalkmaps()) return null;
-        if (!_lockstepChanged && PlaysOnlyTheGame(_shared.Monitor.Latest, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps()))
+        if (PlaysOnlyTheGame(_shared.Monitor.Latest, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps()))
         {
             // The servers stay as they are: only the game (again) against them.
             if (ClientRunning)
@@ -472,7 +435,6 @@ public partial class ControlTab : UserControl
     internal async Task RefreshSetup()
     {
         if (Repo.IsInstall) return;
-        ShowLockstep();
         SetupList.ItemsSource = new[] { new SetupCheck(null, L.Text("checking …")) };
         SetupList.ItemsSource = await Task.Run(SetupChecks.Run);
     }

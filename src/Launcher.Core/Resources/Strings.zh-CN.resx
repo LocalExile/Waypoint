@@ -291,9 +291,6 @@
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>重新获取拉取请求 #{0}：获取其最新提交，强制推送后同样适用</value>
   </data>
-  <data name="Text_0d21277e3dc4" xml:space="preserve">
-    <value>由此源码副本的本地启动配置 config/runtime.local.ps1 设置。请在该文件中移除此设置，才能使用此开关。</value>
-  </data>
   <data name="Text_0d422d261e8b" xml:space="preserve">
     <value>正在备份你的存档</value>
   </data>
@@ -1271,9 +1268,6 @@
   <data name="Text_35a86201334e" xml:space="preserve">
     <value>正在检查 Python 3.9+ 和 Frida，不会安装任何包。</value>
   </data>
-  <data name="Text_35b31d20f9a2" xml:space="preserve">
-    <value>同步模式的更改将在 Gateway 重新启动时生效：“开始游戏”会重启服务器。</value>
-  </data>
   <data name="Text_35dd8b832082" xml:space="preserve">
     <value>显示 Waypoint</value>
   </data>
@@ -1799,9 +1793,6 @@
   </data>
   <data name="Text_4df36313ae04" xml:space="preserve">
     <value>2.  查找你的游戏客户端，或让你手动指定</value>
-  </data>
-  <data name="Text_4df4a74256c7" xml:space="preserve">
-    <value>连线模式为 {0}：服务器支持该模式</value>
   </data>
   <data name="Text_4df57ea533cf" xml:space="preserve">
     <value>正在检查恢复</value>
@@ -3194,9 +3185,6 @@
   <data name="Text_8db991f463fe" xml:space="preserve">
     <value>{0} 最多只能有 {1} 个插槽</value>
   </data>
-  <data name="Text_8de109f741c7" xml:space="preserve">
-    <value>同步模式</value>
-  </data>
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>第 2 代</value>
   </data>
@@ -4349,9 +4337,6 @@
   </data>
   <data name="Text_bf009459884a" xml:space="preserve">
     <value>重新加载游戏数据</value>
-  </data>
-  <data name="Text_bf91cdb0ca76" xml:space="preserve">
-    <value>为连线模式设为“同步模式”的游戏提供服务，仅限本机（Game_LOCKSTEP=1）。游戏自身的设置保持不变。在 Gateway 下次启动时生效。</value>
   </data>
   <data name="Text_bffd26352bd5" xml:space="preserve">
     <value>保存关闭偏好前会询问你一次。</value>
@@ -5941,4 +5926,5 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_8eebbaa1dbe0" xml:space="preserve"><value>工作文件：{0}</value></data>
   <data name="Text_72f399f8decf" xml:space="preserve"><value>{0}（仅供抵达）</value></data>
   <data name="Text_0df1356837a1" xml:space="preserve"><value>{0}（已禁用）</value></data>
+  <data name="Text_0accac4403f2" xml:space="preserve"><value>连线模式为 {0}：服务器支持，但推荐使用预测模式</value></data>
 </root>

@@ -33,7 +33,6 @@ public partial class App : Application
         L.Current.SetLanguage(Settings.Language);
         Theme.Apply(Settings.Appearance);
         Repo.UseLocalProfile = Settings.UseLocalProfile;
-        Repo.LockstepSwitch = Settings.LockstepServer;
         try
         {
             var options = AppStartupOptions.Parse(e.Args, Environment.CurrentDirectory);

@@ -62,28 +62,10 @@ static class Repo
     /// <summary>What a run starts: the checkout's local wrapper with its profile, else live.ps1.</summary>
     public static string LiveEntry => UseLocalProfile && File.Exists(LocalLiveScript) ? LocalLiveScript : LiveScript;
 
-    /// <summary>The Control section's Lockstep switch (Settings).</summary>
-    public static bool LockstepSwitch { get; set; }
-
-    /// <summary>Whether the checkout's server can serve the client's lockstep network mode (LocalExile #560). An older one ignores
-    /// Game_LOCKSTEP, so the switch would look on and do nothing.</summary>
-    public static bool HasLockstep() => File.Exists(Path.Combine("src", "GameServer.Gateway", "Connection", "LockstepLink.cs"));
-
-    /// <summary>What the checkout's local launch profile sets Game_LOCKSTEP to; null when it leaves that to the switch. The
-    /// wrapper runs after Waypoint has set the environment, so the profile's word is final.</summary>
-    public static string? ProfileLockstep()
-    {
-        string runtime = Path.Combine("config", "runtime.local.ps1");
-        try { return LiveEntry == LocalLiveScript && File.Exists(runtime) ? ProfileLockstep(File.ReadAllText(runtime)) : null; }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return null; }
-    }
-
-    internal static string? ProfileLockstep(string profile) =>
-        Regex.Matches(profile, """^\s*\$env:Game_LOCKSTEP\s*=\s*(?:'([^']*)'|"([^"]*)"|(\S+))""", RegexOptions.Multiline | RegexOptions.IgnoreCase)
-            .LastOrDefault() is { } set ? set.Groups[1].Value + set.Groups[2].Value + set.Groups[3].Value : null;
-
-    /// <summary>Whether the next Gateway serves a client in lockstep.</summary>
-    public static bool ServesLockstep => HasLockstep() && (ProfileLockstep() is { } set ? set is "1" or "network" : LockstepSwitch);
+    /// <summary>Whether the checkout's Gateway serves the network mode the client picks (LocalExile #684); an older one serves
+    /// only Predictive unless Game_LOCKSTEP asks (its <c>LockstepLink.cs</c>), and Waypoint no longer sets that.</summary>
+    public static bool ServesAnyNetworkMode() =>
+        File.Exists(Path.Combine("src", "GameServer.Gateway", "Connection", "LockstepLatency.cs"));
 
     /// <summary>Whether the checkout has what Waypoint drives it with: live.ps1 -Stop, the Gateway's <c>commands</c> and
     /// <c>values</c> modes and the dev host's accounts came together. An older Gateway does not know those modes and would

@@ -7,22 +7,18 @@ enum LiveMode { All, Servers, Client, Restart, Stop, StopServers }
 /// <summary>One run of scripts/dev/live.ps1. The launcher never starts a server or the client itself: every button is a
 /// live.ps1 switch (Agents/GettingStarted.md, "Play"), so the script's checks and the patching-server argument apply.</summary>
 /// <param name="NoHotReload">Starts the built Gateway instead of running it under `dotnet watch` (live.ps1's default).</param>
-/// <param name="Lockstep">The Gateway serves a client in the Lockstep network mode on this PC (Game_LOCKSTEP=1).</param>
 sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = false, bool NoBuild = false, bool NoExtract = false,
-    bool NoHotReload = false, bool Lockstep = false)
+    bool NoHotReload = false)
 {
     public static readonly string[] Servers = ["Gateway", "Auth", "Patch"];
 
     /// <summary>A restart of Auth or Patch leaves the running Gateway as it is.</summary>
     public bool StartsGateway => Mode is LiveMode.All or LiveMode.Servers || this is { Mode: LiveMode.Restart, Server: "Gateway" };
 
-    /// <summary>What the run changes in the environment it inherits. A run that starts a Gateway always says whether it serves
-    /// lockstep, so that a variable left in a shell cannot turn it on behind the switch. A local launch profile runs after
-    /// this and has the last word (<see cref="Repo.ProfileLockstep()"/>).</summary>
+    /// <summary>What the run changes in the environment it inherits. The network mode is the game's own setting: the Gateway
+    /// serves whichever the client picks (LocalExile #684), so a run sets nothing for it.</summary>
     public IReadOnlyDictionary<string, string?>? Variables() =>
-        Mode == LiveMode.Client ? Scripts.ClientOnlyEnvironment
-        : StartsGateway ? new Dictionary<string, string?> { ["Game_LOCKSTEP"] = Lockstep ? "1" : null }
-        : null;
+        Mode == LiveMode.Client ? Scripts.ClientOnlyEnvironment : null;
 
     /// <summary>The script's switches. -ClientOnly takes only -Walkmaps (the recorder beside the new client; a checkout's
     /// live.ps1 older than that refuses it, so the caller leaves it out there, <see cref="Repo.ClientOnlyTakesWalkmaps"/>)
@@ -51,7 +47,7 @@ sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = 
 
     string CheckedServer => Servers.Contains(Server) ? Server! : throw new ArgumentException($"not a live.ps1 server: {Server}");
 
-    public string Describe() => $"live.ps1 {string.Join(' ', Arguments())}".TrimEnd() + (StartsGateway && Lockstep ? " (Game_LOCKSTEP=1)" : "");
+    public string Describe() => $"live.ps1 {string.Join(' ', Arguments())}".TrimEnd();
 }
 
 /// <summary>Runs a PowerShell script of the repository and streams its output lines.</summary>

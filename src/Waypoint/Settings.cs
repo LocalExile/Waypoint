@@ -59,8 +59,6 @@ sealed class Settings
     public bool NoExtract { get; set; }
     /// <summary>The Gateway under `dotnet watch` (live.ps1's default); off passes -NoHotReload.</summary>
     public bool HotReload { get; set; } = true;
-    /// <summary>The Gateway serves a client in the Lockstep network mode on this PC. The game's own setting is the player's.</summary>
-    public bool LockstepServer { get; set; }
     /// <summary>Display layers in the map viewer.</summary>
     public MapLayerSettings MapLayers { get; set; } = new();
     /// <summary>Look for a newer release at startup (a release build only).</summary>
