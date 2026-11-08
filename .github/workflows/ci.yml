@@ -36,6 +36,10 @@ jobs:
           }
           python tests/AccountData.Tests.py
           if ($LASTEXITCODE -ne 0) { throw 'AccountData.Tests.py failed' }
+          python tests/LeagueData.Tests.py
+          if ($LASTEXITCODE -ne 0) { throw 'LeagueData.Tests.py failed' }
+          python tests/LeagueArt.Tests.py
+          if ($LASTEXITCODE -ne 0) { throw 'LeagueArt.Tests.py failed' }
           python tests/Capture.Tests.py
           if ($LASTEXITCODE -ne 0) { throw 'Capture.Tests.py failed' }
       - name: Translations
@@ -50,3 +54,5 @@ jobs:
         run: |
           ./tests/ModBrowser.Tests.ps1
           ./tests/ContentBridge.Tests.ps1
+          python3 ./tests/LeagueData.Tests.py
+          python3 ./tests/LeagueArt.Tests.py

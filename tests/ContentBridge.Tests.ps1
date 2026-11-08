@@ -15,15 +15,25 @@ foreach ($name in 'Require','Assert-Physical','Get-ContentEnvironment','Join-Rel
     . ([scriptblock]::Create($function.Extent.Text))
 }
 function At([string]$path) { Join-Path $script:root $path }
+$script:savePath = At "data/saves.db"
+function Get-Python { if ([Environment]::OSVersion.Platform -eq 'Win32NT') { 'python' } else { 'python3' } }
 function Get-WaypointData { Join-Path $fixture 'waypoint data' }
 function Set-Stage($stage, $detail) { }
+function Assert-AccountsStopped($snapshot) { Require (-not $script:running) 'fixture writer is running' }
+function Get-Snapshot { $snapshot }
 function Backup-Saves($snapshot) {
+    if ($script:changeLeagueDuringBackup) { Add-Content -LiteralPath (At 'Leagues/Standard/league.json') ' ' }
+    if ($script:startDuringBackup) { $script:running=$true }
     if ($script:failBackup) { throw 'fixture backup failed' }
     if ($script:changeDuringBackup) { [IO.File]::WriteAllText((At 'data/modules/Example.json'), '{"duringBackup":true}') }
     $script:backups++
 }
 function Check($condition, $text) { if (-not $condition) { throw "FAIL: $text" }; $script:passed++; Write-Host "PASS: $text" }
 function Refused([scriptblock]$run, $text) { $blocked=$false; try { & $run } catch { $blocked=$true }; Check $blocked $text }
+function StageLeague($choices) {
+    $review = (Invoke-LeagueData (Get-ContentEnvironment) @{} "Inspect" "check").Review
+    return Stage (@{ league="Standard"; choices=($choices | ConvertFrom-Json); review=$review } | ConvertTo-Json -Depth 30)
+}
 function Stage($json) {
     $folder = Join-Path (Get-WaypointData) ('mod-downloads/' + [guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Force $folder | Out-Null
@@ -34,6 +44,9 @@ try {
     Set-Content -LiteralPath (At 'Modules/Optional/Example/module.json') '{"id":"Example"}'
     Set-Content -LiteralPath (At 'Modules/Optional/Example/settings.json') '{"settings":{"count":{"type":"integer","default":1}}}'
     Set-Content -LiteralPath (At 'Leagues/Standard/league.json') '{"name":"Standard"}'
+    New-Item -ItemType Directory -Force (At 'Modules/Core/Game') | Out-Null
+    Set-Content -LiteralPath (At 'Modules/Core/Game/module.json') '{"id":"Game"}'
+    Set-Content -LiteralPath (At 'Leagues/Standard/modules.json') '{"modules":["Core/Game","Optional/Example"]}'
     Set-Content -LiteralPath (At 'Leagues/Standard/settings.json') '{"settings":{}}'
     Set-Content -LiteralPath (At 'src/GameServer.Core/Accounts/LeagueCatalog.cs') '// Game_LEAGUE_MODULES'
     Set-Content -LiteralPath (At 'src/GameServer.Gateway/Modding/ModSettings.cs') '// settings fixture'
@@ -61,16 +74,60 @@ try {
     $ModId='Standard'; $ModTarget='Leagues'; $ModExpectedHash='missing'; $ModStaged=Stage '{"level":2}'
     Save-ContentFile $snapshot
     Check (Test-Path -LiteralPath (At 'data/leagues/Standard.json')) 'league settings use a separate namespace'
-    $Action='SaveLeagueModules'; $ModId=''; $ModTarget=''; $ModExpectedHash='missing'; $ModStaged=Stage '{"Standard":{"add":["Optional/Example"],"remove":[]}}'
+    $Action='SaveLeagueModules'; $ModId=''; $ModTarget=''; $ModExpectedHash='missing'; $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example"],"remove":[]}}'
     Save-ContentFile $snapshot
     Check ([IO.File]::ReadAllText((At 'data/league-modules.json')).Contains('Optional/Example')) 'per-league choices write only the user override'
-    $ModExpectedHash=Get-ModFileHash (At 'data/league-modules.json'); $ModStaged=Stage '{"Standard":{"add":[],"remove":["Core/Game"]}}'
+    $ModExpectedHash=Get-ModFileHash (At 'data/league-modules.json'); $ModStaged=StageLeague '{"Standard":{"add":[],"remove":["Core/Game"]}}'
     Refused { Save-ContentFile $snapshot } 'adapter rejects removal of core gameplay'
-    $ModStaged=Stage '{"Standard":{"add":["../outside"],"remove":[]}}'
+    $ModStaged=StageLeague '{"Standard":{"add":["../outside"],"remove":[]}}'
     Refused { Save-ContentFile $snapshot } 'adapter rejects escaping module paths'
+    New-Item -ItemType Directory -Force (At 'Leagues/Standard/Source'), (At 'Leagues/Void/Source') | Out-Null
+    Set-Content -LiteralPath (At 'Leagues/Standard/Source/Fixture.cs') 'public sealed class Fixture : League { }'
+    Set-Content -LiteralPath (At 'Leagues/Void/league.json') '{"name":"Void","creatable":false}'
+    Set-Content -LiteralPath (At 'Leagues/Void/modules.json') '{"modules":[]}'
+    Set-Content -LiteralPath (At 'src/GameServer.Gateway/Modding/ModHost.cs') '// ReadLeagueImages fixture'
+    function StageCreation($name) {
+        $review=(Invoke-LeagueData (Get-ContentEnvironment) @{} 'Inspect' 'check').Review
+        Stage (@{template='Standard'; name=$name; description='An isolated event.'; modules=@('Core/Game','Optional/Example'); review=$review} | ConvertTo-Json -Depth 30)
+    }
+    $env:Game_LEAGUE_MODULES=''
+    $Action='CreateLeague'; $ModStaged=StageCreation 'My Event'
+    Save-ContentFile $snapshot
+    $definition=Get-Content -LiteralPath (At 'Leagues/My Event/league.json') -Raw | ConvertFrom-Json
+    Check ($definition.parent -eq 'Void' -and (Test-Path -LiteralPath (At 'Leagues/My Event/Source/WaypointLeague.cs'))) 'creation publishes a complete isolated league'
+    $ModStaged=StageCreation 'My Event'
+    Refused { Save-ContentFile $snapshot } 'creation never replaces an existing league'
+    $ModStaged=StageCreation 'Backup Failure'; $script:failBackup=$true
+    Refused { Save-ContentFile $snapshot } 'failed backup prevents creating a league'
+    Check (-not (Test-Path -LiteralPath (At 'Leagues/Backup Failure'))) 'failed creation preserves the original league catalogue'
+    $script:failBackup=$false
+    $ModStaged=StageCreation 'Concurrent Change'; $script:changeLeagueDuringBackup=$true
+    Refused { Save-ContentFile $snapshot } 'definition changes during backup block creation'
+    Check (-not (Test-Path -LiteralPath (At 'Leagues/Concurrent Change'))) 'concurrent changes do not leave a partially created league'
+    $script:changeLeagueDuringBackup=$false
+    $ModStaged=StageCreation 'Running Writer'; $script:running=$true
+    Refused { Save-ContentFile $snapshot } 'running writers prevent league creation'
+    $script:running=$false
+    $ModStaged=StageCreation 'New Writer'; $script:startDuringBackup=$true
+    Refused { Save-ContentFile $snapshot } 'writers are checked again after backup'
+    Check (-not (Test-Path -LiteralPath (At 'Leagues/New Writer'))) 'a newly running writer cannot race league creation'
+    $script:running=$false; $script:startDuringBackup=$false
+    function StageVisibility($visible) {
+        $review=(Invoke-LeagueData (Get-ContentEnvironment) @{} 'Inspect' 'check').Review
+        Stage (@{league='Standard'; visible=$visible; review=$review} | ConvertTo-Json -Depth 30)
+    }
+    $Action='SetLeagueVisibility'; $ModStaged=StageVisibility $false
+    Save-ContentFile $snapshot
+    $hidden=Get-Content -LiteralPath (At 'Leagues/Standard/league.json') -Raw | ConvertFrom-Json
+    Check (-not $hidden.creatable -and -not $hidden.ended) 'visibility hides only new character creation without ending the league'
+    $ModStaged=StageVisibility $true; $script:running=$true
+    Refused { Save-ContentFile $snapshot } 'visibility changes require stopped writers'
+    $script:running=$false
+    Save-ContentFile $snapshot
+    Check ((Get-Content -LiteralPath (At 'Leagues/Standard/league.json') -Raw | ConvertFrom-Json).creatable) 'a hidden league can be offered again without changing its identity'
     $script:isRelease=$true
     $envInfo=Get-ContentEnvironment
-    Check (-not $envInfo.CanChoose -and -not $envInfo.CanEditSettings) 'release installs never infer new capabilities from files alone'
+    Check (-not $envInfo.CanChoose -and -not $envInfo.CanEditSettings -and -not $envInfo.CanCreate) 'release installs never infer new capabilities from files alone'
     Refused { Save-ContentFile $snapshot } 'legacy release configuration remains read-only'
     $script:isRelease=$false
     $env:Game_LEAGUE_MODULES='data/custom-choices.json'

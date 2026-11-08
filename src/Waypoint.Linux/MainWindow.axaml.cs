@@ -88,6 +88,7 @@ public partial class MainWindow : Window
         ModulesView.Attach(_shared);
         ModulesView.OpenLeaguesRequested += () => ShowSection(LeaguesView);
         LeaguesView.Attach(_shared);
+        LeaguesView.OpenModsRequested += () => ShowSection(Mods);
         Backups.Attach(_shared);
         Accounts.Attach(_shared);
         Performance.Attach(_shared);

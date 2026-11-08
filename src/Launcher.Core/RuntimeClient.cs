@@ -17,7 +17,7 @@ public sealed class RuntimeClient
         Action<OperationProgress>? progress = null, AccountRequest? account = null,
         string? backupId = null, ModRequest? mod = null, AccountDataRequest? accountData = null, CancellationToken stop = default, string? saveSource = null)
     {
-        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "InstallMod", "SaveModSettings", "UninstallMod", "SaveContentSettings", "SaveLeagueModules", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
+        if (!new[] { "Inspect", "Start", "Play", "Stop", "CloseGame", "Restart", "Build", "PrepareClient", "Dependencies", "Register", "ReloadData", "Backup", "RestoreBackup", "ImportSaves", "DeleteBackup", "BuildMod", "BuildMods", "EnableMod", "DisableMod", "ReloadMod", "QueryMods", "RestoreModChoices", "InstallMod", "SaveModSettings", "UninstallMod", "SaveContentSettings", "SaveLeagueModules", "CreateLeague", "SetLeagueVisibility", "QueryAccounts", "ManageAccount", "CheckCapture", "SetupCapture", "StartCapture", "StopCapture", "FreshSaves" }.Contains(action))
             throw new ArgumentException("Unknown runtime operation.", nameof(action));
         if (!new[] { "All", "Auth", "Patch", "Gateway" }.Contains(service))
             throw new ArgumentException("Unknown service.", nameof(service));

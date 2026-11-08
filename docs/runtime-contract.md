@@ -279,18 +279,49 @@ without raising the failure dialog. The mod queue completes that job rather than
 
 ### Module and league configuration
 
+Flag artwork is optional inspection, separate from configuration mutations. `LeagueArt.py` invokes only a verified,
+already-built `PoEDataExtractor cat` command with explicit output files in Waypoint's cache. It never builds a project,
+installs a dependency, starts a game/server, or writes a GGPK. The supported source presentation contract supplies a
+constant LeagueFlag selector and generic family; unknown implementations are refused rather than inferred from names.
+The flag table, atlas key and inclusive texture rectangle determine the actual image, including native fallback for custom
+leagues. A source/archive identity check precedes cache publication, and hashes verify cached previews. Personal frame
+colours live solely in Waypoint's settings, scoped by checkout and flag; they never enter the adapter's write requests.
+
 `Content` in an inspection names the selected profile's `Game_MODULES_FOLDER`, `Game_LEAGUES_FOLDER` and
 `Game_LEAGUE_MODULES` paths (default Modules, Leagues and data/league-modules.json). `CanEditSettings` requires the source
-shared settings hook, and `CanChoose` the source league-override hook. Releases advertise neither: the current release
+shared settings hook, `CanChoose` the source league-override hook, and `CanCreate` the source league loader for creation and
+visibility editing. Releases advertise none of these: the current release
 predates the downloadable-mod update and remains read-only for the new controls. InstallMod, UninstallMod and
 SaveModSettings are also refused on release installs, in both the adapter and the UI.
 
 `SaveContentSettings` takes a staged JSON object, ModId, ModTarget (Modules or Leagues) and ModExpectedHash. It verifies a
 unique physical manifest and declaration before writing only data/modules/<id>.json or data/leagues/<id>.json.
 `SaveLeagueModules` takes a reviewed staged override object and expected hash; it verifies the capability, array/path
-shape and protection of Core/Game, then writes only the configured user override file. The UI's planner additionally
-checks installed modules and dependencies and preserves the choices of other leagues. Neither action starts or stops a
+shape and protection of Core/Game, then writes only the configured user override file. The planner and backend both
+check installed modules and dependencies and preserve the choices of other leagues. Neither action starts or stops a
 server. Membership is a next-start choice, never a claim that the running server applied it.
+
+League changes now use an envelope with `league`, `choices` and `review`. `review` maps every relevant module manifest,
+league definition/list/settings/source file and custom marker to its SHA-256, plus the user override file. The inventory
+must match exactly, including new/deleted files. `LeagueData.py` validates dependencies, cycles, required dedicated bundles,
+parent chains and a whole-composition witness from an existing same-family/mode profile. Only the selected league's
+override can change; other entries remain byte-value equivalent. Prior configuration is retained before atomic replacement.
+The helper accepts UTF-8 JSON requests with or without one leading BOM, including Windows PowerShell pipeline input.
+Duplicate keys and malformed JSON remain rejected before configuration writes.
+
+`CreateLeague` requires the source league-loader hook (`CanCreate`), a new safe name, an empty marker template and isolated
+Void. The adapter checks stopped save writers before and after the optional backup. `LeagueData.py` opens the selected
+database read-only, verifies the known schema/import state and refuses retained league names in character and stash data.
+It writes only a new physical directory, with independent identity, Void transitions and unchanged template mode flags.
+An exclusive directory reservation and a final no-replace manifest publication prevent partial leagues from being loaded
+or existing leagues from being overwritten. This operation never changes existing league source, saves or runtime state.
+
+`SetLeagueVisibility` takes `league`, boolean `visible`, and `review`. It changes only the top-level `creatable` flag in
+existing definitions, preserving comments and all other fields. Card-link closure prevents orphaned mode options and the
+last playable main card cannot be hidden. Writers must be stopped before and after backup; the source-loader capability
+and current review inventory are required. Original definitions are retained, each replacement is atomic, and failures
+roll back only files still matching this operation's output. Ordering keeps intermediate card states valid. No save
+database is read or written for visibility. It is a global creation-list control, never per-account filtering or ending.
 
 Both actions hold the existing writer lock and reject ownership conflicts. A failed optional save backup blocks the write;
 the expected hash is checked again after backup. Before replacement, the previous configuration is copied to a unique
@@ -308,3 +339,7 @@ It records the appearance mode, scheme, separate custom light/dark role colors, 
 These settings are not passed to LocalExile. Theme detection reads the Windows application-theme preference and
 listens for changes; it never writes Windows registry values or installs fonts. Appearance previews write no settings
 until Apply; Cancel restores the prior appearance. The embedded OpenDyslexic font retains its OFL notice in packages.
+
+`ModuleIcons` is a launcher-only map of checkout and module ID to a stable library key. Missing or unknown choices use
+the module's default icon. These preferences are never forwarded to the runtime adapter or stored in LocalExile files;
+changing an icon performs no checkout operation and does not reload gameplay code or settings.

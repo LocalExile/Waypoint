@@ -14,8 +14,10 @@ public class GameSystemsTests : IDisposable
         Write("Modules/Extra/module.json", """{"id":"Extra","depends":["Vendors"]}""");
         Write("Leagues/Standard/league.json", """{"name":"Standard"}""");
         Write("Leagues/Standard/modules.json", """{"modules":["Core/Game","Core/Vendors"]}""");
-        Write("Leagues/Ruthless/league.json", """{"name":"Ruthless"}""");
+        Write("Leagues/Ruthless/league.json", """{"name":"Ruthless","parent":"Standard"}""");
         Write("Leagues/Ruthless/modules.json", """{"modules":["Core/Game"]}""");
+        Write("Leagues/Addon/league.json", """{"name":"Addon","base":"Standard","parent":"Standard"}""");
+        Write("Leagues/Addon/modules.json", """{"modules":["Core/Game","Core/Vendors","Extra"]}""");
         return new(new(Path.Combine(_root, "Modules"), Path.Combine(_root, "Leagues"), Path.Combine(_root, "data", "league-modules.json"), supported));
     }
     [Fact]
@@ -25,8 +27,8 @@ public class GameSystemsTests : IDisposable
         var catalog = Catalog();
         Assert.Contains("Core/Vendors", catalog.Leagues.Single(l => l.Name == "Ruthless").Systems);
         var original = File.ReadAllText(Path.Combine(_root, "Leagues/Standard/modules.json"));
-        var planned = catalog.Plan(catalog.Leagues.Single(l => l.Name == "Standard"), ["Core/Game", "Core/Vendors", "Extra"]);
-        Assert.Equal("Extra", planned["Standard"]!["add"]![0]!.GetValue<string>());
+        var planned = catalog.Plan(catalog.Leagues.Single(l => l.Name == "Standard"), ["Core/Game"]);
+        Assert.Equal("Core/Vendors", planned["Standard"]!["remove"]![0]!.GetValue<string>());
         Assert.NotNull(planned["Future"]); Assert.NotNull(planned["Ruthless"]);
         var edited = catalog.Plan(catalog.Leagues.Single(l => l.Name == "Ruthless"), ["Core/Game"]);
         Assert.NotNull(edited["Future"]);

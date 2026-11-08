@@ -5,6 +5,7 @@
   <Application.Resources>
     <SolidColorBrush x:Key="Shell.Background" Color="#14161C" />
     <SolidColorBrush x:Key="Shell.Panel" Color="#1C1F27" />
+    <SolidColorBrush x:Key="Shell.Banner" Color="#232733" />
     <SolidColorBrush x:Key="Shell.Cell" Color="#232733" />
     <SolidColorBrush x:Key="Shell.Border" Color="#343A48" />
     <SolidColorBrush x:Key="Shell.Sidebar" Color="#2442C8" />
