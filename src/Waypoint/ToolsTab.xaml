@@ -39,6 +39,20 @@
                         </StackPanel>
                     </DockPanel>
                 </Border>
+                <Border Width="340" Margin="0,0,14,14" Padding="18,16" CornerRadius="8" BorderThickness="1"
+                        Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Style="{StaticResource Shell.PrimaryButton}" Click="OpenLabLayout"
+                                Content="{l:Loc 'Open lab layout'}" Margin="0,12,0,0" />
+                        <md:PackIcon DockPanel.Dock="Left" Kind="Sitemap" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                     Foreground="{DynamicResource Shell.Accent}" />
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc 'Lab layout'}" FontSize="15" FontWeight="SemiBold" />
+                            <TextBlock Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Text="{l:Loc 'The day\'s Labyrinth of every tier as a map: its rooms, the shortest way to Izaro, gauntlets, puzzles, Darkshrines, keys and doors.'}" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
             </WrapPanel>
         </StackPanel>
     </ScrollViewer>

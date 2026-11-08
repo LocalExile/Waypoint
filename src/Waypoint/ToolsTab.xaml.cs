@@ -3,12 +3,13 @@ using System.Windows.Controls;
 
 namespace Waypoint;
 
-/// <summary>Tools for the game itself, each in its own window: the item crafter.</summary>
+/// <summary>Tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout.</summary>
 public partial class ToolsTab : UserControl
 {
     Shared _shared = null!;
     ItemCrafterWindow? _crafter;
     MapViewerWindow? _mapViewer;
+    LabLayoutWindow? _labLayout;
 
     /// <summary>The player wants a copy of LocalExile that has the crafter.</summary>
     internal event Action? NewCopyRequested;
@@ -57,5 +58,26 @@ public partial class ToolsTab : UserControl
         else _crafter.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _crafter.Closed += (_, _) => _crafter = null;
         _crafter.Show();
+    }
+
+    /// <summary>The lab layout's window, or the one already open brought forward.</summary>
+    void OpenLabLayout(object sender, RoutedEventArgs e)
+    {
+        if (_labLayout is { IsLoaded: true })
+        {
+            if (_labLayout.WindowState == WindowState.Minimized) _labLayout.WindowState = WindowState.Normal;
+            _labLayout.Activate();
+            return;
+        }
+        _labLayout = new LabLayoutWindow();
+        if (Window.GetWindow(this) is { WindowState: WindowState.Normal, IsVisible: true } main)
+        {
+            _labLayout.WindowStartupLocation = WindowStartupLocation.Manual;
+            _labLayout.Left = main.Left + (main.ActualWidth - _labLayout.Width) / 2;
+            _labLayout.Top = main.Top + (main.ActualHeight - _labLayout.Height) / 2;
+        }
+        else _labLayout.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        _labLayout.Closed += (_, _) => _labLayout = null;
+        _labLayout.Show();
     }
 }
