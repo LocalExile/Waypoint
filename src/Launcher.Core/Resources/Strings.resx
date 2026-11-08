@@ -51,9 +51,6 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>No mods match your search.</value>
   </data>
-  <data name="Text_013aa5427ff3" xml:space="preserve">
-    <value>Your old {0} client in {1} is deleted for good ({2:0.#} GB).</value>
-  </data>
   <data name="Text_01846401bd51" xml:space="preserve">
     <value>Scripting</value>
   </data>
@@ -249,9 +246,6 @@
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>Use the game client of your current LocalExile, so it takes no extra space.</value>
   </data>
-  <data name="Text_07de6cef1f78" xml:space="preserve">
-    <value>This folder runs the LocalExile made for {0}. Waypoint first updates it to the version for {1}.</value>
-  </data>
   <data name="Text_07e9e8fac2d4" xml:space="preserve">
     <value>Show for new characters</value>
   </data>
@@ -263,9 +257,6 @@
   </data>
   <data name="Text_08834c1903a5" xml:space="preserve">
     <value>Area level can affect map generation. Leave blank to use the default level.</value>
-  </data>
-  <data name="Text_088b4ea73ee7" xml:space="preserve">
-    <value>Open the old client</value>
   </data>
   <data name="Text_089b80999032" xml:space="preserve">
     <value>Pantheon</value>
@@ -672,9 +663,6 @@
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>Repository</value>
   </data>
-  <data name="Text_13da4392a62c" xml:space="preserve">
-    <value>The link to your old {0} client is removed. {1} stays as it is.</value>
-  </data>
   <data name="Text_13e5b221168b" xml:space="preserve">
     <value>{0} commit(s) behind LocalExile</value>
   </data>
@@ -807,6 +795,9 @@
   <data name="Text_17b78022cd38" xml:space="preserve">
     <value>The settings declaration was loaded successfully and contains no editable settings.</value>
   </data>
+  <data name="Text_17bdebfa7973" xml:space="preserve">
+    <value>Current {0} client (a link: only the link is replaced):</value>
+  </data>
   <data name="Text_17cebc83e8bd" xml:space="preserve">
     <value>The servers did not stop</value>
   </data>
@@ -875,6 +866,9 @@
   </data>
   <data xml:space="preserve" name="Text_1a4f630ac1b6">
     <value>Stopped</value>
+  </data>
+  <data name="Text_1a505b9f71ee" xml:space="preserve">
+    <value>Not now: nothing changes, but this folder can't start yet.</value>
   </data>
   <data name="Text_1a56ffc0af65" xml:space="preserve">
     <value>The servers are running</value>
@@ -1418,6 +1412,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_293d8864e78d" xml:space="preserve">
     <value>Tools for the game itself. Each opens in its own window and works with the character in game through the client control bridge (Python with Frida).</value>
   </data>
+  <data name="Text_294f085ed9d0" xml:space="preserve">
+    <value>This copy stays on the LocalExile made for {0}: the newest one needs a {1} client.</value>
+  </data>
   <data name="Text_2951c4e2bb30" xml:space="preserve">
     <value>Stopping: a step that writes the client or the keys finishes first.</value>
   </data>
@@ -1513,6 +1510,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>Save mod settings</value>
+  </data>
+  <data name="Text_2bc430e7e225" xml:space="preserve">
+    <value>The old {0} client was removed. Your saves, accounts and login keys stay.</value>
   </data>
   <data name="Text_2bcd48474ec9" xml:space="preserve">
     <value>Extract the game data</value>
@@ -1779,11 +1779,17 @@ This checkout has modified tracked files.</value>
   <data name="Text_3374c9e93f22" xml:space="preserve">
     <value>You can stop at any point: what is finished stays finished.</value>
   </data>
+  <data name="Text_337fc4c61628" xml:space="preserve">
+    <value>Your saves, accounts and login keys are kept. To back up first, open a folder below.</value>
+  </data>
   <data name="Text_338c29e24170" xml:space="preserve">
     <value>A release has no source code to build, so it can't be used here. Download LocalExile into a new or empty folder instead. Your release stays as it is.</value>
   </data>
   <data name="Text_338e02304930" xml:space="preserve">
     <value>Seed {0} was replaced with {1}.</value>
+  </data>
+  <data name="Text_33a4a7386c6d" xml:space="preserve">
+    <value>Open {0} client</value>
   </data>
   <data name="Text_33a58116eb34" xml:space="preserve">
     <value>Only in this checkout: not on origin (not pushed)</value>
@@ -2134,6 +2140,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3e55c7d756db" xml:space="preserve">
     <value>the mod is larger than {0} files or 64 MB; nothing was installed</value>
   </data>
+  <data name="Text_3e8cf9c948a6" xml:space="preserve">
+    <value>Nothing was changed. Press Play to try again.</value>
+  </data>
   <data xml:space="preserve" name="Text_3e9648b06bc7">
     <value>Using this installation only. Credentials are not saved by the launcher.</value>
   </data>
@@ -2419,6 +2428,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_48713a5c63fb" xml:space="preserve">
     <value>Stop playing</value>
   </data>
+  <data name="Text_48b405c7169c" xml:space="preserve">
+    <value>Waypoint can switch this copy to the last LocalExile for {0}. Your client stays as it is.</value>
+  </data>
   <data name="Text_48bdb0aef4f8" xml:space="preserve">
     <value>Those are this LocalExile's own saves.</value>
   </data>
@@ -2571,6 +2583,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4cefcb025be3" xml:space="preserve">
     <value>LocalExile was updated. Press Play to start it.</value>
+  </data>
+  <data name="Text_4cf1bf896411" xml:space="preserve">
+    <value>Versions for {0} won't be offered after 3.30 comes out.</value>
   </data>
   <data name="Text_4d0e0d0e73a3" xml:space="preserve">
     <value>Dependencies: {0}</value>
@@ -3072,9 +3087,6 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 output</value>
   </data>
-  <data name="Text_5e61c50320b5" xml:space="preserve">
-    <value>Not now changes nothing and plays on {0} this time.</value>
-  </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>Mod choices apply across all leagues. Saved choices do not confirm live load status.</value>
   </data>
@@ -3401,6 +3413,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_676796f86246" xml:space="preserve">
     <value>Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.</value>
+  </data>
+  <data name="Text_6795da662608" xml:space="preserve">
+    <value>Bring back your game settings</value>
   </data>
   <data name="Text_67b6858a9f80" xml:space="preserve">
     <value>Python {0} is on PATH ({1}).</value>
@@ -3855,6 +3870,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_76e684d8787d" xml:space="preserve">
     <value>Start setup</value>
   </data>
+  <data name="Text_76eb7f69d808" xml:space="preserve">
+    <value>Path of Exile {0} was found on this PC. Waypoint updates LocalExile, then copies it over your current client.</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>Commands go through the game client (scripts/dev/client_control.py): start the game and enter an area first.</value>
   </data>
@@ -4013,6 +4031,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>Base</value>
+  </data>
+  <data name="Text_7bacc99e13ee" xml:space="preserve">
+    <value>Only a {0} client was found, so this copy moves to the last LocalExile made for it.</value>
   </data>
   <data name="Text_7bf6ecedbcdb" xml:space="preserve">
     <value>Lab layout</value>
@@ -4293,6 +4314,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8550dd056667" xml:space="preserve">
     <value>No release for Linux is published yet, so LocalExile is set up from its source code.</value>
   </data>
+  <data name="Text_8590a0fa1259" xml:space="preserve">
+    <value>{0} client found (only read):</value>
+  </data>
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>Delete saved item</value>
   </data>
@@ -4313,6 +4337,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_86cf366a184e" xml:space="preserve">
     <value>Delete backup</value>
+  </data>
+  <data name="Text_86d42618a090" xml:space="preserve">
+    <value>Or go back and choose a new, empty folder: Waypoint then sets up LocalExile {0}, made for {1}.</value>
   </data>
   <data name="Text_8703b1f43ea7" xml:space="preserve">
     <value>no local changes</value>
@@ -4551,9 +4578,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8e37953d23da" xml:space="preserve">
     <value>Value</value>
   </data>
-  <data name="Text_8e39096c603e" xml:space="preserve">
-    <value>Your client stays as it is, and you play on the last LocalExile made for {0}. Once you have a {1} client, Play offers the move.</value>
-  </data>
   <data xml:space="preserve" name="Text_8e3cda3b4f8b">
     <value>Local HEAD unavailable</value>
   </data>
@@ -4646,9 +4670,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_91c155b9f086" xml:space="preserve">
     <value>Latest has LocalExile's newest changes. Every change is reviewed, but Latest may be less stable than the release.</value>
-  </data>
-  <data name="Text_91c7a749dcb3" xml:space="preserve">
-    <value>Your saves, accounts and login keys stay. To back up either folder first, open it from here, then press Continue.</value>
   </data>
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>Delete the selected items (Delete key); Ctrl or Shift selects several</value>
@@ -5076,6 +5097,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9d312d6843db" xml:space="preserve">
     <value>Not defined for this mode</value>
   </data>
+  <data name="Text_9d3718c2d85f" xml:space="preserve">
+    <value>Current {0} client (replaced):</value>
+  </data>
   <data xml:space="preserve" name="Text_9d39a3628a49">
     <value>Retry operation</value>
   </data>
@@ -5283,6 +5307,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a3dc8f59f7b2" xml:space="preserve">
     <value>Client must be a separate physical copy in this checkout, not a link to another folder.</value>
   </data>
+  <data name="Text_a3e55e6e2d1c" xml:space="preserve">
+    <value>Path of Exile {0} was found on this PC. Waypoint can copy it over your current client.</value>
+  </data>
   <data name="Text_a3ffee699add" xml:space="preserve">
     <value>Looking for a game client on this PC…</value>
   </data>
@@ -5481,9 +5508,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a8e176f580cf">
     <value>Check the account name and password requirements above.</value>
   </data>
-  <data name="Text_a8ebbe9e3d81" xml:space="preserve">
-    <value>Not now changes nothing; this folder can't start until LocalExile and its client fit.</value>
-  </data>
   <data name="Text_a91d36846491" xml:space="preserve">
     <value>Start the recorder before entering a new area. If the game is closed, it waits up to 10 minutes.</value>
   </data>
@@ -5522,9 +5546,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_aa3410e05ed5" xml:space="preserve">
     <value>This league cannot change creation visibility.</value>
-  </data>
-  <data name="Text_aa64e8e06106" xml:space="preserve">
-    <value>Not now changes nothing; this folder can't start until its client fits.</value>
   </data>
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>The servers are not running</value>
@@ -5588,9 +5609,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_ac1f5a0e46c1" xml:space="preserve">
     <value>The game is not running: start it, enter an area with a character, then give the item again.</value>
-  </data>
-  <data name="Text_ac209005031f" xml:space="preserve">
-    <value>The old {0} copy in Client\ was removed ({1:0.#} GB). Your saves, accounts and login keys stay.</value>
   </data>
   <data xml:space="preserve" name="Text_ac7fcf0ba22e">
     <value>No installed mods</value>
@@ -5768,6 +5786,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_b269dc4e81a5" xml:space="preserve">
     <value>Commands</value>
+  </data>
+  <data name="Text_b26a1f6c97cb" xml:space="preserve">
+    <value>This LocalExile needs Path of Exile {0}, but only a {1} client was found.</value>
   </data>
   <data name="Text_b26fa9e01921" xml:space="preserve">
     <value>Leave LocalExile services running</value>
@@ -6303,9 +6324,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>Cosmetics</value>
   </data>
-  <data name="Text_c43a46e15ee8" xml:space="preserve">
-    <value>Open the {0} client</value>
-  </data>
   <data name="Text_c451c3692d31" xml:space="preserve">
     <value>Mod information unavailable</value>
   </data>
@@ -6503,6 +6521,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   </data>
   <data name="Text_c9e0f4911e18" xml:space="preserve">
     <value>p95 ms</value>
+  </data>
+  <data name="Text_c9efab217fdd" xml:space="preserve">
+    <value>{0} could not be downloaded from GitHub; try again later.</value>
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Unavailable</value>
@@ -7082,9 +7103,6 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_ddf65dfc3807">
     <value>No backups yet. Use Back up now to save a copy of your current progress.</value>
   </data>
-  <data name="Text_de05beb9e74a" xml:space="preserve">
-    <value>Your Path of Exile {0} client in {1} is copied into this LocalExile folder. That folder is only read.</value>
-  </data>
   <data name="Text_de2a5f6b153d" xml:space="preserve">
     <value>Create your first account to get started. Characters are created in the game.</value>
   </data>
@@ -7111,6 +7129,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_dec1638d773b">
     <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Alt+R restores default appearance without changing your checkout or saves.</value>
+  </data>
+  <data name="Text_decaad6d7ea4" xml:space="preserve">
+    <value>Waypoint can set up LocalExile {0}, the last version for {1}, in a new folder. This folder stays as it is.</value>
   </data>
   <data name="Text_deeb8da20758" xml:space="preserve">
     <value>server checkout supports the launcher</value>
@@ -7331,6 +7352,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e5997acfabd7" xml:space="preserve">
     <value>The game is running: Waypoint waits here and comes back when the game closes.</value>
+  </data>
+  <data name="Text_e5b298cafb17" xml:space="preserve">
+    <value>Not now: nothing changes, and you play on {0} this time.</value>
   </data>
   <data name="Text_e5d5f6f3c0d8" xml:space="preserve">
     <value>Running build</value>
@@ -7685,9 +7709,6 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_ef7e1ae10439">
     <value>Build failed / waiting</value>
-  </data>
-  <data name="Text_ef8afd44b5de" xml:space="preserve">
-    <value>Waypoint sets up LocalExile {0} in a new folder with the setup guide. This folder stays as it is, with its saves.</value>
   </data>
   <data name="Text_ef93bf3045a7" xml:space="preserve">
     <value>FreshSaves completed.</value>
@@ -8095,6 +8116,9 @@ Mods at backup: </value>
   <data xml:space="preserve" name="Text_fb42d9b4075f">
     <value>Upstream HEAD unavailable.</value>
   </data>
+  <data name="Text_fb5829adf0ff" xml:space="preserve">
+    <value>Open current client</value>
+  </data>
   <data xml:space="preserve" name="Text_fb5b3abf52be">
     <value>Only the copied client archive is updated.</value>
   </data>
@@ -8139,6 +8163,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fd249743c184" xml:space="preserve">
     <value>{0} new change(s) in LocalExile since your version.</value>
+  </data>
+  <data name="Text_fd2d4d612ab3" xml:space="preserve">
+    <value>Current {0} client (replaced, {1:0.#} GB):</value>
   </data>
   <data name="Text_fd4d54ace369" xml:space="preserve">
     <value>Item Level: {0}</value>
@@ -8224,9 +8251,6 @@ This replaces the saved choices only. Mod DLLs and saves are not restored. The c
   </data>
   <data name="Text_ff8b555d818f" xml:space="preserve">
     <value>Update available</value>
-  </data>
-  <data name="Text_ff92106ddb65" xml:space="preserve">
-    <value>This LocalExile needs the Path of Exile {0} client. The client in this folder is {1}, and no {0} client was found on this PC.</value>
   </data>
   <data xml:space="preserve" name="Text_ffa98e02f7ce">
     <value>Remote</value>

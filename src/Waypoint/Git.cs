@@ -232,6 +232,11 @@ static class Git
         return fetched.Ok ? await MoveForwardAsync(branch, log) : fetched;
     }
 
+    /// <summary>A file as it is in what <paramref name="branch"/> follows, that is, what a move forward would bring; null when git
+    /// cannot say.</summary>
+    public static async Task<string?> FileAtSourceAsync(string branch, string path) =>
+        await SourceRefAsync(branch) is { } source && await RunAsync(null, "show", $"{source}:{path}") is { Ok: true } shown ? shown.Output : null;
+
     /// <summary>The current branch moved forward to what was fetched last, fast-forward only.</summary>
     public static async Task<Result> MoveForwardAsync(string branch, Action<string> log) =>
         await SourceRefAsync(branch) is { } source ? await RunAsync(log, "merge", "--ff-only", source) : new(0, "");

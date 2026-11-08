@@ -125,6 +125,15 @@ public static class LocalExileReleases
             root.TryGetProperty("published_at", out var published) && published.TryGetDateTimeOffset(out var at) ? at : null);
     }
 
+    /// <summary>One release by its tag (v0.1.0-beta); null when there is none.</summary>
+    public static async Task<LocalExileRelease?> ByTagAsync(HttpClient client, string tag, CancellationToken stop = default)
+    {
+        using var response = await client.GetAsync($"https://api.github.com/repos/LocalExile/LocalExile/releases/tags/{Uri.EscapeDataString(tag)}", stop);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
+        response.EnsureSuccessStatusCode();
+        return ParseRelease(await response.Content.ReadAsStringAsync(stop));
+    }
+
     /// <summary>The latest published release; null when there is none.</summary>
     public static async Task<LocalExileRelease?> LatestAsync(HttpClient client, CancellationToken stop = default)
     {
@@ -196,7 +205,7 @@ public static class LocalExileReleases
     public static async Task InstallAsync(HttpClient client, LocalExileRelease release, string folder, Action<long, long> progress, Action extracting, CancellationToken stop)
     {
         if (release.ZipUrl is null || release.HashUrl is null) throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, "LocalExile-*" + AssetSuffix));
-        string expected = HashOf(await client.GetStringAsync(release.HashUrl, stop)) ?? throw new InvalidOperationException(L.Text("the release's .sha256 holds no SHA-256"));
+        string expected = HashOf(await GitHubDownload.GetStringAsync(client, release.HashUrl, stop)) ?? throw new InvalidOperationException(L.Text("the release's .sha256 holds no SHA-256"));
         Directory.CreateDirectory(folder);
         string staging = Path.Combine(folder, StagingName);
         DeleteStaging(staging);
@@ -204,7 +213,7 @@ public static class LocalExileReleases
         try
         {
             string zip = Path.Combine(staging, "release.zip");
-            using (var response = await client.GetAsync(release.ZipUrl, HttpCompletionOption.ResponseHeadersRead, stop))
+            using (var response = await GitHubDownload.GetAsync(client, release.ZipUrl, stop))
             {
                 response.EnsureSuccessStatusCode();
                 long total = response.Content.Headers.ContentLength ?? release.ZipBytes;

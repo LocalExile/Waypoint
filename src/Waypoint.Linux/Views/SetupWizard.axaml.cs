@@ -592,14 +592,20 @@ public partial class SetupWizard : Window
     string NeededClient => FolderNeeds ?? (_clients.Any(c => c.Usable && c.Build == ClientLocator.Build) ? ClientLocator.Build
         : _clients.Where(c => c.Usable && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build);
 
-    /// <summary>For a new folder with a client of an older build chosen: that build, whose last LocalExile is set up instead of
-    /// the newest.</summary>
-    string? OlderToSetUp => FolderNeeds is null && NoClient.IsChecked != true && ClientList.SelectedItem is FoundClient { Build: { } build }
-        && ClientLocator.LastVersionFor(build) is not null ? build : null;
+    /// <summary>With a client of an older build chosen: that build, whose last LocalExile is set up instead of the newest. For a
+    /// new folder, and for a source copy that needs a newer client than any found (<see cref="CanGoBackFor"/>).</summary>
+    string? OlderToSetUp => NoClient.IsChecked != true && ClientList.SelectedItem is FoundClient { Build: { } build }
+        && ClientLocator.LastVersionFor(build) is not null && (FolderNeeds is null || CanGoBackFor(build)) ? build : null;
+
+    /// <summary>A source copy whose LocalExile needs a newer client than any found can move to the last LocalExile made for the
+    /// older one the player has, so that nobody is left without a version to play. A release cannot go back in place.</summary>
+    bool CanGoBackFor(string build) => FolderNeeds is { } needs && ChosenCheckout() is { } folder && !LocalExileReleases.IsInstall(folder)
+        && RepositoryDiscovery.IsLocalExile(folder) && ClientLocator.IsOlder(build, needs) && ClientLocator.LastVersionFor(build) is not null
+        && !_clients.Any(c => c.Usable && c.Build == needs);
 
     /// <summary>A client of a known build other than the one needed cannot be used: it would fail at the login. One of a build
     /// Waypoint does not know is the player's call (<see cref="ClientWarning"/>).</summary>
-    bool Fits(FoundClient client) => client.Build is not { } build || build == NeededClient;
+    bool Fits(FoundClient client) => client.Build is not { } build || build == NeededClient || CanGoBackFor(build);
 
     static bool HasClient(string? checkout) =>
         checkout is not null && ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone;
@@ -711,9 +717,13 @@ public partial class SetupWizard : Window
         if (client.Build is { } build && !Fits(client))
             return ClientLocator.IsOlder(build, NeededClient)
                 ? L.Text("This is the {0} client, and this LocalExile needs {1}. Choose a {1} client instead: let the official Path of Exile launcher update a copy of this one, or download it.", build, NeededClient)
+                    + (ChosenCheckout() is { } install && LocalExileReleases.IsInstall(install) && ClientLocator.LastVersionFor(build) is { } older
+                        ? " " + L.Text("Or go back and choose a new, empty folder: Waypoint then sets up LocalExile {0}, made for {1}.", older.Release, build) : "")
                 : L.Text("This is the {0} client, and this LocalExile works only with {1}. Update LocalExile first, or choose a {1} client.", build, NeededClient);
-        if (client.Build is { } chosen && FolderNeeds is null && ClientLocator.LastVersionFor(chosen) is { } last)
-            return L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release) + " " + ClientUpdate.OlderNoteFor(chosen);
+        if (OlderToSetUp is { } chosen && ClientLocator.LastVersionFor(chosen) is { } last)
+            return (FolderNeeds is null
+                ? L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release)
+                : L.Text("Only a {0} client was found, so this copy moves to the last LocalExile made for it.", chosen)) + " " + ClientUpdate.OlderNoteFor(chosen);
         if (client.KnownBuild == false && client.Build is null) return L.Text("This is not the 3.29.3c build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
         if (Sharing || LinkClient.IsChecked == true) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
@@ -788,7 +798,7 @@ public partial class SetupWizard : Window
                 await SetupSequence.CloneAsync(GitRepositoryProbe.UpstreamUrl, checkout, line => { Write(line); detail(line); }, stop);
                 Remember(checkout);
             }));
-        if (download && OlderToSetUp is { } older)
+        if (OlderToSetUp is { } older)
             tasks.Add(new(L.Text("Go to the version for {0}", older), () => SwitchToSource.OnTestedVersion(checkout), (detail, stop) => SwitchToSource.ChooseTestedVersionAsync(checkout, line => { Write(line); detail(line); }, stop, older)));
         else if (switching is { Download: true, TestedVersion: true })
             tasks.Add(new(L.Text("Go to the older version"), () => SwitchToSource.OnTestedVersion(checkout), (detail, stop) => SwitchToSource.ChooseTestedVersionAsync(checkout, line => { Write(line); detail(line); }, stop)));
@@ -796,6 +806,7 @@ public partial class SetupWizard : Window
             tasks.Add(new(L.Text("Share the game client"), () => HasClient(checkout), (detail, stop) => ClientCopy.ShareAsync(client, checkout, sharedKeys, line => { Write(line); detail(line); }, stop)));
         else if (client is not null)
             tasks.Add(new(L.Text("Copy the game client"), () => HasClient(checkout), (detail, stop) => CopyAsync(client, checkout, detail, stop)));
+        if (client is not null) tasks.Add(SettingsBack(checkout));
         tasks.Add(new(L.Text("Install the extraction dependency"), () => File.Exists(Path.Combine(checkout, "Tools", "ooz", "node_modules", ".package-lock.json")), (detail, stop) => Bridge("Dependencies", detail, stop)));
         if (prepare)
             tasks.Add(new(L.Text("Prepare the client"), () => File.Exists(Path.Combine(checkout, "Client", "Game.patched.exe")) && File.Exists(Path.Combine(checkout, "data", "login-keys.json"))
@@ -810,12 +821,18 @@ public partial class SetupWizard : Window
         return tasks;
     }
 
+    /// <summary>The game settings a replaced client named come back into the new one (<see cref="ClientLocator.RestoreSettings"/>);
+    /// done at once when there are none.</summary>
+    static SetupTask SettingsBack(string folder) =>
+        new(L.Text("Bring back your game settings"), () => !File.Exists(ClientLocator.SavedSettings(folder)), (_, _) => Task.Run(() => ClientLocator.RestoreSettings(folder)));
+
     /// <summary>A release's steps: the zip, then LocalExile.exe's own setup, which goes on from wherever it stopped.</summary>
     IReadOnlyList<SetupTask> ReleasePlan(string folder, string? client, bool prepare)
     {
         string? older = OlderToSetUp;
         var tasks = new List<SetupTask> { new(L.Text("Download LocalExile"), () => LocalExileReleases.IsInstall(folder), (detail, stop) => DownloadReleaseAsync(folder, older, detail, stop)) };
         if (prepare) tasks.Add(new(L.Text("Prepare LocalExile"), null, (detail, stop) => PrepareReleaseAsync(folder, client, detail, stop)));
+        if (prepare) tasks.Add(SettingsBack(folder));
         return tasks;
     }
 
@@ -826,7 +843,7 @@ public partial class SetupWizard : Window
         {
             using var client = Updates.Client();
             var release = (older is not null && ClientLocator.LastVersionFor(older) is { } last
-                    ? (await LocalExileReleases.ListAsync(client, stop)).FirstOrDefault(r => r.Tag == last.Release)
+                    ? await LocalExileReleases.ByTagAsync(client, last.Release, stop)
                       ?? throw new InvalidOperationException(L.Text("LocalExile {0} could not be found among the releases.", last.Release))
                     : await LocalExileReleases.LatestAsync(client, stop))
                 ?? throw new InvalidOperationException(L.Text("LocalExile has no release to download yet."));

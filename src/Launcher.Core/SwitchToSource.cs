@@ -58,7 +58,9 @@ public static class SwitchToSource
     {
         string branch = TestedBranch, commit = TestedCommit;
         if (build is not null && ClientLocator.LastVersionFor(build) is { } older) (branch, commit) = (OlderBranch(build), older.Commit);
-        int code = await ToolProcess.RunAsync("git", ["-C", copy, "switch", "--no-track", "-c", branch, commit], null, output, stop);
+        // A copy that was on that branch before goes back to it as it is.
+        bool made = await ToolProcess.RunAsync("git", ["-C", copy, "rev-parse", "--verify", "--quiet", "refs/heads/" + branch], null, _ => { }, stop) == 0;
+        int code = await ToolProcess.RunAsync("git", made ? ["-C", copy, "switch", branch] : ["-C", copy, "switch", "--no-track", "-c", branch, commit], null, output, stop);
         if (code != 0) throw new IOException(L.Text("The older version could not be chosen (git exit {0}).", code));
     }
 

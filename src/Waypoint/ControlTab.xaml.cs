@@ -248,22 +248,35 @@ public partial class ControlTab : UserControl
         Append(code is null ? "" : $"(exit {code})");
         return code;
     }
-    /// <summary>A start with a client of another build than the checkout's LocalExile would fail at the login
-    /// (<see cref="ClientUpdate"/>). A player with a client of the current build is moved to it without a question: an older
-    /// client in this copy is taken out and the guide brings the found one; a copy on an older version of its own goes to the
-    /// newest changes. Only a player who has nothing newer than an older client is asked, about the older version. A stop
-    /// always goes on.</summary>
+
+    /// <summary>A start of the game with a client of another build than the checkout's LocalExile would fail at the login
+    /// (<see cref="ClientUpdate"/>). A move to a client found elsewhere is asked once: an older client in this copy is then taken
+    /// out and the guide brings the found one; a copy on an older version of its own goes to the newest changes. A player who has
+    /// nothing newer than an older client is asked about the older version. Starts without the game (servers, a restart, a stop)
+    /// go on as before.</summary>
     async Task<bool> ClientFits(LiveRequest request, bool again = false)
     {
-        if (request.Mode is LiveMode.Stop or LiveMode.StopServers) return true;
+        if (request.Mode is not (LiveMode.All or LiveMode.Client)) return true;
+        if (_checking) return false;
+        _checking = true;
+        try { return await ClientFitsNow(request, again); }
+        finally { _checking = false; }
+    }
+
+    /// <summary>A Play is being checked (<see cref="ClientFits"/>): a second one waits for nothing and starts nothing.</summary>
+    bool _checking;
+
+    async Task<bool> ClientFitsNow(LiveRequest request, bool again)
+    {
         var owner = Window.GetWindow(this);
         string folder = Environment.CurrentDirectory;
         int Show(DialogKind kind, string title, string message, string[] buttons) => Dialog.Show(owner, kind, title, message, null, buttons);
         var (outcome, plan) = await ClientUpdate.EnsureAsync(folder, lookForNewer: SwitchToSource.OnTestedVersion(folder),
-            p => p.Kind == ClientUpdate.Kind.UpdateLocalExile && !SwitchToSource.OnTestedVersion(folder) || ClientUpdate.AskMove(p, (title, message, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, null, buttons), path => Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { path }, UseShellExecute = false })?.Dispose()),
-            p => Dialog.Ask(owner, DialogKind.Question, ClientUpdate.Title(p), ClientUpdate.Explain(p) + "\n\n" + ClientUpdate.OlderNoteFor(p.Have), ClientUpdate.Confirm(p)),
+            p => p.Kind == ClientUpdate.Kind.UpdateLocalExile && !SwitchToSource.OnTestedVersion(folder)
+                || ClientUpdate.AskMove(p, (title, message, details, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, details, buttons), path => Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { path }, UseShellExecute = false })?.Dispose()),
+            p => Dialog.Ask(owner, DialogKind.Question, ClientUpdate.Title(p), ClientUpdate.OlderText(p, release: false), ClientUpdate.Confirm(p)),
             text => Dialog.Tell(owner, DialogKind.Error, L.Text("Replace the game client?"), text),
-            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work), confirmed: again);
+            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work));
         switch (outcome)
         {
             case ClientUpdate.Outcome.Fits:
@@ -271,18 +284,20 @@ public partial class ControlTab : UserControl
             case ClientUpdate.Outcome.Replaced:
                 Append(ClientUpdate.Moving(plan!));
                 Say(() => L.Text("The old game client was removed. The setup guide brings the new one."));
-                ClientGuideRequested?.Invoke();
+                OpenGuideWith(plan!.Found);
                 return false;
             case ClientUpdate.Outcome.UseOlder:
-                if (await Editions.MoveToOlderAsync(_shared, plan!.Have, Show))
-                    Say(() => L.Text("This copy is now on the LocalExile made for {0}. Press Play.", plan.Have));
+                if (!await Editions.MoveToOlderAsync(_shared, plan!.Have, Show)) return false;
+                Say(() => L.Text("This copy is now on the LocalExile made for {0}. Press Play.", plan.Have));
+                // A copy with no client yet gets the older one through the guide.
+                if (!Directory.Exists(Path.Combine(folder, "Client"))) OpenGuideWith(plan.Found);
                 return false;
             case ClientUpdate.Outcome.UpdateLocalExile when !again && SwitchToSource.OnTestedVersion(folder):
-                // Not asked: a client of the newer build is there. Get the newest changes' own question is answered for the player.
+                // Asked already: Get the newest changes' own question is answered for the player.
                 Append(ClientUpdate.Explain(plan!));
                 string question = L.Text("Get the newest changes?");
                 return await Editions.MoveToNewestAsync(_shared, (kind, title, message, buttons) => title == question ? 0 : Show(kind, title, message, buttons))
-                    && await ClientFits(request, again: true);
+                    && await ClientFitsNow(request, again: true);
             case ClientUpdate.Outcome.UpdateLocalExile:
                 Dialog.Tell(owner, DialogKind.Warning, ClientUpdate.Title(plan!), ClientUpdate.Explain(plan!) + "\n\n" + ClientUpdate.HowToUpdateCopy);
                 return false;
@@ -290,6 +305,17 @@ public partial class ControlTab : UserControl
                 Say(() => L.Text("Not started: the game client does not fit this LocalExile."));
                 return false;
         }
+    }
+
+    /// <summary>The setup guide, with <paramref name="client"/> chosen on its client page.</summary>
+    void OpenGuideWith(string? client)
+    {
+        if (client is not null)
+        {
+            _shared.Settings.SetupClient = client;
+            _shared.Settings.Save();
+        }
+        ClientGuideRequested?.Invoke();
     }
 
     Task<bool> PrepareWalkmaps() => FridaSetup.EnsureAsync(_shared, Window.GetWindow(this), L.Text("Walk maps"), Append);

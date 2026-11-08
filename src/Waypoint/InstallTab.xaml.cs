@@ -15,7 +15,7 @@ namespace Waypoint;
 public partial class InstallTab : UserControl
 {
     Shared _shared = null!;
-    bool _working, _stopping, _failed, _needsSetup, _withClient = true;
+    bool _working, _checking, _stopping, _failed, _needsSetup, _withClient = true;
     string? _stage;
     long? _current, _total;
     /// <summary>The words shown, as functions, so that a language change says them again.</summary>
@@ -75,20 +75,24 @@ public partial class InstallTab : UserControl
     /// <summary>The client build of the older LocalExile this folder runs, while a client of that build is all the player has:
     /// Play then says, quietly, that it won't last (<see cref="ClientUpdate.OlderNote"/>). Looked for in the background; a
     /// client of the current build found instead is Play's to move to.</summary>
-    string? _olderBuild;
+    string? _olderBuild, _olderLookedFor;
 
     async Task LookForOlderAsync()
     {
         string folder = Environment.CurrentDirectory;
-        _olderBuild = await Task.Run(() => ClientLocator.Needed(folder) is { } need && ClientLocator.IsOlder(need, ClientLocator.Build)
-            && ClientUpdate.FindClient(ClientLocator.Build, default) is null ? need : null);
+        string? need = ClientLocator.Needed(folder);
+        // Looked for again only when the folder's LocalExile changed (an update, a move to another version).
+        if (need is not null && need == _olderLookedFor) return;
+        _olderLookedFor = need;
+        _olderBuild = need is not null && ClientLocator.IsOlder(need, ClientLocator.Build)
+            && await Task.Run(() => ClientUpdate.FindClient(ClientLocator.Build, default)) is null ? need : null;
         Show();
     }
 
     void Show()
     {
         bool needsSetup = _needsSetup || !LocalExileReleases.IsSetUp(Folder);
-        bool busy = _working || _shared.IsLiveRunning;
+        bool busy = _working || _checking || _shared.IsLiveRunning;
         Headline.Text = _headline?.Invoke() ?? (GameRunning ? L.Text("The game is running")
             : needsSetup ? L.Text("LocalExile isn't ready yet")
             : L.Text("Ready to play"));
@@ -122,15 +126,38 @@ public partial class InstallTab : UserControl
 
     async Task RunAsync(string[] arguments, bool withClient)
     {
-        if (_working || _shared.IsLiveRunning) return;
-        if (await ClientFits() is not { } more || !await BackUp()) return;
-        arguments = [.. arguments, .. more];
+        if (_working || _checking || _shared.IsLiveRunning) return;
+        _checking = true;
+        Show();
+        string[]? client;
+        try
+        {
+            client = withClient ? await ClientFits() : [];
+            if (client is not null && !await BackUp()) client = null;
+        }
+        finally { _checking = false; }
+        Show();
+        if (client is null) return;
+        if (client.Length > 0)
+        {
+            // The found client comes in through LocalExile.exe's setup, which starts nothing, so that the game settings can come
+            // back before the game starts (ClientUpdate.AfterNewClient).
+            if (await RunToolAsync(["setup", "--no-update-check", .. client], false, () => L.Text("Copy the game client")) is not { Code: 0 }) return;
+            try { ClientUpdate.AfterNewClient(Folder, client[1]); }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { _shared.Logs.Write($"after the new client: {e.Message}", Severity.Warning); }
+        }
+        await RunToolAsync(arguments, withClient, () => withClient ? L.Text("Starting the game") : L.Text("Starting the servers"));
+    }
+
+    /// <summary>One run of LocalExile.exe, with its steps on this page; what it answered, or null when it could not run.</summary>
+    async Task<LocalExileResult?> RunToolAsync(string[] arguments, bool withClient, Func<string> headline)
+    {
         _working = true;
         _failed = false;
         _stopping = false;
         _note = null;
         _withClient = withClient;
-        _headline = () => withClient ? L.Text("Starting the game") : L.Text("Starting the servers");
+        _headline = headline;
         _steps.Clear();
         _row = null;
         _log.Clear();
@@ -164,6 +191,7 @@ public partial class InstallTab : UserControl
         _headline = null;
         Finished(result, failure);
         Show();
+        return failure is null ? result : null;
     }
     /// <summary>A run with a client of another build than this release needs would fail at the login (<see cref="ClientUpdate"/>).
     /// A player with a client of the current build is moved to it without a question: this release is updated to the newest
@@ -173,11 +201,11 @@ public partial class InstallTab : UserControl
     {
         var owner = Window.GetWindow(this);
         var (outcome, plan) = await ClientUpdate.EnsureAsync(Folder, lookForNewer: true,
-            p => ClientUpdate.AskMove(p, (title, message, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, null, buttons), path => Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { path }, UseShellExecute = false })?.Dispose()),
+            p => ClientUpdate.AskMove(p, (title, message, details, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, details, buttons), path => Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { path }, UseShellExecute = false })?.Dispose()),
             p => Dialog.Ask(owner, DialogKind.Question, ClientUpdate.Title(p),
-                ClientUpdate.Explain(p) + "\n\n" + ClientUpdate.ReleaseOlderNote(p) + "\n\n" + ClientUpdate.OlderNoteFor(p.Have), ClientUpdate.Confirm(p)),
+                ClientUpdate.OlderText(p, release: true), ClientUpdate.Confirm(p)),
             text => Dialog.Tell(owner, DialogKind.Error, L.Text("Replace the game client?"), text),
-            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work), confirmed: again);
+            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work));
         switch (outcome)
         {
             case ClientUpdate.Outcome.Fits:
@@ -193,6 +221,8 @@ public partial class InstallTab : UserControl
             case ClientUpdate.Outcome.UpdateLocalExile when !again:
                 return await UpdateRelease(plan!) ? await ClientFits(again: true) : null;
             default:
+                _note = () => L.Text("Not started: the game client does not fit this LocalExile.");
+                Show();
                 return null;
         }
     }
@@ -227,10 +257,12 @@ public partial class InstallTab : UserControl
             Show();
             return true;
         }
+        // Nothing changed: the next Play asks again, rather than going on from the Continue given for this one.
+        ClientUpdate.Forget(Folder);
         string reason = !ran ? L.Text("Something else is using LocalExile. Try again when it is done.")
-            : failure is not null ? L.Text("The update failed: {0}", failure)
+            : failure is not null ? L.Text("The update failed: {0}", failure) + "\n\n" + L.Text("Nothing was changed. Press Play to try again.")
             : L.Text("LocalExile {0} is the newest release.", LocalExileReleases.Installed(Folder)?.ToString() ?? "");
-        Dialog.Tell(Window.GetWindow(this), DialogKind.Warning, ClientUpdate.Title(plan), ClientUpdate.Explain(plan) + "\n\n" + reason);
+        Dialog.Tell(Window.GetWindow(this), DialogKind.Warning, L.Text("LocalExile update"), reason);
         Show();
         return false;
     }

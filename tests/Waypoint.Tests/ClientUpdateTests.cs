@@ -189,14 +189,139 @@ public class ClientUpdateTests : IDisposable
     public async Task Continue_on_a_working_older_setup_hands_LocalExile_s_update_to_the_caller_and_the_next_round_asks_nothing()
     {
         Release("3.29.3b", "3.29.3b");
-        _found["3.29.3c"] = @"E:\Path of Exile";
+        string newer = Retail("3.29.3c");
+        _found["3.29.3c"] = newer;
         var (outcome, _) = await ClientUpdate.EnsureAsync(Folder, true, _ => true, _ => true, _ => { }, Hold);
         Assert.Equal(ClientUpdate.Outcome.UpdateLocalExile, outcome);
-        // LocalExile updated: the folder now needs 3.29.3c, and the move was already agreed to.
+        // LocalExile updated: the folder now needs 3.29.3c, and the move was already agreed to, with that client: no second
+        // question and no second search, which could miss it.
         Release("3.29.3c", "3.29.3b");
-        var after = await ClientUpdate.EnsureAsync(Folder, true, _ => throw new InvalidOperationException("asked twice"), _ => true, _ => { }, Hold, confirmed: true);
+        _found.Clear();
+        var after = await ClientUpdate.EnsureAsync(Folder, true, _ => throw new InvalidOperationException("asked twice"), _ => true, _ => { }, Hold);
         Assert.Equal(ClientUpdate.Outcome.Replaced, after.Outcome);
-        Assert.Equal(["--client", @"E:\Path of Exile", "--client-mode", "copy"], ClientUpdate.ClientArguments(after.Plan!));
+        Assert.Equal(["--client", newer, "--client-mode", "copy"], ClientUpdate.ClientArguments(after.Plan!));
+    }
+
+    /// <summary>A retail client folder of <paramref name="build"/> elsewhere on the "PC".</summary>
+    string Retail(string build, bool prepared = false)
+    {
+        string folder = Path.Combine(_top, "retail " + build + (prepared ? " prepared" : ""));
+        Directory.CreateDirectory(folder);
+        foreach (string file in prepared ? new[] { "Content.ggpk", "PathOfExile.exe", "Game.patched.exe" } : ["Content.ggpk", "PathOfExile.exe"])
+            File.WriteAllText(Path.Combine(folder, file), "stand-in");
+        _builds[folder] = build;
+        return folder;
+    }
+
+    [Fact]
+    public void Before_a_daily_update_a_client_that_will_not_fit_is_settled_first()
+    {
+        Directory.CreateDirectory(Path.Combine(Folder, "scripts", "release"));
+        File.WriteAllText(Path.Combine(Folder, "scripts", "release", "build-release.ps1"), "[ordered]@{ client = '3.29.3b' }");
+        Directory.CreateDirectory(Client);
+        File.WriteAllText(Path.Combine(Client, "PathOfExile.exe"), "stand-in");
+        _builds[Client] = "3.29.3b";
+
+        // Nothing changes for the client, or the update stays on the same build: go.
+        Assert.True(ClientUpdate.BeforeUpdate(Folder, "3.29.3b").Go);
+        Assert.True(ClientUpdate.BeforeUpdate(Folder, null).Go);
+        // Only the older client: the copy stays where it works, and says why.
+        var only = ClientUpdate.BeforeUpdate(Folder, "3.29.3c");
+        Assert.False(only.Go);
+        Assert.Null(only.Ask);
+        Assert.Contains("3.29.3b", only.Staying);
+        // A 3.29.3c client elsewhere: asked first; Not now stays, and is not asked again.
+        _found["3.29.3c"] = Retail("3.29.3c");
+        var ask = ClientUpdate.BeforeUpdate(Folder, "3.29.3c");
+        Assert.False(ask.Go);
+        Assert.True(ClientUpdate.WorksAnyway(ask.Ask!));
+        Assert.Contains("play on 3.29.3b", ClientUpdate.MoveText(ask.Ask!).Message);
+        Assert.NotNull(ClientUpdate.Answer(ask.Ask!, false));
+        var again = ClientUpdate.BeforeUpdate(Folder, "3.29.3c");
+        Assert.False(again.Go);
+        Assert.Null(again.Ask);
+    }
+
+    [Fact]
+    public void Before_a_daily_update_Continue_lets_the_copy_move()
+    {
+        Directory.CreateDirectory(Path.Combine(Folder, "scripts", "release"));
+        File.WriteAllText(Path.Combine(Folder, "scripts", "release", "build-release.ps1"), "[ordered]@{ client = '3.29.3b' }");
+        Directory.CreateDirectory(Client);
+        File.WriteAllText(Path.Combine(Client, "PathOfExile.exe"), "stand-in");
+        _builds[Client] = "3.29.3b";
+        _found["3.29.3c"] = Retail("3.29.3c");
+        var ask = ClientUpdate.BeforeUpdate(Folder, "3.29.3c").Ask!;
+        Assert.Null(ClientUpdate.Answer(ask, true));
+        Assert.True(ClientUpdate.BeforeUpdate(Folder, "3.29.3c").Go);
+    }
+
+    [Fact]
+    public void A_copy_with_no_client_and_only_an_older_one_found_is_offered_the_older_version()
+    {
+        Directory.CreateDirectory(Path.Combine(Folder, "scripts", "release"));
+        File.WriteAllText(Path.Combine(Folder, "scripts", "release", "build-release.ps1"), "[ordered]@{ client = '3.29.3c' }");
+        Assert.Null(ClientUpdate.Check(Folder));
+        string older = Retail("3.29.3b");
+        _found["3.29.3b"] = older;
+        var plan = ClientUpdate.Check(Folder)!;
+        Assert.Equal((ClientUpdate.Kind.UseOlder, "3.29.3b", older), (plan.Kind, plan.Have, plan.Found));
+        _found["3.29.3c"] = Retail("3.29.3c");
+        Assert.Null(ClientUpdate.Check(Folder));
+    }
+
+    [Fact]
+    public void The_old_client_s_game_settings_come_back_into_the_new_one()
+    {
+        Release("3.29.3c", "3.29.3b");
+        File.WriteAllText(Path.Combine(Client, "config.json"), """{"settings":"LocalExile"}""");
+        ClientLocator.RemoveClient(Folder);
+        Assert.False(Directory.Exists(Client));
+        Assert.False(ClientLocator.RestoreSettings(Folder));
+        Directory.CreateDirectory(Client);
+        File.WriteAllText(Path.Combine(Client, "PathOfExile.exe"), "new client");
+        Assert.True(ClientLocator.RestoreSettings(Folder));
+        Assert.Equal("""{"settings":"LocalExile"}""", File.ReadAllText(Path.Combine(Client, "config.json")));
+        Assert.False(File.Exists(ClientLocator.SavedSettings(Folder)));
+    }
+
+    [Fact]
+    public void Settings_the_new_client_got_meanwhile_are_kept()
+    {
+        Release("3.29.3c", "3.29.3b");
+        File.WriteAllText(Path.Combine(Client, "config.json"), "old");
+        ClientLocator.RemoveClient(Folder);
+        Directory.CreateDirectory(Client);
+        File.WriteAllText(Path.Combine(Client, "PathOfExile.exe"), "new client");
+        File.WriteAllText(Path.Combine(Client, "config.json"), "the guide's");
+        Assert.False(ClientLocator.RestoreSettings(Folder));
+        Assert.Equal("the guide's", File.ReadAllText(Path.Combine(Client, "config.json")));
+        Assert.False(File.Exists(ClientLocator.SavedSettings(Folder)));
+    }
+
+    [Fact]
+    public void A_client_another_LocalExile_prepared_loses_its_patched_executable_after_the_copy()
+    {
+        Release("3.29.3c", "3.29.3c");
+        File.WriteAllText(Path.Combine(Client, "Game.patched.exe"), "patched for another folder's keys");
+        ClientUpdate.AfterNewClient(Folder, Retail("3.29.3c", prepared: true));
+        Assert.False(File.Exists(Path.Combine(Client, "Game.patched.exe")));
+        File.WriteAllText(Path.Combine(Client, "Game.patched.exe"), "patched for this folder");
+        ClientUpdate.AfterNewClient(Folder, Retail("3.29.3c"));
+        Assert.True(File.Exists(Path.Combine(Client, "Game.patched.exe")));
+    }
+
+    [Fact]
+    public async Task After_Not_now_the_working_older_setup_is_not_searched_again()
+    {
+        Release("3.29.3b", "3.29.3b");
+        int searches = 0;
+        ClientUpdate.FindClient = (build, _) => { searches++; return _found.TryGetValue(build, out var f) ? f : null; };
+        _found["3.29.3c"] = Retail("3.29.3c");
+        await ClientUpdate.EnsureAsync(Folder, true, _ => false, _ => true, _ => { }, Hold);
+        int first = searches;
+        var (outcome, _) = await ClientUpdate.EnsureAsync(Folder, true, _ => throw new InvalidOperationException("asked again"), _ => true, _ => { }, Hold);
+        Assert.Equal((ClientUpdate.Outcome.Fits, first), (outcome, searches));
     }
 
     [Fact]
@@ -205,19 +330,22 @@ public class ClientUpdateTests : IDisposable
         Release("3.29.3c", "3.29.3b");
         _found["3.29.3c"] = @"E:\Path of Exile";
         var plan = ClientUpdate.Check(Folder)!;
-        string text = ClientUpdate.MoveText(plan);
+        var (message, details) = ClientUpdate.MoveText(plan);
+        string text = message + " " + details;
         Assert.Contains(@"E:\Path of Exile", text);
         Assert.Contains(Client, text);
-        Assert.Contains("deleted for good", text);
+        Assert.Contains("(replaced)", details);
+        Assert.Contains("can't start yet", message);
+        Assert.DoesNotContain(Client, message);
         Assert.Equal([@"E:\Path of Exile", Client], ClientUpdate.MoveFolders(plan).Select(f => f.Path));
         var opened = new List<string>();
         var answers = new Queue<int>([1, 2, 0]);
         string[]? shown = null;
-        Assert.True(ClientUpdate.AskMove(plan, (_, _, buttons) => { shown = buttons; return answers.Dequeue(); }, opened.Add));
+        Assert.True(ClientUpdate.AskMove(plan, (_, _, _, buttons) => { shown = buttons; return answers.Dequeue(); }, opened.Add));
         Assert.Equal([@"E:\Path of Exile", Client], opened);
         Assert.Equal(4, shown!.Length);
-        Assert.False(ClientUpdate.AskMove(plan, (_, _, buttons) => buttons.Length - 1, opened.Add));
-        Assert.False(ClientUpdate.AskMove(plan, (_, _, _) => -1, opened.Add));
+        Assert.False(ClientUpdate.AskMove(plan, (_, _, _, buttons) => buttons.Length - 1, opened.Add));
+        Assert.False(ClientUpdate.AskMove(plan, (_, _, _, _) => -1, opened.Add));
     }
 
     [Fact]
@@ -234,7 +362,7 @@ public class ClientUpdateTests : IDisposable
         Assert.True(plan.Link);
         Assert.Equal(Path.TrimEndingDirectorySeparator(shared), Path.TrimEndingDirectorySeparator(plan.Target), StringComparer.OrdinalIgnoreCase);
         Assert.Equal("copy", ClientUpdate.ClientArguments(plan)[3]);
-        Assert.Contains("The link to your old 3.29.3b client is removed", ClientUpdate.MoveText(plan));
+        Assert.Contains("only the link is replaced", ClientUpdate.MoveText(plan).Details);
         Assert.Single(ClientUpdate.MoveFolders(plan));
         ClientLocator.RemoveClient(Folder);
         Assert.False(Directory.Exists(Client));

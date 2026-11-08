@@ -88,13 +88,17 @@ static class Updates
             throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, ExeName));
         using var client = Client();
         progress.Report(L.Text("checking {0} …", release.Tag));
-        string expected = HashOf(await client.GetStringAsync(release.HashUrl))
+        string expected = HashOf(await GitHubDownload.GetStringAsync(client, release.HashUrl))
             ?? throw new InvalidOperationException(L.Text("the release's .sha256 holds no SHA-256"));
         string download = exe + ".new";
         progress.Report(L.Text("downloading {0} …", release.Tag));
-        await using (var file = File.Create(download))
-        await using (var stream = await client.GetStreamAsync(release.ExeUrl))
+        using (var response = await GitHubDownload.GetAsync(client, release.ExeUrl))
+        {
+            response.EnsureSuccessStatusCode();
+            await using var file = File.Create(download);
+            await using var stream = await response.Content.ReadAsStreamAsync();
             await stream.CopyToAsync(file);
+        }
         string actual;
         await using (var file = File.OpenRead(download))
             actual = Convert.ToHexStringLower(await SHA256.HashDataAsync(file));

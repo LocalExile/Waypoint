@@ -144,12 +144,15 @@ public static class ClientLocator
                     && client.GetString() is { Length: > 0 } name) return name;
             }
             string script = Path.Combine(folder, "scripts", "release", "build-release.ps1");
-            if (File.Exists(script) && Regex.Match(File.ReadAllText(script), @"\bclient\s*=\s*'([^']+)'") is { Success: true } match)
-                return match.Groups[1].Value;
+            if (File.Exists(script)) return NeededIn(File.ReadAllText(script));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or InvalidOperationException) { }
         return null;
     }
+
+    /// <summary>The client build a checkout's release script names (<c>client = '3.29.3c'</c>); null when it names none.</summary>
+    public static string? NeededIn(string? releaseScript) =>
+        releaseScript is not null && Regex.Match(releaseScript, @"\bclient\s*=\s*'([^']+)'") is { Success: true } match ? match.Groups[1].Value : null;
 
     /// <summary>The folder's Client\ holds a build older than its LocalExile needs, so it cannot log in: (what it has, what it
     /// needs). Null when it fits, or when either side is not a build Waypoint knows (LocalExile's own check has the last word).</summary>
@@ -172,18 +175,52 @@ public static class ClientLocator
     /// <summary>The folder a client removal leaves while it deletes; the next removal finishes it.</summary>
     public const string RemovedClientFolder = ".waypoint-old-client";
 
-    /// <summary>Takes Client\ out of a LocalExile folder, so that the next setup asks for a new one. A link (a shared or linked
+    /// <summary>Where the old client's game settings (Client\config.json, which names LocalExile's own settings folder) wait for
+    /// the new client.</summary>
+    public static string SavedSettings(string folder) => Path.Combine(folder, "data", "client-config.waypoint.json");
+
+    /// <summary>Takes Client\ out of a LocalExile folder, so that the next setup asks for a new one. Its config.json is kept first
+    /// (<see cref="SavedSettings"/>), so that the new client keeps LocalExile's own game settings. A link (a shared or linked
     /// client) loses only the link: the folder it points to is never touched. A copy is first renamed, which fails as a whole
     /// while the game holds one of its files, and only then deleted; a delete cut short leaves <see cref="RemovedClientFolder"/>,
-    /// which the next call finishes. Saves and keys are in data\ and stay.</summary>
+    /// which <see cref="FinishRemoval"/> finishes. Saves and keys are in data\ and stay.</summary>
     public static void RemoveClient(string folder)
     {
         string client = Path.Combine(folder, "Client"), old = Path.Combine(folder, RemovedClientFolder);
-        if (Directory.Exists(old)) DeleteTree(old);
+        FinishRemoval(folder);
         if (!Directory.Exists(client)) return;
+        string settings = Path.Combine(client, "config.json"), saved = SavedSettings(folder);
+        if (File.Exists(settings) && !File.Exists(saved))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(saved)!);
+            File.Copy(settings, saved);
+        }
         if (new DirectoryInfo(client).Attributes.HasFlag(FileAttributes.ReparsePoint)) { Directory.Delete(client); return; }
         Directory.Move(client, old);
         DeleteTree(old);
+    }
+
+    /// <summary>Finishes a removal an earlier one left (<see cref="RemovedClientFolder"/>).</summary>
+    public static void FinishRemoval(string folder)
+    {
+        string old = Path.Combine(folder, RemovedClientFolder);
+        if (Directory.Exists(old)) DeleteTree(old);
+    }
+
+    /// <summary>The old client's game settings back into the new one (<see cref="RemoveClient"/>), once a client is in Client\.
+    /// Settings the new client got meanwhile (the setup guide's) are kept, and the saved ones dropped. True when they came back.</summary>
+    public static bool RestoreSettings(string folder)
+    {
+        string saved = SavedSettings(folder), client = Path.Combine(folder, "Client");
+        if (!File.Exists(saved) || Executable(client) is null) return false;
+        string settings = Path.Combine(client, "config.json");
+        if (File.Exists(settings))
+        {
+            File.Delete(saved);
+            return false;
+        }
+        File.Move(saved, settings);
+        return true;
     }
 
     /// <summary>Deletes a folder without following a link inside it: a link is removed, never what it points to.</summary>

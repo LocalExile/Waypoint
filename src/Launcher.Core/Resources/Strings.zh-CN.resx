@@ -51,9 +51,6 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>没有与搜索匹配的模组。</value>
   </data>
-  <data name="Text_013aa5427ff3" xml:space="preserve">
-    <value>你位于 {1} 的旧 {0} 客户端会被永久删除（{2:0.#} GB）。</value>
-  </data>
   <data name="Text_01846401bd51" xml:space="preserve">
     <value>脚本</value>
   </data>
@@ -249,9 +246,6 @@
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>使用你当前 LocalExile 的游戏客户端，不占用额外空间。</value>
   </data>
-  <data name="Text_07de6cef1f78" xml:space="preserve">
-    <value>此文件夹运行的是为 {0} 制作的 LocalExile。Waypoint 会先把它更新到适用于 {1} 的版本。</value>
-  </data>
   <data name="Text_07e9e8fac2d4" xml:space="preserve">
     <value>在新角色创建界面显示</value>
   </data>
@@ -263,9 +257,6 @@
   </data>
   <data name="Text_08834c1903a5" xml:space="preserve">
     <value>区域等级可能影响地图生成。留空则使用默认等级。</value>
-  </data>
-  <data name="Text_088b4ea73ee7" xml:space="preserve">
-    <value>打开旧客户端</value>
   </data>
   <data name="Text_089b80999032" xml:space="preserve">
     <value>万神殿</value>
@@ -672,9 +663,6 @@
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>仓库</value>
   </data>
-  <data name="Text_13da4392a62c" xml:space="preserve">
-    <value>指向你旧的 {0} 客户端的链接会被移除。{1} 保持不变。</value>
-  </data>
   <data name="Text_13e5b221168b" xml:space="preserve">
     <value>落后 LocalExile {0} 个提交</value>
   </data>
@@ -807,6 +795,9 @@
   <data name="Text_17b78022cd38" xml:space="preserve">
     <value>设置声明已成功加载，其中没有可编辑的设置。</value>
   </data>
+  <data name="Text_17bdebfa7973" xml:space="preserve">
+    <value>当前的 {0} 客户端（链接：只替换链接）：</value>
+  </data>
   <data name="Text_17cebc83e8bd" xml:space="preserve">
     <value>服务器未能停止</value>
   </data>
@@ -875,6 +866,9 @@
   </data>
   <data name="Text_1a4f630ac1b6" xml:space="preserve">
     <value>已停止</value>
+  </data>
+  <data name="Text_1a505b9f71ee" xml:space="preserve">
+    <value>“暂不”：不做任何更改，但此文件夹暂时无法启动。</value>
   </data>
   <data name="Text_1a56ffc0af65" xml:space="preserve">
     <value>服务器正在运行</value>
@@ -1418,6 +1412,9 @@
   <data name="Text_293d8864e78d" xml:space="preserve">
     <value>用于游戏本身的工具。每个工具都在单独的窗口中打开，并通过客户端控制桥（Python 与 Frida）与游戏中的角色交互。</value>
   </data>
+  <data name="Text_294f085ed9d0" xml:space="preserve">
+    <value>此副本保留为 {0} 制作的 LocalExile：最新版本需要 {1} 客户端。</value>
+  </data>
   <data name="Text_2951c4e2bb30" xml:space="preserve">
     <value>正在停止：正在写入客户端或密钥的步骤会先完成。</value>
   </data>
@@ -1513,6 +1510,9 @@
   </data>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>保存模组设置</value>
+  </data>
+  <data name="Text_2bc430e7e225" xml:space="preserve">
+    <value>旧的 {0} 客户端已移除。你的存档、账号和登录密钥都会保留。</value>
   </data>
   <data name="Text_2bcd48474ec9" xml:space="preserve">
     <value>提取游戏数据</value>
@@ -1779,11 +1779,17 @@
   <data name="Text_3374c9e93f22" xml:space="preserve">
     <value>你可以随时停止：已完成的部分会保留。</value>
   </data>
+  <data name="Text_337fc4c61628" xml:space="preserve">
+    <value>你的存档、账号和登录密钥都会保留。如需先备份，请打开下方的文件夹。</value>
+  </data>
   <data name="Text_338c29e24170" xml:space="preserve">
     <value>发行版不含可构建的源代码，因此不能在此使用。请改为将 LocalExile 下载到新的或空的文件夹中。你的发行版将保持不变。</value>
   </data>
   <data name="Text_338e02304930" xml:space="preserve">
     <value>种子 {0} 已替换为 {1}。</value>
+  </data>
+  <data name="Text_33a4a7386c6d" xml:space="preserve">
+    <value>打开 {0} 客户端</value>
   </data>
   <data name="Text_33a58116eb34" xml:space="preserve">
     <value>仅在此源码副本中：origin 上没有（未推送）</value>
@@ -2134,6 +2140,9 @@
   <data name="Text_3e55c7d756db" xml:space="preserve">
     <value>模组超过 {0} 个文件或 64 MB；未安装任何内容</value>
   </data>
+  <data name="Text_3e8cf9c948a6" xml:space="preserve">
+    <value>没有做任何更改。点击“开始游戏”重试。</value>
+  </data>
   <data name="Text_3e9648b06bc7" xml:space="preserve">
     <value>仅作用于此安装。启动器不会保存凭据。</value>
   </data>
@@ -2419,6 +2428,9 @@
   <data name="Text_48713a5c63fb" xml:space="preserve">
     <value>停止游戏</value>
   </data>
+  <data name="Text_48b405c7169c" xml:space="preserve">
+    <value>Waypoint 可以把此副本切换到适用于 {0} 的最后一个 LocalExile。你的客户端保持不变。</value>
+  </data>
   <data name="Text_48bdb0aef4f8" xml:space="preserve">
     <value>这些是此 LocalExile 自己的存档。</value>
   </data>
@@ -2571,6 +2583,9 @@
   </data>
   <data name="Text_4cefcb025be3" xml:space="preserve">
     <value>LocalExile 已更新。点击“开始游戏”启动。</value>
+  </data>
+  <data name="Text_4cf1bf896411" xml:space="preserve">
+    <value>3.30 发布后将不再提供 {0} 的版本。</value>
   </data>
   <data name="Text_4d0e0d0e73a3" xml:space="preserve">
     <value>依赖项：{0}</value>
@@ -3072,9 +3087,6 @@
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 输出</value>
   </data>
-  <data name="Text_5e61c50320b5" xml:space="preserve">
-    <value>“暂不”不会做任何更改，这次仍在 {0} 上游玩。</value>
-  </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>模组选择适用于所有赛季。已保存的选项不代表实际加载状态。</value>
   </data>
@@ -3401,6 +3413,9 @@
   </data>
   <data name="Text_676796f86246" xml:space="preserve">
     <value>可用空间不足：客户端在此驱动器上还需要 {0:0.#} GB，而可用空间只有 {1:0.#} GB。</value>
+  </data>
+  <data name="Text_6795da662608" xml:space="preserve">
+    <value>恢复你的游戏设置</value>
   </data>
   <data name="Text_67b6858a9f80" xml:space="preserve">
     <value>PATH 中有 Python {0}（{1}）。</value>
@@ -3855,6 +3870,9 @@
   <data name="Text_76e684d8787d" xml:space="preserve">
     <value>开始安装</value>
   </data>
+  <data name="Text_76eb7f69d808" xml:space="preserve">
+    <value>在这台电脑上找到了 Path of Exile {0}。Waypoint 会先更新 LocalExile，然后把它复制过来替换你当前的客户端。</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>命令通过游戏客户端发送（scripts/dev/client_control.py）：请先启动游戏并进入一个区域。</value>
   </data>
@@ -4013,6 +4031,9 @@
   </data>
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>基础类型</value>
+  </data>
+  <data name="Text_7bacc99e13ee" xml:space="preserve">
+    <value>只找到了 {0} 客户端，因此此副本会切换到为它制作的最后一个 LocalExile。</value>
   </data>
   <data name="Text_7bf6ecedbcdb" xml:space="preserve">
     <value>迷宫布局</value>
@@ -4293,6 +4314,9 @@
   <data name="Text_8550dd056667" xml:space="preserve">
     <value>尚未发布适用于 Linux 的发行版，因此将从源代码安装 LocalExile。</value>
   </data>
+  <data name="Text_8590a0fa1259" xml:space="preserve">
+    <value>找到的 {0} 客户端（只读取）：</value>
+  </data>
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>删除已保存的物品</value>
   </data>
@@ -4313,6 +4337,9 @@
   </data>
   <data name="Text_86cf366a184e" xml:space="preserve">
     <value>删除备份</value>
+  </data>
+  <data name="Text_86d42618a090" xml:space="preserve">
+    <value>或者返回并选择一个新的空文件夹：Waypoint 会安装为 {1} 制作的 LocalExile {0}。</value>
   </data>
   <data name="Text_8703b1f43ea7" xml:space="preserve">
     <value>无本地更改</value>
@@ -4551,9 +4578,6 @@
   <data name="Text_8e37953d23da" xml:space="preserve">
     <value>值</value>
   </data>
-  <data name="Text_8e39096c603e" xml:space="preserve">
-    <value>你的客户端保持不变，你将在为 {0} 制作的最后一个 LocalExile 上游玩。当你拥有 {1} 客户端后，“开始游戏”会提供迁移。</value>
-  </data>
   <data name="Text_8e3cda3b4f8b" xml:space="preserve">
     <value>本地 HEAD 不可用</value>
   </data>
@@ -4646,9 +4670,6 @@
   </data>
   <data name="Text_91c155b9f086" xml:space="preserve">
     <value>最新版包含 LocalExile 的最新更改。每项更改都经过审查，但最新版可能不如发布版稳定。</value>
-  </data>
-  <data name="Text_91c7a749dcb3" xml:space="preserve">
-    <value>你的存档、账号和登录密钥都会保留。如需先备份任一文件夹，请从这里打开它，然后点击“继续”。</value>
   </data>
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>删除所选物品（Delete 键）；按住 Ctrl 或 Shift 可多选</value>
@@ -5076,6 +5097,9 @@
   <data name="Text_9d312d6843db" xml:space="preserve">
     <value>此模式未定义</value>
   </data>
+  <data name="Text_9d3718c2d85f" xml:space="preserve">
+    <value>当前的 {0} 客户端（将被替换）：</value>
+  </data>
   <data name="Text_9d39a3628a49" xml:space="preserve">
     <value>重试操作</value>
   </data>
@@ -5283,6 +5307,9 @@
   <data name="Text_a3dc8f59f7b2" xml:space="preserve">
     <value>Client 必须是此源码副本中独立的实体文件夹，而不是指向其他文件夹的链接。</value>
   </data>
+  <data name="Text_a3e55e6e2d1c" xml:space="preserve">
+    <value>在这台电脑上找到了 Path of Exile {0}。Waypoint 可以把它复制过来替换你当前的客户端。</value>
+  </data>
   <data name="Text_a3ffee699add" xml:space="preserve">
     <value>正在此电脑上查找游戏客户端…</value>
   </data>
@@ -5481,9 +5508,6 @@
   <data name="Text_a8e176f580cf" xml:space="preserve">
     <value>请检查上方的账号名和密码要求。</value>
   </data>
-  <data name="Text_a8ebbe9e3d81" xml:space="preserve">
-    <value>“暂不”不会做任何更改；在 LocalExile 与其客户端匹配之前，此文件夹无法启动。</value>
-  </data>
   <data name="Text_a91d36846491" xml:space="preserve">
     <value>请在进入新区域前启动采集器。如果游戏已关闭，它最多等待 10 分钟。</value>
   </data>
@@ -5522,9 +5546,6 @@
   </data>
   <data name="Text_aa3410e05ed5" xml:space="preserve">
     <value>无法更改此联赛在角色创建界面的可见性。</value>
-  </data>
-  <data name="Text_aa64e8e06106" xml:space="preserve">
-    <value>“暂不”不会做任何更改；在客户端匹配之前，此文件夹无法启动。</value>
   </data>
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>服务器未运行</value>
@@ -5588,9 +5609,6 @@
   </data>
   <data name="Text_ac1f5a0e46c1" xml:space="preserve">
     <value>游戏未运行：请启动游戏，用角色进入一个区域，然后再次发放物品。</value>
-  </data>
-  <data name="Text_ac209005031f" xml:space="preserve">
-    <value>Client\ 中旧的 {0} 副本已移除（{1:0.#} GB）。你的存档、账号和登录密钥都会保留。</value>
   </data>
   <data name="Text_ac7fcf0ba22e" xml:space="preserve">
     <value>未安装模组</value>
@@ -5768,6 +5786,9 @@
   </data>
   <data name="Text_b269dc4e81a5" xml:space="preserve">
     <value>命令</value>
+  </data>
+  <data name="Text_b26a1f6c97cb" xml:space="preserve">
+    <value>此 LocalExile 需要 Path of Exile {0}，但只找到了 {1} 客户端。</value>
   </data>
   <data name="Text_b26fa9e01921" xml:space="preserve">
     <value>让 LocalExile 服务保持运行</value>
@@ -6303,9 +6324,6 @@
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>外观</value>
   </data>
-  <data name="Text_c43a46e15ee8" xml:space="preserve">
-    <value>打开 {0} 客户端</value>
-  </data>
   <data name="Text_c451c3692d31" xml:space="preserve">
     <value>模组信息不可用</value>
   </data>
@@ -6503,6 +6521,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_c9e0f4911e18" xml:space="preserve">
     <value>p95 毫秒</value>
+  </data>
+  <data name="Text_c9efab217fdd" xml:space="preserve">
+    <value>无法从 GitHub 下载 {0}；请稍后重试。</value>
   </data>
   <data name="Text_ca1844969742" xml:space="preserve">
     <value>不可用</value>
@@ -7082,9 +7103,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ddf65dfc3807" xml:space="preserve">
     <value>还没有备份。使用“立即备份”保存当前进度的副本。</value>
   </data>
-  <data name="Text_de05beb9e74a" xml:space="preserve">
-    <value>你位于 {1} 的 Path of Exile {0} 客户端会被复制到此 LocalExile 文件夹。那个文件夹只会被读取。</value>
-  </data>
   <data name="Text_de2a5f6b153d" xml:space="preserve">
     <value>创建第一个账号即可开始。角色需在游戏中创建。</value>
   </data>
@@ -7111,6 +7129,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_dec1638d773b" xml:space="preserve">
     <value>恢复：Escape 取消此预览。Ctrl+R 重置此窗口。在工作区中，Ctrl+Alt+R 恢复默认外观，不会更改你的源码副本或存档。</value>
+  </data>
+  <data name="Text_decaad6d7ea4" xml:space="preserve">
+    <value>Waypoint 可以把 LocalExile {0}（适用于 {1} 的最后版本）安装到新文件夹。此文件夹保持不变。</value>
   </data>
   <data name="Text_deeb8da20758" xml:space="preserve">
     <value>服务器源码副本支持启动器</value>
@@ -7331,6 +7352,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e5997acfabd7" xml:space="preserve">
     <value>游戏正在运行：Waypoint 会在此等待，并在游戏关闭后返回。</value>
+  </data>
+  <data name="Text_e5b298cafb17" xml:space="preserve">
+    <value>“暂不”：不做任何更改，这次仍在 {0} 上游玩。</value>
   </data>
   <data name="Text_e5d5f6f3c0d8" xml:space="preserve">
     <value>运行中的构建</value>
@@ -7685,9 +7709,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ef7e1ae10439" xml:space="preserve">
     <value>构建失败 / 等待中</value>
-  </data>
-  <data name="Text_ef8afd44b5de" xml:space="preserve">
-    <value>Waypoint 会通过安装向导把 LocalExile {0} 安装到一个新文件夹。此文件夹及其存档保持不变。</value>
   </data>
   <data name="Text_ef93bf3045a7" xml:space="preserve">
     <value>已换用全新存档。</value>
@@ -8095,6 +8116,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_fb42d9b4075f" xml:space="preserve">
     <value>上游 HEAD 不可用。</value>
   </data>
+  <data name="Text_fb5829adf0ff" xml:space="preserve">
+    <value>打开当前客户端</value>
+  </data>
   <data name="Text_fb5b3abf52be" xml:space="preserve">
     <value>仅更新复制的客户端资源包。</value>
   </data>
@@ -8139,6 +8163,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fd249743c184" xml:space="preserve">
     <value>自你的版本以来，LocalExile 有 {0} 项新更改。</value>
+  </data>
+  <data name="Text_fd2d4d612ab3" xml:space="preserve">
+    <value>当前的 {0} 客户端（将被替换，{1:0.#} GB）：</value>
   </data>
   <data name="Text_fd4d54ace369" xml:space="preserve">
     <value>物品等级：{0}</value>
@@ -8224,9 +8251,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ff8b555d818f" xml:space="preserve">
     <value>有可用更新</value>
-  </data>
-  <data name="Text_ff92106ddb65" xml:space="preserve">
-    <value>此 LocalExile 需要 Path of Exile {0} 客户端。此文件夹中的客户端是 {1}，并且这台电脑上没有找到 {0} 客户端。</value>
   </data>
   <data name="Text_ffa98e02f7ce" xml:space="preserve">
     <value>远程分支</value>

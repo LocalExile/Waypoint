@@ -23,6 +23,8 @@ sealed class Shared : IDisposable
     public Shared()
     {
         Metrics = new Metrics(Monitor);
+        // The player's other LocalExile folders: their clients are the first place a move to another client build looks.
+        ClientUpdate.KnownFolders = () => [Settings.ServerPath, Settings.ReleaseFolder, Settings.LatestFolder];
         Workspace = new Workspace(this);
         Monitor.Failed += e => Logs.Write($"service sample failed: {e.Message}", Severity.Error);
         Monitor.Exited += (service, pid) =>
