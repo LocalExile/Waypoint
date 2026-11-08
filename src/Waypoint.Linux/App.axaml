@@ -17,6 +17,9 @@
     <SolidColorBrush x:Key="Shell.Accent" Color="#7E98FF" />
     <SolidColorBrush x:Key="Shell.Primary" Color="#3557E0" />
     <SolidColorBrush x:Key="Shell.Good" Color="#3FBF7F" />
+    <!-- An Update button under the mouse, and pressed: darker greens. -->
+    <SolidColorBrush x:Key="Shell.UpdateHover" Color="#2F9A64" />
+    <SolidColorBrush x:Key="Shell.UpdatePressed" Color="#257A4F" />
     <SolidColorBrush x:Key="Shell.Warning" Color="#E5A93B" />
     <SolidColorBrush x:Key="Shell.Error" Color="#E5625E" />
     <SolidColorBrush x:Key="Shell.Idle" Color="#6C7385" />

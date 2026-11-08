@@ -10,6 +10,9 @@
         <Style Selector="Border.tile"><Setter Property="Width" Value="38" /><Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="9" /><Setter Property="Margin" Value="0,0,12,0" /><Setter Property="Background" Value="{DynamicResource Shell.Background}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" /></Style>
         <Style Selector="Button.modLink"><Setter Property="MinHeight" Value="0" /><Setter Property="Padding" Value="2" /><Setter Property="Margin" Value="0,0,14,0" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /></Style>
         <Style Selector="Button.rowButton"><Setter Property="Width" Value="104" /><Setter Property="Margin" Value="0" /><Setter Property="HorizontalContentAlignment" Value="Center" /></Style>
+        <Style Selector="Button.update"><Setter Property="Background" Value="{DynamicResource Shell.Good}" /><Setter Property="Foreground" Value="White" /></Style>
+        <Style Selector="Button.update:pointerover /template/ ContentPresenter"><Setter Property="Background" Value="{DynamicResource Shell.UpdateHover}" /><Setter Property="Foreground" Value="White" /></Style>
+        <Style Selector="Button.update:pressed /template/ ContentPresenter"><Setter Property="Background" Value="{DynamicResource Shell.UpdatePressed}" /><Setter Property="Foreground" Value="White" /></Style>
         <Style Selector="Button.icon"><Setter Property="Padding" Value="6" /><Setter Property="Background" Value="Transparent" /></Style>
         <Style Selector="TextBlock.cell"><Setter Property="TextTrimming" Value="CharacterEllipsis" /></Style>
         <Style Selector="Button.sortHeader"><Setter Property="MinHeight" Value="0" /><Setter Property="Padding" Value="2,1" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="HorizontalAlignment" Value="Left" /><Setter Property="FontSize" Value="11" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" /><Setter Property="Cursor" Value="Hand" /></Style>
@@ -75,7 +78,7 @@
                             </MenuFlyout></Button.Flyout>
                         </Button>
                     </StackPanel>
-                    <Button x:Name="UpdateAllButton" Classes="accent" HorizontalAlignment="Left" Margin="0" Click="UpdateAll">
+                    <Button x:Name="UpdateAllButton" Classes="update" HorizontalAlignment="Left" Margin="0" Click="UpdateAll">
                         <StackPanel Orientation="Horizontal"><icons:MaterialIcon Kind="Update" Width="16" Height="16" Margin="0,0,6,0" /><TextBlock Text="{l:Loc 'Update all'}" />
                             <Border x:Name="UpdateCountBadge" Margin="7,0,0,0"><TextBlock x:Name="UpdateCount" FontSize="12" /></Border>
                         </StackPanel>
@@ -84,29 +87,24 @@
                 <TextBlock x:Name="Notice" DockPanel.Dock="Top" Classes="note" TextWrapping="Wrap" Margin="0,0,0,10" IsVisible="False" />
                 <TextBlock x:Name="InstalledCount" DockPanel.Dock="Top" Classes="note" FontSize="12" Margin="0,0,0,10" />
                 <Grid x:Name="InstalledHeadings" DockPanel.Dock="Top" Margin="11,0,13,6">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                     <Button Classes="sortHeader" Click="SortBy" Tag="{x:Static l:ModSort.Enabled}" />
                     <Button Grid.Column="1" Classes="sortHeader" Click="SortBy" Tag="{x:Static l:ModSort.Name}" />
                     <Button Grid.Column="2" Classes="sortHeader" Click="SortBy" Tag="{x:Static l:ModSort.Client}" />
-                    <Button Grid.Column="3" Classes="sortHeader" Click="SortBy" Tag="{x:Static l:ModSort.Status}" />
-                    <Button Grid.Column="4" Classes="sortHeader" Click="SortBy" Tag="{x:Static l:ModSort.Action}" />
+                    <Button Grid.Column="3" Classes="sortHeader" Click="SortBy" Tag="{x:Static l:ModSort.Action}" />
                 </Grid>
                 <Grid>
                     <ListBox x:Name="ModList" Classes="mods" AutomationProperties.Name="{l:Loc 'Installed mods'}"><ListBox.ItemTemplate><DataTemplate>
-                        <Grid Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested"><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                        <Grid Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested"><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                             <CheckBox MinWidth="0" IsChecked="{Binding Enabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}" Click="ToggleFromList" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" ToolTip.Tip="{Binding EnabledTip}" AutomationProperties.Name="{Binding EnabledTip}" />
                             <StackPanel Grid.Column="1">
                                 <Button Classes="modLink" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
                                 <TextBlock Text="{Binding Problem}" IsVisible="{Binding HasProblem}" Foreground="{DynamicResource Shell.Error}" FontSize="12" TextWrapping="Wrap" Margin="52,5,12,0" />
                             </StackPanel>
                             <ContentControl Grid.Column="2" Content="{Binding}" ContentTemplate="{StaticResource ClientCell}" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,12,0">
-                                <TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" />
-                                <TextBlock Text="{Binding VersionChange}" FontSize="11" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" IsVisible="{Binding HasUpdate}" />
-                            </StackPanel>
-                            <Button Grid.Column="4" Classes="rowButton" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" IsVisible="{Binding HasButton}" ToolTip.Tip="{Binding ActionTip}"  />
-                            <Button Grid.Column="4" Classes="rowButton" Content="{l:Loc 'Details'}" Click="OpenRowDetails" IsVisible="{Binding ShowDetails}" />
-                            <ContentControl Grid.Column="4" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" IsVisible="{Binding HasJob}" />
+                            <Button Grid.Column="3" Classes="rowButton" Classes.update="{Binding IsUpdate}" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" IsVisible="{Binding HasButton}" ToolTip.Tip="{Binding ActionTip}"  />
+                            <Button Grid.Column="3" Classes="rowButton" Content="{l:Loc 'Details'}" Click="OpenRowDetails" IsVisible="{Binding ShowDetails}" />
+                            <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" IsVisible="{Binding HasJob}" />
                         </Grid>
                     </DataTemplate></ListBox.ItemTemplate></ListBox>
                     <TextBlock x:Name="Empty" Classes="note" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Margin="16" />
@@ -142,7 +140,7 @@
                             <Button Classes="modLink" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
                             <ContentControl Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ClientCell}" VerticalAlignment="Center" />
                             <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" /><TextBlock Text="{Binding VersionChange}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" IsVisible="{Binding HasVersionChange}" /></StackPanel>
-                            <Button Grid.Column="3" Classes="rowButton" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" IsVisible="{Binding ShowOfferAction}" />
+                            <Button Grid.Column="3" Classes="rowButton" Classes.update="{Binding IsUpdate}" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" IsVisible="{Binding ShowOfferAction}" />
                             <Button Grid.Column="3" Classes="rowButton" Content="{l:Loc 'Details'}" Click="OpenRowDetails" IsVisible="{Binding ShowDetails}" />
                             <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" IsVisible="{Binding HasJob}" />
                         </Grid>

@@ -46,6 +46,8 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public bool ShowButton => Job is null;
     public bool CanAct => !Repo.LegacyReleaseMods && Offer != ModOffer.Installed && Job is null;
     public string ActionText => Offer switch { ModOffer.Install => L.Text("Install"), ModOffer.Update => L.Text("Update"), _ => L.Text("Installed") };
+    /// <summary>Its button is an Update: drawn green.</summary>
+    public bool IsUpdate => Offer == ModOffer.Update;
     public string Origin => Release is not null ? L.Text("Release {0}", Release.Tag)
         : Listing.IsProject ? L.Text("No release: installs the source") : L.Text("Scripts: no build needed");
     public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description}";
@@ -235,7 +237,10 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
         RowAction.Build => (Entry.Project.Length > 0 && !Repo.IsInstall) || Offer is not null,
         _ => false,
     };
-    public string? ActionTip => Action == RowAction.Build && !CanAct ? L.Text("This mod has no source project to build here; install it again from Browse.") : null;
+    public string? ActionTip => Action == RowAction.Update ? VersionChange
+        : Action == RowAction.Build && !CanAct ? L.Text("This mod has no source project to build here; install it again from Browse.") : null;
+    /// <summary>Its button is an Update: drawn green.</summary>
+    public bool IsUpdate => Action == RowAction.Update;
     public string Latest => Offer?.Latest ?? "";
     public string Author => Entry.Author.Length > 0 ? Entry.Author : Offer?.Author ?? "";
     /// <summary>Under the name: the installed version, and a problem when there is one.</summary>

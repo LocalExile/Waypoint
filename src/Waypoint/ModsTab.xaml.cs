@@ -607,6 +607,8 @@ public partial class ModsTab : UserControl
             if (job is not null) job.PropertyChanged += PageJobChanged;
         }
         PageAction.Content = job?.Text ?? _pageItem?.ActionText ?? "";
+        // An Update is green, as in the lists.
+        PageAction.Style = (Style)FindResource(_pageItem?.IsUpdate == true ? "Shell.UpdateButton" : "Shell.PrimaryButton");
         SettingsEditor.Show(PageAction, job is not null || _pageItem?.Offer is ModOffer.Install or ModOffer.Update);
     }
 

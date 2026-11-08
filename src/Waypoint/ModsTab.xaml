@@ -45,6 +45,14 @@
         <Style x:Key="RowButton" TargetType="Button" BasedOn="{StaticResource Shell.Button}">
             <Setter Property="Width" Value="104" /><Setter Property="Margin" Value="0" />
         </Style>
+        <!-- A row's action button; an Update is green, as Waypoint's other update buttons are. -->
+        <Style x:Key="OfferButton" TargetType="Button" BasedOn="{StaticResource RowButton}">
+            <Style.Triggers><DataTrigger Binding="{Binding IsUpdate}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Shell.UpdateAccent}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.UpdateAccent}" />
+                <Setter Property="Foreground" Value="White" /><Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Template" Value="{StaticResource Shell.UpdateTemplate}" />
+            </DataTrigger></Style.Triggers>
+        </Style>
         <Style x:Key="ModDescription" TargetType="TextBlock" BasedOn="{StaticResource Shell.Cell}">
             <Setter Property="FontSize" Value="12" /><Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
             <Setter Property="Margin" Value="0,3,0,0" />
@@ -121,38 +129,33 @@
                             </ContextMenu></Button.ContextMenu>
                         </Button>
                     </StackPanel>
-                    <Button x:Name="UpdateAllButton" Style="{StaticResource Shell.PrimaryButton}" HorizontalAlignment="Left" Margin="0" Click="UpdateAll">
+                    <Button x:Name="UpdateAllButton" Style="{StaticResource Shell.UpdateButton}" HorizontalAlignment="Left" Margin="0" Click="UpdateAll">
                         <StackPanel Orientation="Horizontal"><md:PackIcon Kind="Update" Width="16" Height="16" Margin="0,0,6,0" /><TextBlock Text="{l:Loc 'Update all'}" />
-                            <Border x:Name="UpdateCountBadge" Margin="7,0,0,0"><TextBlock x:Name="UpdateCount" FontSize="12" Foreground="{DynamicResource Shell.OnAccent}" /></Border>
+                            <Border x:Name="UpdateCountBadge" Margin="7,0,0,0"><TextBlock x:Name="UpdateCount" FontSize="12" /></Border>
                         </StackPanel>
                     </Button>
                 </DockPanel>
                 <TextBlock x:Name="Notice" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,0,0,10" Visibility="Collapsed" />
                 <TextBlock x:Name="InstalledCount" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" FontSize="12" Margin="0,0,0,10" />
                 <Grid x:Name="InstalledHeadings" DockPanel.Dock="Top" Margin="11,0,13,6">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                     <Button Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Enabled}" />
                     <Button Grid.Column="1" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Name}" />
                     <Button Grid.Column="2" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Client}" />
-                    <Button Grid.Column="3" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Status}" />
-                    <Button Grid.Column="4" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Action}" />
+                    <Button Grid.Column="3" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Action}" />
                 </Grid>
                 <Grid>
                     <ListBox x:Name="ModList" Style="{StaticResource ModTable}" AutomationProperties.Name="{l:Loc 'Installed mods'}"><ListBox.ItemTemplate><DataTemplate>
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                             <CheckBox IsChecked="{Binding Enabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}" Click="ToggleFromList" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" ToolTip="{Binding EnabledTip}" AutomationProperties.Name="{Binding EnabledTip}" />
                             <StackPanel Grid.Column="1">
                                 <Button Style="{StaticResource ModLink}" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
                                 <TextBlock Text="{Binding Problem}" Visibility="{Binding HasProblem, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="{DynamicResource Shell.Error}" FontSize="12" TextWrapping="Wrap" Margin="52,5,12,0" />
                             </StackPanel>
                             <ContentControl Grid.Column="2" Content="{Binding}" ContentTemplate="{StaticResource ClientCell}" VerticalAlignment="Center" Focusable="False" />
-                            <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,12,0">
-                                <TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" />
-                                <TextBlock Text="{Binding VersionChange}" FontSize="11" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" Visibility="{Binding HasUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            </StackPanel>
-                            <Button Grid.Column="4" Style="{StaticResource RowButton}" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" Visibility="{Binding HasButton, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{Binding ActionTip}" ToolTipService.ShowOnDisabled="True" />
-                            <Button Grid.Column="4" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ContentControl Grid.Column="4" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Button Grid.Column="3" Style="{StaticResource OfferButton}" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" Visibility="{Binding HasButton, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{Binding ActionTip}" ToolTipService.ShowOnDisabled="True" />
+                            <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
                     </DataTemplate></ListBox.ItemTemplate></ListBox>
                     <TextBlock x:Name="Empty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Margin="16" />
@@ -188,7 +191,7 @@
                             <Button Style="{StaticResource ModLink}" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
                             <ContentControl Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ClientCell}" VerticalAlignment="Center" Focusable="False" />
                             <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" /><TextBlock Text="{Binding VersionChange}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" Visibility="{Binding HasVersionChange, Converter={StaticResource BooleanToVisibilityConverter}}" /></StackPanel>
-                            <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" Visibility="{Binding ShowOfferAction, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Button Grid.Column="3" Style="{StaticResource OfferButton}" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" Visibility="{Binding ShowOfferAction, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>

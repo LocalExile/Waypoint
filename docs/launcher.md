@@ -646,8 +646,9 @@ Laid out like an addon manager, with **My Mods** and **Browse** beside Refresh a
 heading of its own). Both lists use themed cards with small semantic icons, clear names, descriptions and quiet
 author/type metadata. Installed manifest names take precedence; repository names and descriptions fill missing metadata
 without changing mod IDs or operation targets. Unknown mods use a puzzle icon. Each column's heading is a button: a click
-sorts the list by that column (Use, Mod, Client version, Package status, Action), a second click reverses it, and an arrow
-marks the column in use.
+sorts the list by that column (My Mods: Use, Mod, Client version, Action; Browse: Mod, Client version, Package status,
+Action), a second click reverses it, and an arrow marks the column in use. An **Update** button is green wherever it shows
+(a row, Update all, a mod's page), and its tooltip in My Mods names the version change.
 
 **Client version** shows the LocalExile versions a mod declares it works with (`compatibleClientVersions` in its
 `mod.json`, carried into the repository's `mods.json`; an installed mod whose own manifest has none shows its repository's),
@@ -662,7 +663,7 @@ not assumed **Up to date** without repository evidence. **Open folder**, Refresh
 
 **My Mods** lists the installed mods (from the manifests under
 `Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their client
-versions, package status and author. A row's check box turns the mod on or off at once: Waypoint rewrites
+versions and author; the Action column says what it needs (Update, Build, Reinstall) or that it is up to date. A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
 applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
 Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs

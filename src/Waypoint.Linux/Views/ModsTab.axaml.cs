@@ -597,6 +597,9 @@ partial class ModsTab : UserControl
             if (job is not null) job.PropertyChanged += PageJobChanged;
         }
         PageAction.Content = job?.Text ?? _pageItem?.ActionText ?? "";
+        // An Update is green, as in the lists.
+        PageAction.Classes.Set("accent", _pageItem?.IsUpdate != true);
+        PageAction.Classes.Set("update", _pageItem?.IsUpdate == true);
         SettingsEditor.Show(PageAction, job is not null || _pageItem?.Offer is ModOffer.Install or ModOffer.Update);
     }
 
