@@ -506,18 +506,25 @@ looks only when a folder is about to be used (Play, Start servers, any Control s
 client and, when it matters, a quick look (two seconds, the usual places first) for a 3.29.3c client elsewhere. Clients it merely
 finds are never changed. `ClientUpdate` decides:
 
-- **The client is older than the folder's LocalExile, and a 3.29.3c client was found**: no question. The old client is taken out
+- **A move to a found 3.29.3c client** (the two cases below that name one) is asked once first (`ClientUpdate.AskMove`): the dialog
+  says what happens to each folder, the client found (copied, only read) and the old client (a link removed, or a copy deleted for
+  good, with its size), with a button to open each so the player can back it up, then **Continue** (the default) or **Not now**.
+  Not now changes nothing and never updates. When the old setup still works (a folder on the 3.29.3b version with its 3.29.3b
+  client), the game starts on it, and the question is not asked again while Waypoint runs; otherwise nothing starts. After
+  LocalExile's update, the client step is not asked again.
+- **The client is older than the folder's LocalExile, and a 3.29.3c client was found**: the old client is taken out
   (`ClientLocator.RemoveClient`: a linked client loses only the link and the folder it points to is never touched; a copy is
   renamed first, which fails as a whole while the game holds a file, then deleted, without following a link inside it; saves,
-  accounts and keys in `data\` stay). A release's Play then gives LocalExile.exe the found client (`--client`, linked when the old one
-  was a link, else copied) and goes on; a checkout opens the setup guide, with the found client chosen. The Play page says what
-  was removed.
+  accounts and keys in `data\` stay). A release's Play then gives LocalExile.exe the found client (`--client`, always copied: a link
+  would let LocalExile write into the player's own install, which the official launcher may update under it) and goes on; a
+  checkout opens the setup guide, with the found client chosen and copied. The Play page says what was removed.
 - **The client is older and no 3.29.3c client was found**: the client stays, and Waypoint asks once whether to use the version for
   it. A checkout moves to `waypoint-3.29.3b` (`Editions.MoveToOlderAsync`: saves backed up, nothing done with changes of the
   player's own); a release cannot go back in place (a newer release's modules would stay behind), so the guide sets up v0.1.0-beta
   in a new folder and this one stays as it is.
 - **The folder's LocalExile is older than its client, or a 3.29.3c client was found for a folder still on the 3.29.3b version**:
-  no question. A release updates itself to the newest release on the Play page (`ClientUpdate.UpdateReleaseAsync`, saves copied
+  after the question above (or, with no client found, one that only says LocalExile needs the update), a release updates itself to
+  the newest release on the Play page (`ClientUpdate.UpdateReleaseAsync`, saves copied
   first when Automatic backups is on), then moves to the found client as above. A copy on an older version of its own goes to the
   newest changes (`Editions.MoveToNewestAsync`); any other checkout is told how, since Waypoint moves one only on the player's word.
 - **A client of no build Waypoint knows** is left to LocalExile's own check.

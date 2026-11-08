@@ -139,8 +139,10 @@ public class ClientUpdateTests : IDisposable
         Directory.CreateDirectory(Path.Combine(Client, "Bundles"));
         File.WriteAllText(Path.Combine(Client, "Bundles", "a.bin"), "bundle");
         File.SetAttributes(Path.Combine(Client, "Bundles", "a.bin"), FileAttributes.ReadOnly);
-        var (outcome, plan) = await ClientUpdate.EnsureAsync(Folder, false, _ => throw new InvalidOperationException("not asked"), message => throw new InvalidOperationException(message), Hold);
-        Assert.Equal(ClientUpdate.Outcome.Replaced, outcome);
+        int asked = 0;
+        var (outcome, plan) = await ClientUpdate.EnsureAsync(Folder, false, _ => ++asked > 0, _ => throw new InvalidOperationException("not this question"),
+            message => throw new InvalidOperationException(message), Hold);
+        Assert.Equal((ClientUpdate.Outcome.Replaced, 1), (outcome, asked));
         Assert.False(plan!.Link);
         Assert.False(Directory.Exists(Client));
         Assert.False(Directory.Exists(Path.Combine(Folder, ClientLocator.RemovedClientFolder)));
@@ -148,13 +150,74 @@ public class ClientUpdateTests : IDisposable
     }
 
     [Fact]
-    public async Task Only_the_older_version_is_asked_and_a_no_starts_nothing()
+    public async Task With_only_an_older_client_a_no_to_the_older_version_starts_nothing()
     {
         Release("3.29.3c", "3.29.3b");
         int asked = 0;
-        var (outcome, _) = await ClientUpdate.EnsureAsync(Folder, false, _ => { asked++; return false; }, _ => { }, Hold);
+        var (outcome, _) = await ClientUpdate.EnsureAsync(Folder, false, _ => throw new InvalidOperationException("not this question"),
+            _ => { asked++; return false; }, _ => { }, Hold);
         Assert.Equal((ClientUpdate.Outcome.Stopped, 1), (outcome, asked));
         Assert.True(Directory.Exists(Client));
+    }
+
+    [Fact]
+    public async Task Not_now_to_a_move_that_must_happen_changes_nothing_and_starts_nothing()
+    {
+        Release("3.29.3c", "3.29.3b");
+        _found["3.29.3c"] = @"E:\Path of Exile";
+        var (outcome, plan) = await ClientUpdate.EnsureAsync(Folder, false, _ => false, _ => true, _ => { }, Hold);
+        Assert.Equal(ClientUpdate.Outcome.Stopped, outcome);
+        Assert.False(ClientUpdate.WorksAnyway(plan!));
+        Assert.True(File.Exists(Path.Combine(Client, "Content.ggpk")));
+    }
+
+    [Fact]
+    public async Task Not_now_to_a_move_from_a_working_older_setup_plays_on_and_is_not_asked_again()
+    {
+        Release("3.29.3b", "3.29.3b");
+        _found["3.29.3c"] = @"E:\Path of Exile";
+        int asked = 0;
+        var first = await ClientUpdate.EnsureAsync(Folder, true, _ => { asked++; return false; }, _ => true, _ => { }, Hold);
+        Assert.Equal(ClientUpdate.Outcome.Fits, first.Outcome);
+        Assert.True(ClientUpdate.WorksAnyway(first.Plan!));
+        var again = await ClientUpdate.EnsureAsync(Folder, true, _ => { asked++; return false; }, _ => true, _ => { }, Hold);
+        Assert.Equal((ClientUpdate.Outcome.Fits, 1), (again.Outcome, asked));
+        Assert.True(File.Exists(Path.Combine(Client, "Content.ggpk")));
+    }
+
+    [Fact]
+    public async Task Continue_on_a_working_older_setup_hands_LocalExile_s_update_to_the_caller_and_the_next_round_asks_nothing()
+    {
+        Release("3.29.3b", "3.29.3b");
+        _found["3.29.3c"] = @"E:\Path of Exile";
+        var (outcome, _) = await ClientUpdate.EnsureAsync(Folder, true, _ => true, _ => true, _ => { }, Hold);
+        Assert.Equal(ClientUpdate.Outcome.UpdateLocalExile, outcome);
+        // LocalExile updated: the folder now needs 3.29.3c, and the move was already agreed to.
+        Release("3.29.3c", "3.29.3b");
+        var after = await ClientUpdate.EnsureAsync(Folder, true, _ => throw new InvalidOperationException("asked twice"), _ => true, _ => { }, Hold, confirmed: true);
+        Assert.Equal(ClientUpdate.Outcome.Replaced, after.Outcome);
+        Assert.Equal(["--client", @"E:\Path of Exile", "--client-mode", "copy"], ClientUpdate.ClientArguments(after.Plan!));
+    }
+
+    [Fact]
+    public void The_move_dialog_names_both_folders_and_opening_one_asks_again()
+    {
+        Release("3.29.3c", "3.29.3b");
+        _found["3.29.3c"] = @"E:\Path of Exile";
+        var plan = ClientUpdate.Check(Folder)!;
+        string text = ClientUpdate.MoveText(plan);
+        Assert.Contains(@"E:\Path of Exile", text);
+        Assert.Contains(Client, text);
+        Assert.Contains("deleted for good", text);
+        Assert.Equal([@"E:\Path of Exile", Client], ClientUpdate.MoveFolders(plan).Select(f => f.Path));
+        var opened = new List<string>();
+        var answers = new Queue<int>([1, 2, 0]);
+        string[]? shown = null;
+        Assert.True(ClientUpdate.AskMove(plan, (_, _, buttons) => { shown = buttons; return answers.Dequeue(); }, opened.Add));
+        Assert.Equal([@"E:\Path of Exile", Client], opened);
+        Assert.Equal(4, shown!.Length);
+        Assert.False(ClientUpdate.AskMove(plan, (_, _, buttons) => buttons.Length - 1, opened.Add));
+        Assert.False(ClientUpdate.AskMove(plan, (_, _, _) => -1, opened.Add));
     }
 
     [Fact]
@@ -170,7 +233,9 @@ public class ClientUpdateTests : IDisposable
         var plan = ClientUpdate.Check(Folder)!;
         Assert.True(plan.Link);
         Assert.Equal(Path.TrimEndingDirectorySeparator(shared), Path.TrimEndingDirectorySeparator(plan.Target), StringComparer.OrdinalIgnoreCase);
-        Assert.Equal("link", ClientUpdate.ClientArguments(plan)[3]);
+        Assert.Equal("copy", ClientUpdate.ClientArguments(plan)[3]);
+        Assert.Contains("The link to your old 3.29.3b client is removed", ClientUpdate.MoveText(plan));
+        Assert.Single(ClientUpdate.MoveFolders(plan));
         ClientLocator.RemoveClient(Folder);
         Assert.False(Directory.Exists(Client));
         Assert.Equal("the shared client", File.ReadAllText(Path.Combine(shared, "Content.ggpk")));

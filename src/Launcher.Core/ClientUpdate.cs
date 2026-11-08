@@ -96,9 +96,65 @@ public static class ClientUpdate
     public static string OlderNoteFor(string build) =>
         L.Text("LocalExile now uses Path of Exile {0}. When you can, move to it: versions for {1} won't be offered after 3.30 comes out.", ClientLocator.Build, build);
 
-    /// <summary>What LocalExile.exe is given after the old client was taken out: the client found, linked when the old one was
-    /// a link, else copied, as before.</summary>
-    public static string[] ClientArguments(Plan plan) => ["--client", plan.Found!, "--client-mode", plan.Link ? "link" : "copy"];
+    /// <summary>What LocalExile.exe is given after the old client was taken out: the client found, always copied. A link would let
+    /// LocalExile write into the player's own install (Game.exe, Game.patched.exe, the login list), which the official launcher may
+    /// later update under it; LocalExile's own notes say to keep its copy apart.</summary>
+    public static string[] ClientArguments(Plan plan) => ["--client", plan.Found!, "--client-mode", "copy"];
+
+    /// <summary>The move still leaves a working setup when the player says no: the folder's client fits its (older) LocalExile, and
+    /// only a newer client was found elsewhere.</summary>
+    public static bool WorksAnyway(Plan plan) => plan.Kind == Kind.UpdateLocalExile && plan.Found is not null;
+
+    /// <summary>Folders whose player said Not now to a move that leaves a working setup: not asked again while Waypoint runs.</summary>
+    static readonly HashSet<string> Declined = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The build the player moves to, and the build of this folder's client now.</summary>
+    static (string To, string From) Builds(Plan plan) => plan.Kind == Kind.Replace ? (plan.Need, plan.Have) : (plan.Have, plan.Need);
+
+    public static string MoveTitle(Plan plan) => plan.Found is null ? L.Text("Update LocalExile?") : L.Text("Move to Path of Exile {0}?", Builds(plan).To);
+
+    /// <summary>What a move does, folder by folder, so that the player can back up either one first; and what Not now does.</summary>
+    public static string MoveText(Plan plan)
+    {
+        if (plan.Found is null) return Explain(plan) + "\n\n" + L.Text("Not now changes nothing; this folder can't start until LocalExile and its client fit.");
+        var (to, from) = Builds(plan);
+        var lines = new List<string>();
+        if (plan.Kind == Kind.UpdateLocalExile)
+            lines.Add(L.Text("This folder runs the LocalExile made for {0}. Waypoint first updates it to the version for {1}.", from, to));
+        lines.Add(L.Text("Your Path of Exile {0} client in {1} is copied into this LocalExile folder. That folder is only read.", to, plan.Found));
+        lines.Add(plan.Link
+            ? L.Text("The link to your old {0} client is removed. {1} stays as it is.", from, plan.Target)
+            : L.Text("Your old {0} client in {1} is deleted for good ({2:0.#} GB).", from, plan.Target, plan.Gigabytes));
+        lines.Add(L.Text("Your saves, accounts and login keys stay. To back up either folder first, open it from here, then press Continue."));
+        lines.Add(WorksAnyway(plan)
+            ? L.Text("Not now changes nothing and plays on {0} this time.", from)
+            : L.Text("Not now changes nothing; this folder can't start until its client fits."));
+        return string.Join("\n\n", lines);
+    }
+
+    /// <summary>The folders the move dialog offers to open: the client found, and an old copy that will be deleted.</summary>
+    public static IReadOnlyList<(string Label, string Path)> MoveFolders(Plan plan)
+    {
+        var folders = new List<(string, string)>();
+        if (plan.Found is { } found) folders.Add((L.Text("Open the {0} client", Builds(plan).To), found));
+        if (plan.Found is not null && !plan.Link && Directory.Exists(plan.Target)) folders.Add((L.Text("Open the old client"), plan.Target));
+        return folders;
+    }
+
+    /// <summary>The move dialog: Continue (true), Not now (false), or a folder opened by <paramref name="open"/> and the dialog
+    /// shown again. <paramref name="show"/> shows a question with buttons and answers the one chosen (any other answer is Not now).</summary>
+    public static bool AskMove(Plan plan, Func<string, string, string[], int> show, Action<string> open)
+    {
+        var folders = MoveFolders(plan);
+        string[] buttons = [L.Text("Continue"), .. folders.Select(f => f.Label), L.Text("Not now")];
+        while (true)
+        {
+            int chosen = show(MoveTitle(plan), MoveText(plan), buttons);
+            if (chosen == 0) return true;
+            if (chosen < 1 || chosen > folders.Count) return false;
+            open(folders[chosen - 1].Path);
+        }
+    }
 
     /// <summary>What the player reads while Waypoint moves them to the client found.</summary>
     public static string Moving(Plan plan) => L.Text("Moving you to your Path of Exile {0} client in {1}.", plan.Need, plan.Found) + " "
@@ -154,14 +210,26 @@ public static class ClientUpdate
         Stopped,
     }
 
-    /// <summary>Before a start: checks the folder. A player who has a client of the build current LocalExile needs is moved to
-    /// it without a question: a client too old is taken out while <paramref name="exclusive"/> holds the folder (false:
-    /// something else holds it; a failure goes to <paramref name="tell"/>), and <see cref="Outcome.UpdateLocalExile"/> is the
-    /// caller's to carry out. Only the older version, for a player who has nothing newer, is asked (<paramref name="askOlder"/>).</summary>
-    public static async Task<(Outcome Outcome, Plan? Plan)> EnsureAsync(string folder, bool lookForNewer, Func<Plan, bool> askOlder, Action<string> tell, Func<Func<Task>, Task<bool>> exclusive)
+    /// <summary>Before a start: checks the folder. A move to the client of the build current LocalExile needs is asked first
+    /// (<paramref name="askMove"/>, true to go on), naming the folders so the player can back them up; Not now changes nothing, and
+    /// plays on when the old setup still works (<see cref="WorksAnyway"/>, then not asked again while Waypoint runs). Already
+    /// <paramref name="confirmed"/> (the second round after LocalExile's update) asks nothing. A client too old is then taken out
+    /// while <paramref name="exclusive"/> holds the folder (false: something else holds it; a failure goes to <paramref name="tell"/>),
+    /// and <see cref="Outcome.UpdateLocalExile"/> is the caller's to carry out. The older version, for a player who has nothing
+    /// newer, is asked by <paramref name="askOlder"/>.</summary>
+    public static async Task<(Outcome Outcome, Plan? Plan)> EnsureAsync(string folder, bool lookForNewer, Func<Plan, bool> askMove, Func<Plan, bool> askOlder,
+        Action<string> tell, Func<Func<Task>, Task<bool>> exclusive, bool confirmed = false)
     {
         if (await Task.Run(() => Check(folder, lookForNewer)) is not { } plan) return (Outcome.Fits, null);
         if (plan.Kind == Kind.UseOlder) return (askOlder(plan) ? Outcome.UseOlder : Outcome.Stopped, plan);
+        string key = Path.GetFullPath(folder);
+        if (WorksAnyway(plan) && Declined.Contains(key)) return (Outcome.Fits, plan);
+        if (!confirmed && !askMove(plan))
+        {
+            if (!WorksAnyway(plan)) return (Outcome.Stopped, plan);
+            Declined.Add(key);
+            return (Outcome.Fits, plan);
+        }
         if (plan.Kind == Kind.UpdateLocalExile) return (Outcome.UpdateLocalExile, plan);
         Exception? failure = null;
         bool ran = await exclusive(async () =>

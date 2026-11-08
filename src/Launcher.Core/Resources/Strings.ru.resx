@@ -51,6 +51,9 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>Нет модов, подходящих под поиск.</value>
   </data>
+  <data name="Text_013aa5427ff3" xml:space="preserve">
+    <value>Ваш старый клиент {0} в {1} будет удалён безвозвратно ({2:0.#} ГБ).</value>
+  </data>
   <data name="Text_01846401bd51" xml:space="preserve">
     <value>Скрипты</value>
   </data>
@@ -246,6 +249,9 @@
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>Использовать клиент игры вашего текущего LocalExile, поэтому лишнее место не потребуется.</value>
   </data>
+  <data name="Text_07de6cef1f78" xml:space="preserve">
+    <value>В этой папке LocalExile для {0}. Сначала Waypoint обновит его до версии для {1}.</value>
+  </data>
   <data name="Text_07e9e8fac2d4" xml:space="preserve">
     <value>Показать при создании персонажей</value>
   </data>
@@ -257,6 +263,9 @@
   </data>
   <data name="Text_08834c1903a5" xml:space="preserve">
     <value>Уровень области может влиять на создание карты. Оставьте поле пустым для уровня по умолчанию.</value>
+  </data>
+  <data name="Text_088b4ea73ee7" xml:space="preserve">
+    <value>Открыть старый клиент</value>
   </data>
   <data name="Text_089b80999032" xml:space="preserve">
     <value>Пантеон</value>
@@ -662,6 +671,9 @@
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>Репозиторий</value>
+  </data>
+  <data name="Text_13da4392a62c" xml:space="preserve">
+    <value>Ссылка на ваш старый клиент {0} будет удалена. {1} останется как есть.</value>
   </data>
   <data name="Text_13e5b221168b" xml:space="preserve">
     <value>отстаёт от LocalExile на {0} коммит(ов)</value>
@@ -2701,6 +2713,9 @@
   <data name="Text_515509f0e334" xml:space="preserve">
     <value>{0:0} МБ</value>
   </data>
+  <data name="Text_515ed25002b7" xml:space="preserve">
+    <value>Перейти на Path of Exile {0}?</value>
+  </data>
   <data name="Text_5174093cf95b" xml:space="preserve">
     <value>Оставить старую версию: она не будет обновляться.</value>
   </data>
@@ -3056,6 +3071,9 @@
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>Вывод live.ps1</value>
+  </data>
+  <data name="Text_5e61c50320b5" xml:space="preserve">
+    <value>«Не сейчас» ничего не меняет, и в этот раз игра запустится на {0}.</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>Выбор модов действует во всех лигах. Сохранённый выбор не подтверждает их загрузку на сервере.</value>
@@ -4629,6 +4647,9 @@
   <data name="Text_91c155b9f086" xml:space="preserve">
     <value>«Новейшая» содержит последние изменения LocalExile. Каждое изменение проверяется, но «Новейшая» может быть менее стабильной, чем релиз.</value>
   </data>
+  <data name="Text_91c7a749dcb3" xml:space="preserve">
+    <value>Сохранения, аккаунты и ключи входа останутся. Чтобы сначала сделать резервную копию любой из папок, откройте её отсюда, затем нажмите «Продолжить».</value>
+  </data>
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>Удалить выбранные предметы (клавиша Delete); Ctrl или Shift выбирает несколько</value>
   </data>
@@ -5460,6 +5481,9 @@
   <data xml:space="preserve" name="Text_a8e176f580cf">
     <value>Проверьте указанные выше требования к имени и паролю.</value>
   </data>
+  <data name="Text_a8ebbe9e3d81" xml:space="preserve">
+    <value>«Не сейчас» ничего не меняет; эта папка не запустится, пока LocalExile и её клиент не подойдут друг к другу.</value>
+  </data>
   <data name="Text_a91d36846491" xml:space="preserve">
     <value>Запускайте запись перед входом в новую область. Если игра закрыта, инструмент ждёт до 10 минут.</value>
   </data>
@@ -5498,6 +5522,9 @@
   </data>
   <data name="Text_aa3410e05ed5" xml:space="preserve">
     <value>Для этой лиги нельзя изменить видимость при создании персонажа.</value>
+  </data>
+  <data name="Text_aa64e8e06106" xml:space="preserve">
+    <value>«Не сейчас» ничего не меняет; эта папка не запустится, пока её клиент не подойдёт.</value>
   </data>
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>Серверы не запущены</value>
@@ -6276,6 +6303,9 @@
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>Внешний вид</value>
   </data>
+  <data name="Text_c43a46e15ee8" xml:space="preserve">
+    <value>Открыть клиент {0}</value>
+  </data>
   <data name="Text_c451c3692d31" xml:space="preserve">
     <value>Информация о модах недоступна</value>
   </data>
@@ -7051,6 +7081,9 @@
   </data>
   <data xml:space="preserve" name="Text_ddf65dfc3807">
     <value>Копий пока нет. Нажмите «Создать копию», чтобы сохранить текущий прогресс.</value>
+  </data>
+  <data name="Text_de05beb9e74a" xml:space="preserve">
+    <value>Ваш клиент Path of Exile {0} из {1} будет скопирован в эту папку LocalExile. Та папка только читается.</value>
   </data>
   <data name="Text_de2a5f6b153d" xml:space="preserve">
     <value>Для начала создайте аккаунт. Персонажи создаются в игре.</value>

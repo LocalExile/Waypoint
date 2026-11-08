@@ -172,10 +172,11 @@ partial class InstallTab : UserControl
     {
         var owner = ViewTools.Owner(this);
         var (outcome, plan) = await ClientUpdate.EnsureAsync(Folder, lookForNewer: true,
+            p => ClientUpdate.AskMove(p, (title, message, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, null, buttons), ViewTools.Open),
             p => Dialog.Ask(owner, DialogKind.Question, ClientUpdate.Title(p),
                 ClientUpdate.Explain(p) + "\n\n" + ClientUpdate.ReleaseOlderNote(p) + "\n\n" + ClientUpdate.OlderNoteFor(p.Have), ClientUpdate.Confirm(p)),
             text => Dialog.Tell(owner, DialogKind.Error, L.Text("Replace the game client?"), text),
-            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work));
+            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work), confirmed: again);
         switch (outcome)
         {
             case ClientUpdate.Outcome.Fits:

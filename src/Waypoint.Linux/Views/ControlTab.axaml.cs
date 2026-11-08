@@ -247,9 +247,10 @@ partial class ControlTab : UserControl
         string folder = Environment.CurrentDirectory;
         int Show(DialogKind kind, string title, string message, string[] buttons) => Dialog.Show(owner, kind, title, message, null, buttons);
         var (outcome, plan) = await ClientUpdate.EnsureAsync(folder, lookForNewer: SwitchToSource.OnTestedVersion(folder),
+            p => p.Kind == ClientUpdate.Kind.UpdateLocalExile && !SwitchToSource.OnTestedVersion(folder) || ClientUpdate.AskMove(p, (title, message, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, null, buttons), ViewTools.Open),
             p => Dialog.Ask(owner, DialogKind.Question, ClientUpdate.Title(p), ClientUpdate.Explain(p) + "\n\n" + ClientUpdate.OlderNoteFor(p.Have), ClientUpdate.Confirm(p)),
             text => Dialog.Tell(owner, DialogKind.Error, L.Text("Replace the game client?"), text),
-            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work));
+            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work), confirmed: again);
         switch (outcome)
         {
             case ClientUpdate.Outcome.Fits:

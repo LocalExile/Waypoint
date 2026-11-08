@@ -51,6 +51,9 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>没有与搜索匹配的模组。</value>
   </data>
+  <data name="Text_013aa5427ff3" xml:space="preserve">
+    <value>你位于 {1} 的旧 {0} 客户端会被永久删除（{2:0.#} GB）。</value>
+  </data>
   <data name="Text_01846401bd51" xml:space="preserve">
     <value>脚本</value>
   </data>
@@ -246,6 +249,9 @@
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>使用你当前 LocalExile 的游戏客户端，不占用额外空间。</value>
   </data>
+  <data name="Text_07de6cef1f78" xml:space="preserve">
+    <value>此文件夹运行的是为 {0} 制作的 LocalExile。Waypoint 会先把它更新到适用于 {1} 的版本。</value>
+  </data>
   <data name="Text_07e9e8fac2d4" xml:space="preserve">
     <value>在新角色创建界面显示</value>
   </data>
@@ -257,6 +263,9 @@
   </data>
   <data name="Text_08834c1903a5" xml:space="preserve">
     <value>区域等级可能影响地图生成。留空则使用默认等级。</value>
+  </data>
+  <data name="Text_088b4ea73ee7" xml:space="preserve">
+    <value>打开旧客户端</value>
   </data>
   <data name="Text_089b80999032" xml:space="preserve">
     <value>万神殿</value>
@@ -662,6 +671,9 @@
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>仓库</value>
+  </data>
+  <data name="Text_13da4392a62c" xml:space="preserve">
+    <value>指向你旧的 {0} 客户端的链接会被移除。{1} 保持不变。</value>
   </data>
   <data name="Text_13e5b221168b" xml:space="preserve">
     <value>落后 LocalExile {0} 个提交</value>
@@ -2701,6 +2713,9 @@
   <data name="Text_515509f0e334" xml:space="preserve">
     <value>{0:0} MB</value>
   </data>
+  <data name="Text_515ed25002b7" xml:space="preserve">
+    <value>迁移到 Path of Exile {0}？</value>
+  </data>
   <data name="Text_5174093cf95b" xml:space="preserve">
     <value>保留旧版本；它不会更新。</value>
   </data>
@@ -3056,6 +3071,9 @@
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 输出</value>
+  </data>
+  <data name="Text_5e61c50320b5" xml:space="preserve">
+    <value>“暂不”不会做任何更改，这次仍在 {0} 上游玩。</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>模组选择适用于所有赛季。已保存的选项不代表实际加载状态。</value>
@@ -4629,6 +4647,9 @@
   <data name="Text_91c155b9f086" xml:space="preserve">
     <value>最新版包含 LocalExile 的最新更改。每项更改都经过审查，但最新版可能不如发布版稳定。</value>
   </data>
+  <data name="Text_91c7a749dcb3" xml:space="preserve">
+    <value>你的存档、账号和登录密钥都会保留。如需先备份任一文件夹，请从这里打开它，然后点击“继续”。</value>
+  </data>
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>删除所选物品（Delete 键）；按住 Ctrl 或 Shift 可多选</value>
   </data>
@@ -5460,6 +5481,9 @@
   <data name="Text_a8e176f580cf" xml:space="preserve">
     <value>请检查上方的账号名和密码要求。</value>
   </data>
+  <data name="Text_a8ebbe9e3d81" xml:space="preserve">
+    <value>“暂不”不会做任何更改；在 LocalExile 与其客户端匹配之前，此文件夹无法启动。</value>
+  </data>
   <data name="Text_a91d36846491" xml:space="preserve">
     <value>请在进入新区域前启动采集器。如果游戏已关闭，它最多等待 10 分钟。</value>
   </data>
@@ -5498,6 +5522,9 @@
   </data>
   <data name="Text_aa3410e05ed5" xml:space="preserve">
     <value>无法更改此联赛在角色创建界面的可见性。</value>
+  </data>
+  <data name="Text_aa64e8e06106" xml:space="preserve">
+    <value>“暂不”不会做任何更改；在客户端匹配之前，此文件夹无法启动。</value>
   </data>
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>服务器未运行</value>
@@ -6276,6 +6303,9 @@
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>外观</value>
   </data>
+  <data name="Text_c43a46e15ee8" xml:space="preserve">
+    <value>打开 {0} 客户端</value>
+  </data>
   <data name="Text_c451c3692d31" xml:space="preserve">
     <value>模组信息不可用</value>
   </data>
@@ -7051,6 +7081,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ddf65dfc3807" xml:space="preserve">
     <value>还没有备份。使用“立即备份”保存当前进度的副本。</value>
+  </data>
+  <data name="Text_de05beb9e74a" xml:space="preserve">
+    <value>你位于 {1} 的 Path of Exile {0} 客户端会被复制到此 LocalExile 文件夹。那个文件夹只会被读取。</value>
   </data>
   <data name="Text_de2a5f6b153d" xml:space="preserve">
     <value>创建第一个账号即可开始。角色需在游戏中创建。</value>
