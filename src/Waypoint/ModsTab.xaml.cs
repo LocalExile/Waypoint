@@ -54,6 +54,7 @@ public partial class ModsTab : UserControl
         if (Repo.IsInstall) BuildAllItem.Visibility = CheckModsItem.Visibility = Visibility.Collapsed;
         shared.Workspace.Changed += () => Dispatcher.BeginInvoke(Render);
         _browser.JobsChanged += () => Dispatcher.BeginInvoke(Render);
+        _browser.IconsChanged += () => Dispatcher.BeginInvoke(Render);
         shared.LiveRunning += running => Dispatcher.BeginInvoke(() =>
         {
             _busy = running;
@@ -538,8 +539,24 @@ public partial class ModsTab : UserControl
         ModPage.Visibility = Visibility.Visible;
         SettingsEditor.Show(ChoiceScopeHint, false);
         PageTabs.SelectedItem = ModOverviewPage;
+        PageScroll.ScrollToTop();
         RefreshPage();
         _ = LoadReadmeAsync(item, entry);
+    }
+
+    /// <summary>The page scrolls as one: nothing in it keeps the wheel for itself (the README's and the Versions list's own
+    /// viewers would, even with nothing to scroll). An open drop-down is a window of its own and keeps its wheel.</summary>
+    void PageWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+        if (e.OriginalSource is System.Windows.Media.Visual source
+            && PresentationSource.FromVisual(source) != PresentationSource.FromVisual(PageScroll)) return;
+        PageScroll.ScrollToVerticalOffset(PageScroll.VerticalOffset - e.Delta / 2.5);
+        e.Handled = true;
+    }
+
+    void PageTabChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_shared is not null) UpdateSettingsButtons();
     }
 
     void ClosePage(object sender, RoutedEventArgs e)
@@ -570,6 +587,9 @@ public partial class ModsTab : UserControl
         if (item is null && entry is null) { ClosePage(this, new RoutedEventArgs()); return; }
         string title = entry is null ? item!.Title : new InstalledRow(entry, item).Title;
         PageIcon.Kind = ModsText.Icon(id);
+        var icon = ModsText.IconImage(entry is null ? item!.IconFile : new InstalledRow(entry, item).IconFile);
+        PageImage.Background = icon is null ? null : new System.Windows.Media.ImageBrush(icon) { Stretch = System.Windows.Media.Stretch.Uniform };
+        PageIcon.Visibility = icon is null ? Visibility.Visible : Visibility.Collapsed;
         BackText.Text = L.Text(Pages.SelectedItem == BrowsePage ? "Back to Browse" : "Back to My Mods");
         PageTitle.Text = title;
         string author = entry?.Author is { Length: > 0 } a ? a : item?.Author ?? "";
@@ -683,7 +703,7 @@ public partial class ModsTab : UserControl
     }
     void UpdateSettingsButtons()
     {
-        SettingsEditor.Show(SettingsFooter, _settingsEditor is not null);
+        SettingsEditor.Show(SettingsFooter, _settingsEditor is not null && PageTabs.SelectedItem == ModSettingsPage);
         bool dirty = _settingsEditor?.Dirty == true;
         SaveSettingsButton.IsEnabled = CanUse && dirty; ResetSettingsButton.IsEnabled = CanUse && _form is not null;
         DiscardSettingsButton.IsEnabled = dirty;

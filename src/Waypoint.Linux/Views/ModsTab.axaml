@@ -7,7 +7,7 @@
         <Style Selector="ListBox.mods"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /></Style>
         <Style Selector="ListBox.mods ListBoxItem"><Setter Property="Padding" Value="12,10" /><Setter Property="MinHeight" Value="78" /><Setter Property="Margin" Value="0,0,0,7" /><Setter Property="CornerRadius" Value="9" /><Setter Property="Background" Value="{DynamicResource Shell.Panel}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" /></Style>
         <Style Selector="ListBox.mods ListBoxItem:pointerover"><Setter Property="BorderBrush" Value="{DynamicResource Shell.Accent}" /></Style>
-        <Style Selector="Border.tile"><Setter Property="Width" Value="38" /><Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="9" /><Setter Property="Margin" Value="0,0,12,0" /><Setter Property="Background" Value="{DynamicResource Shell.Background}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" /></Style>
+        <Style Selector="Border.tile"><Setter Property="Width" Value="56" /><Setter Property="Height" Value="56" /><Setter Property="CornerRadius" Value="9" /><Setter Property="Margin" Value="0,0,12,0" /><Setter Property="Background" Value="{DynamicResource Shell.Background}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" /></Style>
         <Style Selector="Button.modLink"><Setter Property="MinHeight" Value="0" /><Setter Property="Padding" Value="2" /><Setter Property="Margin" Value="0,0,14,0" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /></Style>
         <Style Selector="Button.rowButton"><Setter Property="Width" Value="104" /><Setter Property="Margin" Value="0" /><Setter Property="HorizontalContentAlignment" Value="Center" /></Style>
         <Style Selector="Button.update"><Setter Property="Background" Value="{DynamicResource Shell.Good}" /><Setter Property="Foreground" Value="White" /></Style>
@@ -24,7 +24,10 @@
     <UserControl.Resources>
         <DataTemplate x:Key="ModIdentity">
             <DockPanel LastChildFill="True">
-                <Border DockPanel.Dock="Left" Classes="tile"><icons:MaterialIcon Kind="{Binding Icon}" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" /></Border>
+                <Border DockPanel.Dock="Left" Classes="tile"><Grid>
+                    <icons:MaterialIcon Kind="{Binding Icon}" IsVisible="{Binding ShowSymbol}" Width="30" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+                    <Border Width="52" Height="52" CornerRadius="8" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center"><Image Source="{Binding IconImage}" Stretch="Uniform" /></Border>
+                </Grid></Border>
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding Title}" Classes="cell" FontSize="14" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding Description}" Classes="description" IsVisible="{Binding HasDescription}" ToolTip.Tip="{Binding Description}" />
@@ -150,14 +153,24 @@
             </DockPanel>
 
             <DockPanel x:Name="ModPage" IsVisible="False">
-                <StackPanel DockPanel.Dock="Top">
-                    <DockPanel Margin="0,0,0,12">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
                         <Button x:Name="BackButton" Click="ClosePage" HorizontalAlignment="Left"><StackPanel Orientation="Horizontal"><icons:MaterialIcon Kind="ArrowLeft" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock x:Name="BackText" /></StackPanel></Button>
+                </DockPanel>
+                <!-- Stays in view while the page scrolls; shown only on the Settings tab. -->
+                <Border x:Name="SettingsFooter" DockPanel.Dock="Bottom" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" Background="{DynamicResource Shell.Panel}" CornerRadius="9" Padding="10" Margin="0,12,0,0">
+                    <DockPanel><WrapPanel x:Name="SettingsActions" DockPanel.Dock="Right" Margin="12,0,0,0"><Button x:Name="SaveSettingsButton" Margin="0,0,8,0" Classes="accent" Content="{l:Loc 'Save settings'}" Click="SaveSettings" /><Button x:Name="DiscardSettingsButton" Margin="0,0,8,0" Content="{l:Loc 'Discard changes'}" Click="DiscardModSettings" /><Button x:Name="ResetSettingsButton" Margin="0,0,8,0" Content="{l:Loc 'Reset to defaults'}" Click="ResetSettings" /></WrapPanel>
+                        <TextBlock x:Name="SettingsHint" Classes="note" FontSize="12" TextWrapping="Wrap" VerticalAlignment="Center" />
                     </DockPanel>
+                </Border>
+                <ScrollViewer x:Name="PageScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
                     <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,0,0,12">
                         <DockPanel>
-                            <Border DockPanel.Dock="Left" Classes="tile" Width="64" Height="66" VerticalAlignment="Top" Margin="0,0,18,0"><icons:MaterialIcon x:Name="PageIcon" Width="34" Height="34" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" /></Border>
-                            <StackPanel>
+                            <!-- A square as tall as the text beside it, whatever that wraps to; the limit leaves the text room in a narrow window. -->
+                            <Border DockPanel.Dock="Left" Classes="tile" Width="{Binding #PageInfo.Bounds.Height}" MaxWidth="220" Height="NaN" Margin="0,0,18,0"><Grid>
+                                <icons:MaterialIcon x:Name="PageIcon" Width="88" Height="88" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+                                <Border Margin="2" CornerRadius="8" ClipToBounds="True"><Image x:Name="PageImage" Stretch="Uniform" /></Border>
+                            </Grid></Border>
+                            <StackPanel x:Name="PageInfo">
                                 <TextBlock x:Name="PageTitle" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" /><TextBlock x:Name="PageByline" Classes="note" FontSize="12" Margin="0,4,0,0" />
                                 <TextBlock x:Name="PageDescription" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,9,0,0" />
                                 <WrapPanel Margin="0,12,0,0">
@@ -175,27 +188,22 @@
                             </StackPanel>
                         </DockPanel>
                     </Border>
-                </StackPanel>
-                <TabControl x:Name="PageTabs">
+                <TabControl x:Name="PageTabs" SelectionChanged="PageTabChanged">
                     <TabItem x:Name="ModOverviewPage" Header="{l:Loc 'Overview'}"><DockPanel Margin="0,12,0,0">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel x:Name="OverviewPanel" /></ScrollViewer>
+                        <StackPanel x:Name="OverviewPanel" />
                     </DockPanel></TabItem>
                     <TabItem x:Name="ModSettingsPage" Header="{l:Loc 'Settings'}"><DockPanel Margin="0,12,0,0">
-                        <Border x:Name="SettingsFooter" DockPanel.Dock="Bottom" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" Background="{DynamicResource Shell.Panel}" CornerRadius="9" Padding="10" Margin="0,12,0,0">
-                            <StackPanel><TextBlock x:Name="SettingsHint" Classes="note" FontSize="12" TextWrapping="Wrap" />
-                                <WrapPanel x:Name="SettingsActions" HorizontalAlignment="Right" Margin="0,8,0,0"><Button x:Name="SaveSettingsButton" Margin="0,0,8,0" Classes="accent" Content="{l:Loc 'Save settings'}" Click="SaveSettings" /><Button x:Name="DiscardSettingsButton" Margin="0,0,8,0" Content="{l:Loc 'Discard changes'}" Click="DiscardModSettings" /><Button x:Name="ResetSettingsButton" Margin="0,0,8,0" Content="{l:Loc 'Reset to defaults'}" Click="ResetSettings" /></WrapPanel>
-                            </StackPanel>
-                        </Border>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="16"><StackPanel MaxWidth="680" HorizontalAlignment="Left">
+                        <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="16"><StackPanel>
                             <TextBlock Text="{l:Loc 'Mod settings'}" FontSize="18" FontWeight="SemiBold" /><TextBlock Text="{l:Loc 'Shared by every league where this mod runs.'}" Classes="note" FontSize="12" Margin="0,6,0,16" TextWrapping="Wrap" /><StackPanel x:Name="SettingsPanel" />
-                        </StackPanel></Border></ScrollViewer>
+                        </StackPanel></Border>
                     </DockPanel></TabItem>
-                    <TabItem x:Name="ModVersionsPage" Header="{l:Loc 'Versions'}"><ListBox x:Name="VersionList" Classes="mods" Margin="0,12,0,0"><ListBox.ItemTemplate><DataTemplate>
+                    <TabItem x:Name="ModVersionsPage" Header="{l:Loc 'Versions'}"><ListBox x:Name="VersionList" Classes="mods" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0,12,0,0"><ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></ListBox.ItemsPanel><ListBox.ItemTemplate><DataTemplate>
                         <Grid Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested"><Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="100" /><ColumnDefinition Width="80" /><ColumnDefinition Width="*" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Version}" Classes="cell" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="{Binding Date}" Classes="cell" /><TextBlock Grid.Column="2" Text="{Binding Size}" Classes="cell" /><TextBlock Grid.Column="3" Text="{Binding Notes}" Classes="cell" Foreground="{DynamicResource Shell.TextSecondary}" ToolTip.Tip="{Binding Notes}" Margin="0,0,12,0" /><Button Grid.Column="4" Classes="rowButton" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallVersion" />
                         </Grid>
                     </DataTemplate></ListBox.ItemTemplate></ListBox></TabItem>
                 </TabControl>
+                </StackPanel></ScrollViewer>
             </DockPanel>
         </Grid>
     </DockPanel>

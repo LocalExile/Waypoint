@@ -124,5 +124,40 @@ public class SettingsFormTests : IDisposable
         thread.SetApartmentState(ApartmentState.STA); thread.Start(); thread.Join();
         Assert.Null(failure);
     }
+    [Fact]
+    public void A_narrow_card_puts_its_control_under_its_text_and_a_wide_one_beside_it()
+    {
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var editor = new SettingsEditor(Load());
+                IEnumerable<System.Windows.DependencyObject> Walk(System.Windows.DependencyObject root)
+                {
+                    yield return root;
+                    foreach (var child in System.Windows.LogicalTreeHelper.GetChildren(root).OfType<System.Windows.DependencyObject>())
+                        foreach (var nested in Walk(child)) yield return nested;
+                }
+                var row = Walk(editor).OfType<System.Windows.Controls.Grid>().First();
+                var control = row.Children.OfType<System.Windows.Controls.StackPanel>().Last();
+                void Lay(double width)
+                {
+                    editor.Measure(new System.Windows.Size(width, 5000));
+                    editor.Arrange(new System.Windows.Rect(0, 0, width, 5000));
+                    editor.UpdateLayout();
+                }
+                Lay(400);
+                Assert.Equal((1, 0), (System.Windows.Controls.Grid.GetRow(control), System.Windows.Controls.Grid.GetColumn(control)));
+                Assert.True(double.IsNaN(control.Width));
+                Lay(900);
+                Assert.Equal((0, 1), (System.Windows.Controls.Grid.GetRow(control), System.Windows.Controls.Grid.GetColumn(control)));
+                Assert.False(double.IsNaN(control.Width));
+            }
+            catch (Exception e) { failure = e; }
+        });
+        thread.SetApartmentState(ApartmentState.STA); thread.Start(); thread.Join();
+        Assert.Null(failure);
+    }
     public void Dispose() { if (Directory.Exists(_root)) Directory.Delete(_root, true); }
 }

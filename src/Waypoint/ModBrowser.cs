@@ -2,8 +2,10 @@ using System.Net.Http;
 using System.Text.Json.Nodes;
 #if WINDOWS
 using ModIconKind = MaterialDesignThemes.Wpf.PackIconKind;
+using ModIconImage = System.Windows.Media.ImageSource;
 #else
 using ModIconKind = Material.Icons.MaterialIconKind;
+using ModIconImage = Avalonia.Media.IImage;
 #endif
 
 namespace Waypoint;
@@ -53,6 +55,11 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description}";
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Listing.Id);
+    /// <summary>The installed mod's own icon.png, else the repository's.</summary>
+    public string IconFile => Installed?.IconFile is { Length: > 0 } own ? own : ModRepository.IconFile(Source, Listing.Id);
+    public ModIconImage? IconImage => ModsText.IconImage(IconFile);
+    /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
+    public bool ShowSymbol => IconImage is null;
     public string Description => Listing.Description;
     public bool HasDescription => Description.Length > 0;
     public string Metadata => Author;
@@ -191,6 +198,11 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public string Title => Entry.Name.Length > 0 ? Entry.Name : Offer?.Title ?? Entry.Id;
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Entry.Id);
+    /// <summary>The installed mod's own icon.png, else its repository's.</summary>
+    public string IconFile => Entry.IconFile.Length > 0 ? Entry.IconFile : Offer?.IconFile ?? "";
+    public ModIconImage? IconImage => ModsText.IconImage(IconFile);
+    /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
+    public bool ShowSymbol => IconImage is null;
     public string Description => Entry.Description.Length > 0 ? Entry.Description : Offer?.Listing.Description ?? "";
     public bool HasDescription => Description.Length > 0;
     public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
@@ -346,6 +358,7 @@ sealed class ModBrowser(Shared shared)
             var view = await ModRepository.ReadAsync(_http, source);
             _views[source.Key] = view;
             _errors.Remove(source.Key);
+            _ = RefreshIconsAsync(view);
             return view;
         }
         catch (Exception e) when (e is HttpRequestException or InvalidDataException or System.Text.Json.JsonException or TaskCanceledException)
@@ -353,6 +366,22 @@ sealed class ModBrowser(Shared shared)
             _errors[source.Key] = e.Message;
             return _views.GetValueOrDefault(source.Key);
         }
+    }
+
+    /// <summary>A mod's icon.png changed: the lists draw their rows again.</summary>
+    public event Action? IconsChanged;
+
+    /// <summary>Brings the kept icons up to date behind the list, which shows them as they were until this ends. An icon that
+    /// cannot be read stays as it was; a mod without one shows its symbol.</summary>
+    async Task RefreshIconsAsync(ModRepositoryView view)
+    {
+        int changed = 0;
+        await Parallel.ForEachAsync(view.Mods, new ParallelOptions { MaxDegreeOfParallelism = 4 }, async (mod, stop) =>
+        {
+            try { if (await ModRepository.RefreshIconAsync(_http, view.Source, mod, ModRepository.IconFile(view.Source, mod.Id), stop)) Interlocked.Increment(ref changed); }
+            catch (Exception e) when (e is HttpRequestException or TaskCanceledException or IOException or UnauthorizedAccessException) { }
+        });
+        if (changed > 0) IconsChanged?.Invoke();
     }
 
     /// <summary>The rows of a repository read before, matched to the installed mods by id.</summary>
@@ -662,6 +691,47 @@ static class ModsText
         "itemrarity" => ModIconKind.DiamondStone, "example" => ModIconKind.CodeBraces,
         "hello" => ModIconKind.ChatOutline, _ => ModIconKind.PuzzleOutline
     };
+
+    // The lists draw their rows often: a file is decoded again only when it changes.
+    static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (long Length, DateTime Written, ModIconImage? Image)> IconImages = new();
+
+    /// <summary>A mod's icon.png as an image; null, for the mod's symbol, when there is no such file or it is not a usable PNG.</summary>
+    public static ModIconImage? IconImage(string file)
+    {
+        if (file.Length == 0) return null;
+        try
+        {
+            var info = new FileInfo(file);
+            if (!info.Exists) return null;
+            if (IconImages.TryGetValue(file, out var known) && known.Length == info.Length && known.Written == info.LastWriteTimeUtc) return known.Image;
+            ModIconImage? image = null;
+            try { if (info.Length <= 1 << 20 && File.ReadAllBytes(file) is var bytes && ModRepository.IsIcon(bytes)) image = Decode(bytes); }
+            // Decoders throw many kinds for a damaged file, and any of them only means this mod has no icon to show.
+            catch (Exception e) when (e is not (IOException or UnauthorizedAccessException)) { }
+            IconImages[file] = (info.Length, info.LastWriteTimeUtc, image);
+            return image;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException) { return null; }
+    }
+
+    static ModIconImage Decode(byte[] bytes)
+    {
+#if WINDOWS
+        var image = new System.Windows.Media.Imaging.BitmapImage();
+        image.BeginInit();
+        image.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+        image.CreateOptions = System.Windows.Media.Imaging.BitmapCreateOptions.IgnoreColorProfile;
+        image.DecodePixelWidth = 256;
+        image.StreamSource = new MemoryStream(bytes);
+        image.EndInit();
+        image.Freeze();
+        return image;
+#else
+        using var stream = new MemoryStream(bytes);
+        return Avalonia.Media.Imaging.Bitmap.DecodeToWidth(stream, 256);
+#endif
+    }
+
     /// <summary>Only an explicit runtime report can supply a last-checked load state; saved choices never do.</summary>
     public static string RuntimeStatus(RuntimeSnapshot? state, string id)
     {

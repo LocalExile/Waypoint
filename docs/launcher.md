@@ -645,7 +645,11 @@ The explanation opens on demand so it does not crowd the working area.
 Laid out like an addon manager, with **My Mods** and **Browse** beside Refresh and **Open folder** (the section has no
 heading of its own). Both lists use themed cards with small semantic icons, clear names, descriptions and quiet
 author/type metadata. Installed manifest names take precedence; repository names and descriptions fill missing metadata
-without changing mod IDs or operation targets. Unknown mods use a puzzle icon. Each column's heading is a button: a click
+without changing mod IDs or operation targets. An `icon.png` in a mod's folder (a PNG of at most 1 MB and 1024 pixels a
+side) replaces its symbol in both lists and on its page: the installed mod's, or its source project's, then its
+repository's (`mods/<id>/icon.png`, needing no field in `mods.json`), which Waypoint keeps in `mod-icons\` of its data
+folder and refreshes each time it reads the repository. A mod without a usable one keeps its symbol; unknown mods use a
+puzzle icon. Each column's heading is a button: a click
 sorts the list by that column (My Mods: Use, Mod, Client version, Action; Browse: Mod, Client version, Package status,
 Action), a second click reverses it, and an arrow marks the column in use. An **Update** button is green wherever it shows
 (a row, Update all, a mod's page), and its tooltip in My Mods names the version change.
@@ -688,8 +692,10 @@ in parallel. A failed one opens the operation log.
 Clicking a row opens the mod's page: its README (Overview, drawn as GitHub-flavoured Markdown with Markdig; images
 show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its shared settings editor
 (all declared types below; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
-and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
-actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
+and a running Gateway reloads the mod), and its releases (Versions, each installable). The page scrolls as one, its heading
+and tabs with it; the back button stays above it, and the settings' Save bar below it on the Settings tab. Right-clicking a
+row shows its actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never
+deleted.
 
 The mod page shows both the mod's versions (installed and latest, not repeated when identical) and its client versions,
 with the incompatibility warning under them when there is one. A checked enable box or a successful build is never
@@ -863,7 +869,8 @@ with no verified hook remains read-only. No listing command or server startup is
 
 ### Shared settings editor
 
-Mods, modules and leagues use the same editor on Windows and Linux:
+Mods, modules and leagues use the same editor on Windows and Linux. Each setting is a card, its name and description on the
+left and its control in a column on the right; in a card under 520 pixels wide the control moves under the text.
 
 - On/off switches; text with length and pattern checks; single and multiple choices, including typed game-value sources.
 - Numbers with exact-value boxes and sliders when bounded; percentages and multipliers are displayed in their declared units,

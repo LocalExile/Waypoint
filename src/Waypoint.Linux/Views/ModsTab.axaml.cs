@@ -55,6 +55,7 @@ partial class ModsTab : UserControl
         if (Repo.IsInstall) BuildAllItem.IsVisible = CheckModsItem.IsVisible = false;
         shared.Workspace.Changed += () => Dispatcher.UIThread.Post(Render);
         _browser.JobsChanged += () => Dispatcher.UIThread.Post(Render);
+        _browser.IconsChanged += () => Dispatcher.UIThread.Post(Render);
         shared.LiveRunning += running => Dispatcher.UIThread.Post(() =>
         {
             _busy = running;
@@ -528,8 +529,14 @@ partial class ModsTab : UserControl
         ModPage.IsVisible = true;
         SettingsEditor.Show(ChoiceScopeHint, false);
         PageTabs.SelectedItem = ModOverviewPage;
+        PageScroll.ScrollToHome();
         RefreshPage();
         _ = LoadReadmeAsync(item, entry);
+    }
+
+    void PageTabChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_shared is not null) UpdateSettingsButtons();
     }
 
     void ClosePage(object? sender, RoutedEventArgs e)
@@ -560,6 +567,8 @@ partial class ModsTab : UserControl
         if (item is null && entry is null) { ClosePage(this, new RoutedEventArgs()); return; }
         string title = entry is null ? item!.Title : new InstalledRow(entry, item).Title;
         PageIcon.Kind = ModsText.Icon(id);
+        PageImage.Source = ModsText.IconImage(entry is null ? item!.IconFile : new InstalledRow(entry, item).IconFile);
+        PageIcon.IsVisible = PageImage.Source is null;
         BackText.Text = L.Text(Pages.SelectedItem == BrowsePage ? "Back to Browse" : "Back to My Mods");
         PageTitle.Text = title;
         string author = entry?.Author is { Length: > 0 } a ? a : item?.Author ?? "";
@@ -673,7 +682,7 @@ partial class ModsTab : UserControl
     }
     void UpdateSettingsButtons()
     {
-        SettingsEditor.Show(SettingsFooter, _settingsEditor is not null);
+        SettingsEditor.Show(SettingsFooter, _settingsEditor is not null && PageTabs.SelectedItem == ModSettingsPage);
         bool dirty = _settingsEditor?.Dirty == true;
         SaveSettingsButton.IsEnabled = CanUse && dirty; ResetSettingsButton.IsEnabled = CanUse && _form is not null;
         DiscardSettingsButton.IsEnabled = dirty;

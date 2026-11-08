@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -166,6 +167,58 @@ public static class ModRepository
         response.EnsureSuccessStatusCode();
         string text = await response.Content.ReadAsStringAsync(stop);
         return text.Length > 256 * 1024 ? text[..(256 * 1024)] : text;
+    }
+
+    /// <summary>The file in a mod's folder that Waypoint draws in place of the mod's symbol.</summary>
+    public const string IconName = "icon.png";
+    const int MaxIconBytes = 1024 * 1024;
+    const int MaxIconSide = 1024;
+
+    /// <summary>Where Waypoint keeps a repository's icon for a mod, so it shows before the repository is read again.</summary>
+    public static string IconFile(ModSource source, string id) => Path.Combine(SettingsStore.DataDirectory, "mod-icons", source.Owner, source.Name, id + ".png");
+
+    /// <summary>A PNG of a size Waypoint will decode. Any repository can name a file here, and a small PNG can claim to be
+    /// enormous, so the header's size is checked before a decoder sees it.</summary>
+    public static bool IsIcon(ReadOnlySpan<byte> bytes)
+    {
+        ReadOnlySpan<byte> header = [0x89, (byte)'P', (byte)'N', (byte)'G', 13, 10, 26, 10, 0, 0, 0, 13, (byte)'I', (byte)'H', (byte)'D', (byte)'R'];
+        if (bytes.Length < 24 || bytes.Length > MaxIconBytes || !bytes.StartsWith(header)) return false;
+        uint width = BinaryPrimitives.ReadUInt32BigEndian(bytes[16..]), height = BinaryPrimitives.ReadUInt32BigEndian(bytes[20..]);
+        return width is > 0 and <= MaxIconSide && height is > 0 and <= MaxIconSide;
+    }
+
+    /// <summary>Brings <paramref name="file"/> up to date with the mod's icon.png: a mod without one, or with one that is no
+    /// icon, leaves no file. True when the file changed. A failed read throws and leaves the file as it was.</summary>
+    public static async Task<bool> RefreshIconAsync(HttpClient client, ModSource source, ModListing mod, string file, CancellationToken stop = default)
+    {
+        using var response = await client.GetAsync(source.FileUrl($"{mod.Path}/{IconName}"), HttpCompletionOption.ResponseHeadersRead, stop);
+        byte[]? icon = null;
+        if (response.StatusCode != System.Net.HttpStatusCode.NotFound)
+        {
+            response.EnsureSuccessStatusCode();
+            using var bytes = new MemoryStream();
+            await using var input = await response.Content.ReadAsStreamAsync(stop);
+            var buffer = new byte[16 * 1024];
+            int read;
+            while ((read = await input.ReadAsync(buffer, stop)) > 0 && bytes.Length <= MaxIconBytes) bytes.Write(buffer, 0, read);
+            icon = IsIcon(bytes.GetBuffer().AsSpan(0, (int)bytes.Length)) ? bytes.ToArray() : null;
+        }
+        if (icon is null)
+        {
+            if (!File.Exists(file)) return false;
+            File.Delete(file);
+            return true;
+        }
+        if (File.Exists(file) && File.ReadAllBytes(file).AsSpan().SequenceEqual(icon)) return false;
+        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+        string temporary = $"{file}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            await File.WriteAllBytesAsync(temporary, icon, stop);
+            File.Move(temporary, file, overwrite: true);
+        }
+        finally { File.Delete(temporary); }
+        return true;
     }
 
     /// <summary>The repository's index and releases. The index comes from raw.githubusercontent.com; the releases from

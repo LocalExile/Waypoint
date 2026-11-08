@@ -20,6 +20,8 @@ public sealed record ModEntry(string Id, string Version, string Kind, string[] D
     public string Title => Name.Length > 0 ? Name : Id;
     /// <summary>The declarations of its settings (settings.json beside its mod.json), when it has any.</summary>
     public string SettingsFile => Folder.Length > 0 && File.Exists(Path.Combine(Folder, ModSettingsForm.DeclarationsFile)) ? Path.Combine(Folder, ModSettingsForm.DeclarationsFile) : "";
+    /// <summary>Its own icon.png: beside its mod.json, or in its source project before it is built; "" when it has none.</summary>
+    public string IconFile { get; init; } = "";
     public string SearchText => $"{Id} {Name} {Author} {Description} {Version} {Kind} {Status} {Detail}";
     public string DisplayDetail => L.Describe(Detail);
     public string Summary => $"{Version} · {L.Text(Kind)} · " + (Status == "Disabled" ? L.Text("Disabled") : $"{L.Text(Enabled ? "Enabled" : "Disabled")} · {L.Text(Status)}");
@@ -176,7 +178,16 @@ public static class ModCatalog
             }
             entries[entry.Id] = entry with { Status = status, Detail = detail };
         }
-        return entries.Values.OrderBy(e => e.Id, StringComparer.Ordinal).ToArray();
+        return entries.Values.OrderBy(e => e.Id, StringComparer.Ordinal).Select(e => e with { IconFile = FindIcon(e, snapshot.Root) }).ToArray();
+    }
+    static string FindIcon(ModEntry entry, string root)
+    {
+        foreach (string folder in new[] { entry.Folder, entry.Project.Length > 0 ? Path.GetDirectoryName(Path.Combine(root, entry.Project)) ?? "" : "" })
+        {
+            string file = Path.Combine(folder, ModRepository.IconName);
+            if (folder.Length > 0 && File.Exists(file) && Physical(file)) return file;
+        }
+        return "";
     }
     /// <summary>Turns a mod on or off in the server's own choices file (<c>mod-state.txt</c>), replacing the file at once. A
     /// stopped Gateway reads it at its next start; a running one that watches the file (LocalExile since 2026-11-07) loads or

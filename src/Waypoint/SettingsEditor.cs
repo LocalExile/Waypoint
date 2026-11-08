@@ -3,20 +3,26 @@ using System.Text.Json.Nodes;
 #if WINDOWS
 using System.Windows;
 using System.Windows.Controls;
+using A11y = System.Windows.Automation.AutomationProperties;
 using Element = System.Windows.UIElement;
 #else
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using A11y = Avalonia.Automation.AutomationProperties;
 using Element = Avalonia.Controls.Control;
 #endif
 
 namespace Waypoint;
 
-/// <summary>The same declaration-driven editor for mods, modules and leagues on both front ends.</summary>
+/// <summary>The same declaration-driven editor for mods, modules and leagues on both front ends. Each setting is a card:
+/// its name and description on the left, its control on the right, in one column so they line up down the form.</summary>
 sealed class SettingsEditor : StackPanel
 {
+    const double ControlWidth = 280;
+    /// <summary>A card narrower than this (a side panel, a small window) puts its control under its text.</summary>
+    const double StackBelow = 520;
     readonly ModSettingsForm _form;
     readonly Dictionary<string, Func<JsonNode?>> _read = new(StringComparer.Ordinal);
     readonly List<Action> _conditions = [];
@@ -59,7 +65,7 @@ sealed class SettingsEditor : StackPanel
     {
         foreach (var setting in settings)
         {
-            var holder = new StackPanel { Margin = new Thickness(0, 0, 0, 18) };
+            var holder = new StackPanel { Margin = new Thickness(0, 0, 0, 8) };
             readers[setting.Name] = Field(holder, setting, current(setting));
             panel.Children.Add(holder);
             _conditions.Add(() =>
@@ -79,10 +85,16 @@ sealed class SettingsEditor : StackPanel
     {
         if (setting.Type is "group" or "list" or "map" or "choices" && (setting.Type != "choices" || setting.Options.Count == 0))
         {
-            var inner = new StackPanel { Margin = new Thickness(12, 12, 0, 0) };
-            var expander = new Expander { Header = setting.Title, Content = inner, IsExpanded = setting.Type == "group" && !setting.Advanced };
-            panel.Children.Add(expander);
+            var inner = new StackPanel { Margin = new Thickness(14, 0, 14, 6) };
+            // The card is its frame: the expander's own bar and padding would be a second one inside it.
+            var expander = new Expander { Header = setting.Title, Content = inner, IsExpanded = setting.Type == "group" && !setting.Advanced, Background = null };
+#if WINDOWS
+            MaterialDesignThemes.Wpf.ExpanderAssist.SetHorizontalHeaderPadding(expander, new Thickness(14, 10, 14, 10));
+#endif
+            var frame = Card(expander); frame.Padding = new Thickness(0);
+            panel.Children.Add(frame);
             Description(inner, setting);
+            if (inner.Children.Count > 0) ((TextBlock)inner.Children[inner.Children.Count - 1]).Margin = new Thickness(0, 0, 0, 10);
             if (setting.Type == "group")
             {
                 var readers = new Dictionary<string, Func<JsonNode?>>(StringComparer.Ordinal);
@@ -97,53 +109,98 @@ sealed class SettingsEditor : StackPanel
             }
             return Collection(inner, setting, value);
         }
-        if (setting.Type != "bool") panel.Children.Add(Label(Heading(setting)));
+        var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+        text.Children.Add(Title(Heading(setting)));
+        Description(text, setting);
+        var control = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
         Func<JsonNode?> read;
         switch (setting.Type)
         {
             case "bool":
-                var toggle = new CheckBox { Content = setting.Title, IsChecked = value is JsonValue flag && flag.TryGetValue(out bool b) && b };
-                panel.Children.Add(toggle); CheckChanged(toggle, Change);
+                // With no text of its own: the shared style's margin and padding would keep it off the column's edge.
+                var toggle = new CheckBox { HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0), Padding = new Thickness(0), MinWidth = 0, IsChecked = value is JsonValue flag && flag.TryGetValue(out bool b) && b };
+                A11y.SetName(toggle, setting.Title);
+                control.Children.Add(toggle); CheckChanged(toggle, Change);
                 read = () => JsonValue.Create(toggle.IsChecked == true); break;
-            case "integer" or "number": read = Number(panel, setting, value); break;
+            case "integer" or "number": read = Number(control, setting, value); break;
             case "range":
                 var range = value as JsonArray;
                 var component = setting with { Type = setting.Integers ? "integer" : "number", Default = null };
-                panel.Children.Add(Label(L.Text("Minimum")));
-                var low = Number(panel, component, range?.ElementAtOrDefault(0));
-                panel.Children.Add(Label(L.Text("Maximum")));
-                var high = Number(panel, component, range?.ElementAtOrDefault(1));
+                control.Children.Add(Label(L.Text("Minimum")));
+                var low = Number(control, component, range?.ElementAtOrDefault(0));
+                control.Children.Add(Label(L.Text("Maximum")));
+                var high = Number(control, component, range?.ElementAtOrDefault(1));
                 read = () => new JsonArray(low(), high()); break;
             case "choice" when setting.Options.Count > 0:
                 var choice = new ComboBox { MinWidth = 120, HorizontalAlignment = HorizontalAlignment.Stretch };
                 foreach (var option in setting.Options) choice.Items.Add(new ComboBoxItem { Content = option.Label, Tag = option.Value });
                 choice.SelectedItem = choice.Items.OfType<ComboBoxItem>().FirstOrDefault(i => ModSettingsForm.Equal((JsonNode?)i.Tag, value));
-                choice.SelectionChanged += (_, _) => Change(); panel.Children.Add(choice);
+                A11y.SetName(choice, setting.Title);
+                choice.SelectionChanged += (_, _) => Change(); control.Children.Add(choice);
                 read = () => (choice.SelectedItem as ComboBoxItem)?.Tag is JsonNode chosen ? chosen.DeepClone() : null; break;
             case "choices":
                 var selected = value as JsonArray ?? [];
                 var boxes = setting.Options.Select(o => (o.Value, Box: new CheckBox { Content = o.Label, IsChecked = selected.Any(v => ModSettingsForm.Equal(v, o.Value)), Margin = new Thickness(0, 3, 0, 3) })).ToArray();
-                foreach (var (_, box) in boxes) { panel.Children.Add(box); CheckChanged(box, Change); }
+                // A list of labels needs the width: it stays under the description, with no control column.
+                foreach (var (_, box) in boxes) { text.Children.Add(box); CheckChanged(box, Change); }
                 read = () => new JsonArray(boxes.Where(b => b.Box.IsChecked == true).Select(b => b.Value.DeepClone()).ToArray()); break;
             default:
-                var text = new TextBox { Text = ModSettingsForm.Show(value), MinWidth = 100 };
-                text.TextChanged += (_, _) => Change(); panel.Children.Add(text);
-                read = () => JsonValue.Create(text.Text ?? ""); break;
+                var entry = new TextBox { Text = ModSettingsForm.Show(value) };
+                A11y.SetName(entry, setting.Title);
+                entry.TextChanged += (_, _) => Change(); control.Children.Add(entry);
+                read = () => JsonValue.Create(entry.Text ?? ""); break;
         }
-        Description(panel, setting);
+        panel.Children.Add(Card(Row(text, control)));
         return read;
     }
+    static Grid Row(StackPanel text, StackPanel control)
+    {
+        var row = new Grid();
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        row.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        row.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        row.Children.Add(text);
+        if (control.Children.Count == 0) return row;
+        row.Children.Add(control);
+        void Place(bool stacked)
+        {
+            Grid.SetColumn(control, stacked ? 0 : 1); Grid.SetRow(control, stacked ? 1 : 0);
+            control.Width = stacked ? double.NaN : ControlWidth;
+            control.Margin = stacked ? new Thickness(0, 10, 0, 0) : new Thickness(20, 0, 0, 0);
+        }
+        Place(false);
+        row.SizeChanged += (_, e) => Place(e.NewSize.Width < StackBelow);
+        return row;
+    }
+    static Border Card(Element content)
+    {
+        var card = new Border { Child = content, CornerRadius = new CornerRadius(7), BorderThickness = new Thickness(1), Padding = new Thickness(14, 12, 14, 12) };
+        Themed(card, Border.BackgroundProperty, "Shell.Background");
+        Themed(card, Border.BorderBrushProperty, "Shell.Border");
+        return card;
+    }
+#if WINDOWS
+    static void Themed(FrameworkElement element, DependencyProperty property, string key) => element.SetResourceReference(property, key);
+#else
+    static void Themed(Control element, AvaloniaProperty property, string key) => element.Bind(property, new Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension(key));
+#endif
     Func<JsonNode?> Number(StackPanel panel, ModSetting setting, JsonNode? value)
     {
-        var text = new TextBox { Text = ModSettingsForm.Show(value, setting), MinWidth = 100, Margin = new Thickness(0, 3, 0, 6) };
+        var text = new TextBox { Text = ModSettingsForm.Show(value, setting), Width = 84, VerticalAlignment = VerticalAlignment.Center, TextAlignment = TextAlignment.Right };
+        A11y.SetName(text, setting.Title);
         string initialText = text.Text ?? "";
-        panel.Children.Add(text);
+        var line = new DockPanel();
+        DockPanel.SetDock(text, Dock.Right);
+        line.Children.Add(text);
+        panel.Children.Add(line);
         Slider? slider = null;
         bool updating = false;
         double scale = setting.DisplayScale;
         if (setting.Min is { } min && setting.Max is { } max && min < max && double.IsFinite(min) && double.IsFinite(max))
         {
-            slider = new Slider { Minimum = min * scale, Maximum = max * scale, Margin = new Thickness(0, 0, 0, 6) };
+            slider = new Slider { Minimum = min * scale, Maximum = max * scale, Margin = new Thickness(0, 0, 12, 0), VerticalAlignment = VerticalAlignment.Center };
+            A11y.SetName(slider, setting.Title);
 #if WINDOWS
             slider.IsSnapToTickEnabled = setting.Step is not null || setting.Type == "integer";
             slider.TickFrequency = (setting.Step ?? 1) * scale;
@@ -159,8 +216,10 @@ sealed class SettingsEditor : StackPanel
                 updating = true; text.Text = (Math.Clamp(n, min, max) * scale).ToString("G", CultureInfo.InvariantCulture); updating = false;
                 Change();
             };
-            panel.Children.Add(slider);
+            line.Children.Add(slider);
         }
+        // Without a slider the box keeps its place at the right, not filling the column.
+        line.LastChildFill = slider is not null;
         text.TextChanged += (_, _) =>
         {
             if (updating) return;
@@ -232,10 +291,26 @@ sealed class SettingsEditor : StackPanel
     static string Heading(ModSetting s) => s.Title + (s.Format == "percent" ? " (%)" : s.Format == "duration" ? " (" + L.Text("seconds") + ")" : s.Format == "multiplier" ? " (×)" : s.Unit.Length > 0 ? " (" + s.Unit + ")" : "");
     static void Description(StackPanel panel, ModSetting s)
     {
-        if (s.Description.Length > 0) panel.Children.Add(Note(s.Description));
-        if (s.Source.Length > 0) panel.Children.Add(Note(L.Text("Enter a game value of type: {0}", s.Source)));
-        if (s.Applies == "restart") panel.Children.Add(Note(L.Text("Applies when the Gateway restarts.")));
-        if (s.Applies == "nextArea") panel.Children.Add(Note(L.Text("Applies in the next area.")));
+        void Add(string text)
+        {
+            var hint = Note(text); hint.Margin = new Thickness(0, 3, 0, 0);
+            Themed(hint, TextBlock.ForegroundProperty, "Shell.TextSecondary");
+            panel.Children.Add(hint);
+        }
+        if (s.Description.Length > 0) Add(s.Description);
+        if (s.Source.Length > 0) Add(L.Text("Enter a game value of type: {0}", s.Source));
+        if (s.Applies == "restart") Add(L.Text("Applies when the Gateway restarts."));
+        if (s.Applies == "nextArea") Add(L.Text("Applies in the next area."));
+    }
+    static TextBlock Title(string text)
+    {
+        var title = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap };
+#if WINDOWS
+        title.FontWeight = FontWeights.SemiBold;
+#else
+        title.FontWeight = FontWeight.SemiBold;
+#endif
+        return title;
     }
     public static TextBlock Label(string text) => new() { Text = text, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 6) };
     public static TextBlock Note(string text) => new() { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 12, Margin = new Thickness(0, 4, 0, 8) };
