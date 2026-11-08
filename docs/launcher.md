@@ -351,7 +351,7 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters, searchable; registering an account; creating a character; creating, duplicating, renaming, setting a password and deleting with everything stopped | the list and those changes are the adapter's (`QueryAccounts`, `Register`, `ManageAccount`, `AccountData.py`; [account-management.md](account-management.md)); Register and Create go through the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `register`, `create_character`; Waypoint builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
-| Tools | tools for the game itself, each in its own window: the item crafter | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter` and `/item_give` through the client control bridge |
+| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter` and `/item_give` through the client control bridge; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout |
 | Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
 ### Control
@@ -898,6 +898,40 @@ can have (the server's own rolling rules), their stat descriptions in English (t
 A Gateway built before the hook does not know `crafter` and would start for real, so Waypoint first asks `commands`,
 which is safe, and goes on only if that lists `/item_give`, which came with the hook. If not, the window says the
 checkout needs updating and building; nothing starts.
+
+### Tools: the lab layout
+
+**Open lab layout** opens a window of its own (one at a time) with the day's Labyrinth as a map, as poelab.com draws it,
+but built by the checkout's own Gateway: no layout is downloaded, from poelab.com or anywhere else. The tabs pick the
+tier (Normal, Cruel, Merciless, Eternal); the arrows, the date and **Today** pick the day, a UTC day as the official
+server's, and today's shows the time left until the next layout (UTC midnight), then moves on to it.
+
+- The map: the rooms at their places on the in-game Labyrinth map (each section's LabyrinthSectionLayout positions,
+  section after section), numbered left to right, with their connections and the way in from the plaza under the first
+  room. The shortest way from the first room to Izaro's last fight is drawn in the accent colour, every one when
+  several are as short. Over a room are what it holds, as Material Design icons (no game artwork): Izaro, Argus, a trap
+  or escort gauntlet, a switch puzzle, a Darkshrine, a silver key or cache, the gold key and door, the Forgotten
+  Reliquary, a secret passage. The wheel zooms at the pointer, a drag moves the map, and a double-click on an empty
+  place or the fit button fits it again.
+- Doors: a dot on a room's circle for each connection, and the connection drawn from dot to dot. The dots are a
+  scheme, not the doors' places: in an Izaro room the way in is on the left and the way on on the right; in any other
+  room the way in (the plaza's door, else the neighbour nearest the start) is at 6 o'clock, and the other doors each at
+  one of 10, 12 and 2 o'clock, in the left-to-right order of their neighbours on the map and as near their direction
+  as that allows (a fourth door shares the nearest dot, whose popup then lists both). Two doors on one side of an Izaro
+  room are at 10 and 8 o'clock, or 2 and 4 (`LabTier.DoorSides`).
+- Clicking a room, an icon or a door shows its details in a popup (the room, its area, Izaro's fight, what it holds,
+  where a door leads). Clicking a connection marks it green over the rooms, as the game shows a way, and clicking it
+  again unmarks it; **Clear marks** in the notes clears the tier's marks.
+- The notes (right): the shortest way's length, each of Izaro's fights with the mechanics the layout gives it (a
+  mechanic's companion carries it into the later fights; the official server may add one of its own), the gauntlets
+  and puzzles by room, and the rooms of Argus, the Darkshrines, keys, caches and doors.
+
+The layout is the Gateway's (`GameServer.Gateway labyrinth <yyyy-mm-dd>`, read once per Gateway build and day): the
+client's own layout builder for the day's seed, the areas the official server picks, and each room's secrets
+(LabyrinthSecrets: `Hidden` is a Darkshrine, `Payload` the escort gauntlet). `LabyrinthDay.cs` reads it.
+When the server's seed is fixed (`Game_LAB_SEED`), its layout is the same on every day, and the window says so.
+A Gateway built before the mode would start for real, so Waypoint first asks `commands` and goes on only if
+`/lab_layout` takes a date, which came with the mode. Windows only, like the map viewer.
 
 ### Accounts
 

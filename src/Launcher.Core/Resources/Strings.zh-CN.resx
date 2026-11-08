@@ -66,6 +66,9 @@
   <data name="Text_01c618fd5db4" xml:space="preserve">
     <value>所选模块缺失。</value>
   </data>
+  <data name="Text_01deac2c6a06" xml:space="preserve">
+    <value>以地图显示当天每个难度的迷宫：房间、通往伊泽洛的最短路线、陷阱、谜题、黑影祭坛、钥匙和门。</value>
+  </data>
   <data name="Text_01deefe59ede" xml:space="preserve">
     <value>正在读取 {0} …</value>
   </data>
@@ -95,6 +98,9 @@
   </data>
   <data name="Text_0269bc06d60e" xml:space="preserve">
     <value>保存到此副本的 {0}；运行中的 Gateway 会重新加载模组。</value>
+  </data>
+  <data name="Text_029f92044853" xml:space="preserve">
+    <value>黑影祭坛</value>
   </data>
   <data name="Text_02a2840b598b" xml:space="preserve">
     <value>立即备份</value>
@@ -161,6 +167,9 @@
   </data>
   <data name="Text_0516ac3163b5" xml:space="preserve">
     <value>要编辑的颜色</value>
+  </data>
+  <data name="Text_051d9dc39fc1" xml:space="preserve">
+    <value>无情帝王迷宫</value>
   </data>
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>当前源码构建版本</value>
@@ -269,6 +278,9 @@
   </data>
   <data name="Text_0985d74b69c6" xml:space="preserve">
     <value>正在等待已验证的客户端；现有的采集文件会保留。</value>
+  </data>
+  <data name="Text_098efbe9d148" xml:space="preserve">
+    <value>元素球</value>
   </data>
   <data name="Text_099cb57aed76" xml:space="preserve">
     <value>发放物品</value>
@@ -468,6 +480,9 @@
   <data name="Text_0e4133cd4d29" xml:space="preserve">
     <value>本地运行包装脚本</value>
   </data>
+  <data name="Text_0e47f09a748f" xml:space="preserve">
+    <value>放大</value>
+  </data>
   <data name="Text_0e70993a9229" xml:space="preserve">
     <value>遭遇锚点不保证一定会生成遭遇。</value>
   </data>
@@ -588,6 +603,9 @@
   <data name="Text_11e9fe71c67f" xml:space="preserve">
     <value>{0} 个角色</value>
   </data>
+  <data name="Text_11f3f2de97a2" xml:space="preserve">
+    <value>房间 {0}：{1}</value>
+  </data>
   <data name="Text_121e08966248" xml:space="preserve">
     <value>未找到可用的客户端。已搜索：{0}。</value>
   </data>
@@ -596,6 +614,9 @@
   </data>
   <data name="Text_126b8d3e1100" xml:space="preserve">
     <value>重新加载账号</value>
+  </data>
+  <data name="Text_12c439264448" xml:space="preserve">
+    <value>伊泽洛，第 {0} 战</value>
   </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>此发行版未声明兼容可下载模组的设置。请使用兼容的源码副本进行编辑。</value>
@@ -620,6 +641,9 @@
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>更新内容</value>
+  </data>
+  <data name="Text_1379508dcb5b" xml:space="preserve">
+    <value>开关谜题</value>
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>仓库</value>
@@ -671,6 +695,9 @@
   </data>
   <data name="Text_1551e89173ed" xml:space="preserve">
     <value>最小化到托盘后，Waypoint 会在时钟旁继续运行。点击其图标或再次打开 Waypoint 即可返回。</value>
+  </data>
+  <data name="Text_1557c3e70bff" xml:space="preserve">
+    <value>通往试炼者广场的门</value>
   </data>
   <data name="Text_15689b1ef00b" xml:space="preserve">
     <value>LocalExile 所需的工具</value>
@@ -731,6 +758,9 @@
   </data>
   <data name="Text_16fab6cfda80" xml:space="preserve">
     <value>恢复存档前请关闭游戏。恢复模组选择前请停止 Gateway。</value>
+  </data>
+  <data name="Text_1703ba5eec33" xml:space="preserve">
+    <value>最短路线：{0} 个房间</value>
   </data>
   <data name="Text_1709305c9fa9" xml:space="preserve">
     <value>等级</value>
@@ -906,6 +936,9 @@
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>游戏设置已独立（{0}）</value>
   </data>
+  <data name="Text_1cceb5ebd12e" xml:space="preserve">
+    <value>最短路线</value>
+  </data>
   <data name="Text_1d0a51791fe2" xml:space="preserve">
     <value>正在回到之前的版本</value>
   </data>
@@ -971,6 +1004,9 @@
   </data>
   <data name="Text_1f8d6be4b386" xml:space="preserve">
     <value>让 Waypoint 在托盘中保持运行</value>
+  </data>
+  <data name="Text_1fca71f81e8b" xml:space="preserve">
+    <value>银钥匙</value>
   </data>
   <data name="Text_1fceb5ed541c" xml:space="preserve">
     <value>没有分支：点击“获取”即可读取。</value>
@@ -1227,6 +1263,9 @@
   <data name="Text_26639e783252" xml:space="preserve">
     <value>更改账号</value>
   </data>
+  <data name="Text_2671e49fda78" xml:space="preserve">
+    <value>遗忘宝库</value>
+  </data>
   <data name="Text_267342d2d102" xml:space="preserve">
     <value>正在使用：{0}（{1}）</value>
   </data>
@@ -1414,6 +1453,9 @@
   <data name="Text_2aec579f9e4a" xml:space="preserve">
     <value>git 失败</value>
   </data>
+  <data name="Text_2b065c7c9ce4" xml:space="preserve">
+    <value>今天</value>
+  </data>
   <data name="Text_2b28514da699" xml:space="preserve">
     <value>安装已停止</value>
   </data>
@@ -1428,6 +1470,9 @@
   </data>
   <data name="Text_2b69057ec9ef" xml:space="preserve">
     <value>密码必须至少包含 4 个字符。</value>
+  </data>
+  <data name="Text_2b6a38b89f9c" xml:space="preserve">
+    <value>后一天</value>
   </data>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>保存模组设置</value>
@@ -1536,6 +1581,9 @@
   </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>基础类型：{0}</value>
+  </data>
+  <data name="Text_2f0da30ad195" xml:space="preserve">
+    <value>{0}（UTC），种子 {1}</value>
   </data>
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>设置密码…</value>
@@ -1790,6 +1838,9 @@
   <data name="Text_367ef06b8fbf" xml:space="preserve">
     <value>种子</value>
   </data>
+  <data name="Text_3680fcad01f4" xml:space="preserve">
+    <value>水晶塔</value>
+  </data>
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>查找模块</value>
   </data>
@@ -1844,6 +1895,9 @@
   <data name="Text_38d69f252932" xml:space="preserve">
     <value>正在停用源码已删除的模组</value>
   </data>
+  <data name="Text_38d7db28699e" xml:space="preserve">
+    <value>陷阱通道</value>
+  </data>
   <data name="Text_3907fa7f8072" xml:space="preserve">
     <value>外观</value>
   </data>
@@ -1855,6 +1909,9 @@
   </data>
   <data name="Text_3950dabf770c" xml:space="preserve">
     <value>现有角色的模式保持固定。请选择创建独立联赛以使用其他已定义的模式。</value>
+  </data>
+  <data name="Text_3950e40a8fc3" xml:space="preserve">
+    <value>阿格斯</value>
   </data>
   <data name="Text_396bc690d5bd" xml:space="preserve">
     <value>Frida 已就绪。</value>
@@ -1925,6 +1982,9 @@
   <data name="Text_3b373fd62989" xml:space="preserve">
     <value>无法启动 {0}（{1}）：桥接程序需要装有 frida 的 Python（.venv，GettingStarted 第 9 步）</value>
   </data>
+  <data name="Text_3b484ad8c5ae" xml:space="preserve">
+    <value>秘密通道</value>
+  </data>
   <data name="Text_3b5d8715cb2a" xml:space="preserve">
     <value>要在启用区域采集的情况下重启 Gateway 吗？必须先关闭游戏。Gateway 将正常停止，随后采集器会等待你下次启动游戏。</value>
   </data>
@@ -1939,6 +1999,9 @@
   </data>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>制作任意物品：基础类型、稀有度、词缀及其数值、插槽和势力。保存后可以随时回来继续编辑，并可发放给游戏中的角色。</value>
+  </data>
+  <data name="Text_3baed9f4ed86" xml:space="preserve">
+    <value>电极阻断器</value>
   </data>
   <data name="Text_3bc85df158e7" xml:space="preserve">
     <value>，另有 {0} 个</value>
@@ -2241,8 +2304,14 @@
   <data name="Text_46a268a1cf86" xml:space="preserve">
     <value>回到之前的版本</value>
   </data>
+  <data name="Text_46aeaf289dba" xml:space="preserve">
+    <value>力量符文</value>
+  </data>
   <data name="Text_46c7bd8e82a1" xml:space="preserve">
     <value>每天更新一次，获取最新更改。</value>
+  </data>
+  <data name="Text_46cac231d89b" xml:space="preserve">
+    <value>金色之门</value>
   </data>
   <data name="Text_46d6b84bae4a" xml:space="preserve">
     <value>未找到 Git，或此文件夹没有可读取的 Git HEAD。仍可手动选择。</value>
@@ -2333,6 +2402,9 @@
   </data>
   <data name="Text_4938abfad1ef" xml:space="preserve">
     <value>保留最新版的角色</value>
+  </data>
+  <data name="Text_493d9da88d61" xml:space="preserve">
+    <value>种子 {0}，由服务器固定（Game_LAB_SEED）</value>
   </data>
   <data name="Text_494ca78f7374" xml:space="preserve">
     <value>自定义</value>
@@ -2474,6 +2546,9 @@
   </data>
   <data name="Text_4d7056f0e9be" xml:space="preserve">
     <value>色调</value>
+  </data>
+  <data name="Text_4d8b9e63701a" xml:space="preserve">
+    <value>继续前往伊泽洛</value>
   </data>
   <data name="Text_4d95f1b334f2" xml:space="preserve">
     <value>已恢复贮藏的更改。</value>
@@ -2658,6 +2733,9 @@
   <data name="Text_530bcc355f0a" xml:space="preserve">
     <value>正在安装…</value>
   </data>
+  <data name="Text_53345a30f314" xml:space="preserve">
+    <value>护送通道</value>
+  </data>
   <data name="Text_5355e8288662" xml:space="preserve">
     <value>缺少 DLL</value>
   </data>
@@ -2774,6 +2852,9 @@
   </data>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>不做任何更改。如果此客户端与你平时玩的游戏共用设置，你需要自行在游戏中将“连线模式”设为“预测模式”（Networking Mode → Predictive）。</value>
+  </data>
+  <data name="Text_5774139d115b" xml:space="preserve">
+    <value>副官</value>
   </data>
   <data name="Text_57b7b5924c6b" xml:space="preserve">
     <value>一切就绪。在 Waypoint 中点击“开始游戏”即可启动服务器和游戏。首次进入游戏时，请在游戏中设置：选项 → 游戏 → 连线模式 → 预测模式（Options → Game → Networking Mode → Predictive）。</value>
@@ -2953,6 +3034,9 @@
   </data>
   <data name="Text_5ec6014cb5f6" xml:space="preserve">
     <value>游戏仍在运行</value>
+  </data>
+  <data name="Text_5efc124c61fa" xml:space="preserve">
+    <value>基座</value>
   </data>
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>此仓库没有列出模组。</value>
@@ -3153,6 +3237,9 @@
   <data name="Text_646c61108060" xml:space="preserve">
     <value>打开 Client 文件夹</value>
   </data>
+  <data name="Text_64a298faf914" xml:space="preserve">
+    <value>伊泽洛</value>
+  </data>
   <data name="Text_64a576b180a8" xml:space="preserve">
     <value>搜索所选日志（不区分大小写）</value>
   </data>
@@ -3193,6 +3280,9 @@
   </data>
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>所有连接合计的每秒服务器耗时；等待（队列、门控、锁）按其等待时间计入</value>
+  </data>
+  <data name="Text_65c5e545fd23" xml:space="preserve">
+    <value>残酷</value>
   </data>
   <data name="Text_65cbeb090b74" xml:space="preserve">
     <value>初始联赛</value>
@@ -3434,6 +3524,9 @@
   <data name="Text_6e1cc2d63cee" xml:space="preserve">
     <value>环境已检查 · </value>
   </data>
+  <data name="Text_6e22a32d8c29" xml:space="preserve">
+    <value>通往房间 {0} 的门：{1}</value>
+  </data>
   <data name="Text_6e2bd3d0e2c3" xml:space="preserve">
     <value>恢复：Escape 取消此预览。Ctrl+R 重置此窗口。在主窗口中，Ctrl+Shift+R 恢复默认外观，不会更改你的源码副本或存档。</value>
   </data>
@@ -3448,6 +3541,9 @@
   </data>
   <data name="Text_6e63358637fe" xml:space="preserve">
     <value>所有图标</value>
+  </data>
+  <data name="Text_6e6e74eed4bb" xml:space="preserve">
+    <value>{0} 后更换布局</value>
   </data>
   <data name="Text_6e9c271dcc43" xml:space="preserve">
     <value>已显示 {0} 个。每组中适合该物品等级的最佳阶排在最前面。</value>
@@ -3505,6 +3601,9 @@
   </data>
   <data name="Text_7063e226c881" xml:space="preserve">
     <value>退出时停止服务</value>
+  </data>
+  <data name="Text_70895e070991" xml:space="preserve">
+    <value>由此副本的 Gateway 根据客户端数据生成，不下载任何内容。</value>
   </data>
   <data name="Text_708dc8aff75e" xml:space="preserve">
     <value>准备 LocalExile</value>
@@ -3598,6 +3697,9 @@
   </data>
   <data name="Text_735beee2e390" xml:space="preserve">
     <value>最小值</value>
+  </data>
+  <data name="Text_736ecab62973" xml:space="preserve">
+    <value>金钥匙</value>
   </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>只要有 LocalExile 登录、Gateway 或账号服务进程在运行，账号就只能查看、不能更改。请停止这些服务并关闭游戏，然后刷新。未做任何更改。</value>
@@ -3743,6 +3845,9 @@
   <data name="Text_78ae647dc554" xml:space="preserve">
     <value>世界</value>
   </data>
+  <data name="Text_78d97e1e27cc" xml:space="preserve">
+    <value>石像鬼</value>
+  </data>
   <data name="Text_78f253f7422a" xml:space="preserve">
     <value>登录密钥（第 4 步）</value>
   </data>
@@ -3841,6 +3946,9 @@
   </data>
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>基础类型</value>
+  </data>
+  <data name="Text_7bf6ecedbcdb" xml:space="preserve">
+    <value>迷宫布局</value>
   </data>
   <data name="Text_7c0189e54acf" xml:space="preserve">
     <value>打开安装向导</value>
@@ -3961,6 +4069,9 @@
   </data>
   <data name="Text_7fefa2a00ff5" xml:space="preserve">
     <value>{0}（不显示）</value>
+  </data>
+  <data name="Text_801545905b87" xml:space="preserve">
+    <value>清除标记</value>
   </data>
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>此发行版未声明与可下载模组兼容。请使用最新源码副本安装或更新模组。</value>
@@ -4196,6 +4307,9 @@
   <data name="Text_88b2f4aa5837" xml:space="preserve">
     <value>查看安装指南</value>
   </data>
+  <data name="Text_88b387554c07" xml:space="preserve">
+    <value>帝王迷宫</value>
+  </data>
   <data name="Text_88b6f7429ce7" xml:space="preserve">
     <value>无更改</value>
   </data>
@@ -4310,6 +4424,9 @@
   <data name="Text_8c44609d7c15" xml:space="preserve">
     <value>客户端已复制到 Client\（第 3 步）</value>
   </data>
+  <data name="Text_8c9e70a32535" xml:space="preserve">
+    <value>打开迷宫布局</value>
+  </data>
   <data name="Text_8d099abe78af" xml:space="preserve">
     <value>关闭窗口时</value>
   </data>
@@ -4324,6 +4441,9 @@
   </data>
   <data name="Text_8d21c00d704e" xml:space="preserve">
     <value>正在复制你的存档…</value>
+  </data>
+  <data name="Text_8d374ecbaefd" xml:space="preserve">
+    <value>第二个首领</value>
   </data>
   <data name="Text_8d3a583f047c" xml:space="preserve">
     <value>从浏览中移除 {0} 吗？从中安装的模组会保留。</value>
@@ -4506,6 +4626,9 @@
     <value>无法准备地图查看器。
 {0}</value>
   </data>
+  <data name="Text_934ac1cc5cfa" xml:space="preserve">
+    <value>残酷帝王迷宫</value>
+  </data>
   <data name="Text_93638ea9e0b0" xml:space="preserve">
     <value>灰度</value>
   </data>
@@ -4526,6 +4649,9 @@
   </data>
   <data name="Text_93f25877bb69" xml:space="preserve">
     <value>安装前设置不可用</value>
+  </data>
+  <data name="Text_941354e5e8d5" xml:space="preserve">
+    <value>房间内</value>
   </data>
   <data name="Text_94351810d456" xml:space="preserve">
     <value>正在检查上游 HEAD 并搜索常见的本地文件夹…你仍可通过“浏览”选择位置。</value>
@@ -5303,6 +5429,9 @@
   <data name="Text_a9ada4eade1d" xml:space="preserve">
     <value>进行此更改前将创建存档备份。</value>
   </data>
+  <data name="Text_a9cdee2ac3fb" xml:space="preserve">
+    <value>永恒帝王迷宫</value>
+  </data>
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>停止 dev host</value>
   </data>
@@ -5414,11 +5543,17 @@
   <data name="Text_adb8a7038d6c" xml:space="preserve">
     <value>选择一个模组以查看其依赖项和操作。</value>
   </data>
+  <data name="Text_adb91b20d763" xml:space="preserve">
+    <value>时间雕像</value>
+  </data>
   <data name="Text_adc6944d0f20" xml:space="preserve">
     <value>已污染固定词缀</value>
   </data>
   <data name="Text_addd1dcb439b" xml:space="preserve">
     <value>退出 Waypoint 时会停止此源码副本的服务。</value>
+  </data>
+  <data name="Text_ae0e17894743" xml:space="preserve">
+    <value>第 {0} 战（房间 {1}）：{2}</value>
   </data>
   <data name="Text_ae2ff967432c" xml:space="preserve">
     <value>保留不会变化的旧版本</value>
@@ -5431,6 +5566,9 @@
   </data>
   <data name="Text_ae684f70a175" xml:space="preserve">
     <value>采集检查完成。</value>
+  </data>
+  <data name="Text_ae779cd7f460" xml:space="preserve">
+    <value>切换雕像</value>
   </data>
   <data name="Text_ae82cf58855d" xml:space="preserve">
     <value>重新加载模组</value>
@@ -5503,6 +5641,9 @@
   </data>
   <data name="Text_b0c35534bd56" xml:space="preserve">
     <value>键盘：Ctrl+1–9 选择页面 · Ctrl+Tab / Ctrl+Shift+Tab 在页面间切换 · Ctrl+F 搜索当前页面 · F5 刷新本地状态。可在“设置”中更改外观和辅助功能偏好。</value>
+  </data>
+  <data name="Text_b0d5201fdc86" xml:space="preserve">
+    <value>无情</value>
   </data>
   <data name="Text_b0ebcb44a8da" xml:space="preserve">
     <value>设置未保存</value>
@@ -5858,6 +5999,9 @@
   <data name="Text_bc74ef1e258a" xml:space="preserve">
     <value> 输出</value>
   </data>
+  <data name="Text_bc7b631a689b" xml:space="preserve">
+    <value>缩小</value>
+  </data>
   <data name="Text_bc7b7aee59a2" xml:space="preserve">
     <value>此功能需要 Frida。正常游戏不需要 Frida。</value>
   </data>
@@ -5996,6 +6140,9 @@
   <data name="Text_c1c1009d3f37" xml:space="preserve">
     <value>更新</value>
   </data>
+  <data name="Text_c1dbdf2cd909" xml:space="preserve">
+    <value>伊泽洛，第 {0} 战：{1}</value>
+  </data>
   <data name="Text_c1ebc7817870" xml:space="preserve">
     <value>需要注意</value>
   </data>
@@ -6037,6 +6184,9 @@
   </data>
   <data name="Text_c3099cb7725f" xml:space="preserve">
     <value>请使用简单的文件夹名称，不含 \ / : * ? " &lt; &gt; |。</value>
+  </data>
+  <data name="Text_c34b0f2c4589" xml:space="preserve">
+    <value>银色财宝</value>
   </data>
   <data name="Text_c35c701a7673" xml:space="preserve">
     <value>在 Waypoint 中，此模块始终使用同一个图标。</value>
@@ -6343,6 +6493,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cca5479cc21b" xml:space="preserve">
     <value>选择图标…</value>
   </data>
+  <data name="Text_cca7aec3cf35" xml:space="preserve">
+    <value>适应窗口</value>
+  </data>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>游戏或服务正在运行，或无法确定其归属，因此为只读。请先停止它们并重新加载，再更改账号。</value>
   </data>
@@ -6387,6 +6540,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ce8272ce39a9" xml:space="preserve">
     <value>无法读取发行版：{0}</value>
+  </data>
+  <data name="Text_cebea94648e1" xml:space="preserve">
+    <value>陷阱与谜题</value>
   </data>
   <data name="Text_cec3a9b89b2e" xml:space="preserve">
     <value>数据</value>
@@ -6688,6 +6844,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d921a507c60b" xml:space="preserve">
     <value>模块图标已保存在 Waypoint 中，由“模块”和“联赛”面板共用；LocalExile 未被修改。</value>
   </data>
+  <data name="Text_d92649c8a743" xml:space="preserve">
+    <value>（无区域）</value>
+  </data>
   <data name="Text_d94343f8f050" xml:space="preserve">
     <value>仍然更新</value>
   </data>
@@ -6962,6 +7121,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e21cbdbe5596" xml:space="preserve">
     <value>在 LocalExile 上</value>
   </data>
+  <data name="Text_e21cd00f3345" xml:space="preserve">
+    <value>点击房间、图标或门可查看详情，点击连线可将其标为绿色。</value>
+  </data>
   <data name="Text_e21f935f11d7" xml:space="preserve">
     <value>复制</value>
   </data>
@@ -7039,6 +7201,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop 和 dev host：游戏、行走地图记录器、服务器和账号服务</value>
+  </data>
+  <data name="Text_e4a1e89ee1db" xml:space="preserve">
+    <value>前一天</value>
   </data>
   <data name="Text_e4a97b87b06b" xml:space="preserve">
     <value>源代码，用于开发 LocalExile</value>
@@ -7187,6 +7352,12 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e9b53806a276" xml:space="preserve">
     <value>实时更改会影响此 Gateway 上的所有角色。重新加载会重置模组状态。</value>
   </data>
+  <data name="Text_e9c4956d0201" xml:space="preserve">
+    <value>永恒</value>
+  </data>
+  <data name="Text_e9c6f4ddf770" xml:space="preserve">
+    <value>卫兵传送门</value>
+  </data>
   <data name="Text_e9d7f3ec4aa7" xml:space="preserve">
     <value>选择一个备份以恢复或删除。</value>
   </data>
@@ -7219,6 +7390,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ea6467743294" xml:space="preserve">
     <value>正在构建服务</value>
+  </data>
+  <data name="Text_ea6fed94b95f" xml:space="preserve">
+    <value>此副本的 Gateway 还不能列出迷宫布局：请更新 LocalExile，然后开始游戏或启动一次服务器以进行构建。</value>
   </data>
   <data name="Text_ea78a0d3095b" xml:space="preserve">
     <value>打开所选文件夹</value>

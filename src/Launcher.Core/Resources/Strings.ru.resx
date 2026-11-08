@@ -66,6 +66,9 @@
   <data name="Text_01c618fd5db4" xml:space="preserve">
     <value>Выбранный модуль отсутствует.</value>
   </data>
+  <data name="Text_01deac2c6a06" xml:space="preserve">
+    <value>Лабиринт дня каждой сложности в виде карты: комнаты, кратчайший путь к Изаро, ловушки, головоломки, тёмные святыни, ключи и двери.</value>
+  </data>
   <data name="Text_01deefe59ede" xml:space="preserve">
     <value>Чтение {0} …</value>
   </data>
@@ -95,6 +98,9 @@
   </data>
   <data name="Text_0269bc06d60e" xml:space="preserve">
     <value>Сохраняется для этой рабочей копии в {0}; запущенный Gateway перезагрузит мод.</value>
+  </data>
+  <data name="Text_029f92044853" xml:space="preserve">
+    <value>Тёмная святыня</value>
   </data>
   <data xml:space="preserve" name="Text_02a2840b598b">
     <value>Создать копию</value>
@@ -161,6 +167,9 @@
   </data>
   <data xml:space="preserve" name="Text_0516ac3163b5">
     <value>Какие цвета изменять</value>
+  </data>
+  <data name="Text_051d9dc39fc1" xml:space="preserve">
+    <value>Безжалостный Лабиринт</value>
   </data>
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>этой сборки из исходников</value>
@@ -269,6 +278,9 @@
   </data>
   <data name="Text_0985d74b69c6" xml:space="preserve">
     <value>Ожидание проверенного клиента; существующие записи сохраняются.</value>
+  </data>
+  <data name="Text_098efbe9d148" xml:space="preserve">
+    <value>Стихийные сферы</value>
   </data>
   <data name="Text_099cb57aed76" xml:space="preserve">
     <value>Выдача предметов</value>
@@ -468,6 +480,9 @@
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Локальная оболочка запуска</value>
   </data>
+  <data name="Text_0e47f09a748f" xml:space="preserve">
+    <value>Приблизить</value>
+  </data>
   <data name="Text_0e70993a9229" xml:space="preserve">
     <value>Точка события не гарантирует его появления.</value>
   </data>
@@ -588,6 +603,9 @@
   <data name="Text_11e9fe71c67f" xml:space="preserve">
     <value>Персонажей: {0}</value>
   </data>
+  <data name="Text_11f3f2de97a2" xml:space="preserve">
+    <value>Комната {0}: {1}</value>
+  </data>
   <data name="Text_121e08966248" xml:space="preserve">
     <value>Подходящий клиент не найден. Поиск: {0}.</value>
   </data>
@@ -596,6 +614,9 @@
   </data>
   <data name="Text_126b8d3e1100" xml:space="preserve">
     <value>Обновить аккаунты</value>
+  </data>
+  <data name="Text_12c439264448" xml:space="preserve">
+    <value>Изаро, бой {0}</value>
   </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>Этот релиз не заявляет совместимость с настройками загружаемых модов. Для их изменения используйте совместимую копию исходного кода.</value>
@@ -620,6 +641,9 @@
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>Что нового</value>
+  </data>
+  <data name="Text_1379508dcb5b" xml:space="preserve">
+    <value>Головоломка с рычагами</value>
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>Репозиторий</value>
@@ -671,6 +695,9 @@
   </data>
   <data name="Text_1551e89173ed" xml:space="preserve">
     <value>При сворачивании в трей Waypoint продолжает работать со значком рядом с часами. Нажмите на значок или снова запустите Waypoint, чтобы вернуться.</value>
+  </data>
+  <data name="Text_1557c3e70bff" xml:space="preserve">
+    <value>Дверь на Площадь претендентов</value>
   </data>
   <data name="Text_15689b1ef00b" xml:space="preserve">
     <value>Инструменты для LocalExile</value>
@@ -731,6 +758,9 @@
   </data>
   <data xml:space="preserve" name="Text_16fab6cfda80">
     <value>Закройте игру перед восстановлением сохранений. Остановите Gateway перед восстановлением выбора модов.</value>
+  </data>
+  <data name="Text_1703ba5eec33" xml:space="preserve">
+    <value>Кратчайший путь: комнат — {0}</value>
   </data>
   <data name="Text_1709305c9fa9" xml:space="preserve">
     <value>Уровень</value>
@@ -906,6 +936,9 @@
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>настройки игры отдельные ({0})</value>
   </data>
+  <data name="Text_1cceb5ebd12e" xml:space="preserve">
+    <value>Кратчайший путь</value>
+  </data>
   <data name="Text_1d0a51791fe2" xml:space="preserve">
     <value>Возвращаем прежнюю версию</value>
   </data>
@@ -971,6 +1004,9 @@
   </data>
   <data name="Text_1f8d6be4b386" xml:space="preserve">
     <value>Оставить Waypoint работать в трее</value>
+  </data>
+  <data name="Text_1fca71f81e8b" xml:space="preserve">
+    <value>Серебряный ключ</value>
   </data>
   <data name="Text_1fceb5ed541c" xml:space="preserve">
     <value>Веток нет: нажмите «Получить ветки».</value>
@@ -1227,6 +1263,9 @@
   <data name="Text_26639e783252" xml:space="preserve">
     <value>Изменить аккаунт</value>
   </data>
+  <data name="Text_2671e49fda78" xml:space="preserve">
+    <value>Забытый Реликварий</value>
+  </data>
   <data name="Text_267342d2d102" xml:space="preserve">
     <value>Используется: {0} ({1})</value>
   </data>
@@ -1414,6 +1453,9 @@
   <data name="Text_2aec579f9e4a" xml:space="preserve">
     <value>ошибка git</value>
   </data>
+  <data name="Text_2b065c7c9ce4" xml:space="preserve">
+    <value>Сегодня</value>
+  </data>
   <data name="Text_2b28514da699" xml:space="preserve">
     <value>Настройка остановлена</value>
   </data>
@@ -1428,6 +1470,9 @@
   </data>
   <data name="Text_2b69057ec9ef" xml:space="preserve">
     <value>Пароль должен содержать не менее 4 символов.</value>
+  </data>
+  <data name="Text_2b6a38b89f9c" xml:space="preserve">
+    <value>Следующий день</value>
   </data>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>Сохранить настройки мода</value>
@@ -1536,6 +1581,9 @@
   </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>База: {0}</value>
+  </data>
+  <data name="Text_2f0da30ad195" xml:space="preserve">
+    <value>{0} (UTC), сид {1}</value>
   </data>
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>Задать пароль…</value>
@@ -1790,6 +1838,9 @@
   <data name="Text_367ef06b8fbf" xml:space="preserve">
     <value>Зерно</value>
   </data>
+  <data name="Text_3680fcad01f4" xml:space="preserve">
+    <value>Купели</value>
+  </data>
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>Найти модуль</value>
   </data>
@@ -1844,6 +1895,9 @@
   <data name="Text_38d69f252932" xml:space="preserve">
     <value>Вывод удалённых модов из сборки</value>
   </data>
+  <data name="Text_38d7db28699e" xml:space="preserve">
+    <value>Коридор ловушек</value>
+  </data>
   <data xml:space="preserve" name="Text_3907fa7f8072">
     <value>Оформление</value>
   </data>
@@ -1855,6 +1909,9 @@
   </data>
   <data name="Text_3950dabf770c" xml:space="preserve">
     <value>Режимы существующих персонажей не меняются. Чтобы выбрать другой определённый режим, создайте отдельную лигу.</value>
+  </data>
+  <data name="Text_3950e40a8fc3" xml:space="preserve">
+    <value>Аргус</value>
   </data>
   <data name="Text_396bc690d5bd" xml:space="preserve">
     <value>Frida готова к работе.</value>
@@ -1925,6 +1982,9 @@
   <data name="Text_3b373fd62989" xml:space="preserve">
     <value>не удалось запустить {0} ({1}): мосту нужен Python с frida (.venv, шаг 9 в GettingStarted)</value>
   </data>
+  <data name="Text_3b484ad8c5ae" xml:space="preserve">
+    <value>Тайный проход</value>
+  </data>
   <data name="Text_3b5d8715cb2a" xml:space="preserve">
     <value>Перезапустить Gateway с записью областей? Игра должна быть закрыта. Gateway корректно остановится, затем инструмент будет ждать следующего запуска игры.</value>
   </data>
@@ -1939,6 +1999,9 @@
   </data>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>Соберите любой предмет: база, редкость, свойства со значениями, гнёзда и влияния. Сохраните, чтобы вернуться к нему, и выдайте персонажу в игре.</value>
+  </data>
+  <data name="Text_3baed9f4ed86" xml:space="preserve">
+    <value>Исказители</value>
   </data>
   <data name="Text_3bc85df158e7" xml:space="preserve">
     <value> и ещё {0}</value>
@@ -2241,8 +2304,14 @@
   <data name="Text_46a268a1cf86" xml:space="preserve">
     <value>Вернуться к прежней версии</value>
   </data>
+  <data name="Text_46aeaf289dba" xml:space="preserve">
+    <value>Символы силы</value>
+  </data>
   <data name="Text_46c7bd8e82a1" xml:space="preserve">
     <value>Раз в день обновляться до последних изменений.</value>
+  </data>
+  <data name="Text_46cac231d89b" xml:space="preserve">
+    <value>Золотая дверь</value>
   </data>
   <data xml:space="preserve" name="Text_46d6b84bae4a">
     <value>Git отсутствует или HEAD этой папки недоступен. Папку по-прежнему можно выбрать вручную.</value>
@@ -2333,6 +2402,9 @@
   </data>
   <data name="Text_4938abfad1ef" xml:space="preserve">
     <value>Оставить персонажей «Новейшей»</value>
+  </data>
+  <data name="Text_493d9da88d61" xml:space="preserve">
+    <value>Сид {0}, задан сервером (Game_LAB_SEED)</value>
   </data>
   <data xml:space="preserve" name="Text_494ca78f7374">
     <value>Своя схема</value>
@@ -2474,6 +2546,9 @@
   </data>
   <data xml:space="preserve" name="Text_4d7056f0e9be">
     <value>Цветовой тон</value>
+  </data>
+  <data name="Text_4d8b9e63701a" xml:space="preserve">
+    <value>Дальше к Изаро</value>
   </data>
   <data name="Text_4d95f1b334f2" xml:space="preserve">
     <value>Отложенные изменения возвращены.</value>
@@ -2658,6 +2733,9 @@
   <data name="Text_530bcc355f0a" xml:space="preserve">
     <value>Установка…</value>
   </data>
+  <data name="Text_53345a30f314" xml:space="preserve">
+    <value>Сопровождение</value>
+  </data>
   <data xml:space="preserve" name="Text_5355e8288662">
     <value>Нет DLL</value>
   </data>
@@ -2774,6 +2852,9 @@
   </data>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>Ничего не меняется. Если этот клиент использует настройки вашей обычной игры, выберите в игре «Режим работы сети» → «Рассинхронизация» (Networking Mode → Predictive) сами.</value>
+  </data>
+  <data name="Text_5774139d115b" xml:space="preserve">
+    <value>Лейтенанты</value>
   </data>
   <data name="Text_57b7b5924c6b" xml:space="preserve">
     <value>Всё на месте. Нажмите «Играть» в Waypoint, чтобы запустить серверы и игру. В первый раз в самой игре выберите Настройки → Игра → Режим работы сети → Рассинхронизация (Options → Game → Networking Mode → Predictive).</value>
@@ -2953,6 +3034,9 @@
   </data>
   <data name="Text_5ec6014cb5f6" xml:space="preserve">
     <value>Игра ещё запущена</value>
+  </data>
+  <data name="Text_5efc124c61fa" xml:space="preserve">
+    <value>Пьедесталы</value>
   </data>
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>В этом репозитории нет модов.</value>
@@ -3153,6 +3237,9 @@
   <data name="Text_646c61108060" xml:space="preserve">
     <value>Открыть папку Client</value>
   </data>
+  <data name="Text_64a298faf914" xml:space="preserve">
+    <value>Изаро</value>
+  </data>
   <data xml:space="preserve" name="Text_64a576b180a8">
     <value>Поиск в журнале без учёта регистра</value>
   </data>
@@ -3193,6 +3280,9 @@
   </data>
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>Время сервера в секунду по всем соединениям вместе; ожидания (очереди, шлюзы, блокировки) учитываются со временем ожидания</value>
+  </data>
+  <data name="Text_65c5e545fd23" xml:space="preserve">
+    <value>Жестокий</value>
   </data>
   <data name="Text_65cbeb090b74" xml:space="preserve">
     <value>Исходная лига</value>
@@ -3434,6 +3524,9 @@
   <data xml:space="preserve" name="Text_6e1cc2d63cee">
     <value>Среда проверена · </value>
   </data>
+  <data name="Text_6e22a32d8c29" xml:space="preserve">
+    <value>Дверь в комнату {0}: {1}</value>
+  </data>
   <data xml:space="preserve" name="Text_6e2bd3d0e2c3">
     <value>Возврат: Escape отменяет предпросмотр. Ctrl+R сбрасывает параметры в этом окне. В рабочем окне Ctrl+Shift+R возвращает стандартное оформление, не меняя репозиторий и сохранения.</value>
   </data>
@@ -3448,6 +3541,9 @@
   </data>
   <data name="Text_6e63358637fe" xml:space="preserve">
     <value>Все значки</value>
+  </data>
+  <data name="Text_6e6e74eed4bb" xml:space="preserve">
+    <value>Новая карта через {0}</value>
   </data>
   <data name="Text_6e9c271dcc43" xml:space="preserve">
     <value>Показано: {0}. В каждой группе первым идёт лучший тир для уровня предмета.</value>
@@ -3505,6 +3601,9 @@
   </data>
   <data name="Text_7063e226c881" xml:space="preserve">
     <value>Остановить службы при выходе</value>
+  </data>
+  <data name="Text_70895e070991" xml:space="preserve">
+    <value>Построено Gateway этой копии по данным клиента; ничего не скачивается.</value>
   </data>
   <data name="Text_708dc8aff75e" xml:space="preserve">
     <value>Подготовить LocalExile</value>
@@ -3598,6 +3697,9 @@
   </data>
   <data name="Text_735beee2e390" xml:space="preserve">
     <value>Минимум</value>
+  </data>
+  <data name="Text_736ecab62973" xml:space="preserve">
+    <value>Золотой ключ</value>
   </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>Пока работает служба входа, Gateway или служба аккаунтов LocalExile, доступен только просмотр. Остановите службы, закройте игру и обновите данные. Ничего не изменено.</value>
@@ -3743,6 +3845,9 @@
   <data name="Text_78ae647dc554" xml:space="preserve">
     <value>Мир</value>
   </data>
+  <data name="Text_78d97e1e27cc" xml:space="preserve">
+    <value>Горгульи</value>
+  </data>
   <data name="Text_78f253f7422a" xml:space="preserve">
     <value>ключи входа (шаг 4)</value>
   </data>
@@ -3841,6 +3946,9 @@
   </data>
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>База</value>
+  </data>
+  <data name="Text_7bf6ecedbcdb" xml:space="preserve">
+    <value>Карта лабиринта</value>
   </data>
   <data name="Text_7c0189e54acf" xml:space="preserve">
     <value>Открыть мастер настройки</value>
@@ -3961,6 +4069,9 @@
   </data>
   <data name="Text_7fefa2a00ff5" xml:space="preserve">
     <value>{0} (не отображается)</value>
+  </data>
+  <data name="Text_801545905b87" xml:space="preserve">
+    <value>Снять отметки</value>
   </data>
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>Этот выпуск не заявляет совместимость с загружаемыми модами. Для установки и обновления модов используйте актуальную копию исходного кода.</value>
@@ -4196,6 +4307,9 @@
   <data xml:space="preserve" name="Text_88b2f4aa5837">
     <value>Руководство по настройке</value>
   </data>
+  <data name="Text_88b387554c07" xml:space="preserve">
+    <value>Лабиринт</value>
+  </data>
   <data xml:space="preserve" name="Text_88b6f7429ce7">
     <value>Без изменений</value>
   </data>
@@ -4310,6 +4424,9 @@
   <data name="Text_8c44609d7c15" xml:space="preserve">
     <value>клиент скопирован в Client\ (шаг 3)</value>
   </data>
+  <data name="Text_8c9e70a32535" xml:space="preserve">
+    <value>Открыть карту лабиринта</value>
+  </data>
   <data name="Text_8d099abe78af" xml:space="preserve">
     <value>При закрытии окна</value>
   </data>
@@ -4324,6 +4441,9 @@
   </data>
   <data name="Text_8d21c00d704e" xml:space="preserve">
     <value>Копирование сохранений…</value>
+  </data>
+  <data name="Text_8d374ecbaefd" xml:space="preserve">
+    <value>Второй босс</value>
   </data>
   <data name="Text_8d3a583f047c" xml:space="preserve">
     <value>Убрать {0} из каталога? Установленные из него моды останутся.</value>
@@ -4506,6 +4626,9 @@
     <value>Не удалось подготовить просмотр карт.
 {0}</value>
   </data>
+  <data name="Text_934ac1cc5cfa" xml:space="preserve">
+    <value>Жестокий Лабиринт</value>
+  </data>
   <data xml:space="preserve" name="Text_93638ea9e0b0">
     <value>Оттенки серого</value>
   </data>
@@ -4526,6 +4649,9 @@
   </data>
   <data name="Text_93f25877bb69" xml:space="preserve">
     <value>Настройки недоступны до установки</value>
+  </data>
+  <data name="Text_941354e5e8d5" xml:space="preserve">
+    <value>В комнатах</value>
   </data>
   <data xml:space="preserve" name="Text_94351810d456">
     <value>Проверяем HEAD LocalExile и ищем в типичных локальных папках… Вы можете выбрать путь вручную через «Обзор».</value>
@@ -5303,6 +5429,9 @@
   <data name="Text_a9ada4eade1d" xml:space="preserve">
     <value>Перед изменением будет создана резервная копия сохранений.</value>
   </data>
+  <data name="Text_a9cdee2ac3fb" xml:space="preserve">
+    <value>Вечный Лабиринт</value>
+  </data>
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>Остановить dev host</value>
   </data>
@@ -5414,11 +5543,17 @@
   <data xml:space="preserve" name="Text_adb8a7038d6c">
     <value>Выберите мод, чтобы увидеть зависимости и доступные действия.</value>
   </data>
+  <data name="Text_adb91b20d763" xml:space="preserve">
+    <value>Статуи времени</value>
+  </data>
   <data name="Text_adc6944d0f20" xml:space="preserve">
     <value>Осквернённые собственные свойства</value>
   </data>
   <data name="Text_addd1dcb439b" xml:space="preserve">
     <value>При выходе из Waypoint службы этой рабочей копии останавливаются.</value>
+  </data>
+  <data name="Text_ae0e17894743" xml:space="preserve">
+    <value>Бой {0} (комната {1}): {2}</value>
   </data>
   <data name="Text_ae2ff967432c" xml:space="preserve">
     <value>Оставить старую версию, которая не меняется</value>
@@ -5431,6 +5566,9 @@
   </data>
   <data name="Text_ae684f70a175" xml:space="preserve">
     <value>Зависимости записи проверены.</value>
+  </data>
+  <data name="Text_ae779cd7f460" xml:space="preserve">
+    <value>Переключаемые статуи</value>
   </data>
   <data name="Text_ae82cf58855d" xml:space="preserve">
     <value>Перезагрузить мод</value>
@@ -5503,6 +5641,9 @@
   </data>
   <data name="Text_b0c35534bd56" xml:space="preserve">
     <value>Клавиатура: Ctrl+1–9 выбирает страницу · Ctrl+Tab / Ctrl+Shift+Tab переключает страницы · Ctrl+F открывает поиск на текущей странице · F5 обновляет локальное состояние. Параметры оформления и доступности можно изменить в настройках.</value>
+  </data>
+  <data name="Text_b0d5201fdc86" xml:space="preserve">
+    <value>Безжалостный</value>
   </data>
   <data name="Text_b0ebcb44a8da" xml:space="preserve">
     <value>Настройки не сохранены</value>
@@ -5858,6 +5999,9 @@
   <data xml:space="preserve" name="Text_bc74ef1e258a">
     <value> — вывод</value>
   </data>
+  <data name="Text_bc7b631a689b" xml:space="preserve">
+    <value>Отдалить</value>
+  </data>
   <data name="Text_bc7b7aee59a2" xml:space="preserve">
     <value>Для этой функции нужна Frida. Для обычной игры она не требуется.</value>
   </data>
@@ -5996,6 +6140,9 @@
   <data name="Text_c1c1009d3f37" xml:space="preserve">
     <value>Обновить</value>
   </data>
+  <data name="Text_c1dbdf2cd909" xml:space="preserve">
+    <value>Изаро, бой {0}: {1}</value>
+  </data>
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Требует внимания</value>
   </data>
@@ -6037,6 +6184,9 @@
   </data>
   <data name="Text_c3099cb7725f" xml:space="preserve">
     <value>Простое имя папки, без \ / : * ? " &lt; &gt; |.</value>
+  </data>
+  <data name="Text_c34b0f2c4589" xml:space="preserve">
+    <value>Серебряный сундук</value>
   </data>
   <data name="Text_c35c701a7673" xml:space="preserve">
     <value>Один значок для этого модуля во всех разделах Waypoint.</value>
@@ -6343,6 +6493,9 @@
   <data name="Text_cca5479cc21b" xml:space="preserve">
     <value>Выбрать значок…</value>
   </data>
+  <data name="Text_cca7aec3cf35" xml:space="preserve">
+    <value>Вписать карту</value>
+  </data>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>Доступен только просмотр, пока игра или службы работают либо их принадлежность не подтверждена. Остановите их и обновите данные перед изменением аккаунтов.</value>
   </data>
@@ -6387,6 +6540,9 @@
   </data>
   <data name="Text_ce8272ce39a9" xml:space="preserve">
     <value>Не удалось прочитать выпуски: {0}</value>
+  </data>
+  <data name="Text_cebea94648e1" xml:space="preserve">
+    <value>Ловушки и головоломки</value>
   </data>
   <data name="Text_cec3a9b89b2e" xml:space="preserve">
     <value>Данные</value>
@@ -6688,6 +6844,9 @@
   <data name="Text_d921a507c60b" xml:space="preserve">
     <value>Значок модуля сохранён в Waypoint и используется в разделах «Модули» и «Лиги». LocalExile не изменён.</value>
   </data>
+  <data name="Text_d92649c8a743" xml:space="preserve">
+    <value>(нет области)</value>
+  </data>
   <data name="Text_d94343f8f050" xml:space="preserve">
     <value>Всё равно обновить</value>
   </data>
@@ -6962,6 +7121,9 @@
   <data name="Text_e21cbdbe5596" xml:space="preserve">
     <value>В LocalExile</value>
   </data>
+  <data name="Text_e21cd00f3345" xml:space="preserve">
+    <value>Нажмите на комнату, значок или дверь, чтобы увидеть подробности, а на связь — чтобы отметить её зелёным.</value>
+  </data>
   <data name="Text_e21f935f11d7" xml:space="preserve">
     <value>Копировать</value>
   </data>
@@ -7039,6 +7201,9 @@
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop и dev host: игра, запись планировок, серверы и служба аккаунтов</value>
+  </data>
+  <data name="Text_e4a1e89ee1db" xml:space="preserve">
+    <value>Предыдущий день</value>
   </data>
   <data name="Text_e4a97b87b06b" xml:space="preserve">
     <value>Исходный код, для работы над LocalExile</value>
@@ -7187,6 +7352,12 @@
   <data xml:space="preserve" name="Text_e9b53806a276">
     <value>Изменения в игре затрагивают всех персонажей на этом Gateway. Перезагрузка сбрасывает состояние мода.</value>
   </data>
+  <data name="Text_e9c4956d0201" xml:space="preserve">
+    <value>Вечный</value>
+  </data>
+  <data name="Text_e9c6f4ddf770" xml:space="preserve">
+    <value>Порталы защитников</value>
+  </data>
   <data xml:space="preserve" name="Text_e9d7f3ec4aa7">
     <value>Выберите копию для восстановления или удаления.</value>
   </data>
@@ -7219,6 +7390,9 @@
   </data>
   <data xml:space="preserve" name="Text_ea6467743294">
     <value>Сборка служб</value>
+  </data>
+  <data name="Text_ea6fed94b95f" xml:space="preserve">
+    <value>Gateway этой копии пока не умеет выдавать карты Лабиринта: обновите LocalExile, затем один раз запустите игру или серверы, чтобы собрать его.</value>
   </data>
   <data xml:space="preserve" name="Text_ea78a0d3095b">
     <value>Открыть папку выбранного</value>

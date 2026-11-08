@@ -66,6 +66,9 @@
   <data name="Text_01c618fd5db4" xml:space="preserve">
     <value>A selected module is missing.</value>
   </data>
+  <data name="Text_01deac2c6a06" xml:space="preserve">
+    <value>The day's Labyrinth of every tier as a map: its rooms, the shortest way to Izaro, gauntlets, puzzles, Darkshrines, keys and doors.</value>
+  </data>
   <data name="Text_01deefe59ede" xml:space="preserve">
     <value>Reading {0} …</value>
   </data>
@@ -95,6 +98,9 @@
   </data>
   <data name="Text_0269bc06d60e" xml:space="preserve">
     <value>Saved for this checkout in {0}; a running Gateway reloads the mod.</value>
+  </data>
+  <data name="Text_029f92044853" xml:space="preserve">
+    <value>Darkshrine</value>
   </data>
   <data xml:space="preserve" name="Text_02a2840b598b">
     <value>Back up now</value>
@@ -161,6 +167,9 @@
   </data>
   <data xml:space="preserve" name="Text_0516ac3163b5">
     <value>Colors to edit</value>
+  </data>
+  <data name="Text_051d9dc39fc1" xml:space="preserve">
+    <value>The Merciless Labyrinth</value>
   </data>
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>this build from source</value>
@@ -269,6 +278,9 @@
   </data>
   <data name="Text_0985d74b69c6" xml:space="preserve">
     <value>Waiting for the verified client; existing capture files are preserved.</value>
+  </data>
+  <data name="Text_098efbe9d148" xml:space="preserve">
+    <value>Elemental orbs</value>
   </data>
   <data name="Text_099cb57aed76" xml:space="preserve">
     <value>Giving items</value>
@@ -468,6 +480,9 @@
   <data xml:space="preserve" name="Text_0e4133cd4d29">
     <value>Local runtime wrapper</value>
   </data>
+  <data name="Text_0e47f09a748f" xml:space="preserve">
+    <value>Zoom in</value>
+  </data>
   <data name="Text_0e70993a9229" xml:space="preserve">
     <value>Encounter anchor; this does not guarantee an encounter will spawn.</value>
   </data>
@@ -588,6 +603,9 @@
   <data name="Text_11e9fe71c67f" xml:space="preserve">
     <value>{0} characters</value>
   </data>
+  <data name="Text_11f3f2de97a2" xml:space="preserve">
+    <value>Room {0}: {1}</value>
+  </data>
   <data name="Text_121e08966248" xml:space="preserve">
     <value>No usable client was found. Searched {0}.</value>
   </data>
@@ -596,6 +614,9 @@
   </data>
   <data name="Text_126b8d3e1100" xml:space="preserve">
     <value>Reload accounts</value>
+  </data>
+  <data name="Text_12c439264448" xml:space="preserve">
+    <value>Izaro, fight {0}</value>
   </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>This release does not declare compatibility with downloadable mod settings. Use a compatible source checkout to edit them.</value>
@@ -620,6 +641,9 @@
   </data>
   <data name="Text_135e912e8905" xml:space="preserve">
     <value>What's new</value>
+  </data>
+  <data name="Text_1379508dcb5b" xml:space="preserve">
+    <value>Switch puzzle</value>
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>Repository</value>
@@ -671,6 +695,9 @@
   </data>
   <data name="Text_1551e89173ed" xml:space="preserve">
     <value>Minimize to tray keeps Waypoint running beside the clock. Click its icon, or open Waypoint again, to return.</value>
+  </data>
+  <data name="Text_1557c3e70bff" xml:space="preserve">
+    <value>Door to the Aspirants' Plaza</value>
   </data>
   <data name="Text_15689b1ef00b" xml:space="preserve">
     <value>Tools LocalExile needs</value>
@@ -731,6 +758,9 @@
   </data>
   <data xml:space="preserve" name="Text_16fab6cfda80">
     <value>Close the game before restoring saves. Stop Gateway before restoring mod choices.</value>
+  </data>
+  <data name="Text_1703ba5eec33" xml:space="preserve">
+    <value>Shortest way: {0} rooms</value>
   </data>
   <data name="Text_1709305c9fa9" xml:space="preserve">
     <value>Level</value>
@@ -906,6 +936,9 @@
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>game settings are separate ({0})</value>
   </data>
+  <data name="Text_1cceb5ebd12e" xml:space="preserve">
+    <value>Shortest way</value>
+  </data>
   <data name="Text_1d0a51791fe2" xml:space="preserve">
     <value>Going back to the version you had</value>
   </data>
@@ -971,6 +1004,9 @@
   </data>
   <data name="Text_1f8d6be4b386" xml:space="preserve">
     <value>Keep Waypoint running in the tray</value>
+  </data>
+  <data name="Text_1fca71f81e8b" xml:space="preserve">
+    <value>Silver key</value>
   </data>
   <data name="Text_1fceb5ed541c" xml:space="preserve">
     <value>No branches: Fetch reads them.</value>
@@ -1227,6 +1263,9 @@
   <data name="Text_26639e783252" xml:space="preserve">
     <value>Change account</value>
   </data>
+  <data name="Text_2671e49fda78" xml:space="preserve">
+    <value>Forgotten Reliquary</value>
+  </data>
   <data name="Text_267342d2d102" xml:space="preserve">
     <value>In use: {0} ({1})</value>
   </data>
@@ -1414,6 +1453,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2aec579f9e4a" xml:space="preserve">
     <value>git failed</value>
   </data>
+  <data name="Text_2b065c7c9ce4" xml:space="preserve">
+    <value>Today</value>
+  </data>
   <data name="Text_2b28514da699" xml:space="preserve">
     <value>Setup stopped</value>
   </data>
@@ -1428,6 +1470,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2b69057ec9ef" xml:space="preserve">
     <value>The password must have at least 4 characters.</value>
+  </data>
+  <data name="Text_2b6a38b89f9c" xml:space="preserve">
+    <value>Next day</value>
   </data>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>Save mod settings</value>
@@ -1536,6 +1581,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>Base: {0}</value>
+  </data>
+  <data name="Text_2f0da30ad195" xml:space="preserve">
+    <value>{0} (UTC), seed {1}</value>
   </data>
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>Set password…</value>
@@ -1790,6 +1838,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_367ef06b8fbf" xml:space="preserve">
     <value>Seed</value>
   </data>
+  <data name="Text_3680fcad01f4" xml:space="preserve">
+    <value>Fonts</value>
+  </data>
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>Find a module</value>
   </data>
@@ -1844,6 +1895,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_38d69f252932" xml:space="preserve">
     <value>Retiring removed source mods</value>
   </data>
+  <data name="Text_38d7db28699e" xml:space="preserve">
+    <value>Trap gauntlet</value>
+  </data>
   <data xml:space="preserve" name="Text_3907fa7f8072">
     <value>Appearance</value>
   </data>
@@ -1855,6 +1909,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3950dabf770c" xml:space="preserve">
     <value>Modes are fixed for existing characters. Create a separate league to choose another defined mode.</value>
+  </data>
+  <data name="Text_3950e40a8fc3" xml:space="preserve">
+    <value>Argus</value>
   </data>
   <data name="Text_396bc690d5bd" xml:space="preserve">
     <value>Frida is ready.</value>
@@ -1925,6 +1982,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3b373fd62989" xml:space="preserve">
     <value>can't start {0} ({1}): the bridge needs Python with frida (.venv, GettingStarted step 9)</value>
   </data>
+  <data name="Text_3b484ad8c5ae" xml:space="preserve">
+    <value>Secret passage</value>
+  </data>
   <data name="Text_3b5d8715cb2a" xml:space="preserve">
     <value>Restart Gateway with area capture enabled? The game must be closed. Gateway will stop gracefully, then the recorder will wait for your next game launch.</value>
   </data>
@@ -1939,6 +1999,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>Make any item: a base, its rarity, modifiers with their values, sockets and influences. Save it to come back to it, and give it to the character in game.</value>
+  </data>
+  <data name="Text_3baed9f4ed86" xml:space="preserve">
+    <value>Charge disruptors</value>
   </data>
   <data name="Text_3bc85df158e7" xml:space="preserve">
     <value> + {0} more</value>
@@ -2241,8 +2304,14 @@ This checkout has modified tracked files.</value>
   <data name="Text_46a268a1cf86" xml:space="preserve">
     <value>Go back to the version you had</value>
   </data>
+  <data name="Text_46aeaf289dba" xml:space="preserve">
+    <value>Power symbols</value>
+  </data>
   <data name="Text_46c7bd8e82a1" xml:space="preserve">
     <value>Update to the newest changes once a day.</value>
+  </data>
+  <data name="Text_46cac231d89b" xml:space="preserve">
+    <value>Gold door</value>
   </data>
   <data xml:space="preserve" name="Text_46d6b84bae4a">
     <value>Git is missing or this folder has no readable Git HEAD. Manual selection still works.</value>
@@ -2333,6 +2402,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4938abfad1ef" xml:space="preserve">
     <value>Keep Latest's own</value>
+  </data>
+  <data name="Text_493d9da88d61" xml:space="preserve">
+    <value>Seed {0}, fixed by the server (Game_LAB_SEED)</value>
   </data>
   <data xml:space="preserve" name="Text_494ca78f7374">
     <value>Custom</value>
@@ -2474,6 +2546,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_4d7056f0e9be">
     <value>Hue</value>
+  </data>
+  <data name="Text_4d8b9e63701a" xml:space="preserve">
+    <value>The way on to Izaro</value>
   </data>
   <data name="Text_4d95f1b334f2" xml:space="preserve">
     <value>Stashed changes restored.</value>
@@ -2658,6 +2733,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_530bcc355f0a" xml:space="preserve">
     <value>Installing…</value>
   </data>
+  <data name="Text_53345a30f314" xml:space="preserve">
+    <value>Escort gauntlet</value>
+  </data>
   <data xml:space="preserve" name="Text_5355e8288662">
     <value>Missing DLL</value>
   </data>
@@ -2774,6 +2852,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>Nothing changes. If this client shares its settings with your normal game, you set Networking Mode to Predictive in the game yourself.</value>
+  </data>
+  <data name="Text_5774139d115b" xml:space="preserve">
+    <value>Lieutenants</value>
   </data>
   <data name="Text_57b7b5924c6b" xml:space="preserve">
     <value>Everything is in place. Press Play in Waypoint to start the servers and the game. In the game, set Options → Game → Networking Mode to Predictive the first time.</value>
@@ -2953,6 +3034,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5ec6014cb5f6" xml:space="preserve">
     <value>The game is still running</value>
+  </data>
+  <data name="Text_5efc124c61fa" xml:space="preserve">
+    <value>Pedestals</value>
   </data>
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>This repository lists no mods.</value>
@@ -3153,6 +3237,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data name="Text_646c61108060" xml:space="preserve">
     <value>Open Client folder</value>
   </data>
+  <data name="Text_64a298faf914" xml:space="preserve">
+    <value>Izaro</value>
+  </data>
   <data xml:space="preserve" name="Text_64a576b180a8">
     <value>Search selected log (case insensitive)</value>
   </data>
@@ -3193,6 +3280,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>Server time per second, all connections together; waits (queues, gates, locks) count their waiting time</value>
+  </data>
+  <data name="Text_65c5e545fd23" xml:space="preserve">
+    <value>Cruel</value>
   </data>
   <data name="Text_65cbeb090b74" xml:space="preserve">
     <value>Starting league</value>
@@ -3434,6 +3524,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_6e1cc2d63cee">
     <value>Environment checked · </value>
   </data>
+  <data name="Text_6e22a32d8c29" xml:space="preserve">
+    <value>Door to room {0}: {1}</value>
+  </data>
   <data xml:space="preserve" name="Text_6e2bd3d0e2c3">
     <value>Recovery: Escape cancels this preview. Ctrl+R resets this window. In the workspace, Ctrl+Shift+R restores default appearance without changing your checkout or saves.</value>
   </data>
@@ -3448,6 +3541,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6e63358637fe" xml:space="preserve">
     <value>All icons</value>
+  </data>
+  <data name="Text_6e6e74eed4bb" xml:space="preserve">
+    <value>A new layout in {0}</value>
   </data>
   <data name="Text_6e9c271dcc43" xml:space="preserve">
     <value>{0} shown. The best tier for the item level comes first in each group.</value>
@@ -3505,6 +3601,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7063e226c881" xml:space="preserve">
     <value>Stop services on exit</value>
+  </data>
+  <data name="Text_70895e070991" xml:space="preserve">
+    <value>Built by this checkout's Gateway from the client's data; nothing is downloaded.</value>
   </data>
   <data name="Text_708dc8aff75e" xml:space="preserve">
     <value>Prepare LocalExile</value>
@@ -3598,6 +3697,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_735beee2e390" xml:space="preserve">
     <value>Minimum</value>
+  </data>
+  <data name="Text_736ecab62973" xml:space="preserve">
+    <value>Gold key</value>
   </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>Account changes are read-only while any LocalExile login, Gateway or account-service process is running. Stop those services and close the game, then refresh. Nothing was changed.</value>
@@ -3743,6 +3845,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_78ae647dc554" xml:space="preserve">
     <value>World</value>
   </data>
+  <data name="Text_78d97e1e27cc" xml:space="preserve">
+    <value>Gargoyles</value>
+  </data>
   <data name="Text_78f253f7422a" xml:space="preserve">
     <value>login keys (step 4)</value>
   </data>
@@ -3841,6 +3946,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>Base</value>
+  </data>
+  <data name="Text_7bf6ecedbcdb" xml:space="preserve">
+    <value>Lab layout</value>
   </data>
   <data name="Text_7c0189e54acf" xml:space="preserve">
     <value>Open the setup guide</value>
@@ -3961,6 +4069,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7fefa2a00ff5" xml:space="preserve">
     <value>{0} (not shown)</value>
+  </data>
+  <data name="Text_801545905b87" xml:space="preserve">
+    <value>Clear marks</value>
   </data>
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.</value>
@@ -4196,6 +4307,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_88b2f4aa5837">
     <value>View setup guide</value>
   </data>
+  <data name="Text_88b387554c07" xml:space="preserve">
+    <value>The Labyrinth</value>
+  </data>
   <data xml:space="preserve" name="Text_88b6f7429ce7">
     <value>Unchanged</value>
   </data>
@@ -4310,6 +4424,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8c44609d7c15" xml:space="preserve">
     <value>client copied into Client\ (step 3)</value>
   </data>
+  <data name="Text_8c9e70a32535" xml:space="preserve">
+    <value>Open lab layout</value>
+  </data>
   <data name="Text_8d099abe78af" xml:space="preserve">
     <value>When I close the window</value>
   </data>
@@ -4324,6 +4441,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8d21c00d704e" xml:space="preserve">
     <value>Copying your saves …</value>
+  </data>
+  <data name="Text_8d374ecbaefd" xml:space="preserve">
+    <value>A second boss</value>
   </data>
   <data name="Text_8d3a583f047c" xml:space="preserve">
     <value>Remove {0} from Browse? Mods installed from it stay installed.</value>
@@ -4506,6 +4626,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
     <value>Could not prepare the map viewer.
 {0}</value>
   </data>
+  <data name="Text_934ac1cc5cfa" xml:space="preserve">
+    <value>The Cruel Labyrinth</value>
+  </data>
   <data xml:space="preserve" name="Text_93638ea9e0b0">
     <value>Grayscale</value>
   </data>
@@ -4526,6 +4649,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_93f25877bb69" xml:space="preserve">
     <value>Settings unavailable before installation</value>
+  </data>
+  <data name="Text_941354e5e8d5" xml:space="preserve">
+    <value>In the rooms</value>
   </data>
   <data xml:space="preserve" name="Text_94351810d456">
     <value>Checking upstream HEAD and searching common local folders… You can still Browse to choose a location.</value>
@@ -5303,6 +5429,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a9ada4eade1d" xml:space="preserve">
     <value>A save backup will be created before this change.</value>
   </data>
+  <data name="Text_a9cdee2ac3fb" xml:space="preserve">
+    <value>The Eternal Labyrinth</value>
+  </data>
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>Stop dev host</value>
   </data>
@@ -5414,11 +5543,17 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_adb8a7038d6c">
     <value>Select a mod to view its dependencies and controls.</value>
   </data>
+  <data name="Text_adb91b20d763" xml:space="preserve">
+    <value>Chrono statues</value>
+  </data>
   <data name="Text_adc6944d0f20" xml:space="preserve">
     <value>Corruption implicits</value>
   </data>
   <data name="Text_addd1dcb439b" xml:space="preserve">
     <value>Exiting Waypoint stops this checkout’s services.</value>
+  </data>
+  <data name="Text_ae0e17894743" xml:space="preserve">
+    <value>Fight {0} (room {1}): {2}</value>
   </data>
   <data name="Text_ae2ff967432c" xml:space="preserve">
     <value>Keep an older version that does not change</value>
@@ -5431,6 +5566,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_ae684f70a175" xml:space="preserve">
     <value>CheckCapture completed.</value>
+  </data>
+  <data name="Text_ae779cd7f460" xml:space="preserve">
+    <value>Toggle statues</value>
   </data>
   <data name="Text_ae82cf58855d" xml:space="preserve">
     <value>Reload mod</value>
@@ -5503,6 +5641,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_b0c35534bd56" xml:space="preserve">
     <value>Keyboard: Ctrl+1–9 chooses a page · Ctrl+Tab / Ctrl+Shift+Tab moves between pages · Ctrl+F searches the current page · F5 refreshes local status. Change appearance and accessibility preferences in Settings.</value>
+  </data>
+  <data name="Text_b0d5201fdc86" xml:space="preserve">
+    <value>Merciless</value>
   </data>
   <data name="Text_b0ebcb44a8da" xml:space="preserve">
     <value>Settings not saved</value>
@@ -5858,6 +5999,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_bc74ef1e258a">
     <value> output</value>
   </data>
+  <data name="Text_bc7b631a689b" xml:space="preserve">
+    <value>Zoom out</value>
+  </data>
   <data name="Text_bc7b7aee59a2" xml:space="preserve">
     <value>This feature needs Frida. Frida is optional for normal play.</value>
   </data>
@@ -5996,6 +6140,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c1c1009d3f37" xml:space="preserve">
     <value>Update</value>
   </data>
+  <data name="Text_c1dbdf2cd909" xml:space="preserve">
+    <value>Izaro, fight {0}: {1}</value>
+  </data>
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Needs attention</value>
   </data>
@@ -6037,6 +6184,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c3099cb7725f" xml:space="preserve">
     <value>A plain folder name, without \ / : * ? " &lt; &gt; |.</value>
+  </data>
+  <data name="Text_c34b0f2c4589" xml:space="preserve">
+    <value>Silver cache</value>
   </data>
   <data name="Text_c35c701a7673" xml:space="preserve">
     <value>One icon, wherever this module appears in Waypoint.</value>
@@ -6343,6 +6493,9 @@ Client: {2}</value>
   <data name="Text_cca5479cc21b" xml:space="preserve">
     <value>Choose icon…</value>
   </data>
+  <data name="Text_cca7aec3cf35" xml:space="preserve">
+    <value>Fit the map</value>
+  </data>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>Read-only while the game or services are running, or ownership is uncertain. Stop them and reload before changing accounts.</value>
   </data>
@@ -6387,6 +6540,9 @@ Client: {2}</value>
   </data>
   <data name="Text_ce8272ce39a9" xml:space="preserve">
     <value>Could not read the releases: {0}</value>
+  </data>
+  <data name="Text_cebea94648e1" xml:space="preserve">
+    <value>Gauntlets and puzzles</value>
   </data>
   <data name="Text_cec3a9b89b2e" xml:space="preserve">
     <value>Data</value>
@@ -6688,6 +6844,9 @@ Client: {2}</value>
   <data name="Text_d921a507c60b" xml:space="preserve">
     <value>Module icon saved in Waypoint. It is shared by Modules and Leagues; LocalExile was not changed.</value>
   </data>
+  <data name="Text_d92649c8a743" xml:space="preserve">
+    <value>(no area)</value>
+  </data>
   <data name="Text_d94343f8f050" xml:space="preserve">
     <value>Update anyway</value>
   </data>
@@ -6962,6 +7121,9 @@ Dependencies: {2}
   <data name="Text_e21cbdbe5596" xml:space="preserve">
     <value>On LocalExile</value>
   </data>
+  <data name="Text_e21cd00f3345" xml:space="preserve">
+    <value>Click a room, an icon or a door for its details, and a connection to mark it green.</value>
+  </data>
   <data name="Text_e21f935f11d7" xml:space="preserve">
     <value>Copy</value>
   </data>
@@ -7039,6 +7201,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop and the dev host: the game, the walk-map recorder, the servers and the account service</value>
+  </data>
+  <data name="Text_e4a1e89ee1db" xml:space="preserve">
+    <value>Previous day</value>
   </data>
   <data name="Text_e4a97b87b06b" xml:space="preserve">
     <value>The source code, for working on LocalExile</value>
@@ -7187,6 +7352,12 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_e9b53806a276">
     <value>Live changes affect every character on this Gateway. Reload resets mod state.</value>
   </data>
+  <data name="Text_e9c4956d0201" xml:space="preserve">
+    <value>Eternal</value>
+  </data>
+  <data name="Text_e9c6f4ddf770" xml:space="preserve">
+    <value>Guardian portals</value>
+  </data>
   <data xml:space="preserve" name="Text_e9d7f3ec4aa7">
     <value>Select a backup to restore or delete it.</value>
   </data>
@@ -7219,6 +7390,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_ea6467743294">
     <value>Building services</value>
+  </data>
+  <data name="Text_ea6fed94b95f" xml:space="preserve">
+    <value>This checkout's Gateway cannot list the Labyrinth's layouts yet: update LocalExile, then play or start the servers once to build it.</value>
   </data>
   <data xml:space="preserve" name="Text_ea78a0d3095b">
     <value>Open selected folder</value>
