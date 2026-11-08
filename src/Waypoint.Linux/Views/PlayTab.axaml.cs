@@ -46,16 +46,35 @@ partial class PlayTab : UserControl
     public void Attach(Shared shared, ControlTab control)
     {
         _shared = shared;
+        if (!Repo.IsInstall) _ = LookForOlderAsync();
         _control = control;
         Edition.Attach(shared);
         shared.Monitor.Sampled += _ => Dispatcher.UIThread.Post(Show);
         shared.Workspace.Changed += () => Dispatcher.UIThread.Post(Show);
+        shared.Workspace.Changed += () => Dispatcher.UIThread.Post(async () => await LookForOlderAsync());
         shared.LiveRunning += _ => Dispatcher.UIThread.Post(Show);
         L.Current.PropertyChanged += (_, _) => Show();
         // LocalExile changes many times a day: Play says how far behind it is, without waiting for its daily update.
         _lookAgain.Tick += async (_, _) => await LookForChangesAsync();
         _lookAgain.Start();
         Dispatcher.UIThread.Post(async () => await LookForChangesAsync());
+        Show();
+    }
+
+    /// <summary>The client build of the older LocalExile this folder runs, while a client of that build is all the player has:
+    /// Play then says, quietly, that it won't last (<see cref="ClientUpdate.OlderNote"/>). Looked for in the background; a
+    /// client of the current build found instead is Play's to move to.</summary>
+    string? _olderBuild, _olderLookedFor;
+
+    async Task LookForOlderAsync()
+    {
+        string folder = Environment.CurrentDirectory;
+        string? need = ClientLocator.Needed(folder);
+        // Looked for again only when the folder's LocalExile changed (an update, a move to another version).
+        if (need is not null && need == _olderLookedFor) return;
+        _olderLookedFor = need;
+        _olderBuild = need is not null && ClientLocator.IsOlder(need, ClientLocator.Build)
+            && await Task.Run(() => ClientUpdate.FindClient(ClientLocator.Build, default)) is null ? need : null;
         Show();
     }
 
@@ -71,7 +90,7 @@ partial class PlayTab : UserControl
         MainButton.Content = needsSetup ? L.Text("Finish setup") : L.Text("Play");
         MainButton.IsVisible = !(busy || GameRunning || Checking);
         Working.IsVisible = busy && S.Appearance?.ReduceMotion != true;
-        string? note = _note?.Invoke();
+        string? note = _note?.Invoke() ?? (_olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;
@@ -179,6 +198,7 @@ partial class PlayTab : UserControl
         Say(() => L.Text("Looking for updates"));
         var (branch, compared, plain) = await LookAsync(at, record: true);
         if (!plain || compared is not (_, > 0)) return null;
+        if (!await ClientAllowsUpdateAsync(branch!)) return null;
 
         string? before = NewestBackup();
         if (S.AutomaticBackups)
@@ -198,6 +218,27 @@ partial class PlayTab : UserControl
         S.Save();
         CheckoutChanged?.Invoke();
         return S.LastUpdate;
+    }
+
+    /// <summary>A newer LocalExile may need another client build (<see cref="ClientUpdate.BeforeUpdate"/>): settled before the copy
+    /// moves, so that a Not now, or a player with only the older client, keeps the version that works.</summary>
+    async Task<bool> ClientAllowsUpdateAsync(string branch)
+    {
+        string folder = Environment.CurrentDirectory;
+        string? next = ClientLocator.NeededIn(await Git.FileAtSourceAsync(branch, "scripts/release/build-release.ps1"));
+        var (go, ask, staying) = await Task.Run(() => ClientUpdate.BeforeUpdate(folder, next));
+        if (ask is not null)
+        {
+            var owner = ViewTools.Owner(this);
+            go = ClientUpdate.AskMove(ask, (title, message, details, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, details, buttons), ViewTools.Open);
+            staying = ClientUpdate.Answer(ask, go);
+        }
+        if (staying is not null)
+        {
+            _shared.Logs.Write(staying, Severity.Info);
+            _note = () => staying;
+        }
+        return go;
     }
 
     string? NewestBackup() => _shared.Workspace.Latest is { } state ? BackupCatalog.Read(state.SaveDatabase).FirstOrDefault()?.Id : null;

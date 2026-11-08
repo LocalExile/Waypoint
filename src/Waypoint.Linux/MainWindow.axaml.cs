@@ -126,6 +126,8 @@ public partial class MainWindow : Window
         PlayView.CheckoutChanged += CheckoutMoved;
         PlayView.SetupRequested += Setup.OpenSetupGuide;
         InstallView.SetupRequested += Setup.OpenSetupGuide;
+        Control.ClientGuideRequested += Setup.OpenSetupGuide;
+        InstallView.OlderReleaseRequested += Setup.SetUpRelease;
         PlayView.DetailsRequested += () => ShowSection(LogsView);
         InstallView.DetailsRequested += () => ShowSection(LogsView);
         PlayView.ChangeFolderRequested += Setup.ChangeFolder;

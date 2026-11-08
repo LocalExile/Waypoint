@@ -152,6 +152,13 @@ public partial class MainWindow : Window
         PlayView.SetupRequested += Setup.OpenSetupGuide;
         PlayView.DetailsRequested += () => ShowSection(LogsView);
         InstallView.SetupRequested += Setup.OpenSetupGuide;
+        Control.ClientGuideRequested += Setup.OpenSetupGuide;
+        InstallView.OlderReleaseRequested += Setup.SetUpRelease;
+        InstallView.Updated += () =>
+        {
+            _exileRelease = null;
+            ExileUpdateBar.Visibility = Visibility.Collapsed;
+        };
         InstallView.DetailsRequested += () => ShowSection(LogsView);
         ReleasesView.CheckRequested += () => _ = CheckForUpdates(manual: true);
         PlayView.ChangeFolderRequested += Setup.ChangeFolder;
@@ -496,6 +503,13 @@ public partial class MainWindow : Window
             Dialog.Tell(this, DialogKind.Info, L.Text("Close the game first"), L.Text("LocalExile can only be updated while the game and its servers are closed. Close the game, wait for the servers to stop, then press Update now again."));
             return;
         }
+        // A release for a newer client than the only one on this PC would leave the player unable to play (ClientUpdate).
+        string clientFolder = Path.Combine(Environment.CurrentDirectory, "Client");
+        if (ClientUpdate.ClientOf(release) is { } needs && Directory.Exists(clientFolder) && ClientLocator.BuildOf(clientFolder) is { } have
+            && ClientLocator.IsOlder(have, needs) && await Task.Run(() => ClientUpdate.FindClient(needs, default)) is null
+            && Dialog.Ask(this, DialogKind.Warning, L.Text("Keep this version?"),
+                L.Text("LocalExile {0} needs the Path of Exile {1} client, and this PC has only {2}. After this update you could not play until you have a {1} client.", release.Version, needs, have),
+                L.Text("Keep this version"), L.Text("Update anyway"))) return;
         if (!Dialog.Ask(this, DialogKind.Question, L.Text("Update LocalExile to {0}?", release.Version),
                 L.Text("Waypoint downloads {0:0} MB, checks it, and puts it over this install. Your characters, keys and game client are kept, and your saves are copied first when Automatic backups is on. The next Play may extract game data again.", release.ZipBytes / 1e6),
                 L.Text("Update"))) return;

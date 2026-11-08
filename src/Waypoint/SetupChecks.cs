@@ -15,7 +15,7 @@ static class SetupChecks
 #else
             OnPath("dotnet") ? new(true, ".NET SDK") : new(false, L.Text(".NET SDK not found (dotnet)"), "https://dotnet.microsoft.com/download"),
 #endif
-            File("Client/Game.exe", L.Text("client copied into Client\\ (step 3)"), L.Text("robocopy your 3.29.3b client to Client, then copy PathOfExile.exe to Game.exe")),
+            File("Client/Game.exe", L.Text("client copied into Client\\ (step 3)"), L.Text("robocopy your 3.29.3c client to Client, then copy PathOfExile.exe to Game.exe")),
             File("Client/Content.ggpk", L.Text("standalone client layout (Content.ggpk)"), L.Text("Steam installs have no Content.ggpk")),
             File("data/login-keys.json", L.Text("login keys (step 4)"), "dotnet run --project src/GameServer.Auth -- keygen Client/Game.exe"),
             File("Client/Game.patched.exe", L.Text("patched client (step 5)"), "dotnet run --project src/GameServer.Auth -- patch Client/Game.exe Client/Game.patched.exe"),

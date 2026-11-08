@@ -114,6 +114,38 @@ static class Editions
         return true;
     }
 
+    /// <summary>The copy onto the last LocalExile made for the player's older client (<see cref="ClientUpdate.Kind.UseOlder"/>):
+    /// a branch of its own (<see cref="SwitchToSource.OlderBranch"/>) that Play never moves, the saves backed up first, nothing
+    /// done with changes of the player's own. True when it moved.</summary>
+    public static async Task<bool> MoveToOlderAsync(Shared shared, string build, Func<DialogKind, string, string, string[], int> ask)
+    {
+        if (ClientLocator.LastVersionFor(build) is not { } older) return false;
+        if (shared.IsLiveRunning || shared.Monitor.Latest.Any(s => s.Running))
+        {
+            ask(DialogKind.Info, L.Text("Stop LocalExile first"), L.Text("Press Stop playing, then try again."), [L.Text("OK")]);
+            return false;
+        }
+        if ((await Git.ChangesAsync()).Count > 0)
+        {
+            ask(DialogKind.Warning, L.Text("This copy has changes of your own"), L.Text("Waypoint leaves it as it is. Keep or remove them first."), [L.Text("OK")]);
+            return false;
+        }
+        if (shared.Settings.AutomaticBackups && !await BackedUp(shared)) return false;
+        string branch = SwitchToSource.OlderBranch(build);
+        void Log(string line) => shared.Logs.Write($"git: {line}");
+        Git.Result? moved = null;
+        await shared.RunGitAsync(async () => moved = (await Git.LocalBranchesAsync()).Contains(branch)
+            ? await Git.RunAsync(Log, "switch", branch)
+            : await Git.RunAsync(Log, "switch", "--no-track", "-c", branch, older.Commit));
+        if (moved is not { Ok: true })
+        {
+            if (moved is not null) ask(DialogKind.Error, L.Text("The copy didn't move"), moved.Output, [L.Text("OK")]);
+            return false;
+        }
+        await shared.Workspace.RefreshAsync();
+        return true;
+    }
+
     static async Task<bool> BackedUp(Shared shared) =>
         await shared.Workspace.OperateAsync("Backup", L.Text("Back up now")) is { Ok: true };
 }

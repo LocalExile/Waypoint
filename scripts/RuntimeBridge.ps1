@@ -1,4 +1,4 @@
-# Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3b / .NET 10 Debug layout.
+# Adapter v1: Windows PowerShell 5.1, upstream LocalExile 3.29.3c / .NET 10 Debug layout.
 # All operations use result files; live.ps1 never runs in a pipeline or with captured stdout.
 param(
     [Parameter(Mandatory=$true)][ValidateSet('Inspect','Start','Play','Stop','CloseGame','Restart','Build','PrepareClient','Dependencies','Register','Switch','Fetch','ReloadData','Backup','RestoreBackup','ImportSaves','DeleteBackup','BuildMod','BuildMods','EnableMod','DisableMod','ReloadMod','QueryMods','RestoreModChoices','InstallMod','SaveModSettings','UninstallMod','SaveContentSettings','SaveLeagueModules','CreateLeague','SetLeagueVisibility','QueryAccounts','ManageAccount','CheckCapture','SetupCapture','StartCapture','StopCapture','FreshSaves')][string]$Action,
@@ -689,7 +689,7 @@ function Start-FreshSaves($snapshot) {
 }
 function Get-ClientDetail {
     $client = Get-Item -LiteralPath (At 'Client') -Force -ErrorAction SilentlyContinue
-    if (-not $client -or -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return 'Standalone 3.29.3b executable at Client/Game.exe' }
+    if (-not $client -or -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return 'Standalone 3.29.3c executable at Client/Game.exe' }
     $target = @($client.Target)[0]
     if (Test-Path -LiteralPath (At 'Client/Game.exe')) { return "Linked to $target" }
     return "Client links to $target, which has no client. Run the setup guide to replace the link."
@@ -706,7 +706,7 @@ function Prepare-Client($snapshot) {
         Write-Host "Client is a link to $target and is already prepared: nothing to do."
         return
     }
-    Require (Test-Path -LiteralPath (At 'Client/Content.ggpk')) 'Copy the complete standalone 3.29.3b client into Client first.'
+    Require (Test-Path -LiteralPath (At 'Client/Content.ggpk')) 'Copy the complete standalone 3.29.3c client into Client first.'
     foreach ($relative in @('Client/Content.ggpk','Client/Game.exe','Client/PathOfExile.exe','Client/Game.patched.exe','data','data/login-keys.json')) {
         $item = Get-Item -LiteralPath (At $relative) -ErrorAction SilentlyContinue
         Require (-not $item -or -not ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) "Preparation refuses redirected files or folders: $relative"
@@ -727,7 +727,7 @@ function Prepare-Client($snapshot) {
     $auth = At 'src/GameServer.Auth/bin/Debug/net10.0/GameServer.Auth.dll'
     if (-not $keys) {
         & dotnet $auth keygen (At 'Client/Game.exe')
-        Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3b.'
+        Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3c.'
     }
     if (-not $patched) {
         & dotnet $auth patch (At 'Client/Game.exe') (At 'Client/Game.patched.exe')

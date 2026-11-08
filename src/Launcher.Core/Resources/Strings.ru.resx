@@ -42,6 +42,9 @@
   <data xml:space="preserve" name="Text_01134b9287ff">
     <value>Не удалось прочитать резервные копии: </value>
   </data>
+  <data name="Text_011cc4bbe97f" xml:space="preserve">
+    <value>LocalExile перешёл на клиент Path of Exile {0}, и он есть у вас в {1}. В этой папке всё ещё LocalExile для {2}: обновите его, чтобы играть на {0}. Сохранения, аккаунты и ключи входа останутся.</value>
+  </data>
   <data name="Text_0126dc853a0e" xml:space="preserve">
     <value>клиент: {0}</value>
   </data>
@@ -165,6 +168,9 @@
   <data xml:space="preserve" name="Text_0480c77bde68">
     <value>Адаптер запуска</value>
   </data>
+  <data name="Text_048fe1d24504" xml:space="preserve">
+    <value>Это не сборка 3.29.3c, нужная LocalExile, поэтому подготовка, скорее всего, не удастся. Можно попробовать, но сначала проверьте версию: копия большая.</value>
+  </data>
   <data xml:space="preserve" name="Text_0516ac3163b5">
     <value>Какие цвета изменять</value>
   </data>
@@ -185,6 +191,9 @@
   </data>
   <data name="Text_058d82af4063" xml:space="preserve">
     <value>Сохранить выбор мода</value>
+  </data>
+  <data name="Text_059f1bfcd1b8" xml:space="preserve">
+    <value>Windows · отдельный клиент PoE 3.29.3c · .NET 10 · сборки Debug · стандартные порты localhost. Игра всегда запускается через live.ps1. Службы останавливаются через Ctrl+C; Waypoint не завершает сервер или игру принудительно.</value>
   </data>
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Фокус клавиатуры</value>
@@ -290,6 +299,9 @@
   </data>
   <data name="Text_09b5f4350f6d" xml:space="preserve">
     <value>Применяется в следующей области.</value>
+  </data>
+  <data name="Text_09cdf9d2503f" xml:space="preserve">
+    <value>Используйте подготовленный репозиторий или подготовьте отдельную копию клиента в выбранной папке. Поддерживается отдельный клиент PoE 3.29.3c.</value>
   </data>
   <data name="Text_09df5fb37bf0" xml:space="preserve">
     <value>Аккаунты загружены. Обновите список, чтобы проверить изменения.</value>
@@ -443,6 +455,9 @@
   </data>
   <data name="Text_0dc3484d5ab2" xml:space="preserve">
     <value>Аккаунтов пока нет: зарегистрируйте первый ниже.</value>
+  </data>
+  <data name="Text_0dcb80676a91" xml:space="preserve">
+    <value>Использовать версию для {0}</value>
   </data>
   <data name="Text_0dcc8c70ea9d" xml:space="preserve">
     <value>Качество {0}</value>
@@ -780,6 +795,9 @@
   <data name="Text_17b78022cd38" xml:space="preserve">
     <value>Описание настроек успешно загружено и не содержит редактируемых параметров.</value>
   </data>
+  <data name="Text_17bdebfa7973" xml:space="preserve">
+    <value>Текущий клиент {0} (ссылка: заменяется только ссылка):</value>
+  </data>
   <data name="Text_17cebc83e8bd" xml:space="preserve">
     <value>Серверы не остановились</value>
   </data>
@@ -849,6 +867,9 @@
   <data xml:space="preserve" name="Text_1a4f630ac1b6">
     <value>Остановлен</value>
   </data>
+  <data name="Text_1a505b9f71ee" xml:space="preserve">
+    <value>«Не сейчас»: ничего не меняется, но эта папка пока не запустится.</value>
+  </data>
   <data name="Text_1a56ffc0af65" xml:space="preserve">
     <value>Серверы работают</value>
   </data>
@@ -867,6 +888,9 @@
   <data name="Text_1aee4597ab3b" xml:space="preserve">
     <value>Создать аккаунт…</value>
   </data>
+  <data name="Text_1b071ef8f91d" xml:space="preserve">
+    <value>Waypoint не скачивает игру. Нужна ваша собственная автономная копия Path of Exile 3.29.3c.</value>
+  </data>
   <data name="Text_1b12c338d9d5" xml:space="preserve">
     <value>Метки предметов</value>
   </data>
@@ -878,6 +902,10 @@
   </data>
   <data name="Text_1b28bb60c464" xml:space="preserve">
     <value>Удаляет локальные ветки pr/&lt;n&gt; закрытых запросов на слияние (кроме текущей)</value>
+  </data>
+  <data name="Text_1b388120b03f" xml:space="preserve">
+    <value>Не удалось удалить старый клиент: {0}
+Закройте игру и всё, что использует эту папку, затем повторите.</value>
   </data>
   <data name="Text_1b39c7a894cf" xml:space="preserve">
     <value>Вы сможете вернуться к текущей в любой момент. У каждой свои персонажи и прогресс.</value>
@@ -1384,6 +1412,9 @@
   <data name="Text_293d8864e78d" xml:space="preserve">
     <value>Инструменты для самой игры. Каждый открывается в своём окне и работает с персонажем в игре через мост управления клиентом (Python с Frida).</value>
   </data>
+  <data name="Text_294f085ed9d0" xml:space="preserve">
+    <value>Эта копия остаётся на LocalExile для {0}: новейшему нужен клиент {1}.</value>
+  </data>
   <data name="Text_2951c4e2bb30" xml:space="preserve">
     <value>Остановка: шаг, записывающий клиент или ключи, сначала завершится.</value>
   </data>
@@ -1447,6 +1478,9 @@
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Восстановить выбор модов</value>
   </data>
+  <data name="Text_2ae155180cc7" xml:space="preserve">
+    <value>Обновите эту копию до новейшего LocalExile: в разделе «Версии» в расширенном режиме или кнопкой «Получать последние изменения» на странице «Играть» в простом режиме.</value>
+  </data>
   <data name="Text_2ae8aced0bae" xml:space="preserve">
     <value>Ориентиры</value>
   </data>
@@ -1476,6 +1510,9 @@
   </data>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>Сохранить настройки мода</value>
+  </data>
+  <data name="Text_2bc430e7e225" xml:space="preserve">
+    <value>Старый клиент {0} удалён. Сохранения, аккаунты и ключи входа остались.</value>
   </data>
   <data name="Text_2bcd48474ec9" xml:space="preserve">
     <value>Извлечь игровые данные</value>
@@ -1542,9 +1579,6 @@
   </data>
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>Извлечение данных игры</value>
-  </data>
-  <data name="Text_2e19a6844469" xml:space="preserve">
-    <value>Waypoint не скачивает игру. Нужна ваша собственная автономная копия Path of Exile 3.29.3b.</value>
   </data>
   <data name="Text_2e24eb8ac337" xml:space="preserve">
     <value>Ближний бой</value>
@@ -1624,6 +1658,9 @@
   <data name="Text_2fd09340d317" xml:space="preserve">
     <value>Переключить для всех копий?</value>
   </data>
+  <data name="Text_2fe123735877" xml:space="preserve">
+    <value>Исполняемый файл отдельного клиента 3.29.3c: Client/Game.exe</value>
+  </data>
   <data name="Text_2fe83d132e3d" xml:space="preserve">
     <value>Мод</value>
   </data>
@@ -1641,6 +1678,9 @@
   </data>
   <data name="Text_3016539813b7" xml:space="preserve">
     <value>Лагерь</value>
+  </data>
+  <data name="Text_301fc5574d06" xml:space="preserve">
+    <value>Переводим вас на ваш клиент Path of Exile {0} в {1}.</value>
   </data>
   <data name="Text_302110ba3e90" xml:space="preserve">
     <value>Искать новый выпуск Waypoint на GitHub</value>
@@ -1739,11 +1779,17 @@
   <data name="Text_3374c9e93f22" xml:space="preserve">
     <value>Остановиться можно в любой момент: готовое останется готовым.</value>
   </data>
+  <data name="Text_337fc4c61628" xml:space="preserve">
+    <value>Сохранения, аккаунты и ключи входа сохранятся. Чтобы сначала сделать резервную копию, откройте папку ниже.</value>
+  </data>
   <data name="Text_338c29e24170" xml:space="preserve">
     <value>В релизе нет исходного кода для сборки, поэтому здесь его использовать нельзя. Скачайте LocalExile в новую или пустую папку. Ваш релиз останется без изменений.</value>
   </data>
   <data name="Text_338e02304930" xml:space="preserve">
     <value>Сид {0} заменён на {1}.</value>
+  </data>
+  <data name="Text_33a4a7386c6d" xml:space="preserve">
+    <value>Открыть клиент {0}</value>
   </data>
   <data name="Text_33a58116eb34" xml:space="preserve">
     <value>Только в этом репозитории: на origin её нет (не отправлена)</value>
@@ -1925,9 +1971,6 @@
   <data name="Text_3a0f7b919840" xml:space="preserve">
     <value>Изменение данных аккаунта</value>
   </data>
-  <data name="Text_3a1a91189489" xml:space="preserve">
-    <value>Укажите папку с PathOfExile.exe и Content.ggpk. Это должна быть автономная установка 3.29.3b: версии Steam и Epic не подходят, а скачать игру Waypoint не может.</value>
-  </data>
   <data xml:space="preserve" name="Text_3a361f5a0e7f">
     <value>Рабочая папка требует внимания</value>
   </data>
@@ -2096,6 +2139,9 @@
   </data>
   <data name="Text_3e55c7d756db" xml:space="preserve">
     <value>в моде больше {0} файлов или больше 64 МБ; ничего не установлено</value>
+  </data>
+  <data name="Text_3e8cf9c948a6" xml:space="preserve">
+    <value>Ничего не изменилось. Нажмите «Играть», чтобы попробовать снова.</value>
   </data>
   <data xml:space="preserve" name="Text_3e9648b06bc7">
     <value>Используется только эта установка. Waypoint не сохраняет данные для входа.</value>
@@ -2382,6 +2428,9 @@
   <data name="Text_48713a5c63fb" xml:space="preserve">
     <value>Закончить игру</value>
   </data>
+  <data name="Text_48b405c7169c" xml:space="preserve">
+    <value>Waypoint может переключить эту копию на последний LocalExile для {0}. Ваш клиент останется как есть.</value>
+  </data>
   <data name="Text_48bdb0aef4f8" xml:space="preserve">
     <value>Это собственные сохранения этого LocalExile.</value>
   </data>
@@ -2400,6 +2449,9 @@
   <data xml:space="preserve" name="Text_491291cca723">
     <value>Перезагрузить выбранный</value>
   </data>
+  <data name="Text_491726921aad" xml:space="preserve">
+    <value>Это клиент {0}, а этому LocalExile нужен {1}. Выберите клиент {1}: обновите копию этого клиента официальным лаунчером Path of Exile или скачайте его.</value>
+  </data>
   <data name="Text_4938abfad1ef" xml:space="preserve">
     <value>Оставить персонажей «Новейшей»</value>
   </data>
@@ -2411,6 +2463,9 @@
   </data>
   <data name="Text_494d2555d158" xml:space="preserve">
     <value>Waypoint не удалось вернуться к этой версии.</value>
+  </data>
+  <data name="Text_4985a64efe69" xml:space="preserve">
+    <value>Обновить LocalExile</value>
   </data>
   <data name="Text_4987ea348964" xml:space="preserve">
     <value>Выполняется {0}; в списках то, что репозиторий уже знал.</value>
@@ -2529,6 +2584,9 @@
   <data name="Text_4cefcb025be3" xml:space="preserve">
     <value>LocalExile обновлён. Нажмите «Играть», чтобы запустить его.</value>
   </data>
+  <data name="Text_4cf1bf896411" xml:space="preserve">
+    <value>После выхода 3.30 версии для {0} больше не будут предлагаться.</value>
+  </data>
   <data name="Text_4d0e0d0e73a3" xml:space="preserve">
     <value>Зависимости: {0}</value>
   </data>
@@ -2619,6 +2677,9 @@
   <data name="Text_4f3a9bd00397" xml:space="preserve">
     <value>Класс</value>
   </data>
+  <data name="Text_4f3fb57f471f" xml:space="preserve">
+    <value>Обновление LocalExile</value>
+  </data>
   <data xml:space="preserve" name="Text_4f4bcbb48773">
     <value>ТЕКУЩИЕ ИСХОДНИКИ</value>
   </data>
@@ -2666,6 +2727,9 @@
   </data>
   <data name="Text_515509f0e334" xml:space="preserve">
     <value>{0:0} МБ</value>
+  </data>
+  <data name="Text_515ed25002b7" xml:space="preserve">
+    <value>Перейти на Path of Exile {0}?</value>
   </data>
   <data name="Text_5174093cf95b" xml:space="preserve">
     <value>Оставить старую версию: она не будет обновляться.</value>
@@ -3051,6 +3115,9 @@
     <value>
 Достигнут лимит поиска; другие репозитории могут остаться ненайденными. Вы можете выбрать любую папку вручную.</value>
   </data>
+  <data name="Text_5f3f9390f047" xml:space="preserve">
+    <value>Оставить эту версию</value>
+  </data>
   <data name="Text_5f42784698ae" xml:space="preserve">
     <value>LocalExile от 1 ноября, с которым точно работает конструктор предметов. Последние изменения можно получить позже в разделе «Играть».</value>
   </data>
@@ -3104,6 +3171,9 @@
   </data>
   <data name="Text_60941b3ce6ff" xml:space="preserve">
     <value>Старый LocalExile удалён, а клиент игры перемещён сюда. Старые сохранения остались в {0}.</value>
+  </data>
+  <data name="Text_60ac7167f87b" xml:space="preserve">
+    <value>Этот LocalExile работает только с клиентом Path of Exile {0}, а клиент в этой папке — {1}. LocalExile нужно обновить до версии с поддержкой {1}. Сохранения, аккаунты и ключи входа останутся.</value>
   </data>
   <data xml:space="preserve" name="Text_60acc53f13a5">
     <value>Тёмная</value>
@@ -3287,6 +3357,9 @@
   <data name="Text_65cbeb090b74" xml:space="preserve">
     <value>Исходная лига</value>
   </data>
+  <data name="Text_661ced1ed9f6" xml:space="preserve">
+    <value>Ссылка на ваш старый клиент {0} удалена; сама папка осталась как есть.</value>
+  </data>
   <data name="Text_663d6ece3e67" xml:space="preserve">
     <value>Установленных модов: {0} из {1}</value>
   </data>
@@ -3340,6 +3413,9 @@
   </data>
   <data name="Text_676796f86246" xml:space="preserve">
     <value>Недостаточно места: клиенту нужно ещё {0:0.#} ГБ на этом диске, а свободно {1:0.#} ГБ.</value>
+  </data>
+  <data name="Text_6795da662608" xml:space="preserve">
+    <value>Вернуть ваши настройки игры</value>
   </data>
   <data name="Text_67b6858a9f80" xml:space="preserve">
     <value>Python {0} есть в PATH ({1}).</value>
@@ -3497,6 +3573,9 @@
   <data name="Text_6d7beeefb57a" xml:space="preserve">
     <value>Создать профиль</value>
   </data>
+  <data name="Text_6da4f4d72938" xml:space="preserve">
+    <value>Не запущено: игровой клиент не подходит к этому LocalExile.</value>
+  </data>
   <data name="Text_6dafb2da0b4c" xml:space="preserve">
     <value>★ Закрепить</value>
   </data>
@@ -3517,9 +3596,6 @@
   </data>
   <data xml:space="preserve" name="Text_6e169a16bf03">
     <value>Изменения видны здесь и в рабочем окне. «Применить» сохраняет их, «Отмена» возвращает прежнее оформление.</value>
-  </data>
-  <data name="Text_6e1b46333871" xml:space="preserve">
-    <value>Это не сборка 3.29.3b, нужная LocalExile, поэтому подготовка, скорее всего, не удастся. Можно попробовать, но сначала проверьте версию: копия большая.</value>
   </data>
   <data xml:space="preserve" name="Text_6e1cc2d63cee">
     <value>Среда проверена · </value>
@@ -3794,6 +3870,9 @@
   <data name="Text_76e684d8787d" xml:space="preserve">
     <value>Начать настройку</value>
   </data>
+  <data name="Text_76eb7f69d808" xml:space="preserve">
+    <value>На этом ПК найден Path of Exile {0}. Waypoint обновит LocalExile, а затем скопирует его поверх вашего текущего клиента.</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>Команды проходят через игровой клиент (scripts/dev/client_control.py): сначала запустите игру и войдите в область.</value>
   </data>
@@ -3805,6 +3884,9 @@
   </data>
   <data name="Text_7743ce348d92" xml:space="preserve">
     <value>черновик</value>
+  </data>
+  <data name="Text_775530099b57" xml:space="preserve">
+    <value>LocalExile теперь работает с Path of Exile {0}. Когда сможете, переходите на него: версии для {1} перестанут предлагаться после выхода 3.30.</value>
   </data>
   <data name="Text_777a88e600e2" xml:space="preserve">
     <value>Запрошенная сборка</value>
@@ -3932,6 +4014,9 @@
   <data name="Text_7b1b95097ad5" xml:space="preserve">
     <value>extract-data.ps1 -List: какие извлечённые файлы отсутствуют или устарели</value>
   </data>
+  <data name="Text_7b1d477c3d5b" xml:space="preserve">
+    <value>Использовать версию для вашего клиента?</value>
+  </data>
   <data name="Text_7b33ac5a1812" xml:space="preserve">
     <value>у выпуска {0} нет SHA-256 для {1}; ничего не установлено</value>
   </data>
@@ -3946,6 +4031,9 @@
   </data>
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>База</value>
+  </data>
+  <data name="Text_7bacc99e13ee" xml:space="preserve">
+    <value>Найден только клиент {0}, поэтому эта копия перейдёт на последний LocalExile для него.</value>
   </data>
   <data name="Text_7bf6ecedbcdb" xml:space="preserve">
     <value>Карта лабиринта</value>
@@ -4226,6 +4314,9 @@
   <data name="Text_8550dd056667" xml:space="preserve">
     <value>Выпуска для Linux пока нет, поэтому LocalExile будет установлен из исходного кода.</value>
   </data>
+  <data name="Text_8590a0fa1259" xml:space="preserve">
+    <value>Найден клиент {0} (только чтение):</value>
+  </data>
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>Удалить сохранённый предмет</value>
   </data>
@@ -4246,6 +4337,9 @@
   </data>
   <data name="Text_86cf366a184e" xml:space="preserve">
     <value>Удалить копию</value>
+  </data>
+  <data name="Text_86d42618a090" xml:space="preserve">
+    <value>Или вернитесь назад и выберите новую пустую папку: тогда Waypoint установит LocalExile {0}, сделанный для {1}.</value>
   </data>
   <data name="Text_8703b1f43ea7" xml:space="preserve">
     <value>нет локальных изменений</value>
@@ -4732,6 +4826,9 @@
   <data xml:space="preserve" name="Text_964cf7280ca9">
     <value>Дополнительные имена для скрытия через запятую</value>
   </data>
+  <data name="Text_9657fa1701fe" xml:space="preserve">
+    <value>Найден только клиент {0}, поэтому Waypoint установит {1} — последний LocalExile для него.</value>
+  </data>
   <data name="Text_96696ebb5f8d" xml:space="preserve">
     <value>Что копировать</value>
   </data>
@@ -4919,6 +5016,9 @@
   <data name="Text_9afaaba23e27" xml:space="preserve">
     <value>Учётная запись создана.</value>
   </data>
+  <data name="Text_9b091b44d79b" xml:space="preserve">
+    <value>Теперь в этой копии LocalExile для {0}. Нажмите «Играть».</value>
+  </data>
   <data name="Text_9b1120c28631" xml:space="preserve">
     <value>Папка журналов</value>
   </data>
@@ -4996,6 +5096,9 @@
   </data>
   <data name="Text_9d312d6843db" xml:space="preserve">
     <value>Не определено для этого режима</value>
+  </data>
+  <data name="Text_9d3718c2d85f" xml:space="preserve">
+    <value>Текущий клиент {0} (заменяется):</value>
   </data>
   <data xml:space="preserve" name="Text_9d39a3628a49">
     <value>Повторить операцию</value>
@@ -5138,9 +5241,6 @@
   <data xml:space="preserve" name="Text_a101713cac16">
     <value>Скачать Python</value>
   </data>
-  <data xml:space="preserve" name="Text_a129818ff2ac">
-    <value>Windows · отдельный клиент PoE 3.29.3b · .NET 10 · сборки Debug · стандартные порты localhost. Игра всегда запускается через live.ps1. Службы останавливаются через Ctrl+C; Waypoint не завершает сервер или игру принудительно.</value>
-  </data>
   <data name="Text_a14bac75fafd" xml:space="preserve">
     <value>Диалог</value>
   </data>
@@ -5149,6 +5249,9 @@
   </data>
   <data xml:space="preserve" name="Text_a1ac9a887b35">
     <value>Проверка принадлежности каждого необходимого прослушиваемого порта.</value>
+  </data>
+  <data name="Text_a20471ca67eb" xml:space="preserve">
+    <value>LocalExile {0} нужен клиент Path of Exile {1}, а на этом ПК есть только {2}. После этого обновления играть не получится, пока у вас не будет клиента {1}.</value>
   </data>
   <data name="Text_a25890814951" xml:space="preserve">
     <value>Остановить службы перед выходом</value>
@@ -5204,8 +5307,8 @@
   <data name="Text_a3dc8f59f7b2" xml:space="preserve">
     <value>Папка Client должна быть отдельной копией внутри этой установки, а не ссылкой на другую папку.</value>
   </data>
-  <data xml:space="preserve" name="Text_a3f721e4f70e">
-    <value>Исполняемый файл отдельного клиента 3.29.3b: Client/Game.exe</value>
+  <data name="Text_a3e55e6e2d1c" xml:space="preserve">
+    <value>На этом ПК найден Path of Exile {0}. Waypoint может скопировать его поверх вашего текущего клиента.</value>
   </data>
   <data name="Text_a3ffee699add" xml:space="preserve">
     <value>Поиск игрового клиента на этом ПК…</value>
@@ -5332,6 +5435,9 @@
   </data>
   <data name="Text_a67ecaab2e09" xml:space="preserve">
     <value>Службы остановлены. Выход из Waypoint.</value>
+  </data>
+  <data name="Text_a6927c2b27f1" xml:space="preserve">
+    <value>Оставить эту версию?</value>
   </data>
   <data name="Text_a6b4705c6883" xml:space="preserve">
     <value>Изменить…</value>
@@ -5681,6 +5787,9 @@
   <data name="Text_b269dc4e81a5" xml:space="preserve">
     <value>Команды</value>
   </data>
+  <data name="Text_b26a1f6c97cb" xml:space="preserve">
+    <value>Этому LocalExile нужен Path of Exile {0}, но найден только клиент {1}.</value>
+  </data>
   <data name="Text_b26fa9e01921" xml:space="preserve">
     <value>Оставить службы LocalExile работать</value>
   </data>
@@ -5726,9 +5835,6 @@
   <data name="Text_b3919f6581ff" xml:space="preserve">
     <value>Служебные метки</value>
   </data>
-  <data name="Text_b39bfca7ddf5" xml:space="preserve">
-    <value>скопируйте клиент 3.29.3b в Client через robocopy, затем скопируйте PathOfExile.exe в Game.exe</value>
-  </data>
   <data xml:space="preserve" name="Text_b3a0f9e4aea4">
     <value>Локальная ветка</value>
   </data>
@@ -5740,6 +5846,9 @@
   </data>
   <data name="Text_b3f952e8b678" xml:space="preserve">
     <value>Кольцо</value>
+  </data>
+  <data name="Text_b43c089ad433" xml:space="preserve">
+    <value>LocalExile {0} не найден среди выпусков.</value>
   </data>
   <data name="Text_b45a804aa67c" xml:space="preserve">
     <value>Не запускайте игру и службы LocalExile до завершения изменения.</value>
@@ -5779,6 +5888,9 @@
   </data>
   <data name="Text_b5c120b316c2" xml:space="preserve">
     <value>Сохранённые</value>
+  </data>
+  <data name="Text_b607b1bd57e8" xml:space="preserve">
+    <value>скопируйте клиент 3.29.3c в Client через robocopy, затем скопируйте PathOfExile.exe в Game.exe</value>
   </data>
   <data name="Text_b61789ae5217" xml:space="preserve">
     <value>Оставьте хотя бы одну доступную для игры карточку лиги при создании персонажей.</value>
@@ -5920,6 +6032,9 @@
   </data>
   <data name="Text_ba3ceaa2d395" xml:space="preserve">
     <value>Устанавливайте, обновляйте и настраивайте модификации.</value>
+  </data>
+  <data name="Text_ba441484ed1c" xml:space="preserve">
+    <value>Обновить LocalExile?</value>
   </data>
   <data name="Text_ba4e38e456ba" xml:space="preserve">
     <value>Использовать локальный профиль запуска репозитория, если он есть</value>
@@ -6297,9 +6412,6 @@
   <data name="Text_c726cb5de813" xml:space="preserve">
     <value>Запись планировок</value>
   </data>
-  <data xml:space="preserve" name="Text_c7353185b802">
-    <value>Используйте подготовленный репозиторий или подготовьте отдельную копию клиента в выбранной папке. Поддерживается отдельный клиент PoE 3.29.3b.</value>
-  </data>
   <data xml:space="preserve" name="Text_c74950bf4f08">
     <value>Процесс и прослушиваемые порты проверены</value>
   </data>
@@ -6312,11 +6424,8 @@
   <data xml:space="preserve" name="Text_c7a882f64135">
     <value>Не удалось загрузить варианты исходников: </value>
   </data>
-  <data name="Text_c7b81e4f8801" xml:space="preserve">
-    <value>Выберите папку Path of Exile (с файлом Content.ggpk)</value>
-  </data>
-  <data xml:space="preserve" name="Text_c7bc8ebf53fa">
-    <value>Скопируйте полную установку отдельного клиента PoE 3.29.3b в:
+  <data name="Text_c7b0c42e9e6d" xml:space="preserve">
+    <value>Скопируйте полную установку отдельного клиента PoE 3.29.3c в:
 {0}
 
 1. В Проводнике откройте папку поддерживаемого клиента с Content.ggpk и PathOfExile.exe (или Game.exe).
@@ -6325,6 +6434,9 @@
 4. Дождитесь завершения копирования. Вернитесь на страницу подготовки и нажмите «Подготовить клиент».
 
 Установка Steam и более новый официальный клиент не поддерживаются. Waypoint не скачивает игру.</value>
+  </data>
+  <data name="Text_c7b81e4f8801" xml:space="preserve">
+    <value>Выберите папку Path of Exile (с файлом Content.ggpk)</value>
   </data>
   <data name="Text_c7c78e5406ce" xml:space="preserve">
     <value>Использовать отдельные настройки игры…</value>
@@ -6361,6 +6473,9 @@
   </data>
   <data name="Text_c88f2330c818" xml:space="preserve">
     <value>Закрыть Waypoint или оставить работать?</value>
+  </data>
+  <data name="Text_c893fec1a12d" xml:space="preserve">
+    <value>Заменить игровой клиент?</value>
   </data>
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway запустил новый процесс в том же сеансе отслеживания. Войдите повторно, если игра вернулась на экран входа.</value>
@@ -6406,6 +6521,9 @@
   </data>
   <data name="Text_c9e0f4911e18" xml:space="preserve">
     <value>p95, мс</value>
+  </data>
+  <data name="Text_c9efab217fdd" xml:space="preserve">
+    <value>Не удалось скачать {0} с GitHub; попробуйте позже.</value>
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
@@ -6598,6 +6716,9 @@
   <data xml:space="preserve" name="Text_d10cdbf98c85">
     <value>ВЫБРАННЫЕ ИСХОДНИКИ</value>
   </data>
+  <data name="Text_d12bce4a1886" xml:space="preserve">
+    <value>Укажите папку с PathOfExile.exe и Content.ggpk. Это должна быть автономная установка 3.29.3c: версии Steam и Epic не подходят, а скачать игру Waypoint не может.</value>
+  </data>
   <data name="Text_d1373700538f" xml:space="preserve">
     <value>Ошибка: {0} завершился с кодом {1}; см. вывод и раздел «Журналы».</value>
   </data>
@@ -6768,6 +6889,9 @@
   </data>
   <data name="Text_d6d6be81ee89" xml:space="preserve">
     <value>{0}: обновлено. «Перезапустить серверы» (или «Играть») соберёт новую версию.</value>
+  </data>
+  <data name="Text_d6ee7457df7a" xml:space="preserve">
+    <value>Игровой клиент в этой папке LocalExile — {0}, а её LocalExile нужен {1}. «Играть» предложит, что с этим сделать.</value>
   </data>
   <data name="Text_d7001bf5b45e" xml:space="preserve">
     <value>куча GC</value>
@@ -7006,6 +7130,9 @@
   <data xml:space="preserve" name="Text_dec1638d773b">
     <value>Возврат: Escape отменяет предпросмотр. Ctrl+R сбрасывает параметры в этом окне. В рабочем окне Ctrl+Alt+R возвращает стандартное оформление, не меняя репозиторий и сохранения.</value>
   </data>
+  <data name="Text_decaad6d7ea4" xml:space="preserve">
+    <value>Waypoint может установить LocalExile {0}, последнюю версию для {1}, в новую папку. Эта папка останется как есть.</value>
+  </data>
   <data name="Text_deeb8da20758" xml:space="preserve">
     <value>репозиторий сервера поддерживает Waypoint</value>
   </data>
@@ -7223,11 +7350,11 @@
   <data name="Text_e54674967f90" xml:space="preserve">
     <value>Новая копия находится в {0}. Нажмите «Играть» в Waypoint, чтобы запустить её.</value>
   </data>
-  <data name="Text_e577f85f0ebe" xml:space="preserve">
-    <value>не сборка 3.29.3b</value>
-  </data>
   <data name="Text_e5997acfabd7" xml:space="preserve">
     <value>Игра запущена: Waypoint ждёт здесь и вернётся, когда игра закроется.</value>
+  </data>
+  <data name="Text_e5b298cafb17" xml:space="preserve">
+    <value>«Не сейчас»: ничего не меняется, и в этот раз вы играете на {0}.</value>
   </data>
   <data name="Text_e5d5f6f3c0d8" xml:space="preserve">
     <value>Запущенная сборка</value>
@@ -7240,6 +7367,9 @@
   </data>
   <data xml:space="preserve" name="Text_e62daa01ba01">
     <value>Выберите и проверьте рабочую папку, чтобы увидеть её копии.</value>
+  </data>
+  <data name="Text_e638157dcf26" xml:space="preserve">
+    <value>Перейти на версию для {0}</value>
   </data>
   <data name="Text_e64333c8348f" xml:space="preserve">
     <value>Видимому варианту режима нужна родительская карточка.</value>
@@ -7276,6 +7406,9 @@
   </data>
   <data name="Text_e74cca36ea73" xml:space="preserve">
     <value>МБ, МБ/с</value>
+  </data>
+  <data name="Text_e74d585d04f2" xml:space="preserve">
+    <value>Старый игровой клиент удалён. Новый добавит мастер настройки.</value>
   </data>
   <data name="Text_e75ba15efa68" xml:space="preserve">
     <value>Waypoint переносит свои файлы, только когда ничего не запущено. Нажмите «Закончить игру», затем попробуйте снова.</value>
@@ -7758,6 +7891,9 @@
   <data name="Text_f549a65bb648" xml:space="preserve">
     <value>Выбранная лига: {0} · {1}</value>
   </data>
+  <data name="Text_f5520488718f" xml:space="preserve">
+    <value>Замена игрового клиента</value>
+  </data>
   <data name="Text_f55c33b0abbd" xml:space="preserve">
     <value>Флаги лиг и режимы, определённые для создания персонажа.</value>
   </data>
@@ -7784,6 +7920,9 @@
   </data>
   <data xml:space="preserve" name="Text_f6388410aa5a">
     <value> · файлы не проверены</value>
+  </data>
+  <data name="Text_f647fb4d1ce7" xml:space="preserve">
+    <value>Это клиент {0}, а этот LocalExile работает только с {1}. Сначала обновите LocalExile или выберите клиент {1}.</value>
   </data>
   <data xml:space="preserve" name="Text_f64a45cd7d47">
     <value>Выберите способ подготовки</value>
@@ -7902,6 +8041,9 @@
   <data xml:space="preserve" name="Text_f9d2f04d4584">
     <value>Запуск, сборка или перезапуск; проверьте вывод Gateway на ошибки</value>
   </data>
+  <data name="Text_f9ebd5052336" xml:space="preserve">
+    <value>не сборка 3.29.3c</value>
+  </data>
   <data xml:space="preserve" name="Text_fa15a5c1d610">
     <value>Бирюза</value>
   </data>
@@ -7974,6 +8116,9 @@
   <data xml:space="preserve" name="Text_fb42d9b4075f">
     <value>HEAD LocalExile недоступен.</value>
   </data>
+  <data name="Text_fb5829adf0ff" xml:space="preserve">
+    <value>Открыть текущий клиент</value>
+  </data>
   <data xml:space="preserve" name="Text_fb5b3abf52be">
     <value>Обновляется только скопированный архив клиента.</value>
   </data>
@@ -8018,6 +8163,9 @@
   </data>
   <data name="Text_fd249743c184" xml:space="preserve">
     <value>Новых изменений в LocalExile с вашей версии: {0}.</value>
+  </data>
+  <data name="Text_fd2d4d612ab3" xml:space="preserve">
+    <value>Текущий клиент {0} (заменяется, {1:0.#} ГБ):</value>
   </data>
   <data name="Text_fd4d54ace369" xml:space="preserve">
     <value>Уровень предмета: {0}</value>

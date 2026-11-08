@@ -59,6 +59,8 @@ public static class LocalExileReleases
     public static string AssetSuffix => OperatingSystem.IsWindows() ? "-win-x64.zip" : "-linux-x64.zip";
     public const string ManifestName = "release.json";
     public const string LatestUrl = "https://api.github.com/repos/LocalExile/LocalExile/releases/latest";
+    /// <summary>The newest release's page, for a player to download it by hand.</summary>
+    public const string ReleasesPage = "https://github.com/LocalExile/LocalExile/releases/latest";
     public const string ListUrl = "https://api.github.com/repos/LocalExile/LocalExile/releases?per_page=30";
     /// <summary>Beside the install's files while a download is checked and extracted; never left behind.</summary>
     const string StagingName = ".waypoint-update";
@@ -121,6 +123,15 @@ public static class LocalExileReleases
             zip.ValueKind == JsonValueKind.Object && zip.TryGetProperty("size", out var size) && size.TryGetInt64(out long bytes) ? bytes : 0,
             root.TryGetProperty("body", out var body) ? body.GetString() ?? "" : "",
             root.TryGetProperty("published_at", out var published) && published.TryGetDateTimeOffset(out var at) ? at : null);
+    }
+
+    /// <summary>One release by its tag (v0.1.0-beta); null when there is none.</summary>
+    public static async Task<LocalExileRelease?> ByTagAsync(HttpClient client, string tag, CancellationToken stop = default)
+    {
+        using var response = await client.GetAsync($"https://api.github.com/repos/LocalExile/LocalExile/releases/tags/{Uri.EscapeDataString(tag)}", stop);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
+        response.EnsureSuccessStatusCode();
+        return ParseRelease(await response.Content.ReadAsStringAsync(stop));
     }
 
     /// <summary>The latest published release; null when there is none.</summary>
@@ -194,7 +205,7 @@ public static class LocalExileReleases
     public static async Task InstallAsync(HttpClient client, LocalExileRelease release, string folder, Action<long, long> progress, Action extracting, CancellationToken stop)
     {
         if (release.ZipUrl is null || release.HashUrl is null) throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, "LocalExile-*" + AssetSuffix));
-        string expected = HashOf(await client.GetStringAsync(release.HashUrl, stop)) ?? throw new InvalidOperationException(L.Text("the release's .sha256 holds no SHA-256"));
+        string expected = HashOf(await GitHubDownload.GetStringAsync(client, release.HashUrl, stop)) ?? throw new InvalidOperationException(L.Text("the release's .sha256 holds no SHA-256"));
         Directory.CreateDirectory(folder);
         string staging = Path.Combine(folder, StagingName);
         DeleteStaging(staging);
@@ -202,7 +213,7 @@ public static class LocalExileReleases
         try
         {
             string zip = Path.Combine(staging, "release.zip");
-            using (var response = await client.GetAsync(release.ZipUrl, HttpCompletionOption.ResponseHeadersRead, stop))
+            using (var response = await GitHubDownload.GetAsync(client, release.ZipUrl, stop))
             {
                 response.EnsureSuccessStatusCode();
                 long total = response.Content.Headers.ContentLength ?? release.ZipBytes;

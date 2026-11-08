@@ -61,7 +61,7 @@ static class SetupChecks
         check(ClientLocator.Classify(standalone) == ClientKind.Standalone && ClientLocator.Classify(ready) == ClientKind.Ready, "a standalone client and a prepared one are told apart");
         check(ClientLocator.Classify(steam) == ClientKind.Unsupported && ClientLocator.Describe(steam) is { Usable: false }, "a Steam layout is found, and reported as unusable");
         check(ClientLocator.Classify(empty) is null && ClientLocator.Describe(empty) is null, "a folder without a client is not one");
-        check(ClientLocator.IsKnownBuild(standalone) == false && ClientLocator.IsKnownBuild(empty) is null, "an executable of another size is not the 3.29.3b build");
+        check(ClientLocator.IsKnownBuild(standalone) == false && ClientLocator.IsKnownBuild(empty) is null, "an executable of another size is not the build LocalExile needs");
     }
 
     static async Task CopyAsync(string root, Action<bool, string> check)

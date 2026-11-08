@@ -16,7 +16,8 @@ unchanged. It does not download Path of Exile, bundle LocalExile or offer a publ
 
 ## Install
 
-Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, and your own standalone PoE **3.29.3b** client. The setup guide
+Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, and your own standalone PoE **3.29.3c** client (a player who has only 3.29.3b gets
+the last LocalExile made for it, see [Game client builds](docs/launcher.md#game-client-builds)). The setup guide
 offers two ways to get LocalExile:
 
 - **The ready-to-play release** (recommended). Nothing else to install: Waypoint downloads the release, checks its SHA-256, and
@@ -32,7 +33,7 @@ offers two ways to get LocalExile:
 | [Git](https://git-scm.com/downloads/win) | Branches and pull requests |
 | [Python 3.9+](https://www.python.org/downloads/windows/) | Data extraction, consistent save backups, the account tools. Tick the installer's *Add python.exe to PATH*; Waypoint also finds a Python installed without it |
 | [Node.js](https://nodejs.org/en/download) | The bundle-decompression dependency |
-| Your own standalone PoE **3.29.3b** client | A separate copy in the checkout's `Client` folder; Steam layout and newer clients are unsupported |
+| Your own standalone PoE **3.29.3c** client | A separate copy in the checkout's `Client` folder; Steam layout and other builds are unsupported |
 
 Frida (`pip install frida`) is optional: it is needed for walk maps, the console, live mod control and the item crafter's Give
 item, not for ordinary play. The crafter offers to install it.
@@ -53,7 +54,7 @@ where they are. Neither old file is changed.
 
 Linux has its own executable and interface (`src/Waypoint.Linux`, Avalonia) over the same engine, and the Windows app is
 built as before. It needs the .NET 10 SDK, [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own
-standalone PoE **3.29.3b** client. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
+standalone PoE **3.29.3c** client. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
 Python 3.9+ and Node.js.
 
 ```bash
@@ -63,8 +64,8 @@ dotnet run --project src/Waypoint.Linux
 Game settings and the saved login are kept in `~/.local/share/LocalExile/wine-prefix`: every LocalExile of yours shares them, they
 stay when an install is deleted, and your normal Path of Exile does not use them.
 
-The ready-to-play route needs a release with a `-linux-x64` zip. Until LocalExile publishes one, the setup guide sets up the
-source code instead. Not on Linux yet: walk maps, the client control bridge (the Console copies commands instead of sending
+The ready-to-play route needs a release with a `-linux-x64` zip; LocalExile publishes one since v0.2.0-beta. For an older release
+without one, the setup guide sets up the source code instead. Not on Linux yet: walk maps, the client control bridge (the Console copies commands instead of sending
 them), the item crafter, the tray and the appearance editor.
 
 ## Simple and Advanced modes

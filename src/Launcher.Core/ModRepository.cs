@@ -176,7 +176,7 @@ public static class ModRepository
     public static async Task<StagedMod> DownloadReleaseAsync(HttpClient client, ModRelease release, Action<long, long>? progress, CancellationToken stop)
     {
         string? expected = release.Sha256;
-        if (expected is null && release.HashUrl is not null) expected = LocalExileReleases.HashOf(await client.GetStringAsync(release.HashUrl, stop));
+        if (expected is null && release.HashUrl is not null) expected = LocalExileReleases.HashOf(await GitHubDownload.GetStringAsync(client, release.HashUrl, stop));
         if (expected is null) throw new InvalidDataException(L.Text("release {0} has no SHA-256 for {1}; nothing was installed", release.Tag, release.ZipName));
         string work = NewWorkFolder();
         try
@@ -274,7 +274,7 @@ public static class ModRepository
 
     static async Task DownloadAsync(HttpClient client, string url, string path, Action<long, long>? progress, CancellationToken stop)
     {
-        using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, stop);
+        using var response = await GitHubDownload.GetAsync(client, url, stop);
         response.EnsureSuccessStatusCode();
         long total = response.Content.Headers.ContentLength ?? 0;
         if (total > MaxZipBytes) throw new InvalidDataException(L.Text("the download is larger than 64 MB; nothing was installed"));

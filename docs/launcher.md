@@ -169,7 +169,8 @@ has no source to build, and turns to the download instead.
   on the copy and closed the game; Play then asks. **Delete the old one…** moves a shared client into the copy when both are on one
   drive, and deletes the release's program files. Its `data` and `Mods` stay, and so does anything a release does not ship.
 - **Updates**, for a download: **Keep an older version that does not change** puts the copy on its own branch `waypoint-tested` at
-  `SwitchToSource.TestedCommit`, which Play never moves, because only a plain copy on the default branch is updated. **Get the newest
+  `SwitchToSource.TestedCommit` (LocalExile v0.2.0-beta, e28909f6), which Play never moves, because only a plain copy on the default
+  branch is updated. **Get the newest
   changes** leaves it on `main`. Changing the commit means testing it again: a release's database opened on it, and an item given.
 - **Giving items**: **Set up Give item** installs Frida into the copy's `.venv`, which git ignores. Left out, the crafter offers it
   again the first time **Give item** is pressed.
@@ -485,8 +486,71 @@ clone upstream into a new or empty folder, with the drive's free space. It lists
 `Client` folders, what the installers recorded in the registry, the default folders, a time-limited walk of the fixed drives),
 and when there is none it says where it looked. Steam and Epic installs are listed struck out, so a player sees why theirs was
 passed over; they have no `Content.ggpk` and cannot be chosen. **Browse…** takes any folder. `PathOfExile.exe` has no version
-resource, so the 3.29.3b build is recognized by its SHA-256 (`ClientLocator`): another one is warned about before a 70 GB copy,
-but not refused. **Set up the rest now** goes on without a client. The game is never downloaded.
+resource, so a build is recognized by its SHA-256 (`ClientLocator`), and the list shows it beside the size. A build the folder's
+LocalExile cannot use is refused with the reason ([Game client builds](#game-client-builds)); one Waypoint does not know is warned
+about before a 70 GB copy, but not refused. For a new folder the guide sets up what the client fits: the newest LocalExile when a
+3.29.3c client was found, and only when the player has nothing but 3.29.3b, the last LocalExile made for it (release v0.1.0-beta,
+or a source copy on its own branch `waypoint-3.29.3b` at the head of the server's `3.29.3b` branch), with the quiet note below.
+**Set up the rest now** goes on without a client. The game is never downloaded.
+
+### Game client builds
+
+LocalExile works with one Path of Exile build at a time. v0.2.0-beta moved from 3.29.3b to **3.29.3c**: a 3.29.3b client no
+longer logs in to it, and v0.1.0-beta (the server's `3.29.3b` branch) is the last LocalExile for 3.29.3b. `ClientLocator.Builds`
+holds each build Waypoint knows (the SHA-256 and size of its `PathOfExile.exe`, and for an older build its last release and
+commit); `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
+`scripts/release/build-release.ps1`), so a folder pinned to an older version keeps its own.
+
+The rule: a player who has a 3.29.3c client plays on 3.29.3c; one who has only 3.29.3b keeps the last LocalExile for it. Waypoint
+looks when a folder is about to start the game (Play, and Control's Play or Start game; not Start servers, a restart or a stop)
+and before Simple mode's daily update moves a source copy. It looks at that folder's client and, when it matters, takes a quick
+look (two seconds: the player's other LocalExile folders and the usual places first, a plain client before one another LocalExile
+prepared) for a client of another build. Clients it merely finds are never changed. `ClientUpdate` decides:
+
+- **A move to a found 3.29.3c client** is asked once (`ClientUpdate.AskMove`): two short lines (what happens, what Not now does),
+  then a box with each folder and what happens to it (the client found: only read; the current client: replaced, with its size,
+  or for a link only the link), a button to open each so the player can back it up, then **Continue** (the default) or **Not
+  now**. Not now changes nothing and never updates. When the old setup still works (a folder on the 3.29.3b version with its
+  3.29.3b client), the game starts on it; otherwise nothing starts and the page says so. Either way the folder is not asked again
+  while Waypoint runs. Continue is kept with the client found, so the steps after LocalExile's update ask nothing and use that
+  client, not a second search's; a failed update forgets it, and the next Play asks again.
+- **The client is older than the folder's LocalExile, and a 3.29.3c client was found**: the old client is taken out
+  (`ClientLocator.RemoveClient`: its `config.json`, which names LocalExile's own game settings, is kept in
+  `data\client-config.waypoint.json` first; a linked client loses only the link and the folder it points to is never touched; a
+  copy is renamed first, which fails as a whole while the game holds a file, then deleted, without following a link inside it; a
+  delete cut short is finished by the next start; saves, accounts and keys in `data\` stay). A release's Play then runs
+  `LocalExile.exe setup --client <found> --client-mode copy` (always a copy: a link would let LocalExile write into the player's
+  own install, which the official launcher may update under it; LocalExile copies into `Client.partial`, so a stopped copy is
+  resumed, never used), drops the patched executable when the source was another LocalExile's prepared client (it trusts that
+  folder's keys), puts the game settings back, and only then runs the game. A checkout opens the setup guide with the found client
+  chosen; the guide copies it and puts the settings back (**Bring back your game settings**).
+- **The client is older and no 3.29.3c client was found**: the client stays, and Waypoint asks once whether to use the version for
+  it. A checkout moves to `waypoint-3.29.3b` (`Editions.MoveToOlderAsync`: saves backed up, nothing done with changes of the
+  player's own; a copy without a client then gets the older one through the guide); a release cannot go back in place (a newer
+  release's modules would stay behind), so the guide sets up v0.1.0-beta in a new folder and this one stays as it is.
+- **The folder's LocalExile is older than its client, or a 3.29.3c client was found for a folder still on the 3.29.3b version**:
+  after the question above (or, with no client found elsewhere, one that only says LocalExile needs the update), a release updates
+  itself to the newest release on the Play page (`ClientUpdate.UpdateReleaseAsync`, saves copied first when Automatic backups is
+  on), then moves to the found client as above. A copy on an older version of its own goes to the newest changes
+  (`Editions.MoveToNewestAsync`); any other checkout is told how, since Waypoint moves one only on the player's word.
+- **Simple mode's daily update** reads the client build the newer LocalExile needs (`git show <what the branch follows>:
+  scripts/release/build-release.ps1`, `ClientUpdate.BeforeUpdate`) before the copy moves. A client that will not fit is settled
+  first: with a 3.29.3c client found, the same question (Not now keeps the copy where it is); with only 3.29.3b, the copy stays and
+  the page says why.
+- **A client of no build Waypoint knows** is left to LocalExile's own check.
+
+While a folder runs the 3.29.3b version and no 3.29.3c client is there, Play shows a quiet note (not a warning) that versions for
+3.29.3b won't be offered after 3.30; it is looked for again only when the folder's LocalExile changes. A release's **Update now**
+to a version for a newer client than the only one on the PC asks first, with **Keep this version** chosen (the build is read from
+the release notes' "For the Path of Exile **3.29.3c** client"). The setup guide shows each client's build; a source copy that
+needs 3.29.3c on a PC with only 3.29.3b can pick it, and the guide moves the copy to the version for it, while a release folder
+says to go back and choose a new, empty folder for v0.1.0-beta. A new client build means a new row in `ClientLocator.Builds`, with
+the old build's last release and commit.
+
+Release files are downloaded through `GitHubDownload`: a release's download link (github.com/…/releases/download/…) that fails
+with a server error or a time-out is fetched once more through GitHub's API (the release by its tag, the asset by its name, as
+`application/octet-stream`). On 2026-11-08 the download links answered 504 for a long while as the API served the same files. It
+serves LocalExile's updates and downloads, Waypoint's own update, and mod releases.
 
 The run is a list of steps (`SetupSequence`): the server ports (the question on the Control section, asked first so that it does
 not wait at the end of a long copy), download, copy, the extraction dependency, preparing the client, build, game data. Each
