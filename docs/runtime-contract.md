@@ -306,6 +306,8 @@ league definition/list/settings/source file and custom marker to its SHA-256, pl
 must match exactly, including new/deleted files. `LeagueData.py` validates dependencies, cycles, required dedicated bundles,
 parent chains and a whole-composition witness from an existing same-family/mode profile. Only the selected league's
 override can change; other entries remain byte-value equivalent. Prior configuration is retained before atomic replacement.
+The helper accepts UTF-8 JSON requests with or without one leading BOM, including Windows PowerShell pipeline input.
+Duplicate keys and malformed JSON remain rejected before configuration writes.
 
 `CreateLeague` requires the source league-loader hook (`CanCreate`), a new safe name, an empty marker template and isolated
 Void. The adapter checks stopped save writers before and after the optional backup. `LeagueData.py` opens the selected

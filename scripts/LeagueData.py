@@ -441,7 +441,9 @@ def run(modules, leagues, choices, database, history, action, request, apply=Fal
 
 def main():
     try:
-        request = json.load(sys.stdin, object_pairs_hook=unique_object)
+        # Windows PowerShell pipelines can include a UTF-8 BOM. Accept one leading marker,
+        # as read_json does for files, while retaining strict JSON and duplicate-key checks.
+        request = json.loads(sys.stdin.read().removeprefix("\ufeff"), object_pairs_hook=unique_object)
         if sys.argv[6] == "Inspect":
             print(json.dumps({"Ok": True, "Review": review(*map(Path, sys.argv[1:4]))}))
             return 0

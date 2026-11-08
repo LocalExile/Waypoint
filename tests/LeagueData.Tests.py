@@ -2,8 +2,10 @@
 from contextlib import closing
 import importlib.util
 import json
+import os
 from pathlib import Path
 import sqlite3
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -52,6 +54,32 @@ class LeagueDataTests(unittest.TestCase):
 
     def run_request(self, request, action="CreateLeague", apply=True):
         data.run(self.modules, self.leagues, self.choices, self.database, self.history, action, request, apply)
+
+    def run_cli(self, payload, action="CreateLeague", phase="apply"):
+        return subprocess.run([sys.executable, str(Path(data.__file__)), *map(str, (
+            self.modules, self.leagues, self.choices, self.database, self.history)), action, phase],
+            input=payload, capture_output=True, env=dict(os.environ, PYTHONIOENCODING="utf-8"), check=False)
+
+    def test_cli_accepts_utf8_requests_with_or_without_a_bom_and_preserves_unicode(self):
+        for prefix, name in ((b"", "Plain Event"), (b"\xef\xbb\xbf", "BOM Event")):
+            with self.subTest(bom=bool(prefix)):
+                request = self.request(name=name)
+                request["description"] = "Событие · 自定义赛季"
+                result = self.run_cli(prefix + json.dumps(request, ensure_ascii=False).encode("utf-8"))
+                reply = json.loads(result.stdout)
+                self.assertEqual(result.returncode, 0, reply)
+                self.assertTrue(reply["Ok"])
+                self.assertEqual(data.read_json(self.leagues / name / "league.json")["description"], request["description"])
+
+    def test_cli_bom_support_keeps_duplicate_and_malformed_json_rejected(self):
+        before = self.review()
+        for payload in (b'{"review":{},"review":{}}', b'{"broken":', b'\xef\xbb\xbf{}'):
+            with self.subTest(payload=payload):
+                result = self.run_cli(b"\xef\xbb\xbf" + payload, action="Inspect", phase="check")
+                self.assertEqual(result.returncode, 1)
+                self.assertFalse(json.loads(result.stdout)["Ok"])
+        self.assertEqual(self.review(), before)
+        self.assertFalse(self.history.exists())
 
     def database_fixture(self):
         self.database.parent.mkdir(exist_ok=True)
