@@ -39,6 +39,8 @@
     <SolidColorBrush x:Key="Shell.UpdateBorder" Color="#7CC995" />
     <SolidColorBrush x:Key="Shell.UpdateText" Color="#14532D" />
     <SolidColorBrush x:Key="Shell.UpdateAccent" Color="#1E8E3E" />
+    <SolidColorBrush x:Key="Shell.UpdateHover" Color="#18742F" />
+    <SolidColorBrush x:Key="Shell.UpdatePressed" Color="#135C26" />
 
     <FontFamily x:Key="Mono">Consolas, Courier New</FontFamily>
 
@@ -80,6 +82,32 @@
         <Setter Property="BorderBrush" Value="{DynamicResource Shell.Primary}" />
         <Setter Property="Foreground" Value="{DynamicResource Shell.OnAccent}" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource Shell.Focus}" />
+    </Style>
+    <!-- An Update button: green, and a darker green under the mouse (Material's hover would wash it out to white). -->
+    <ControlTemplate x:Key="Shell.UpdateTemplate" TargetType="Button">
+                    <Border x:Name="Fill" CornerRadius="4" SnapsToDevicePixels="True" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Shell.UpdateHover}" />
+                            <Setter TargetName="Fill" Property="BorderBrush" Value="{DynamicResource Shell.UpdateHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Shell.UpdatePressed}" />
+                            <Setter TargetName="Fill" Property="BorderBrush" Value="{DynamicResource Shell.UpdatePressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Fill" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <Style x:Key="Shell.UpdateButton" TargetType="Button" BasedOn="{StaticResource Shell.PrimaryButton}">
+        <Setter Property="Background" Value="{DynamicResource Shell.UpdateAccent}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Shell.UpdateAccent}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Template" Value="{StaticResource Shell.UpdateTemplate}" />
     </Style>
     <Style x:Key="Shell.IconButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
         <Setter Property="Width" Value="32" />

@@ -194,6 +194,8 @@ public static class ThemePalette
             ["Shell.UpdateBorder"] = Mix(page, good, .5),
             ["Shell.UpdateText"] = text,
             ["Shell.UpdateAccent"] = dark ? Mix(good, Colors.Black, .35) : good,
+            ["Shell.UpdateHover"] = Mix(good, Colors.Black, dark ? .48 : .18),
+            ["Shell.UpdatePressed"] = Mix(good, Colors.Black, dark ? .58 : .32),
         };
         return shell;
     }

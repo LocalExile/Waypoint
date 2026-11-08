@@ -14,7 +14,7 @@ public sealed record ModRequest(string Id = "", string Project = "", string Stag
     IReadOnlyList<ModRequest>? Batch = null, string ExpectedHash = "");
 public sealed record ModEntry(string Id, string Version, string Kind, string[] Depends, bool Enabled, string Status,
     string Detail, string Folder, string Project, string Fingerprint, string Name = "", string Description = "", string Author = "",
-    bool IsScript = false)
+    bool IsScript = false, IReadOnlyList<string>? ClientVersions = null)
 {
     /// <summary>The manifest's name, or the id for a mod without one.</summary>
     public string Title => Name.Length > 0 ? Name : Id;
@@ -66,7 +66,7 @@ public static class ModCatalog
         return hash;
     }
     sealed record Manifest(string Id, string Version, string Kind, string[] Depends, string Assembly, bool Enabled,
-        string Name = "", string Description = "", string Author = "");
+        string Name = "", string Description = "", string Author = "", string[]? ClientVersions = null);
     /// <summary>The assembly a manifest names (its id's .dll by default).</summary>
     internal static string AssemblyName(string folderId, string json) => ParseJson(folderId, json).Assembly;
     static Manifest Parse(string folderId, string path) => ParseJson(folderId, Read(path));
@@ -95,9 +95,10 @@ public static class ModCatalog
         if (enabled.ValueKind is not (JsonValueKind.Undefined or JsonValueKind.True or JsonValueKind.False)) throw new InvalidDataException("enabled must be true or false.");
         string assembly = Text("assembly", id + ".dll");
         if (Path.GetFileName(assembly) != assembly || assembly.IndexOfAny(['/', '\\', ':']) >= 0 || !assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Assembly must be a DLL in the mod folder.");
-        // name, description and author are Waypoint's (LocalExile-Mods' AGENTS.md); the Gateway ignores them.
+        // name, description, author and compatibleClientVersions are Waypoint's (LocalExile-Mods' AGENTS.md); the Gateway
+        // ignores them.
         return new(id, Text("version", "0"), kind, dependencies, assembly, enabled.ValueKind != JsonValueKind.False,
-            Text("name", ""), Text("description", ""), Text("author", ""));
+            Text("name", ""), Text("description", ""), Text("author", ""), ClientCompatibility.Read(Field(ClientCompatibility.Field)));
     }
     public static ModEntry[] Read(RuntimeSnapshot snapshot)
     {
@@ -121,7 +122,7 @@ public static class ModCatalog
                         if (!source.TryAdd(manifest.Id, Path.GetRelativePath(snapshot.Root, project))) throw new InvalidDataException("Multiple source projects use this ID.");
                         entries[manifest.Id] = new(manifest.Id, manifest.Version, manifest.Kind, manifest.Depends, manifest.Enabled,
                             "Not built", "Build this source mod before enabling it.", Path.Combine(environment.Folder, manifest.Id), source[manifest.Id], "",
-                            manifest.Name, manifest.Description, manifest.Author);
+                            manifest.Name, manifest.Description, manifest.Author, ClientVersions: manifest.ClientVersions);
                     }
                     catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                     { entries[id] = new(id, "?", "?", [], false, "Invalid source", ex.Message, folder, "", ""); }
@@ -152,7 +153,7 @@ public static class ModCatalog
                         string.Join('\n', scripts.Select(f => Path.GetFileName(f) + "|" + Fingerprint(f)))))) : "";
                     entries[id] = new(id, manifest.Version, manifest.Kind, manifest.Depends, enabled, built ? "Not checked" : "Missing DLL",
                         built ? "Runtime status has not been confirmed." : "Build this mod or install its DLL.", folder, source.GetValueOrDefault(id, ""), hash,
-                        manifest.Name, manifest.Description, manifest.Author, script);
+                        manifest.Name, manifest.Description, manifest.Author, script, manifest.ClientVersions);
                 }
                 catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                 { entries[id] = new(id, "?", "?", [], false, "Invalid manifest", ex.Message, folder, source.GetValueOrDefault(id, ""), ""); }

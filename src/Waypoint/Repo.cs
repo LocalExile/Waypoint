@@ -22,6 +22,17 @@ static class Repo
     /// live.ps1, adapter or git is not offered. Set once at startup.</summary>
     public static bool IsInstall { get; set; }
 
+    /// <summary>The LocalExile version the checkout runs, which a mod's <c>compatibleClientVersions</c> are checked against: a
+    /// release's release.json, a source checkout's newest version tag (<c>git describe</c>). Null when unknown.</summary>
+    public static ReleaseVersion? ClientVersion { get; set; }
+
+    /// <summary>The first release made for downloadable mods: it ships an empty Mods\Binaries\ for Waypoint to fill.</summary>
+    public static ReleaseVersion FirstDownloadableModsRelease { get; } = ReleaseVersion.Parse("0.2.0-beta")!;
+
+    /// <summary>A release older than <see cref="FirstDownloadableModsRelease"/> (or of no readable version): it keeps the mods
+    /// it shipped with, built for an older mod API, so Waypoint installs, updates and edits none there.</summary>
+    public static bool LegacyReleaseMods => IsInstall && (ClientVersion is null || ClientVersion.CompareTo(FirstDownloadableModsRelease) < 0);
+
     /// <summary>Where the folder picker starts: a "LocalExile" folder beside the launcher's own repository when it is a
     /// checkout (the usual layout, LocalExile\ and LocalExile-Launcher\ side by side), else the launcher's folder.</summary>
     public static string Suggested(string launcherFolder)
