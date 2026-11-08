@@ -1,5 +1,10 @@
 using System.Net.Http;
 using System.Text.Json.Nodes;
+#if WINDOWS
+using ModIconKind = MaterialDesignThemes.Wpf.PackIconKind;
+#else
+using ModIconKind = Material.Icons.MaterialIconKind;
+#endif
 
 namespace Waypoint;
 
@@ -45,6 +50,14 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
         : Listing.IsProject ? L.Text("No release: installs the source") : L.Text("Scripts: no build needed");
     public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description}";
     public string Initial => ModsText.Initial(Title);
+    public ModIconKind Icon => ModsText.Icon(Listing.Id);
+    public string Description => Listing.Description;
+    public bool HasDescription => Description.Length > 0;
+    public string Metadata => string.Join(" · ", new[] { Latest, Author, TypeText }.Where(s => s.Length > 0));
+    public string PackageStatus => Offer == ModOffer.Update ? L.Text("Update available") : Offer == ModOffer.Installed ? L.Text("Installed")
+        : NeedsBuild ? L.Text("Source project") : Release is not null ? L.Text("Release") : L.Text("Scripts");
+    public bool ShowOfferAction => Job is null && Offer != ModOffer.Installed;
+    public bool ShowDetails => Job is null && Offer == ModOffer.Installed;
     public string Author => Listing.Author.Length > 0 ? Listing.Author : Source.Owner;
     public string Latest => Offered?.ToString() ?? Listing.Version;
     /// <summary>Under the name: what an install takes (a release, scripts, or a build) .</summary>
@@ -147,12 +160,21 @@ static class ModSorting
 /// <summary>A row of My Mods: an installed mod, and what a repository offers of it (for Update and its latest version).</summary>
 sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
 {
-    public string Title => Entry.Title;
-    public string Initial => ModsText.Initial(Entry.Title);
+    public string Title => Entry.Name.Length > 0 ? Entry.Name : Offer?.Title ?? Entry.Id;
+    public string Initial => ModsText.Initial(Title);
+    public ModIconKind Icon => ModsText.Icon(Entry.Id);
+    public string Description => Entry.Description.Length > 0 ? Entry.Description : Offer?.Listing.Description ?? "";
+    public bool HasDescription => Description.Length > 0;
+    public string Metadata => string.Join(" · ", new[] { Entry.Version, Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
+    public string PackageStatus => HasUpdate ? L.Text("Update available") : !IsBuilt ? L.Text("Not built")
+        : Offer is null ? L.Text("Installed") : L.Text("Up to date");
+    public string VersionChange => HasUpdate ? L.Text("{0} → {1}", Entry.Version, Latest) : "";
+    public bool ShowDetails => Job is null && !HasButton;
+    public bool CanToggle => IsBuilt && Job is null;
     public bool Enabled => Entry.Enabled;
     public bool HasUpdate => Offer?.Offer == ModOffer.Update;
     public bool IsBuilt => Entry.Fingerprint.Length > 0;
-    public string EnabledTip => L.Text("Enabled");
+    public string EnabledTip => L.Text("Saved enable choice for {0}; this does not confirm live load status.", Title);
     /// <summary>Why the running Gateway did not load this mod (its log), or "".</summary>
     public string LoadError { get; init; } = "";
     public bool Failed => Entry.Enabled && LoadError.Length > 0;
@@ -192,7 +214,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
         || (Entry.Enabled && Entry.Status == "Load failed") ? L.Text(Entry.Status) : "";
     public bool HasProblem => Problem.Length > 0;
     public string? ProblemTip => HasProblem ? Problem : null;
-    public string SearchText => Entry.SearchText;
+    public string SearchText => $"{Entry.SearchText} {Title} {Description} {Author}";
 }
 
 /// <summary>What the running Gateway last said about each mod in its log (logs/live-gateway.log, written anew at each
@@ -561,6 +583,24 @@ sealed class ModBrowser(Shared shared)
 /// <summary>The Mods section's text and form reading, the same in both apps' views.</summary>
 static class ModsText
 {
+    /// <summary>Presentation-only defaults, using the same native symbol family as the module library.</summary>
+    public static ModIconKind Icon(string id) => id.ToLowerInvariant() switch
+    {
+        "bossloot" => ModIconKind.TrophyOutline, "doubleexperience" => ModIconKind.StarFourPoints,
+        "fastcampaign" => ModIconKind.RunFast, "itemquantity" => ModIconKind.PackageVariantClosed,
+        "itemrarity" => ModIconKind.DiamondStone, "example" => ModIconKind.CodeBraces,
+        "hello" => ModIconKind.ChatOutline, _ => ModIconKind.PuzzleOutline
+    };
+    /// <summary>Only an explicit runtime report can supply a last-checked load state; saved choices never do.</summary>
+    public static string RuntimeStatus(RuntimeSnapshot? state, string id)
+    {
+        if (state?.ModEnvironment is not { } environment) return L.Text("Not checked");
+        var report = ModCatalog.ParseRuntimeReport(environment.RuntimeReport);
+        if (!report.TryGetValue(id, out var observation)) return L.Text("Not checked");
+        string status = observation.Status == "Loaded (last checked)" ? L.Text("Loaded (last checked)")
+            : observation.Status == "Disabled" ? L.Text("Not loaded (last checked)") : L.Text("Failed to load (last checked)");
+        return DateTimeOffset.TryParse(environment.CheckedUtc, out var when) ? L.Text("{0} · {1:g}", status, when.ToLocalTime()) : status;
+    }
     /// <summary>Choices are saved even on an older Gateway; do not imply its running mods changed.</summary>
     public static string ChoicesNotice(RuntimeSnapshot? state) =>
         state is { ModEnvironment.Supported: true } && state.Services.Any(s => s.Name == "Gateway" && s.IsRunning)
@@ -585,7 +625,7 @@ static class ModsText
     {
         var parts = new List<string>();
         if (installed is not null) parts.Add(L.Text("Installed {0}", installed.Version));
-        if (item is not null) parts.Add(L.Text("Latest {0}", item.Latest));
+        if (item is not null && (installed is null || item.Latest != installed.Version)) parts.Add(L.Text("Latest {0}", item.Latest));
         if (item?.Release?.Published is { } published) parts.Add(published.ToLocalTime().ToString("d"));
         if (item?.Release is { ZipBytes: > 0 } release) parts.Add(L.Text("{0:N0} KB", Math.Max(1, release.ZipBytes / 1024)));
         return string.Join("   ·   ", parts);

@@ -573,7 +573,15 @@ Python packages. Linux explains that its game-control integrations are unavailab
 
 ### Mods
 
-Laid out like an addon manager, in two tables. **My Mods** lists the installed mods (from the manifests under
+Laid out like an addon manager, with **My Mods** and **Browse**. Both lists use themed cards with small semantic icons,
+clear names, descriptions and quiet version/author metadata. Installed manifest names take precedence; repository names
+and descriptions fill missing metadata without changing mod IDs or operation targets. Unknown mods use a puzzle icon.
+**Sort by** keeps name, saved enable choice, package action, latest version and author sorting, with a reverse-order button.
+Search also finds the displayed repository metadata; the installed count reflects its filter. **Details** or the name opens
+the mod page, while package actions and progress stay on the row. Unmatched installed packages are labelled **Installed**,
+not assumed **Up to date** without repository evidence. **Open folder**, Refresh, and the rarer **More** tools stay available.
+
+**My Mods** lists the installed mods (from the manifests under
 `Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their version,
 the latest one a repository offers, and the author. A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
@@ -602,6 +610,18 @@ show their alt text, HTML is left out, relative links open the mod's folder on G
 (all declared types below; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
 and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
 actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
+
+The mod page separates **Saved choice** from **Live load status**. Only an explicit runtime report supplies a last-checked
+load state, labelled with its time when available; a checked enable box or a successful build is never presented as a live
+load. **Check live status** remains a manual action with the same capability checks as before. Installed/latest versions
+are not repeated when identical, and an up-to-date package is text rather than a disabled action button.
+
+**Settings** remains visible so an uninstalled mod, an installed package without a declaration, a release without support,
+an empty declaration and a read/validation failure each have an explanation. Missing declarations do not imply that the mod
+has no separate configuration files. Save, Discard and Reset stay below the scrolling form. Save requires an edited form
+and the existing operation capability; refresh preserves an unsaved form for the same installed mod. Release settings
+show no editor and no save/reset actions. Error details expand on demand. These are presentation changes over the same
+validated settings writer, backup, expected-hash checks and serialized operations.
 
 An existing LocalExile release does not declare compatibility with the newer downloadable mods. Waypoint leaves its
 existing saved mod switches available (an older server applies them at its next start), but disables install, update,

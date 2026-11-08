@@ -1,303 +1,196 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl x:Class="Waypoint.ModsTab"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:l="clr-namespace:Waypoint"
-             x:Class="Waypoint.ModsTab">
-  <UserControl.Styles>
-    <Style Selector="ListBox.mods">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-    </Style>
-    <Style Selector="ListBox.mods ListBoxItem">
-      <Setter Property="Padding" Value="10,0" />
-      <Setter Property="MinHeight" Value="60" />
-      <Setter Property="Cursor" Value="Hand" />
-    </Style>
-    <Style Selector="ListBox.mods ListBoxItem:nth-child(2n+1)">
-      <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
-    </Style>
-    <Style Selector="Border.tile">
-      <Setter Property="Width" Value="40" />
-      <Setter Property="Height" Value="40" />
-      <Setter Property="CornerRadius" Value="4" />
-      <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
-      <Setter Property="BorderThickness" Value="1" />
-    </Style>
-    <Style Selector="Border.tile TextBlock">
-      <Setter Property="FontSize" Value="18" />
-      <Setter Property="FontWeight" Value="SemiBold" />
-      <Setter Property="Foreground" Value="{DynamicResource Shell.Accent}" />
-      <Setter Property="HorizontalAlignment" Value="Center" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-    <Style Selector="TextBlock.note.problem">
-      <Setter Property="Foreground" Value="{DynamicResource Shell.Error}" />
-    </Style>
-    <Style Selector="TextBlock.column">
-      <Setter Property="FontSize" Value="11" />
-      <Setter Property="FontWeight" Value="SemiBold" />
-      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
-    </Style>
-    <Style Selector="Border.tag">
-      <Setter Property="CornerRadius" Value="9" />
-      <Setter Property="Padding" Value="7,0,7,1" />
-      <Setter Property="Margin" Value="0,0,6,0" />
-      <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
-    </Style>
-  </UserControl.Styles>
-  <DockPanel>
-    <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="150" Margin="0,8,0,0" IsVisible="False" />
-
-    <!-- Only the headers: what they show is below, so a mod's page can take the place of either list. -->
-    <TabControl x:Name="Pages" DockPanel.Dock="Top" SelectionChanged="PageChanged">
-      <TabItem x:Name="InstalledPage" />
-      <TabItem x:Name="BrowsePage" />
-    </TabControl>
-
-    <Grid Margin="0,8,0,0">
-      <!-- My Mods. -->
-      <DockPanel x:Name="InstalledView">
-        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4">
-            <TextBox x:Name="Search" Width="220" VerticalAlignment="Center" TextChanged="SearchChanged">
-              <TextBox.InnerLeftContent>
-                <icons:MaterialIcon Kind="Magnify" Width="16" Height="16" Margin="8,0,0,0" Foreground="{DynamicResource Shell.TextSecondary}" />
-              </TextBox.InnerLeftContent>
-            </TextBox>
-            <Button x:Name="OpenModsButton" Click="OpenMods" Background="Transparent">
-              <icons:MaterialIcon Kind="FolderOpenOutline" Width="18" Height="18" />
-            </Button>
-            <Button x:Name="RefreshInstalledButton" Click="RefreshInstalled" Background="Transparent">
-              <icons:MaterialIcon Kind="Refresh" Width="18" Height="18" />
-            </Button>
-            <Button x:Name="MoreButton" Background="Transparent">
-              <icons:MaterialIcon Kind="DotsVertical" Width="18" Height="18" />
-              <Button.Flyout>
-                <MenuFlyout Placement="BottomEdgeAlignedRight">
-                  <MenuItem x:Name="InstallFolderItem" Click="InstallFolder" />
-                  <MenuItem x:Name="BuildAllItem" Click="BuildAll" />
-                  <MenuItem x:Name="CheckModsItem" Click="CheckMods" />
-                  <MenuItem x:Name="GatewayLogItem" Click="GatewayLog" />
-                  <MenuItem x:Name="ShowLogItem" ToggleType="CheckBox" Click="ShowLogChanged" />
-                  <Separator />
-                  <MenuItem x:Name="AutoBackupItem" ToggleType="CheckBox" Click="BackupChanged" />
-                </MenuFlyout>
-              </Button.Flyout>
-            </Button>
-          </StackPanel>
-          <Button x:Name="UpdateAllButton" HorizontalAlignment="Left" Click="UpdateAll">
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <icons:MaterialIcon Kind="Update" Width="16" Height="16" />
-              <TextBlock x:Name="UpdateAllText" VerticalAlignment="Center" />
-              <Border x:Name="UpdateCountBadge" CornerRadius="9" Padding="7,0,7,1" Background="{DynamicResource Shell.Accent}">
-                <TextBlock x:Name="UpdateCount" FontSize="11" Foreground="White" />
-              </Border>
-            </StackPanel>
-          </Button>
-        </DockPanel>
-        <TextBlock x:Name="Notice" DockPanel.Dock="Top" Classes="note" TextWrapping="Wrap" Margin="2,0,0,8" IsVisible="False" />
-        <!-- Each heading sorts by its column; again, the other way. -->
-        <Grid DockPanel.Dock="Top" Margin="10,0,10,4" ColumnDefinitions="72,52,*,120,130,150">
-          <TextBlock x:Name="SortEnabled" Tag="Enabled" Classes="column" Cursor="Hand" Tapped="SortBy" />
-          <TextBlock x:Name="NameHeader" Grid.Column="2" Tag="Name" Classes="column" Cursor="Hand" Tapped="SortBy" />
-          <TextBlock x:Name="ActionHeader" Grid.Column="3" Tag="Action" Classes="column" Cursor="Hand" Tapped="SortBy" />
-          <TextBlock x:Name="LatestHeader" Grid.Column="4" Tag="Latest" Classes="column" Cursor="Hand" Tapped="SortBy" />
-          <TextBlock x:Name="AuthorHeader" Grid.Column="5" Tag="Author" Classes="column" Cursor="Hand" Tapped="SortBy" />
-        </Grid>
-        <Grid>
-          <ListBox x:Name="ModList" Classes="mods" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <Grid ColumnDefinitions="72,52,*,120,130,150" Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested">
-                  <CheckBox HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0" MinWidth="0" IsChecked="{Binding Enabled, Mode=OneWay}"
-                            Click="ToggleFromList" ToolTip.Tip="{Binding EnabledTip}" />
-                  <Border Grid.Column="1" Classes="tile">
-                    <TextBlock Text="{Binding Initial}" />
-                  </Border>
-                  <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0">
-                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{Binding Subtitle}" Classes="note" Classes.problem="{Binding HasProblem}" ToolTip.Tip="{Binding ProblemTip}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-                  </StackPanel>
-                  <Button Grid.Column="3" Width="100" VerticalAlignment="Center" HorizontalContentAlignment="Center" Click="RowAction"
-                          IsVisible="{Binding HasButton}" IsEnabled="{Binding CanAct}" Content="{Binding ActionText}" ToolTip.Tip="{Binding ActionTip}" />
-                  <TextBlock Grid.Column="3" Text="{Binding ActionText}" Classes="note" VerticalAlignment="Center" IsVisible="{Binding UpToDate}" />
-                  <Border Grid.Column="3" Width="100" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" CornerRadius="3" BorderThickness="1"
-                          BorderBrush="{DynamicResource Shell.Accent}" ClipToBounds="True" IsVisible="{Binding HasJob}">
-                    <Panel>
-                      <ProgressBar Value="{Binding Job.Percent}" IsIndeterminate="{Binding Job.Indeterminate}" Minimum="0" Maximum="100" MinHeight="0" MinWidth="0"
-                                   VerticalAlignment="Stretch" Background="Transparent" Foreground="{DynamicResource Shell.Accent}" Opacity="0.3" CornerRadius="0" />
-                      <TextBlock Text="{Binding Job.Text}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="Medium" />
-                    </Panel>
-                  </Border>
-                  <TextBlock Grid.Column="4" Text="{Binding Latest}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                  <TextBlock Grid.Column="5" Text="{Binding Author}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+             xmlns:l="clr-namespace:Waypoint">
+    <UserControl.Styles>
+        <Style Selector="ListBox.mods"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /></Style>
+        <Style Selector="ListBox.mods ListBoxItem"><Setter Property="Padding" Value="12,10" /><Setter Property="MinHeight" Value="78" /><Setter Property="Margin" Value="0,0,0,7" /><Setter Property="CornerRadius" Value="8" /><Setter Property="Background" Value="{DynamicResource Shell.Panel}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" /></Style>
+        <Style Selector="ListBox.mods ListBoxItem:pointerover"><Setter Property="BorderBrush" Value="{DynamicResource Shell.Accent}" /></Style>
+        <Style Selector="Border.tile"><Setter Property="Width" Value="38" /><Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="7" /><Setter Property="Margin" Value="0,0,12,0" /><Setter Property="Background" Value="{DynamicResource Shell.Background}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" /></Style>
+        <Style Selector="Button.modLink"><Setter Property="MinHeight" Value="0" /><Setter Property="Padding" Value="2" /><Setter Property="Margin" Value="0,0,14,0" /><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /></Style>
+        <Style Selector="Button.rowButton"><Setter Property="Width" Value="104" /><Setter Property="Margin" Value="0" /><Setter Property="HorizontalContentAlignment" Value="Center" /></Style>
+        <Style Selector="Button.icon"><Setter Property="Padding" Value="6" /><Setter Property="Background" Value="Transparent" /></Style>
+        <Style Selector="TextBlock.cell"><Setter Property="TextTrimming" Value="CharacterEllipsis" /></Style>
+        <Style Selector="TextBlock.column"><Setter Property="FontSize" Value="11" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" /></Style>
+        <Style Selector="TextBlock.description"><Setter Property="FontSize" Value="12" /><Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" /><Setter Property="TextTrimming" Value="CharacterEllipsis" /><Setter Property="Margin" Value="0,3,0,0" /></Style>
+        <Style Selector="Border.tag"><Setter Property="Padding" Value="7,3" /><Setter Property="Background" Value="{DynamicResource Shell.Banner}" /><Setter Property="CornerRadius" Value="4" /></Style>
+    </UserControl.Styles>
+    <UserControl.Resources>
+        <DataTemplate x:Key="ModIdentity">
+            <DockPanel LastChildFill="True">
+                <Border DockPanel.Dock="Left" Classes="tile"><icons:MaterialIcon Kind="{Binding Icon}" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" /></Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Title}" Classes="cell" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding Description}" Classes="description" IsVisible="{Binding HasDescription}" ToolTip.Tip="{Binding Description}" />
+                    <TextBlock Text="{Binding Metadata}" Classes="note" FontSize="11" TextTrimming="CharacterEllipsis" Margin="0,3,0,0" />
+                </StackPanel>
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="JobBox">
+            <Border Width="104" Height="30" HorizontalAlignment="Right" CornerRadius="4" ClipToBounds="True" Background="{DynamicResource Shell.Background}">
+                <Grid>
+                    <ProgressBar Value="{Binding Percent, Mode=OneWay}" IsIndeterminate="{Binding Indeterminate, Mode=OneWay}" Minimum="0" Maximum="100" MinHeight="0" VerticalAlignment="Stretch" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource Shell.Accent}" Opacity="0.25" />
+                    <TextBlock Text="{Binding Text}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" Margin="4,0" />
                 </Grid>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-          <TextBlock x:Name="Empty" Classes="note" IsHitTestVisible="False" TextAlignment="Center" TextWrapping="Wrap"
-                     VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="320" Margin="16" />
-        </Grid>
-      </DockPanel>
-
-      <!-- Browse. -->
-      <DockPanel x:Name="BrowseView" IsVisible="False">
-        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4">
-            <TextBox x:Name="BrowseSearch" Width="220" VerticalAlignment="Center" TextChanged="BrowseSearchChanged">
-              <TextBox.InnerLeftContent>
-                <icons:MaterialIcon Kind="Magnify" Width="16" Height="16" Margin="8,0,0,0" Foreground="{DynamicResource Shell.TextSecondary}" />
-              </TextBox.InnerLeftContent>
-            </TextBox>
-            <Button x:Name="RefreshButton" Click="RefreshBrowse" Background="Transparent">
-              <icons:MaterialIcon Kind="Refresh" Width="18" Height="18" />
-            </Button>
-            <Button x:Name="BrowseMoreButton" Background="Transparent">
-              <icons:MaterialIcon Kind="DotsVertical" Width="18" Height="18" />
-              <Button.Flyout>
-                <MenuFlyout Placement="BottomEdgeAlignedRight">
-                  <MenuItem x:Name="AddRepositoryItem" Click="ShowAddRepository" />
-                  <MenuItem x:Name="OpenRepositoryItem" Click="OpenRepository" />
-                  <MenuItem x:Name="RemoveRepositoryItem" Click="RemoveRepository" />
-                </MenuFlyout>
-              </Button.Flyout>
-            </Button>
-          </StackPanel>
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <ComboBox x:Name="SourcePicker" MinWidth="260" VerticalAlignment="Center" SelectionChanged="SourceChanged" />
-            <TextBlock x:Name="BrowseCount" Classes="note" VerticalAlignment="Center" />
-          </StackPanel>
-        </DockPanel>
-        <DockPanel x:Name="AddRepositoryRow" DockPanel.Dock="Top" Margin="0,0,0,8" IsVisible="False">
-          <Button x:Name="CancelRepositoryButton" DockPanel.Dock="Right" Margin="6,0,0,0" Click="HideAddRepository" />
-          <Button x:Name="AddRepositoryButton" DockPanel.Dock="Right" Classes="accent" Margin="6,0,0,0" Click="AddRepository" />
-          <TextBox x:Name="RepositoryUrl" KeyDown="RepositoryUrlKey" />
-        </DockPanel>
-        <TextBlock x:Name="BrowseStatus" DockPanel.Dock="Top" Classes="note" TextWrapping="Wrap" Margin="2,0,0,8" IsVisible="False" />
-        <Grid DockPanel.Dock="Top" Margin="10,0,10,4" ColumnDefinitions="52,*,120,110,100,150">
-          <TextBlock x:Name="BrowseNameHeader" Grid.Column="1" Classes="column" />
-          <TextBlock x:Name="BrowseActionHeader" Grid.Column="2" Classes="column" />
-          <TextBlock x:Name="BrowseLatestHeader" Grid.Column="3" Classes="column" />
-          <TextBlock x:Name="BrowseTypeHeader" Grid.Column="4" Classes="column" />
-          <TextBlock x:Name="BrowseAuthorHeader" Grid.Column="5" Classes="column" />
-        </Grid>
-        <Grid>
-          <ListBox x:Name="BrowseList" Classes="mods" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <Grid ColumnDefinitions="52,*,120,110,100,150" Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested">
-                  <Border Classes="tile">
-                    <TextBlock Text="{Binding Initial}" />
-                  </Border>
-                  <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
-                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{Binding Subtitle}" Classes="note" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-                  </StackPanel>
-                  <Button Grid.Column="2" Width="100" VerticalAlignment="Center" HorizontalContentAlignment="Center" Content="{Binding ActionText}"
-                          IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" IsVisible="{Binding ShowButton}" />
-                  <Border Grid.Column="2" Width="100" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" CornerRadius="3" BorderThickness="1"
-                          BorderBrush="{DynamicResource Shell.Accent}" ClipToBounds="True" IsVisible="{Binding HasJob}">
-                    <Panel>
-                      <ProgressBar Value="{Binding Job.Percent}" IsIndeterminate="{Binding Job.Indeterminate}" Minimum="0" Maximum="100" MinHeight="0" MinWidth="0"
-                                   VerticalAlignment="Stretch" Background="Transparent" Foreground="{DynamicResource Shell.Accent}" Opacity="0.3" CornerRadius="0" />
-                      <TextBlock Text="{Binding Job.Text}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="Medium" />
-                    </Panel>
-                  </Border>
-                  <TextBlock Grid.Column="3" Text="{Binding Latest}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                  <TextBlock Grid.Column="4" Text="{Binding TypeText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                  <TextBlock Grid.Column="5" Text="{Binding Author}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                </Grid>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-          <TextBlock x:Name="BrowseEmpty" Classes="note" IsHitTestVisible="False" TextAlignment="Center" TextWrapping="Wrap"
-                     VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="320" Margin="16" />
-        </Grid>
-      </DockPanel>
-
-      <!-- One mod's page: opened from either list. -->
-      <DockPanel x:Name="ModPage" IsVisible="False">
-        <Border DockPanel.Dock="Top" Classes="card" Padding="12">
-          <DockPanel>
-            <Button x:Name="BackButton" DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,0,8,0" Background="Transparent" Click="ClosePage">
-              <icons:MaterialIcon Kind="ArrowLeft" Width="20" Height="20" />
-            </Button>
-            <Border DockPanel.Dock="Left" Classes="tile" Width="88" Height="88" VerticalAlignment="Top" Margin="0,0,14,0">
-              <TextBlock x:Name="PageInitial" FontSize="40" />
             </Border>
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top" Margin="12,0,0,0">
-              <CheckBox x:Name="PageEnabled" VerticalAlignment="Center" Margin="0,0,4,0" Click="TogglePage" />
-              <Button x:Name="PageMenuButton" Background="Transparent" Click="OpenPageMenu">
-                <icons:MaterialIcon Kind="DotsVertical" Width="18" Height="18" />
-              </Button>
-              <Button x:Name="PageAction" Classes="accent" MinWidth="100" HorizontalContentAlignment="Center" Click="PageActionClicked" />
-            </StackPanel>
-            <StackPanel>
-              <WrapPanel>
-                <TextBlock x:Name="PageTitle" FontSize="18" FontWeight="SemiBold" Margin="0,0,10,0" />
-                <TextBlock x:Name="PageByline" Classes="note" VerticalAlignment="Bottom" Margin="0,0,0,2" />
-              </WrapPanel>
-              <TextBlock x:Name="PageDescription" TextWrapping="Wrap" Margin="0,6,0,0" />
-              <Border BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,1,0,0" Margin="0,10,0,0" Padding="0,8,0,0">
-                <DockPanel>
-                  <TextBlock x:Name="PageStats" DockPanel.Dock="Right" Classes="note" FontSize="12" Margin="12,0,0,0" />
-                  <ItemsControl x:Name="PageTags">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <WrapPanel />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate>
-                        <Border Classes="tag">
-                          <TextBlock Text="{Binding}" FontSize="11.5" />
-                        </Border>
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </DockPanel>
-              </Border>
-            </StackPanel>
-          </DockPanel>
-        </Border>
-        <TabControl x:Name="PageTabs" Margin="0,8,0,0">
-          <TabItem x:Name="ModOverviewPage">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-              <StackPanel x:Name="OverviewPanel" MaxWidth="940" Margin="16,12,16,16" HorizontalAlignment="Left" />
-            </ScrollViewer>
-          </TabItem>
-          <TabItem x:Name="ModSettingsPage">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-              <StackPanel MaxWidth="640" Margin="16,12,16,16" HorizontalAlignment="Left">
-                <StackPanel x:Name="SettingsPanel" />
-                <WrapPanel ItemSpacing="6" Margin="0,8,0,0">
-                  <Button x:Name="SaveSettingsButton" Classes="accent" Click="SaveSettings" />
-                  <Button x:Name="ResetSettingsButton" Click="ResetSettings" />
-                </WrapPanel>
-                <TextBlock x:Name="SettingsHint" Classes="note" FontSize="11.5" TextWrapping="Wrap" Margin="0,4,0,0" />
-              </StackPanel>
-            </ScrollViewer>
-          </TabItem>
-          <TabItem x:Name="ModVersionsPage">
-            <ListBox x:Name="VersionList" Classes="mods" Margin="0,8,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-              <ListBox.ItemTemplate>
-                <DataTemplate>
-                  <Grid ColumnDefinitions="120,120,90,*,110" MinHeight="44">
-                    <TextBlock Text="{Binding Version}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="1" Text="{Binding Date}" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="2" Text="{Binding Size}" VerticalAlignment="Center" />
-                    <TextBlock Grid.Column="3" Text="{Binding Notes}" Classes="note" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                               ToolTip.Tip="{Binding Notes}" Margin="0,0,12,0" />
-                    <Button Grid.Column="4" Width="100" VerticalAlignment="Center" HorizontalContentAlignment="Center" Content="{Binding ActionText}"
-                            IsEnabled="{Binding CanAct}" Click="InstallVersion" />
-                  </Grid>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </TabItem>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel Margin="18,8,18,12">
+        <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="150" Margin="0,8,0,0" IsVisible="False" />
+        <TextBlock DockPanel.Dock="Bottom" Text="{l:Loc 'Saved enable choices are separate from live load status. League module choices are managed in Leagues.'}" Classes="note" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,0" />
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <Button x:Name="OpenModsButton" DockPanel.Dock="Right" Click="OpenMods"  VerticalAlignment="Top" AutomationProperties.Name="{l:Loc 'Open mods folder'}">
+                <StackPanel Orientation="Horizontal"><icons:MaterialIcon Kind="FolderOpenOutline" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock Text="{l:Loc 'Open folder'}" /></StackPanel>
+            </Button>
+            <StackPanel><TextBlock Text="{l:Loc 'Mods'}" FontSize="26" FontWeight="SemiBold" /><TextBlock Text="{l:Loc 'Install, update and configure your modifications.'}" Classes="note" FontSize="12" TextWrapping="Wrap" Margin="0,5,0,0" /></StackPanel>
+        </DockPanel>
+        <TabControl x:Name="Pages" DockPanel.Dock="Top" SelectionChanged="PageChanged" Width="280" HorizontalAlignment="Left" Margin="0,0,0,12">
+            <TabItem x:Name="InstalledPage" Header="{l:Loc 'My Mods'}" /><TabItem x:Name="BrowsePage" Header="{l:Loc 'Browse'}" />
         </TabControl>
-      </DockPanel>
-    </Grid>
-  </DockPanel>
+        <Grid>
+            <DockPanel x:Name="InstalledView">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <TextBox x:Name="Search" Width="220" Margin="0,0,8,0" VerticalAlignment="Center" PlaceholderText="{l:Loc 'Search mods'}" AutomationProperties.Name="{l:Loc 'Search mods'}" TextChanged="SearchChanged" />
+                        <Button Classes="icon" Click="RefreshInstalled" ToolTip.Tip="{l:Loc 'Refresh'}" AutomationProperties.Name="{l:Loc 'Refresh'}"><icons:MaterialIcon Kind="Refresh" Width="18" Height="18" /></Button>
+                        <Button x:Name="MoreButton"  AutomationProperties.Name="{l:Loc 'More mod tools'}">
+                            <StackPanel Orientation="Horizontal"><icons:MaterialIcon Kind="DotsVertical" Width="17" Height="17" Margin="0,0,5,0" /><TextBlock Text="{l:Loc 'More'}" /></StackPanel>
+                            <Button.Flyout><MenuFlyout Placement="BottomEdgeAlignedRight">
+                                <MenuItem x:Name="InstallFolderItem" Header="{l:Loc 'Install from folder…'}" Click="InstallFolder" />
+                                <MenuItem x:Name="BuildAllItem" Header="{l:Loc 'Build all mods'}" Click="BuildAll" />
+                                <MenuItem x:Name="CheckModsItem" Header="{l:Loc 'Check live status'}" Click="CheckMods" />
+                                <MenuItem Header="{l:Loc 'Gateway log'}" Click="GatewayLog" /><MenuItem x:Name="ShowLogItem" Header="{l:Loc 'Show operation log'}" ToggleType="CheckBox" Click="ShowLogChanged" />
+                                <Separator /><MenuItem x:Name="AutoBackupItem" Header="{l:Loc 'Automatic backup before mod changes'}" ToggleType="CheckBox" Click="BackupChanged" />
+                            </MenuFlyout></Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                    <Button x:Name="UpdateAllButton" Classes="accent" HorizontalAlignment="Left" Margin="0" Click="UpdateAll">
+                        <StackPanel Orientation="Horizontal"><icons:MaterialIcon Kind="Update" Width="16" Height="16" Margin="0,0,6,0" /><TextBlock Text="{l:Loc 'Update all'}" />
+                            <Border x:Name="UpdateCountBadge" Margin="7,0,0,0"><TextBlock x:Name="UpdateCount" FontSize="12" /></Border>
+                        </StackPanel>
+                    </Button>
+                </DockPanel>
+                <TextBlock x:Name="Notice" DockPanel.Dock="Top" Classes="note" TextWrapping="Wrap" Margin="0,0,0,10" IsVisible="False" />
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <TextBlock Text="{l:Loc 'Sort by'}" Classes="note" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <ComboBox x:Name="SortPicker" Width="160" SelectionChanged="SortChoiceChanged" AutomationProperties.Name="{l:Loc 'Sort mods by'}" />
+                        <Button x:Name="SortDirection" Click="ReverseSort" Classes="icon" ToolTip.Tip="{l:Loc 'Reverse sort order'}" AutomationProperties.Name="{l:Loc 'Reverse sort order'}" />
+                    </StackPanel>
+                    <TextBlock x:Name="InstalledCount" Classes="note" FontSize="12" VerticalAlignment="Center" />
+                </DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="13,0,13,6">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                    <TextBlock Text="{l:Loc 'Use'}" Classes="column" /><TextBlock Grid.Column="1" Text="{l:Loc 'Mod'}" Classes="column" />
+                    <TextBlock Grid.Column="2" Text="{l:Loc 'Package status'}" Classes="column" /><TextBlock Grid.Column="3" Text="{l:Loc 'Action'}" Classes="column" />
+                </Grid>
+                <Grid>
+                    <ListBox x:Name="ModList" Classes="mods" AutomationProperties.Name="{l:Loc 'Installed mods'}"><ListBox.ItemTemplate><DataTemplate>
+                        <Grid Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested"><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                            <CheckBox MinWidth="0" IsChecked="{Binding Enabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}" Click="ToggleFromList" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" ToolTip.Tip="{Binding EnabledTip}" AutomationProperties.Name="{Binding EnabledTip}" />
+                            <StackPanel Grid.Column="1">
+                                <Button Classes="modLink" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
+                                <TextBlock Text="{Binding Problem}" IsVisible="{Binding HasProblem}" Foreground="{DynamicResource Shell.Error}" FontSize="12" TextWrapping="Wrap" Margin="52,5,12,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0">
+                                <TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" />
+                                <TextBlock Text="{Binding VersionChange}" FontSize="11" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" IsVisible="{Binding HasUpdate}" />
+                            </StackPanel>
+                            <Button Grid.Column="3" Classes="rowButton" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" IsVisible="{Binding HasButton}" ToolTip.Tip="{Binding ActionTip}"  />
+                            <Button Grid.Column="3" Classes="rowButton" Content="{l:Loc 'Details'}" Click="OpenRowDetails" IsVisible="{Binding ShowDetails}" />
+                            <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" IsVisible="{Binding HasJob}" />
+                        </Grid>
+                    </DataTemplate></ListBox.ItemTemplate></ListBox>
+                    <TextBlock x:Name="Empty" Classes="note" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Margin="16" />
+                </Grid>
+            </DockPanel>
+
+            <DockPanel x:Name="BrowseView" IsVisible="False">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <TextBox x:Name="BrowseSearch" Width="220" Margin="0,0,8,0" VerticalAlignment="Center" PlaceholderText="{l:Loc 'Search mods'}" AutomationProperties.Name="{l:Loc 'Search mods'}" TextChanged="BrowseSearchChanged" />
+                        <Button x:Name="RefreshButton" Classes="icon" Click="RefreshBrowse" ToolTip.Tip="{l:Loc 'Refresh'}" AutomationProperties.Name="{l:Loc 'Refresh'}"><icons:MaterialIcon Kind="Refresh" Width="18" Height="18" /></Button>
+                        <Button Classes="icon" ToolTip.Tip="{l:Loc 'More'}" AutomationProperties.Name="{l:Loc 'Repository tools'}"><icons:MaterialIcon Kind="DotsVertical" Width="18" Height="18" />
+                            <Button.Flyout><MenuFlyout Placement="BottomEdgeAlignedRight"><MenuItem Header="{l:Loc 'Add repository…'}" Click="ShowAddRepository" /><MenuItem Header="{l:Loc 'Open on GitHub'}" Click="OpenRepository" /><MenuItem x:Name="RemoveRepositoryItem" Header="{l:Loc 'Remove repository'}" Click="RemoveRepository" /></MenuFlyout></Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                    <ComboBox x:Name="SourcePicker" MinWidth="230" MaxWidth="300" HorizontalAlignment="Left" VerticalAlignment="Center" SelectionChanged="SourceChanged" AutomationProperties.Name="{l:Loc 'Mod repository'}" />
+                </DockPanel>
+                <TextBlock x:Name="BrowseCount" DockPanel.Dock="Top" Classes="note" FontSize="12" Margin="0,0,0,10" />
+                <DockPanel x:Name="AddRepositoryRow" DockPanel.Dock="Top" Margin="0,0,0,10" IsVisible="False">
+                    <Button DockPanel.Dock="Right" Content="{l:Loc 'Cancel'}" Margin="6,0,0,0" Click="HideAddRepository" /><Button DockPanel.Dock="Right" Content="{l:Loc 'Add'}" Classes="accent" Margin="6,0,0,0" Click="AddRepository" />
+                    <TextBox x:Name="RepositoryUrl" PlaceholderText="{l:Loc 'Another mod repository: github.com/owner/name'}" KeyDown="RepositoryUrlKey" />
+                </DockPanel>
+                <TextBlock x:Name="BrowseStatus" DockPanel.Dock="Top" Classes="note" TextWrapping="Wrap" Margin="0,0,0,10" IsVisible="False" />
+                <Grid DockPanel.Dock="Top" Margin="13,0,13,6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                    <TextBlock Text="{l:Loc 'Mod'}" Classes="column" /><TextBlock Grid.Column="1" Text="{l:Loc 'Package'}" Classes="column" /><TextBlock Grid.Column="2" Text="{l:Loc 'Action'}" Classes="column" />
+                </Grid>
+                <Grid>
+                    <ListBox x:Name="BrowseList" Classes="mods" AutomationProperties.Name="{l:Loc 'Available mods'}"><ListBox.ItemTemplate><DataTemplate>
+                        <Grid Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                            <Button Classes="modLink" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" /><TextBlock Text="{Binding VersionText}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" /></StackPanel>
+                            <Button Grid.Column="2" Classes="rowButton" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" IsVisible="{Binding ShowOfferAction}" />
+                            <Button Grid.Column="2" Classes="rowButton" Content="{l:Loc 'Details'}" Click="OpenRowDetails" IsVisible="{Binding ShowDetails}" />
+                            <ContentControl Grid.Column="2" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" IsVisible="{Binding HasJob}" />
+                        </Grid>
+                    </DataTemplate></ListBox.ItemTemplate></ListBox>
+                    <TextBlock x:Name="BrowseEmpty" Classes="note" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Margin="16" />
+                </Grid>
+            </DockPanel>
+
+            <DockPanel x:Name="ModPage" IsVisible="False">
+                <StackPanel DockPanel.Dock="Top">
+                    <DockPanel Margin="0,0,0,12">
+                        <Button DockPanel.Dock="Right" Click="RefreshInstalled" Classes="icon" HorizontalAlignment="Right" ToolTip.Tip="{l:Loc 'Refresh mod details'}" AutomationProperties.Name="{l:Loc 'Refresh mod details'}"><icons:MaterialIcon Kind="Refresh" Width="18" Height="18" /></Button>
+                        <Button x:Name="BackButton" Click="ClosePage" HorizontalAlignment="Left"><StackPanel Orientation="Horizontal"><icons:MaterialIcon Kind="ArrowLeft" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock x:Name="BackText" /></StackPanel></Button>
+                    </DockPanel>
+                    <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,0,0,12">
+                        <DockPanel>
+                            <Border DockPanel.Dock="Left" Classes="tile" Width="64" Height="66" VerticalAlignment="Top" Margin="0,0,18,0"><icons:MaterialIcon x:Name="PageIcon" Width="34" Height="34" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" /></Border>
+                            <StackPanel>
+                                <TextBlock x:Name="PageTitle" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" /><TextBlock x:Name="PageByline" Classes="note" FontSize="12" Margin="0,4,0,0" />
+                                <TextBlock x:Name="PageDescription" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,9,0,0" />
+                                <WrapPanel Margin="0,12,0,0">
+                                    <CheckBox x:Name="PageEnabled" Content="{l:Loc 'Enabled for this checkout'}" VerticalAlignment="Center" Margin="0,0,14,0" Click="TogglePage" />
+                                    <TextBlock x:Name="PagePackageStatus" Classes="note" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                    <Button x:Name="PageAction" Classes="accent" MinWidth="100" Margin="0,0,8,0" Click="PageActionClicked" />
+                                    <Button x:Name="PageMenuButton" Classes="icon" Click="OpenPageMenu" ToolTip.Tip="{l:Loc 'More'}" AutomationProperties.Name="{l:Loc 'More mod actions'}"><icons:MaterialIcon Kind="DotsVertical" Width="18" Height="18" /></Button>
+                                </WrapPanel>
+                                <TextBlock x:Name="PageStats" Classes="note" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,8" />
+                                <ItemsControl x:Name="PageTags"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Classes="tag" Margin="0,0,6,0"><TextBlock Text="{Binding}" FontSize="11" /></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+                <TabControl x:Name="PageTabs">
+                    <TabItem x:Name="ModOverviewPage" Header="{l:Loc 'Overview'}"><DockPanel>
+                        <Border x:Name="RuntimeCard" DockPanel.Dock="Top" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,12,0,10">
+                            <DockPanel><Button x:Name="PageCheckStatus" DockPanel.Dock="Right" Content="{l:Loc 'Check live status'}" Click="CheckMods"  VerticalAlignment="Top" Margin="14,0,0,0" />
+                                <StackPanel><TextBlock Text="{l:Loc 'Saved choice and live status'}" FontSize="14" FontWeight="SemiBold" /><TextBlock x:Name="SavedChoiceText" Margin="0,8,0,0" TextWrapping="Wrap" /><TextBlock x:Name="RuntimeStatusText" Margin="0,4,0,0" TextWrapping="Wrap" /><TextBlock Text="{l:Loc 'A saved checkmark does not confirm that the mod is loaded in the running game.'}" Classes="note" FontSize="12" TextWrapping="Wrap" Margin="0,7,0,0" /></StackPanel>
+                            </DockPanel>
+                        </Border>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel x:Name="OverviewPanel" /></ScrollViewer>
+                    </DockPanel></TabItem>
+                    <TabItem x:Name="ModSettingsPage" Header="{l:Loc 'Settings'}"><DockPanel Margin="0,12,0,0">
+                        <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,1,0,0" Padding="0,12,0,0" Margin="0,10,0,0">
+                            <StackPanel><TextBlock x:Name="SettingsHint" Classes="note" FontSize="12" TextWrapping="Wrap" />
+                                <WrapPanel x:Name="SettingsActions" Margin="0,8,0,0"><Button x:Name="SaveSettingsButton" Classes="accent" Content="{l:Loc 'Save settings'}" Click="SaveSettings" /><Button x:Name="DiscardSettingsButton" Content="{l:Loc 'Discard changes'}" Click="DiscardModSettings" /><Button x:Name="ResetSettingsButton" Content="{l:Loc 'Reset to defaults'}" Click="ResetSettings" /></WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel MaxWidth="680" HorizontalAlignment="Left" Margin="16,12,16,0">
+                            <TextBlock Text="{l:Loc 'Mod settings'}" FontSize="18" FontWeight="SemiBold" /><TextBlock Text="{l:Loc 'Shared by every league where this mod runs.'}" Classes="note" FontSize="12" Margin="0,6,0,16" TextWrapping="Wrap" /><StackPanel x:Name="SettingsPanel" />
+                        </StackPanel></ScrollViewer>
+                    </DockPanel></TabItem>
+                    <TabItem x:Name="ModVersionsPage" Header="{l:Loc 'Versions'}"><ListBox x:Name="VersionList" Classes="mods" Margin="0,12,0,0"><ListBox.ItemTemplate><DataTemplate>
+                        <Grid Background="Transparent" Tapped="RowTapped" ContextRequested="RowContextRequested"><Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="100" /><ColumnDefinition Width="80" /><ColumnDefinition Width="*" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Version}" Classes="cell" FontWeight="SemiBold" /><TextBlock Grid.Column="1" Text="{Binding Date}" Classes="cell" /><TextBlock Grid.Column="2" Text="{Binding Size}" Classes="cell" /><TextBlock Grid.Column="3" Text="{Binding Notes}" Classes="cell" Foreground="{DynamicResource Shell.TextSecondary}" ToolTip.Tip="{Binding Notes}" Margin="0,0,12,0" /><Button Grid.Column="4" Classes="rowButton" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallVersion" />
+                        </Grid>
+                    </DataTemplate></ListBox.ItemTemplate></ListBox></TabItem>
+                </TabControl>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
 </UserControl>

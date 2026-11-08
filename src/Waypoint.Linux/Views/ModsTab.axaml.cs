@@ -27,7 +27,7 @@ partial class ModsTab : UserControl
     IReadOnlyList<BrowseItem> _items = [];
     bool _busy, _filling;
     ModSort _sort = ModSort.Name;
-    bool _descending;
+    bool _descending, _fillingSort;
     BrowseItem? _pageItem;
     ModEntry? _pageEntry;
     string _pageReadme = "";
@@ -63,6 +63,7 @@ partial class ModsTab : UserControl
         L.Current.PropertyChanged += (_, _) =>
         {
             FillSources();
+            FillSortChoices();
             Render();
         };
         ViewTools.WhenShown(this, async () =>
@@ -78,52 +79,14 @@ partial class ModsTab : UserControl
             return true;
         }, TimeSpan.FromSeconds(2));
         FillSources();
+        FillSortChoices();
         Render();
-    }
-
-    void ShowTexts()
-    {
-        InstalledPage.Header = L.Text("My Mods");
-        BrowsePage.Header = L.Text("Browse");
-        Search.PlaceholderText = BrowseSearch.PlaceholderText = L.Text("Search");
-        UpdateAllText.Text = L.Text("Update all");
-        ToolTip.SetTip(OpenModsButton, L.Text("Open mods folder"));
-        ToolTip.SetTip(RefreshInstalledButton, L.Text("Refresh"));
-        ToolTip.SetTip(RefreshButton, L.Text("Refresh"));
-        ToolTip.SetTip(MoreButton, L.Text("More"));
-        ToolTip.SetTip(BrowseMoreButton, L.Text("More"));
-        ToolTip.SetTip(PageMenuButton, L.Text("More"));
-        ToolTip.SetTip(BackButton, L.Text("Back"));
-        InstallFolderItem.Header = L.Text("Install from folder…");
-        BuildAllItem.Header = L.Text("Build all mods");
-        CheckModsItem.Header = L.Text("Check live status");
-        GatewayLogItem.Header = L.Text("Gateway log");
-        ShowLogItem.Header = L.Text("Show operation log");
-        AutoBackupItem.Header = L.Text("Automatic backup before mod changes");
-        BrowseNameHeader.Text = L.Text("Name");
-        BrowseActionHeader.Text = L.Text("Action");
-        BrowseLatestHeader.Text = L.Text("Latest");
-        BrowseTypeHeader.Text = L.Text("Type");
-        BrowseAuthorHeader.Text = L.Text("Author");
-        AddRepositoryItem.Header = L.Text("Add repository…");
-        OpenRepositoryItem.Header = L.Text("Open on GitHub");
-        RemoveRepositoryItem.Header = L.Text("Remove repository");
-        AddRepositoryButton.Content = L.Text("Add");
-        CancelRepositoryButton.Content = L.Text("Cancel");
-        RepositoryUrl.PlaceholderText = L.Text("Another mod repository: github.com/owner/name");
-        PageEnabled.Content = L.Text("Enabled");
-        ModOverviewPage.Header = L.Text("Overview");
-        ModSettingsPage.Header = L.Text("Settings");
-        ModVersionsPage.Header = L.Text("Versions");
-        SaveSettingsButton.Content = L.Text("Save settings");
-        ResetSettingsButton.Content = L.Text("Reset to defaults");
     }
 
     // ---- Lists ----
 
     void Render()
     {
-        ShowTexts();
         var state = State;
         bool supported = state?.ModEnvironment is { Supported: true };
         string notice = "";
@@ -163,8 +126,10 @@ partial class ModsTab : UserControl
         var failures = GatewayMods.LoadErrors(State);
         var rows = ModSorting.Sort(_entries.Select(e => new InstalledRow(e, _offers.GetValueOrDefault(e.Id)) { Job = _browser.Job(e.Id), LoadError = failures.GetValueOrDefault(e.Id, "") })
             .Where(r => r.SearchText.Contains(text, StringComparison.OrdinalIgnoreCase)), _sort, _descending).ToList();
-        foreach (var (heading, column) in new[] { (SortEnabled, ModSort.Enabled), (NameHeader, ModSort.Name), (ActionHeader, ModSort.Action), (LatestHeader, ModSort.Latest), (AuthorHeader, ModSort.Author) })
-            heading.Text = ModSorting.Heading(column, _sort, _descending);
+        SortDirection.Content = _descending ? "↓" : "↑";
+        int updates = _entries.Count(e => _offers.GetValueOrDefault(e.Id)?.Offer == ModOffer.Update);
+        InstalledCount.Text = text.Length > 0 ? L.Text("{0} of {1} installed mods", rows.Count, _entries.Length)
+            : L.Text("{0} installed · {1} updates", _entries.Length, updates);
         ModList.ItemsSource = rows;
         Empty.IsVisible = rows.Count == 0;
         Empty.Text = text.Length > 0 ? L.Text("No mods match your search.")
@@ -280,13 +245,26 @@ partial class ModsTab : UserControl
         Render();
     }
 
-    /// <summary>A heading sorts My Mods by its column; the same heading again reverses it.</summary>
-    void SortBy(object? sender, TappedEventArgs e)
+    void FillSortChoices()
     {
-        if (sender is not TextBlock { Tag: string tag } || !Enum.TryParse(tag, out ModSort column)) return;
-        _descending = column == _sort && !_descending;
-        _sort = column;
-        Filter();
+        _fillingSort = true; SortPicker.Items.Clear();
+        foreach (var column in Enum.GetValues<ModSort>())
+            SortPicker.Items.Add(new ComboBoxItem { Content = column == ModSort.Action ? L.Text("Package status") : ModSorting.Heading(column, (ModSort)(-1), false), Tag = column });
+        SortPicker.SelectedItem = SortPicker.Items.OfType<ComboBoxItem>().First(i => Equals(i.Tag, _sort));
+        _fillingSort = false;
+    }
+    void SortChoiceChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_shared is null || _fillingSort || SortPicker.SelectedItem is not ComboBoxItem { Tag: ModSort column }) return;
+        _sort = column; _descending = false; Filter();
+    }
+    void ReverseSort(object? sender, RoutedEventArgs e) { _descending = !_descending; Filter(); }
+    void OpenRowDetails(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        e.Handled = true;
+        if (button.DataContext is InstalledRow row) OpenPage(row.Offer, row.Entry);
+        else if (button.DataContext is BrowseItem item) OpenPage(item, item.Installed);
     }
 
     async void RowAction(object? sender, RoutedEventArgs e)
@@ -557,25 +535,32 @@ partial class ModsTab : UserControl
         _pageItem = item;
         _pageEntry = entry;
         if (item is null && entry is null) { ClosePage(this, new RoutedEventArgs()); return; }
-        string title = item?.Title ?? entry!.Title;
-        PageInitial.Text = ModsText.Initial(title);
+        string title = entry is null ? item!.Title : new InstalledRow(entry, item).Title;
+        PageIcon.Kind = ModsText.Icon(id);
+        BackText.Text = L.Text(Pages.SelectedItem == BrowsePage ? "Back to Browse" : "Back to My Mods");
         PageTitle.Text = title;
         string author = entry?.Author is { Length: > 0 } a ? a : item?.Author ?? "";
         PageByline.Text = author.Length > 0 ? L.Text("by {0}", author) : "";
-        PageDescription.Text = item?.Listing.Description is { Length: > 0 } d ? d : entry?.Description ?? "";
+        PageDescription.Text = entry?.Description is { Length: > 0 } d ? d : item?.Listing.Description ?? "";
         PageTags.ItemsSource = ModsText.Tags(item, entry);
         PageStats.Text = ModsText.Stats(item, entry);
         PageEnabled.IsVisible = entry is not null;
         PageEnabled.IsChecked = entry?.Enabled == true;
         PageEnabled.IsEnabled = entry?.Fingerprint.Length > 0;
-        PageAction.IsVisible = item is not null;
+
         ShowPageJob(_browser.Job(item?.Listing.Id ?? entry!.Id));
         PageAction.IsEnabled = item?.CanAct == true && _pageJob is null && CanUse;
         var history = item is null ? [] : _browser.View(item.Source)?.History.GetValueOrDefault(item.Listing.Id) ?? [];
         VersionList.ItemsSource = history.Select(r => new VersionRow(item!, r)).ToList();
         ModVersionsPage.IsVisible = history.Count > 0;
-        ModSettingsPage.IsVisible = entry?.SettingsFile.Length > 0;
+        SettingsEditor.Show(ModSettingsPage, true);
         if (PageTabs.SelectedItem is TabItem { IsVisible: false }) PageTabs.SelectedItem = ModOverviewPage;
+        PagePackageStatus.Text = entry is null ? "" : new InstalledRow(entry, item).PackageStatus;
+        SettingsEditor.Show(PagePackageStatus, entry is not null && _pageJob is null);
+        SettingsEditor.Show(RuntimeCard, entry is not null);
+        SavedChoiceText.Text = L.Text("Saved choice: {0}", L.Text(entry?.Enabled == true ? "Enabled" : "Disabled"));
+        RuntimeStatusText.Text = L.Text("Live load status: {0}", ModsText.RuntimeStatus(State, id));
+        PageCheckStatus.IsEnabled = CheckModsItem.IsEnabled;
         ShowSettings(entry);
         if (_pageReadme.Length == 0) ShowOverview(PageDescription.Text ?? "");
     }
@@ -590,6 +575,7 @@ partial class ModsTab : UserControl
             if (job is not null) job.PropertyChanged += PageJobChanged;
         }
         PageAction.Content = job?.Text ?? _pageItem?.ActionText ?? "";
+        SettingsEditor.Show(PageAction, job is not null || _pageItem?.Offer is ModOffer.Install or ModOffer.Update);
     }
 
     void PageJobChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -623,29 +609,55 @@ partial class ModsTab : UserControl
 
     void ShowSettings(ModEntry? entry)
     {
-        string? shown = _form?.Id;
-        if (Repo.IsInstall || entry is null || entry.SettingsFile.Length == 0 || State is not { } state)
+        // Refreshes must not replace a form that still belongs to this installed mod.
+        if (!Repo.IsInstall && entry is not null && _form?.Id == entry.Id && SettingsPanel.Children.Count > 0)
+        { UpdateSettingsButtons(); return; }
+        _form = null; _settingsEditor = null; _inputs.Clear(); SettingsPanel.Children.Clear();
+        SettingsEditor.Show(SettingsActions, false); SettingsHint.Text = "";
+        if (Repo.IsInstall)
         {
-            _form = null;
-            SettingsPanel.Children.Clear();
-            return;
+            SettingsNotice(L.Text("Settings support unavailable"), L.Text("This release does not declare compatibility with downloadable mod settings. Use a compatible source checkout to edit them.")); return;
         }
-        SaveSettingsButton.IsEnabled = ResetSettingsButton.IsEnabled = CanUse;
-        // A refresh redraws the page; keep what the player is typing in the form of the same mod.
-        if (shown == entry.Id && SettingsPanel.Children.Count > 0) return;
-        _inputs.Clear();
-        SettingsPanel.Children.Clear();
+        if (entry is null)
+        { SettingsNotice(L.Text("Settings unavailable before installation"), L.Text("Install this mod to view its settings.")); return; }
+        if (entry.SettingsFile.Length == 0)
+        {
+            SettingsNotice(L.Text("Settings not exposed to Waypoint"), L.Text("The installed mod does not provide a settings declaration for Waypoint. Separate configuration files may still exist.")); return;
+        }
+        if (State is not { } state)
+        { SettingsNotice(L.Text("Settings could not be loaded"), L.Text("Choose and check a workspace to see its mods.")); return; }
         try { _form = ModSettingsForm.Load(entry.Id, entry.SettingsFile, state.Root); }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException)
         {
             _form = null;
-            SettingsHint.Text = L.Text("Could not read this mod's settings: ") + e.Message;
-            SaveSettingsButton.IsEnabled = ResetSettingsButton.IsEnabled = false;
+            SettingsNotice(L.Text("Settings could not be loaded"), L.Text("Waypoint found a settings declaration but could not load it. Refresh to try again. Nothing was changed."));
+            SettingsPanel.Children.Add(new Expander { Header = L.Text("Error details"), Content = Note(e.Message), Margin = new Thickness(0, 8, 0, 0) });
             return;
         }
+        if (_form.Settings.Count == 0)
+        { _form = null; SettingsNotice(L.Text("No editable settings"), L.Text("The settings declaration was loaded successfully and contains no editable settings.")); return; }
         _settingsEditor = new SettingsEditor(_form);
-        SettingsPanel.Children.Add(_settingsEditor);
-        SettingsHint.Text = L.Text("Saved for this checkout in {0}; a running Gateway reloads the mod.", ModSettingsForm.UserFile(entry.Id));
+        SettingsPanel.Children.Add(_settingsEditor); _settingsEditor.Edited += UpdateSettingsButtons;
+        SettingsEditor.Show(SettingsActions, true); UpdateSettingsButtons();
+    }
+    void SettingsNotice(string heading, string explanation)
+    {
+        var title = Note(heading); title.FontSize = 14; title.FontWeight = FontWeight.SemiBold;
+        title.Bind(TextBlock.ForegroundProperty, new Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("Shell.Text")); SettingsPanel.Children.Add(title);
+        var note = Note(explanation); note.Margin = new Thickness(0, 6, 0, 0); SettingsPanel.Children.Add(note);
+    }
+    void UpdateSettingsButtons()
+    {
+        bool dirty = _settingsEditor?.Dirty == true;
+        SaveSettingsButton.IsEnabled = CanUse && dirty; ResetSettingsButton.IsEnabled = CanUse && _form is not null;
+        DiscardSettingsButton.IsEnabled = dirty;
+        if (_settingsEditor is not null) _settingsEditor.IsEnabled = CanUse;
+        SettingsHint.Text = !CanUse ? L.Text("Settings cannot be saved while this workspace is unavailable or busy.") : dirty ? L.Text("Unsaved settings") : L.Text("No unsaved changes.");
+    }
+    void DiscardModSettings(object? sender, RoutedEventArgs e)
+    {
+        if (_settingsEditor?.Dirty != true || !DiscardSettings()) return;
+        _form = null; ShowSettings(_pageEntry);
     }
 
     static TextBlock Note(string text)
