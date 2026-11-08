@@ -108,6 +108,14 @@ try {
     Operation 'UninstallMod'
     Check (-not (Test-Path -LiteralPath (At 'Mods/Binaries/beta')) -and -not (Test-Path -LiteralPath (At 'Mods/Binaries/gamma')) -and $script:backups -eq $before + 1) 'batch uninstall removes both with one backup'
     $script:ModIds = ''
+    Check (-not (Test-LegacyReleaseMods)) 'a source checkout is never a legacy release'
+    $script:isRelease = $true
+    try {
+        foreach ($case in @(@('0.1.0-beta', $true), @('0.2.0-alpha', $true), @('0.2.0-beta', $false), @('0.2.0', $false), @('0.3.1', $false), @('nonsense', $true))) {
+            [IO.File]::WriteAllText((At 'release.json'), '{ "version": "' + $case[0] + '" }')
+            Check ((Test-LegacyReleaseMods) -eq $case[1]) "release $($case[0]) legacy mods: $($case[1])"
+        }
+    } finally { $script:isRelease = $false; Remove-Item -LiteralPath (At 'release.json') -ErrorAction SilentlyContinue }
     Write-Host "$script:passed mod browser checks passed."
 } finally {
     $env:Game_MODS_FOLDER = $previousModFolder

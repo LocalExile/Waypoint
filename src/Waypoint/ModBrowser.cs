@@ -44,7 +44,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public ModJob? Job { get; init; }
     public bool HasJob => Job is not null;
     public bool ShowButton => Job is null;
-    public bool CanAct => !Repo.IsInstall && Offer != ModOffer.Installed && Job is null;
+    public bool CanAct => !Repo.LegacyReleaseMods && Offer != ModOffer.Installed && Job is null;
     public string ActionText => Offer switch { ModOffer.Install => L.Text("Install"), ModOffer.Update => L.Text("Update"), _ => L.Text("Installed") };
     public string Origin => Release is not null ? L.Text("Release {0}", Release.Tag)
         : Listing.IsProject ? L.Text("No release: installs the source") : L.Text("Scripts: no build needed");
@@ -53,7 +53,16 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public ModIconKind Icon => ModsText.Icon(Listing.Id);
     public string Description => Listing.Description;
     public bool HasDescription => Description.Length > 0;
-    public string Metadata => string.Join(" · ", new[] { Latest, Author, TypeText }.Where(s => s.Length > 0));
+    public string Metadata => Author;
+    /// <summary>The LocalExile versions it declares; the list shows these, not the mod's own version.</summary>
+    public IReadOnlyList<string> ClientVersions => Listing.ClientVersions ?? [];
+    public string ClientText => ModsText.ClientText(ClientVersions);
+    /// <summary>It names the LocalExile versions it works with, and this checkout's is not one of them.</summary>
+    public bool Incompatible => !ClientCompatibility.Fits(ClientVersions, Repo.ClientVersion);
+    public string? IncompatibleTip => Incompatible ? ModsText.IncompatibleTip(ClientVersions) : null;
+    /// <summary>Under the package status: the version change of an update.</summary>
+    public string VersionChange => Offer == ModOffer.Update ? VersionText : "";
+    public bool HasVersionChange => VersionChange.Length > 0;
     public string PackageStatus => Offer == ModOffer.Update ? L.Text("Update available") : Offer == ModOffer.Installed ? L.Text("Installed")
         : NeedsBuild ? L.Text("Source project") : Release is not null ? L.Text("Release") : L.Text("Scripts");
     public bool ShowOfferAction => Job is null && Offer != ModOffer.Installed;
@@ -80,7 +89,7 @@ sealed record VersionRow(BrowseItem Item, ModRelease Release)
         }
     }
     public bool IsInstalled => Item.InstalledVersion is { } installed && !installed.IsNewerThan(Release.Version) && !Release.Version.IsNewerThan(installed);
-    public bool CanAct => !Repo.IsInstall && !IsInstalled;
+    public bool CanAct => !Repo.LegacyReleaseMods && !IsInstalled;
     public string ActionText => IsInstalled ? L.Text("Installed") : L.Text("Install");
 }
 
@@ -115,45 +124,62 @@ sealed class ModJob(string id, string text) : System.ComponentModel.INotifyPrope
 /// <summary>What a row of My Mods offers to do, in the order it sorts.</summary>
 enum RowAction { Update, Reinstall, Build, NotLoaded, UpToDate }
 
-/// <summary>A column My Mods sorts by.</summary>
-enum ModSort { Enabled, Name, Action, Latest, Author }
+/// <summary>A column My Mods and Browse sort by: its heading is a button.</summary>
+enum ModSort { Enabled, Name, Client, Status, Action }
 
-/// <summary>My Mods' order: by a column, then by name.</summary>
+/// <summary>The lists' order: by a column, then by name.</summary>
 static class ModSorting
 {
-    public static IEnumerable<InstalledRow> Sort(IEnumerable<InstalledRow> rows, ModSort by, bool descending)
+    static readonly StringComparer ByName = StringComparer.CurrentCultureIgnoreCase;
+
+    // Text by name, versions as versions; what has none comes first.
+    static readonly Comparer<object?> Keys = Comparer<object?>.Create((x, y) => (x, y) switch
     {
-        var byName = StringComparer.CurrentCultureIgnoreCase;
-        var versions = Comparer<string>.Create((x, y) => (ReleaseVersion.Parse(x), ReleaseVersion.Parse(y)) switch
-        {
-            ({ } a, { } b) => a.IsNewerThan(b) ? 1 : b.IsNewerThan(a) ? -1 : 0,
-            (null, null) => string.CompareOrdinal(x, y),
-            (null, _) => -1,
-            _ => 1,
-        });
-        var ordered = by switch
-        {
-            ModSort.Enabled => descending ? rows.OrderBy(r => r.Enabled) : rows.OrderByDescending(r => r.Enabled),
-            ModSort.Action => descending ? rows.OrderByDescending(r => r.Action) : rows.OrderBy(r => r.Action),
-            ModSort.Latest => descending ? rows.OrderByDescending(r => r.Latest, versions) : rows.OrderBy(r => r.Latest, versions),
-            ModSort.Author => descending ? rows.OrderByDescending(r => r.Author, byName) : rows.OrderBy(r => r.Author, byName),
-            _ => descending ? rows.OrderByDescending(r => r.Title, byName) : rows.OrderBy(r => r.Title, byName),
-        };
-        return by == ModSort.Name ? ordered : ordered.ThenBy(r => r.Title, byName);
+        (string a, string b) => ByName.Compare(a, b),
+        (ReleaseVersion a, ReleaseVersion b) => a.CompareTo(b),
+        (null, null) => 0,
+        (null, _) => -1,
+        (_, null) => 1,
+        _ => Comparer<object>.Default.Compare(x, y),
+    });
+
+    public static IEnumerable<InstalledRow> Sort(IEnumerable<InstalledRow> rows, ModSort by, bool descending) => Order(rows, r => r.Title, descending, by switch
+    {
+        ModSort.Enabled => r => r.Enabled ? 0 : 1,
+        ModSort.Client => r => Newest(r.ClientVersions),
+        ModSort.Status => r => r.PackageStatus,
+        ModSort.Action => r => (int)r.Action,
+        _ => null,
+    });
+
+    public static IEnumerable<BrowseItem> Sort(IEnumerable<BrowseItem> rows, ModSort by, bool descending) => Order(rows, r => r.Title, descending, by switch
+    {
+        ModSort.Client => r => Newest(r.ClientVersions),
+        ModSort.Status => r => r.PackageStatus,
+        ModSort.Action => r => (int)r.Offer,
+        _ => null,
+    });
+
+    static IEnumerable<T> Order<T>(IEnumerable<T> rows, Func<T, string> title, bool descending, Func<T, object?>? key)
+    {
+        if (key is null) return descending ? rows.OrderByDescending(title, ByName) : rows.OrderBy(title, ByName);
+        return (descending ? rows.OrderByDescending(key, Keys) : rows.OrderBy(key, Keys)).ThenBy(title, ByName);
     }
+
+    static ReleaseVersion? Newest(IReadOnlyList<string> versions) => versions.Select(ReleaseVersion.Parse).OfType<ReleaseVersion>().Max();
 
     /// <summary>A column's heading, with an arrow when the list is sorted by it.</summary>
     public static string Heading(ModSort column, ModSort by, bool descending)
     {
         string text = column switch
         {
-            ModSort.Enabled => L.Text("Enabled"),
+            ModSort.Enabled => L.Text("Use"),
+            ModSort.Client => L.Text("Client version"),
+            ModSort.Status => L.Text("Package status"),
             ModSort.Action => L.Text("Action"),
-            ModSort.Latest => L.Text("Latest version"),
-            ModSort.Author => L.Text("Author"),
-            _ => L.Text("Name"),
+            _ => L.Text("Mod"),
         };
-        return column == by ? text + (descending ? "  ▼" : "  ▲") : text;
+        return column == by ? text + (descending ? " ▼" : " ▲") : text;
     }
 }
 
@@ -165,7 +191,12 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public ModIconKind Icon => ModsText.Icon(Entry.Id);
     public string Description => Entry.Description.Length > 0 ? Entry.Description : Offer?.Listing.Description ?? "";
     public bool HasDescription => Description.Length > 0;
-    public string Metadata => string.Join(" · ", new[] { Entry.Version, Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
+    public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
+    /// <summary>The LocalExile versions its installed mod.json declares, else what its repository's listing does.</summary>
+    public IReadOnlyList<string> ClientVersions => Entry.ClientVersions is { Count: > 0 } own ? own : Offer?.ClientVersions ?? [];
+    public string ClientText => ModsText.ClientText(ClientVersions);
+    public bool Incompatible => !ClientCompatibility.Fits(ClientVersions, Repo.ClientVersion);
+    public string? IncompatibleTip => Incompatible ? ModsText.IncompatibleTip(ClientVersions) : null;
     public string PackageStatus => HasUpdate ? L.Text("Update available") : !IsBuilt ? L.Text("Not built")
         : Offer is null ? L.Text("Installed") : L.Text("Up to date");
     public string VersionChange => HasUpdate ? L.Text("{0} → {1}", Entry.Version, Latest) : "";
@@ -198,7 +229,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     /// <summary>The Action column as text, not a button: Up to date, or Not loaded.</summary>
     public bool UpToDate => !HasButton && Job is null;
     /// <summary>Build compiles the source project (a source checkout), or installs the repository's copy when there is none.</summary>
-    public bool CanAct => !Repo.IsInstall && Job is null && Action switch
+    public bool CanAct => !Repo.LegacyReleaseMods && Job is null && Action switch
     {
         RowAction.Update or RowAction.Reinstall => true,
         RowAction.Build => (Entry.Project.Length > 0 && !Repo.IsInstall) || Offer is not null,
@@ -574,9 +605,26 @@ sealed class ModBrowser(Shared shared)
         finally { try { Directory.Delete(folder, recursive: true); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { } }
     }
 
+    /// <summary>Reads the checkout's LocalExile version again (<see cref="Repo.ClientVersion"/>): a release's release.json, a
+    /// source checkout's newest version tag. A switch or an update changes it.</summary>
+    public static async Task RefreshClientVersionAsync()
+    {
+        if (Repo.IsInstall) { Repo.ClientVersion = LocalExileReleases.Installed(Environment.CurrentDirectory); return; }
+        try
+        {
+            var result = await Git.RunAsync(null, "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*");
+            Repo.ClientVersion = result.Ok ? ReleaseVersion.Parse(result.Output.Trim()) : null;
+        }
+        catch (Exception e) when (e is System.ComponentModel.Win32Exception or InvalidOperationException) { Repo.ClientVersion = null; }
+    }
+
+    /// <summary>The question before installing, updating or building a mod made for other LocalExile versions.</summary>
+    public static string IncompatibleQuestion() =>
+        L.Text("This mod is incompatible with your client version: {0}. Are you sure you want to install it?", Repo.ClientVersion?.ToString() ?? "?");
+
     internal static void RequireModernMods()
     {
-        if (Repo.IsInstall) throw new InvalidOperationException(L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods."));
+        if (Repo.LegacyReleaseMods) throw new InvalidOperationException(L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods."));
     }
 }
 
@@ -644,10 +692,19 @@ static class ModsText
         var parts = new List<string>();
         if (installed is not null) parts.Add(L.Text("Installed {0}", installed.Version));
         if (item is not null && (installed is null || item.Latest != installed.Version)) parts.Add(L.Text("Latest {0}", item.Latest));
+        var client = installed?.ClientVersions is { Count: > 0 } own ? own : item?.ClientVersions ?? [];
+        parts.Add(L.Text("Client version {0}", ClientText(client)));
         if (item?.Release?.Published is { } published) parts.Add(published.ToLocalTime().ToString("d"));
         if (item?.Release is { ZipBytes: > 0 } release) parts.Add(L.Text("{0:N0} KB", Math.Max(1, release.ZipBytes / 1024)));
         return string.Join("   ·   ", parts);
     }
+
+    /// <summary>A mod's compatible client versions as the lists show them.</summary>
+    public static string ClientText(IReadOnlyList<string> versions) => versions.Count > 0 ? ClientCompatibility.Text(versions) : L.Text("Not declared");
+
+    /// <summary>The warning beside a mod made for other LocalExile versions.</summary>
+    public static string IncompatibleTip(IReadOnlyList<string> versions) =>
+        L.Text("Made for LocalExile {0}; this checkout runs {1}.", ClientCompatibility.Text(versions), Repo.ClientVersion?.ToString() ?? "?");
 
     /// <summary>The question before an uninstall.</summary>
     public static string UninstallQuestion(ModEntry mod) =>

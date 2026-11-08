@@ -60,6 +60,27 @@
                 </StackPanel>
             </DockPanel>
         </DataTemplate>
+        <!-- A column's heading: a click sorts the list by it, again reverses it. -->
+        <Style x:Key="SortHeader" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" /><Setter Property="Focusable" Value="True" /><Setter Property="HorizontalAlignment" Value="Left" />
+            <EventSetter Event="Click" Handler="SortBy" />
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+                <Border x:Name="Focus" Background="Transparent" BorderThickness="1" BorderBrush="Transparent" CornerRadius="3" Padding="2,1">
+                    <TextBlock x:Name="Label" Text="{TemplateBinding Content}" Style="{StaticResource Shell.ColumnHeader}" />
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Label" Property="Foreground" Value="{DynamicResource Shell.Text}" /></Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Focus" Property="BorderBrush" Value="{DynamicResource Shell.Accent}" /></Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <DataTemplate x:Key="ClientCell">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" ToolTip="{Binding IncompatibleTip}">
+                <md:PackIcon Kind="AlertCircle" Width="16" Height="16" Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Warning}"
+                             Visibility="{Binding Incompatible, Converter={StaticResource BooleanToVisibilityConverter}}" AutomationProperties.Name="{Binding IncompatibleTip}" />
+                <TextBlock Text="{Binding ClientText}" FontSize="12" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="JobBox">
             <Border Width="104" Height="30" HorizontalAlignment="Right" CornerRadius="4" ClipToBounds="True" Background="{DynamicResource Shell.Background}">
                 <Grid>
@@ -73,18 +94,17 @@
     <DockPanel Margin="18,8,18,12">
         <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="150" Margin="0,8,0,0" Visibility="Collapsed" />
         <TextBlock x:Name="ChoiceScopeHint" DockPanel.Dock="Bottom" Text="{l:Loc 'Saved enable choices do not confirm live load status.'}" Style="{StaticResource Shell.Secondary}" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,0" />
-        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="16,0,0,0">
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
                 <Button Click="RefreshInstalled" Style="{StaticResource Shell.Button}" Margin="0,0,8,0" Content="{l:Loc 'Refresh'}" AutomationProperties.Name="{l:Loc 'Refresh'}" />
                 <Button x:Name="OpenModsButton" Click="OpenMods" Style="{StaticResource Shell.Button}" Margin="0" AutomationProperties.Name="{l:Loc 'Open mods folder'}">
                     <StackPanel Orientation="Horizontal"><md:PackIcon Kind="FolderOpenOutline" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock Text="{l:Loc 'Open folder'}" /></StackPanel>
                 </Button>
             </StackPanel>
-            <l:ContentSectionHeading Section="Mods" />
+            <TabControl x:Name="Pages" SelectionChanged="PageChanged" Width="280" HorizontalAlignment="Left">
+                <TabItem x:Name="InstalledPage" Header="{l:Loc 'My Mods'}" /><TabItem x:Name="BrowsePage" Header="{l:Loc 'Browse'}" />
+            </TabControl>
         </DockPanel>
-        <TabControl x:Name="Pages" DockPanel.Dock="Top" SelectionChanged="PageChanged" Width="280" HorizontalAlignment="Left" Margin="0,0,0,12">
-            <TabItem x:Name="InstalledPage" Header="{l:Loc 'My Mods'}" /><TabItem x:Name="BrowsePage" Header="{l:Loc 'Browse'}" />
-        </TabControl>
         <Grid>
             <DockPanel x:Name="InstalledView">
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
@@ -108,34 +128,31 @@
                     </Button>
                 </DockPanel>
                 <TextBlock x:Name="Notice" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,0,0,10" Visibility="Collapsed" />
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <TextBlock Text="{l:Loc 'Sort by'}" Style="{StaticResource Shell.Secondary}" VerticalAlignment="Center" Margin="0,0,8,0" />
-                        <ComboBox x:Name="SortPicker" Width="160" SelectionChanged="SortChoiceChanged" AutomationProperties.Name="{l:Loc 'Sort mods by'}" />
-                        <Button x:Name="SortDirection" Click="ReverseSort" Style="{StaticResource Shell.IconButton}" ToolTip="{l:Loc 'Reverse sort order'}" AutomationProperties.Name="{l:Loc 'Reverse sort order'}" />
-                    </StackPanel>
-                    <TextBlock x:Name="InstalledCount" Style="{StaticResource Shell.Secondary}" FontSize="12" VerticalAlignment="Center" />
-                </DockPanel>
-                <Grid DockPanel.Dock="Top" Margin="13,0,13,6">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
-                    <TextBlock Text="{l:Loc 'Use'}" Style="{StaticResource Shell.ColumnHeader}" /><TextBlock Grid.Column="1" Text="{l:Loc 'Mod'}" Style="{StaticResource Shell.ColumnHeader}" />
-                    <TextBlock Grid.Column="2" Text="{l:Loc 'Package status'}" Style="{StaticResource Shell.ColumnHeader}" /><TextBlock Grid.Column="3" Text="{l:Loc 'Action'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <TextBlock x:Name="InstalledCount" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" FontSize="12" Margin="0,0,0,10" />
+                <Grid x:Name="InstalledHeadings" DockPanel.Dock="Top" Margin="11,0,13,6">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Enabled}" />
+                    <Button Grid.Column="1" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Name}" />
+                    <Button Grid.Column="2" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Client}" />
+                    <Button Grid.Column="3" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Status}" />
+                    <Button Grid.Column="4" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Action}" />
                 </Grid>
                 <Grid>
                     <ListBox x:Name="ModList" Style="{StaticResource ModTable}" AutomationProperties.Name="{l:Loc 'Installed mods'}"><ListBox.ItemTemplate><DataTemplate>
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                             <CheckBox IsChecked="{Binding Enabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}" Click="ToggleFromList" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0" ToolTip="{Binding EnabledTip}" AutomationProperties.Name="{Binding EnabledTip}" />
                             <StackPanel Grid.Column="1">
                                 <Button Style="{StaticResource ModLink}" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
                                 <TextBlock Text="{Binding Problem}" Visibility="{Binding HasProblem, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="{DynamicResource Shell.Error}" FontSize="12" TextWrapping="Wrap" Margin="52,5,12,0" />
                             </StackPanel>
-                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0">
+                            <ContentControl Grid.Column="2" Content="{Binding}" ContentTemplate="{StaticResource ClientCell}" VerticalAlignment="Center" Focusable="False" />
+                            <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,12,0">
                                 <TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" />
                                 <TextBlock Text="{Binding VersionChange}" FontSize="11" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" Visibility="{Binding HasUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </StackPanel>
-                            <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" Visibility="{Binding HasButton, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{Binding ActionTip}" ToolTipService.ShowOnDisabled="True" />
-                            <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Button Grid.Column="4" Style="{StaticResource RowButton}" Content="{Binding ActionText}" Click="RowAction" IsEnabled="{Binding CanAct}" Visibility="{Binding HasButton, Converter={StaticResource BooleanToVisibilityConverter}}" ToolTip="{Binding ActionTip}" ToolTipService.ShowOnDisabled="True" />
+                            <Button Grid.Column="4" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ContentControl Grid.Column="4" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
                     </DataTemplate></ListBox.ItemTemplate></ListBox>
                     <TextBlock x:Name="Empty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Margin="16" />
@@ -159,17 +176,21 @@
                     <TextBox x:Name="RepositoryUrl" md:HintAssist.Hint="{l:Loc 'Another mod repository: github.com/owner/name'}" KeyDown="RepositoryUrlKey" />
                 </DockPanel>
                 <TextBlock x:Name="BrowseStatus" DockPanel.Dock="Top" Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,0,0,10" Visibility="Collapsed" />
-                <Grid DockPanel.Dock="Top" Margin="13,0,13,6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
-                    <TextBlock Text="{l:Loc 'Mod'}" Style="{StaticResource Shell.ColumnHeader}" /><TextBlock Grid.Column="1" Text="{l:Loc 'Package'}" Style="{StaticResource Shell.ColumnHeader}" /><TextBlock Grid.Column="2" Text="{l:Loc 'Action'}" Style="{StaticResource Shell.ColumnHeader}" />
+                <Grid x:Name="BrowseHeadings" DockPanel.Dock="Top" Margin="11,0,13,6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Name}" />
+                    <Button Grid.Column="1" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Client}" />
+                    <Button Grid.Column="2" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Status}" />
+                    <Button Grid.Column="3" Style="{StaticResource SortHeader}" Tag="{x:Static l:ModSort.Action}" />
                 </Grid>
                 <Grid>
                     <ListBox x:Name="BrowseList" Style="{StaticResource ModTable}" AutomationProperties.Name="{l:Loc 'Available mods'}"><ListBox.ItemTemplate><DataTemplate>
-                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /><ColumnDefinition Width="156" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                             <Button Style="{StaticResource ModLink}" Click="OpenRowDetails" Content="{Binding}" ContentTemplate="{StaticResource ModIdentity}" AutomationProperties.Name="{Binding Title}" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" /><TextBlock Text="{Binding VersionText}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" /></StackPanel>
-                            <Button Grid.Column="2" Style="{StaticResource RowButton}" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" Visibility="{Binding ShowOfferAction, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <Button Grid.Column="2" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ContentControl Grid.Column="2" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ContentControl Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ClientCell}" VerticalAlignment="Center" Focusable="False" />
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock Text="{Binding PackageStatus}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" /><TextBlock Text="{Binding VersionChange}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" Margin="0,3,0,0" Visibility="{Binding HasVersionChange, Converter={StaticResource BooleanToVisibilityConverter}}" /></StackPanel>
+                            <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{Binding ActionText}" IsEnabled="{Binding CanAct}" Click="InstallFromBrowse" Visibility="{Binding ShowOfferAction, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <Button Grid.Column="3" Style="{StaticResource RowButton}" Content="{l:Loc 'Details'}" Click="OpenRowDetails" Visibility="{Binding ShowDetails, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ContentControl Grid.Column="3" Content="{Binding Job}" ContentTemplate="{StaticResource JobBox}" VerticalAlignment="Center" Visibility="{Binding HasJob, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
                     </DataTemplate></ListBox.ItemTemplate></ListBox>
                     <TextBlock x:Name="BrowseEmpty" Style="{StaticResource Shell.Secondary}" IsHitTestVisible="False" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Margin="16" />
@@ -194,18 +215,17 @@
                                     <Button x:Name="PageMenuButton" Style="{StaticResource Shell.IconButton}" Click="OpenPageMenu" ToolTip="{l:Loc 'More'}" AutomationProperties.Name="{l:Loc 'More mod actions'}"><md:PackIcon Kind="DotsVertical" Width="18" Height="18" /></Button>
                                 </WrapPanel>
                                 <TextBlock x:Name="PageStats" Style="{StaticResource Shell.Secondary}" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,8" />
+                                <StackPanel x:Name="PageIncompatible" Orientation="Horizontal" Margin="0,0,0,8" Visibility="Collapsed">
+                                    <md:PackIcon Kind="AlertCircle" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Warning}" />
+                                    <TextBlock x:Name="PageIncompatibleText" FontSize="12" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Warning}" />
+                                </StackPanel>
                                 <ItemsControl x:Name="PageTags"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource ContentBadge}" Margin="0,0,6,0"><TextBlock Text="{Binding}" FontSize="11" /></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
                             </StackPanel>
                         </DockPanel>
                     </Border>
                 </StackPanel>
                 <TabControl x:Name="PageTabs">
-                    <TabItem x:Name="ModOverviewPage" Header="{l:Loc 'Overview'}"><DockPanel>
-                        <Border x:Name="RuntimeCard" DockPanel.Dock="Top" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="16" Margin="0,12,0,12">
-                            <DockPanel><Button x:Name="PageCheckStatus" DockPanel.Dock="Right" Content="{l:Loc 'Check live status'}" Click="CheckMods" Style="{StaticResource Shell.Button}" VerticalAlignment="Top" Margin="14,0,0,0" />
-                                <StackPanel><TextBlock Text="{l:Loc 'Saved choice and live status'}" FontSize="14" FontWeight="SemiBold" /><TextBlock x:Name="SavedChoiceText" Margin="0,8,0,0" TextWrapping="Wrap" /><TextBlock x:Name="RuntimeStatusText" Margin="0,4,0,0" TextWrapping="Wrap" /><TextBlock Text="{l:Loc 'A saved checkmark does not confirm that the mod is loaded in the running game.'}" Style="{StaticResource Shell.Secondary}" FontSize="12" TextWrapping="Wrap" Margin="0,7,0,0" /></StackPanel>
-                            </DockPanel>
-                        </Border>
+                    <TabItem x:Name="ModOverviewPage" Header="{l:Loc 'Overview'}"><DockPanel Margin="0,12,0,0">
                         <FlowDocumentScrollViewer x:Name="Overview" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" IsToolBarVisible="False" />
                     </DockPanel></TabItem>
                     <TabItem x:Name="ModSettingsPage" Header="{l:Loc 'Settings'}"><DockPanel Margin="0,12,0,0">

@@ -642,17 +642,27 @@ footer. The info button beside each title explains their relationship: Mods inst
 configures shared gameplay systems, and Leagues chooses the modules used by each player-facing flag and linked mode.
 The explanation opens on demand so it does not crowd the working area.
 
-Laid out like an addon manager, with **My Mods** and **Browse**. Both lists use themed cards with small semantic icons,
-clear names, descriptions and quiet version/author metadata. Installed manifest names take precedence; repository names
-and descriptions fill missing metadata without changing mod IDs or operation targets. Unknown mods use a puzzle icon.
-**Sort by** keeps name, saved enable choice, package action, latest version and author sorting, with a reverse-order button.
-Search also finds the displayed repository metadata; the installed count reflects its filter. **Details** or the name opens
+Laid out like an addon manager, with **My Mods** and **Browse** beside Refresh and **Open folder** (the section has no
+heading of its own). Both lists use themed cards with small semantic icons, clear names, descriptions and quiet
+author/type metadata. Installed manifest names take precedence; repository names and descriptions fill missing metadata
+without changing mod IDs or operation targets. Unknown mods use a puzzle icon. Each column's heading is a button: a click
+sorts the list by that column (Use, Mod, Client version, Package status, Action), a second click reverses it, and an arrow
+marks the column in use.
+
+**Client version** shows the LocalExile versions a mod declares it works with (`compatibleClientVersions` in its
+`mod.json`, carried into the repository's `mods.json`; an installed mod whose own manifest has none shows its repository's),
+in place of the mod's own version. Waypoint compares them with the checkout's LocalExile version: a release's
+`release.json`, a source checkout's newest version tag (`git describe --tags --abbrev=0 --match v[0-9]*`), read again when
+the section opens and on Refresh. A mod whose list does not hold that version gets a yellow exclamation mark (its tooltip
+names both) in My Mods, Browse and on its page. It can still be installed, updated or built, after "This mod is
+incompatible with your client version: … Are you sure you want to install it?". A mod that declares no versions, or a
+checkout whose version cannot be read, is not judged. Search also finds the displayed repository metadata; the installed count reflects its filter. **Details** or the name opens
 the mod page, while package actions and progress stay on the row. Unmatched installed packages are labelled **Installed**,
 not assumed **Up to date** without repository evidence. **Open folder**, Refresh, and the rarer **More** tools stay available.
 
 **My Mods** lists the installed mods (from the manifests under
-`Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their version,
-the latest one a repository offers, and the author. A row's check box turns the mod on or off at once: Waypoint rewrites
+`Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their client
+versions, package status and author. A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
 applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
 Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs
@@ -680,10 +690,10 @@ show their alt text, HTML is left out, relative links open the mod's folder on G
 and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
 actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
 
-The mod page separates **Saved choice** from **Live load status**. Only an explicit runtime report supplies a last-checked
-load state, labelled with its time when available; a checked enable box or a successful build is never presented as a live
-load. **Check live status** remains a manual action with the same capability checks as before. Installed/latest versions
-are not repeated when identical, and an up-to-date package is text rather than a disabled action button.
+The mod page shows both the mod's versions (installed and latest, not repeated when identical) and its client versions,
+with the incompatibility warning under them when there is one. A checked enable box or a successful build is never
+presented as a live load; **Check live status** stays in My Mods' ⋮ menu. An up-to-date package is text rather than a
+disabled action button.
 
 **Settings** remains visible so an uninstalled mod, an installed package without a declaration, a release without support,
 an empty declaration and a read/validation failure each have an explanation. Missing declarations do not imply that the mod
@@ -692,10 +702,12 @@ and the existing operation capability; refresh preserves an unsaved form for the
 show no editor and no save/reset actions. Error details expand on demand. These are presentation changes over the same
 validated settings writer, backup, expected-hash checks and serialized operations.
 
-An existing LocalExile release does not declare compatibility with the newer downloadable mods. Waypoint leaves its
-existing saved mod switches available (an older server applies them at its next start), but disables install, update,
-uninstall and settings editing on release installs. Use a current source checkout for these tools. This is checked in the
-adapter as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
+A release from v0.2.0-beta on is made for downloadable mods (it ships an empty `Mods\Binaries\` for Waypoint to fill):
+Install, Update, Uninstall and settings editing work there as in a source checkout, from a mod's release (a release cannot
+build a project from source). An older release (v0.1.0-beta, or one whose `release.json` has no readable version) keeps
+the mods it shipped with, built for the older mod API: Waypoint leaves its saved mod switches available (the server
+applies them at its next start) but disables install, update, uninstall and settings editing there
+(`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
 for read-only inspection in Advanced mode.
 
 ### Modules and Leagues

@@ -34,11 +34,31 @@ public sealed record ModSource(string Owner, string Name, string Branch = "main"
     }
 }
 
-/// <summary>One mod of a repository's index.</summary>
+/// <summary>One mod of a repository's index. <paramref name="ClientVersions"/> are the LocalExile versions it declares it
+/// works with (its mod.json's <c>compatibleClientVersions</c>); empty when it declares none.</summary>
 public sealed record ModListing(string Id, string Name, string Description, string Author, string Version, string Kind,
-    bool IsProject, string Path, string[] Depends, bool HasSettings)
+    bool IsProject, string Path, string[] Depends, bool HasSettings, IReadOnlyList<string>? ClientVersions = null)
 {
     public ReleaseVersion? ParsedVersion => ReleaseVersion.Parse(Version);
+}
+
+/// <summary>Which LocalExile versions a mod says it works with: <c>compatibleClientVersions</c> in its mod.json (and the
+/// index), such as <c>["0.2.0-beta"]</c>. A mod that declares none, or a LocalExile whose version is unknown, is not judged.</summary>
+public static class ClientCompatibility
+{
+    public const string Field = "compatibleClientVersions";
+
+    /// <summary>The field's versions; anything that is not a list of text is read as none.</summary>
+    public static string[] Read(JsonElement field) => field.ValueKind == JsonValueKind.Array
+        ? field.EnumerateArray().Where(e => e.ValueKind == JsonValueKind.String).Select(e => e.GetString()!.Trim()).Where(v => v.Length > 0).Take(64).ToArray()
+        : [];
+
+    /// <summary>False only when the mod names its versions and <paramref name="client"/> is none of them.</summary>
+    public static bool Fits(IReadOnlyList<string>? declared, ReleaseVersion? client) =>
+        declared is not { Count: > 0 } || client is null || declared.Any(v => ReleaseVersion.Parse(v) is { } version && version.CompareTo(client) == 0);
+
+    /// <summary>The versions as a mod's row shows them: "0.2.0-beta, 0.3.0"; "" for none.</summary>
+    public static string Text(IReadOnlyList<string>? declared) => declared is { Count: > 0 } ? string.Join(", ", declared) : "";
 }
 
 /// <summary>A mod's published release: its zip and the SHA-256 GitHub records for it (or a ".sha256" file beside it).</summary>
@@ -92,7 +112,8 @@ public static class ModRepository
                 ? d.EnumerateArray().Where(e => e.ValueKind == JsonValueKind.String).Select(e => e.GetString()!).Where(ModCatalog.ValidId).ToArray() : [];
             result.Add(new(id, Text("name") is { Length: > 0 } name ? name : id, Text("description"), Text("author"), Text("version"),
                 Text("kind") is { Length: > 0 } kind ? kind : "feature", Text("type") == "project", path, depends,
-                mod.TryGetProperty("settings", out var s) && s.ValueKind == JsonValueKind.True));
+                mod.TryGetProperty("settings", out var s) && s.ValueKind == JsonValueKind.True,
+                ClientCompatibility.Read(mod.TryGetProperty(ClientCompatibility.Field, out var c) ? c : default)));
         }
         return result;
     }

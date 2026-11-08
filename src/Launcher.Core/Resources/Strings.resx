@@ -177,6 +177,9 @@
   <data name="Text_051d9dc39fc1" xml:space="preserve">
     <value>The Merciless Labyrinth</value>
   </data>
+  <data name="Text_051e0471ec60" xml:space="preserve">
+    <value>This mod is incompatible with your client version: {0}. Are you sure you want to install it?</value>
+  </data>
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>this build from source</value>
   </data>
@@ -1260,6 +1263,9 @@ Close the game and anything else using that folder, then try again.</value>
   </data>
   <data name="Text_25e7df197704" xml:space="preserve">
     <value>the bridge needs Python with frida, which is not installed: Give item in the item crafter sets it up</value>
+  </data>
+  <data name="Text_25eaa4ef8e3c" xml:space="preserve">
+    <value>Client version</value>
   </data>
   <data name="Text_25ec5c9141d3" xml:space="preserve">
     <value>live.ps1 -NoClient: rebuilds and restarts Patch, Auth and Gateway (after a pull, or edits outside the Gateway); the Gateway's own code edits apply by themselves with hot reload. A running client stays.</value>
@@ -2880,6 +2886,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_5594a1f9def3" xml:space="preserve">
     <value>Stop the servers and the game before exiting</value>
+  </data>
+  <data name="Text_559c488cfe8b" xml:space="preserve">
+    <value>Made for LocalExile {0}; this checkout runs {1}.</value>
   </data>
   <data name="Text_55b612083b47" xml:space="preserve">
     <value>Gives LocalExile its own settings and saved login, so your normal game keeps its own</value>
@@ -5730,6 +5739,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b0176d1229f3" xml:space="preserve">
     <value>The command is on the clipboard.</value>
   </data>
+  <data name="Text_b02009e44201" xml:space="preserve">
+    <value>Not declared</value>
+  </data>
   <data name="Text_b03f0885df1b" xml:space="preserve">
     <value>{0} is not inside the release's LocalExile folder; nothing was changed</value>
   </data>
@@ -6423,6 +6435,9 @@ Last reported Gateway event. Open Gateway output for details.</value>
   </data>
   <data xml:space="preserve" name="Text_c7a882f64135">
     <value>Could not load source choices: </value>
+  </data>
+  <data name="Text_c73c8e3ad0e2" xml:space="preserve">
+    <value>Client version {0}</value>
   </data>
   <data name="Text_c7b0c42e9e6d" xml:space="preserve">
     <value>Copy the complete standalone PoE 3.29.3c installation to:

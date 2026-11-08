@@ -177,6 +177,9 @@
   <data name="Text_051d9dc39fc1" xml:space="preserve">
     <value>无情帝王迷宫</value>
   </data>
+  <data name="Text_051e0471ec60" xml:space="preserve">
+    <value>此模组与你的客户端版本不兼容：{0}。确定要安装吗？</value>
+  </data>
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>当前源码构建版本</value>
   </data>
@@ -1260,6 +1263,9 @@
   </data>
   <data name="Text_25e7df197704" xml:space="preserve">
     <value>桥接程序需要装有 frida 的 Python，但尚未安装：物品制作器中的“发放物品”会完成设置</value>
+  </data>
+  <data name="Text_25eaa4ef8e3c" xml:space="preserve">
+    <value>客户端版本</value>
   </data>
   <data name="Text_25ec5c9141d3" xml:space="preserve">
     <value>live.ps1 -NoClient：重新构建并重启 Patch、Auth 和 Gateway（用于拉取之后，或修改了 Gateway 以外的内容时）；Gateway 自身的代码修改会通过热重载自动生效。正在运行的客户端会保留。</value>
@@ -2880,6 +2886,9 @@
   </data>
   <data name="Text_5594a1f9def3" xml:space="preserve">
     <value>退出前停止服务器和游戏</value>
+  </data>
+  <data name="Text_559c488cfe8b" xml:space="preserve">
+    <value>为 LocalExile {0} 制作；此副本运行的是 {1}。</value>
   </data>
   <data name="Text_55b612083b47" xml:space="preserve">
     <value>为 LocalExile 提供独立的设置和已保存的登录信息，让你平常的游戏保留自己的设置</value>
@@ -5730,6 +5739,9 @@
   <data name="Text_b0176d1229f3" xml:space="preserve">
     <value>命令已复制到剪贴板。</value>
   </data>
+  <data name="Text_b02009e44201" xml:space="preserve">
+    <value>未声明</value>
+  </data>
   <data name="Text_b03f0885df1b" xml:space="preserve">
     <value>{0} 不在发行版的 LocalExile 文件夹内；未做任何更改</value>
   </data>
@@ -6411,6 +6423,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_c726cb5de813" xml:space="preserve">
     <value>行走地图</value>
+  </data>
+  <data name="Text_c73c8e3ad0e2" xml:space="preserve">
+    <value>客户端版本 {0}</value>
   </data>
   <data name="Text_c74950bf4f08" xml:space="preserve">
     <value>已验证进程和监听端口</value>

@@ -292,7 +292,8 @@ colours live solely in Waypoint's settings, scoped by checkout and flag; they ne
 shared settings hook, `CanChoose` the source league-override hook, and `CanCreate` the source league loader for creation and
 visibility editing. Releases advertise none of these: the current release
 predates the downloadable-mod update and remains read-only for the new controls. InstallMod, UninstallMod and
-SaveModSettings are also refused on release installs, in both the adapter and the UI.
+SaveModSettings are refused on a release older than v0.2.0-beta (or of no readable version in its `release.json`), in both
+the adapter (`Test-LegacyReleaseMods`) and the UI; v0.2.0-beta and later take downloaded mods.
 
 `SaveContentSettings` takes a staged JSON object, ModId, ModTarget (Modules or Leagues) and ModExpectedHash. It verifies a
 unique physical manifest and declaration before writing only data/modules/<id>.json or data/leagues/<id>.json.

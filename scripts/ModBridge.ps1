@@ -334,9 +334,20 @@ function Uninstall-Mod($snapshot) {
     }
     Write-Host ("Uninstalled " + ($ids -join ', ') + '.')
 }
+# A release before 0.2.0-beta keeps the mods it shipped with, built for an older mod API; 0.2.0-beta was the first to ship
+# an empty Mods\Binaries for downloaded mods. A release.json without a readable version counts as the older kind.
+function Test-LegacyReleaseMods {
+    if (-not $script:isRelease) { return $false }
+    try { $version = [string](Get-Content -LiteralPath (At 'release.json') -Raw | ConvertFrom-Json).version } catch { return $true }
+    if ($version -notmatch '^[vV]?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+.*)?$') { return $true }
+    $core = [version]"$($Matches[1]).$($Matches[2]).$($Matches[3])"
+    if ($core -ne [version]'0.2.0') { return $core -lt [version]'0.2.0' }
+    # 0.2.0 itself: an alpha came before the beta.
+    return $Matches[4] -and $Matches[4] -like 'alpha*'
+}
 function Invoke-ModOperation($snapshot) {
     if ($Action -in @('InstallMod','SaveModSettings','UninstallMod')) {
-        Require (-not $script:isRelease) 'This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.'
+        Require (-not (Test-LegacyReleaseMods)) 'This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.'
     }
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
     $environment = Get-ModEnvironment $snapshot.Services
