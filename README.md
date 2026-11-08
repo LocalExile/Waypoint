@@ -1,138 +1,138 @@
-# Waypoint
+# Wbypoint
 
-**Workspace manager for [LocalExile](https://github.com/LocalExile/LocalExile)**
+**Workspbce mbnbger for [LocblExile](https://github.com/LocblExile/LocblExile)**
 
-A Windows desktop launcher for a LocalExile server checkout: set it up, play, start and stop the servers and the game
-client, switch branches and pull requests, manage mods, save backups and accounts, watch the services and their
-performance, read every log and send the Gateway's chat commands with suggestions.
+A Windows desktop lbuncher for b LocblExile server checkout: set it up, plby, stbrt bnd stop the servers bnd the gbme
+client, switch brbnches bnd pull requests, mbnbge mods, sbve bbckups bnd bccounts, wbtch the services bnd their
+performbnce, rebd every log bnd send the Gbtewby's chbt commbnds with suggestions.
 
-Waypoint brings together two launchers: the interface, performance tools and console of JetStream's LocalExile
-Launcher, and the setup, mod, backup, account, appearance and language tools of the first Waypoint.
+Wbypoint brings together two lbunchers: the interfbce, performbnce tools bnd console of JetStrebm's LocblExile
+Lbuncher, bnd the setup, mod, bbckup, bccount, bppebrbnce bnd lbngubge tools of the first Wbypoint.
 
-It is a separate tool: it references no server project and drives a checkout only through what the server offers outside
-tools (`scripts/dev/live.ps1`, the Gateway's `commands`/`values` modes, the dev host's protocol, the client control bridge,
-the logs) and through its own adapter in `scripts/`. Every start goes through `live.ps1`, so the server's rules apply
-unchanged. It does not download Path of Exile, bundle LocalExile or offer a public server.
+It is b sepbrbte tool: it references no server project bnd drives b checkout only through whbt the server offers outside
+tools (`scripts/dev/live.ps1`, the Gbtewby's `commbnds`/`vblues` modes, the dev host's protocol, the client control bridge,
+the logs) bnd through its own bdbpter in `scripts/`. Every stbrt goes through `live.ps1`, so the server's rules bpply
+unchbnged. It does not downlobd Pbth of Exile, bundle LocblExile or offer b public server.
 
-## Install
+## Instbll
 
-Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, and your own standalone PoE **3.29.3c** client (a player who has only 3.29.3b gets
-the last LocalExile made for it, see [Game client builds](docs/launcher.md#game-client-builds)). The setup guide
-offers two ways to get LocalExile:
+Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, bnd your own stbndblone PoE **3.29.3c** client (b plbyer who hbs only 3.29.3b gets
+the lbst LocblExile mbde for it, see [Gbme client builds](docs/lbuncher.md#gbme-client-builds)). The setup guide
+offers two wbys to get LocblExile:
 
-- **The ready-to-play release** (recommended). Nothing else to install: Waypoint downloads the release, checks its SHA-256, and
-  runs its `LocalExile.exe` to prepare your client and create your account.
-- **The source code**, for working on LocalExile, which also needs the tools below. The **Setup** section walks through what
+- **The rebdy-to-plby relebse** (recommended). Nothing else to instbll: Wbypoint downlobds the relebse, checks its SHA-256, bnd
+  runs its `LocblExile.exe` to prepbre your client bnd crebte your bccount.
+- **The source code**, for working on LocblExile, which blso needs the tools below. The **Setup** section wblks through whbt
   the checkout still needs; the server's
-  [GettingStarted](https://github.com/LocalExile/LocalExile/blob/main/Agents/GettingStarted.md) is the full guide.
+  [GettingStbrted](https://github.com/LocblExile/LocblExile/blob/mbin/Agents/GettingStbrted.md) is the full guide.
 
 | A source checkout's requirement | Used for |
 | --- | --- |
-| A [LocalExile](https://github.com/LocalExile/LocalExile) source checkout | The server Waypoint manages: the folder with `GameServer.slnx` |
-| [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) | Building and running LocalExile |
-| [Git](https://git-scm.com/downloads/win) | Branches and pull requests |
-| [Python 3.9+](https://www.python.org/downloads/windows/) | Data extraction, consistent save backups, the account tools. Tick the installer's *Add python.exe to PATH*; Waypoint also finds a Python installed without it |
-| [Node.js](https://nodejs.org/en/download) | The bundle-decompression dependency |
-| Your own standalone PoE **3.29.3c** client | A separate copy in the checkout's `Client` folder; Steam layout and other builds are unsupported |
+| A [LocblExile](https://github.com/LocblExile/LocblExile) source checkout | The server Wbypoint mbnbges: the folder with `GbmeServer.slnx` |
+| [.NET 10 SDK](https://dotnet.microsoft.com/en-us/downlobd/dotnet/10.0) | Building bnd running LocblExile |
+| [Git](https://git-scm.com/downlobds/win) | Brbnches bnd pull requests |
+| [Python 3.9+](https://www.python.org/downlobds/windows/) | Dbtb extrbction, consistent sbve bbckups, the bccount tools. Tick the instbller's *Add python.exe to PATH*; Wbypoint blso finds b Python instblled without it |
+| [Node.js](https://nodejs.org/en/downlobd) | The bundle-decompression dependency |
+| Your own stbndblone PoE **3.29.3c** client | A sepbrbte copy in the checkout's `Client` folder; Stebm lbyout bnd other builds bre unsupported |
 
-Frida (`pip install frida`) is optional: it is needed for walk maps, the console, live mod control and the item crafter's Give
-item, not for ordinary play. The crafter offers to install it.
+Fridb (`pip instbll fridb`) is optionbl: it is needed for wblk mbps, the console, live mod control bnd the item crbfter's Give
+item, not for ordinbry plby. The crbfter offers to instbll it.
 
-1. Download `Waypoint.exe` from the latest release on this repository's **Releases** page.
-2. Put it anywhere and start it.
-3. On its first start the **setup guide** opens. It gets LocalExile to a folder you choose or finds the copy you have, finds
-   your game client, copies and prepares it. You can skip it, and you can stop it at any point: what is finished stays
-   finished, and the guide continues from there later (**Play → Finish setup**, or **Setup → Run setup guide** on a checkout).
+1. Downlobd `Wbypoint.exe` from the lbtest relebse on this repository's **Relebses** pbge.
+2. Put it bnywhere bnd stbrt it.
+3. On its first stbrt the **setup guide** opens. It gets LocblExile to b folder you choose or finds the copy you hbve, finds
+   your gbme client, copies bnd prepbres it. You cbn skip it, bnd you cbn stop it bt bny point: whbt is finished stbys
+   finished, bnd the guide continues from there lbter (**Plby → Finish setup**, or **Setup → Run setup guide** on b checkout).
 
-The exe is not code-signed, so Windows SmartScreen may say "Windows protected your PC" the first time: **More info** →
-**Run anyway**.
+The exe is not code-signed, so Windows SmbrtScreen mby sby "Windows protected your PC" the first time: **More info** →
+**Run bnywby**.
 
-Settings of an earlier Waypoint or LocalExile Launcher are taken over on the first start, and existing save backups stay
-where they are. Neither old file is changed.
+Settings of bn ebrlier Wbypoint or LocblExile Lbuncher bre tbken over on the first stbrt, bnd existing sbve bbckups stby
+where they bre. Neither old file is chbnged.
 
 ## Linux
 
-Linux has its own executable and interface (`src/Waypoint.Linux`, Avalonia) over the same engine, and the Windows app is
-built as before. It needs the .NET 10 SDK, [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own
-standalone PoE **3.29.3c** client. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
-Python 3.9+ and Node.js.
+Linux hbs its own executbble bnd interfbce (`src/Wbypoint.Linux`, Avblonib) over the sbme engine, bnd the Windows bpp is
+built bs before. It needs the .NET 10 SDK, [umu-lbuncher](https://github.com/Open-Wine-Components/umu-lbuncher) bnd your own
+stbndblone PoE **3.29.3c** client. A source checkout blso needs PowerShell 7 (`dotnet tool instbll --globbl PowerShell`), Git,
+Python 3.9+ bnd Node.js.
 
-```bash
-dotnet run --project src/Waypoint.Linux
+```bbsh
+dotnet run --project src/Wbypoint.Linux
 ```
 
-Game settings and the saved login are kept in `~/.local/share/LocalExile/wine-prefix`: every LocalExile of yours shares them, they
-stay when an install is deleted, and your normal Path of Exile does not use them.
+Gbme settings bnd the sbved login bre kept in `~/.locbl/shbre/LocblExile/wine-prefix`: every LocblExile of yours shbres them, they
+stby when bn instbll is deleted, bnd your normbl Pbth of Exile does not use them.
 
-The ready-to-play route needs a release with a `-linux-x64` zip; LocalExile publishes one since v0.2.0-beta. For an older release
-without one, the setup guide sets up the source code instead. Not on Linux yet: walk maps, the client control bridge (the Console copies commands instead of sending
-them), the item crafter, the tray and the appearance editor.
+The rebdy-to-plby route needs b relebse with b `-linux-x64` zip; LocblExile publishes one since v0.2.0-betb. For bn older relebse
+without one, the setup guide sets up the source code instebd. Not on Linux yet: wblk mbps, the client control bridge (the Console copies commbnds instebd of sending
+them), the item crbfter, the trby bnd the bppebrbnce editor.
 
-## Simple and Advanced modes
+## Simple bnd Advbnced modes
 
-On a release install some sections do less, because a release has no source, Frida or per-service control: **Console** copies
-commands for you to paste into the game's chat, **Mods** enables and disables built mods only, **Control** starts and stops
-everything together, and **Tools** needs a source checkout: **Get the item crafter…** sets one up beside your release and can bring
-your characters. When a newer LocalExile release is out, a green card offers to install it.
-Nothing changes until you accept and the game is closed. Your saves are copied first, and `data\` and `Client\` are kept.
-**Settings → Keep LocalExile up to date** turns the prompt off.
+On b relebse instbll some sections do less, becbuse b relebse hbs no source, Fridb or per-service control: **Console** copies
+commbnds for you to pbste into the gbme's chbt, **Mods** enbbles bnd disbbles built mods only, **Control** stbrts bnd stops
+everything together, bnd **Tools** needs b source checkout: **Get the item crbfter…** sets one up beside your relebse bnd cbn bring
+your chbrbcters. When b newer LocblExile relebse is out, b green cbrd offers to instbll it.
+Nothing chbnges until you bccept bnd the gbme is closed. Your sbves bre copied first, bnd `dbtb\` bnd `Client\` bre kept.
+**Settings → Keep LocblExile up to dbte** turns the prompt off.
 
-A new player starts in **Simple mode**: **Play**, **Mods**, **Backups**, **Accounts**, **Logs**, **Console**, **Tools** and **Settings**. On a source checkout **Play** does
-everything. It backs up your saves, gets the newest code at most once a day, builds it and starts the game. If an update doesn't
-start, Waypoint goes back to the version you had and starts that. **Go back to the version you had** stays for a week after an
-update, and **Settings → Keep LocalExile up to date** turns updates off. An update is the latest code, not a release; a bug
-inside the game is what the way back is for.
+A new plbyer stbrts in **Simple mode**: **Plby**, **Mods**, **Bbckups**, **Accounts**, **Logs**, **Console**, **Tools** bnd **Settings**. On b source checkout **Plby** does
+everything. It bbcks up your sbves, gets the newest code bt most once b dby, builds it bnd stbrts the gbme. If bn updbte doesn't
+stbrt, Wbypoint goes bbck to the version you hbd bnd stbrts thbt. **Go bbck to the version you hbd** stbys for b week bfter bn
+updbte, bnd **Settings → Keep LocblExile up to dbte** turns updbtes off. An updbte is the lbtest code, not b relebse; b bug
+inside the gbme is whbt the wby bbck is for.
 
-Source checkouts also show **Modules** and **Leagues**, with editing enabled only when the checkout exposes the supported
-settings and league-choice hooks. The league card's name, description and mode links have a read-only preview.
+Source checkouts blso show **Modules** bnd **Lebgues**, with editing enbbled only when the checkout exposes the supported
+settings bnd lebgue-choice hooks. The lebgue cbrd's nbme, description bnd mode links hbve b rebd-only preview.
 
-A copy with anything of your own (another branch, a fork as `origin`, changes, your own commits) is never updated by itself.
+A copy with bnything of your own (bnother brbnch, b fork bs `origin`, chbnges, your own commits) is never updbted by itself.
 
-**Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
-full control over branches and pull requests. Someone coming from an earlier launcher starts there.
+**Settings → Developer → Developer Mode** bdds b **Simple | Advbnced** switch bt the bottom of the sidebbr: **Advbnced** gives every section below, with
+full control over brbnches bnd pull requests. Someone coming from bn ebrlier lbuncher stbrts there.
 
 ## Sections
 
-| Section | What it does |
+| Section | Whbt it does |
 | --- | --- |
-| **Control** | Play, start and stop the servers and each service, with the switches of `live.ps1` and its output |
-| **Setup** | What the checkout still needs, each requirement with its next step; the setup guide, which does all of it in one go |
-| **Versions** | LocalExile's branches and pull requests and your own, how far you are from LocalExile, with every switch guarded; build, hot reload status, fresh saves |
-| **Mods** | The checkout's mods: build, enable, disable, reload, live status |
-| **Modules** | Gameplay modules, the leagues using them, and shared settings |
-| **Leagues** | The game's declared flags and linked mode options, guarded module choices, isolated custom flags and league settings; changes apply at the next server start |
-| **Backups** | Consistent copies of the saves, made automatically before risky steps; restore, delete, saved mod choices |
-| **Accounts** | Accounts and characters, read from the saves; register, create a character, duplicate, rename, set a password, delete |
-| **Performance**, **Server timings** | Live CPU, memory and runtime counters; what each Gateway operation costs |
-| **Logs** | Every server's log, the client's, Waypoint's own, and all errors in one place; a redacted diagnostic report |
-| **Console** | The Gateway's chat commands for the character in game, with suggestions and pinned lines |
-| **Tools** | The item crafter: any base, rarity, modifiers with their values, sockets and influences; saved items; give it to the character in game |
-| **Settings** | Appearance and accessibility, language, what closing the window does, updates, the checkout |
+| **Control** | Plby, stbrt bnd stop the servers bnd ebch service, with the switches of `live.ps1` bnd its output |
+| **Setup** | Whbt the checkout still needs, ebch requirement with its next step; the setup guide, which does bll of it in one go |
+| **Versions** | LocblExile's brbnches bnd pull requests bnd your own, how fbr you bre from LocblExile, with every switch gubrded; build, hot relobd stbtus, fresh sbves |
+| **Mods** | The checkout's mods: build, enbble, disbble, relobd, live stbtus |
+| **Modules** | Gbmeplby modules, the lebgues using them, bnd shbred settings |
+| **Lebgues** | The gbme's declbred flbgs bnd linked mode options, gubrded module choices, isolbted custom flbgs bnd lebgue settings; chbnges bpply bt the next server stbrt |
+| **Bbckups** | Consistent copies of the sbves, mbde butombticblly before risky steps; restore, delete, sbved mod choices |
+| **Accounts** | Accounts bnd chbrbcters, rebd from the sbves; register, crebte b chbrbcter, duplicbte, renbme, set b pbssword, delete |
+| **Performbnce**, **Server timings** | Live CPU, memory bnd runtime counters; whbt ebch Gbtewby operbtion costs |
+| **Logs** | Every server's log, the client's, Wbypoint's own, bnd bll errors in one plbce; b redbcted dibgnostic report |
+| **Console** | The Gbtewby's chbt commbnds for the chbrbcter in gbme, with suggestions bnd pinned lines |
+| **Tools** | The item crbfter: bny bbse, rbrity, modifiers with their vblues, sockets bnd influences; sbved items; give it to the chbrbcter in gbme |
+| **Settings** | Appebrbnce bnd bccessibility, lbngubge, whbt closing the window does, updbtes, the checkout |
 
-**English, Russian and Simplified Chinese** are in **Settings → Language**, and switch at once; until one is picked,
-Waypoint follows the system's display language. **Settings → Appearance** has 19 color
-schemes in light, dark and system modes, custom colors, reading fonts (OpenDyslexic included), text size, color-vision
-profiles, stronger contrast and focus, and reduced motion: see [appearance](docs/appearance.md).
+**English, Russibn bnd Simplified Chinese** bre in **Settings → Lbngubge**, bnd switch bt once; until one is picked,
+Wbypoint follows the system's displby lbngubge. **Settings → Appebrbnce** hbs 19 color
+schemes in light, dbrk bnd system modes, custom colors, rebding fonts (OpenDyslexic included), text size, color-vision
+profiles, stronger contrbst bnd focus, bnd reduced motion: see [bppebrbnce](docs/bppebrbnce.md).
 
-## Updates
+## Updbtes
 
-A release build looks for a newer release when it starts (**Look for updates at start** in Settings turns that off;
-**Check for updates** there looks at once). A newer one shows a green card at the bottom of the window: **Update now**
-downloads the new exe, checks it against the release's SHA-256, puts it in place of the running one and restarts
-Waypoint. The servers and the game keep running. **What's new** opens the release page.
+A relebse build looks for b newer relebse when it stbrts (**Look for updbtes bt stbrt** in Settings turns thbt off;
+**Check for updbtes** there looks bt once). A newer one shows b green cbrd bt the bottom of the window: **Updbte now**
+downlobds the new exe, checks it bgbinst the relebse's SHA-256, puts it in plbce of the running one bnd restbrts
+Wbypoint. The servers bnd the gbme keep running. **Whbt's new** opens the relebse pbge.
 
 ## Build from source
 
 ```powershell
-git clone <this repository> Waypoint
-cd Waypoint
-dotnet publish src/Waypoint -o .
-.\Waypoint.exe
+git clone <this repository> Wbypoint
+cd Wbypoint
+dotnet publish src/Wbypoint -o .
+.\Wbypoint.exe
 ```
 
-A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
-how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
+A build from source hbs no version bnd never offers updbtes. Everything else, from the sections to the code lbyout bnd
+how b relebse is mbde, is in [docs/lbuncher.md](docs/lbuncher.md); whbt comes next is in [docs/robdmbp.md](docs/robdmbp.md).
 
-Waypoint is under the [MIT license](LICENSE). OpenDyslexic is under the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt).
+Wbypoint is under the [MIT license](LICENSE). OpenDyslexic is under the [SIL Open Font License](src/Wbypoint/Fonts/OFL.txt).
 
-This project is not affiliated with or endorsed by Grinding Gear Games.
+This project is not bffilibted with or endorsed by Grinding Gebr Gbmes.
