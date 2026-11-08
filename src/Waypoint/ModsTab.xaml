@@ -26,7 +26,7 @@
                 <EventSetter Event="MouseLeftButtonUp" Handler="RowClicked" /><EventSetter Event="ContextMenuOpening" Handler="RowMenuOpening" />
                 <Setter Property="ContextMenu"><Setter.Value><ContextMenu /></Setter.Value></Setter>
                 <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-                    <Border x:Name="Row" MinHeight="78" Padding="12,10" CornerRadius="8" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1">
+                    <Border x:Name="Row" MinHeight="78" Padding="12,10" CornerRadius="9" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1">
                         <ContentPresenter VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Shell.Accent}" /></Trigger></ControlTemplate.Triggers>
@@ -34,9 +34,13 @@
             </Style></Setter.Value></Setter>
         </Style>
         <Style x:Key="Tile" TargetType="Border">
-            <Setter Property="Width" Value="38" /><Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="7" />
+            <Setter Property="Width" Value="38" /><Setter Property="Height" Value="40" /><Setter Property="CornerRadius" Value="9" />
             <Setter Property="Margin" Value="0,0,12,0" /><Setter Property="Background" Value="{DynamicResource Shell.Background}" />
             <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style x:Key="ContentBadge" TargetType="Border">
+            <Setter Property="Padding" Value="8,4" /><Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Background" Value="{DynamicResource Shell.Banner}" /><Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" /><Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style x:Key="RowButton" TargetType="Button" BasedOn="{StaticResource Shell.Button}">
             <Setter Property="Width" Value="104" /><Setter Property="Margin" Value="0" />
@@ -68,12 +72,15 @@
 
     <DockPanel Margin="18,8,18,12">
         <l:OutputPanel x:Name="OutputView" DockPanel.Dock="Bottom" Height="150" Margin="0,8,0,0" Visibility="Collapsed" />
-        <TextBlock DockPanel.Dock="Bottom" Text="{l:Loc 'Saved enable choices are separate from live load status. League module choices are managed in Leagues.'}" Style="{StaticResource Shell.Secondary}" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,0" />
+        <TextBlock x:Name="ChoiceScopeHint" DockPanel.Dock="Bottom" Text="{l:Loc 'Saved enable choices do not confirm live load status.'}" Style="{StaticResource Shell.Secondary}" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,0" />
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
-            <Button x:Name="OpenModsButton" DockPanel.Dock="Right" Click="OpenMods" Style="{StaticResource Shell.Button}" VerticalAlignment="Top" AutomationProperties.Name="{l:Loc 'Open mods folder'}">
-                <StackPanel Orientation="Horizontal"><md:PackIcon Kind="FolderOpenOutline" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock Text="{l:Loc 'Open folder'}" /></StackPanel>
-            </Button>
-            <StackPanel><TextBlock Text="{l:Loc 'Mods'}" FontSize="26" FontWeight="SemiBold" /><TextBlock Text="{l:Loc 'Install, update and configure your modifications.'}" Style="{StaticResource Shell.Secondary}" FontSize="12" TextWrapping="Wrap" Margin="0,5,0,0" /></StackPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="16,0,0,0">
+                <Button Click="RefreshInstalled" Style="{StaticResource Shell.Button}" Margin="0,0,8,0" Content="{l:Loc 'Refresh'}" AutomationProperties.Name="{l:Loc 'Refresh'}" />
+                <Button x:Name="OpenModsButton" Click="OpenMods" Style="{StaticResource Shell.Button}" Margin="0" AutomationProperties.Name="{l:Loc 'Open mods folder'}">
+                    <StackPanel Orientation="Horizontal"><md:PackIcon Kind="FolderOpenOutline" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock Text="{l:Loc 'Open folder'}" /></StackPanel>
+                </Button>
+            </StackPanel>
+            <l:ContentSectionHeading Section="Mods" />
         </DockPanel>
         <TabControl x:Name="Pages" DockPanel.Dock="Top" SelectionChanged="PageChanged" Width="280" HorizontalAlignment="Left" Margin="0,0,0,12">
             <TabItem x:Name="InstalledPage" Header="{l:Loc 'My Mods'}" /><TabItem x:Name="BrowsePage" Header="{l:Loc 'Browse'}" />
@@ -83,7 +90,6 @@
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                         <TextBox x:Name="Search" Width="220" Margin="0,0,8,0" VerticalAlignment="Center" md:HintAssist.Hint="{l:Loc 'Search mods'}" AutomationProperties.Name="{l:Loc 'Search mods'}" md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="SearchChanged" />
-                        <Button Style="{StaticResource Shell.IconButton}" Click="RefreshInstalled" ToolTip="{l:Loc 'Refresh'}" AutomationProperties.Name="{l:Loc 'Refresh'}"><md:PackIcon Kind="Refresh" Width="18" Height="18" /></Button>
                         <Button x:Name="MoreButton" Style="{StaticResource Shell.Button}" Click="OpenMenu" AutomationProperties.Name="{l:Loc 'More mod tools'}">
                             <StackPanel Orientation="Horizontal"><md:PackIcon Kind="DotsVertical" Width="17" Height="17" Margin="0,0,5,0" /><TextBlock Text="{l:Loc 'More'}" /></StackPanel>
                             <Button.ContextMenu><ContextMenu>
@@ -140,7 +146,7 @@
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                         <TextBox x:Name="BrowseSearch" Width="220" Margin="0,0,8,0" VerticalAlignment="Center" md:HintAssist.Hint="{l:Loc 'Search mods'}" AutomationProperties.Name="{l:Loc 'Search mods'}" md:TextFieldAssist.HasLeadingIcon="True" md:TextFieldAssist.LeadingIcon="Magnify" TextChanged="BrowseSearchChanged" />
-                        <Button x:Name="RefreshButton" Style="{StaticResource Shell.IconButton}" Click="RefreshBrowse" ToolTip="{l:Loc 'Refresh'}" AutomationProperties.Name="{l:Loc 'Refresh'}"><md:PackIcon Kind="Refresh" Width="18" Height="18" /></Button>
+                        <Button x:Name="RefreshButton" Style="{StaticResource Shell.IconButton}" Click="RefreshBrowse" ToolTip="{l:Loc 'Refresh repository'}" AutomationProperties.Name="{l:Loc 'Refresh repository'}"><md:PackIcon Kind="Refresh" Width="18" Height="18" /></Button>
                         <Button Style="{StaticResource Shell.IconButton}" Click="OpenMenu" ToolTip="{l:Loc 'More'}" AutomationProperties.Name="{l:Loc 'Repository tools'}"><md:PackIcon Kind="DotsVertical" Width="18" Height="18" />
                             <Button.ContextMenu><ContextMenu><MenuItem Header="{l:Loc 'Add repository…'}" Click="ShowAddRepository" /><MenuItem Header="{l:Loc 'Open on GitHub'}" Click="OpenRepository" /><MenuItem x:Name="RemoveRepositoryItem" Header="{l:Loc 'Remove repository'}" Click="RemoveRepository" /></ContextMenu></Button.ContextMenu>
                         </Button>
@@ -173,7 +179,6 @@
             <DockPanel x:Name="ModPage" Visibility="Collapsed">
                 <StackPanel DockPanel.Dock="Top">
                     <DockPanel Margin="0,0,0,12">
-                        <Button DockPanel.Dock="Right" Click="RefreshInstalled" Style="{StaticResource Shell.IconButton}" HorizontalAlignment="Right" ToolTip="{l:Loc 'Refresh mod details'}" AutomationProperties.Name="{l:Loc 'Refresh mod details'}"><md:PackIcon Kind="Refresh" Width="18" Height="18" /></Button>
                         <Button x:Name="BackButton" Click="ClosePage" Style="{StaticResource Shell.Button}" HorizontalAlignment="Left"><StackPanel Orientation="Horizontal"><md:PackIcon Kind="ArrowLeft" Width="17" Height="17" Margin="0,0,7,0" /><TextBlock x:Name="BackText" /></StackPanel></Button>
                     </DockPanel>
                     <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="18" Margin="0,0,0,12">
@@ -189,14 +194,14 @@
                                     <Button x:Name="PageMenuButton" Style="{StaticResource Shell.IconButton}" Click="OpenPageMenu" ToolTip="{l:Loc 'More'}" AutomationProperties.Name="{l:Loc 'More mod actions'}"><md:PackIcon Kind="DotsVertical" Width="18" Height="18" /></Button>
                                 </WrapPanel>
                                 <TextBlock x:Name="PageStats" Style="{StaticResource Shell.Secondary}" FontSize="11" TextWrapping="Wrap" Margin="0,12,0,8" />
-                                <ItemsControl x:Name="PageTags"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource Shell.Badge}" Margin="0,0,6,0"><TextBlock Text="{Binding}" FontSize="11" /></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                                <ItemsControl x:Name="PageTags"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource ContentBadge}" Margin="0,0,6,0"><TextBlock Text="{Binding}" FontSize="11" /></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
                             </StackPanel>
                         </DockPanel>
                     </Border>
                 </StackPanel>
                 <TabControl x:Name="PageTabs">
                     <TabItem x:Name="ModOverviewPage" Header="{l:Loc 'Overview'}"><DockPanel>
-                        <Border x:Name="RuntimeCard" DockPanel.Dock="Top" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,12,0,10">
+                        <Border x:Name="RuntimeCard" DockPanel.Dock="Top" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="16" Margin="0,12,0,12">
                             <DockPanel><Button x:Name="PageCheckStatus" DockPanel.Dock="Right" Content="{l:Loc 'Check live status'}" Click="CheckMods" Style="{StaticResource Shell.Button}" VerticalAlignment="Top" Margin="14,0,0,0" />
                                 <StackPanel><TextBlock Text="{l:Loc 'Saved choice and live status'}" FontSize="14" FontWeight="SemiBold" /><TextBlock x:Name="SavedChoiceText" Margin="0,8,0,0" TextWrapping="Wrap" /><TextBlock x:Name="RuntimeStatusText" Margin="0,4,0,0" TextWrapping="Wrap" /><TextBlock Text="{l:Loc 'A saved checkmark does not confirm that the mod is loaded in the running game.'}" Style="{StaticResource Shell.Secondary}" FontSize="12" TextWrapping="Wrap" Margin="0,7,0,0" /></StackPanel>
                             </DockPanel>
@@ -204,14 +209,14 @@
                         <FlowDocumentScrollViewer x:Name="Overview" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" IsToolBarVisible="False" />
                     </DockPanel></TabItem>
                     <TabItem x:Name="ModSettingsPage" Header="{l:Loc 'Settings'}"><DockPanel Margin="0,12,0,0">
-                        <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,1,0,0" Padding="0,12,0,0" Margin="0,10,0,0">
+                        <Border x:Name="SettingsFooter" DockPanel.Dock="Bottom" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" Background="{DynamicResource Shell.Panel}" CornerRadius="9" Padding="10" Margin="0,12,0,0">
                             <StackPanel><TextBlock x:Name="SettingsHint" Style="{StaticResource Shell.Secondary}" FontSize="12" TextWrapping="Wrap" />
-                                <WrapPanel x:Name="SettingsActions" Margin="0,8,0,0"><Button x:Name="SaveSettingsButton" Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Save settings'}" Click="SaveSettings" /><Button x:Name="DiscardSettingsButton" Content="{l:Loc 'Discard changes'}" Click="DiscardModSettings" /><Button x:Name="ResetSettingsButton" Content="{l:Loc 'Reset to defaults'}" Click="ResetSettings" /></WrapPanel>
+                                <WrapPanel x:Name="SettingsActions" HorizontalAlignment="Right" Margin="0,8,0,0"><Button x:Name="SaveSettingsButton" Margin="0,0,8,0" Style="{StaticResource Shell.PrimaryButton}" Content="{l:Loc 'Save settings'}" Click="SaveSettings" /><Button x:Name="DiscardSettingsButton" Margin="0,0,8,0" Content="{l:Loc 'Discard changes'}" Click="DiscardModSettings" /><Button x:Name="ResetSettingsButton" Margin="0,0,8,0" Content="{l:Loc 'Reset to defaults'}" Click="ResetSettings" /></WrapPanel>
                             </StackPanel>
                         </Border>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel MaxWidth="680" HorizontalAlignment="Left" Margin="16,12,16,0">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1" CornerRadius="9" Padding="16"><StackPanel MaxWidth="680" HorizontalAlignment="Left">
                             <TextBlock Text="{l:Loc 'Mod settings'}" FontSize="18" FontWeight="SemiBold" /><TextBlock Text="{l:Loc 'Shared by every league where this mod runs.'}" Style="{StaticResource Shell.Secondary}" FontSize="12" Margin="0,6,0,16" TextWrapping="Wrap" /><StackPanel x:Name="SettingsPanel" />
-                        </StackPanel></ScrollViewer>
+                        </StackPanel></Border></ScrollViewer>
                     </DockPanel></TabItem>
                     <TabItem x:Name="ModVersionsPage" Header="{l:Loc 'Versions'}"><ListBox x:Name="VersionList" Style="{StaticResource ModTable}" Margin="0,12,0,0"><ListBox.ItemTemplate><DataTemplate>
                         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="100" /><ColumnDefinition Width="80" /><ColumnDefinition Width="*" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>

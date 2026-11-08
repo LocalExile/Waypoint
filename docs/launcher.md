@@ -573,6 +573,11 @@ Python packages. Linux explains that its game-control integrations are unavailab
 
 ### Mods
 
+Mods, Modules and Leagues share the same title hierarchy, themed cards, badges, icon frames, refresh position and settings
+footer. The info button beside each title explains their relationship: Mods installs add-ons for the checkout, Modules
+configures shared gameplay systems, and Leagues chooses the modules used by each player-facing flag and linked mode.
+The explanation opens on demand so it does not crowd the working area.
+
 Laid out like an addon manager, with **My Mods** and **Browse**. Both lists use themed cards with small semantic icons,
 clear names, descriptions and quiet version/author metadata. Installed manifest names take precedence; repository names
 and descriptions fill missing metadata without changing mod IDs or operation targets. Unknown mods use a puzzle icon.
@@ -632,7 +637,7 @@ for read-only inspection in Advanced mode.
 ### Modules and Leagues
 
 **Modules** lists gameplay systems from the selected checkout's `Modules/`, without loading server assemblies. Select one
-to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
+to see its dependencies, the leagues using it and its settings. **Manage in Leagues** opens Leagues. Module
 settings are shared by every league using that module, rather than being separate per league.
 
 The module navigator uses the same selectable cards and icon defaults as the module rows in Leagues. **Find a module**
@@ -656,6 +661,14 @@ choice; **Use module default** selects its default for review before Apply. Icon
 The preference is scoped by checkout and module ID and saved only in Waypoint's settings, never in module manifests,
 league choices or the client. Existing releases keep their capability guards, and icon selection does not enable editing
 unsupported gameplay settings.
+
+The **Global mods** summary stays above the league workspace while switching flags or modes. It lists the checkout's
+saved enabled mod names (up to three, with the full list in its tooltip), separately from the last-checked live load count.
+Saved choices never imply a successful live load. An unavailable/not-checked report is identified explicitly; an existing
+report is always labelled **Last checked**, even if the server has since stopped or restarted. The summary never runs a
+live inspection itself. **Manage in Mods** opens Mods without changing league choices.
+Mods apply across all leagues, so the summary is not repeated inside individual league cards. Refresh or a workspace
+inspection updates the summary without rebuilding an unsaved league form. Existing release/capability guards still apply.
 
 **Leagues** lists the separate flags declared for the game's character-creation screen. Only explicit `entryOf` / `entryKind`
 links make another definition a mode option on that flag. Sharing a game base, migration destination or Hardcore death

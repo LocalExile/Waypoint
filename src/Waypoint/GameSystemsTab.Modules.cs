@@ -67,7 +67,7 @@ public sealed partial class GameSystemsTab
     {
         if (_catalog is null) return;
         var hero = new DockPanel();
-        var emblem = Card(new ModuleGlyph(module.Id, 42), 16, "Shell.Background"); emblem.Margin = new Thickness(0, 0, 18, 0);
+        var emblem = Card(new ModuleGlyph(module.Id, 34), 14, "Shell.Background"); emblem.Width = 64; emblem.Height = 66; emblem.Margin = new Thickness(0, 0, 18, 0);
         emblem.VerticalAlignment = VerticalAlignment.Top; DockPanel.SetDock(emblem, Dock.Left); hero.Children.Add(emblem);
         var body = new StackPanel();
         var title = new DockPanel();
@@ -76,13 +76,17 @@ public sealed partial class GameSystemsTab
         iconAction.Margin = new Thickness(12, 0, 0, 0); DockPanel.SetDock(iconAction, Dock.Right); title.Children.Add(iconAction);
         title.Children.Add(Type(ModuleTitle(module), 25, true)); body.Children.Add(title);
         var identity = Type(L.Text("Gameplay module · {0}", module.Id), 12, false, "Shell.TextSecondary"); identity.Margin = new Thickness(0, 6, 0, 0); body.Children.Add(identity);
-        var description = Type(module.Description.Length > 0 ? module.Description : L.Text("A gameplay system provided by this LocalExile checkout."), 13, false, "Shell.TextSecondary");
-        description.Margin = new Thickness(0, 10, 0, 0); body.Children.Add(description);
+        if (module.Description.Length > 0)
+        {
+            var description = Type(module.Description, 13, false, "Shell.TextSecondary");
+            description.Margin = new Thickness(0, 10, 0, 0); body.Children.Add(description);
+        }
         hero.Children.Add(body); var heroCard = Card(hero, 18); heroCard.Margin = new Thickness(0, 0, 0, 12); _detail.Children.Add(heroCard);
 
         var usage = new StackPanel();
         var usageHeader = new DockPanel();
-        var choose = SettingsEditor.Button(L.Text("Choose leagues for this module"), () => OpenLeaguesRequested?.Invoke());
+        var choose = SettingsEditor.Button(L.Text("Manage in Leagues"), () => OpenLeaguesRequested?.Invoke());
+        Named(choose, L.Text("Manage in Leagues"));
         choose.Margin = new Thickness(12, 0, 0, 0); DockPanel.SetDock(choose, Dock.Right); usageHeader.Children.Add(choose);
         usageHeader.Children.Add(Type(L.Text("League usage"), 18, true)); usage.Children.Add(usageHeader);
         var used = _catalog.Leagues.Where(l => l.Systems.Contains(module.Path, StringComparer.OrdinalIgnoreCase)).ToArray();
@@ -103,7 +107,7 @@ public sealed partial class GameSystemsTab
         var usageCard = Card(usage); usageCard.Margin = new Thickness(0, 0, 0, 12); _detail.Children.Add(usageCard);
 
         var settings = new StackPanel(); settings.Children.Add(Type(L.Text("Shared settings"), 18, true));
-        var shared = Type(L.Text("Shared settings: changes affect every league using this module."), 12, false, "Shell.TextSecondary"); shared.Margin = new Thickness(0, 6, 0, 16); settings.Children.Add(shared);
+        var shared = Type(L.Text("Changes affect every league using this module."), 12, false, "Shell.TextSecondary"); shared.Margin = new Thickness(0, 6, 0, 16); settings.Children.Add(shared);
         OpenSettings(settings, module.Id, module.SettingsFile, "modules");
         var settingsCard = Card(settings); settingsCard.Margin = new Thickness(0, 0, 0, 12); _detail.Children.Add(settingsCard);
         if (File.Exists(module.SettingsFile)) { _detail.Children.Remove(settingsCard); _detail.Children.Insert(1, settingsCard); }

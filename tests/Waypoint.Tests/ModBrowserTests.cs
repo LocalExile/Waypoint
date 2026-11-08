@@ -40,6 +40,35 @@ public class ModBrowserTests : IDisposable
     }
 
     [Fact]
+    public void Global_choices_distinguish_unavailable_disabled_and_saved_enable_choices()
+    {
+        var entry = Installed("Boss Loot") with { Enabled = true, Status = "Not checked" };
+        Assert.Equal(L.Text("Mod information unavailable"), ModsText.GlobalChoices(null, [entry]));
+        Assert.Equal(L.Text("Mod information unavailable"), ModsText.GlobalChoices(new(false, _root, true), [entry]));
+        Assert.Equal(L.Text("Mods are off for this checkout"), ModsText.GlobalChoices(new(true, _root, false), [entry]));
+        Assert.Equal(L.Text("No mods enabled"), ModsText.GlobalChoices(new(true, _root, true), [entry with { Enabled = false }]));
+        Assert.Equal(L.Text("Saved enabled: {0}", "Boss Loot"), ModsText.GlobalChoices(new(true, _root, true), [entry]));
+        var several = Enumerable.Range(1, 5).Select(i => entry with { Id = "mod" + i, Name = "Mod " + i }).ToArray();
+        Assert.Equal(L.Text("Saved enabled: {0}", "Mod 1, Mod 2, Mod 3" + L.Text(" + {0} more", 2)), ModsText.GlobalChoices(new(true, _root, true), several));
+        Assert.Contains("Mod 5", ModsText.GlobalChoices(new(true, _root, true), several, compact: false));
+    }
+
+    [Fact]
+    public void Global_live_count_requires_an_explicit_report_and_is_always_labelled_last_checked()
+    {
+        var state = new RuntimeSnapshot(_root, "", "", "", "", "", [],
+            [new("Gateway", "Ready", 123, "", "", [], 0, 0, "")], [], ModEnvironment: new(true, _root, true));
+        Assert.Equal(L.Text("Live load: not checked"), ModsText.GlobalRuntime(state));
+        var report = "bossloot 1.0.0 - feature, 1 hook(s)\nother - not loaded, disabled\nbroken - not loaded, dependency missing";
+        var checkedState = state with { ModEnvironment = new(true, _root, true, report) };
+        Assert.Equal(L.Text("Last checked: {0} loaded", 1), ModsText.GlobalRuntime(checkedState));
+        Assert.Equal(L.Text("Last checked: {0} loaded", 1), ModsText.GlobalRuntime(checkedState with { Services = [] }));
+        Assert.Equal(L.Text("Live load: not checked"), ModsText.GlobalRuntime(state with { Services = [] }));
+        Assert.Empty(ModsText.GlobalRuntime(state with { ModEnvironment = null }));
+        Assert.Empty(ModsText.GlobalRuntime(state with { ModEnvironment = new(false, _root, true, report) }));
+    }
+
+    [Fact]
     public void Saved_choices_do_not_supply_a_runtime_load_observation()
     {
         var state = new RuntimeSnapshot(_root, "", "", "", "", "", [], [], [], ModEnvironment: new(true, _root, true));

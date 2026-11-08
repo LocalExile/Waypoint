@@ -515,6 +515,7 @@ public partial class ModsTab : UserControl
         _pageReadme = "";
         InstalledView.Visibility = BrowseView.Visibility = Visibility.Collapsed;
         ModPage.Visibility = Visibility.Visible;
+        SettingsEditor.Show(ChoiceScopeHint, false);
         PageTabs.SelectedItem = ModOverviewPage;
         RefreshPage();
         _ = LoadReadmeAsync(item, entry);
@@ -526,6 +527,7 @@ public partial class ModsTab : UserControl
         if (!DiscardSettings()) return;
         _settingsEditor = null;
         ModPage.Visibility = Visibility.Collapsed;
+        SettingsEditor.Show(ChoiceScopeHint, true);
         _pageItem = null;
         _pageEntry = null;
         _form = null;
@@ -624,7 +626,7 @@ public partial class ModsTab : UserControl
         if (!Repo.IsInstall && entry is not null && _form?.Id == entry.Id && SettingsPanel.Children.Count > 0)
         { UpdateSettingsButtons(); return; }
         _form = null; _settingsEditor = null; _inputs.Clear(); SettingsPanel.Children.Clear();
-        SettingsEditor.Show(SettingsActions, false); SettingsHint.Text = "";
+        SettingsEditor.Show(SettingsActions, false); SettingsEditor.Show(SettingsFooter, false); SettingsHint.Text = "";
         if (Repo.IsInstall)
         {
             SettingsNotice(L.Text("Settings support unavailable"), L.Text("This release does not declare compatibility with downloadable mod settings. Use a compatible source checkout to edit them.")); return;
@@ -659,6 +661,7 @@ public partial class ModsTab : UserControl
     }
     void UpdateSettingsButtons()
     {
+        SettingsEditor.Show(SettingsFooter, _settingsEditor is not null);
         bool dirty = _settingsEditor?.Dirty == true;
         SaveSettingsButton.IsEnabled = CanUse && dirty; ResetSettingsButton.IsEnabled = CanUse && _form is not null;
         DiscardSettingsButton.IsEnabled = dirty;
@@ -671,7 +674,7 @@ public partial class ModsTab : UserControl
         _form = null; ShowSettings(_pageEntry);
     }
 
-    TextBlock Note(string text) => new() { Text = text, Style = (Style)FindResource("Shell.Secondary"), FontSize = 11.5, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0) };
+    TextBlock Note(string text) => new() { Text = text, Style = (Style)FindResource("Shell.Secondary"), FontSize = 12, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0) };
 
     async void SaveSettings(object sender, RoutedEventArgs e)
     {

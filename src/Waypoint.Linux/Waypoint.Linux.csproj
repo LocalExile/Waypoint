@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Compile Include="..\Waypoint\AccountList.cs;..\Waypoint\CheckoutUpdates.cs;..\Waypoint\ClientBridge.cs;..\Waypoint\CommandCatalog.cs;..\Waypoint\Completion.cs;..\Waypoint\CraftedItems.cs;..\Waypoint\CrafterCatalog.cs;..\Waypoint\DevHost.cs;..\Waypoint\Editions.cs;..\Waypoint\Git.cs;..\Waypoint\LiveScript.cs;..\Waypoint\LogHub.cs;..\Waypoint\LogTail.cs;..\Waypoint\Metrics.cs;..\Waypoint\ModBrowser.cs;..\Waypoint\OperationTimings.cs;..\Waypoint\PathChoices.cs;..\Waypoint\PortCheck.cs;..\Waypoint\PullRequests.cs;..\Waypoint\Repo.cs;..\Waypoint\RuntimeCounters.cs;..\Waypoint\ServiceMonitor.cs;..\Waypoint\Settings.cs;..\Waypoint\SetupChecks.cs;..\Waypoint\Shared.cs;..\Waypoint\TimeSeries.cs;..\Waypoint\Updates.cs;..\Waypoint\Workspace.cs" Link="Shared\%(Filename)%(Extension)" />
-    <Compile Include="../Waypoint/SettingsEditor.cs;../Waypoint/GameSystemsTab.cs;../Waypoint/GameSystemsTab.Draft.cs;../Waypoint/GameSystemsTab.Visuals.cs;../Waypoint/GameSystemsTab.FlagAppearance.cs;../Waypoint/GameSystemsTab.Modules.cs;../Waypoint/ModuleIcons.cs;../Waypoint/ModuleGlyph.cs" Link="Shared/%(Filename)%(Extension)" />
+    <Compile Include="../Waypoint/SettingsEditor.cs;../Waypoint/ContentSectionHeading.cs;../Waypoint/GameSystemsTab.cs;../Waypoint/GameSystemsTab.Draft.cs;../Waypoint/GameSystemsTab.GlobalMods.cs;../Waypoint/GameSystemsTab.Visuals.cs;../Waypoint/GameSystemsTab.FlagAppearance.cs;../Waypoint/GameSystemsTab.Modules.cs;../Waypoint/ModuleIcons.cs;../Waypoint/ModuleGlyph.cs" Link="Shared/%(Filename)%(Extension)" />
     <Using Include="System.IO" />
     <Using Include="Launcher.Core" />
     <Using Include="Avalonia.Controls.Window" Alias="Window" />

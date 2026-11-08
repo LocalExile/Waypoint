@@ -583,6 +583,24 @@ sealed class ModBrowser(Shared shared)
 /// <summary>The Mods section's text and form reading, the same in both apps' views.</summary>
 static class ModsText
 {
+    /// <summary>The checkout's saved choices, never an assertion that those mods loaded.</summary>
+    public static string GlobalChoices(ModEnvironment? environment, IReadOnlyList<ModEntry> entries, bool compact = true)
+    {
+        if (environment is not { Supported: true }) return L.Text("Mod information unavailable");
+        if (!environment.Enabled) return L.Text("Mods are off for this checkout");
+        var enabled = entries.Where(e => e.Enabled).OrderBy(e => e.Title, StringComparer.CurrentCultureIgnoreCase).ToArray();
+        if (enabled.Length == 0) return L.Text("No mods enabled");
+        string names = string.Join(", ", (compact ? enabled.Take(3) : enabled).Select(e => e.Title));
+        if (compact && enabled.Length > 3) names += L.Text(" + {0} more", enabled.Length - 3);
+        return L.Text("Saved enabled: {0}", names);
+    }
+    public static string GlobalRuntime(RuntimeSnapshot? state)
+    {
+        if (state?.ModEnvironment is not { Supported: true } environment) return "";
+        var report = ModCatalog.ParseRuntimeReport(environment.RuntimeReport);
+        return report.Count == 0 ? L.Text("Live load: not checked")
+            : L.Text("Last checked: {0} loaded", report.Count(e => e.Value.Status == "Loaded (last checked)"));
+    }
     /// <summary>Presentation-only defaults, using the same native symbol family as the module library.</summary>
     public static ModIconKind Icon(string id) => id.ToLowerInvariant() switch
     {

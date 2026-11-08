@@ -26,6 +26,7 @@ public sealed partial class GameSystemsTab : UserControl
 {
     public bool LeagueView { get; set; }
     internal event Action? OpenLeaguesRequested;
+    internal event Action? OpenModsRequested;
     Shared _shared = null!;
     GameSystems? _catalog;
     readonly StackPanel _detail = new(), _header = new();
@@ -44,6 +45,8 @@ public sealed partial class GameSystemsTab : UserControl
     object? _selected, _selectedRow;
     bool _selecting, _choicesDirty, _creating, _refreshing, _applying, _liveRunning;
     Button? _primary, _discardAction, _settingsAction, _availabilityAction, _newAction;
+    Button? _refreshAction;
+    Border? _footerCard;
     TextBlock? _availabilityHint;
     ComboBox? _modeSelector;
     Expander? _leagueSettings;
@@ -63,8 +66,11 @@ public sealed partial class GameSystemsTab : UserControl
         _shared = shared;
         var shell = new DockPanel { Margin = new Thickness(18, 8, 18, 12) };
         var heading = new StackPanel { Margin = new Thickness(0, 0, 0, 12) };
-        heading.Children.Add(_header); UpdateHeading();
-        _toolbar.Children.Add(SettingsEditor.Button(L.Text("Refresh"), () => _ = RefreshAsync(discard: true)));
+        var headingRow = new DockPanel { Margin = new Thickness(0, 0, 0, 16) };
+        _refreshAction = Named(SettingsEditor.Button(L.Text("Refresh"), () => _ = RefreshAsync(discard: true)), L.Text("Refresh"));
+        _refreshAction.VerticalAlignment = VerticalAlignment.Top; _refreshAction.Margin = new Thickness(16, 0, 0, 0);
+        DockPanel.SetDock(_refreshAction, Dock.Right); headingRow.Children.Add(_refreshAction);
+        headingRow.Children.Add(_header); heading.Children.Add(headingRow); UpdateHeading();
         if (LeagueView) { _newAction = SettingsEditor.Button(L.Text("New league"), () => StartCreate()); Primary(_newAction); _toolbar.Children.Add(_newAction); }
         if (LeagueView)
         {
@@ -78,6 +84,12 @@ public sealed partial class GameSystemsTab : UserControl
         heading.Children.Add(_toolbar);
         if (LeagueView) { Ink(_flagSummary, "Shell.TextSecondary"); _flagSummary.Margin = new Thickness(0, 10, 0, 0); heading.Children.Add(_flagSummary); }
         DockPanel.SetDock(heading, Dock.Top); shell.Children.Add(heading);
+        if (LeagueView)
+        {
+            var globalMods = CreateGlobalModsBar();
+            DockPanel.SetDock(globalMods, Dock.Top); shell.Children.Add(globalMods);
+            UpdateGlobalMods();
+        }
         var footer = new StackPanel();
         _validation.FontSize = 12; _validation.Margin = new Thickness(0, 0, 0, 6); Ink(_validation, "Shell.TextSecondary");
         _status.FontSize = 12; Ink(_status, "Shell.TextSecondary"); SettingsEditor.Show(_status, false);
@@ -85,6 +97,7 @@ public sealed partial class GameSystemsTab : UserControl
         footer.Children.Add(_validation); footer.Children.Add(_status); footer.Children.Add(_actions);
         A11y.SetLiveSetting(_status, LiveSetting.Polite); A11y.SetLiveSetting(_validation, LiveSetting.Polite);
         var footerCard = Card(footer, 10); footerCard.Margin = new Thickness(238, 12, 0, 0);
+        _footerCard = footerCard;
         DockPanel.SetDock(footerCard, Dock.Bottom); shell.Children.Add(footerCard);
         Named(_list, L.Text(LeagueView ? "Leagues" : "Modules"));
         DressNavigation();
@@ -113,11 +126,12 @@ public sealed partial class GameSystemsTab : UserControl
         Loaded += (_, _) => { if (_catalog is null) _ = RefreshAsync(); };
         shared.Workspace.Changed += () => Dispatch(() =>
         {
+            UpdateGlobalMods();
             if (_catalog is null && shared.Workspace.Latest?.Content is not null) _ = RefreshAsync();
             else UpdateFeedback();
         });
         shared.LiveRunning += running => Dispatch(() => { _liveRunning = running; UpdateFeedback(); });
-        L.Current.PropertyChanged += (_, _) => Dispatch(() => { if (!Dirty && !Busy) { UpdateHeading(); RenderSelection(); } });
+        L.Current.PropertyChanged += (_, _) => Dispatch(() => { UpdateGlobalMods(); if (!Dirty && !Busy) { UpdateHeading(); RenderSelection(); } });
 #if WINDOWS
         Theme.Changed += RefreshFlagColors;
 #endif
@@ -125,10 +139,7 @@ public sealed partial class GameSystemsTab : UserControl
     void UpdateHeading()
     {
         _header.Children.Clear();
-        _header.Children.Add(Type(L.Text(LeagueView ? "Leagues" : "Modules"), 26, true));
-        var introduction = Type(LeagueView ? L.Text("League flags and mode options as declared for character creation.")
-            : L.Text("Modules provide gameplay systems. Their settings are shared by every league using them."), 12, false, "Shell.TextSecondary");
-        introduction.Margin = new Thickness(0, 5, 0, 10); _header.Children.Add(introduction);
+        _header.Children.Add(new ContentSectionHeading { Section = LeagueView ? ManagedContentSection.Leagues : ManagedContentSection.Modules });
     }
     static T Named<T>(T control, string name) where T : AccessibleElement { A11y.SetName(control, name); return control; }
     static TextBlock LabelFor(AccessibleElement control, string text)
@@ -145,6 +156,7 @@ public sealed partial class GameSystemsTab : UserControl
     {
         _status.Text = text;
         SettingsEditor.Show(_status, text.Length > 0);
+        UpdateFooterVisibility();
 #if WINDOWS
         System.Windows.Automation.Peers.UIElementAutomationPeer.FromElement(_status)?.RaiseAutomationEvent(System.Windows.Automation.Peers.AutomationEvents.LiveRegionChanged);
 #endif
@@ -152,7 +164,12 @@ public sealed partial class GameSystemsTab : UserControl
     void UpdateLock()
     {
         _detail.IsEnabled = _list.IsEnabled = _toolbar.IsEnabled = _actions.IsEnabled = _moduleSearch.IsEnabled = !Busy;
+        if (_refreshAction is not null) _refreshAction.IsEnabled = !Busy;
         if (_newAction is not null) _newAction.IsEnabled = !_creating && _catalog?.Environment.CanCreate == true;
+    }
+    void UpdateFooterVisibility()
+    {
+        if (_footerCard is not null) SettingsEditor.Show(_footerCard, LeagueView || _editor is not null || _status.Text is { Length: > 0 });
     }
     Button FooterButton(string text, Action action, bool primary = false)
     {
@@ -220,7 +237,7 @@ public sealed partial class GameSystemsTab : UserControl
         if (_catalog is null || _selected is null) return;
         if (_selected is GameSystem system) RenderModule(system);
         else if (_selected is GameLeague league) RenderLeague(league);
-        _discardAction = FooterButton(L.Text("Discard changes"), DiscardCurrent);
+        if (LeagueView || _editor is not null) _discardAction = FooterButton(L.Text("Discard changes"), DiscardCurrent);
         UpdateFeedback(); UpdateLock();
         if (focusMode && _modeSelector is not null) Dispatch(() => _modeSelector.Focus());
     }
@@ -471,6 +488,7 @@ public sealed partial class GameSystemsTab : UserControl
         else _validation.Text = _editor?.Dirty == true ? L.Text("Unsaved settings") : L.Text("No unsaved changes.");
         if (_settingsAction is not null) _settingsAction.IsEnabled = !Busy && _editor?.Dirty == true;
         if (_discardAction is not null) _discardAction.IsEnabled = !Busy && Dirty;
+        UpdateFooterVisibility();
         UpdateLock();
     }
     async Task SetVisibilityAsync(GameLeague league)

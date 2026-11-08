@@ -387,6 +387,9 @@
   <data name="Text_0c9e7b062660" xml:space="preserve">
     <value>Сотворение чар</value>
   </data>
+  <data name="Text_0cad8e682400" xml:space="preserve">
+    <value>Флаги для игроков, игровые режимы и выбор модулей для каждой лиги.</value>
+  </data>
   <data xml:space="preserve" name="Text_0cdc983551de">
     <value> · история модов не записана</value>
   </data>
@@ -488,6 +491,9 @@
   </data>
   <data name="Text_0f044feb6ca7" xml:space="preserve">
     <value>Операция</value>
+  </data>
+  <data name="Text_0f1343519ff6" xml:space="preserve">
+    <value>Нет включённых модов</value>
   </data>
   <data name="Text_0f17c1790f9b" xml:space="preserve">
     <value>Игра или службы ещё работают. Waypoint останется открытым. Принудительное завершение не выполнялось.</value>
@@ -1468,6 +1474,9 @@
   <data name="Text_2d0afc98a2dd" xml:space="preserve">
     <value>Оставить службы работать</value>
   </data>
+  <data name="Text_2d0b83afa9d2" xml:space="preserve">
+    <value>Моды отключены для этой копии</value>
+  </data>
   <data name="Text_2d895f09eb26" xml:space="preserve">
     <value>Нет выпуска: устанавливается исходный код</value>
   </data>
@@ -1931,6 +1940,9 @@
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>Соберите любой предмет: база, редкость, свойства со значениями, гнёзда и влияния. Сохраните, чтобы вернуться к нему, и выдайте персонажу в игре.</value>
   </data>
+  <data name="Text_3bc85df158e7" xml:space="preserve">
+    <value> и ещё {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_3bd8fd42d412">
     <value>Папка ещё не существует: </value>
   </data>
@@ -2187,6 +2199,9 @@
   <data xml:space="preserve" name="Text_45989de49fb7">
     <value>Сведения</value>
   </data>
+  <data name="Text_45afac004fa5" xml:space="preserve">
+    <value>Общие моды</value>
+  </data>
   <data name="Text_45d498d7208d" xml:space="preserve">
     <value>Остановка серверов и игры …</value>
   </data>
@@ -2421,6 +2436,9 @@
   <data name="Text_4c764cb6248e" xml:space="preserve">
     <value>Бандит</value>
   </data>
+  <data name="Text_4c95462ff653" xml:space="preserve">
+    <value>Настройка общих игровых систем; выбор лиг для них — в разделе «Лиги».</value>
+  </data>
   <data name="Text_4c9e6a2c6d56" xml:space="preserve">
     <value>Найти значок</value>
   </data>
@@ -2616,11 +2634,20 @@
   <data name="Text_52797c44d495" xml:space="preserve">
     <value>Недоступные модули ({0})</value>
   </data>
+  <data name="Text_52858040571d" xml:space="preserve">
+    <value>Не удалось проверить общие моды</value>
+  </data>
   <data name="Text_52c821f5742b" xml:space="preserve">
     <value>у {0} нет mod.json; ничего не установлено</value>
   </data>
   <data name="Text_52e01b2df16d" xml:space="preserve">
     <value>Не удалось создать: {0}</value>
+  </data>
+  <data name="Text_52e029304e0f" xml:space="preserve">
+    <value>Обновить репозиторий</value>
+  </data>
+  <data name="Text_52e85e515897" xml:space="preserve">
+    <value>Установка и настройка дополнений для этой копии.</value>
   </data>
   <data name="Text_52ec94a020a9" xml:space="preserve">
     <value>Последняя запись: {0} · {1:g}</value>
@@ -2914,6 +2941,9 @@
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>Вывод live.ps1</value>
+  </data>
+  <data name="Text_5e72e95aaebe" xml:space="preserve">
+    <value>Выбор модов действует во всех лигах. Сохранённый выбор не подтверждает их загрузку на сервере.</value>
   </data>
   <data xml:space="preserve" name="Text_5e9647ccdc6e">
     <value>Выберите часть интерфейса для изменения. Цвета светлой и тёмной тем хранятся отдельно. Изменение готовой схемы создаёт пользовательскую палитру.</value>
@@ -3275,6 +3305,9 @@
   <data name="Text_691145a11e9f" xml:space="preserve">
     <value>Секций тайника: {0}</value>
   </data>
+  <data name="Text_694b88b90bb9" xml:space="preserve">
+    <value>При последней проверке загружено: {0}</value>
+  </data>
   <data name="Text_6952069f9d84" xml:space="preserve">
     <value>уровень {0}</value>
   </data>
@@ -3295,6 +3328,9 @@
   </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Остановка службы учётных записей</value>
+  </data>
+  <data name="Text_6a01b4f4e1a2" xml:space="preserve">
+    <value>Управление в разделе «Лиги»</value>
   </data>
   <data name="Text_6a1ec725867a" xml:space="preserve">
     <value>Добавить на предмет</value>
@@ -3472,6 +3508,9 @@
   </data>
   <data name="Text_708dc8aff75e" xml:space="preserve">
     <value>Подготовить LocalExile</value>
+  </data>
+  <data name="Text_709098e7c9a2" xml:space="preserve">
+    <value>Управление в разделе «Моды»</value>
   </data>
   <data name="Text_709e77536bf1" xml:space="preserve">
     <value>Некорректная настройка: {0}</value>
@@ -3835,6 +3874,9 @@
   </data>
   <data name="Text_7cec6cca16cb" xml:space="preserve">
     <value>LocalExile {0}</value>
+  </data>
+  <data name="Text_7cf66d7bafd4" xml:space="preserve">
+    <value>Модули — игровые системы LocalExile. Их настройки общие для всех лиг, в которых они используются.</value>
   </data>
   <data name="Text_7cf77adcf36c" xml:space="preserve">
     <value>Запуск dev host …</value>
@@ -4391,6 +4433,9 @@
   <data name="Text_9057fd0f98cc" xml:space="preserve">
     <value>Игровой клиент</value>
   </data>
+  <data name="Text_909523b40339" xml:space="preserve">
+    <value>Моды — дополнения, установленные для этой копии. Включайте, обновляйте и настраивайте их в разделе «Моды».</value>
+  </data>
   <data name="Text_90eb3b815e3e" xml:space="preserve">
     <value>{0} — уникальный предмет: крафтер делает только обычные, магические и редкие.</value>
   </data>
@@ -4907,6 +4952,9 @@
   <data name="Text_9f97cf25460a" xml:space="preserve">
     <value>LocalExile здесь уже скачан.</value>
   </data>
+  <data name="Text_9f9c8a678785" xml:space="preserve">
+    <value>Лиги определяют флаги и связанные режимы, доступные игрокам. Выбирайте модули для каждой лиги в разделе «Лиги».</value>
+  </data>
   <data name="Text_9fa77e063410" xml:space="preserve">
     <value>Вышла версия {0}; текущая: {1}. Серверы и игра продолжат работать во время обновления.</value>
   </data>
@@ -5404,6 +5452,9 @@
   </data>
   <data name="Text_aef7de28d529" xml:space="preserve">
     <value>Сервер</value>
+  </data>
+  <data name="Text_af004a2cc3a3" xml:space="preserve">
+    <value>Загрузка на сервере: не проверена</value>
   </data>
   <data name="Text_af0303342a01" xml:space="preserve">
     <value>Открыть страницу</value>
@@ -6007,6 +6058,9 @@
   </data>
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>Внешний вид</value>
+  </data>
+  <data name="Text_c451c3692d31" xml:space="preserve">
+    <value>Информация о модах недоступна</value>
   </data>
   <data name="Text_c45aa0aa9d4a" xml:space="preserve">
     <value>Цель: {0}, {1}</value>
@@ -6661,6 +6715,9 @@
   <data name="Text_da79ad6da3cf" xml:space="preserve">
     <value>Изгнанник-разбойник</value>
   </data>
+  <data name="Text_da86bbbc05e9" xml:space="preserve">
+    <value>О модах, модулях и лигах</value>
+  </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>Сбросить</value>
   </data>
@@ -6708,6 +6765,9 @@
   </data>
   <data xml:space="preserve" name="Text_dc62d4bb4fb1">
     <value>Создание учётной записи</value>
+  </data>
+  <data name="Text_dc63ab18e32d" xml:space="preserve">
+    <value>Сохранённый выбор включённых модов не подтверждает их загрузку на сервере.</value>
   </data>
   <data name="Text_dc6c5ae4c245" xml:space="preserve">
     <value>Удалить {0}?</value>
@@ -6768,6 +6828,9 @@
   </data>
   <data name="Text_de6933c6727c" xml:space="preserve">
     <value>Сохраните или отмените изменения настроек лиги перед изменением выбора модулей.</value>
+  </data>
+  <data name="Text_de737b22972b" xml:space="preserve">
+    <value>Включены в настройках: {0}</value>
   </data>
   <data name="Text_de86c9b49a36" xml:space="preserve">
     <value>Смерть в режиме Hardcore в этой пользовательской лиге окончательна.</value>
@@ -7451,6 +7514,9 @@
   <data name="Text_f2d1dab08310" xml:space="preserve">
     <value>NPC</value>
   </data>
+  <data name="Text_f2faba4b22de" xml:space="preserve">
+    <value>Моды, модули и лиги</value>
+  </data>
   <data name="Text_f2fcd3f7dcca" xml:space="preserve">
     <value>Энергия</value>
   </data>
@@ -7462,6 +7528,9 @@
   </data>
   <data name="Text_f34ba9fc922c" xml:space="preserve">
     <value>Случайное имя</value>
+  </data>
+  <data name="Text_f38938ee1db3" xml:space="preserve">
+    <value>Изменения действуют во всех лигах, использующих этот модуль.</value>
   </data>
   <data xml:space="preserve" name="Text_f3ec74792130">
     <value>Службы остаются остановленными. Ошибка сборки не затронет базу сохранений.</value>

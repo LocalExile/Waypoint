@@ -387,6 +387,9 @@
   <data name="Text_0c9e7b062660" xml:space="preserve">
     <value>Casting</value>
   </data>
+  <data name="Text_0cad8e682400" xml:space="preserve">
+    <value>Manage player-facing flags, game modes and each league's module choices.</value>
+  </data>
   <data xml:space="preserve" name="Text_0cdc983551de">
     <value> · Mod history not recorded</value>
   </data>
@@ -488,6 +491,9 @@
   </data>
   <data name="Text_0f044feb6ca7" xml:space="preserve">
     <value>Operation</value>
+  </data>
+  <data name="Text_0f1343519ff6" xml:space="preserve">
+    <value>No mods enabled</value>
   </data>
   <data name="Text_0f17c1790f9b" xml:space="preserve">
     <value>The game or services are still running. Waypoint will stay open. No force termination was attempted.</value>
@@ -1468,6 +1474,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2d0afc98a2dd" xml:space="preserve">
     <value>Keep services running</value>
   </data>
+  <data name="Text_2d0b83afa9d2" xml:space="preserve">
+    <value>Mods are off for this checkout</value>
+  </data>
   <data name="Text_2d895f09eb26" xml:space="preserve">
     <value>No release: installs the source</value>
   </data>
@@ -1931,6 +1940,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>Make any item: a base, its rarity, modifiers with their values, sockets and influences. Save it to come back to it, and give it to the character in game.</value>
   </data>
+  <data name="Text_3bc85df158e7" xml:space="preserve">
+    <value> + {0} more</value>
+  </data>
   <data xml:space="preserve" name="Text_3bd8fd42d412">
     <value>Folder does not exist yet: </value>
   </data>
@@ -2187,6 +2199,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_45989de49fb7">
     <value>Details</value>
   </data>
+  <data name="Text_45afac004fa5" xml:space="preserve">
+    <value>Global mods</value>
+  </data>
   <data name="Text_45d498d7208d" xml:space="preserve">
     <value>Stopping the servers and the game …</value>
   </data>
@@ -2421,6 +2436,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4c764cb6248e" xml:space="preserve">
     <value>Shadow</value>
   </data>
+  <data name="Text_4c95462ff653" xml:space="preserve">
+    <value>Configure shared gameplay systems; choose which leagues use them in Leagues.</value>
+  </data>
   <data name="Text_4c9e6a2c6d56" xml:space="preserve">
     <value>Find an icon</value>
   </data>
@@ -2616,11 +2634,20 @@ This checkout has modified tracked files.</value>
   <data name="Text_52797c44d495" xml:space="preserve">
     <value>Unavailable modules ({0})</value>
   </data>
+  <data name="Text_52858040571d" xml:space="preserve">
+    <value>Could not inspect global mods</value>
+  </data>
   <data name="Text_52c821f5742b" xml:space="preserve">
     <value>{0} has no mod.json; nothing was installed</value>
   </data>
   <data name="Text_52e01b2df16d" xml:space="preserve">
     <value>Cannot create: {0}</value>
+  </data>
+  <data name="Text_52e029304e0f" xml:space="preserve">
+    <value>Refresh repository</value>
+  </data>
+  <data name="Text_52e85e515897" xml:space="preserve">
+    <value>Install and configure add-ons for this checkout.</value>
   </data>
   <data name="Text_52ec94a020a9" xml:space="preserve">
     <value>Last captured: {0} · {1:g}</value>
@@ -2914,6 +2941,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 output</value>
+  </data>
+  <data name="Text_5e72e95aaebe" xml:space="preserve">
+    <value>Mod choices apply across all leagues. Saved choices do not confirm live load status.</value>
   </data>
   <data xml:space="preserve" name="Text_5e9647ccdc6e">
     <value>Choose a part of the interface to edit. Light and dark colors are stored separately. Editing a preset creates your Custom scheme.</value>
@@ -3275,6 +3305,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_691145a11e9f" xml:space="preserve">
     <value>{0} stash tabs</value>
   </data>
+  <data name="Text_694b88b90bb9" xml:space="preserve">
+    <value>Last checked: {0} loaded</value>
+  </data>
   <data name="Text_6952069f9d84" xml:space="preserve">
     <value>level {0}</value>
   </data>
@@ -3295,6 +3328,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Closing account service</value>
+  </data>
+  <data name="Text_6a01b4f4e1a2" xml:space="preserve">
+    <value>Manage in Leagues</value>
   </data>
   <data name="Text_6a1ec725867a" xml:space="preserve">
     <value>Add to the item</value>
@@ -3472,6 +3508,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_708dc8aff75e" xml:space="preserve">
     <value>Prepare LocalExile</value>
+  </data>
+  <data name="Text_709098e7c9a2" xml:space="preserve">
+    <value>Manage in Mods</value>
   </data>
   <data name="Text_709e77536bf1" xml:space="preserve">
     <value>Invalid setting: {0}</value>
@@ -3835,6 +3874,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7cec6cca16cb" xml:space="preserve">
     <value>LocalExile {0}</value>
+  </data>
+  <data name="Text_7cf66d7bafd4" xml:space="preserve">
+    <value>Modules are LocalExile gameplay systems. Their settings are shared by all leagues using them.</value>
   </data>
   <data name="Text_7cf77adcf36c" xml:space="preserve">
     <value>Starting the dev host …</value>
@@ -4391,6 +4433,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_9057fd0f98cc" xml:space="preserve">
     <value>Game client</value>
   </data>
+  <data name="Text_909523b40339" xml:space="preserve">
+    <value>Mods are add-ons installed for this checkout. Enable, update and configure them in Mods.</value>
+  </data>
   <data name="Text_90eb3b815e3e" xml:space="preserve">
     <value>{0} is a unique: the crafter makes normal, magic and rare items.</value>
   </data>
@@ -4907,6 +4952,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9f97cf25460a" xml:space="preserve">
     <value>LocalExile is already downloaded here.</value>
   </data>
+  <data name="Text_9f9c8a678785" xml:space="preserve">
+    <value>Leagues define the flags and linked game modes players can choose. Select the modules each league uses in Leagues.</value>
+  </data>
   <data name="Text_9fa77e063410" xml:space="preserve">
     <value>Version {0} is out; this is {1}. The servers and the game keep running while it updates.</value>
   </data>
@@ -5404,6 +5452,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_aef7de28d529" xml:space="preserve">
     <value>Server</value>
+  </data>
+  <data name="Text_af004a2cc3a3" xml:space="preserve">
+    <value>Live load: not checked</value>
   </data>
   <data name="Text_af0303342a01" xml:space="preserve">
     <value>Open page</value>
@@ -6007,6 +6058,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>Cosmetics</value>
+  </data>
+  <data name="Text_c451c3692d31" xml:space="preserve">
+    <value>Mod information unavailable</value>
   </data>
   <data name="Text_c45aa0aa9d4a" xml:space="preserve">
     <value>Target: {0}, {1}</value>
@@ -6661,6 +6715,9 @@ Dependencies: {2}
   <data name="Text_da79ad6da3cf" xml:space="preserve">
     <value>Rogue exile</value>
   </data>
+  <data name="Text_da86bbbc05e9" xml:space="preserve">
+    <value>About Mods, Modules and Leagues</value>
+  </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>Reset</value>
   </data>
@@ -6708,6 +6765,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_dc62d4bb4fb1">
     <value>Creating local account</value>
+  </data>
+  <data name="Text_dc63ab18e32d" xml:space="preserve">
+    <value>Saved enable choices do not confirm live load status.</value>
   </data>
   <data name="Text_dc6c5ae4c245" xml:space="preserve">
     <value>Delete {0}?</value>
@@ -6768,6 +6828,9 @@ Dependencies: {2}
   </data>
   <data name="Text_de6933c6727c" xml:space="preserve">
     <value>Save or discard the league settings before changing module choices.</value>
+  </data>
+  <data name="Text_de737b22972b" xml:space="preserve">
+    <value>Saved enabled: {0}</value>
   </data>
   <data name="Text_de86c9b49a36" xml:space="preserve">
     <value>Hardcore death in this custom league is permanent.</value>
@@ -7451,6 +7514,9 @@ Dependencies: {2}
   <data name="Text_f2d1dab08310" xml:space="preserve">
     <value>NPC</value>
   </data>
+  <data name="Text_f2faba4b22de" xml:space="preserve">
+    <value>Mods, Modules and Leagues</value>
+  </data>
   <data name="Text_f2fcd3f7dcca" xml:space="preserve">
     <value>Energy</value>
   </data>
@@ -7462,6 +7528,9 @@ Dependencies: {2}
   </data>
   <data name="Text_f34ba9fc922c" xml:space="preserve">
     <value>Random name</value>
+  </data>
+  <data name="Text_f38938ee1db3" xml:space="preserve">
+    <value>Changes affect every league using this module.</value>
   </data>
   <data xml:space="preserve" name="Text_f3ec74792130">
     <value>Services remain stopped. A failed build preserves the save database.</value>
