@@ -573,7 +573,20 @@ Python packages. Linux explains that its game-control integrations are unavailab
 
 ### Mods
 
-Laid out like an addon manager, in two tables. **My Mods** lists the installed mods (from the manifests under
+Mods, Modules and Leagues share the same title hierarchy, themed cards, badges, icon frames, refresh position and settings
+footer. The info button beside each title explains their relationship: Mods installs add-ons for the checkout, Modules
+configures shared gameplay systems, and Leagues chooses the modules used by each player-facing flag and linked mode.
+The explanation opens on demand so it does not crowd the working area.
+
+Laid out like an addon manager, with **My Mods** and **Browse**. Both lists use themed cards with small semantic icons,
+clear names, descriptions and quiet version/author metadata. Installed manifest names take precedence; repository names
+and descriptions fill missing metadata without changing mod IDs or operation targets. Unknown mods use a puzzle icon.
+**Sort by** keeps name, saved enable choice, package action, latest version and author sorting, with a reverse-order button.
+Search also finds the displayed repository metadata; the installed count reflects its filter. **Details** or the name opens
+the mod page, while package actions and progress stay on the row. Unmatched installed packages are labelled **Installed**,
+not assumed **Up to date** without repository evidence. **Open folder**, Refresh, and the rarer **More** tools stay available.
+
+**My Mods** lists the installed mods (from the manifests under
 `Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their version,
 the latest one a repository offers, and the author. A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
@@ -603,6 +616,18 @@ show their alt text, HTML is left out, relative links open the mod's folder on G
 and a running Gateway reloads the mod), and its releases (Versions, each installable). Right-clicking a row shows its
 actions; **Uninstall** asks first. A replaced or uninstalled mod is moved to `Mods/.replaced/<time>/`, never deleted.
 
+The mod page separates **Saved choice** from **Live load status**. Only an explicit runtime report supplies a last-checked
+load state, labelled with its time when available; a checked enable box or a successful build is never presented as a live
+load. **Check live status** remains a manual action with the same capability checks as before. Installed/latest versions
+are not repeated when identical, and an up-to-date package is text rather than a disabled action button.
+
+**Settings** remains visible so an uninstalled mod, an installed package without a declaration, a release without support,
+an empty declaration and a read/validation failure each have an explanation. Missing declarations do not imply that the mod
+has no separate configuration files. Save, Discard and Reset stay below the scrolling form. Save requires an edited form
+and the existing operation capability; refresh preserves an unsaved form for the same installed mod. Release settings
+show no editor and no save/reset actions. Error details expand on demand. These are presentation changes over the same
+validated settings writer, backup, expected-hash checks and serialized operations.
+
 An existing LocalExile release does not declare compatibility with the newer downloadable mods. Waypoint leaves its
 existing saved mod switches available (an older server applies them at its next start), but disables install, update,
 uninstall and settings editing on release installs. Use a current source checkout for these tools. This is checked in the
@@ -612,15 +637,142 @@ for read-only inspection in Advanced mode.
 ### Modules and Leagues
 
 **Modules** lists gameplay systems from the selected checkout's `Modules/`, without loading server assemblies. Select one
-to see its dependencies, the leagues using it and its settings. **Choose leagues for this module** opens Leagues. Module
+to see its dependencies, the leagues using it and its settings. **Manage in Leagues** opens Leagues. Module
 settings are shared by every league using that module, rather than being separate per league.
 
-**Leagues** lists existing leagues. Select one to change its module choices. The Game module is required; saving refuses
-missing dependencies and modules. Ended leagues and leagues that cannot create characters are read-only. Choices are saved
+The module navigator uses the same selectable cards and icon defaults as the module rows in Leagues. **Find a module**
+searches its display name, ID, path and description; the count and empty state reflect the filter. Filtering preserves the
+current form while its module still matches, and asks before discarding an unsaved form if the filter would switch modules.
+The selected module has a clear heading and icon, a **Shared settings** card, **League usage**, and collapsible dependencies.
+Modules with settings show that card first. **Settings not exposed to Waypoint** means there is no declaration for the
+launcher; separate module configuration files may still exist. **Settings support unavailable** means a declaration exists
+but the selected LocalExile version lacks the supported shared-settings hook. **No editable settings** is shown only when
+a declaration loads successfully and is empty. **Settings could not be loaded** identifies a reading or validation failure
+inside the settings card, with expandable error details and a Refresh suggestion. These states never enable save/reset.
+League usage counts definitions, including linked modes, rather than claiming they are separate player flags. The first
+five names are visible and the remaining definitions expand on demand. Save and Discard stay in the fixed footer.
+
+**Choose icon…** opens a shared library of 184 symbols with search and category filters, covering existing and possible
+future modules (combat, magic, loot, crafting, exploration, encounters, progression, companions, nature, building and
+administration). All 24 known modules have distinct defaults; the seven original distinctive icons are retained. Unknown
+modules use the generic modules icon until the player chooses another. **Apply** changes that module's icon throughout
+Modules and Leagues immediately, without rebuilding or discarding an unsaved settings form. **Cancel** keeps the previous
+choice; **Use module default** selects its default for review before Apply. Icons use theme resources in both front ends.
+The preference is scoped by checkout and module ID and saved only in Waypoint's settings, never in module manifests,
+league choices or the client. Existing releases keep their capability guards, and icon selection does not enable editing
+unsupported gameplay settings.
+
+The **Global mods** summary stays above the league workspace while switching flags or modes. It lists the checkout's
+saved enabled mod names (up to three, with the full list in its tooltip), separately from the last-checked live load count.
+Saved choices never imply a successful live load. An unavailable/not-checked report is identified explicitly; an existing
+report is always labelled **Last checked**, even if the server has since stopped or restarted. The summary never runs a
+live inspection itself. **Manage in Mods** opens Mods without changing league choices.
+Mods apply across all leagues, so the summary is not repeated inside individual league cards. Refresh or a workspace
+inspection updates the summary without rebuilding an unsaved league form. Existing release/capability guards still apply.
+
+**Leagues** lists the separate flags declared for the game's character-creation screen. Only explicit `entryOf` / `entryKind`
+links make another definition a mode option on that flag. Sharing a game base, migration destination or Hardcore death
+destination never merges flags: Hardcore Allflame remains separate from Allflame when its definition has no `entryOf`.
+The flag count and order follow the checkout's startup catalogue (Standard first). Names and descriptions come from the
+definitions; a description beginning with `#` is identified as a game text key rather than pretending to resolve client text.
+The list uses selectable flag tiles with the native Standard/Hardcore banner artwork when it can be verified from the
+selected client. The flag image is literal; surrounding controls do not attempt to copy the whole character-creation screen.
+This is not a query of a running server's cached catalogue.
+
+Artwork is read through the checkout's already-built `PoEDataExtractor cat` tool, never through a build or a server/client
+launch. The optional reader needs Python with Pillow and the checkout's existing Node/ooz dependency. It validates the known
+banner-selection contract, reads `LeagueFlag.datc64` and the atlas, resolves explicit selectors or the native generic fallback,
+and crops the inclusive sprite rectangle from the DDS texture. Thus a custom league uses the same generic flag the client
+would use, rather than invented art. Unsupported contracts or unavailable tools show an explicitly labelled placeholder.
+No dependency is installed automatically. Extracted artwork stays in Waypoint's `league-art` cache, outside its source;
+the client GGPK is only read. Cache identity includes client size/time, the presentation contract, helper and decoder version;
+the reader rejects a changing client and rechecks cached image hashes.
+
+The selected flag has a distinct heading and banner; secondary text is muted, and module rows use small consistent icons
+with separate selection/required states. Neutral badges avoid competing status colours. **League settings** is
+expandable so the flag and gameplay modules remain the main focus. Save/Discard stay in a fixed footer.
+
+The flag's gear button opens **League settings → Flag appearance in Waypoint**. Automatic uses the theme accent for normal
+flags and theme red for Hardcore. Theme accent, theme red, neutral and a custom colour are available per flag and checkout.
+These personal choices apply immediately and are stored only in Waypoint's settings, not league manifests. They colour the
+frame/fallback emblem, never tint the original artwork or affect the game. Frames adapt for contrast, grayscale and Windows
+High Contrast; theme changes update them without dropping a draft. In-game artwork editing remains separate future work.
+
+Select a flag, expand **League settings**, then choose **Game mode** to manage its default or an explicitly linked combination. **In-game mode links
+and combinations** shows each exact checkbox path and destination league, including nested SSF/Hardcore/Ruthless links.
+Hardcore or SSF already fixed on a separate flag does not become an invented checkbox. **Show hidden definitions** exposes
+hidden/ended/unloaded cards and modes for inspection, clearly marked **not shown**; broken, cyclic or ambiguous links never
+appear as selectable player modes. Unlinked modes are labelled as definitions, not invented flags. A mode with a hidden
+ancestor is not offered as reachable. The default list includes only offered flags and reachable modes; editing compatibility
+families remain a separate safety concern and never determine the player-facing grouping.
+
+Modes stay separate internally for characters, stashes and death rules. Choosing a mode here browses that existing variant;
+it does not convert any characters. The Game module is required; saving refuses
+missing dependencies and modules. Ended and non-playable leagues are read-only. Hidden leagues remain configurable and usable as templates; hiding affects only creation availability. Choices are saved
 in the user's `data/league-modules.json` overrides (or the selected profile's `Game_LEAGUE_MODULES` path), preserving other
 leagues and leaving shipped manifests unchanged. Auth and Gateway read these choices at startup: Waypoint says to restart
-the servers when ready and never restarts them automatically. Existing characters stay in their league. Creating, deleting
-or migrating leagues is not part of these controls.
+the servers when ready and never restarts them automatically. Existing characters stay in their league. Deleting or
+migrating leagues is not part of these controls.
+
+The module list appears below the mode selector. **Find a module** searches names, IDs and descriptions without changing
+the selection. Required modules stay readable and cannot be disabled; modules not defined for the mode are grouped under
+**Unavailable modules**. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
+preview and league settings are expandable. Search hides an empty unavailable group and updates its matching count.
+Refreshing or applying a change locks editing until the operation finishes;
+switching league or mode asks before discarding a draft.
+
+**Visible to new characters** / **Hidden from new characters** reflects LocalExile's global creation list (`creatable` and
+not `ended`), not an account-specific permission. **Hide…** hides the selected league and its linked mode descendants;
+**Show…** also restores any parent cards it needs. Independent cards stay independent. At least one
+playable main card must remain visible, and visible mode options cannot lose their parent. Hiding changes only `creatable`:
+it does not end the league or prevent existing characters from entering it. Existing saves and stashes are not opened or
+changed by visibility edits. Void and ended leagues cannot be offered with these controls.
+
+Visibility editing requires stopped services/game and the source league-definition hook. After the optional backup,
+Waypoint checks writers and the full reviewed inventory again. Multi-file edits preserve comments and formatting, retain
+the original files in configuration history, apply children before hiding parents (parents before showing children), and
+roll back their own writes on failure without overwriting another tool's changes. Visibility takes effect at the next
+server start. Per-account visibility requires a separate LocalExile hook and is not implied by this global control.
+
+Module selection is conservative. The whole selection must fit at least one existing non-Waypoint league definition with
+the same mode-linked family, game base and exact mode flags/data set, rather than combining modules merely because each appears somewhere.
+Dependencies must be present and acyclic. Game is required; dedicated non-Core bundles from the starting profile, and
+their dependencies, stay together. Unverified modules are labelled and cannot be added. An already selected incompatible
+module can be deselected to repair a draft; invalid selections cannot be saved. Parent chains must lead to Standard or Void.
+The backend repeats these checks, even if an outside caller bypasses the interface.
+
+**New league** creates a separate league in two steps. First choose the starting league and game mode, then enter a new
+name and description. **Next: modules** opens the module choices and review; **Back to name and mode** keeps the draft.
+Starting profiles use the same explicit flag grouping. Review states that creation adds one independent flag with the
+chosen mode fixed, rather than adding mode checkboxes or rewriting another flag's links.
+**Customize as a new league** starts with the selected profile and its current module choices. Profiles with custom code
+or no reusable source template disable this action and explain why. A family with no SSF, Hardcore or Ruthless variant says that the option is unavailable: Waypoint never
+invents unsupported flags. Modes of an existing league are not changed underneath its characters; another mode creates
+another identity and card. New cards are independent, so they cannot displace an existing card's mode checkboxes.
+
+Custom leagues use Void as their parent and, for Hardcore, their death destination. A valid isolated Void definition must
+exist, hidden and without a parent; its module list may be empty or contain only the core Game foundation. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
+all save writers stopped, uses the normal optional save backup, and checks the writers again afterward. A read-only save
+inspection refuses names retained by characters, deleted-character records or stashes, and blocks unfamiliar schemas and
+pending imports rather than guessing. Names use 3–48 English letters, digits, spaces, underscores or hyphens.
+The final Create action and availability controls explain when running services block them; a creation draft remains
+editable while services run. Name feedback catches invalid or currently used names before proceeding; retained save names
+are checked again by the adapter before creation.
+
+Only an existing empty league marker class is reusable. A profile with custom league code or only prebuilt binaries is
+not silently cloned. Waypoint writes a known empty marker into the new league's Source folder, its module list, optional
+settings declarations, and its own `.waypoint-league.json` marker. It publishes the complete league manifest last, without
+replacing an existing directory. It never builds or starts LocalExile. The new league is available on the next server start.
+
+New league files and visibility edits are the player's own checkout changes. Simple mode's existing update guard keeps
+such a customized checkout in place instead of automatically moving it to newer source. Module overrides in ignored data
+files keep their existing behavior.
+
+Drafts review the complete relevant manifest/source inventory and user overrides. Adding, removing or changing a definition
+invalidates the draft; the backend checks again after backup. These checks enforce the declared structure, not every hidden
+assumption in arbitrary module code. LocalExile currently has no complete conflicts/supported-modes metadata contract.
+Broader cross-profile combinations need explicit compatibility declarations from LocalExile or the modules; unknown
+combinations remain blocked. The implemented controls require no LocalExile source changes.
 
 **League card preview** shows the definition's name, description, Hardcore/SSF/form flags and linked mode variants in a
 collapsed, read-only panel. It reads files, not the running server's startup snapshot. LocalExile already reads descriptions
