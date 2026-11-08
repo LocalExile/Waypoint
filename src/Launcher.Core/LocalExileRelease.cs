@@ -59,6 +59,8 @@ public static class LocalExileReleases
     public static string AssetSuffix => OperatingSystem.IsWindows() ? "-win-x64.zip" : "-linux-x64.zip";
     public const string ManifestName = "release.json";
     public const string LatestUrl = "https://api.github.com/repos/LocalExile/LocalExile/releases/latest";
+    /// <summary>The newest release's page, for a player to download it by hand.</summary>
+    public const string ReleasesPage = "https://github.com/LocalExile/LocalExile/releases/latest";
     public const string ListUrl = "https://api.github.com/repos/LocalExile/LocalExile/releases?per_page=30";
     /// <summary>Beside the install's files while a download is checked and extracted; never left behind.</summary>
     const string StagingName = ".waypoint-update";

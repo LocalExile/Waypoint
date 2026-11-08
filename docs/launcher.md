@@ -169,7 +169,8 @@ has no source to build, and turns to the download instead.
   on the copy and closed the game; Play then asks. **Delete the old one…** moves a shared client into the copy when both are on one
   drive, and deletes the release's program files. Its `data` and `Mods` stay, and so does anything a release does not ship.
 - **Updates**, for a download: **Keep an older version that does not change** puts the copy on its own branch `waypoint-tested` at
-  `SwitchToSource.TestedCommit`, which Play never moves, because only a plain copy on the default branch is updated. **Get the newest
+  `SwitchToSource.TestedCommit` (LocalExile v0.2.0-beta, e28909f6), which Play never moves, because only a plain copy on the default
+  branch is updated. **Get the newest
   changes** leaves it on `main`. Changing the commit means testing it again: a release's database opened on it, and an item given.
 - **Giving items**: **Set up Give item** installs Frida into the copy's `.venv`, which git ignores. Left out, the crafter offers it
   again the first time **Give item** is pressed.
@@ -485,8 +486,46 @@ clone upstream into a new or empty folder, with the drive's free space. It lists
 `Client` folders, what the installers recorded in the registry, the default folders, a time-limited walk of the fixed drives),
 and when there is none it says where it looked. Steam and Epic installs are listed struck out, so a player sees why theirs was
 passed over; they have no `Content.ggpk` and cannot be chosen. **Browse…** takes any folder. `PathOfExile.exe` has no version
-resource, so the 3.29.3b build is recognized by its SHA-256 (`ClientLocator`): another one is warned about before a 70 GB copy,
-but not refused. **Set up the rest now** goes on without a client. The game is never downloaded.
+resource, so a build is recognized by its SHA-256 (`ClientLocator`), and the list shows it beside the size. A build the folder's
+LocalExile cannot use is refused with the reason ([Game client builds](#game-client-builds)); one Waypoint does not know is warned
+about before a 70 GB copy, but not refused. For a new folder the guide sets up what the client fits: the newest LocalExile when a
+3.29.3c client was found, and only when the player has nothing but 3.29.3b, the last LocalExile made for it (release v0.1.0-beta,
+or a source copy on its own branch `waypoint-3.29.3b` at the head of the server's `3.29.3b` branch), with the quiet note below.
+**Set up the rest now** goes on without a client. The game is never downloaded.
+
+### Game client builds
+
+LocalExile works with one Path of Exile build at a time. v0.2.0-beta moved from 3.29.3b to **3.29.3c**: a 3.29.3b client no
+longer logs in to it, and v0.1.0-beta (the server's `3.29.3b` branch) is the last LocalExile for 3.29.3b. `ClientLocator.Builds`
+holds each build Waypoint knows (the SHA-256 and size of its `PathOfExile.exe`, and for an older build its last release and
+commit); `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
+`scripts/release/build-release.ps1`), so a folder pinned to an older version keeps its own.
+
+The rule: a player who has a 3.29.3c client plays on 3.29.3c; one who has only 3.29.3b keeps the last LocalExile for it. Waypoint
+looks only when a folder is about to be used (Play, Start servers, any Control start; a stop never), and only at that folder's
+client and, when it matters, a quick look (two seconds, the usual places first) for a 3.29.3c client elsewhere. Clients it merely
+finds are never changed. `ClientUpdate` decides:
+
+- **The client is older than the folder's LocalExile, and a 3.29.3c client was found**: no question. The old client is taken out
+  (`ClientLocator.RemoveClient`: a linked client loses only the link and the folder it points to is never touched; a copy is
+  renamed first, which fails as a whole while the game holds a file, then deleted, without following a link inside it; saves,
+  accounts and keys in `data\` stay). A release's Play then gives LocalExile.exe the found client (`--client`, linked when the old one
+  was a link, else copied) and goes on; a checkout opens the setup guide, with the found client chosen. The Play page says what
+  was removed.
+- **The client is older and no 3.29.3c client was found**: the client stays, and Waypoint asks once whether to use the version for
+  it. A checkout moves to `waypoint-3.29.3b` (`Editions.MoveToOlderAsync`: saves backed up, nothing done with changes of the
+  player's own); a release cannot go back in place (a newer release's modules would stay behind), so the guide sets up v0.1.0-beta
+  in a new folder and this one stays as it is.
+- **The folder's LocalExile is older than its client, or a 3.29.3c client was found for a folder still on the 3.29.3b version**:
+  no question. A release updates itself to the newest release on the Play page (`ClientUpdate.UpdateReleaseAsync`, saves copied
+  first when Automatic backups is on), then moves to the found client as above. A copy on an older version of its own goes to the
+  newest changes (`Editions.MoveToNewestAsync`); any other checkout is told how, since Waypoint moves one only on the player's word.
+- **A client of no build Waypoint knows** is left to LocalExile's own check.
+
+While a folder runs the 3.29.3b version and no 3.29.3c client is there, Play shows a quiet note (not a warning) that versions for
+3.29.3b won't be offered after 3.30. A release's **Update now** to a version for a newer client than the only one on the PC asks
+first, with **Keep this version** chosen (the build is read from the release notes' "For the Path of Exile **3.29.3c** client").
+A new client build means a new row in `ClientLocator.Builds`, with the old build's last release and commit.
 
 The run is a list of steps (`SetupSequence`): the server ports (the question on the Control section, asked first so that it does
 not wait at the end of a long copy), download, copy, the extraction dependency, preparing the client, build, game data. Each

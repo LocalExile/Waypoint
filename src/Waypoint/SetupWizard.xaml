@@ -40,7 +40,7 @@
                     <TextBlock Text="{l:Loc '3.  Copies the client and prepares it'}" Margin="0,0,0,14" />
                     <TextBlock Text="{l:Loc 'You can stop at any point: what is finished stays finished, and the guide continues from there next time. Setup never changes your own Path of Exile install.'}"
                                Style="{StaticResource Caption}" />
-                    <TextBlock Text="{l:Loc 'Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3b.'}"
+                    <TextBlock Text="{l:Loc 'Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3c.'}"
                                Style="{StaticResource Caption}" Margin="0,8,0,0" />
                 </StackPanel>
 

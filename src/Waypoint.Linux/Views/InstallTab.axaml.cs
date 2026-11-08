@@ -65,6 +65,10 @@ partial class InstallTab : UserControl
 
     /// <summary>The window runs the setup guide.</summary>
     internal event Action? SetupRequested;
+    /// <summary>The player has only an older client: the window sets up the last LocalExile made for it, in a new folder.</summary>
+    internal event Action? OlderReleaseRequested;
+    /// <summary>This release was updated from here: the window drops its update card.</summary>
+    internal event Action? Updated;
     /// <summary>The window opens the logs.</summary>
     internal event Action? DetailsRequested;
     /// <summary>The player wants another folder.</summary>
@@ -96,6 +100,7 @@ partial class InstallTab : UserControl
     {
         _shared = shared;
         if (!Repo.IsInstall) return;
+        _ = LookForOlderAsync();
         Edition.Attach(shared);
         StepList.ItemsSource = _steps;
         shared.Monitor.Sampled += _ => Dispatcher.UIThread.Post(Show);
@@ -109,9 +114,23 @@ partial class InstallTab : UserControl
     internal void InstallChanged(Func<string>? note = null)
     {
         if (!Repo.IsInstall) return;
+        _ = LookForOlderAsync();
         _needsSetup = false;
         _failed = false;
         _note = note;
+        Show();
+    }
+
+    /// <summary>The client build of the older LocalExile this folder runs, while a client of that build is all the player has:
+    /// Play then says, quietly, that it won't last (<see cref="ClientUpdate.OlderNote"/>). Looked for in the background; a
+    /// client of the current build found instead is Play's to move to.</summary>
+    string? _olderBuild;
+
+    async Task LookForOlderAsync()
+    {
+        string folder = Environment.CurrentDirectory;
+        _olderBuild = await Task.Run(() => ClientLocator.Needed(folder) is { } need && ClientLocator.IsOlder(need, ClientLocator.Build)
+            && ClientUpdate.FindClient(ClientLocator.Build, default) is null ? need : null);
         Show();
     }
 
@@ -127,7 +146,7 @@ partial class InstallTab : UserControl
         Working.IsVisible = busy && (_shared.Settings.Appearance?.ReduceMotion != true || _total is > 0);
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
-        string? note = _note?.Invoke();
+        string? note = _note?.Invoke() ?? (_olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;
@@ -145,13 +164,82 @@ partial class InstallTab : UserControl
     }
 
     internal Task PlayAsync() => RunAsync(["run", "--no-update-check"], true);
+    /// <summary>A run with a client of another build than this release needs would fail at the login (<see cref="ClientUpdate"/>).
+    /// A player with a client of the current build is moved to it without a question: this release is updated to the newest
+    /// (saves copied first), an older client is taken out, and LocalExile.exe is given the found one; the arguments to add, or
+    /// null when nothing starts. Only a player who has nothing newer than an older client is asked, about the older version.</summary>
+    async Task<string[]?> ClientFits(bool again = false)
+    {
+        var owner = ViewTools.Owner(this);
+        var (outcome, plan) = await ClientUpdate.EnsureAsync(Folder, lookForNewer: true,
+            p => Dialog.Ask(owner, DialogKind.Question, ClientUpdate.Title(p),
+                ClientUpdate.Explain(p) + "\n\n" + ClientUpdate.ReleaseOlderNote(p) + "\n\n" + ClientUpdate.OlderNoteFor(p.Have), ClientUpdate.Confirm(p)),
+            text => Dialog.Tell(owner, DialogKind.Error, L.Text("Replace the game client?"), text),
+            work => _shared.RunExclusiveAsync(L.Text("Replacing the game client"), work));
+        switch (outcome)
+        {
+            case ClientUpdate.Outcome.Fits:
+                return [];
+            case ClientUpdate.Outcome.Replaced:
+                _shared.Logs.Write(ClientUpdate.Moving(plan!), Severity.Info);
+                _note = () => ClientUpdate.Moving(plan!);
+                Show();
+                return ClientUpdate.ClientArguments(plan!);
+            case ClientUpdate.Outcome.UseOlder:
+                OlderReleaseRequested?.Invoke();
+                return null;
+            case ClientUpdate.Outcome.UpdateLocalExile when !again:
+                return await UpdateRelease(plan!) ? await ClientFits(again: true) : null;
+            default:
+                return null;
+        }
+    }
 
-    /// <summary>The Control section's Start servers. One LocalExile.exe holds an install, so the game cannot join them later.</summary>
+    /// <summary>This release onto LocalExile's newest, with the steps on this page: the client the player has is newer than it.</summary>
+    async Task<bool> UpdateRelease(ClientUpdate.Plan plan)
+    {
+        _shared.Logs.Write(ClientUpdate.Explain(plan), Severity.Info);
+        _headline = () => L.Text("Updating LocalExile");
+        Show();
+        LocalExileRelease? updated = null;
+        string? failure = null;
+        bool ran = await _shared.RunExclusiveAsync(L.Text("LocalExile update"), async () =>
+        {
+            try
+            {
+                using var http = Updates.Client();
+                updated = await ClientUpdate.UpdateReleaseAsync(http, Folder, _shared.Settings.AutomaticBackups, text => Dispatcher.UIThread.Post(() => { _note = () => text; Show(); }));
+            }
+            catch (Exception e) when (e is System.Net.Http.HttpRequestException or TaskCanceledException or IOException or UnauthorizedAccessException
+                or InvalidOperationException or InvalidDataException or System.Text.Json.JsonException)
+            {
+                failure = e.Message;
+            }
+        });
+        _headline = null;
+        _note = null;
+        if (updated is not null)
+        {
+            _shared.Logs.Write($"LocalExile updated to {updated.Version}", Severity.Info);
+            Updated?.Invoke();
+            Show();
+            return true;
+        }
+        string reason = !ran ? L.Text("Something else is using LocalExile. Try again when it is done.")
+            : failure is not null ? L.Text("The update failed: {0}", failure)
+            : L.Text("LocalExile {0} is the newest release.", LocalExileReleases.Installed(Folder)?.ToString() ?? "");
+        Dialog.Tell(ViewTools.Owner(this), DialogKind.Warning, ClientUpdate.Title(plan), ClientUpdate.Explain(plan) + "\n\n" + reason);
+        Show();
+        return false;
+    }
+
     internal Task StartServersAsync() => RunAsync(["run", "--no-client", "--no-update-check"], false);
 
     async Task RunAsync(string[] arguments, bool withClient)
     {
-        if (_working || _shared.IsLiveRunning || !await BackUp()) return;
+        if (_working || _shared.IsLiveRunning) return;
+        if (await ClientFits() is not { } more || !await BackUp()) return;
+        arguments = [.. arguments, .. more];
         // Another folder's servers on these ports: the same question as a checkout's, instead of a refusal from the run.
         if (await PortCheck.ClearAsync(ViewTools.Owner(this), PortCheck.ServerPorts, [], line => _shared.Logs.Write(line)) != PortAnswer.Free) return;
         _working = true;

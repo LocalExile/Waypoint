@@ -23,7 +23,7 @@ public sealed record RemovedRelease(bool ClientMoved);
 public static class SwitchToSource
 {
     /// <summary>The LocalExile commit this Waypoint was tested with: a release's database opened on it, and an item was given.</summary>
-    public const string TestedCommit = "dfcdc8f3786f2839d7ab0dcfaada796a5ebdf214";
+    public const string TestedCommit = "e28909f68b5ada849c568310e4c702f47c7ca910";
     /// <summary>A branch of the copy's own at that commit: only a plain copy on the default branch is moved by Play.</summary>
     public const string TestedBranch = "waypoint-tested";
     /// <summary>What the game's chat box takes, measured: the rest of a longer line is lost. The client control bridge sends
@@ -37,15 +37,28 @@ public static class SwitchToSource
     /// <summary>What the adapter writes last, so that the guide run again never copies over newer progress.</summary>
     public static bool SavesBrought(string copy) => File.Exists(Path.Combine(copy, "data", "saves-brought.json"));
 
+    /// <summary>The branch of a copy on the last LocalExile made for an older client (<see cref="ClientLocator.LastVersionFor"/>):
+    /// like <see cref="TestedBranch"/>, Play never moves it.</summary>
+    public static string OlderBranch(string build) => "waypoint-" + build;
+
+    /// <summary>The copy is on a version of its own that Play never moves: the tested one, or the one for an older client.</summary>
     public static bool OnTestedVersion(string copy)
     {
-        try { return File.ReadAllText(Path.Combine(copy, ".git", "HEAD")).Trim() == $"ref: refs/heads/{TestedBranch}"; }
+        try
+        {
+            string head = File.ReadAllText(Path.Combine(copy, ".git", "HEAD")).Trim();
+            return head == $"ref: refs/heads/{TestedBranch}" || ClientLocator.OlderBuilds.Any(b => head == $"ref: refs/heads/{OlderBranch(b)}");
+        }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
     }
 
-    public static async Task ChooseTestedVersionAsync(string copy, Action<string> output, CancellationToken stop)
+    /// <summary>A new copy onto the tested version, or with <paramref name="build"/> onto the last LocalExile made for that
+    /// older client.</summary>
+    public static async Task ChooseTestedVersionAsync(string copy, Action<string> output, CancellationToken stop, string? build = null)
     {
-        int code = await ToolProcess.RunAsync("git", ["-C", copy, "switch", "--no-track", "-c", TestedBranch, TestedCommit], null, output, stop);
+        string branch = TestedBranch, commit = TestedCommit;
+        if (build is not null && ClientLocator.LastVersionFor(build) is { } older) (branch, commit) = (OlderBranch(build), older.Commit);
+        int code = await ToolProcess.RunAsync("git", ["-C", copy, "switch", "--no-track", "-c", branch, commit], null, output, stop);
         if (code != 0) throw new IOException(L.Text("The older version could not be chosen (git exit {0}).", code));
     }
 

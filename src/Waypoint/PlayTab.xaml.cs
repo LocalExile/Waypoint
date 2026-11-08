@@ -44,6 +44,7 @@ public partial class PlayTab : UserControl
     internal void Attach(Shared shared, ControlTab control)
     {
         _shared = shared;
+        if (!Repo.IsInstall) _ = LookForOlderAsync();
         _control = control;
         Offer.Attach(shared.Settings);
         Edition.Attach(shared);
@@ -59,6 +60,19 @@ public partial class PlayTab : UserControl
         Show();
     }
 
+    /// <summary>The client build of the older LocalExile this folder runs, while a client of that build is all the player has:
+    /// Play then says, quietly, that it won't last (<see cref="ClientUpdate.OlderNote"/>). Looked for in the background; a
+    /// client of the current build found instead is Play's to move to.</summary>
+    string? _olderBuild;
+
+    async Task LookForOlderAsync()
+    {
+        string folder = Environment.CurrentDirectory;
+        _olderBuild = await Task.Run(() => ClientLocator.Needed(folder) is { } need && ClientLocator.IsOlder(need, ClientLocator.Build)
+            && ClientUpdate.FindClient(ClientLocator.Build, default) is null ? need : null);
+        Show();
+    }
+
     void Show()
     {
         bool needsSetup = NeedsSetup;
@@ -71,7 +85,7 @@ public partial class PlayTab : UserControl
         MainButton.Content = needsSetup ? L.Text("Finish setup") : L.Text("Play");
         MainButton.Visibility = busy || GameRunning || Checking ? Visibility.Collapsed : Visibility.Visible;
         Working.Visibility = busy && !Theme.Current.ReduceMotion ? Visibility.Visible : Visibility.Collapsed;
-        string? note = _note?.Invoke();
+        string? note = _note?.Invoke() ?? (_olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.Visibility = note is null ? Visibility.Collapsed : Visibility.Visible;
         DetailsLink.Visibility = _failed && !busy ? Visibility.Visible : Visibility.Collapsed;
