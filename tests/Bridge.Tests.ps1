@@ -151,6 +151,16 @@ try {
     $ClientExecutableHash = '0' * 64
     Prepare-Client $stopped 6>$null
     Check ($script:patchCalls -eq $calls) 'a different requested build cannot authorize repair'
+    # A hotfix keeps the build's name, so a build has several executables. Either is a valid Game.exe.
+    [IO.File]::WriteAllText((At 'Client/PathOfExile.exe'), 'hotfix verified executable')
+    $hotfix = (Get-FileHash -LiteralPath (At 'Client/PathOfExile.exe')).Hash
+    $release = (Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash
+    $ClientExecutableHash = $release + ',' + $hotfix
+    Prepare-Client $stopped 6>$null
+    Check ($script:patchCalls -eq $calls -and (Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $release) 'a build''s other executable does not replace a valid Game.exe'
+    [IO.File]::WriteAllText((At 'Client/Game.exe'), 'executable of an older build')
+    Prepare-Client $stopped 6>$null
+    Check ($script:patchCalls -eq $calls + 1 -and (Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $hotfix) 'a hotfix original refreshes a stale Game.exe'
 
     # Fresh copies still get their missing Game.exe and patch from the selected original.
     $script:root = Join-Path $preparationFixture 'fresh'

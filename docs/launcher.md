@@ -511,7 +511,9 @@ or a source copy on its own branch `waypoint-3.29.3b` at the head of the server'
 LocalExile works with one Path of Exile build at a time. v0.2.0-beta moved from 3.29.3b to **3.29.3c**: a 3.29.3b client no
 longer logs in to it, and v0.1.0-beta (the server's `3.29.3b` branch) is the last LocalExile for 3.29.3b. `ClientLocator.Builds`
 holds each build Waypoint knows (the SHA-256 and size of its `PathOfExile.exe`, and for an older build its last release and
-commit); `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
+commit), with a row for each executable GGG shipped under the build's name: the 3.29.3.5 hotfix is still 3.29.3c, with
+another `PathOfExile.exe`, and LocalExile runs both with the same code. A hotfix Waypoint has no row for shows as "not
+the 3.29.3c build" in the setup guide, which warns before the copy and lets the player go on. `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
 `scripts/release/build-release.ps1`), so a folder pinned to an older version keeps its own.
 
 The rule: a player who has a 3.29.3c client plays on 3.29.3c; one who has only 3.29.3b keeps the last LocalExile for it. Waypoint

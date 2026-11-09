@@ -40,19 +40,23 @@ public static class ClientLocator
     public sealed record OlderVersion(string Release, string Commit);
 
     /// <summary>The builds Waypoint can name, newest first: the SHA-256 and length of their PathOfExile.exe, and for an older
-    /// build the last LocalExile made for it, so that a player who has only that client can still play.</summary>
+    /// build the last LocalExile made for it, so that a player who has only that client can still play. A build has a row
+    /// for each executable GGG shipped under its name: a hotfix keeps the name and changes the file.</summary>
     static readonly (string Name, string Hash, long Length, OlderVersion? Older)[] Builds =
     [
+        // The 3.29.3c release (build 327984), then its 3.29.3.5 hotfix (build 328126), which LocalExile runs with the same code.
         ("3.29.3c", "cc8aa38345be2a837575215d2ce142ebecf7b007345843265b335ebb8ac5964c", 79_394_136, null),
+        ("3.29.3c", "01a22facf36886b39bca74793c0d8c7295b1495f1625b4ebc7b23c2de32a70cf", 79_394_136, null),
         ("3.29.3b", "78a0e227189c263658a7f65a02f086428b859bfc114ae8e7ce8aab721ebd48d5", 79_345_496,
             new("v0.1.0-beta", "7724004c8f13fce2c5e8a8c29ff40ef4b4ef10de")),
     ];
 
-    /// <summary>SHA-256 of the <see cref="Build"/> PathOfExile.exe.</summary>
+    /// <summary>SHA-256 of the <see cref="Build"/> PathOfExile.exe as first released.</summary>
     public static string KnownExecutable => Builds.First(b => b.Name == Build).Hash;
 
-    /// <summary>The original executable fingerprint for a supported build; unknown future builds are never repaired automatically.</summary>
-    public static string? ExecutableHashFor(string? build) => Builds.FirstOrDefault(b => b.Name == build).Hash;
+    /// <summary>The original executables' fingerprints for a supported build, its hotfixes included; none for a build
+    /// Waypoint does not know: unknown future builds are never repaired automatically.</summary>
+    public static string[] ExecutableHashesFor(string? build) => [.. Builds.Where(b => b.Name == build).Select(b => b.Hash)];
 
     /// <summary>The last LocalExile made for an older build; null for the current build or one Waypoint does not know.</summary>
     public static OlderVersion? LastVersionFor(string build) => Builds.FirstOrDefault(b => b.Name == build).Older;
