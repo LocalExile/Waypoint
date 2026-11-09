@@ -139,6 +139,10 @@
                         <Button x:Name="ThemeButton" Style="{StaticResource Shell.IconButton}" Click="CycleTheme">
                             <md:PackIcon x:Name="ThemeIcon" Kind="ThemeLightDark" Width="18" Height="18" />
                         </Button>
+                        <Button Style="{StaticResource Shell.IconButton}" Click="ReportProblem" Margin="4,0,0,0"
+                                ToolTip="{l:Loc 'Report a problem: copy or save your logs for whoever is helping you'}">
+                            <md:PackIcon Kind="Lifebuoy" Width="18" Height="18" />
+                        </Button>
                         <Button Style="{StaticResource Shell.IconButton}" Click="OpenSettingsSection" ToolTip="{l:Loc 'Settings'}" Margin="4,0,0,0">
                             <md:PackIcon Kind="CogOutline" Width="18" Height="18" />
                         </Button>

@@ -429,7 +429,8 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
   while the game already runs stays open. The tray icon's menu shows the window, stops everything or exits.
 - A failure on a background thread (the process sampling, a runtime counter session, the log reading) is reported in
   Waypoint's log, never ends it: a server that `live.ps1` stops ends its counter stream anywhere, even inside
-  a block. Anything that still ends the process is written to the checkout's `logs\launcher-crash.log`.
+  a block. Anything that still ends the process is written to the checkout's `logs\launcher-crash.log` and to
+  Waypoint's own log on disk.
 
 ### Versions
 
@@ -924,9 +925,21 @@ or a crash is an error, and a warning or a slow handler ("took 73 ms") is a warn
 error. A server that exits while no `live.ps1` run is going on is reported as an error in the launcher's log and in
 "All errors"; a client closed by its player is not.
 
-**Diagnostic report** builds a report for a bug: the versions, the services, what is missing, the recent operations and the
-log on screen, with paths, account and character names and credentials redacted. It is previewed first, more names can be
-removed there, and it goes to the clipboard only when asked.
+Waypoint keeps a log of its own on disk, `logs\waypoint.log` in its own folder (`%LOCALAPPDATA%\Waypoint`, or
+`WAYPOINT_HOME`), not the checkout's (`SessionLog`). It holds every line of the launcher's log, so each `live.ps1` run and
+adapter operation with how it ended and how long it took, the setup guide's steps (the guide runs before there is a
+checkout, and its own log goes with its window), and the errors behind "Could not open Waypoint" and "Unexpected error".
+Sessions follow one another in the file; at 1 MB it is set aside as `waypoint.1.log`, and two older files are kept. Every
+line is redacted as a report is before it is written. On the launcher's log, **Open file** opens it.
+
+**Diagnostic report** builds the report a user gives when someone asks for their logs (`SupportReport`): the versions,
+the LocalExile release or source checkout, the services, what is missing, the recent operations, the end of Waypoint's
+log on disk and the newest lines of every server log and the game's, with paths, account and character names and
+credentials redacted. It is previewed first, and more names can be removed there. **Copy reviewed report** puts it on the
+clipboard; **Save as a file** writes it to `reports\waypoint-report-<date>-<time>.txt` in Waypoint's folder and shows the
+file, ready to attach or drag into a chat; **Open log folder** shows the log files themselves. Nothing is sent by
+Waypoint. The same report opens from three places: the lifebuoy button in the window's header (Windows, in Simple and
+Advanced mode), the **Diagnostic report** button on an operation's failure dialog, and this section's button.
 
 ### Console
 

@@ -59,6 +59,8 @@ sealed class LogHub : IDisposable
     {
         var line = new LogLine(Launcher.Name, text, severity ?? LogSeverity.Of(text), DateTime.Now);
         lock (_lock) Add(Launcher, [line], false);
+        // And to Waypoint's log on disk, which outlives the session.
+        SessionLog.Current?.Write(text, line.Severity switch { Severity.Error => "ERROR", Severity.Warning => "WARN", _ => "INFO" }, line.At);
     }
 
     void Poll()

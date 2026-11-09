@@ -579,6 +579,9 @@
   <data name="Text_10adc7d75e67" xml:space="preserve">
     <value>Не менее 4 символов. Waypoint не сохраняет учётные данные.</value>
   </data>
+  <data name="Text_10b451daffda" xml:space="preserve">
+    <value>Не удалось сохранить отчёт</value>
+  </data>
   <data name="Text_10b654bcd6eb" xml:space="preserve">
     <value>Состояние пакета</value>
   </data>
@@ -2437,6 +2440,9 @@
   <data xml:space="preserve" name="Text_4859a908b868">
     <value>Горячая перезагрузка</value>
   </data>
+  <data name="Text_4862da00cc97" xml:space="preserve">
+    <value>Открыть папку журналов</value>
+  </data>
   <data name="Text_48713a5c63fb" xml:space="preserve">
     <value>Закончить игру</value>
   </data>
@@ -3720,6 +3726,9 @@
   <data name="Text_709e77536bf1" xml:space="preserve">
     <value>Некорректная настройка: {0}</value>
   </data>
+  <data name="Text_70a3eff5efdf" xml:space="preserve">
+    <value>Сообщить о проблеме: скопируйте или сохраните журналы для того, кто вам помогает</value>
+  </data>
   <data name="Text_70b4554c1108" xml:space="preserve">
     <value>Старые персонажи останутся в {0}, пока вы не удалите эту папку.</value>
   </data>
@@ -4461,6 +4470,9 @@
   <data name="Text_897b35f13239" xml:space="preserve">
     <value>{0}: от {1} до {2}</value>
   </data>
+  <data name="Text_897f7947157c" xml:space="preserve">
+    <value>Сохраняет проверенный отчёт в один текстовый файл и показывает его: файл можно прикрепить или перетащить в чат</value>
+  </data>
   <data xml:space="preserve" name="Text_898a809683dd">
     <value>Мод перезагружен.</value>
   </data>
@@ -4673,6 +4685,9 @@
   </data>
   <data name="Text_9045b1ddb963" xml:space="preserve">
     <value>Новое имя аккаунта</value>
+  </data>
+  <data name="Text_904f70502906" xml:space="preserve">
+    <value>Сохранить в файл</value>
   </data>
   <data name="Text_9057a199a1c0" xml:space="preserve">
     <value>Порт {0}: {1} (PID {2}), запущен {3:g}</value>
@@ -7328,6 +7343,9 @@
   </data>
   <data name="Text_e2bec0c84c30" xml:space="preserve">
     <value>Требуется: {0}</value>
+  </data>
+  <data name="Text_e2c3e1dc9225" xml:space="preserve">
+    <value>Собственные файлы журнала Waypoint, которые сохраняются между запусками</value>
   </data>
   <data name="Text_e2d0a54968ea" xml:space="preserve">
     <value>Удалить</value>

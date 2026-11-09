@@ -64,7 +64,15 @@ public static class DiagnosticReport
     }
 
     public static string Create(RuntimeSnapshot state, string launcherVersion, string operationText, string? failure,
-        string sourceLabel, string selectedLog, IEnumerable<string>? privateNames = null)
+        string sourceLabel, string selectedLog, IEnumerable<string>? privateNames = null) =>
+        Create(state, launcherVersion, operationText, failure, [("SELECTED LOG: " + sourceLabel, selectedLog, 200)], privateNames);
+
+    /// <summary>The report with several logs, each under its heading and cut to its last lines: what a user sends when
+    /// someone asks for their logs. <paramref name="details"/> are further lines of the head (the LocalExile version, the
+    /// mode).</summary>
+    public static string Create(RuntimeSnapshot state, string launcherVersion, string operationText, string? failure,
+        IReadOnlyList<(string Heading, string Text, int Lines)> logs, IEnumerable<string>? privateNames = null,
+        IEnumerable<string>? details = null)
     {
         // Only caller-selected log text and in-memory operation output are included. Never enumerate saves,
         // account JSON, generated keys, credentials, settings dumps or whole source/game directories.
@@ -75,12 +83,13 @@ public static class DiagnosticReport
             .AppendLine($"Source: {state.SourceBranch} {state.SourceCommit}")
             .AppendLine($"Built: {state.BuildCommit}")
             .AppendLine($"Setup: {(state.SetupReady ? "ready" : "incomplete")}");
+        foreach (string detail in details ?? []) text.AppendLine(detail);
         foreach (var service in state.Services) text.AppendLine($"{service.Name}: {service.Status}; PID {service.ProcessId}");
         foreach (var requirement in state.Requirements.Where(r => !r.Ready)) text.AppendLine("Missing: " + requirement.Name);
         foreach (var conflict in state.Conflicts) text.AppendLine("Conflict: " + conflict);
         if (failure is not null) text.AppendLine("Last failure: " + failure);
-        text.AppendLine().AppendLine("RECENT OPERATIONS").AppendLine(LastLines(operationText, 100))
-            .AppendLine().AppendLine("SELECTED LOG: " + sourceLabel).AppendLine(LastLines(selectedLog, 200));
+        text.AppendLine().AppendLine("RECENT OPERATIONS").AppendLine(LastLines(operationText, 100));
+        foreach (var (heading, log, lines) in logs) text.AppendLine().AppendLine(heading).AppendLine(LastLines(log, lines));
         string report = Redact(text.ToString(), privateNames, [state.Root, state.SaveDatabase]);
         // Commit hashes are useful public build identifiers, added from validated fields after log redaction.
         if (Regex.IsMatch(state.SourceCommit, @"\A[a-fA-F0-9]{40}\z")) report += "\nSource commit: " + state.SourceCommit + "\n";

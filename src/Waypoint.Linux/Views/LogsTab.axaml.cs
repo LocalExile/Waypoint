@@ -134,18 +134,15 @@ partial class LogsTab : UserControl
 
     void OpenFile(object? sender, RoutedEventArgs e)
     {
-        if (Selected?.File is not { } file || !File.Exists(file)) return;
+        // The launcher's own lines are a file too: Waypoint's log on disk.
+        if ((Selected?.File ?? (Selected == _shared.Logs.Launcher ? SessionLog.Current?.File : null)) is not { } file || !File.Exists(file)) return;
         ViewTools.Open(Path.GetFullPath(file));
     }
 
     void DiagnosticReportClicked(object? sender, RoutedEventArgs e)
     {
-        var workspace = _shared.Workspace;
-        var state = workspace.Latest ?? new RuntimeSnapshot(Environment.CurrentDirectory, "Unavailable", "", "", "", "",
-            [new("Installation inspection", false, "Select and check a valid checkout first.")], [], []);
-        string shown = string.Join(Environment.NewLine, _shown.Select(l => l.Text));
-        new DiagnosticPreviewDialog(ViewTools.Owner(this), additional => DiagnosticReport.Create(state, Updates.Current.ToString(), workspace.OperationText,
-            workspace.LastFailure, Selected?.Name ?? "", shown, workspace.PrivateNames.Concat(additional))).ShowDialog();
+        // The same report as a failure's dialog: every log, not only the one on show.
+        DiagnosticPreviewDialog.Show(ViewTools.Owner(this), _shared);
     }
 
     void Clear(object? sender, RoutedEventArgs e)

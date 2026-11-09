@@ -579,6 +579,9 @@
   <data name="Text_10adc7d75e67" xml:space="preserve">
     <value>至少 4 个字符。Waypoint 不会保存凭据。</value>
   </data>
+  <data name="Text_10b451daffda" xml:space="preserve">
+    <value>无法保存报告</value>
+  </data>
   <data name="Text_10b654bcd6eb" xml:space="preserve">
     <value>安装包状态</value>
   </data>
@@ -2437,6 +2440,9 @@
   <data name="Text_4859a908b868" xml:space="preserve">
     <value>热重载</value>
   </data>
+  <data name="Text_4862da00cc97" xml:space="preserve">
+    <value>打开日志文件夹</value>
+  </data>
   <data name="Text_48713a5c63fb" xml:space="preserve">
     <value>停止游戏</value>
   </data>
@@ -3720,6 +3726,9 @@
   <data name="Text_709e77536bf1" xml:space="preserve">
     <value>无效设置：{0}</value>
   </data>
+  <data name="Text_70a3eff5efdf" xml:space="preserve">
+    <value>报告问题：复制或保存日志，发给帮助你的人</value>
+  </data>
   <data name="Text_70b4554c1108" xml:space="preserve">
     <value>你的旧角色会保留在 {0} 中，直到你删除该文件夹。</value>
   </data>
@@ -4461,6 +4470,9 @@
   <data name="Text_897b35f13239" xml:space="preserve">
     <value>{0}：从 {1} 到 {2}</value>
   </data>
+  <data name="Text_897f7947157c" xml:space="preserve">
+    <value>将已检查的报告保存为一个文本文件并显示它，可直接作为附件或拖入聊天</value>
+  </data>
   <data name="Text_898a809683dd" xml:space="preserve">
     <value>模组已重新加载。</value>
   </data>
@@ -4673,6 +4685,9 @@
   </data>
   <data name="Text_9045b1ddb963" xml:space="preserve">
     <value>新账号名</value>
+  </data>
+  <data name="Text_904f70502906" xml:space="preserve">
+    <value>保存为文件</value>
   </data>
   <data name="Text_9057a199a1c0" xml:space="preserve">
     <value>端口 {0}：{1}（PID {2}），启动于 {3:g}</value>
@@ -7328,6 +7343,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e2bec0c84c30" xml:space="preserve">
     <value>需求 {0}</value>
+  </data>
+  <data name="Text_e2c3e1dc9225" xml:space="preserve">
+    <value>Waypoint 自己的日志文件，在各次运行之间保留</value>
   </data>
   <data name="Text_e2d0a54968ea" xml:space="preserve">
     <value>删除</value>
