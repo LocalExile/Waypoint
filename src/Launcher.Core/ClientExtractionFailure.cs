@@ -5,6 +5,11 @@ namespace Launcher.Core;
 /// <summary>Read-only support details for the executable actually consumed by client-constants extraction.</summary>
 public static class ClientExtractionFailure
 {
+    public static bool IsHncFailure(string? message) =>
+        message?.Contains("HNC mask not found", StringComparison.OrdinalIgnoreCase) == true;
+
+    public static string RecoveryHint => L.Text("Client setup needs attention. Run setup guide below to recheck and refresh it, then try Play again.");
+
     public static string Describe(string checkout, string failure)
     {
         string client = Path.GetFullPath(Path.Combine(checkout, "Client"));

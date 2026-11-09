@@ -314,7 +314,13 @@ partial class ControlTab : UserControl
         Append($"> {request.Describe()}");
         Say(() => L.Text("Running {0} …", request.Describe()));
         var started = Stopwatch.StartNew();
-        int? code = await run(request, line => Dispatcher.UIThread.Post(() => Append(line)));
+        int clientSetupFailure = 0;
+        int? code = await run(request, line =>
+        {
+            if (ClientExtractionFailure.IsHncFailure(line)) Interlocked.Exchange(ref clientSetupFailure, 1);
+            Dispatcher.UIThread.Post(() => Append(line));
+        });
+        ClientSetupFailed = code is not (null or 0) && clientSetupFailure != 0;
         double seconds = started.Elapsed.TotalSeconds;
         Say(() => code switch
         {
@@ -332,10 +338,14 @@ partial class ControlTab : UserControl
         else await PlayAsync();
     }
 
+    /// <summary>The last Play attempt failed with the recognized client preparation error.</summary>
+    internal bool ClientSetupFailed { get; private set; }
+
     /// <summary>Play: also what the Versions section starts after a switch, and Simple mode's Play. The exit code of the run;
     /// null when none ran.</summary>
     internal async Task<int?> PlayAsync()
     {
+        ClientSetupFailed = false;
         if (PlaysOnlyTheGame(_shared.Monitor.Latest, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps()))
         {
             // The servers stay as they are: only the game (again) against them.

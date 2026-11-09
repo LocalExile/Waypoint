@@ -39,5 +39,17 @@ public sealed class ClientExtractionFailureTests : IDisposable
         Assert.Null(ClientLocator.ExecutableHashFor("future build"));
     }
 
+    [Theory]
+    [InlineData("Unhandled exception. System.IO.InvalidDataException: HNC mask not found: the client is not the expected 3.29.3c build.", true)]
+    [InlineData("hnc mask not found", true)]
+    [InlineData("extract-data: client-constants failed (exit -532462766)", false)]
+    [InlineData("HNC Protocol Violated", false)]
+    [InlineData("Node is missing", false)]
+    [InlineData(null, false)]
+    public void Setup_recovery_is_recommended_only_for_the_recognized_Hnc_failure(string? message, bool expected)
+    {
+        Assert.Equal(expected, ClientExtractionFailure.IsHncFailure(message));
+    }
+
     public void Dispose() => Directory.Delete(folder, recursive: true);
 }

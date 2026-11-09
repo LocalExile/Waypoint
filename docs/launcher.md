@@ -301,6 +301,12 @@ chip: nothing to choose before playing. **Settings → Developer → Developer M
 mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer Mode on
 (`Settings.Load`).
 
+The quiet **Run setup guide…** link below the folder controls is always visible, for both a source copy and a release install,
+on Windows and Linux. It reopens the guide for the current folder to recheck requirements and refresh preparation, even when
+the main button says Play. Its tooltip explains this; the link is disabled while the game, servers or another operation run.
+A failed Play attempt with the recognized HNC mask error also recommends this link directly on the Play screen. Other startup
+errors keep their own guidance, and the full HNC diagnostic remains in the logs.
+
 **Play** in Simple mode (`PlayTab`) is the Control section's Play with an update before it:
 
 1. When `CheckoutUpdates.Due` says so (at most once a day; **Settings → Updates → Keep LocalExile up to date**, on by

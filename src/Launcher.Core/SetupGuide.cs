@@ -207,7 +207,7 @@ public static class SetupSequence
             checkout, line =>
             {
                 if (line.Trim().Length > 0) last = line;
-                hncFailure |= line.Contains("HNC mask not found", StringComparison.OrdinalIgnoreCase);
+                hncFailure |= ClientExtractionFailure.IsHncFailure(line);
                 output(line);
             }, stop);
         if (code != 0)
