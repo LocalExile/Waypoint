@@ -20,6 +20,13 @@ folder ([Folders and tools](#folders-and-tools)), so a self-update, which replac
 `Workspace.cs` is the app's side of it. The adapter still has its own start, stop and branch-switch actions, covered by its
 tests; the app does not use them.
 
+On a source checkout, the setup guide checks preparation again on every run. If the copied `PathOfExile.exe` matches the
+known fingerprint for that checkout's declared client build, preparation can replace a stale `Game.exe` and rebuild its
+patched copy using the existing login keys. It finishes patching a temporary executable before replacing either existing
+file and keeps the previous executables under `data/client-preparation-backups/`. A linked client is never repaired here;
+unrecognized originals and other client builds do not authorize replacement. HNC extraction failures identify the actual
+`Client/Game.exe`, include both executable fingerprints, and point to `logs/extract-client-constants.log`.
+
 The Windows Tools section opens the map viewer when the selected source checkout has the terrain generator and extracted
 game data. Waypoint carries its own read-only map helper, builds it against that checkout's existing generator libraries,
 and closes it with the viewer. No LocalExile map-service hook or source changes are needed. The helper and all build outputs

@@ -22,7 +22,8 @@ param(
     [string]$ModTargets = '',
     [string]$ModStaged = '',
     [ValidateSet('','Binaries','Source','Modules','Leagues')][string]$ModTarget = '',
-    [string]$ModExpectedHash = ''
+    [string]$ModExpectedHash = '',
+    [ValidatePattern('^$|^[0-9a-fA-F]{64}$')][string]$ClientExecutableHash = ''
 )
 . (Join-Path $PSScriptRoot 'ModBridge.ps1')
 . (Join-Path $PSScriptRoot 'AccountBridge.ps1')
@@ -714,24 +715,72 @@ function Prepare-Client($snapshot) {
     $keys = Test-Path -LiteralPath (At 'data/login-keys.json')
     $patched = Test-Path -LiteralPath (At 'Client/Game.patched.exe')
     Require ($keys -or -not $patched) 'A prepared executable exists without keys. Preserve it and recover its matching keys, or prepare a new client copy.'
-    if (-not (Test-Path -LiteralPath (At 'Client/Game.exe'))) {
-        Require (Test-Path -LiteralPath (At 'Client/PathOfExile.exe')) 'Client/PathOfExile.exe or Client/Game.exe is required.'
-        Copy-Item -LiteralPath (At 'Client/PathOfExile.exe') -Destination (At 'Client/Game.exe')
-    }
+    $game = At 'Client/Game.exe'
+    $original = At 'Client/PathOfExile.exe'
+    $prepared = At 'Client/Game.patched.exe'
+    $gameHash = if (Test-Path -LiteralPath $game) { (Get-FileHash -LiteralPath $game -Algorithm SHA256).Hash } else { '' }
+    $originalHash = if (Test-Path -LiteralPath $original) { (Get-FileHash -LiteralPath $original -Algorithm SHA256).Hash } else { '' }
+    # Only a fingerprint from ClientLocator for this checkout's declared build authorizes a repair.
+    # Small launchers, future builds and a different checkout's build cannot replace an existing executable.
+    $refresh = $ClientExecutableHash -and $originalHash -eq $ClientExecutableHash -and $gameHash -and $gameHash -ne $originalHash
+    Write-Host "Client/Game.exe SHA-256: $gameHash"
+    Write-Host "Client/PathOfExile.exe SHA-256: $originalHash"
     Set-Stage 'Building preparation tools' 'Auth and Patch'
     foreach ($name in @('Auth','Patch')) {
         & dotnet build (At "src/GameServer.$name") --nologo -v minimal
         Require ($LASTEXITCODE -eq 0) "Build failed for $name."
     }
-    Set-Stage 'Preparing client' 'Retaining existing keys and prepared executable; creating only missing files.'
+    Set-Stage 'Preparing client' 'Checking the client executables and retaining existing login keys.'
     $auth = At 'src/GameServer.Auth/bin/Debug/net10.0/GameServer.Auth.dll'
-    if (-not $keys) {
-        & dotnet $auth keygen (At 'Client/Game.exe')
-        Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3c.'
-    }
-    if (-not $patched) {
-        & dotnet $auth patch (At 'Client/Game.exe') (At 'Client/Game.patched.exe')
-        Require ($LASTEXITCODE -eq 0) 'Client preparation failed. Existing keys were preserved.'
+    $stagedGame = $null; $stagedPatch = $null
+    try {
+        if (-not $gameHash) {
+            Require (Test-Path -LiteralPath $original) 'Client/PathOfExile.exe or Client/Game.exe is required.'
+            Copy-Item -LiteralPath $original -Destination $game
+            $gameHash = (Get-FileHash -LiteralPath $game -Algorithm SHA256).Hash
+        }
+        $inputGame = $game
+        if ($refresh) {
+            $stagedGame = At ('Client/.waypoint-game-' + [guid]::NewGuid().ToString('N') + '.exe')
+            [IO.File]::Copy($original, $stagedGame, $false)
+            Require ((Get-FileHash -LiteralPath $stagedGame -Algorithm SHA256).Hash -eq $ClientExecutableHash) 'The client changed during preparation. Close its official launcher and try again.'
+            $inputGame = $stagedGame
+        }
+        if (-not $keys) {
+            & dotnet $auth keygen $inputGame
+            Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3c.'
+        }
+        $knownGame = $ClientExecutableHash -and ($refresh -or $gameHash -eq $ClientExecutableHash)
+        $stalePatch = $patched -and $knownGame -and (
+            (Get-Item -LiteralPath $prepared).Length -ne (Get-Item -LiteralPath $inputGame).Length -or
+            (Get-Item -LiteralPath $prepared).LastWriteTimeUtc -lt (Get-Item -LiteralPath $inputGame).LastWriteTimeUtc -or
+            (Get-Item -LiteralPath $prepared).LastWriteTimeUtc -lt (Get-Item -LiteralPath (At 'data/login-keys.json')).LastWriteTimeUtc)
+        if (-not $patched -or $refresh -or $stalePatch) {
+            $stagedPatch = At ('Client/.waypoint-patched-' + [guid]::NewGuid().ToString('N') + '.exe')
+            & dotnet $auth patch $inputGame $stagedPatch
+            Require ($LASTEXITCODE -eq 0) 'Client preparation failed. Existing keys were preserved.'
+            Require ((Test-Path -LiteralPath $stagedPatch) -and (Get-Item -LiteralPath $stagedPatch).Length -eq (Get-Item -LiteralPath $inputGame).Length) 'Client preparation did not produce a complete executable. Previous client files were preserved.'
+            Assert-Physical $stagedPatch
+            $backup = $null
+            if ($patched -or $refresh) {
+                $backup = At ('data/client-preparation-backups/' + [guid]::NewGuid().ToString('N'))
+                Assert-Physical $backup
+                New-Item -ItemType Directory -Path $backup | Out-Null
+                # Copy both old files before publishing either replacement. A failed copy changes neither executable.
+                if ($refresh) { [IO.File]::Copy($game, (Join-Path $backup 'Game.exe'), $false) }
+                if ($patched) { [IO.File]::Copy($prepared, (Join-Path $backup 'Game.patched.exe'), $false) }
+                Write-Host "Previous client executables: $backup"
+            }
+            # Publish the patch first: if replacing Game.exe then fails, the next preparation still sees the
+            # old Game.exe fingerprint and retries the whole repair. Failed patching never replaces Game.exe.
+            if ($patched) { [IO.File]::Replace($stagedPatch, $prepared, (Join-Path $backup 'Game.patched.exe')) }
+            else { [IO.File]::Move($stagedPatch, $prepared) }
+            if ($refresh) { [IO.File]::Replace($stagedGame, $game, (Join-Path $backup 'Game.exe')) }
+        }
+    } finally {
+        foreach ($temp in @($stagedGame, $stagedPatch)) {
+            if ($temp -and (Test-Path -LiteralPath $temp)) { Remove-Item -LiteralPath $temp -Force }
+        }
     }
     Set-Stage 'Selecting local gateway' 'Only the copied client archive is updated.'
     & dotnet (At 'src/GameServer.Patch/bin/Debug/net10.0/GameServer.Patch.dll') gateway (At 'Client/Content.ggpk') --login '127.0.0.1:20493'

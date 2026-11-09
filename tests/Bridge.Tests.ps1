@@ -95,3 +95,77 @@ try {
     Remove-Item -LiteralPath $linkFixture -Recurse -Force -ErrorAction SilentlyContinue
 }
 Write-Host "$script:passed bridge checks passed."
+
+# Preparation repairs only from an explicitly verified build fingerprint. All tool boundaries are fakes;
+# these disposable files are never executable and no game, server, build, or archive writer is started.
+$preparationFixture = Join-Path ([IO.Path]::GetTempPath()) ('Waypoint-prepare-' + [guid]::NewGuid().ToString('N'))
+$script:root = $preparationFixture
+$script:patchCalls = 0
+$script:failPatch = $false
+$ClientExecutableHash = ''
+function Set-Stage($stage, $detail) { }
+function dotnet {
+    $global:LASTEXITCODE = 0
+    if ($args[1] -eq 'keygen') { Set-Content -LiteralPath (At 'data/login-keys.json') -Value 'new fixture keys' }
+    if ($args[1] -eq 'patch') {
+        $script:patchCalls++
+        if ($script:failPatch) { $global:LASTEXITCODE = 1; return }
+        $bytes = [IO.File]::ReadAllBytes($args[2]); $bytes[0] = 33
+        [IO.File]::WriteAllBytes($args[3], $bytes)
+    }
+}
+try {
+    New-Item -ItemType Directory -Path (At 'Client'), (At 'data') | Out-Null
+    [IO.File]::WriteAllText((At 'Client/PathOfExile.exe'), 'new verified executable')
+    [IO.File]::WriteAllText((At 'Client/Game.exe'), 'old executable')
+    [IO.File]::WriteAllText((At 'Client/Game.patched.exe'), 'old prepared executable')
+    [IO.File]::WriteAllText((At 'Client/Content.ggpk'), 'archive stays unchanged')
+    [IO.File]::WriteAllText((At 'data/login-keys.json'), 'existing fixture keys')
+    [IO.File]::WriteAllText((At 'data/saves.db'), 'existing fixture saves')
+    $ClientExecutableHash = (Get-FileHash -LiteralPath (At 'Client/PathOfExile.exe')).Hash
+
+    $script:failPatch = $true
+    $refused = $null
+    try { Prepare-Client $stopped 6>$null } catch { $refused = $_.Exception.Message }
+    Check ($refused -eq 'Client preparation failed. Existing keys were preserved.') 'failed re-patching reports failure'
+    Check ([IO.File]::ReadAllText((At 'Client/Game.exe')) -eq 'old executable' -and
+        [IO.File]::ReadAllText((At 'Client/Game.patched.exe')) -eq 'old prepared executable') 'failed re-patching preserves both old executables'
+    Check (-not @(Get-ChildItem -LiteralPath (At 'Client') -Filter '.waypoint-*.exe').Count) 'failed preparation removes only its temporary executable files'
+
+    $script:failPatch = $false
+    Prepare-Client $stopped 6>$null
+    Check ((Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $ClientExecutableHash) 'verified original refreshes a stale Game.exe'
+    $backup = Get-ChildItem -LiteralPath (At 'data/client-preparation-backups') -Directory | Select-Object -First 1
+    Check ([IO.File]::ReadAllText((Join-Path $backup.FullName 'Game.exe')) -eq 'old executable' -and
+        [IO.File]::ReadAllText((Join-Path $backup.FullName 'Game.patched.exe')) -eq 'old prepared executable') 'both previous executables are backed up before replacement'
+    Check ([IO.File]::ReadAllText((At 'data/login-keys.json')) -eq 'existing fixture keys' -and
+        [IO.File]::ReadAllText((At 'data/saves.db')) -eq 'existing fixture saves' -and
+        [IO.File]::ReadAllText((At 'Client/Content.ggpk')) -eq 'archive stays unchanged') 'repair retains existing keys, saves and the archive outside the mocked gateway tool'
+    $calls = $script:patchCalls
+    Prepare-Client $stopped 6>$null
+    Check ($script:patchCalls -eq $calls) 'a second preparation keeps matching up-to-date executables'
+
+    [IO.File]::WriteAllText((At 'Client/PathOfExile.exe'), 'small launcher or unrecognized build')
+    Prepare-Client $stopped 6>$null
+    Check ($script:patchCalls -eq $calls -and (Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $ClientExecutableHash) 'an unrecognized original cannot replace a valid Game.exe'
+    $ClientExecutableHash = '0' * 64
+    Prepare-Client $stopped 6>$null
+    Check ($script:patchCalls -eq $calls) 'a different requested build cannot authorize repair'
+
+    # Fresh copies still get their missing Game.exe and patch from the selected original.
+    $script:root = Join-Path $preparationFixture 'fresh'
+    New-Item -ItemType Directory -Path (At 'Client'), (At 'data') | Out-Null
+    [IO.File]::WriteAllText((At 'Client/PathOfExile.exe'), 'fresh verified executable')
+    [IO.File]::WriteAllText((At 'Client/Content.ggpk'), 'fresh archive fixture')
+    $ClientExecutableHash = (Get-FileHash -LiteralPath (At 'Client/PathOfExile.exe')).Hash
+    Prepare-Client $stopped 6>$null
+    Check ((Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $ClientExecutableHash -and
+        (Test-Path -LiteralPath (At 'Client/Game.patched.exe'))) 'fresh setup copies the original and creates its prepared executable'
+    Check (-not (Test-Path -LiteralPath (At 'data/client-preparation-backups'))) 'fresh setup does not create unnecessary executable backups'
+} finally {
+    # The root is the GUID-named fixture created above; refuse redirected entries before recursive cleanup.
+    Assert-Physical $preparationFixture
+    if (@(Get-ChildItem -LiteralPath $preparationFixture -Recurse -Force | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }).Count) { throw 'Unexpected link in preparation fixture.' }
+    Remove-Item -LiteralPath $preparationFixture -Recurse -Force
+}
+Write-Host "$script:passed bridge and preparation checks passed."
