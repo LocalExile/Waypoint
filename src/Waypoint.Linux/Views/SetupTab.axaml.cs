@@ -51,7 +51,7 @@ public partial class SetupTab : UserControl
         ToolTip.SetTip(ChangeButton, L.Text("Pick another LocalExile server checkout; Waypoint starts again on it"));
         CheckButton.Content = L.Text("Check again");
         PrepareButton.Content = L.Text("Prepare client");
-        ToolTip.SetTip(PrepareButton, L.Text("Creates the missing login keys and Game.patched.exe in your client copy; existing ones are kept"));
+        ToolTip.SetTip(PrepareButton, L.Text("Checks your client copy and repairs stale executables from a verified original; keeps login keys and backs up replaced files"));
         DependenciesButton.Content = L.Text("Install dependency");
         ToolTip.SetTip(DependenciesButton, L.Text("npm ci in the checkout's Tools/ooz"));
         CreateAccountButton.Content = L.Text("Create account…");

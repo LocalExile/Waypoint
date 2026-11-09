@@ -39,6 +39,11 @@ public sealed class RuntimeClient
         foreach (string argument in new[] { "-NoLogo", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", bridge,
                      "-Action", action, "-RepoRoot", settings.RepositoryPath, "-Service", service, "-ResultPath", resultFile })
             start.ArgumentList.Add(argument);
+        if (action == "PrepareClient" && ClientLocator.ExecutableHashFor(ClientLocator.Needed(settings.RepositoryPath)) is { } clientHash)
+        {
+            start.ArgumentList.Add("-ClientExecutableHash");
+            start.ArgumentList.Add(clientHash);
+        }
         if (settings.UseLocalProfile) start.ArgumentList.Add("-UseLocalProfile");
         if (!settings.HotReload) start.ArgumentList.Add("-NoHotReload");
         if (!settings.AutomaticBackups) start.ArgumentList.Add("-NoBackup");

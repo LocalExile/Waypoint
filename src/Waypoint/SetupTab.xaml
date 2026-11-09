@@ -29,7 +29,7 @@
 
         <WrapPanel DockPanel.Dock="Bottom" Margin="20,8,20,0">
             <Button x:Name="PrepareButton" Content="{l:Loc 'Prepare client'}" Click="Prepare"
-                    ToolTip="{l:Loc 'Creates the missing login keys and Game.patched.exe in your client copy; existing ones are kept'}" />
+                    ToolTip="{l:Loc 'Checks your client copy and repairs stale executables from a verified original; keeps login keys and backs up replaced files'}" />
             <Button x:Name="DependenciesButton" Content="{l:Loc 'Install dependency'}" Click="Dependencies"
                     ToolTip="{l:Loc 'npm ci in the checkout\'s Tools/ooz'}" />
             <Button x:Name="SettingsButton" Content="{l:Loc 'Use separate game settings…'}" Click="SeparateSettings"

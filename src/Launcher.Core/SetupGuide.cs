@@ -202,8 +202,18 @@ public static class SetupSequence
     {
         string powershell = Platform.PowerShell;
         string last = "";
+        bool hncFailure = false;
         int code = await ToolProcess.RunAsync(powershell, ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", Path.Combine("scripts", "dev", "extract-data.ps1")],
-            checkout, line => { if (line.Trim().Length > 0) last = line; output(line); }, stop);
-        if (code != 0) throw new IOException(last.Length > 0 ? last : L.Text("The game data could not be extracted (exit {0}).", code));
+            checkout, line =>
+            {
+                if (line.Trim().Length > 0) last = line;
+                hncFailure |= line.Contains("HNC mask not found", StringComparison.OrdinalIgnoreCase);
+                output(line);
+            }, stop);
+        if (code != 0)
+        {
+            string failure = last.Length > 0 ? last : L.Text("The game data could not be extracted (exit {0}).", code);
+            throw new IOException(hncFailure ? ClientExtractionFailure.Describe(checkout, failure) : failure);
+        }
     }
 }

@@ -1198,6 +1198,9 @@
   <data name="Text_241b991ef5b7" xml:space="preserve">
     <value>联盟卡片预览</value>
   </data>
+  <data name="Text_241cc97b1195" xml:space="preserve">
+    <value>检查客户端副本，并使用经过验证的原始文件修复过时的可执行文件；保留登录密钥并备份被替换的文件</value>
+  </data>
   <data name="Text_24532939f9d0" xml:space="preserve">
     <value>请换一个名称</value>
   </data>
@@ -1970,6 +1973,9 @@
   </data>
   <data name="Text_39921a740bf2" xml:space="preserve">
     <value>切换</value>
+  </data>
+  <data name="Text_39a30e6ba869" xml:space="preserve">
+    <value>使用 LocalExile 的 Auth 和 Patch 工具准备现有客户端副本。保留现有登录密钥。经过验证且受支持的 PathOfExile.exe 可用于更新过时的 Game.exe 及其修补副本；替换前会备份原有可执行文件。通过链接使用的客户端不会被修改。</value>
   </data>
   <data name="Text_39d2600b7211" xml:space="preserve">
     <value>按原样使用</value>
@@ -3325,6 +3331,15 @@
   <data name="Text_64a9b80f4b33" xml:space="preserve">
     <value>无法确认服务已停止。Waypoint 将保持打开。</value>
   </data>
+  <data name="Text_64b765aec7d6" xml:space="preserve">
+    <value>LocalExile 无法从以下文件读取预期的客户端常量：
+{0}
+
+设置时可能识别的是 PathOfExile.exe，而提取时读取的是此 LocalExile 文件夹中的 Game.exe。请重新运行设置向导，检查并准备此副本。如果仍然失败，请提供以下信息及此日志：
+{1}
+
+{2}</value>
+  </data>
   <data name="Text_64cff1319d2f" xml:space="preserve">
     <value>操作</value>
   </data>
@@ -3581,6 +3596,9 @@
   </data>
   <data name="Text_6d7beeefb57a" xml:space="preserve">
     <value>创建配置文件</value>
+  </data>
+  <data name="Text_6d896b67ee96" xml:space="preserve">
+    <value>客户端准备过程未生成完整的可执行文件。已保留原有客户端文件。</value>
   </data>
   <data name="Text_6da4f4d72938" xml:space="preserve">
     <value>未启动：游戏客户端与此 LocalExile 不匹配。</value>
@@ -4770,6 +4788,9 @@
   </data>
   <data name="Text_9491bfb97e66" xml:space="preserve">
     <value>正在等待游戏窗口关闭，不会强制终止。</value>
+  </data>
+  <data name="Text_949d1326b83e" xml:space="preserve">
+    <value>正在检查客户端可执行文件并保留现有登录密钥。</value>
   </data>
   <data name="Text_94b04d14b4fa" xml:space="preserve">
     <value>自动查找…</value>
@@ -6610,6 +6631,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cbef8c5002e9" xml:space="preserve">
     <value>{0} | 热重载监视进程 PID {1}</value>
+  </data>
+  <data name="Text_cc2162d992f4" xml:space="preserve">
+    <value>客户端在准备过程中发生了更改。请关闭其官方启动器后重试。</value>
   </data>
   <data name="Text_cc490cdeff7b" xml:space="preserve">
     <value>依赖项已安装。</value>

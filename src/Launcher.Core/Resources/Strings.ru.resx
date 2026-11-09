@@ -1198,6 +1198,9 @@
   <data name="Text_241b991ef5b7" xml:space="preserve">
     <value>Предпросмотр карточки лиги</value>
   </data>
+  <data name="Text_241cc97b1195" xml:space="preserve">
+    <value>Проверяет копию клиента и восстанавливает устаревшие исполняемые файлы из проверенного оригинала; сохраняет ключи входа и резервные копии заменяемых файлов</value>
+  </data>
   <data name="Text_24532939f9d0" xml:space="preserve">
     <value>Выберите другое имя</value>
   </data>
@@ -1970,6 +1973,9 @@
   </data>
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Перейти</value>
+  </data>
+  <data name="Text_39a30e6ba869" xml:space="preserve">
+    <value>Подготовить существующую копию клиента средствами Auth и Patch из LocalExile. Текущие ключи входа сохраняются. Проверенный поддерживаемый PathOfExile.exe может обновить устаревшие Game.exe и его исправленную копию; сначала создаются резервные копии прежних исполняемых файлов. Клиенты, подключённые ссылкой, не изменяются.</value>
   </data>
   <data name="Text_39d2600b7211" xml:space="preserve">
     <value>Использовать как есть</value>
@@ -3325,6 +3331,15 @@
   <data name="Text_64a9b80f4b33" xml:space="preserve">
     <value>Не удалось убедиться, что службы остановлены. Waypoint останется открытым.</value>
   </data>
+  <data name="Text_64b765aec7d6" xml:space="preserve">
+    <value>LocalExile не удалось прочитать ожидаемые константы клиента из файла:
+{0}
+
+При настройке может определяться версия PathOfExile.exe, а при извлечении используется Game.exe в этой папке LocalExile. Снова запустите мастер настройки, чтобы проверить и подготовить эту копию. Если ошибка повторится, отправьте сведения ниже и этот журнал:
+{1}
+
+{2}</value>
+  </data>
   <data name="Text_64cff1319d2f" xml:space="preserve">
     <value>Действие</value>
   </data>
@@ -3581,6 +3596,9 @@
   </data>
   <data name="Text_6d7beeefb57a" xml:space="preserve">
     <value>Создать профиль</value>
+  </data>
+  <data name="Text_6d896b67ee96" xml:space="preserve">
+    <value>При подготовке клиента не был создан полный исполняемый файл. Прежние файлы клиента сохранены.</value>
   </data>
   <data name="Text_6da4f4d72938" xml:space="preserve">
     <value>Не запущено: игровой клиент не подходит к этому LocalExile.</value>
@@ -4770,6 +4788,9 @@
   </data>
   <data xml:space="preserve" name="Text_9491bfb97e66">
     <value>Ожидание закрытия окна игры без принудительного завершения.</value>
+  </data>
+  <data name="Text_949d1326b83e" xml:space="preserve">
+    <value>Проверка исполняемых файлов клиента с сохранением текущих ключей входа.</value>
   </data>
   <data name="Text_94b04d14b4fa" xml:space="preserve">
     <value>Найти автоматически…</value>
@@ -6424,6 +6445,9 @@
   <data name="Text_c726cb5de813" xml:space="preserve">
     <value>Запись планировок</value>
   </data>
+  <data name="Text_c73c8e3ad0e2" xml:space="preserve">
+    <value>Версия клиента {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_c74950bf4f08">
     <value>Процесс и прослушиваемые порты проверены</value>
   </data>
@@ -6435,9 +6459,6 @@
   </data>
   <data xml:space="preserve" name="Text_c7a882f64135">
     <value>Не удалось загрузить варианты исходников: </value>
-  </data>
-  <data name="Text_c73c8e3ad0e2" xml:space="preserve">
-    <value>Версия клиента {0}</value>
   </data>
   <data name="Text_c7b0c42e9e6d" xml:space="preserve">
     <value>Скопируйте полную установку отдельного клиента PoE 3.29.3c в:
@@ -6610,6 +6631,9 @@
   </data>
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | отслеживание изменений, PID {1}</value>
+  </data>
+  <data name="Text_cc2162d992f4" xml:space="preserve">
+    <value>Клиент изменился во время подготовки. Закройте его официальный лаунчер и повторите попытку.</value>
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Зависимости установлены.</value>

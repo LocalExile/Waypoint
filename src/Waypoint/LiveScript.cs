@@ -99,8 +99,20 @@ static class Scripts
         return process.ExitCode;
     }
 
-    public static Task<int> RunAsync(LiveRequest request, Action<string> output) =>
-        RunAsync(Repo.LiveEntry, request.Arguments(), output, request.Variables());
+    public static async Task<int> RunAsync(LiveRequest request, Action<string> output)
+    {
+        string checkout = Environment.CurrentDirectory;
+        string? hncFailure = null;
+        void Line(string line)
+        {
+            if (line.Contains("HNC mask not found", StringComparison.OrdinalIgnoreCase))
+                Interlocked.CompareExchange(ref hncFailure, line, null);
+            output(line);
+        }
+        int code = await RunAsync(Repo.LiveEntry, request.Arguments(), Line, request.Variables());
+        if (code != 0 && hncFailure is { } failure) output(ClientExtractionFailure.Describe(checkout, failure));
+        return code;
+    }
 
     /// <summary>What the control bridge sets for -ClientOnly (client_control.py, open): an unreachable proxy, so a client
     /// that tried the official services anyway gets nowhere, and no redirected client configuration.</summary>

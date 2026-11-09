@@ -728,8 +728,7 @@ public partial class SetupWizard : FormWindow
         if (client is not null) tasks.Add(SettingsBack(checkout));
         tasks.Add(new(L.Text("Install the extraction dependency"), () => File.Exists(Path.Combine(checkout, "Tools", "ooz", "node_modules", ".package-lock.json")), (detail, stop) => Bridge("Dependencies", detail, stop)));
         if (prepare)
-            tasks.Add(new(L.Text("Prepare the client"), () => File.Exists(Path.Combine(checkout, "Client", "Game.patched.exe")) && File.Exists(Path.Combine(checkout, "data", "login-keys.json"))
-                && File.Exists(Path.Combine(checkout, "data", "gateway_list.original.txt")), (detail, stop) => Bridge("PrepareClient", detail, stop)));
+            tasks.Add(new(L.Text("Prepare the client"), null, (detail, stop) => Bridge("PrepareClient", detail, stop)));
         if (prepare && ownSettings) tasks.Add(SettingsStep(checkout));
         tasks.Add(new(L.Text("Build LocalExile"), null, (detail, stop) => Bridge("Build", detail, stop)));
         if (prepare)

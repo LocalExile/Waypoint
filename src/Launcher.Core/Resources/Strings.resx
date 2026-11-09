@@ -1198,6 +1198,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_241b991ef5b7" xml:space="preserve">
     <value>League card preview</value>
   </data>
+  <data name="Text_241cc97b1195" xml:space="preserve">
+    <value>Checks your client copy and repairs stale executables from a verified original; keeps login keys and backs up replaced files</value>
+  </data>
   <data name="Text_24532939f9d0" xml:space="preserve">
     <value>Choose another name</value>
   </data>
@@ -1970,6 +1973,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Switch</value>
+  </data>
+  <data name="Text_39a30e6ba869" xml:space="preserve">
+    <value>Prepare the existing client copy using LocalExile's Auth and Patch tools. Existing login keys are retained. A verified supported PathOfExile.exe can refresh a stale Game.exe and its patched copy; previous executables are backed up first. Linked clients are never changed.</value>
   </data>
   <data name="Text_39d2600b7211" xml:space="preserve">
     <value>Use it as it is</value>
@@ -3325,6 +3331,15 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data name="Text_64a9b80f4b33" xml:space="preserve">
     <value>Could not verify that services stopped. Waypoint will stay open.</value>
   </data>
+  <data name="Text_64b765aec7d6" xml:space="preserve">
+    <value>LocalExile could not read the expected client constants from:
+{0}
+
+Setup can identify PathOfExile.exe while extraction reads Game.exe in this LocalExile folder. Run the setup guide again to check and prepare this copy. If it still fails, share the details below and this log:
+{1}
+
+{2}</value>
+  </data>
   <data name="Text_64cff1319d2f" xml:space="preserve">
     <value>Action</value>
   </data>
@@ -3581,6 +3596,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6d7beeefb57a" xml:space="preserve">
     <value>Create a profile</value>
+  </data>
+  <data name="Text_6d896b67ee96" xml:space="preserve">
+    <value>Client preparation did not produce a complete executable. Previous client files were preserved.</value>
   </data>
   <data name="Text_6da4f4d72938" xml:space="preserve">
     <value>Not started: the game client does not fit this LocalExile.</value>
@@ -4770,6 +4788,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_9491bfb97e66">
     <value>Waiting for the game window to close without force termination.</value>
+  </data>
+  <data name="Text_949d1326b83e" xml:space="preserve">
+    <value>Checking the client executables and retaining existing login keys.</value>
   </data>
   <data name="Text_94b04d14b4fa" xml:space="preserve">
     <value>Find automatically…</value>
@@ -6424,6 +6445,9 @@ Last reported Gateway event. Open Gateway output for details.</value>
   <data name="Text_c726cb5de813" xml:space="preserve">
     <value>Walk maps</value>
   </data>
+  <data name="Text_c73c8e3ad0e2" xml:space="preserve">
+    <value>Client version {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_c74950bf4f08">
     <value>Verified process and listening ports</value>
   </data>
@@ -6435,9 +6459,6 @@ Last reported Gateway event. Open Gateway output for details.</value>
   </data>
   <data xml:space="preserve" name="Text_c7a882f64135">
     <value>Could not load source choices: </value>
-  </data>
-  <data name="Text_c73c8e3ad0e2" xml:space="preserve">
-    <value>Client version {0}</value>
   </data>
   <data name="Text_c7b0c42e9e6d" xml:space="preserve">
     <value>Copy the complete standalone PoE 3.29.3c installation to:
@@ -6610,6 +6631,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | hot reload watcher PID {1}</value>
+  </data>
+  <data name="Text_cc2162d992f4" xml:space="preserve">
+    <value>The client changed during preparation. Close its official launcher and try again.</value>
   </data>
   <data xml:space="preserve" name="Text_cc490cdeff7b">
     <value>Dependencies completed.</value>

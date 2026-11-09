@@ -51,6 +51,9 @@ public static class ClientLocator
     /// <summary>SHA-256 of the <see cref="Build"/> PathOfExile.exe.</summary>
     public static string KnownExecutable => Builds.First(b => b.Name == Build).Hash;
 
+    /// <summary>The original executable fingerprint for a supported build; unknown future builds are never repaired automatically.</summary>
+    public static string? ExecutableHashFor(string? build) => Builds.FirstOrDefault(b => b.Name == build).Hash;
+
     /// <summary>The last LocalExile made for an older build; null for the current build or one Waypoint does not know.</summary>
     public static OlderVersion? LastVersionFor(string build) => Builds.FirstOrDefault(b => b.Name == build).Older;
 
