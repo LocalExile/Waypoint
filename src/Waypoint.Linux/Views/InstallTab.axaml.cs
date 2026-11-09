@@ -142,6 +142,7 @@ partial class InstallTab : UserControl
     {
         bool needsSetup = _needsSetup || !LocalExileReleases.IsSetUp(Folder);
         bool busy = _working || _checking || _shared.IsLiveRunning;
+        RunSetupLink.IsEnabled = !busy && !AnythingRunning;
         Headline.Text = _headline?.Invoke() ?? (GameRunning ? L.Text("The game is running")
             : needsSetup ? L.Text("LocalExile isn't ready yet")
             : L.Text("Ready to play"));
@@ -165,6 +166,11 @@ partial class InstallTab : UserControl
     {
         if (_needsSetup || !LocalExileReleases.IsSetUp(Folder)) { SetupRequested?.Invoke(); return; }
         _ = PlayAsync();
+    }
+
+    void RunSetupClicked(object? sender, RoutedEventArgs e)
+    {
+        if (!_working && !_checking && !_shared.IsLiveRunning && !AnythingRunning) SetupRequested?.Invoke();
     }
 
     internal Task PlayAsync() => RunAsync(["run", "--no-update-check"], true);
@@ -394,7 +400,9 @@ partial class InstallTab : UserControl
         _failed = true;
         string? reason = failure ?? result?.Error?.Split('\n')[0];
         _row?.Show(SetupState.Failed, reason ?? "");
-        _note = () => L.Text("The game didn't start.") + (reason is null ? "" : "\n" + reason);
+        _note = ClientExtractionFailure.IsHncFailure(failure ?? result?.Error)
+            ? () => ClientExtractionFailure.RecoveryHint
+            : () => L.Text("The game didn't start.") + (reason is null ? "" : "\n" + reason);
     }
 
     void Write(string line)

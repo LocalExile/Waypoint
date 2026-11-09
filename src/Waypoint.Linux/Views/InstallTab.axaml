@@ -4,6 +4,9 @@
              x:Class="Waypoint.InstallTab">
   <UserControl.Styles>
     <StyleInclude Source="avares://Waypoint/Views/ViewStyles.axaml" />
+    <Style Selector="Button#RunSetupLink:disabled">
+      <Setter Property="Opacity" Value="0.45" />
+    </Style>
   </UserControl.Styles>
   <!-- A release install's home, laid out as PlayTab: one sentence, one button. Below them, once Play was pressed, what the run
        is doing: its steps as on the setup guide, and its output. -->
@@ -24,6 +27,9 @@
         <Button Classes="quiet" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
                 ToolTip.Tip="{l:Loc 'Sets up a second LocalExile from its source code, which has the item crafter. You can bring your characters.'}" />
       </StackPanel>
+      <Button x:Name="RunSetupLink" Classes="quiet" FontSize="12.5" Margin="0,10,0,0"
+              Content="{l:Loc 'Run setup guide…'}" Click="RunSetupClicked"
+              ToolTip.Tip="{l:Loc 'Recheck requirements and refresh this setup, including client preparation. Close the game and stop servers first.'}" />
     </StackPanel>
     <Border x:Name="Activity" Grid.Row="1" IsVisible="False" Margin="0,8,0,0" Padding="14,10" CornerRadius="6" BorderThickness="1"
             BorderBrush="{DynamicResource Shell.Border}">

@@ -4107,6 +4107,9 @@
   <data name="Text_7d0a4fb5a543" xml:space="preserve">
     <value>Связан с {0}</value>
   </data>
+  <data name="Text_7d2f06d53231" xml:space="preserve">
+    <value>Проверить требования и обновить настройку, включая подготовку клиента. Сначала закройте игру и остановите серверы.</value>
+  </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Закрыть</value>
   </data>
@@ -5570,6 +5573,9 @@
   </data>
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>Остановить dev host</value>
+  </data>
+  <data name="Text_aa128a84671e" xml:space="preserve">
+    <value>Настройка клиента требует внимания. Нажмите «Запустить мастер настройки» ниже, чтобы повторно проверить и обновить её, затем попробуйте запустить игру снова.</value>
   </data>
   <data xml:space="preserve" name="Text_aa1bf9baa865">
     <value>Не удалось выбрать репозиторий: </value>

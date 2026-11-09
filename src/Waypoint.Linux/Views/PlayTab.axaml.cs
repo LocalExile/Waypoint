@@ -98,6 +98,7 @@ partial class PlayTab : UserControl
         BehindPanel.IsVisible = !busy && !GameRunning && !needsSetup && _behind is > 0;
         BehindText.Text = _behind is { } behind ? L.Text("{0} new change(s) in LocalExile since your version.", behind) : "";
         UpdateNowLink.IsEnabled = !AnythingRunning;
+        RunSetupLink.IsEnabled = !busy && !AnythingRunning && !Checking;
         GoBackLink.IsVisible = !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
         RemoveOldCard.IsVisible = !busy && !AnythingRunning && Replaced is not null;
         if (Replaced is { } replaced) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
@@ -122,6 +123,11 @@ partial class PlayTab : UserControl
         await PlayAsync();
     }
 
+    void RunSetupClicked(object? sender, RoutedEventArgs e)
+    {
+        if (!_working && !_shared.IsLiveRunning && !AnythingRunning && !Checking) SetupRequested?.Invoke();
+    }
+
     async Task PlayAsync()
     {
         if (_working || _shared.IsLiveRunning) return;
@@ -142,7 +148,9 @@ partial class PlayTab : UserControl
             }
             else if (update is not null) _note = () => L.Text("LocalExile was updated.");
             _failed = code is not (null or 0);
-            if (_failed) _note = () => L.Text("The game didn't start.");
+            if (_failed) _note = _control.ClientSetupFailed
+                ? () => ClientExtractionFailure.RecoveryHint
+                : () => L.Text("The game didn't start.");
             if (code == 0 && S.RemoveRelease is { Played: false } release && IsThisCopy(release))
             {
                 S.RemoveRelease = release with { Played = true };

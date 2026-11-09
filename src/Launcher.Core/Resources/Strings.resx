@@ -4107,6 +4107,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7d0a4fb5a543" xml:space="preserve">
     <value>Linked to {0}</value>
   </data>
+  <data name="Text_7d2f06d53231" xml:space="preserve">
+    <value>Recheck requirements and refresh this setup, including client preparation. Close the game and stop servers first.</value>
+  </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Close</value>
   </data>
@@ -5570,6 +5573,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>Stop dev host</value>
+  </data>
+  <data name="Text_aa128a84671e" xml:space="preserve">
+    <value>Client setup needs attention. Run setup guide below to recheck and refresh it, then try Play again.</value>
   </data>
   <data xml:space="preserve" name="Text_aa1bf9baa865">
     <value>Could not select checkout: </value>

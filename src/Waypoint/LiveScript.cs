@@ -105,7 +105,7 @@ static class Scripts
         string? hncFailure = null;
         void Line(string line)
         {
-            if (line.Contains("HNC mask not found", StringComparison.OrdinalIgnoreCase))
+            if (ClientExtractionFailure.IsHncFailure(line))
                 Interlocked.CompareExchange(ref hncFailure, line, null);
             output(line);
         }
