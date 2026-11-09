@@ -3555,6 +3555,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_6b43463e9003" xml:space="preserve">
     <value>Delete the local branches of pull requests that are no longer open?</value>
   </data>
+  <data name="Text_6b66c287b2d1" xml:space="preserve">
+    <value>LocalExile {0} has a bug that stops most downloaded mods from loading. Update LocalExile to {1} or newer to fix it. You can still install, change and remove mods here.</value>
+  </data>
   <data name="Text_6b8471643e7d" xml:space="preserve">
     <value>Stashed changes</value>
   </data>

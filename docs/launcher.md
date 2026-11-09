@@ -732,6 +732,13 @@ applies them at its next start) but disables install, update, uninstall and sett
 (`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
 for read-only inspection in Advanced mode.
 
+v0.2.0-beta and v0.2.1-beta take downloaded mods but cannot load the compiled ones: their `GameServer.Modding.dll` carries
+the release's version (0.2.x), the mods of LocalExile-Mods are built for 1.0.0.0, and the server reports "Could not load
+file or assembly 'GameServer.Modding, Version=1.0.0.0'" (fixed in LocalExile #762, first released as v0.2.2-beta). On
+those two the Mods section only warns, above its other notices, that the release has this bug and that updating LocalExile
+fixes it (`Repo.ReleaseModsMayNotLoad`). Nothing is refused: a player can still uninstall a mod there, and a script mod
+is compiled by the server itself.
+
 ### Modules and Leagues
 
 **Modules** lists gameplay systems from the selected checkout's `Modules/`, without loading server assemblies. Select one

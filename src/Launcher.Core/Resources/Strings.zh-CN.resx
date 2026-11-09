@@ -3555,6 +3555,9 @@
   <data name="Text_6b43463e9003" xml:space="preserve">
     <value>删除已不再打开的拉取请求的本地分支吗？</value>
   </data>
+  <data name="Text_6b66c287b2d1" xml:space="preserve">
+    <value>LocalExile {0} 有一个错误，会导致大多数下载的模组无法加载。请将 LocalExile 更新到 {1} 或更高版本以修复。你仍然可以在这里安装、更改和移除模组。</value>
+  </data>
   <data name="Text_6b8471643e7d" xml:space="preserve">
     <value>贮藏的更改</value>
   </data>

@@ -3555,6 +3555,9 @@
   <data name="Text_6b43463e9003" xml:space="preserve">
     <value>Удалить локальные ветки закрытых запросов на слияние?</value>
   </data>
+  <data name="Text_6b66c287b2d1" xml:space="preserve">
+    <value>В LocalExile {0} есть ошибка, из-за которой большинство скачанных модов не загружается. Обновите LocalExile до {1} или новее, чтобы исправить это. Устанавливать, изменять и удалять моды здесь по-прежнему можно.</value>
+  </data>
   <data name="Text_6b8471643e7d" xml:space="preserve">
     <value>Отложенные изменения</value>
   </data>

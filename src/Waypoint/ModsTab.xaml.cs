@@ -102,7 +102,7 @@ public partial class ModsTab : UserControl
             notice = L.Text("Could not inspect mods: ") + ex.Message;
         }
         if (state is not null && supported && !state.ModEnvironment!.Enabled) notice = L.Text("Mods off in launch profile (Game_MODS=0)");
-        notice = string.Join("\n", new[] { notice, ModsText.ChoicesNotice(state) }.Where(s => s.Length > 0));
+        notice = string.Join("\n", new[] { ModsText.MayNotLoadNotice(), notice, ModsText.ChoicesNotice(state) }.Where(s => s.Length > 0));
         if (Repo.LegacyReleaseMods) notice = L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.");
         Notice.Text = notice;
         Notice.Visibility = notice.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
