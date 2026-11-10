@@ -310,8 +310,10 @@ question (a fork's pull request) has Cancel as its default.
 
 **The mode follows the folder** (`Editions.Advanced`), and is worked out each time, never written:
 
-- **A release install** shows what its user chose. A new user starts in **Simple mode**, with one list of six sections
-  (Play, Mods, Backups, Accounts, Tools, Settings) and no status strip or branch chip: nothing to choose before playing.
+- **A release install** shows what its user chose. A new user starts in **Simple mode**, with one list of eight sections
+  (Play, Mods, Modules, Leagues, Backups, Accounts, Tools, Settings) and no status strip or branch chip: nothing to choose
+  before playing. Modules and Leagues are the sections a source copy has; what a release takes from them is under
+  [Modules and Leagues](#modules-and-leagues).
   Console and Logs are not in the list; two cards on Tools open them, and a link that leads to one, such as Play's **See
   what happened**, opens it too (`MainWindow.ShowSection`). **Settings → Developer → Developer Mode**, off by default, adds
   the **Simple | Advanced** switch at the bottom of the sidebar. **Advanced** replaces Play with Control, as that section has
@@ -866,8 +868,15 @@ Install, Update, Uninstall and settings editing work there as in a source checko
 build a project from source). An older release (v0.1.0-beta, or one whose `release.json` has no readable version) keeps
 the mods it shipped with, built for the older mod API: Waypoint leaves its saved mod switches available (the server
 applies them at its next start) but disables install, update, uninstall and settings editing there
-(`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
-for read-only inspection in Advanced mode.
+(`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Modules and Leagues are listed in both modes, and a release from
+v0.2.0-beta on takes their changes too: which modules a league uses, and module and league settings. Those are its user's
+own files under `data\` (`data\league-modules.json`, `data\modules\`, `data\leagues\`), which the release's servers read
+from its folder and which no update of a release touches. A release has no source to look for a hook in, so what it takes
+follows from its version, as for its mods (`Get-ContentEnvironment`, `Test-LegacyReleaseMods`): an older release, or one
+whose version can't be read, stays read-only. A league can be made on such a release too: it ships its leagues as source
+with the compiler that builds them at each start, and an update writes only the files of its zip, so a new league's folder
+is left alone. The leagues that came with the release are the release's own files, which an update writes over: only a
+league made in Waypoint is hidden or shown there (`ContentEnvironment.ShippedLeaguesFixed`).
 
 v0.2.0-beta and v0.2.1-beta take downloaded mods but cannot load the compiled ones: their `GameServer.Modding.dll` carries
 the release's version (0.2.x), the mods of LocalExile-Mods are built for 1.0.0.0, and the server reports "Could not load
@@ -957,8 +966,35 @@ the servers when ready and never restarts them automatically. Existing character
 migrating leagues is not part of these controls.
 
 The module list appears below the mode selector. **Find a module** searches names, IDs and descriptions without changing
-the selection. Required modules stay readable and cannot be disabled; modules not defined for the mode are grouped under
-**Unavailable modules**. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
+the selection. Required modules stay readable and cannot be disabled; what can't be turned on for the league is grouped
+under **Unavailable modules**.
+
+**Which modules a league can have** follows LocalExile's own rules, in the interface (`GameSystems.ValidateComposition`)
+and again in the adapter (`LeagueData.py`, `validate_modules`). LocalExile says that a module has no knowledge of leagues
+and that any league can list it, so every installed module is a box to tick for every league that can be edited: a core
+module the league does not ship with (the Currency Exchange in an SSF or a Ruthless league), another league's module
+(Ruthless, the Phrecia ascendancies), and an add-on. What stays:
+
+- **The game and dependencies.** `Core/Game` cannot be removed, and what a module needs has to be on, as LocalExile itself
+  requires.
+- **A league's own bundle asks first** (`BundleModules`, `BundleLeftOut`): the modules outside `Core/` that its shipped
+  list names, such as Ruthless in a Ruthless league. LocalExile loads the league without them and keeps its saved data,
+  so they are boxes like any other. Once one is unticked, the line under the list says that the league will run without
+  the rules or content it is named for, that its characters stay as they are and that it can be turned back on; the
+  question before saving says it again, as a warning. A league made from one says the same about the new league. A
+  module someone added by hand to a shipped list counts as part of that league's bundle, since nothing tells the two
+  apart: it gets the same warning and can be unticked. Only the game is **Required** and locked.
+- **A module made for an isolated league stays in isolated leagues** (`IsolatedModule`, `Isolated`). A league is isolated
+  when its parents lead to Void, so nothing of it reaches Standard: Survivors is one, and so is every league made in
+  Waypoint. A module LocalExile ships only in such leagues (the three Survivors modules: a run starts by itself, refuses
+  ordinary exits and hands out rewards) shows as **For isolated leagues only** in a league that leads to Standard.
+- **An add-on** is a module that no league LocalExile ships lists (`GameSystems.AddOn`: PlayerBots and
+  NessaDevelopmentTabs, at the time of writing), off until its user lists it in the league they want it in, which is how
+  LocalExile's own guide turns PlayerBots on (`{"Standard": {"add": ["PlayerBots"]}}` in `data/league-modules.json`).
+  Saving writes that same entry. An add-on is never part of a bundle, in a league made in Waypoint that lists it either.
+- **A listed module that is not installed** (a typo in a hand edit, a module taken away since) shows as
+  **{path} (not installed)**, ticked. LocalExile skips it and loads the league, so the league stays editable; unticking
+  the entry takes it off the list. It is never required, and a new one that is not installed is refused. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
 preview and league settings are expandable. Search hides an empty unavailable group and updates its matching count.
 Refreshing or applying a change locks editing until the operation finishes;
 switching league or mode asks before discarding a draft.
@@ -970,8 +1006,10 @@ playable main card must remain visible, and visible mode options cannot lose the
 it does not end the league or prevent existing characters from entering it. Existing saves and stashes are not opened or
 changed by visibility edits. Void and ended leagues cannot be offered with these controls.
 
-Visibility editing requires stopped services/game and the source league-definition hook. After the optional backup,
-Waypoint checks writers and the full reviewed inventory again. Multi-file edits preserve comments and formatting, retain
+Visibility editing requires the league-definition hook (`CanCreate`), and on a release applies only to a league made in
+Waypoint. It does not wait for the game or the servers to stop: LocalExile reads its leagues once, when a server starts, so
+a change made while one runs is what its next start reads. After the optional backup,
+Waypoint checks the full reviewed inventory again. Multi-file edits preserve comments and formatting, retain
 the original files in configuration history, apply children before hiding parents (parents before showing children), and
 roll back their own writes on failure without overwriting another tool's changes. Visibility takes effect at the next
 server start. Per-account visibility requires a separate LocalExile hook and is not implied by this global control.
@@ -993,12 +1031,12 @@ invents unsupported flags. Modes of an existing league are not changed underneat
 another identity and card. New cards are independent, so they cannot displace an existing card's mode checkboxes.
 
 Custom leagues use Void as their parent and, for Hardcore, their death destination. A valid isolated Void definition must
-exist, hidden and without a parent; its module list may be empty or contain only the core Game foundation. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
-all save writers stopped, uses the normal optional save backup, and checks the writers again afterward. A read-only save
+exist, hidden and without a parent; its module list may be empty or contain only the core Game foundation. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation does not wait for the game
+or the servers to stop, for the same reason as visibility: a league made while a server runs is there at its next start. It
+uses the normal optional save backup. A read-only save
 inspection refuses names retained by characters, deleted-character records or stashes, and blocks unfamiliar schemas and
 pending imports rather than guessing. Names use 3–48 English letters, digits, spaces, underscores or hyphens.
-The final Create action and availability controls explain when running services block them; a creation draft remains
-editable while services run. Name feedback catches invalid or currently used names before proceeding; retained save names
+The final Create action and the availability controls work while services run. Name feedback catches invalid or currently used names before proceeding; retained save names
 are checked again by the adapter before creation.
 
 Only an existing empty league marker class is reusable. A profile with custom league code or only prebuilt binaries is
@@ -1013,8 +1051,8 @@ files keep their existing behavior.
 Drafts review the complete relevant manifest/source inventory and user overrides. Adding, removing or changing a definition
 invalidates the draft; the backend checks again after backup. These checks enforce the declared structure, not every hidden
 assumption in arbitrary module code. LocalExile currently has no complete conflicts/supported-modes metadata contract.
-Broader cross-profile combinations need explicit compatibility declarations from LocalExile or the modules; unknown
-combinations remain blocked. The implemented controls require no LocalExile source changes.
+Waypoint adds one rule to LocalExile's, the modules of isolated leagues, and one warning, about a league's own bundle;
+a declaration from LocalExile or the modules of what belongs together would replace both. The implemented controls require no LocalExile source changes.
 
 **League card preview** shows the definition's name, description, Hardcore/SSF/form flags and linked mode variants in a
 collapsed, read-only panel. It reads files, not the running server's startup snapshot. LocalExile already reads descriptions
@@ -1023,8 +1061,9 @@ and stashes, and mode links select real gameplay variants. There is no separate 
 does not edit league presentation or rewrite these definitions.
 
 The adapter supplies the selected profile's module, league and override paths. A source checkout must expose the shared
-settings hook before editing settings, and the league-override hook before editing membership. An older checkout or release
-with no verified hook remains read-only. No listing command or server startup is used to discover these capabilities.
+settings hook before editing settings, and the league-override hook before editing membership; an older checkout with no
+verified hook remains read-only. A release has no source: from v0.2.0-beta on it takes settings and membership, and an
+older one remains read-only. No listing command or server startup is used to discover these capabilities.
 
 ### Shared settings editor
 

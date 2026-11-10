@@ -234,6 +234,9 @@
   <data name="Text_06c07d364810" xml:space="preserve">
     <value>你的角色暂时还不能转移</value>
   </data>
+  <data name="Text_06f8025705e4" xml:space="preserve">
+    <value>没有 {0}，此联赛将不再具备其名称所代表的规则或内容。其中的角色保持不变，之后可以重新启用。</value>
+  </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}：不是整数</value>
   </data>
@@ -2257,6 +2260,9 @@
   <data name="Text_40ef19a35d79" xml:space="preserve">
     <value>服务已停止。</value>
   </data>
+  <data name="Text_4109f096d29b" xml:space="preserve">
+    <value>{0}（未安装）</value>
+  </data>
   <data name="Text_4115d7cc67e2" xml:space="preserve">
     <value>数据库拆分之前的存档会放到 data/saves.db，但此 LocalExile 不使用它：它的角色数据库设在别处。</value>
   </data>
@@ -4200,6 +4206,9 @@
   <data name="Text_7d2f06d53231" xml:space="preserve">
     <value>重新检查所需组件并刷新此安装的设置，包括客户端准备。请先关闭游戏并停止服务器。</value>
   </data>
+  <data name="Text_7d457621ab87" xml:space="preserve">
+    <value>此发布版自带的联赛无法在这里隐藏或显示：更新 LocalExile 会撤销该更改。</value>
+  </data>
   <data name="Text_7d9eb7acb13e" xml:space="preserve">
     <value>关闭</value>
   </data>
@@ -5214,6 +5223,9 @@
   <data name="Text_9c384372f6be" xml:space="preserve">
     <value>采集已停止。现有文件已保留。</value>
   </data>
+  <data name="Text_9c45a66aeb78" xml:space="preserve">
+    <value>此联赛的列表中有一个未安装的模块。LocalExile 会跳过它。取消勾选即可将其从列表中移除。</value>
+  </data>
   <data name="Text_9c508bc48078" xml:space="preserve">
     <value>准备中</value>
   </data>
@@ -5318,6 +5330,9 @@
   </data>
   <data name="Text_9ecdfa3146b3" xml:space="preserve">
     <value>自然与元素</value>
+  </data>
+  <data name="Text_9ee98bd65288" xml:space="preserve">
+    <value>{0} 是为独立联赛制作的，这类联赛的角色和奖励不会进入 Standard。无法在最终通向 Standard 的联赛中启用它。</value>
   </data>
   <data name="Text_9f088dbebd6c" xml:space="preserve">
     <value>高级</value>
@@ -6180,6 +6195,9 @@
   <data name="Text_b8f6fa5921eb" xml:space="preserve">
     <value>“发放物品”需要 Frida，这是一个与正在运行的游戏通信的工具。Waypoint 可以将它安装到此 LocalExile 文件夹中。它大约占用 180 MB，部分杀毒软件会将其标记为可疑。</value>
   </data>
+  <data name="Text_b8f92dd32433" xml:space="preserve">
+    <value>以“{1}”模式创建“{0}”？{2} 现有赛季和存档会保留。</value>
+  </data>
   <data name="Text_b9289f13fa7e" xml:space="preserve">
     <value>账号名（3–32 个字母、数字、_ 或 -）</value>
   </data>
@@ -6365,6 +6383,9 @@
   </data>
   <data name="Text_bfc5b531a3b4" xml:space="preserve">
     <value>限时挑战</value>
+  </data>
+  <data name="Text_bfce30bdebb8" xml:space="preserve">
+    <value>只要所需的模块已启用，这里可以启用任何已安装的模块。此联赛自身的模块组保持启用，为独立联赛制作的模块只能用于独立联赛。</value>
   </data>
   <data name="Text_bffd26352bd5" xml:space="preserve">
     <value>保存关闭偏好前会询问你一次。</value>
@@ -6872,6 +6893,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cf47dcf7cadf" xml:space="preserve">
     <value>此版本管理的内容</value>
   </data>
+  <data name="Text_cf53cb353693" xml:space="preserve">
+    <value>没有 {0}，新联赛会沿用“{1}”的模式，但不包含其规则或内容。</value>
+  </data>
   <data name="Text_cf5c6c0d1737" xml:space="preserve">
     <value>退出 Waypoint 时服务会继续运行。</value>
   </data>
@@ -6992,8 +7016,14 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>此处已安装 LocalExile {0}。</value>
   </data>
+  <data name="Text_d3d0b33deb9f" xml:space="preserve">
+    <value>只要所需的模块已启用，这里可以启用或停用任何已安装的模块。停用此联赛自身的模块组前会先询问，为独立联赛制作的模块只能用于独立联赛。</value>
+  </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>联盟设置</value>
+  </data>
+  <data name="Text_d40afb35e5e4" xml:space="preserve">
+    <value>属于此联赛自身的模块组。停用前会先询问。</value>
   </data>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>所选模式：{0}</value>
@@ -7138,6 +7168,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d8205881eccd" xml:space="preserve">
     <value>GitHub PR 列表不可用。本地/已获取的分支仍可使用；输入 PR 编号可直接尝试。</value>
+  </data>
+  <data name="Text_d8216570a4e4" xml:space="preserve">
+    <value>仅限独立联赛</value>
   </data>
   <data name="Text_d82d265d278c" xml:space="preserve">
     <value>安装或打开 LocalExile 的正式发布版。它有自己的角色；你在这里的角色会保留在此文件夹中。</value>
@@ -7685,6 +7718,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e9182bbf5cec" xml:space="preserve">
     <value>正在删除备份</value>
+  </data>
+  <data name="Text_e96c43c358a6" xml:space="preserve">
+    <value>普通模式</value>
   </data>
   <data name="Text_e97166b54500" xml:space="preserve">
     <value>enable</value>

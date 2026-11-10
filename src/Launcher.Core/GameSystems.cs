@@ -3,7 +3,11 @@ using System.Text.Json.Nodes;
 
 namespace Launcher.Core;
 
-public sealed record ContentEnvironment(string Modules, string Leagues, string Choices, bool CanChoose, bool CanEditSettings = false, bool CanCreate = false);
+/// <summary>Where a folder's modules, leagues and its user's module choices are, and what the adapter lets Waypoint change
+/// there. <paramref name="ShippedLeaguesFixed"/>: a release, whose own leagues' files an update writes over, so only a
+/// league made in Waypoint is hidden or shown there.</summary>
+public sealed record ContentEnvironment(string Modules, string Leagues, string Choices, bool CanChoose, bool CanEditSettings = false, bool CanCreate = false,
+    bool ShippedLeaguesFixed = false);
 public sealed record GameSystem(string Id, string Path, string Name, string Description, string[] Depends, string Folder)
 {
     public string SettingsFile => System.IO.Path.Combine(Folder, "settings.json");
@@ -109,14 +113,8 @@ public sealed partial class GameSystems
     public JsonObject Plan(GameLeague league, IEnumerable<string> selected)
     {
         if (!Environment.CanChoose) throw new InvalidOperationException(L.Text("This server does not expose supported league system overrides. Update LocalExile to edit these choices."));
-        if (league.Systems.Any(p => !Systems.Any(s => s.Path.Equals(p, StringComparison.OrdinalIgnoreCase)))) throw new InvalidOperationException(L.Text("A selected module is missing."));
         if (!Configurable(league)) throw new InvalidOperationException(L.Text("Ended or non-playable league definitions are read-only."));
         var paths = selected.Select(Normal).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
-        var active = paths.Select(p => Systems.SingleOrDefault(s => s.Path.Equals(p, StringComparison.OrdinalIgnoreCase)) ?? throw new InvalidOperationException(L.Text("A selected module is missing."))).ToArray();
-        if (league.Creatable && !active.Any(s => s.Id.Equals("Game", StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException(L.Text("The Game module is required for a playable league."));
-        foreach (var system in active)
-            foreach (string dependency in system.Depends)
-                if (!active.Any(s => s.Id.Equals(dependency, StringComparison.OrdinalIgnoreCase))) throw new InvalidOperationException(L.Text("{0} needs {1}. Enable the required module first.", system.Name, dependency));
         ValidateComposition(league, paths);
         var result = (JsonObject)Choices.DeepClone();
         string key = result.Select(p => p.Key).FirstOrDefault(k => k.Equals(league.Name, StringComparison.OrdinalIgnoreCase)) ?? league.Name;

@@ -71,22 +71,24 @@ them), the item crafter, the tray and the appearance editor.
 ## Simple and Advanced modes
 
 On a release install some sections do less, because a release has no source, Frida or per-service control: **Console** copies
-commands for you to paste into the game's chat, **Mods** enables and disables built mods only, **Control** starts and stops
+commands for you to paste into the game's chat, **Mods** installs a mod's release but cannot build one from source, **Control** starts and stops
 everything together, and **Tools** needs a source checkout: **Get the item crafter…** sets one up beside your release and can bring
 your characters. When a newer LocalExile release is out, a green card offers to install it.
 Nothing changes until you accept and the game is closed. Your saves are copied first, and `data\` and `Client\` are kept.
 **Settings → Keep LocalExile up to date** turns the prompt off.
 
-A new player starts in **Simple mode**: **Play**, **Mods**, **Backups**, **Accounts**, **Tools** and **Settings**, with **Console**
-and **Logs** one click away on Tools. Simple mode plays the release. A source checkout is always shown in **Advanced mode**: it
+A new player starts in **Simple mode**: **Play**, **Mods**, **Modules**, **Leagues**, **Backups**, **Accounts**, **Tools** and
+**Settings**, with **Console** and **Logs** one click away on Tools. Simple mode plays the release. A source checkout is always shown in **Advanced mode**: it
 plays from **Control** and its user updates it from **Versions**. Waypoint never updates a source checkout by itself.
 
 The folder Waypoint works on is at the top of the sidebar. A click lists your other LocalExile folders, a release or any
 number of source checkouts, and choosing one opens it: no file moves, and Waypoint asks before it stops anything.
 **Add a folder you already have…** puts another one in the list.
 
-Source checkouts also show **Modules** and **Leagues**, with editing enabled only when the checkout exposes the supported
-settings and league-choice hooks. The league card's name, description and mode links have a read-only preview.
+**Modules** and **Leagues** can be edited on a release from v0.2.0-beta on and on a source checkout that exposes the
+supported settings and league-choice hooks: which modules a league uses, their settings, and new leagues. Any installed
+module can be ticked for any league when what it needs is on, Player Bots among them; turning off a league's own bundle
+(Ruthless in a Ruthless league) asks first, and the Survivors modules stay in isolated leagues. A release hides and shows only the leagues made in Waypoint. The league card's name, description and mode links have a read-only preview.
 
 On a release install, **Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
 full control over branches and pull requests. Someone coming from an earlier launcher starts there.

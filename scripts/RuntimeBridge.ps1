@@ -159,7 +159,15 @@ function Get-ContentEnvironment {
         Assert-Physical $hostHook
         if ((Get-Item -LiteralPath $hostHook).Length -lt 1048576) { $canCreate = [IO.File]::ReadAllText($hostHook).Contains('ReadLeagueImages') }
     }
-    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=($canChoose -and -not $script:isRelease); CanEditSettings=$canEditSettings; CanCreate=$canCreate }
+    # A release has no source to look at, so what it takes follows from its version, as for its mods
+    # (Test-LegacyReleaseMods). Every release from 0.2.0-beta on starts its servers in its own folder and reads there the
+    # league module choices (data\league-modules.json) and the module and league settings (data\modules, data\leagues);
+    # data\ is its user's own, and no update of a release writes there. It also ships its leagues as source with the
+    # compiler that builds them at each start, so a league made here loads like its own, and an update, which writes only
+    # the files of its zip, leaves that league's folder alone. The leagues that came with the release are the release's
+    # files, which an update writes over: those are not hidden or shown here (ShippedLeaguesFixed).
+    if ($script:isRelease) { $canChoose = $canEditSettings = $canCreate = -not (Test-LegacyReleaseMods) }
+    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=$canChoose; CanEditSettings=$canEditSettings; CanCreate=$canCreate; ShippedLeaguesFixed=[bool]$script:isRelease }
 }
 function Join-Relative([string]$path) { if ([IO.Path]::IsPathRooted($path)) { $path } else { At $path } }
 function Get-Inventory {

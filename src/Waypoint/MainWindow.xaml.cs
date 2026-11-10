@@ -269,8 +269,10 @@ public partial class MainWindow : Window
         FrameworkElement[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
             ? s.View is GameSystemsTab || s.View is ControlTab or VersionsTab or ReleasesTab or ModsTab or BackupsTab or AccountsTab or PerformanceTab or TimingsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab
-            // Simple mode's one list. Console and Logs open from Tools: ShowSection shows a section that is not listed.
-            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or ToolsTab or SettingsTab)).ToArray();
+            // Simple mode's one list, Modules and Leagues among it: a release takes their changes too (the adapter's
+            // Get-ContentEnvironment says which). Console and Logs open from Tools: ShowSection shows a section that is
+            // not listed.
+            : s.View is GameSystemsTab || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or ToolsTab or SettingsTab)).ToArray();
         // Developer Mode (Settings) unlocks the switch, on a release: a source copy has no Simple mode to switch to.
         ModeSwitch.Visibility = Repo.IsInstall && _shared.Settings.Developer ? Visibility.Visible : Visibility.Collapsed;
         var shown = Sections.SelectedItem as Section;

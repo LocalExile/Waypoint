@@ -305,8 +305,14 @@ colours live solely in Waypoint's settings, scoped by checkout and flag; they ne
 `Content` in an inspection names the selected profile's `Game_MODULES_FOLDER`, `Game_LEAGUES_FOLDER` and
 `Game_LEAGUE_MODULES` paths (default Modules, Leagues and data/league-modules.json). `CanEditSettings` requires the source
 shared settings hook, `CanChoose` the source league-override hook, and `CanCreate` the source league loader for creation and
-visibility editing. Releases advertise none of these: the current release
-predates the downloadable-mod update and remains read-only for the new controls. InstallMod, UninstallMod and
+visibility editing. A release has no source to inspect, so its version decides: from v0.2.0-beta on (the releases whose
+servers read `data/league-modules.json`, `data/modules/` and `data/leagues/` from the release's own folder) it has
+`CanChoose`, `CanEditSettings` and `CanCreate`, and an older release, or one with no readable version, has none. A release
+ships its leagues as source with the compiler that builds them, and an update writes only its zip's files, so a new
+league's folder stays. `ShippedLeaguesFixed` is true on a release: the leagues it came with are its own files, which an
+update writes over, so `SetLeagueVisibility` there takes only a league with a `.waypoint-league.json`. `LeagueData.py` runs
+under a release's bundled Python, the embeddable one, which does not look for modules beside a script: it adds its own
+folder to the module path before it imports `AccountData`. InstallMod, UninstallMod and
 SaveModSettings are refused on a release older than v0.2.0-beta (or of no readable version in its `release.json`), in both
 the adapter (`Test-LegacyReleaseMods`) and the UI; v0.2.0-beta and later take downloaded mods.
 
@@ -326,7 +332,7 @@ The helper accepts UTF-8 JSON requests with or without one leading BOM, includin
 Duplicate keys and malformed JSON remain rejected before configuration writes.
 
 `CreateLeague` requires the source league-loader hook (`CanCreate`), a new safe name, an empty marker template and isolated
-Void. The adapter checks stopped save writers before and after the optional backup. `LeagueData.py` opens the selected
+Void. It does not wait for save writers to stop: LocalExile reads its leagues once, when a server starts. `LeagueData.py` opens the selected
 database read-only (with a split layout's auth.db attached), verifies the known schema/import state and refuses retained league names in character and stash data.
 It writes only a new physical directory, with independent identity, Void transitions and unchanged template mode flags.
 An exclusive directory reservation and a final no-replace manifest publication prevent partial leagues from being loaded
@@ -334,7 +340,7 @@ or existing leagues from being overwritten. This operation never changes existin
 
 `SetLeagueVisibility` takes `league`, boolean `visible`, and `review`. It changes only the top-level `creatable` flag in
 existing definitions, preserving comments and all other fields. Card-link closure prevents orphaned mode options and the
-last playable main card cannot be hidden. Writers must be stopped before and after backup; the source-loader capability
+last playable main card cannot be hidden. Writers need not be stopped; the league-loader capability
 and current review inventory are required. Original definitions are retained, each replacement is atomic, and failures
 roll back only files still matching this operation's output. Ordering keeps intermediate card states valid. No save
 database is read or written for visibility. It is a global creation-list control, never per-account filtering or ending.

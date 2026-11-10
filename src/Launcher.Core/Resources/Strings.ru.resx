@@ -234,6 +234,9 @@
   <data name="Text_06c07d364810" xml:space="preserve">
     <value>Персонажей пока нельзя перенести</value>
   </data>
+  <data name="Text_06f8025705e4" xml:space="preserve">
+    <value>Без {0} эта лига будет работать без правил или содержимого, в честь которых она названа. Её персонажи останутся как есть, и модуль можно включить снова.</value>
+  </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: не целое число</value>
   </data>
@@ -2257,6 +2260,9 @@
   <data xml:space="preserve" name="Text_40ef19a35d79">
     <value>Службы остановлены.</value>
   </data>
+  <data name="Text_4109f096d29b" xml:space="preserve">
+    <value>{0} (не установлен)</value>
+  </data>
   <data name="Text_4115d7cc67e2" xml:space="preserve">
     <value>Сохранения, сделанные до разделения баз данных, помещаются в data/saves.db, но этот LocalExile его не использует: его база данных персонажей указана в другом месте.</value>
   </data>
@@ -4200,6 +4206,9 @@
   <data name="Text_7d2f06d53231" xml:space="preserve">
     <value>Проверить требования и обновить настройку, включая подготовку клиента. Сначала закройте игру и остановите серверы.</value>
   </data>
+  <data name="Text_7d457621ab87" xml:space="preserve">
+    <value>Лигу, входящую в этот релиз, здесь нельзя скрыть или показать: обновление LocalExile отменит это изменение.</value>
+  </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Закрыть</value>
   </data>
@@ -5214,6 +5223,9 @@
   <data name="Text_9c384372f6be" xml:space="preserve">
     <value>Запись остановлена. Существующие файлы сохранены.</value>
   </data>
+  <data name="Text_9c45a66aeb78" xml:space="preserve">
+    <value>В списке этой лиги есть модуль, который не установлен. LocalExile его пропускает. Снимите флажок, чтобы убрать его из списка.</value>
+  </data>
   <data name="Text_9c508bc48078" xml:space="preserve">
     <value>Подготовка</value>
   </data>
@@ -5318,6 +5330,9 @@
   </data>
   <data name="Text_9ecdfa3146b3" xml:space="preserve">
     <value>Природа и стихии</value>
+  </data>
+  <data name="Text_9ee98bd65288" xml:space="preserve">
+    <value>{0} создан для изолированной лиги, чьи персонажи и награды никогда не попадают в Standard. Его нельзя включить в лиге, которая ведёт в Standard.</value>
   </data>
   <data name="Text_9f088dbebd6c" xml:space="preserve">
     <value>Расширенный</value>
@@ -6180,6 +6195,9 @@
   <data name="Text_b8f6fa5921eb" xml:space="preserve">
     <value>Для выдачи предметов нужна Frida — инструмент, который взаимодействует с запущенной игрой. Waypoint может установить её в эту папку LocalExile. Она занимает около 180 МБ, а некоторые антивирусы на неё реагируют.</value>
   </data>
+  <data name="Text_b8f92dd32433" xml:space="preserve">
+    <value>Создать лигу «{0}» в режиме «{1}»? {2} Существующие лиги и сохранения будут сохранены.</value>
+  </data>
   <data xml:space="preserve" name="Text_b9289f13fa7e">
     <value>Имя (3–32 латинские буквы, цифры, _ или -)</value>
   </data>
@@ -6365,6 +6383,9 @@
   </data>
   <data name="Text_bfc5b531a3b4" xml:space="preserve">
     <value>Испытание на время</value>
+  </data>
+  <data name="Text_bfce30bdebb8" xml:space="preserve">
+    <value>Здесь можно включить любой установленный модуль, если включено всё, что ему требуется. Собственный набор этой лиги остаётся включённым, а модуль, созданный для изолированной лиги, остаётся в изолированных лигах.</value>
   </data>
   <data name="Text_bffd26352bd5" xml:space="preserve">
     <value>Перед сохранением предпочтения вам один раз предложат выбрать действие при закрытии.</value>
@@ -6872,6 +6893,9 @@
   <data xml:space="preserve" name="Text_cf47dcf7cadf">
     <value>Что поддерживается</value>
   </data>
+  <data name="Text_cf53cb353693" xml:space="preserve">
+    <value>Без {0} новая лига получит режим лиги «{1}», но не её правила или содержимое.</value>
+  </data>
   <data name="Text_cf5c6c0d1737" xml:space="preserve">
     <value>При выходе из Waypoint службы продолжают работать.</value>
   </data>
@@ -6992,8 +7016,14 @@
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>LocalExile {0} уже установлен здесь.</value>
   </data>
+  <data name="Text_d3d0b33deb9f" xml:space="preserve">
+    <value>Здесь можно включить или выключить любой установленный модуль, если включено всё, что ему требуется. Перед отключением собственного набора этой лиги Waypoint спросит подтверждение, а модуль, созданный для изолированной лиги, остаётся в изолированных лигах.</value>
+  </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>Настройки лиги</value>
+  </data>
+  <data name="Text_d40afb35e5e4" xml:space="preserve">
+    <value>Входит в собственный набор этой лиги. Перед отключением будет запрошено подтверждение.</value>
   </data>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>Выбранные режимы: {0}</value>
@@ -7138,6 +7168,9 @@
   </data>
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>Список PR GitHub недоступен. Локальные и полученные ветки доступны; можно ввести номер PR напрямую.</value>
+  </data>
+  <data name="Text_d8216570a4e4" xml:space="preserve">
+    <value>Только для изолированных лиг</value>
   </data>
   <data name="Text_d82d265d278c" xml:space="preserve">
     <value>Устанавливает или открывает опубликованный релиз LocalExile. Персонажи у него свои; те, что есть здесь, остаются в этой папке.</value>
@@ -7685,6 +7718,9 @@
   </data>
   <data xml:space="preserve" name="Text_e9182bbf5cec">
     <value>Удаление копии</value>
+  </data>
+  <data name="Text_e96c43c358a6" xml:space="preserve">
+    <value>Софткор</value>
   </data>
   <data xml:space="preserve" name="Text_e97166b54500">
     <value>enable</value>

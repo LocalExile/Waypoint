@@ -234,6 +234,9 @@
   <data name="Text_06c07d364810" xml:space="preserve">
     <value>Your characters can't come yet</value>
   </data>
+  <data name="Text_06f8025705e4" xml:space="preserve">
+    <value>Without {0}, this league runs without the rules or content it is named for. Its characters stay as they are, and you can turn it back on.</value>
+  </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: not a whole number</value>
   </data>
@@ -2257,6 +2260,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_40ef19a35d79">
     <value>Stop completed.</value>
   </data>
+  <data name="Text_4109f096d29b" xml:space="preserve">
+    <value>{0} (not installed)</value>
+  </data>
   <data name="Text_4115d7cc67e2" xml:space="preserve">
     <value>Saves from before the database split go to data/saves.db, which this LocalExile does not use: its characters database is set elsewhere.</value>
   </data>
@@ -4200,6 +4206,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7d2f06d53231" xml:space="preserve">
     <value>Recheck requirements and refresh this setup, including client preparation. Close the game and stop servers first.</value>
   </data>
+  <data name="Text_7d457621ab87" xml:space="preserve">
+    <value>A league that came with this release can't be hidden or shown here: an update of LocalExile would undo it.</value>
+  </data>
   <data xml:space="preserve" name="Text_7d9eb7acb13e">
     <value>Close</value>
   </data>
@@ -5214,6 +5223,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9c384372f6be" xml:space="preserve">
     <value>Capture stopped. Existing files were kept.</value>
   </data>
+  <data name="Text_9c45a66aeb78" xml:space="preserve">
+    <value>This league lists a module that is not installed. LocalExile skips it. Untick it to take it off the list.</value>
+  </data>
   <data name="Text_9c508bc48078" xml:space="preserve">
     <value>Getting ready</value>
   </data>
@@ -5318,6 +5330,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9ecdfa3146b3" xml:space="preserve">
     <value>Nature and elements</value>
+  </data>
+  <data name="Text_9ee98bd65288" xml:space="preserve">
+    <value>{0} is made for an isolated league, whose characters and rewards never reach Standard. It can't be turned on in a league that leads to Standard.</value>
   </data>
   <data name="Text_9f088dbebd6c" xml:space="preserve">
     <value>Advanced</value>
@@ -6180,6 +6195,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b8f6fa5921eb" xml:space="preserve">
     <value>Give item needs Frida, a tool that talks to the running game. Waypoint can install it into this LocalExile folder. It takes about 180 MB, and some antivirus programs flag it.</value>
   </data>
+  <data name="Text_b8f92dd32433" xml:space="preserve">
+    <value>Create the league "{0}" in {1} mode? {2} Existing leagues and saves are preserved.</value>
+  </data>
   <data xml:space="preserve" name="Text_b9289f13fa7e">
     <value>Account name (3–32 letters, digits, _ or -)</value>
   </data>
@@ -6365,6 +6383,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_bfc5b531a3b4" xml:space="preserve">
     <value>Timed challenge</value>
+  </data>
+  <data name="Text_bfce30bdebb8" xml:space="preserve">
+    <value>Any installed module can be turned on here when what it needs is on. This league's own bundle stays on, and a module made for an isolated league stays in isolated leagues.</value>
   </data>
   <data name="Text_bffd26352bd5" xml:space="preserve">
     <value>You’ll be asked once before a closing preference is saved.</value>
@@ -6872,6 +6893,9 @@ Client: {2}</value>
   <data xml:space="preserve" name="Text_cf47dcf7cadf">
     <value>What this version manages</value>
   </data>
+  <data name="Text_cf53cb353693" xml:space="preserve">
+    <value>Without {0}, the new league has the mode of {1} but not its rules or content.</value>
+  </data>
   <data name="Text_cf5c6c0d1737" xml:space="preserve">
     <value>Exiting Waypoint leaves services running.</value>
   </data>
@@ -6992,8 +7016,14 @@ Client: {2}</value>
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>LocalExile {0} is already installed here.</value>
   </data>
+  <data name="Text_d3d0b33deb9f" xml:space="preserve">
+    <value>Any installed module can be turned on or off here when what it needs is on. Turning off this league's own bundle asks first, and a module made for an isolated league stays in isolated leagues.</value>
+  </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>League settings</value>
+  </data>
+  <data name="Text_d40afb35e5e4" xml:space="preserve">
+    <value>Part of this league's own bundle. Turning it off asks first.</value>
   </data>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>Selected modes: {0}</value>
@@ -7138,6 +7168,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>GitHub PR list unavailable. Local/fetched branches still work; enter a PR number to try it directly.</value>
+  </data>
+  <data name="Text_d8216570a4e4" xml:space="preserve">
+    <value>For isolated leagues only</value>
   </data>
   <data name="Text_d82d265d278c" xml:space="preserve">
     <value>Sets up or opens LocalExile's published release. It has its own characters; the ones you have here stay in this folder.</value>
@@ -7685,6 +7718,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_e9182bbf5cec">
     <value>Deleting backup</value>
+  </data>
+  <data name="Text_e96c43c358a6" xml:space="preserve">
+    <value>Softcore</value>
   </data>
   <data xml:space="preserve" name="Text_e97166b54500">
     <value>enable</value>
