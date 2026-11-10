@@ -355,7 +355,8 @@ turns on Developer Mode and Advanced mode, where this copy plays from Control, V
 and Waypoint no longer updates the copy by itself. Each is one click, so whoever was on the Latest side in Simple mode
 goes on either way; until they choose, nothing of theirs is changed. While the game or a server runs the page shows that
 and **Stop playing**, and the choice comes after. The parts of Simple mode's Play that belong to a source copy (the daily
-update, **Update now**, **Go back to the version you had**) are not reached any more.
+update, **Update now**, **Go back to the version you had**) are not reached any more, and its **Set up a new copy…**
+(another clone, for branches and pull requests) is Control's alone. **Change folder…** and **Run setup guide…** stay.
 
 - Both ways to Latest say first that Latest has LocalExile's newest changes, reviewed, but possibly less stable than the release.
 - **Release → Latest**: bring your characters? **Bring my characters** copies them in (the adapter's `ImportSaves`, as the guide's

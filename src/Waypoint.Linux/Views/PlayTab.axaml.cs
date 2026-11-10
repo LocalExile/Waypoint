@@ -104,6 +104,8 @@ partial class PlayTab : UserControl
         BehindText.Text = _behind is { } behind ? L.Text("{0} new change(s) in LocalExile since your version.", behind) : "";
         UpdateNowLink.IsEnabled = !AnythingRunning;
         RunSetupLink.IsEnabled = !busy && !AnythingRunning && !Checking;
+        // Another clone from source is Advanced mode's (Control has it): Simple mode plays the release.
+        NewCopyLink.IsVisible = !choose;
         GoBackLink.IsVisible = !choose && !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
         RemoveOldCard.IsVisible = !busy && !AnythingRunning && Replaced is not null;
         if (Replaced is { } replaced) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
