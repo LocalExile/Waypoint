@@ -201,7 +201,7 @@ public static class SetupSequence
     /// the client tables from client.db and live.ps1 extracts only what they still read.</summary>
     public static bool ExtractsForServers(string checkout)
     {
-        try { return Regex.IsMatch(File.ReadAllText(Path.Combine(checkout, "scripts", "dev", "extract-data.ps1")), @"\[switch\]\$Servers", RegexOptions.IgnoreCase); }
+        try { return Regex.IsMatch(File.ReadAllText(Path.Combine(checkout, "scripts", "dev", "extract-data.ps1")), @"\[switch\]\$Servers\b", RegexOptions.IgnoreCase); }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
     }
 

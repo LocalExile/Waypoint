@@ -139,11 +139,15 @@ way back beyond the saves' copy. The next Play extracts whatever game data the n
 ## Build and run
 
 ```powershell
-dotnet publish src/Waypoint -o .     # one Waypoint.exe in this repository's root (git-ignored)
-.\Waypoint.exe                       # or double-click it
-dotnet run --project src/Waypoint    # while working on it
-dotnet test Waypoint.slnx            # the tests
+dotnet publish src/Waypoint -o publish   # one Waypoint.exe in publish\ (git-ignored)
+.\publish\Waypoint.exe                   # or double-click it
+dotnet run --project src/Waypoint        # while working on it
+dotnet test Waypoint.slnx                # the tests
 ```
+
+Publish into a folder of its own, never `-o .`: the output folder reaches Launcher.Core too, and the .NET SDK leaves every
+file under it out of a project's sources, so with the repository's root nothing of Launcher.Core is compiled and the build
+fails with `CS0246: The type or namespace name 'Launcher' could not be found`.
 
 To update it after a pull or a change, close Waypoint first (a running `Waypoint.exe` is locked and the publish fails to
 replace it; leave the servers and the game running if you want), run the same `dotnet publish`, and start it again.

@@ -128,8 +128,8 @@ Waypoint. The servers and the game keep running. **What's new** opens the releas
 ```powershell
 git clone <this repository> Waypoint
 cd Waypoint
-dotnet publish src/Waypoint -o .
-.\Waypoint.exe
+dotnet publish src/Waypoint -o publish
+.\publish\Waypoint.exe
 ```
 
 A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
