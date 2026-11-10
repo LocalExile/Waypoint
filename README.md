@@ -81,6 +81,10 @@ A new player starts in **Simple mode**: **Play**, **Mods**, **Backups**, **Accou
 and **Logs** one click away on Tools. Simple mode plays the release. A source checkout is always shown in **Advanced mode**: it
 plays from **Control** and its user updates it from **Versions**. Waypoint never updates a source checkout by itself.
 
+The folder Waypoint works on is at the top of the sidebar. A click lists your other LocalExile folders, a release or any
+number of source checkouts, and choosing one opens it: no file moves, and Waypoint asks before it stops anything.
+**Add a folder you already have…** puts another one in the list.
+
 Source checkouts also show **Modules** and **Leagues**, with editing enabled only when the checkout exposes the supported
 settings and league-choice hooks. The league card's name, description and mode links have a read-only preview.
 

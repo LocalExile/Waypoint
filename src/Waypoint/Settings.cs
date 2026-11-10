@@ -16,6 +16,10 @@ sealed class Settings
     /// the last of each Waypoint ran on.</summary>
     public string? ReleaseFolder { get; set; }
     public string? LatestFolder { get; set; }
+    /// <summary>Every LocalExile folder Waypoint has run on or its user added, in the order they came: the sidebar's list
+    /// (<see cref="FolderList"/>). Paths only; what each folder is now is read from it. Empty in settings saved before the
+    /// list, where the three folders above stand in.</summary>
+    public List<string> KnownFolders { get; set; } = [];
     /// <summary>Waypoint's data folder (operation logs, the adapter's scripts, backups unless <see cref="BackupsFolder"/> says
     /// otherwise); empty: the default (<see cref="SettingsStore.DefaultDataDirectory"/>). Settings → Folders and tools.</summary>
     public string? DataFolder { get; set; }
@@ -48,6 +52,8 @@ sealed class Settings
     /// <summary>The source copy whose characters wait to come to the release: noted when its user leaves it for the release,
     /// and offered on the release's Play page (<see cref="Editions.BringToReleaseAsync"/>).</summary>
     public string? BringFrom { get; set; }
+    /// <summary>Source copies whose characters are not offered on the way to a release: "Don't offer again" on that card.</summary>
+    public List<string> NoBringFrom { get; set; } = [];
     /// <summary>On a release install, a newer release shows the update card. On a source copy it was the switch of Play's
     /// daily update (<see cref="CheckoutUpdates"/>), which is no longer reached, as the three settings below.</summary>
     public bool KeepUpToDate { get; set; } = true;

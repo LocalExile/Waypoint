@@ -507,6 +507,9 @@
   <data name="Text_0e47f09a748f" xml:space="preserve">
     <value>Приблизить</value>
   </data>
+  <data name="Text_0e570ca6fabe" xml:space="preserve">
+    <value>Исходный код</value>
+  </data>
   <data name="Text_0e70993a9229" xml:space="preserve">
     <value>Точка события не гарантирует его появления.</value>
   </data>
@@ -674,6 +677,9 @@
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>Репозиторий</value>
+  </data>
+  <data name="Text_13da3c149ab9" xml:space="preserve">
+    <value>Найти…</value>
   </data>
   <data name="Text_13e5b221168b" xml:space="preserve">
     <value>отстаёт от LocalExile на {0} коммит(ов)</value>
@@ -1032,6 +1038,9 @@
   </data>
   <data name="Text_1f08634207ab" xml:space="preserve">
     <value>Показать журнал операций</value>
+  </data>
+  <data name="Text_1f14def65c07" xml:space="preserve">
+    <value>{0}, {1}, используется</value>
   </data>
   <data name="Text_1f27728ea921" xml:space="preserve">
     <value>Неизвестная связь режима</value>
@@ -1480,6 +1489,9 @@
   </data>
   <data name="Text_29f2cb4814a9" xml:space="preserve">
     <value>Подготовить клиент</value>
+  </data>
+  <data name="Text_2a0063587f69" xml:space="preserve">
+    <value>Этой папки нет на месте</value>
   </data>
   <data name="Text_2a0a15cf528f" xml:space="preserve">
     <value>не удалось закрыть клиент: {0}</value>
@@ -2043,6 +2055,9 @@
   <data name="Text_3ac1a9ec4fa7" xml:space="preserve">
     <value>Валюта</value>
   </data>
+  <data name="Text_3ad1ce6fedba" xml:space="preserve">
+    <value>Waypoint не может найти вашу папку LocalExile</value>
+  </data>
   <data xml:space="preserve" name="Text_3ad8589795b3">
     <value>Проверить в игре</value>
   </data>
@@ -2227,6 +2242,9 @@
   <data name="Text_400d65cb7299" xml:space="preserve">
     <value>Остановить и обновить</value>
   </data>
+  <data name="Text_4011b69007cd" xml:space="preserve">
+    <value>Не удаётся найти {0}: возможно, папку переместили или переименовали, либо её диск не подключён. Укажите, где она теперь, чтобы вернуть её в список, или уберите её из списка. В самой папке в любом случае ничего не изменится.</value>
+  </data>
   <data name="Text_4033ce159a87" xml:space="preserve">
     <value>Случайная добыча</value>
   </data>
@@ -2316,6 +2334,9 @@
   </data>
   <data xml:space="preserve" name="Text_437d2a208b63">
     <value>Локальный профиль использует {0}</value>
+  </data>
+  <data name="Text_43b74e5aab5d" xml:space="preserve">
+    <value>{0}, {1}, не найдена</value>
   </data>
   <data name="Text_43e894b938d6" xml:space="preserve">
     <value>{0} — не индекс модов версии 1</value>
@@ -2986,6 +3007,9 @@
   <data name="Text_581dec3ed74b" xml:space="preserve">
     <value>ПОСЛЕДНИЙ КОММИТ</value>
   </data>
+  <data name="Text_5821caa2408b" xml:space="preserve">
+    <value>Укажите, где папка находится сейчас</value>
+  </data>
   <data xml:space="preserve" name="Text_5841335d26d5">
     <value>Автоматические копии выключены. Перед изменениями, которые может понадобиться отменить, создайте копию вручную на странице резервных копий.</value>
   </data>
@@ -3020,6 +3044,9 @@
   </data>
   <data name="Text_59546c79643c" xml:space="preserve">
     <value>Закрыть: {0}</value>
+  </data>
+  <data name="Text_595d778513d6" xml:space="preserve">
+    <value>Waypoint остаётся в этой папке. Папка мастера настройки, {0}, добавлена в список папок вверху боковой панели: выберите её там, чтобы открыть.</value>
   </data>
   <data xml:space="preserve" name="Text_59976865a56d">
     <value>Установите .NET 10 SDK; проверка: dotnet --list-sdks</value>
@@ -3068,6 +3095,9 @@
   </data>
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>Связи карточек лиг образуют цикл.</value>
+  </data>
+  <data name="Text_5ae573789edf" xml:space="preserve">
+    <value>Настроить заново…</value>
   </data>
   <data name="Text_5aeae0f3a80d" xml:space="preserve">
     <value>Счётчики .NET:</value>
@@ -3894,6 +3924,9 @@
   <data xml:space="preserve" name="Text_75081b593d15">
     <value>Отключён</value>
   </data>
+  <data name="Text_750af77aa42e" xml:space="preserve">
+    <value>Используется</value>
+  </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>Всё</value>
   </data>
@@ -3965,6 +3998,9 @@
   </data>
   <data name="Text_779a193c6fad" xml:space="preserve">
     <value>Waypoint не может записывать в {0}: {1}</value>
+  </data>
+  <data name="Text_77a53d9641e6" xml:space="preserve">
+    <value>Убрать из списка</value>
   </data>
   <data name="Text_77dc2a655f8e" xml:space="preserve">
     <value>Цветок</value>
@@ -4071,6 +4107,9 @@
   <data name="Text_7ac5b6d5456b" xml:space="preserve">
     <value>Показать сведения о службе</value>
   </data>
+  <data name="Text_7ad35008821d" xml:space="preserve">
+    <value>Добавить имеющуюся папку…</value>
+  </data>
   <data xml:space="preserve" name="Text_7af959bccf93">
     <value>Скачать SDK</value>
   </data>
@@ -4109,6 +4148,9 @@
   </data>
   <data name="Text_7bacc99e13ee" xml:space="preserve">
     <value>Найден только клиент {0}, поэтому эта копия перейдёт на последний LocalExile для него.</value>
+  </data>
+  <data name="Text_7bc17e5802cf" xml:space="preserve">
+    <value>Этой папки нет на месте: возможно, её переместили или переименовали, либо её диск не подключён. Ничего не изменено.</value>
   </data>
   <data name="Text_7bf6ecedbcdb" xml:space="preserve">
     <value>Карта лабиринта</value>
@@ -5009,6 +5051,9 @@
   <data name="Text_98210ede903e" xml:space="preserve">
     <value>Установите Node.js (руководство по настройке LocalExile использует Node 24) и нажмите «Проверить снова»: Waypoint заново читает PATH, так что перезапуск не нужен.</value>
   </data>
+  <data name="Text_9825db2bf982" xml:space="preserve">
+    <value>Исходный код, {0}</value>
+  </data>
   <data name="Text_9839ef01de05" xml:space="preserve">
     <value>Другие инструменты модов</value>
   </data>
@@ -5585,6 +5630,9 @@
   </data>
   <data xml:space="preserve" name="Text_a7626cdbe094">
     <value>Мод без исходников</value>
+  </data>
+  <data name="Text_a769ffad7e7f" xml:space="preserve">
+    <value>Выберите папку LocalExile, которая уже есть на этом компьютере: релиз или копию его исходного кода. Waypoint откроет её и оставит в этом списке.</value>
   </data>
   <data name="Text_a76e13b98392" xml:space="preserve">
     <value>Вернуть</value>
@@ -6483,6 +6531,9 @@
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>Запомнить для следующего раза</value>
   </data>
+  <data name="Text_c53d2d6c95e3" xml:space="preserve">
+    <value>Нажмите, чтобы увидеть другие папки LocalExile</value>
+  </data>
   <data name="Text_c53e89986e05" xml:space="preserve">
     <value>Изменения сразу применяются к рамке флага только в Waypoint. Оригинальное игровое изображение остаётся без изменений.</value>
   </data>
@@ -6833,6 +6884,9 @@
   <data xml:space="preserve" name="Text_cfa63e97e7e5">
     <value>Включить мод</value>
   </data>
+  <data name="Text_cff965236d80" xml:space="preserve">
+    <value>Папка LocalExile: {0}, {1}</value>
+  </data>
   <data name="Text_d00aae6b7fbf" xml:space="preserve">
     <value>Магазин</value>
   </data>
@@ -7045,6 +7099,9 @@
   </data>
   <data name="Text_d7329bd6c77b" xml:space="preserve">
     <value>Не удалось безопасно прочитать текущие настройки. Ничего не изменено.</value>
+  </data>
+  <data name="Text_d75559811285" xml:space="preserve">
+    <value>Убрать эту папку из списка. Сама папка и её файлы останутся на месте.</value>
   </data>
   <data name="Text_d762e323adff" xml:space="preserve">
     <value>Игровые модули</value>
@@ -7464,6 +7521,9 @@
   <data name="Text_e3a640bd65b5" xml:space="preserve">
     <value>Выберите модули для каждой лиги. Изменения состава требуют перезапуска серверов.</value>
   </data>
+  <data name="Text_e3aaf711bc78" xml:space="preserve">
+    <value>Другие ваши папки LocalExile</value>
+  </data>
   <data name="Text_e3b7b1ed944d" xml:space="preserve">
     <value>LocalExile в виде релиза: проверенный, обновляется, когда вы согласитесь.</value>
   </data>
@@ -7559,6 +7619,9 @@
   </data>
   <data name="Text_e6deff541223" xml:space="preserve">
     <value>LocalExile нужны ещё некоторые данные. Укажите их, завершив настройку.</value>
+  </data>
+  <data name="Text_e71b40130672" xml:space="preserve">
+    <value>Открыть {0}</value>
   </data>
   <data name="Text_e721e319e5f9" xml:space="preserve">
     <value>Амулет</value>
@@ -7900,7 +7963,7 @@
     <value>Гриб</value>
   </data>
   <data name="Text_f072c8faa039" xml:space="preserve">
-    <value>Выпуск {0}</value>
+    <value>Релиз {0}</value>
   </data>
   <data name="Text_f082ac980336" xml:space="preserve">
     <value>Компас</value>
@@ -7937,6 +8000,9 @@
   </data>
   <data name="Text_f1fd5ed417a0" xml:space="preserve">
     <value>МБ, рабочий набор</value>
+  </data>
+  <data name="Text_f2042b0b650a" xml:space="preserve">
+    <value>Открывает мастер настройки, который подготовит LocalExile в выбранной вами папке</value>
   </data>
   <data name="Text_f24116ae1425" xml:space="preserve">
     <value>Добро пожаловать в Waypoint</value>

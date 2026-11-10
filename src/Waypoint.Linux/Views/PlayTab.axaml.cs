@@ -25,10 +25,8 @@ partial class PlayTab : UserControl
     internal event Action? SetupRequested;
     /// <summary>The window opens the logs.</summary>
     internal event Action? DetailsRequested;
-    /// <summary>The player wants another folder.</summary>
-    internal event Action? ChangeFolderRequested;
-    /// <summary>The player wants a new git copy set up.</summary>
-    internal event Action? NewCopyRequested;
+    /// <summary>The Latest card's "Switch to the release…": the window goes there, with that switch's question.</summary>
+    internal event Action? ReleaseRequested;
     /// <summary>The Latest card's "Use Advanced mode".</summary>
     internal event Action? AdvancedRequested;
     /// <summary>The checkout moved: what reads it reads it again.</summary>
@@ -50,7 +48,6 @@ partial class PlayTab : UserControl
         _shared = shared;
         if (!Repo.IsInstall) _ = LookForOlderAsync();
         _control = control;
-        Edition.Attach(shared);
         shared.Monitor.Sampled += _ => Dispatcher.UIThread.Post(Show);
         shared.Workspace.Changed += () => Dispatcher.UIThread.Post(Show);
         shared.Workspace.Changed += () => Dispatcher.UIThread.Post(async () => await LookForOlderAsync());
@@ -86,7 +83,6 @@ partial class PlayTab : UserControl
         bool busy = _working || _shared.IsLiveRunning;
         // Simple mode plays the release: on a source copy this page asks for the release or Advanced mode instead of Play.
         bool choose = Editions.MustChoose(S);
-        FolderText.Text = Environment.CurrentDirectory;
         Headline.Text = _stage?.Invoke() ?? (GameRunning ? L.Text("The game is running")
             : choose ? L.Text("Simple mode plays the release")
             : Checking ? L.Text("Getting ready")
@@ -104,8 +100,6 @@ partial class PlayTab : UserControl
         BehindText.Text = _behind is { } behind ? L.Text("{0} new change(s) in LocalExile since your version.", behind) : "";
         UpdateNowLink.IsEnabled = !AnythingRunning;
         RunSetupLink.IsEnabled = !busy && !AnythingRunning && !Checking;
-        // Another clone from source is Advanced mode's (Control has it): Simple mode plays the release.
-        NewCopyLink.IsVisible = !choose;
         GoBackLink.IsVisible = !choose && !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
         // While something runs the choice waits, and "Stop playing" is what shows.
         LatestCard.IsVisible = choose && !busy && !AnythingRunning;
@@ -334,15 +328,8 @@ partial class PlayTab : UserControl
         }
     }
 
-    void ChangeFolderClicked(object? sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
-
-    void NewCopyClicked(object? sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
-
-    /// <summary>As the release's view: the switch again when Developer Mode changes.</summary>
-    internal void ShowOffers() => Edition.Refresh();
-
-    // The choice in place of Play (Editions.MustChoose). The release is the switch's own way there, with its question about characters.
-    void GuideReleaseClicked(object? sender, RoutedEventArgs e) => Edition.Choose(release: true);
+    // The choice in place of Play (Editions.MustChoose). The release has its own question about characters (Editions.PrepareAsync).
+    void GuideReleaseClicked(object? sender, RoutedEventArgs e) => ReleaseRequested?.Invoke();
 
     void GuideAdvancedClicked(object? sender, RoutedEventArgs e) => AdvancedRequested?.Invoke();
 

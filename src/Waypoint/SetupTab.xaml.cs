@@ -100,8 +100,10 @@ public partial class SetupTab : UserControl
             _shared.Settings.ServerPath = saved;
             _shared.Settings.Save();
             if (await App.SwitchServerAsync(owner, _shared, checkout, createAccount: guide.CreateAccountNext)) return;
+            // The guide's folder is in the sidebar's list from now on, which is the way to it.
+            if (FolderList.Add(_shared.Settings, checkout)) _shared.Settings.Save();
             Dialog.Tell(owner, DialogKind.Info, L.Text("The folder was not changed"),
-                L.Text("Waypoint stays on this folder. The setup guide's folder is {0}: Change folder… on Play, or Change… on Control, opens it.", checkout));
+                L.Text("Waypoint stays on this folder. The setup guide's folder, {0}, is in the folder list at the top of the sidebar: choose it there to open it.", checkout));
             elsewhere = true;
         }
         SetupFinished?.Invoke();

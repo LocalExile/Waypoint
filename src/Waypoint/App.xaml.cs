@@ -42,6 +42,16 @@ public partial class App : Application
             var options = AppStartupOptions.Parse(e.Args, Environment.CurrentDirectory);
             if (!options.AllowMultiple && !await BecomePrimary(options)) { Shutdown(0); return; }
             string? root = Repo.Find(options.RepositoryPath ?? Settings.ServerPath, Environment.CurrentDirectory);
+            // The saved folder is not there any more (moved, renamed, a drive not connected). That is not a first start:
+            // Waypoint says so and offers the ways on, and only "Set up again…" leads to the guide below.
+            if (root is null && options.RepositoryPath is null && Settings.ServerPath is { Length: > 0 } gone)
+            {
+                SessionLog.Current?.Write("The saved folder is not there: " + gone);
+                var question = new MissingFolderDialog(gone, [.. FolderList.Read(Settings, "").Where(folder => folder.Kind != FolderKind.Missing)]);
+                if (question.ShowDialog() != true) { Shutdown(0); return; }
+                root = question.Chosen;
+                SessionLog.Current?.Write(root is null ? "Answer: the setup guide" : "Answer: " + root);
+            }
             if (root is null)
             {
                 var guide = new SetupWizard(Settings, null, null);
@@ -182,9 +192,11 @@ public partial class App : Application
     /// user's word (<see cref="Editions.ReadyToLeaveAsync"/>; <paramref name="asked"/>: the caller has seen to it), and the
     /// folder is saved only once nothing can refuse the close: an operation in progress is the one thing that does, and a
     /// folder saved before a refused close would open at the next start instead. <paramref name="createAccount"/>: the
-    /// next start opens the Create account dialog, noted only with the folder. True when Waypoint is starting again;
-    /// false when everything is as it was.</summary>
-    internal static async Task<bool> SwitchServerAsync(Window owner, Shared shared, string? chosen = null, bool asked = false, bool createAccount = false)
+    /// next start opens the Create account dialog, noted only with the folder. <paramref name="before"/>: a last question
+    /// of the caller's, asked once what ran has been seen to; false gives the change up. True when Waypoint is starting
+    /// again; false when everything is as it was.</summary>
+    internal static async Task<bool> SwitchServerAsync(Window owner, Shared shared, string? chosen = null, bool asked = false, bool createAccount = false,
+        Func<Task<bool>>? before = null)
     {
         // One change of folder at a time: the first is stopping what runs.
         if (shared.Leaving) return false;
@@ -200,9 +212,11 @@ public partial class App : Application
                 Dialog.Tell(owner, DialogKind.Info, L.Text("{0} is still running", shared.BusyWith), L.Text("Wait for the current operation before changing checkout."));
                 return false;
             }
+            if (before is not null && !await before()) return false;
             var settings = shared.Settings;
             shared.Logs.Write($"change of folder: from {Environment.CurrentDirectory} to {root}", Severity.Info);
-            Editions.LeftFor(settings, root);
+            Editions.LeftFor(settings, root, Repo.IsInstall ? null : Environment.CurrentDirectory);
+            FolderList.Add(settings, root);
             settings.ServerPath = root;
             if (createAccount) settings.CreateAccountOnStart = true;
             settings.Save();

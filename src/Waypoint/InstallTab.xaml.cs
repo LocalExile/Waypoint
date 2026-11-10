@@ -34,10 +34,6 @@ public partial class InstallTab : UserControl
     internal event Action? Updated;
     /// <summary>The window opens the logs.</summary>
     internal event Action? DetailsRequested;
-    /// <summary>The player wants another folder.</summary>
-    internal event Action? ChangeFolderRequested;
-    /// <summary>The player wants a new git copy set up.</summary>
-    internal event Action? NewCopyRequested;
 
     public InstallTab() => InitializeComponent();
 
@@ -51,8 +47,6 @@ public partial class InstallTab : UserControl
         if (!Repo.IsInstall) return;
         _ = LookForOlderAsync();
         Offer.Attach(shared.Settings);
-        Edition.Attach(shared);
-        ShowOffers();
         Profile.Attach(shared);
         StepList.ItemsSource = _steps;
         shared.Monitor.Sampled += _ => Dispatcher.BeginInvoke(Show);
@@ -109,7 +103,6 @@ public partial class InstallTab : UserControl
         DetailsLink.Visibility = _failed && !busy ? Visibility.Visible : Visibility.Collapsed;
         // A step that writes the client or the keys is not cut short.
         StopLink.Visibility = !_stopping && !LocalExileReleases.MustFinish(_stage) && (_working || AnythingRunning) ? Visibility.Visible : Visibility.Collapsed;
-        FolderText.Text = Folder;
         Elapsed.Text = _working ? L.Text("Running for {0}", _clock.Elapsed.ToString(@"m\:ss")) : "";
         VersionText.Text = LocalExileReleases.Installed(Folder) is { } version ? L.Text("LocalExile {0}", version) : "";
         Offer.Show(!busy && !AnythingRunning && !needsSetup);
@@ -410,19 +403,6 @@ public partial class InstallTab : UserControl
         _stopping = _working;
         _headline = _working ? _headline : null;
         Show();
-    }
-
-    void ChangeFolderClicked(object sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
-
-    void NewCopyClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
-
-    /// <summary>The Latest side's two offers, the switch and the copy from source, only for those who asked
-    /// (<see cref="Editions.Offered"/>). The setup guide below stays for everyone.</summary>
-    internal void ShowOffers()
-    {
-        if (_shared is null) return;
-        Edition.Refresh();
-        NewCopyLink.Visibility = Editions.Offered(_shared.Settings) ? Visibility.Visible : Visibility.Collapsed;
     }
 
     void DetailsClicked(object sender, RoutedEventArgs e) => DetailsRequested?.Invoke();

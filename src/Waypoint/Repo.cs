@@ -53,14 +53,17 @@ static class Repo
 
     /// <summary>The checkout's branch, from its HEAD file (no git process): a short commit when detached, null when the
     /// checkout has none (not a git checkout, or unreadable).</summary>
-    public static string? Branch()
+    public static string? Branch() => BranchIn(".");
+
+    /// <summary>As <see cref="Branch"/>, of the checkout in <paramref name="folder"/>: another folder of the list.</summary>
+    public static string? BranchIn(string folder)
     {
         try
         {
-            // A worktree's .git is a file naming its git directory.
-            string git = ".git";
+            // A worktree's .git is a file naming its git directory, which may be written relative to the worktree.
+            string git = Path.Combine(folder, ".git");
             if (File.Exists(git) && File.ReadAllText(git).Trim() is var link && link.StartsWith("gitdir:", StringComparison.Ordinal))
-                git = link["gitdir:".Length..].Trim();
+                git = Path.Combine(folder, link["gitdir:".Length..].Trim());
             string head = Path.Combine(git, "HEAD");
             return File.Exists(head) ? BranchOf(File.ReadAllText(head)) : null;
         }

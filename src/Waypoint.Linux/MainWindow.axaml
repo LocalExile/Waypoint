@@ -1,10 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:l="clr-namespace:Waypoint"
         x:Class="Waypoint.MainWindow" Title="Waypoint" Width="1180" Height="760" MinWidth="820" MinHeight="520">
   <Grid ColumnDefinitions="210,*">
     <Border Background="{DynamicResource Shell.Sidebar}">
       <DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="Waypoint" FontSize="21" FontWeight="Bold" Margin="16,14,0,12" Foreground="{DynamicResource Shell.SidebarStrong}" />
+        <!-- The LocalExile folder everything below works on, and the way to the others (FolderPicker). -->
+        <l:FolderPicker x:Name="Folders" DockPanel.Dock="Top" Margin="10,0,10,10" />
         <TextBlock x:Name="VersionText" DockPanel.Dock="Bottom" Margin="16,0,0,10" FontSize="11" Foreground="{DynamicResource Shell.SidebarText}" />
         <Border x:Name="ModeSwitch" DockPanel.Dock="Bottom" Margin="12,0,12,10" IsVisible="False">
           <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">

@@ -107,6 +107,7 @@ public partial class MainWindow : Window
         ConsoleView.Attach(_shared);
         ToolsView.Attach(_shared);
         SettingsView.Attach(_shared);
+        Folders.Attach(_shared);
         Lights.ItemsSource = _lights;
 
         _tray.ShowRequested += ShowFromTray;
@@ -167,13 +168,13 @@ public partial class MainWindow : Window
         {
             _exileRelease = null;
             ExileUpdateBar.Visibility = Visibility.Collapsed;
+            // The release in this folder is another version now.
+            Folders.ShowCurrent();
         };
         InstallView.DetailsRequested += () => ShowSection(LogsView);
         ReleasesView.CheckRequested += () => _ = CheckForUpdates(manual: true);
-        PlayView.ChangeFolderRequested += Setup.ChangeFolder;
-        InstallView.ChangeFolderRequested += Setup.ChangeFolder;
         ReleasesView.ChangeFolderRequested += Setup.ChangeFolder;
-        PlayView.NewCopyRequested += Setup.SetUpNewCopy;
+        Folders.NewCopyRequested += Setup.SetUpNewCopy;
         // The choice page's "Use Advanced mode": this copy is shown in Advanced mode from now on. The choice made on a
         // release (Developer Mode, Simple or Advanced) is not touched.
         PlayView.AdvancedRequested += () =>
@@ -186,20 +187,15 @@ public partial class MainWindow : Window
         // Simple mode's Tools page leads to the two sections its list leaves out.
         ToolsView.ConsoleRequested += () => ShowSection(ConsoleView);
         ToolsView.LogsRequested += () => ShowSection(LogsView);
-        // Simple mode's Release | Latest switch, when the other side is not set up yet.
-        foreach (var edition in new[] { PlayView.Edition, InstallView.Edition })
-        {
-            edition.ReleaseSetupRequested += Setup.SetUpRelease;
-            edition.LatestSetupRequested += Setup.SetUpLatest;
-        }
-        InstallView.NewCopyRequested += Setup.SetUpNewCopy;
+        // The choice page's "Switch to the release…".
+        PlayView.ReleaseRequested += () => GoTo(release: true);
         ReleasesView.NewCopyRequested += Setup.SetUpNewCopy;
         Control.NewCopyRequested += Setup.SetUpNewCopy;
         // The crafter needs a source copy: the Latest one Waypoint knows, or a new one through the guide (its tested version).
         ToolsView.NewCopyRequested += () =>
         {
             if (Editions.Folder(_shared.Settings, release: false) is null) Setup.SetUpNewCopy();
-            else InstallView.Edition.Choose(release: false);
+            else GoTo(release: false);
         };
         Control.InstallPlayRequested += () =>
         {
@@ -285,10 +281,19 @@ public partial class MainWindow : Window
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
         ToolsView.ShowMode(simple: !advanced);
-        // Developer Mode also decides whether Simple mode offers the Latest side.
-        InstallView.ShowOffers();
-        PlayView.ShowOffers();
         SettingsView.ShowMode();
+    }
+
+    /// <summary>To the release Waypoint remembers, or to its source copy ("Latest"), with the one question of that switch
+    /// (<see cref="Editions.PrepareAsync"/>); the setup guide when there is none yet. The sidebar's list is the everyday
+    /// way between folders: this is for the two places that name a side, not a folder.</summary>
+    async void GoTo(bool release)
+    {
+        var (step, folder) = await Editions.PrepareAsync(_shared, release, (kind, title, message, buttons) => Dialog.Show(this, kind, title, message, null, buttons));
+        if (step == EditionStep.SetUpRelease) Setup.SetUpRelease();
+        else if (step == EditionStep.SetUpLatest) Setup.SetUpLatest();
+        // PrepareAsync has made sure nothing runs.
+        else if (step == EditionStep.Switch) await App.SwitchServerAsync(this, _shared, folder, asked: true);
     }
 
     /// <summary>The sidebar's switch, which only a release shows. ShowMode also sets these buttons, on a source copy to
@@ -305,6 +310,7 @@ public partial class MainWindow : Window
     void CheckoutMoved()
     {
         BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");
+        Folders.ShowCurrent();
         _ = Control.RefreshSetup();
         _ = _shared.Workspace.RefreshAsync();
     }
