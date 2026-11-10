@@ -900,6 +900,9 @@
   <data name="Text_1a6192ed0ec5" xml:space="preserve">
     <value>Start on the newest changes. You update the copy yourself from Versions.</value>
   </data>
+  <data name="Text_1a6e5743a0b2" xml:space="preserve">
+    <value>Any installed module can be turned on or off here when what it needs is on. Turning off this league's own bundle asks first, a module made for an isolated league stays in isolated leagues, and the rules of a game mode go with that mode's leagues and with leagues made in Waypoint.</value>
+  </data>
   <data name="Text_1a6ff8f22cbb" xml:space="preserve">
     <value>Start when you are ready. You can stop at any point, and the game can stay closed the whole time.</value>
   </data>
@@ -1174,6 +1177,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_22695d9b9731" xml:space="preserve">
     <value>Not read yet.</value>
   </data>
+  <data name="Text_226cc5e45c9b" xml:space="preserve">
+    <value>For the whole mode, go back and choose {0} as the game mode.</value>
+  </data>
   <data name="Text_2288c47a9839" xml:space="preserve">
     <value>Errors and warnings only</value>
   </data>
@@ -1408,6 +1414,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Get Node.js</value>
+  </data>
+  <data name="Text_282e649055dc" xml:space="preserve">
+    <value>{0} holds the rules of a game mode. The new league gets them without that mode's own skills, vendors and quest rewards, and the game does not show it as a league of that mode.</value>
   </data>
   <data name="Text_284c52af98f1" xml:space="preserve">
     <value>game running</value>
@@ -1943,6 +1952,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Waypoint mint</value>
+  </data>
+  <data name="Text_378a5666fe38" xml:space="preserve">
+    <value>Rules of a game mode</value>
   </data>
   <data name="Text_37a8eec1ce19" xml:space="preserve">
     <value>default</value>
@@ -3743,6 +3755,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>Eldritch implicits</value>
+  </data>
+  <data name="Text_6f1f1b23d3fd" xml:space="preserve">
+    <value>Here it gives the rules of a game mode only, without that mode's own skills, vendors and quest rewards.</value>
   </data>
   <data name="Text_6f20e73b9302" xml:space="preserve">
     <value>Prefixes</value>
@@ -6675,6 +6690,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   <data name="Text_c87d285421d0" xml:space="preserve">
     <value>The tested version could not be chosen (git exit {0}).</value>
   </data>
+  <data name="Text_c881ce2fb9a6" xml:space="preserve">
+    <value>{0} holds the rules of a game mode. It can be turned on for a league made in Waypoint that starts from one of: {1}.</value>
+  </data>
   <data name="Text_c888f98938da" xml:space="preserve">
     <value>{0} d ago</value>
   </data>
@@ -7015,9 +7033,6 @@ Client: {2}</value>
   </data>
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>LocalExile {0} is already installed here.</value>
-  </data>
-  <data name="Text_d3d0b33deb9f" xml:space="preserve">
-    <value>Any installed module can be turned on or off here when what it needs is on. Turning off this league's own bundle asks first, and a module made for an isolated league stays in isolated leagues.</value>
   </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>League settings</value>
@@ -7559,6 +7574,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e3b7b1ed944d" xml:space="preserve">
     <value>LocalExile as released: tested, and updated when you accept.</value>
+  </data>
+  <data name="Text_e3ba7472396e" xml:space="preserve">
+    <value>{0} holds the rules of a game mode. Turned on here, they apply to every character in this league from the next server start, without that mode's own skills, vendors and quest rewards, and the game still shows the league as it is. Untick it to go back.</value>
   </data>
   <data name="Text_e3ebaa16dd9d" xml:space="preserve">
     <value>Not found</value>
@@ -8142,6 +8160,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_f4ed6bccdcb2" xml:space="preserve">
     <value>Delirium</value>
+  </data>
+  <data name="Text_f4f3bad65021" xml:space="preserve">
+    <value>{0} holds the rules of a game mode, and goes with the leagues of that mode.</value>
   </data>
   <data name="Text_f4f5dca37b59" xml:space="preserve">
     <value>{0} of {1} accounts</value>

@@ -900,6 +900,9 @@
   <data name="Text_1a6192ed0ec5" xml:space="preserve">
     <value>Начать с последних изменений. Копию вы обновляете сами в разделе «Версии».</value>
   </data>
+  <data name="Text_1a6e5743a0b2" xml:space="preserve">
+    <value>Здесь можно включить или выключить любой установленный модуль, если включено всё, что ему требуется. Перед отключением собственного набора этой лиги Waypoint спросит подтверждение, модуль, созданный для изолированной лиги, остаётся в изолированных лигах, а правила режима игры относятся к лигам этого режима и к лигам, созданным в Waypoint.</value>
+  </data>
   <data name="Text_1a6ff8f22cbb" xml:space="preserve">
     <value>Начните, когда будете готовы. Остановиться можно в любой момент, а игру всё это время можно не запускать.</value>
   </data>
@@ -1174,6 +1177,9 @@
   <data name="Text_22695d9b9731" xml:space="preserve">
     <value>Ещё не прочитано.</value>
   </data>
+  <data name="Text_226cc5e45c9b" xml:space="preserve">
+    <value>Чтобы получить режим целиком, вернитесь назад и выберите «{0}» в поле «Режим игры».</value>
+  </data>
   <data name="Text_2288c47a9839" xml:space="preserve">
     <value>Только ошибки и предупреждения</value>
   </data>
@@ -1408,6 +1414,9 @@
   </data>
   <data xml:space="preserve" name="Text_282b08d0523c">
     <value>Скачать Node.js</value>
+  </data>
+  <data name="Text_282e649055dc" xml:space="preserve">
+    <value>{0} содержит правила режима игры. Новая лига получит их без собственных умений, торговцев и наград за задания этого режима, и игра не будет показывать её как лигу этого режима.</value>
   </data>
   <data name="Text_284c52af98f1" xml:space="preserve">
     <value>игра запущена</value>
@@ -1943,6 +1952,9 @@
   </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Мятная Waypoint</value>
+  </data>
+  <data name="Text_378a5666fe38" xml:space="preserve">
+    <value>Правила режима игры</value>
   </data>
   <data name="Text_37a8eec1ce19" xml:space="preserve">
     <value>основная</value>
@@ -3743,6 +3755,9 @@
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>Жуткие собственные свойства</value>
+  </data>
+  <data name="Text_6f1f1b23d3fd" xml:space="preserve">
+    <value>Здесь он даёт только правила режима игры, без собственных умений, торговцев и наград за задания этого режима.</value>
   </data>
   <data name="Text_6f20e73b9302" xml:space="preserve">
     <value>Префиксы</value>
@@ -6675,6 +6690,9 @@
   <data name="Text_c87d285421d0" xml:space="preserve">
     <value>Не удалось выбрать проверенную версию (git завершился с кодом {0}).</value>
   </data>
+  <data name="Text_c881ce2fb9a6" xml:space="preserve">
+    <value>{0} содержит правила режима игры. Его можно включить для лиги, созданной в Waypoint на основе одной из этих: {1}.</value>
+  </data>
   <data name="Text_c888f98938da" xml:space="preserve">
     <value>{0} дн. назад</value>
   </data>
@@ -7015,9 +7033,6 @@
   </data>
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>LocalExile {0} уже установлен здесь.</value>
-  </data>
-  <data name="Text_d3d0b33deb9f" xml:space="preserve">
-    <value>Здесь можно включить или выключить любой установленный модуль, если включено всё, что ему требуется. Перед отключением собственного набора этой лиги Waypoint спросит подтверждение, а модуль, созданный для изолированной лиги, остаётся в изолированных лигах.</value>
   </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>Настройки лиги</value>
@@ -7559,6 +7574,9 @@
   </data>
   <data name="Text_e3b7b1ed944d" xml:space="preserve">
     <value>LocalExile в виде релиза: проверенный, обновляется, когда вы согласитесь.</value>
+  </data>
+  <data name="Text_e3ba7472396e" xml:space="preserve">
+    <value>{0} содержит правила режима игры. Если включить его здесь, они будут действовать для всех персонажей этой лиги со следующего запуска сервера, без собственных умений, торговцев и наград за задания этого режима, а игра по-прежнему будет показывать лигу как есть. Снимите флажок, чтобы вернуть всё назад.</value>
   </data>
   <data name="Text_e3ebaa16dd9d" xml:space="preserve">
     <value>Не найдено</value>
@@ -8142,6 +8160,9 @@
   </data>
   <data name="Text_f4ed6bccdcb2" xml:space="preserve">
     <value>Делириум</value>
+  </data>
+  <data name="Text_f4f3bad65021" xml:space="preserve">
+    <value>{0} содержит правила режима игры и относится к лигам этого режима.</value>
   </data>
   <data name="Text_f4f5dca37b59" xml:space="preserve">
     <value>Аккаунтов: {0} из {1}</value>

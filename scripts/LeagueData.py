@@ -181,7 +181,8 @@ def isolated(profile, profiles):
 def validate_modules(profile, selected, systems, profiles, new=False, listed=()):
     """Whether these modules can run together for the league, by what LocalExile itself asks: the game, each module's own
     dependencies, and nothing made for an isolated league in one that leads to Standard. A module has no knowledge of
-    leagues (LocalExile's modules.md), so any other module goes with any league. A league's own bundle (Ruthless in a
+    leagues (LocalExile's modules.md), so any other module goes with any league, but the rules of a game mode, which go
+    with that mode's leagues and with a league made in Waypoint on a base that has the mode. A league's own bundle (Ruthless in a
     Ruthless league) can be left out too: LocalExile loads the league without it and keeps its saved data, and the
     interface asks its user first. `new`: the modules are for a league made from this one, which is isolated whatever
     its template is. `listed`: what the league lists now, which may name a module that is not installed."""
@@ -204,6 +205,22 @@ def validate_modules(profile, selected, systems, profiles, new=False, listed=())
             users = [p for p in profiles if not p["custom"] and path.casefold() in {m.casefold() for m in p["modules"]}]
             require(not users or not all(isolated(p, profiles) for p in users),
                     path.rsplit("/", 1)[-1] + " is made for an isolated league and cannot be turned on in a league that leads to Standard.")
+    # A module of a game mode: every shipped league that lists it has that form (Ruthless and "ruthless"). In a league of
+    # that mode it is the league's own. In another it brings the mode's rules alone, which is for a league made in
+    # Waypoint, on a game base LocalExile ships that mode for. One the league already lists (a hand edit) stays until its
+    # user unticks it, so that another change still saves.
+    own = (profile["data"].get("form") or "").casefold()
+    for path in active.values():
+        if not new and path.casefold() in known:
+            continue
+        forms = {(p["data"].get("form") or "").casefold() for p in profiles
+                 if not p["custom"] and path.casefold() in {m.casefold() for m in p["modules"]}}
+        if len(forms) != 1 or "" in forms or forms == {own}:
+            continue
+        form = next(iter(forms))
+        require((new or profile["custom"]) and any(not p["custom"] and (p["data"].get("form") or "").casefold() == form
+                                                   and p["base"].casefold() == profile["base"].casefold() for p in profiles),
+                path.rsplit("/", 1)[-1] + " holds the rules of a game mode: it can be turned on for a league made in Waypoint, on a game base that has that mode.")
     visiting, done = set(), set()
 
     def visit(identifier):

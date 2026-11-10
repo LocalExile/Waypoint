@@ -96,10 +96,11 @@ public sealed partial class GameSystems
     /// module: its hooks do not run … Saved data stays"), so they can be turned off; the league then no longer has the
     /// rules or content it is named for, which the interface says before it saves (<see cref="BundleLeftOut"/>). An
     /// add-on is never part of a bundle: a league made in Waypoint with an add-on ticked lists it in its own file. Nor is
-    /// a listed module that is not installed.</summary>
+    /// a listed module that is not installed, nor the rules of a game mode in a league of another mode
+    /// (<see cref="RulesOnly"/>): ticked for a league made in Waypoint, they are an extra that unticking takes back.</summary>
     public IReadOnlyList<string> BundleModules(GameLeague league) =>
         [.. league.BaseSystems.Where(p => !p.StartsWith("Core/", StringComparison.OrdinalIgnoreCase) && !Id(p).Equals("Game", StringComparison.OrdinalIgnoreCase)
-            && !AddOn(p) && Installed(p))];
+            && !AddOn(p) && Installed(p) && !(ModeOf(p) is { } form && !league.Form.Equals(form, StringComparison.OrdinalIgnoreCase)))];
 
     /// <summary>The modules of the league's own bundle that <paramref name="paths"/> leaves out: what its user is told,
     /// by the names the list shows, and asked to confirm.</summary>
@@ -118,8 +119,9 @@ public sealed partial class GameSystems
     bool Installed(string path) => Systems.Any(s => s.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>Whether the modules in <paramref name="paths"/> can run together for <paramref name="league"/>, by what
-    /// LocalExile itself asks: the game, each module's own dependencies, and nothing made for an isolated league in one
-    /// that leads to Standard (<see cref="IsolatedModule"/>). A module has no knowledge of leagues (LocalExile's
+    /// LocalExile itself asks: the game, each module's own dependencies, nothing made for an isolated league in one
+    /// that leads to Standard (<see cref="IsolatedModule"/>), and the rules of a game mode only where that mode fits
+    /// (<see cref="ModeOf"/>). A module has no knowledge of leagues (LocalExile's
     /// <c>Agents/docs/dev/modules.md</c>), so any other module goes with any league. Turning off a league's own bundle
     /// is allowed too, and is what the interface asks about first (<see cref="BundleLeftOut"/>).
     /// <paramref name="forNewLeague"/>: the modules are for a league made from this one, which is isolated whatever its
@@ -130,6 +132,10 @@ public sealed partial class GameSystems
         if (!forNewLeague && !Isolated(league) && paths.FirstOrDefault(IsolatedModule) is { } apart)
             throw new InvalidOperationException(L.Text("{0} is made for an isolated league, whose characters and rewards never reach Standard. It can't be turned on in a league that leads to Standard.",
                 Systems.FirstOrDefault(s => s.Path.Equals(apart, StringComparison.OrdinalIgnoreCase))?.Name ?? apart));
+        // The rules of a game mode, where that mode does not fit. One this league already lists (a hand edit) stays until
+        // its user unticks it, so that another change still saves; it is not turned on anew.
+        if (paths.FirstOrDefault(p => !ModeFits(league, p, forNewLeague) && (forNewLeague || !league.Systems.Contains(p, StringComparer.OrdinalIgnoreCase))) is { } ofMode)
+            throw new InvalidOperationException(ModeNote(ofMode));
         // A listed module that is not installed: LocalExile logs it and loads the league without it. One this league
         // already lists stays until its user unticks it; one that is new here is refused.
         if (paths.Any(p => !Installed(p) && (forNewLeague || !league.Systems.Contains(p, StringComparer.OrdinalIgnoreCase))))
@@ -172,9 +178,59 @@ public sealed partial class GameSystems
     public bool IsolatedModule(string path) =>
         Leagues.Where(l => !l.Custom && l.BaseSystems.Contains(path, StringComparer.OrdinalIgnoreCase)).ToArray() is { Length: > 0 } users && users.All(Isolated);
 
+    /// <summary>The game mode a module goes with, as the leagues LocalExile ships say it: every one of them that lists
+    /// the module has that <c>form</c> (the Ruthless module and the form "ruthless"). Such a module gives a league that
+    /// mode's rules, whole: LocalExile takes a league's rules from one module and never merges them. Null for a module
+    /// of no mode: one listed by leagues of different modes, of none, or by no league. A league made in Waypoint does
+    /// not count: its list is its user's. Nothing here names a module or a mode; once a league LocalExile ships in
+    /// another mode lists the module, the files say it is no longer one mode's.</summary>
+    public string? ModeOf(string path)
+    {
+        var users = Leagues.Where(l => !l.Custom && l.BaseSystems.Contains(path, StringComparer.OrdinalIgnoreCase)).ToArray();
+        return users.Length > 0 && users[0].Form is { Length: > 0 } form && users.All(l => l.Form.Equals(form, StringComparison.OrdinalIgnoreCase)) ? form : null;
+    }
+
+    /// <summary>Whether a module of a game mode may be on in <paramref name="league"/>. In a league of that mode it is the
+    /// league's own. In another it brings the mode's rules without the rest of the mode (<see cref="RulesOnly"/>), which
+    /// is for a league its user made in Waypoint, on a game base LocalExile ships that mode for: the Standard and
+    /// Allflame bases have Ruthless leagues, Survivors' own base has none. The leagues LocalExile ships stay as they
+    /// are, with their own versions in that mode.</summary>
+    bool ModeFits(GameLeague league, string path, bool forNewLeague) =>
+        ModeOf(path) is not { } form || league.Form.Equals(form, StringComparison.OrdinalIgnoreCase)
+        || (forNewLeague || league.Custom) && Leagues.Any(l => !l.Custom && l.Form.Equals(form, StringComparison.OrdinalIgnoreCase)
+            && l.Base.Equals(league.Base, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>The modules of a game mode among <paramref name="paths"/> that are not of <paramref name="league"/>'s own
+    /// mode: there they give the mode's rules alone, for every character of the league. The mode's own versions of
+    /// skills, vendors and quest rewards come from the league's definition (<c>dataSet</c>), which a module does not
+    /// change, and the game shows the league by its <c>form</c>. What the interface says before it saves.</summary>
+    public IReadOnlyList<GameSystem> RulesOnly(GameLeague league, IEnumerable<string> paths) =>
+        [.. paths.Select(Normal).Where(p => ModeOf(p) is { } form && !league.Form.Equals(form, StringComparison.OrdinalIgnoreCase))
+            .Select(p => Systems.FirstOrDefault(s => s.Path.Equals(p, StringComparison.OrdinalIgnoreCase))).OfType<GameSystem>()];
+
+    /// <summary>The flags a league made in Waypoint can start from to have the rules of this module's mode: those whose
+    /// game base LocalExile ships that mode for, and that can be copied. Empty for a module of no mode.</summary>
+    public IReadOnlyList<string> ModeStarts(string path) => ModeOf(path) is not { } form ? [] :
+        [.. Cards.Where(c => c.IsFlag && !c.Primary.Custom && Configurable(c.Primary) && EmptyTemplate(c.Primary.Folder)
+            && Leagues.Any(l => !l.Custom && l.Form.Equals(form, StringComparison.OrdinalIgnoreCase) && l.Base.Equals(c.Primary.Base, StringComparison.OrdinalIgnoreCase)))
+            .Select(c => c.Name)];
+
+    /// <summary>Why a module of a game mode is not offered for a league, and where it is: the tooltip of its row and
+    /// the refusal of <see cref="ValidateComposition"/>.</summary>
+    public string ModeNote(string path)
+    {
+        string name = Systems.FirstOrDefault(s => s.Path.Equals(path, StringComparison.OrdinalIgnoreCase))?.Name ?? path;
+        return ModeStarts(path) is { Count: > 0 } starts
+            ? L.Text("{0} holds the rules of a game mode. It can be turned on for a league made in Waypoint that starts from one of: {1}.", name, string.Join(", ", starts))
+            : L.Text("{0} holds the rules of a game mode, and goes with the leagues of that mode.", name);
+    }
+
     /// <summary>Whether <paramref name="path"/> can be turned on for <paramref name="league"/>: any module, but one made
-    /// for an isolated league in a league that leads to Standard.</summary>
-    public bool ModuleOffered(GameLeague league, string path) => !IsolatedModule(path) || Isolated(league);
+    /// for an isolated league in a league that leads to Standard, and one of a game mode where that mode does not fit
+    /// (<see cref="ModeOf"/>). <paramref name="forNewLeague"/>: for a league made from this one, which is isolated and
+    /// its user's own.</summary>
+    public bool ModuleOffered(GameLeague league, string path, bool forNewLeague = false) =>
+        (forNewLeague || !IsolatedModule(path) || Isolated(league)) && ModeFits(league, path, forNewLeague);
 
     public IReadOnlyList<GameLeague> VisibilityPlan(GameLeague league, bool visible)
     {

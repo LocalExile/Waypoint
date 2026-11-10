@@ -374,7 +374,7 @@ public sealed partial class GameSystemsTab : UserControl
         bool reusable = !league.Custom && _catalog.Configurable(league) && GameSystems.EmptyTemplate(league.Folder);
         customize.IsEnabled = reusable && _catalog.Environment.CanCreate; details.Children.Add(customize);
         if (!reusable) details.Children.Add(SettingsEditor.Note(L.Text("This league has custom code or no reusable source template. It cannot be safely copied.")));
-        details.Children.Add(SettingsEditor.Note(L.Text("Any installed module can be turned on or off here when what it needs is on. Turning off this league's own bundle asks first, and a module made for an isolated league stays in isolated leagues.")));
+        details.Children.Add(SettingsEditor.Note(L.Text("Any installed module can be turned on or off here when what it needs is on. Turning off this league's own bundle asks first, a module made for an isolated league stays in isolated leagues, and the rules of a game mode go with that mode's leagues and with leagues made in Waypoint.")));
         details.Children.Add(SettingsEditor.Label(L.Text("Selected league definition: {0}", league.Name)));
         if (league.EntryOf.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("Shown as a mode of: {0}", league.EntryOf)));
         if (league.Parent.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("Parent league: {0}", league.Parent)));
@@ -410,8 +410,12 @@ public sealed partial class GameSystemsTab : UserControl
         {
             bool selected = (_creating ? (IEnumerable<string>)_draftModules : league.Systems).Contains(module.Path, StringComparer.OrdinalIgnoreCase);
             // Any module goes with any league, but one made for an isolated league in a league that leads to Standard
-            // (GameSystems.ModuleOffered). A league being made is isolated whatever its template is.
-            bool offered = _creating || _catalog.ModuleOffered(league, module.Path), locked = required.Contains(module.Path);
+            // and one of a game mode where that mode does not fit (GameSystems.ModuleOffered). A league being made is
+            // isolated, and its user's own, whatever its template is.
+            bool offered = _catalog.ModuleOffered(league, module.Path, forNewLeague: _creating), locked = required.Contains(module.Path);
+            // The rules of a game mode, in a league of another mode: on, they are that mode's rules alone.
+            bool ofMode = _catalog.ModeOf(module.Path) is not null, rulesOnly = _catalog.RulesOnly(league, [module.Path]).Count > 0;
+            string whyNot = ofMode ? L.Text("Rules of a game mode") : L.Text("For isolated leagues only");
             string name = ModuleTitle(module);
             var box = Named(new CheckBox { Content = ModuleLabel(module), IsChecked = selected, IsEnabled = editable && !locked && (selected || offered), HorizontalAlignment = HorizontalAlignment.Stretch }, name);
             _checks[module.Path] = box;
@@ -419,7 +423,7 @@ public sealed partial class GameSystemsTab : UserControl
             if (locked || !editable || !offered && !selected)
             {
                 var readOnly = new DockPanel();
-                var state = Badge(locked ? L.Text("Required") : !offered ? L.Text("For isolated leagues only") : selected ? L.Text("Enabled") : L.Text("Disabled"));
+                var state = Badge(locked ? L.Text("Required") : !offered ? whyNot : selected ? L.Text("Enabled") : L.Text("Disabled"));
                 state.Margin = new Thickness(12, 0, 0, 0); DockPanel.SetDock(state, Dock.Right); readOnly.Children.Add(state);
                 var mark = Type(selected ? "✓" : "–", 13, false, "Shell.TextSecondary"); mark.Margin = new Thickness(0, 0, 12, 0);
                 DockPanel.SetDock(mark, Dock.Left); readOnly.Children.Add(mark); readOnly.Children.Add(ModuleLabel(module)); row = readOnly;
@@ -427,7 +431,9 @@ public sealed partial class GameSystemsTab : UserControl
             else row = box;
             var holder = Card(row, 10, "Shell.Background"); holder.Margin = new Thickness(0, 0, 0, 6);
             Named(holder, name + (locked ? " · " + L.Text("Required") : ""));
-            string help = module.Description.Length > 0 ? module.Description : locked ? L.Text("Required by this league's gameplay bundle.") : !offered ? L.Text("For isolated leagues only") : L.Text("Optional module for this mode.");
+            string help = module.Description.Length > 0 ? module.Description : locked ? L.Text("Required by this league's gameplay bundle.") : !offered ? ofMode ? "" : whyNot : L.Text("Optional module for this mode.");
+            if (!offered && ofMode) help += (help.Length > 0 ? "\n" : "") + _catalog.ModeNote(module.Path);
+            if (rulesOnly && (offered || selected)) help += "\n" + L.Text("Here it gives the rules of a game mode only, without that mode's own skills, vendors and quest rewards.");
             if (module.Depends.Length > 0) help += "\n" + L.Text("Dependencies: {0}", string.Join(", ", module.Depends));
             // The league's own bundle is a box like any other; what turning it off means is said once it is unticked.
             if (bundle.Contains(module.Path, StringComparer.OrdinalIgnoreCase)) help += "\n" + L.Text("Part of this league's own bundle. Turning it off asks first.");
@@ -496,7 +502,7 @@ public sealed partial class GameSystemsTab : UserControl
         else if (_selected is GameLeague league)
         {
             string? error = _catalog.CompositionError(league, SelectedModules());
-            string apart = error is null && _choicesDirty ? BundleWarning(league) : "";
+            string apart = error is null && _choicesDirty ? Warnings(league) : "";
             _validation.Text = error is not null ? L.Text("Cannot save: {0}", error) : !_catalog.Environment.CanChoose ? L.Text("Read-only module list. Update LocalExile to edit these choices.")
                 : _editor?.Dirty == true ? L.Text("Save league settings before applying module choices.")
                 : _choicesDirty ? L.Text("Unsaved module choices — applies after a server restart.") + (apart.Length > 0 ? " " + apart : "") : L.Text("No unsaved changes.");
@@ -596,13 +602,24 @@ public sealed partial class GameSystemsTab : UserControl
     string BundleWarning(GameLeague league) => _catalog!.BundleLeftOut(league, SelectedModules()) is { Count: > 0 } left
         ? L.Text("Without {0}, this league runs without the rules or content it is named for. Its characters stay as they are, and you can turn it back on.", string.Join(", ", left.Select(ModuleTitle))) : "";
 
+    /// <summary>What a module of a game mode means in a league of another mode (<see cref="GameSystems.RulesOnly"/>), said
+    /// when the ticked boxes turn one on: the mode's rules, for every character there, without the rest of the mode.
+    /// Empty when none is being turned on.</summary>
+    string ModeWarning(GameLeague league) => _catalog!.RulesOnly(league, SelectedModules())
+        .Where(m => !league.Systems.Contains(m.Path, StringComparer.OrdinalIgnoreCase)).ToArray() is { Length: > 0 } turnedOn
+        ? L.Text("{0} holds the rules of a game mode. Turned on here, they apply to every character in this league from the next server start, without that mode's own skills, vendors and quest rewards, and the game still shows the league as it is. Untick it to go back.",
+            string.Join(", ", turnedOn.Select(ModuleTitle))) : "";
+
+    /// <summary>Everything the ticked boxes call for a word about before they are saved.</summary>
+    string Warnings(GameLeague league) => string.Join(" ", new[] { BundleWarning(league), ModeWarning(league) }.Where(text => text.Length > 0));
+
     async Task SaveChoicesAsync(GameLeague league)
     {
         if (_catalog is null || Busy) return;
         try
         {
             var values = _catalog.Plan(league, SelectedModules());
-            string apart = BundleWarning(league);
+            string apart = Warnings(league);
             if (!Dialog.Ask(Owner, apart.Length > 0 ? DialogKind.Warning : DialogKind.Question, L.Text("Save league choices"),
                     L.Text("Save module choices for {0}? They apply after a server restart. Existing characters and other leagues are preserved.", league.Name)
                     + (apart.Length > 0 ? "\n\n" + apart : ""), L.Text("Save"), L.Text("Cancel"))) return;
