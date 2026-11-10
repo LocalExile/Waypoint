@@ -188,9 +188,9 @@
                         <StackPanel x:Name="UpdatesChoice">
                             <TextBlock Text="{l:Loc 'Updates'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,6" />
                             <RadioButton x:Name="TestedVersion" GroupName="Updates" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Keep an older version that does not change'}" IsChecked="True" />
-                            <TextBlock Text="{l:Loc 'LocalExile from 1 November, which the item crafter is known to work with. You can get the newest changes later from Play.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
+                            <TextBlock Text="{l:Loc 'LocalExile from 1 November, which the item crafter is known to work with. You can move to the newest changes later from Versions.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
                             <RadioButton x:Name="NewestVersion" GroupName="Updates" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Get the newest changes'}" />
-                            <TextBlock Text="{l:Loc 'Updates itself each day, and things can break.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
+                            <TextBlock Text="{l:Loc 'LocalExile\'s newest changes; things can break. You update it yourself from Versions.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
                         </StackPanel>
                         <StackPanel x:Name="GiveItemChoice">
                             <TextBlock Text="{l:Loc 'Giving items'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,6" />

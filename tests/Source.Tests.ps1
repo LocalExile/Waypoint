@@ -138,20 +138,6 @@ try {
     Check (-not $own.Ok -and $own.Message.Contains('own saves')) 'a folder cannot bring its own saves'
     $nothing = Operation 'ImportSaves' @('-SaveSource',(Join-Path $fixture 'Nowhere'))
     Check (-not $nothing.Ok -and $nothing.Message.Contains('no saves')) 'a folder without saves is refused'
-    # The other way, which Waypoint offers when the release is the same as or newer than the copy (Editions.ReleaseTakesAsync):
-    # this copy's saves into the release. The release's own go aside first, and the copy is only read.
-    $copyRoot = $root
-    $copyBefore = (Get-FileHash -LiteralPath "$copyRoot/data/saves.db").Hash
-    $releaseBackups = @(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse).Count
-    $root = $release
-    try { $toRelease = Operation 'ImportSaves' @('-SaveSource',$copyRoot) } finally { $root = $copyRoot }
-    Check $toRelease.Ok ('a copy''s saves are copied into a release: ' + $toRelease.Message)
-    & python (Join-Path $PSScriptRoot 'SqliteFixture.py') brought "$release/data/saves.db"
-    Check ($LASTEXITCODE -eq 0) 'the release holds the copy''s saves'
-    Check (@(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse).Count -eq $releaseBackups + 1) 'the release''s own saves are backed up first'
-    Check ((Get-FileHash -LiteralPath "$copyRoot/data/saves.db").Hash -eq $copyBefore) 'the copy is only read'
-    # LocalExile from the database split on (sql/base/characters/): auth.db and characters.db, and an old saves.db its first
-    # server start moves over. Only files are checked here; the migration itself is the servers'.
     $fixtureDb = Join-Path $PSScriptRoot 'SqliteFixture.py'
     $backups = "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups"
     function New-BackupFolder([scriptblock]$work) {
@@ -160,6 +146,28 @@ try {
         $made = @(Get-ChildItem $backups -Filter backup.json -Recurse | Where-Object { $_.Directory.FullName -notin $before })
         return @{ Result=$result; Folder=$(if ($made.Count -eq 1) { $made[0].Directory }) }
     }
+    # The other way, which Waypoint offers when the release is the same as or newer than the copy (Editions.ReleaseTakesAsync):
+    # this copy's saves into the release. The release's own are backed up, with automatic backups off too, and go aside;
+    # its mod choices stay its own; the copy is only read. The copy gets a character only it has, so that the release's
+    # own database left where it was would not pass.
+    $copyRoot = $root
+    & python $fixtureDb rename "$copyRoot/data/saves.db" 'copy-character'
+    Check ($LASTEXITCODE -eq 0) 'the copy has a character the release does not'
+    $copyBefore = (Get-FileHash -LiteralPath "$copyRoot/data/saves.db").Hash
+    Set-Content "$release/Mods/Binaries/mod-state.txt" 'the release''s own choices'
+    $root = $release
+    try { $toRelease = New-BackupFolder { Operation 'ImportSaves' @('-SaveSource',$copyRoot,'-NoBackup') } } finally { $root = $copyRoot }
+    Check $toRelease.Result.Ok ('a copy''s saves are copied into a release: ' + $toRelease.Result.Message)
+    & python $fixtureDb has "$release/data/saves.db" 'copy-character'
+    Check ($LASTEXITCODE -eq 0) 'the release holds the copy''s saves'
+    Check ([bool]$toRelease.Folder) 'the release''s own saves are backed up first, with automatic backups off too'
+    & python $fixtureDb has "$($toRelease.Folder.FullName)/saves.db" 'release-character'
+    Check ($LASTEXITCODE -eq 0) 'that backup holds the release''s own characters, to restore from Backups'
+    Check (Test-Path -LiteralPath "$release/data/saves-brought.json") 'the release says the characters were brought'
+    Check ((Get-Content -LiteralPath "$release/Mods/Binaries/mod-state.txt" -Raw).Trim() -eq 'the release''s own choices') 'a release keeps its own mod choices'
+    Check ((Get-FileHash -LiteralPath "$copyRoot/data/saves.db").Hash -eq $copyBefore) 'the copy is only read'
+    # LocalExile from the database split on (sql/base/characters/): auth.db and characters.db, and an old saves.db its first
+    # server start moves over. Only files are checked here; the migration itself is the servers'.
     $checkout = $root
     $root = Join-Path $fixture 'Split'
     New-Item -ItemType Directory -Force "$root/scripts/dev", "$root/sql/base/characters", "$root/data" | Out-Null
@@ -194,9 +202,27 @@ try {
     Check ($splitImport.Ok -and $LASTEXITCODE -eq 0 -and -not (Test-Path "$root/data/saves.db")) ('a split release''s saves come in whole, and what was here goes aside: ' + $splitImport.Message)
     $deletedPair = Operation 'DeleteBackup' @('-BackupId',$pair.Folder.Name)
     Check ($deletedPair.Ok -and -not (Test-Path $pair.Folder.FullName)) ("a split backup is deleted with both databases: " + $deletedPair.Message)
+    # The other way with the split databases: a split copy's pair, with a label only it has, into a split release. The
+    # release's own pair is backed up, and goes aside together with a saves.db left beside it.
+    $splitCheckout = $root
+    New-Item -ItemType Directory -Force "$newRelease/sql/base/characters" | Out-Null
+    & python $fixtureDb split-rename "$splitCheckout/data/characters.db" "$splitCheckout/data/auth.db" 'copy-split'
+    & python $fixtureDb init "$newRelease/data/saves.db"
+    $root = $newRelease
+    try { $pairToRelease = New-BackupFolder { Operation 'ImportSaves' @('-SaveSource',$splitCheckout) } } finally { $root = $splitCheckout }
+    & python $fixtureDb split-has "$newRelease/data/characters.db" "$newRelease/data/auth.db" 'copy-split'
+    Check ($pairToRelease.Result.Ok -and $LASTEXITCODE -eq 0 -and -not (Test-Path "$newRelease/data/saves.db")) ('a split copy''s characters.db and auth.db come into a split release, and all that was there goes aside: ' + $pairToRelease.Result.Message)
+    Check ([bool]$pairToRelease.Folder) 'the split release''s own saves are backed up first'
+    & python $fixtureDb split-has "$($pairToRelease.Folder.FullName)/characters.db" "$($pairToRelease.Folder.FullName)/auth.db" 'release-split'
+    Check ($LASTEXITCODE -eq 0) 'that backup holds the release''s own characters.db and auth.db'
     $root = $checkout
     $refused = Operation 'ImportSaves' @('-SaveSource',$newRelease)
     Check (-not $refused.Ok -and $refused.Message.Contains('newer LocalExile')) 'an older LocalExile refuses split saves it cannot read'
+    # An older copy's saves.db into a split release: it goes in as data/saves.db, for the release's servers to migrate.
+    $root = $newRelease
+    try { $oldToRelease = Operation 'ImportSaves' @('-SaveSource',$checkout) } finally { $root = $checkout }
+    & python $fixtureDb has "$newRelease/data/saves.db" 'copy-character'
+    Check ($oldToRelease.Ok -and $LASTEXITCODE -eq 0 -and -not (Test-Path "$newRelease/data/characters.db") -and -not (Test-Path "$newRelease/data/auth.db")) ('an older copy''s saves.db comes into a split release as data/saves.db, with the release''s databases set aside: ' + $oldToRelease.Message)
     # A release has no GameServer.slnx: a build would only get MSBuild's "Project file does not exist".
     $checkout = $root
     $root = $release

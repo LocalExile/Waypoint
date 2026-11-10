@@ -6,7 +6,7 @@ namespace Launcher.Core;
 /// LocalExile moves to a new game client now and then (v0.2.0-beta: 3.29.3b to 3.29.3c), and a folder whose client and
 /// LocalExile are of different builds cannot log in. The rule: a player who has a client of the build current LocalExile needs
 /// plays on it; one who has only an older client keeps the last LocalExile made for it, with a quiet note that it will not
-/// last. Waypoint looks when a folder is about to start the game (Play; a source copy's daily update too), at that folder's
+/// last. Waypoint looks when a folder is about to start the game (Play), at that folder's
 /// client and, for a client of another build, at the usual places (<see cref="FindClient"/>), never at every client on the PC,
 /// and settles what fits before anything starts (<see cref="Kind"/>). A move is asked once (<see cref="AskMove"/>) and the
 /// answer kept for the folder while Waypoint runs. A client of a build Waypoint does not know is left to LocalExile's own check.
@@ -87,8 +87,8 @@ public static class ClientUpdate
         return new(kind, folder, have, need, link, link ? ClientLocator.RealPath(client) : client, gigabytes, found, older);
     }
 
-    /// <summary>Before a source copy moves forward to a LocalExile that needs client <paramref name="next"/> (Simple mode's daily
-    /// update), off the UI thread: Go when its client fits, the build does not change, or the player agreed already. A client of
+    /// <summary>Before a source copy moves forward to a LocalExile that needs client <paramref name="next"/> (what was Simple
+    /// mode's daily update, which is no longer reached: docs/launcher.md, "No longer reached"), off the UI thread: Go when its client fits, the build does not change, or the player agreed already. A client of
     /// <paramref name="next"/> found elsewhere gives the question to ask (<see cref="Answer"/> keeps the reply). With only the
     /// older client, or after a Not now, the copy stays, and <c>Staying</c> says why.</summary>
     public static (bool Go, Plan? Ask, string? Staying) BeforeUpdate(string folder, string? next, Func<string, CancellationToken, string?>? find = null)
@@ -271,7 +271,7 @@ public static class ClientUpdate
     }
 
     /// <summary>A source copy's way to the newer LocalExile when Waypoint cannot move it itself.</summary>
-    public static string HowToUpdateCopy => L.Text("Update this copy to the newest LocalExile: on the Versions section in Advanced mode, or with Get the newest changes on Play in Simple mode.");
+    public static string HowToUpdateCopy => L.Text("Update this copy to the newest LocalExile on the Versions section.");
 
     /// <summary>Takes the old client out (<see cref="ClientLocator.RemoveClient"/>); throws, with nothing lost, when the game
     /// still holds one of its files.</summary>

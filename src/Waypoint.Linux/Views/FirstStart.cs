@@ -15,8 +15,6 @@ static class FirstStart
             var guide = new SetupWizard();
             await Ui.ShowAsync(guide, null);
             string? root = guide.Checkout;
-            // A source copy taken in the guide is Advanced mode's, with nothing to choose there.
-            if (root is not null) Editions.LeftFor(app.Settings, root);
             if (root is null && guide.Skipped)
             {
                 var chooser = new CheckoutDialog(null, app.Settings.ServerPath);

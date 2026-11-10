@@ -189,6 +189,15 @@ public partial class MainWindow : Window
                 CreateFirstAccount();
             }
         };
+        // Waypoint stops what runs before it leaves this folder (Shared.Leaving): until that has ended the window is not
+        // usable, as when it stops what runs before it closes. A change of folder that does not go on gives it back.
+        string? title = null;
+        _shared.LeavingChanged += () =>
+        {
+            IsEnabled = !_shared.Leaving;
+            if (_shared.Leaving) { title = Title; Title = L.Text("Waypoint: stopping …"); }
+            else if (title is not null) Title = title;
+        };
         Closing += WindowClosing;
         Closed += (_, _) => _shared.Dispose();
     }
@@ -315,8 +324,9 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>A real exit, without the question about what runs: Waypoint starts again on another folder, and whoever
-    /// asked for that has answered already. A run in progress still keeps the window open.</summary>
+    /// <summary>A real exit, without the question about what runs: Waypoint starts again, on another folder say. What runs
+    /// is left as it is, whatever is set for an exit: whoever asked for the change has answered that already ("Switch
+    /// without stopping"), and stopping is not what starting again is for. A run in progress still keeps the window open.</summary>
     internal void ExitNow()
     {
         _explicitExit = true;
@@ -331,6 +341,9 @@ public partial class MainWindow : Window
         if (_deciding) { e.Cancel = true; return; }
         bool explicitExit = _explicitExit;
         _explicitExit = false;
+        // Waypoint is stopping what runs before it leaves this folder, and closes by itself when that has ended. Nothing
+        // is asked or said meanwhile: a question open when the wait ends would keep the window from closing.
+        if (_shared.Leaving) { e.Cancel = true; return; }
         var settings = _shared.Settings;
         bool anything = _shared.Monitor.Latest.Any(s => s.Running && s.Service.Kind is not ServiceKind.Recorder);
         if (_shared.IsLiveRunning)
@@ -347,7 +360,7 @@ public partial class MainWindow : Window
             Dispatcher.UIThread.Post(AskClose);
             return;
         }
-        if (stop && anything)
+        if (stop && anything && !explicitExit)
         {
             e.Cancel = true;
             Dispatcher.UIThread.Post(StopAndClose);

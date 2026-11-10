@@ -48,8 +48,8 @@ sealed class Settings
     /// <summary>The source copy whose characters wait to come to the release: noted when its user leaves it for the release,
     /// and offered on the release's Play page (<see cref="Editions.BringToReleaseAsync"/>).</summary>
     public string? BringFrom { get; set; }
-    /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>); on a release install, a
-    /// newer release shows the update card.</summary>
+    /// <summary>On a release install, a newer release shows the update card. On a source copy it was the switch of Play's
+    /// daily update (<see cref="CheckoutUpdates"/>), which is no longer reached, as the three settings below.</summary>
     public bool KeepUpToDate { get; set; } = true;
     /// <summary>When Play last looked for an update of LocalExile.</summary>
     public DateTimeOffset? LastUpdateCheck { get; set; }
@@ -57,7 +57,7 @@ sealed class Settings
     public DateTimeOffset? UpdatesPausedUntil { get; set; }
     /// <summary>The update Play made last, until the player went back from it.</summary>
     public CheckoutUpdate? LastUpdate { get; set; }
-    /// <summary>The guide's "Remove the old one later", until the player has decided on Play.</summary>
+    /// <summary>The guide's "Remove the old one later", until the player has decided on Control (<see cref="Editions.Replaced"/>).</summary>
     public ReleaseToRemove? RemoveRelease { get; set; }
     /// <summary>The guide ended in another folder and an account comes next: the start on that folder opens it.</summary>
     public bool CreateAccountOnStart { get; set; }

@@ -888,6 +888,9 @@
   <data name="Text_1a5ac0bd0b6b" xml:space="preserve">
     <value>源码：</value>
   </data>
+  <data name="Text_1a6192ed0ec5" xml:space="preserve">
+    <value>从最新更改开始。之后由你自己在“版本”部分更新此副本。</value>
+  </data>
   <data name="Text_1a6ff8f22cbb" xml:space="preserve">
     <value>准备好后即可开始。你可以随时停止，整个过程中游戏都可以保持关闭。</value>
   </data>
@@ -1505,9 +1508,6 @@
   <data name="Text_2ad580eaee79" xml:space="preserve">
     <value>恢复模组选择</value>
   </data>
-  <data name="Text_2ae155180cc7" xml:space="preserve">
-    <value>请把此副本更新到最新的 LocalExile：高级模式下在“版本”部分操作，简易模式下在“开始游戏”页使用“获取最新更改”。</value>
-  </data>
   <data name="Text_2ae8aced0bae" xml:space="preserve">
     <value>地标</value>
   </data>
@@ -1658,6 +1658,9 @@
   <data name="Text_2f444c96f7fb" xml:space="preserve">
     <value>更醒目的键盘焦点边框</value>
   </data>
+  <data name="Text_2f55db28c725" xml:space="preserve">
+    <value>仍有程序在运行：它不是从此文件夹启动的，或者未能停止。“仍然切换”会让它继续运行，另一个文件夹会把它显示为自己的程序。如果它是从你要打开的文件夹启动的，可以在那里停止它。</value>
+  </data>
   <data name="Text_2f5ca4b733a1" xml:space="preserve">
     <value>退出 Waypoint</value>
   </data>
@@ -1721,6 +1724,9 @@
   <data name="Text_3064d79a295c" xml:space="preserve">
     <value>重命名</value>
   </data>
+  <data name="Text_307136636b95" xml:space="preserve">
+    <value>请在“版本”部分把此副本更新到最新的 LocalExile。</value>
+  </data>
   <data name="Text_30b596760dc1" xml:space="preserve">
     <value>Frida 已安装，但无法加载。请检查安装输出并重试。</value>
   </data>
@@ -1771,9 +1777,6 @@
   </data>
   <data name="Text_3253dba2c477" xml:space="preserve">
     <value>切换并构建</value>
-  </data>
-  <data name="Text_32635dd132ba" xml:space="preserve">
-    <value>要回到你的另一个 LocalExile，请在“开始游戏”中使用“更改文件夹…”，然后选择 {0}。</value>
   </data>
   <data name="Text_32861db02c0a" xml:space="preserve">
     <value>共享设置</value>
@@ -2116,6 +2119,9 @@
   <data name="Text_3c8dedc73d20" xml:space="preserve">
     <value>遭遇与挑战</value>
   </data>
+  <data name="Text_3c94106d9402" xml:space="preserve">
+    <value>11 月 1 日的 LocalExile，已知物品制作器可以正常使用。之后可以在“版本”部分改用最新更改。</value>
+  </data>
   <data name="Text_3cc7bdb1ec13" xml:space="preserve">
     <value>此模式的可选模块。</value>
   </data>
@@ -2392,9 +2398,6 @@
   <data name="Text_46aeaf289dba" xml:space="preserve">
     <value>力量符文</value>
   </data>
-  <data name="Text_46c7bd8e82a1" xml:space="preserve">
-    <value>每天更新一次，获取最新更改。</value>
-  </data>
   <data name="Text_46cac231d89b" xml:space="preserve">
     <value>金色之门</value>
   </data>
@@ -2458,6 +2461,9 @@
   <data name="Text_4850b174b713" xml:space="preserve">
     <value>必需</value>
   </data>
+  <data name="Text_4850fd99e28f" xml:space="preserve">
+    <value>Waypoint 仍使用此文件夹。安装向导的文件夹是 {0}：点击“开始游戏”页的“更改文件夹…”或“控制”部分的“更改…”即可打开它。</value>
+  </data>
   <data name="Text_4854bd9995ea" xml:space="preserve">
     <value>工作副本版本：{0}</value>
   </data>
@@ -2478,6 +2484,9 @@
   </data>
   <data name="Text_48ce04a2b2bc" xml:space="preserve">
     <value>“完整复制”包括角色、进度以及所有个人/公会仓库页。“从空白开始”仅创建新的登录账号。</value>
+  </data>
+  <data name="Text_48db6ba05959" xml:space="preserve">
+    <value>以高级模式显示此副本：显示所有部分，分支和拉取请求在“版本”部分。发布版保留你在那里选择的模式。</value>
   </data>
   <data name="Text_48fe4f837791" xml:space="preserve">
     <value>联赛已创建，将在下次启动服务器后可用。</value>
@@ -3120,14 +3129,8 @@
   <data name="Text_5d202208fa1a" xml:space="preserve">
     <value>创建副本…</value>
   </data>
-  <data name="Text_5d881cebd727" xml:space="preserve">
-    <value>开发中的 LocalExile：最新的改动，在你游戏时更新。</value>
-  </data>
   <data name="Text_5d9389cbbeb3" xml:space="preserve">
     <value>详情</value>
-  </data>
-  <data name="Text_5dd0a28cb004" xml:space="preserve">
-    <value>你的旧 LocalExile 仍在 {0} 中。你玩过之后，“开始游戏”会询问是否删除它。</value>
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 输出</value>
@@ -3163,14 +3166,14 @@
   <data name="Text_5f3f9390f047" xml:space="preserve">
     <value>保留此版本</value>
   </data>
-  <data name="Text_5f42784698ae" xml:space="preserve">
-    <value>11 月 1 日的 LocalExile，已知物品制作器可以正常使用。之后可以在“开始游戏”中获取最新更改。</value>
-  </data>
   <data name="Text_5f664501398a" xml:space="preserve">
     <value>git fetch --prune origin，以及来自 GitHub 的打开的拉取请求</value>
   </data>
   <data name="Text_5f6d5cac3804" xml:space="preserve">
     <value>正在备份存档</value>
+  </data>
+  <data name="Text_5f755162e884" xml:space="preserve">
+    <value>Waypoint 无法获取 LocalExile 的最新代码，因此无法将 {0} 中的副本与此发布版进行比较。请检查网络连接后重试。</value>
   </data>
   <data name="Text_5f7d44dba864" xml:space="preserve">
     <value>你的角色仍在 {0} 中。当此发布版与那个副本相同或更新时，Waypoint 可以把它们带到这里。</value>
@@ -3615,6 +3618,9 @@
   <data name="Text_6caadd32b7a9" xml:space="preserve">
     <value>独立版客户端布局（Content.ggpk）</value>
   </data>
+  <data name="Text_6cc01aa057db" xml:space="preserve">
+    <value>不再提示迁移这些角色？</value>
+  </data>
   <data name="Text_6cc4fac6c312" xml:space="preserve">
     <value>怪物群：{0} 个锚点</value>
   </data>
@@ -3800,9 +3806,6 @@
   </data>
   <data name="Text_721de2068658" xml:space="preserve">
     <value>未加载（上次检查时）</value>
-  </data>
-  <data name="Text_722cdc47d49a" xml:space="preserve">
-    <value>每天自动更新，可能会出现问题。</value>
   </data>
   <data name="Text_722ddecd794e" xml:space="preserve">
     <value>可能出现的怪物群首领：{0}</value>
@@ -4094,6 +4097,9 @@
   </data>
   <data name="Text_7b3f91c46dd2" xml:space="preserve">
     <value>{0} · {1:g}</value>
+  </data>
+  <data name="Text_7b46684662b8" xml:space="preserve">
+    <value>开发中的 LocalExile：最新的改动，来自源代码，以高级模式显示。</value>
   </data>
   <data name="Text_7b472544bbda" xml:space="preserve">
     <value>圣堂武僧</value>
@@ -4577,6 +4583,9 @@
   </data>
   <data name="Text_8b57b64a80f5" xml:space="preserve">
     <value>备份这个发布版的存档？</value>
+  </data>
+  <data name="Text_8b5ad58d76bc" xml:space="preserve">
+    <value>你的角色会原样保留在 {0} 中。Waypoint 不会再提示把它们带到此发布版。</value>
   </data>
   <data name="Text_8b7df2ff57b5" xml:space="preserve">
     <value>部分自定义文字/背景组合的对比度较低。请调整颜色或重置此方案。</value>
@@ -5169,6 +5178,9 @@
   <data name="Text_9c618d925c1c" xml:space="preserve">
     <value>Patch 服务器：客户端的更新检查保持在本地</value>
   </data>
+  <data name="Text_9c8fdf7ac695" xml:space="preserve">
+    <value>文件夹未更改</value>
+  </data>
   <data name="Text_9ca428fef4d5" xml:space="preserve">
     <value>已全局禁用模组</value>
   </data>
@@ -5724,9 +5736,6 @@
   <data name="Text_acb4bce11dae" xml:space="preserve">
     <value>正在进行工作区操作。</value>
   </data>
-  <data name="Text_acbaeabe2255" xml:space="preserve">
-    <value>这个副本将从旧版本改为 LocalExile 的最新更改，之后“开始游戏”会每天更新它。最新更改可能不够稳定。会先备份你的存档。</value>
-  </data>
   <data name="Text_ad050d3449ef" xml:space="preserve">
     <value>已跟踪文件有修改</value>
   </data>
@@ -6206,6 +6215,9 @@
   </data>
   <data name="Text_bb7234ec1245" xml:space="preserve">
     <value>注册</value>
+  </data>
+  <data name="Text_bb7f72918e71" xml:space="preserve">
+    <value>你的旧 LocalExile 仍在 {0} 中。你玩过之后，“控制”部分会询问是否删除它。</value>
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>无法加载设置</value>
@@ -6989,9 +7001,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d5c6cc663b20" xml:space="preserve">
     <value>仅替换已保存的启用/禁用设置；不恢复模组二进制文件或存档。</value>
   </data>
-  <data name="Text_d5d6149fadee" xml:space="preserve">
-    <value>游戏或其服务器正从此文件夹运行。Waypoint 会先停止它们，再打开另一个文件夹；服务器会先保存。</value>
-  </data>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>无耗时数据：{0}</value>
   </data>
@@ -7139,9 +7148,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_da86bbbc05e9" xml:space="preserve">
     <value>关于模组、模块和赛季</value>
   </data>
-  <data name="Text_da8ec7567c63" xml:space="preserve">
-    <value>有程序未能停止。请自行关闭游戏或停止服务器，然后再次更改文件夹。</value>
-  </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>重置</value>
   </data>
@@ -7192,6 +7198,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_dc63ab18e32d" xml:space="preserve">
     <value>已保存的启用选项不代表实际加载状态。</value>
+  </data>
+  <data name="Text_dc6c0cd150d1" xml:space="preserve">
+    <value>游戏或其服务器正从此文件夹运行。Waypoint 会先停止它们，再打开另一个文件夹。</value>
   </data>
   <data name="Text_dc6c5ae4c245" xml:space="preserve">
     <value>删除 {0}？</value>
@@ -7328,6 +7337,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e0ad23f58ba8" xml:space="preserve">
     <value>时间窗口内最差一秒的第 99 百分位数</value>
   </data>
+  <data name="Text_e0b03d95aed1" xml:space="preserve">
+    <value>这个副本将从旧版本改为 LocalExile 的最新更改。之后由你自己在“版本”部分更新它。最新更改可能不够稳定。会先备份你的存档。</value>
+  </data>
   <data name="Text_e0bfbac4f14b" xml:space="preserve">
     <value>先驱者</value>
   </data>
@@ -7364,9 +7376,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e1ac34af368e" xml:space="preserve">
     <value>正在设置采集</value>
-  </data>
-  <data name="Text_e1bbf21f70bc" xml:space="preserve">
-    <value>开启开发者模式和高级模式：显示所有部分，分支和拉取请求在“版本”部分。此后 Waypoint 不再自行更新 LocalExile。</value>
   </data>
   <data name="Text_e1c753f8d16c" xml:space="preserve">
     <value>{0}：{1} 到 {2} 个字符</value>
@@ -7700,6 +7709,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eb1a70e39274" xml:space="preserve">
     <value>放弃更改</value>
+  </data>
+  <data name="Text_eb1f230afa51" xml:space="preserve">
+    <value>LocalExile 的最新更改，可能会出现问题。由你自己在“版本”部分更新。</value>
   </data>
   <data name="Text_eb24997abb6c" xml:space="preserve">
     <value>请在“设置”中选择 LocalExile 源码副本。</value>
@@ -8125,6 +8137,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f7a90ea11a44" xml:space="preserve">
     <value>查看发生了什么</value>
   </data>
+  <data name="Text_f7b95d390f97" xml:space="preserve">
+    <value>要回到你的另一个 LocalExile，请在“控制”部分使用“更改…”，然后选择 {0}。</value>
+  </data>
   <data name="Text_f7bf8de0a782" xml:space="preserve">
     <value>要设置“发放物品”吗？</value>
   </data>
@@ -8214,6 +8229,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fa77a5252d38" xml:space="preserve">
     <value>大门</value>
+  </data>
+  <data name="Text_faa0f28e0c5b" xml:space="preserve">
+    <value>不再提示</value>
   </data>
   <data name="Text_faa6d163b29d" xml:space="preserve">
     <value>配色方案、自定义颜色、阅读字体、文字大小和辅助功能选项。</value>

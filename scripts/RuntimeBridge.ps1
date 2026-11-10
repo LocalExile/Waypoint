@@ -512,7 +512,8 @@ function Get-Python {
     return $command.Source
 }
 function Backup-Saves($snapshot) {
-    if ($NoBackup -and $Action -ne 'Backup') { Write-Host 'Automatic save backup is disabled.'; return }
+    # Bringing another LocalExile's saves in replaces every character here, so it is backed up whatever the preference.
+    if ($NoBackup -and $Action -notin @('Backup','ImportSaves')) { Write-Host 'Automatic save backup is disabled.'; return }
     $files = @(Get-SaveFiles)
     if (-not $files.Count) { Write-Host 'No save database exists yet; nothing to back up.'; return }
     $destination = Join-Path (Get-BackupDirectory) ((Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8))
@@ -652,8 +653,10 @@ function Import-Saves($snapshot) {
     $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
     Assert-Physical $history
     if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
+    # A source copy takes the mod choices of the release its characters come from. A release keeps its own: it has
+    # its own mods, and a copy's list would turn them on and off unasked.
     $choices = Join-Path $source 'Mods\Binaries\mod-state.txt'
-    if (Test-Path -LiteralPath $choices -PathType Leaf) {
+    if (-not $script:isRelease -and (Test-Path -LiteralPath $choices -PathType Leaf)) {
         New-Item -ItemType Directory -Force -Path (At 'Mods/Binaries') | Out-Null
         Copy-Item -LiteralPath $choices -Destination (At 'Mods/Binaries/mod-state.txt') -Force
     }

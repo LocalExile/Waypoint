@@ -162,6 +162,10 @@ public partial class ControlTab : UserControl
     {
         foreach (var row in _rows)
             row.Update(samples.FirstOrDefault(s => s.Service == row.Service) ?? new(row.Service, null, false, 0, 0, 0, 0, TimeSpan.Zero), _live);
+        // The old release is asked about with the game closed and nothing holding the folder.
+        var replaced = _live || samples.Any(s => s.Running) ? null : Replaced;
+        RemoveOldCard.Visibility = replaced is null ? Visibility.Collapsed : Visibility.Visible;
+        if (replaced is not null) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
         // With servers up the same live.ps1 run restarts them: what is needed after edits hot reload does not cover.
         bool anyUp = samples.Any(s => s.Service.Kind == ServiceKind.Server && s.Running);
         if (Repo.IsInstall)
@@ -244,6 +248,8 @@ public partial class ControlTab : UserControl
             Dispatcher.BeginInvoke(() => Append(line));
         });
         ClientSetupFailed = code is not (null or 0) && clientSetupFailure != 0;
+        // The game started on this copy: the release its user wanted removed later is asked about once the game is closed.
+        if (code == 0 && request.Mode is (LiveMode.All or LiveMode.Client) && Editions.PlayedOn(_shared.Settings, Environment.CurrentDirectory)) _shared.Settings.Save();
         double seconds = started.Elapsed.TotalSeconds;
         Say(() => code switch
         {
@@ -533,6 +539,52 @@ public partial class ControlTab : UserControl
     {
         Directory.CreateDirectory(Repo.Logs);
         Process.Start(new ProcessStartInfo("explorer.exe", Path.GetFullPath(Repo.Logs)) { UseShellExecute = true })?.Dispose();
+    }
+
+    /// <summary>The release this copy replaces, once its user has played here: the guide's "Remove the old one later".</summary>
+    ReleaseToRemove? Replaced => Repo.IsInstall ? null : Editions.Replaced(_shared.Settings, Environment.CurrentDirectory);
+
+    /// <summary>Deletes the old release's program files (<see cref="SwitchToSource.RemoveRelease"/>), holding the folder
+    /// meanwhile: a client this copy shares moves here, so nothing may start during it.</summary>
+    async void RemoveOldClicked(object sender, RoutedEventArgs e)
+    {
+        if (_shared.IsLiveRunning || _shared.Monitor.Latest.Any(s => s.Running) || Replaced is not { } release) return;
+        if (!Dialog.Ask(Window.GetWindow(this), DialogKind.Warning, L.Text("Delete your old LocalExile?"),
+                L.Text("This deletes the program files in {0}, and cannot be undone. Your old saves and mods stay there until you delete them yourself. A game client this copy uses moves here first when it is on the same drive.", release.Old),
+                L.Text("Delete"))) return;
+        RemovedRelease? removed = null;
+        Exception? failed = null;
+        bool ran = await _shared.RunExclusiveAsync(L.Text("Deleting your old LocalExile"), async () =>
+        {
+            Say(() => L.Text("Deleting your old LocalExile"));
+            try { removed = await Task.Run(() => SwitchToSource.RemoveRelease(release.Old, Environment.CurrentDirectory)); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException) { failed = ex; }
+        });
+        if (!ran) return;
+        if (removed is null)
+        {
+            // Nothing is noted as done: the question stays, and a stopped removal can be asked for again.
+            string why = failed?.Message ?? "";
+            Say(() => L.Text("Waypoint couldn't delete your old LocalExile: {0}", why));
+            Append(_state());
+            return;
+        }
+        _shared.Settings.RemoveRelease = null;
+        _shared.Settings.Save();
+        string data = Path.Combine(release.Old, "data");
+        Say(removed.ClientMoved ? () => L.Text("Your old LocalExile is deleted, and the game client moved here. Your old saves are still in {0}.", data)
+            : () => L.Text("Your old LocalExile is deleted. Your old saves are still in {0}.", data));
+        Append(_state());
+        ShowServices(_shared.Monitor.Latest);
+        // A client that moved here is this copy's own now: what reads the folder reads it again.
+        _ = _shared.Workspace.RefreshAsync();
+    }
+
+    void KeepOldClicked(object sender, RoutedEventArgs e)
+    {
+        _shared.Settings.RemoveRelease = null;
+        _shared.Settings.Save();
+        ShowServices(_shared.Monitor.Latest);
     }
 
     void ChangeServer(object sender, RoutedEventArgs e)

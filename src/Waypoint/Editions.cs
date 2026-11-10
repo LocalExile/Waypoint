@@ -55,13 +55,38 @@ static class Editions
         if (!LocalExileReleases.IsInstall(folder)) settings.SourceChoiceMade = true;
     }
 
+    /// <summary>At startup, on <paramref name="root"/>: any folder but the one the settings named when they were read
+    /// (<paramref name="saved"/>) is one its user went to on purpose, through the first start's guide or its chooser, by
+    /// naming it when starting Waypoint, or by starting Waypoint inside it, and is noted as <see cref="LeftFor"/> notes it.
+    /// Only someone who starts on the saved source copy is left to be asked (<see cref="MustChoose"/>). True when
+    /// something was noted, which the caller saves.</summary>
+    public static bool Arrived(Settings settings, string root, string? saved)
+    {
+        // A saved path that cannot be read as one names no folder, this one least of all.
+        try { if (saved is { Length: > 0 } && SameFolder(root, saved)) return false; }
+        catch (Exception e) when (e is ArgumentException or NotSupportedException or IOException) { }
+        bool? before = settings.SourceChoiceMade;
+        LeftFor(settings, root);
+        return settings.SourceChoiceMade != before;
+    }
+
     static bool Running(Shared shared) => shared.Monitor.Latest.Any(s => s.Running);
 
-    /// <summary>Before Waypoint leaves this folder for another, by whatever way: an operation is waited for, and a game or
-    /// servers still running are stopped first, on the user's word. Waypoint finds what runs by its name, not by its folder, so
-    /// what is left running would show in the next folder as that folder's own. Whoever works on LocalExile may leave it
-    /// running all the same. False when the change of folder should not go on.</summary>
-    public static async Task<bool> ReadyToLeaveAsync(Shared shared, Func<DialogKind, string, string, string[], int> ask)
+    /// <summary>Whether leaving this folder for <paramref name="root"/> offers "Switch without stopping": with Developer
+    /// Mode, or in Advanced mode when the other folder is a source copy too, which is shown in Advanced mode as well.
+    /// Someone in Simple mode, here or where they are going, stops what runs first: another folder's game and servers
+    /// would show there as its own.</summary>
+    public static bool MayLeaveRunning(Settings settings, string root) =>
+        settings.Developer || Advanced(settings) && !LocalExileReleases.IsInstall(root);
+
+    /// <summary>Before Waypoint leaves this folder for <paramref name="root"/>, by whatever way: an operation is waited for,
+    /// and a game or servers still running are stopped first, on the user's word. Waypoint finds what runs by its name, not
+    /// by its folder, so what is left running shows in the next folder as that folder's own; "Switch without stopping" is
+    /// therefore only for <see cref="MayLeaveRunning"/>. Each folder's stop ends only what was started from it, so after a
+    /// stop that left something running nobody is refused: the user says whether to go on. From the stop on the window is
+    /// not usable (<see cref="Shared.Leaving"/>), and stays so when this returns: the caller ends that, having closed the
+    /// window or left everything as it was. False when the change of folder should not go on.</summary>
+    public static async Task<bool> ReadyToLeaveAsync(Shared shared, string root, Func<DialogKind, string, string, string[], int> ask)
     {
         if (shared.IsLiveRunning)
         {
@@ -69,31 +94,61 @@ static class Editions
             return false;
         }
         if (!Running(shared)) return true;
-        bool mayLeave = Advanced(shared.Settings) || shared.Settings.Developer;
+        bool mayLeave = MayLeaveRunning(shared.Settings, root);
         int answer = ask(DialogKind.Question, L.Text("LocalExile is still running"),
-            L.Text("The game or its servers are running from this folder. Waypoint stops them before it opens the other folder; the servers save first."),
+            L.Text("The game or its servers are running from this folder. Waypoint stops them before it opens the other folder."),
             mayLeave ? [L.Text("Stop and switch"), L.Text("Switch without stopping"), L.Text("Cancel")] : [L.Text("Stop and switch"), L.Text("Cancel")]);
         shared.Logs.Write($"change of folder while something runs: answer {answer}{(mayLeave ? " (may leave it running)" : "")}", Severity.Info);
         if (mayLeave && answer == 1) return true;
         if (answer != 0) return false;
+        shared.Leaving = true;
         await shared.StopAllAsync(_ => { });
-        // The monitor looks again every two seconds; a Gateway takes a moment to save and end.
+        // The monitor looks again every two seconds; the processes take a moment to end.
         for (int i = 0; i < 60 && Running(shared); i++) await Task.Delay(500);
         if (!Running(shared)) return true;
-        ask(DialogKind.Warning, L.Text("LocalExile is still running"),
-            L.Text("Something did not stop. Close the game or stop the servers yourself, then change folder again."), [L.Text("OK")]);
-        return false;
+        // This folder's stop has run. What is left was started from another folder, perhaps the one being opened, or
+        // would not end; a refusal here would leave no way to the folder that can stop it.
+        int anyway = ask(DialogKind.Warning, L.Text("LocalExile is still running"),
+            L.Text("Something is still running: it was not started from this folder, or it did not stop. Switch anyway leaves it running, and the other folder will show it as if it were its own. If it was started from the folder you are opening, you can stop it there."),
+            [L.Text("Switch anyway"), L.Text("Cancel")]);
+        shared.Logs.Write($"change of folder with something still running after the stop: answer {anyway}", Severity.Info);
+        return anyway == 0;
     }
 
-    /// <summary>The source copy whose characters wait to come to this release, while that folder still is one.</summary>
+    /// <summary>The source copy whose characters wait to come to this release, while that folder still is one and has
+    /// saves: what the adapter's ImportSaves would find there.</summary>
     public static string? BringFrom(Settings settings) =>
-        Repo.IsInstall && settings.BringFrom is { Length: > 0 } from && Repo.IsRoot(from) ? from : null;
+        Repo.IsInstall && settings.BringFrom is { Length: > 0 } from && Repo.IsRoot(from) && LocalExileReleases.HasSaves(from) ? from : null;
+
+    /// <summary>"Don't offer again" on the characters card: the note of that folder is dropped, on its user's word, and
+    /// the card is gone for good. Nothing in either folder changes. The offer returns only when someone leaves a source
+    /// copy for the release again (<see cref="PrepareAsync"/>). True when it was dropped.</summary>
+    public static bool StopOfferingBring(Shared shared, Func<DialogKind, string, string, string[], int> ask)
+    {
+        if (BringFrom(shared.Settings) is not { } from) return false;
+        if (ask(DialogKind.Question, L.Text("Stop offering these characters?"),
+                L.Text("Your characters stay in {0}, as they are. Waypoint will not offer to bring them to this release again.", from),
+                [L.Text("Don't offer again"), L.Text("Cancel")]) != 0) return false;
+        shared.Settings.BringFrom = null;
+        shared.Settings.Save();
+        shared.Logs.Write($"characters from {from} to this release: not offered again, on the user's word", Severity.Info);
+        return true;
+    }
+
+    /// <summary>How long the one fetch of <see cref="ReleaseTakesAsync"/> may take before it is ended.</summary>
+    static readonly TimeSpan FetchLimit = TimeSpan.FromMinutes(2);
 
     /// <summary>Whether the release in <paramref name="releaseFolder"/> can take the characters of the source copy in <paramref name="from"/>: its code is the
     /// same as that copy's or newer, which is the step every update of a release makes. A copy that is ahead of the release,
     /// on a branch the release does not hold, or changed by its owner may have saved what this release can't read; why, then,
-    /// in words for its user.</summary>
-    public static async Task<(bool Ok, string Why)> ReleaseTakesAsync(string from, string releaseFolder)
+    /// in words for its user. A change is a tracked file that differs, or a new file where it is code: a database change
+    /// waiting under <c>sql</c>, source under <c>src</c> or <c>Modules</c>. A league made in Waypoint and a league shown or
+    /// hidden there (<c>Leagues</c>) are not: that is Waypoint's own Leagues section at work, and a refusal would leave its
+    /// user nothing to do but undo it. When the copy has never seen the release's commit, LocalExile's branches are
+    /// fetched once (<see cref="Git.FetchUpstreamInAsync"/>). The copy's current commit is what is compared: which code
+    /// last wrote its saves is recorded nowhere, so a copy put back on an older commit with its saves left in place passes.
+    /// The fetch, and how it ended, go to <paramref name="log"/>.</summary>
+    public static async Task<(bool Ok, string Why)> ReleaseTakesAsync(string from, string releaseFolder, Action<string>? log = null)
     {
         if (LocalExileReleases.InstalledCommit(releaseFolder) is not { } release)
             return (false, L.Text("This release does not say which version of LocalExile's code it was built from, so Waypoint can't tell whether your characters fit it."));
@@ -102,15 +157,20 @@ static class Editions
             var head = await Git.RunAsync(null, "-C", from, "rev-parse", "HEAD");
             if (head.Code != 0) return (false, L.Text("Waypoint could not read the version of the copy in {0}.", from));
             string source = head.Output.Trim();
-            var changes = await Git.RunAsync(null, "-C", from, "status", "--porcelain", "--untracked-files=no");
-            if (changes.Code != 0 || changes.Output.Trim().Length > 0)
+            // league.json is what Waypoint's own Leagues section rewrites to show or hide a league.
+            var changes = await Git.RunAsync(null, "-C", from, "status", "--porcelain", "--untracked-files=no", "--", ".", ":(exclude,glob)Leagues/*/league.json");
+            var added = await Git.RunAsync(null, "-C", from, "ls-files", "--others", "--exclude-standard", "--", "sql", "src", "Modules");
+            if (changes.Code != 0 || changes.Output.Trim().Length > 0 || added.Code != 0 || added.Output.Trim().Length > 0)
                 return (false, L.Text("The copy in {0} has changes of your own to LocalExile's code, so its characters may not fit this release.", from));
             if (source.StartsWith(release, StringComparison.OrdinalIgnoreCase) || release.StartsWith(source, StringComparison.OrdinalIgnoreCase)) return (true, "");
             var older = await Git.RunAsync(null, "-C", from, "merge-base", "--is-ancestor", source, release);
             if (older.Code is not (0 or 1))
             {
-                // The release's commit is not in that copy yet: newer than anything it has fetched.
-                await Git.RunAsync(null, "-C", from, "fetch", "--quiet", "origin");
+                // The release's commit is not in that copy yet: newer than anything it has fetched. Its origin may be a
+                // fork that does not have it either, so LocalExile itself is asked.
+                var fetched = await Git.FetchUpstreamInAsync(from, FetchLimit, log);
+                if (!fetched.Ok)
+                    return (false, L.Text("Waypoint could not get LocalExile's newest code to compare the copy in {0} with this release. Check your connection and try again.", from));
                 older = await Git.RunAsync(null, "-C", from, "merge-base", "--is-ancestor", source, release);
             }
             return older.Code switch
@@ -128,8 +188,10 @@ static class Editions
 
     /// <summary>The characters of the source copy its user left for this release, brought here when they fit
     /// (<see cref="ReleaseTakesAsync"/>): that folder is only read, and this release's own saves are backed up and set aside
-    /// first (the adapter's ImportSaves). True when they came.</summary>
-    public static async Task<bool> BringToReleaseAsync(Shared shared, Func<DialogKind, string, string, string[], int> ask)
+    /// first (the adapter's ImportSaves), with automatic backups off too. The check may fetch, so it holds the folder as
+    /// any other work does, and <paramref name="checking"/> hears when it starts and ends: Play waits, and the card says
+    /// that Waypoint is checking. True when they came.</summary>
+    public static async Task<bool> BringToReleaseAsync(Shared shared, Func<DialogKind, string, string, string[], int> ask, Action<bool>? checking = null)
     {
         if (BringFrom(shared.Settings) is not { } from) return false;
         if (shared.IsLiveRunning || Running(shared))
@@ -137,7 +199,16 @@ static class Editions
             ask(DialogKind.Info, L.Text("Stop LocalExile first"), L.Text("Press Stop playing, then try again."), [L.Text("OK")]);
             return false;
         }
-        var (fits, why) = await ReleaseTakesAsync(from, Environment.CurrentDirectory);
+        bool fits = false, ran;
+        string why = "";
+        checking?.Invoke(true);
+        try
+        {
+            ran = await shared.RunExclusiveAsync(L.Text("Bring your characters"),
+                async () => (fits, why) = await ReleaseTakesAsync(from, Environment.CurrentDirectory, line => shared.Logs.Write($"git: {line}")));
+        }
+        finally { checking?.Invoke(false); }
+        if (!ran) return false;
         shared.Logs.Write($"characters from {from} to this release: {(fits ? "they fit" : "not now: " + why)}", Severity.Info);
         if (!fits)
         {
@@ -157,6 +228,23 @@ static class Editions
         shared.Settings.Save();
         return true;
     }
+
+    /// <summary>The guide's "Remove the old one later" (<see cref="Settings.RemoveRelease"/>), noted for the source copy in
+    /// <paramref name="folder"/>: the game has now started there, so the question about the old release may come
+    /// (<see cref="Replaced"/>). Control notes it, where a source copy plays. True when it was noted, which the caller
+    /// saves.</summary>
+    public static bool PlayedOn(Settings settings, string folder)
+    {
+        if (settings.RemoveRelease is not { Played: false } release || !string.Equals(release.Copy, folder, StringComparison.OrdinalIgnoreCase)) return false;
+        settings.RemoveRelease = release with { Played = true };
+        return true;
+    }
+
+    /// <summary>The release that the source copy in <paramref name="folder"/> replaces, once its user has played there
+    /// (<see cref="PlayedOn"/>): what Control asks about, "Delete the old one…" or "Keep it". Null in any other folder,
+    /// and before that.</summary>
+    public static ReleaseToRemove? Replaced(Settings settings, string folder) =>
+        settings.RemoveRelease is { Played: true } release && string.Equals(release.Copy, folder, StringComparison.OrdinalIgnoreCase) ? release : null;
 
     /// <summary>The remembered folder of that side, while it still is one.</summary>
     public static string? Folder(Settings settings, bool release) =>
@@ -223,9 +311,10 @@ static class Editions
         return (EditionStep.Switch, folder);
     }
 
-    /// <summary>A copy on the tested version (<see cref="SwitchToSource.TestedBranch"/>, which Play never moves) onto LocalExile's
-    /// default branch, which Play then keeps up to date: the saves backed up first, nothing done with changes of the player's own.
-    /// The next Play fetches and updates as it always does. True when it moved.</summary>
+    /// <summary>A copy on the tested version (<see cref="SwitchToSource.TestedBranch"/>) onto LocalExile's default branch,
+    /// which its user then updates from Versions: the saves backed up first, nothing done with changes of the player's own.
+    /// Control calls it when the game client needs a newer LocalExile, with the question answered for the user; the
+    /// Release | Latest switch's own link to it is no longer reached. True when it moved.</summary>
     public static async Task<bool> MoveToNewestAsync(Shared shared, Func<DialogKind, string, string, string[], int> ask)
     {
         if (shared.IsLiveRunning || shared.Monitor.Latest.Any(s => s.Running))
@@ -234,7 +323,7 @@ static class Editions
             return false;
         }
         if (ask(DialogKind.Question, L.Text("Get the newest changes?"),
-                L.Text("This copy moves from its older version to LocalExile's newest changes, and Play then updates it each day. The newest changes may be less stable. Your saves are backed up first."),
+                L.Text("This copy moves from its older version to LocalExile's newest changes. After that you update it yourself from Versions. The newest changes may be less stable. Your saves are backed up first."),
                 [L.Text("Get the newest changes"), L.Text("Cancel")]) != 0) return false;
         if ((await Git.ChangesAsync()).Count > 0)
         {
@@ -249,7 +338,7 @@ static class Editions
             if (moved is not null) ask(DialogKind.Error, L.Text("The copy didn't move"), moved.Output, [L.Text("OK")]);
             return false;
         }
-        // Due at once: the next Play fetches, backs up and moves forward, with its way back.
+        // Was "due at once" for Play's daily update, which is no longer reached: nothing reads it now.
         shared.Settings.LastUpdateCheck = null;
         shared.Settings.Save();
         await shared.Workspace.RefreshAsync();
@@ -257,7 +346,7 @@ static class Editions
     }
 
     /// <summary>The copy onto the last LocalExile made for the player's older client (<see cref="ClientUpdate.Kind.UseOlder"/>):
-    /// a branch of its own (<see cref="SwitchToSource.OlderBranch"/>) that Play never moves, the saves backed up first, nothing
+    /// a branch of its own (<see cref="SwitchToSource.OlderBranch"/>) that nothing moves, the saves backed up first, nothing
     /// done with changes of the player's own. True when it moved.</summary>
     public static async Task<bool> MoveToOlderAsync(Shared shared, string build, Func<DialogKind, string, string, string[], int> ask)
     {

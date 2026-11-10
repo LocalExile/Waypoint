@@ -77,18 +77,14 @@ your characters. When a newer LocalExile release is out, a green card offers to 
 Nothing changes until you accept and the game is closed. Your saves are copied first, and `data\` and `Client\` are kept.
 **Settings → Keep LocalExile up to date** turns the prompt off.
 
-A new player starts in **Simple mode**: **Play**, **Mods**, **Backups**, **Accounts**, **Logs**, **Console**, **Tools** and **Settings**. On a source checkout **Play** does
-everything. It backs up your saves, gets the newest code at most once a day, builds it and starts the game. If an update doesn't
-start, Waypoint goes back to the version you had and starts that. **Go back to the version you had** stays for a week after an
-update, and **Settings → Keep LocalExile up to date** turns updates off. An update is the latest code, not a release; a bug
-inside the game is what the way back is for.
+A new player starts in **Simple mode**: **Play**, **Mods**, **Backups**, **Accounts**, **Tools** and **Settings**, with **Console**
+and **Logs** one click away on Tools. Simple mode plays the release. A source checkout is always shown in **Advanced mode**: it
+plays from **Control** and its user updates it from **Versions**. Waypoint never updates a source checkout by itself.
 
 Source checkouts also show **Modules** and **Leagues**, with editing enabled only when the checkout exposes the supported
 settings and league-choice hooks. The league card's name, description and mode links have a read-only preview.
 
-A copy with anything of your own (another branch, a fork as `origin`, changes, your own commits) is never updated by itself.
-
-**Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
+On a release install, **Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
 full control over branches and pull requests. Someone coming from an earlier launcher starts there.
 
 ## Sections

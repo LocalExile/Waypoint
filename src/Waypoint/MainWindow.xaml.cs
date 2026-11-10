@@ -112,6 +112,15 @@ public partial class MainWindow : Window
         _tray.ShowRequested += ShowFromTray;
         _tray.StopAllRequested += async () => await _shared.StopAllAsync(_ => { });
         _tray.ExitRequested += () => { ShowFromTray(); _explicitExit = true; Close(); };
+        // Waypoint stops what runs before it leaves this folder (Shared.Leaving): until that has ended the window is not
+        // usable, as when it stops what runs before it closes. A change of folder that does not go on gives it back.
+        string? title = null;
+        _shared.LeavingChanged += () =>
+        {
+            IsEnabled = !_shared.Leaving;
+            if (_shared.Leaving) { title = Title; Title = L.Text("Waypoint: stopping …"); }
+            else if (title is not null) Title = title;
+        };
         _shared.Monitor.Sampled += samples => Dispatcher.BeginInvoke(() =>
         {
             ClientSeen(samples.Any(s => s.Service == Service.Client && s.Running));
@@ -634,9 +643,15 @@ public partial class MainWindow : Window
         if (_deciding) { e.Cancel = true; return; }
         var settings = _shared.Settings;
         bool sessionEnding = Application.Current is App { IsSessionEnding: true };
+        // Waypoint is stopping what runs before it leaves this folder, and closes by itself when that has ended. Nothing
+        // is asked or said meanwhile: a question open when the wait ends would keep the window from closing.
+        if (_shared.Leaving && !sessionEnding) { e.Cancel = true; _explicitExit = false; return; }
         bool anything = _shared.Monitor.Latest.Any(s => s.Running && s.Service.Kind is not ServiceKind.Recorder);
         var action = WindowClosePolicy.Decide(settings.ForBridge, _shared.IsLiveRunning, _explicitExit, sessionEnding);
         _explicitExit = false;
+        // Taken for this close alone: a close that is refused must not leave it for the next one.
+        bool? stopOverride = _stopOverride;
+        _stopOverride = null;
         if (action == WindowCloseAction.Ask && !anything && !settings.CloseToTray && !settings.AlwaysAskOnClose) action = WindowCloseAction.Exit;
         switch (action)
         {
@@ -654,8 +669,7 @@ public partial class MainWindow : Window
                 Dialog.Tell(this, DialogKind.Info, L.Text("{0} is still running", _shared.BusyWith), L.Text("Close Waypoint when it is done."));
                 return;
         }
-        bool stop = _stopOverride ?? settings.StopServicesOnExit;
-        _stopOverride = null;
+        bool stop = stopOverride ?? settings.StopServicesOnExit;
         if (stop && anything && !sessionEnding)
         {
             e.Cancel = true;
@@ -672,10 +686,13 @@ public partial class MainWindow : Window
         await Accounts.CreateAccountAsync();
     }
 
-    /// <summary>A real exit, whatever closing the window is set to do.</summary>
+    /// <summary>A real exit, whatever closing the window is set to do: Waypoint starts again, on another folder say. What
+    /// runs is left as it is, whatever is set for an exit: whoever asked for the change has answered that already
+    /// ("Switch without stopping"), and stopping is not what starting again is for.</summary>
     internal void ExitNow()
     {
         _explicitExit = true;
+        _stopOverride = false;
         Close();
     }
 

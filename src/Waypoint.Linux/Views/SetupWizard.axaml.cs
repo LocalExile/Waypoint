@@ -194,9 +194,9 @@ public partial class SetupWizard : Window
         RemoveNote.Text = L.Text("Once the new copy has worked for you, Waypoint will ask before deleting the old one.");
         UpdatesTitle.Text = L.Text("Updates");
         TestedVersion.Content = L.Text("Keep an older version that does not change");
-        TestedNote.Text = L.Text("LocalExile from 1 November, which the item crafter is known to work with. You can get the newest changes later from Play.");
+        TestedNote.Text = L.Text("LocalExile from 1 November, which the item crafter is known to work with. You can move to the newest changes later from Versions.");
         NewestVersion.Content = L.Text("Get the newest changes");
-        NewestNote.Text = L.Text("Updates itself each day, and things can break.");
+        NewestNote.Text = L.Text("LocalExile's newest changes; things can break. You update it yourself from Versions.");
         GiveItemTitle.Text = L.Text("Giving items");
         GiveItem.Content = L.Text("Set up Give item (recommended)");
         GiveItemNote.Text = L.Text("Installs Frida, a tool that talks to the running game. It takes about 180 MB, and some antivirus programs flag it. The game's chat box is too short for most items, so Give item needs it.");

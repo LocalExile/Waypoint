@@ -888,6 +888,9 @@
   <data xml:space="preserve" name="Text_1a5ac0bd0b6b">
     <value>Source: </value>
   </data>
+  <data name="Text_1a6192ed0ec5" xml:space="preserve">
+    <value>Start on the newest changes. You update the copy yourself from Versions.</value>
+  </data>
   <data name="Text_1a6ff8f22cbb" xml:space="preserve">
     <value>Start when you are ready. You can stop at any point, and the game can stay closed the whole time.</value>
   </data>
@@ -1505,9 +1508,6 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Restore mod choices</value>
   </data>
-  <data name="Text_2ae155180cc7" xml:space="preserve">
-    <value>Update this copy to the newest LocalExile: on the Versions section in Advanced mode, or with Get the newest changes on Play in Simple mode.</value>
-  </data>
   <data name="Text_2ae8aced0bae" xml:space="preserve">
     <value>Landmarks</value>
   </data>
@@ -1658,6 +1658,9 @@ Change location above to choose somewhere else.</value>
   <data xml:space="preserve" name="Text_2f444c96f7fb">
     <value>Stronger keyboard focus borders</value>
   </data>
+  <data name="Text_2f55db28c725" xml:space="preserve">
+    <value>Something is still running: it was not started from this folder, or it did not stop. Switch anyway leaves it running, and the other folder will show it as if it were its own. If it was started from the folder you are opening, you can stop it there.</value>
+  </data>
   <data name="Text_2f5ca4b733a1" xml:space="preserve">
     <value>Exit Waypoint</value>
   </data>
@@ -1721,6 +1724,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_3064d79a295c" xml:space="preserve">
     <value>Rename</value>
   </data>
+  <data name="Text_307136636b95" xml:space="preserve">
+    <value>Update this copy to the newest LocalExile on the Versions section.</value>
+  </data>
   <data name="Text_30b596760dc1" xml:space="preserve">
     <value>Frida was installed but could not be loaded. Check the installation output and try again.</value>
   </data>
@@ -1771,9 +1777,6 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_3253dba2c477">
     <value>Switch and build</value>
-  </data>
-  <data name="Text_32635dd132ba" xml:space="preserve">
-    <value>To go back to your other LocalExile, use Change folder… on Play and choose {0}.</value>
   </data>
   <data name="Text_32861db02c0a" xml:space="preserve">
     <value>Shared settings</value>
@@ -2116,6 +2119,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3c8dedc73d20" xml:space="preserve">
     <value>Encounters and challenges</value>
   </data>
+  <data name="Text_3c94106d9402" xml:space="preserve">
+    <value>LocalExile from 1 November, which the item crafter is known to work with. You can move to the newest changes later from Versions.</value>
+  </data>
   <data name="Text_3cc7bdb1ec13" xml:space="preserve">
     <value>Optional module for this mode.</value>
   </data>
@@ -2392,9 +2398,6 @@ This checkout has modified tracked files.</value>
   <data name="Text_46aeaf289dba" xml:space="preserve">
     <value>Power symbols</value>
   </data>
-  <data name="Text_46c7bd8e82a1" xml:space="preserve">
-    <value>Update to the newest changes once a day.</value>
-  </data>
   <data name="Text_46cac231d89b" xml:space="preserve">
     <value>Gold door</value>
   </data>
@@ -2458,6 +2461,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4850b174b713" xml:space="preserve">
     <value>Required</value>
   </data>
+  <data name="Text_4850fd99e28f" xml:space="preserve">
+    <value>Waypoint stays on this folder. The setup guide's folder is {0}: Change folder… on Play, or Change… on Control, opens it.</value>
+  </data>
   <data name="Text_4854bd9995ea" xml:space="preserve">
     <value>Checkout revision: {0}</value>
   </data>
@@ -2478,6 +2484,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_48ce04a2b2bc" xml:space="preserve">
     <value>Full copy includes characters, progress and all personal/guild stash tabs. Start empty creates only a new login.</value>
+  </data>
+  <data name="Text_48db6ba05959" xml:space="preserve">
+    <value>Shows this copy in Advanced mode: every section, with branches and pull requests under Versions. A release keeps the mode you chose there.</value>
   </data>
   <data name="Text_48fe4f837791" xml:space="preserve">
     <value>League created. It becomes available after the next server start.</value>
@@ -3120,14 +3129,8 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data name="Text_5d202208fa1a" xml:space="preserve">
     <value>Duplicate…</value>
   </data>
-  <data name="Text_5d881cebd727" xml:space="preserve">
-    <value>LocalExile as it is being made: the newest changes, updated when you play.</value>
-  </data>
   <data name="Text_5d9389cbbeb3" xml:space="preserve">
     <value>DETAIL</value>
-  </data>
-  <data name="Text_5dd0a28cb004" xml:space="preserve">
-    <value>Your old LocalExile is still in {0}. After you have played, Play asks whether to delete it.</value>
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 output</value>
@@ -3163,14 +3166,14 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data name="Text_5f3f9390f047" xml:space="preserve">
     <value>Keep this version</value>
   </data>
-  <data name="Text_5f42784698ae" xml:space="preserve">
-    <value>LocalExile from 1 November, which the item crafter is known to work with. You can get the newest changes later from Play.</value>
-  </data>
   <data name="Text_5f664501398a" xml:space="preserve">
     <value>git fetch --prune origin, and the open pull requests from GitHub</value>
   </data>
   <data xml:space="preserve" name="Text_5f6d5cac3804">
     <value>Backing up saves</value>
+  </data>
+  <data name="Text_5f755162e884" xml:space="preserve">
+    <value>Waypoint could not get LocalExile's newest code to compare the copy in {0} with this release. Check your connection and try again.</value>
   </data>
   <data name="Text_5f7d44dba864" xml:space="preserve">
     <value>Your characters are still in {0}. Waypoint can bring them here when this release is the same as or newer than that copy.</value>
@@ -3615,6 +3618,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_6caadd32b7a9" xml:space="preserve">
     <value>standalone client layout (Content.ggpk)</value>
   </data>
+  <data name="Text_6cc01aa057db" xml:space="preserve">
+    <value>Stop offering these characters?</value>
+  </data>
   <data name="Text_6cc4fac6c312" xml:space="preserve">
     <value>Monster pack anchors: {0}</value>
   </data>
@@ -3800,9 +3806,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_721de2068658" xml:space="preserve">
     <value>Not loaded (last checked)</value>
-  </data>
-  <data name="Text_722cdc47d49a" xml:space="preserve">
-    <value>Updates itself each day, and things can break.</value>
   </data>
   <data name="Text_722ddecd794e" xml:space="preserve">
     <value>Possible pack leaders: {0}</value>
@@ -4094,6 +4097,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7b3f91c46dd2" xml:space="preserve">
     <value>{0} · {1:g}</value>
+  </data>
+  <data name="Text_7b46684662b8" xml:space="preserve">
+    <value>LocalExile as it is being made: the newest changes, from its source, in Advanced mode.</value>
   </data>
   <data name="Text_7b472544bbda" xml:space="preserve">
     <value>Templar</value>
@@ -4577,6 +4583,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8b57b64a80f5" xml:space="preserve">
     <value>Back up this release's saves?</value>
+  </data>
+  <data name="Text_8b5ad58d76bc" xml:space="preserve">
+    <value>Your characters stay in {0}, as they are. Waypoint will not offer to bring them to this release again.</value>
   </data>
   <data xml:space="preserve" name="Text_8b7df2ff57b5">
     <value>Some custom text/background combinations have low contrast. Adjust the colors or reset this scheme.</value>
@@ -5169,6 +5178,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9c618d925c1c" xml:space="preserve">
     <value>Patch server: the client's update check stays local</value>
   </data>
+  <data name="Text_9c8fdf7ac695" xml:space="preserve">
+    <value>The folder was not changed</value>
+  </data>
   <data xml:space="preserve" name="Text_9ca428fef4d5">
     <value>Mods disabled globally</value>
   </data>
@@ -5724,9 +5736,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_acb4bce11dae">
     <value>A workspace operation is in progress.</value>
   </data>
-  <data name="Text_acbaeabe2255" xml:space="preserve">
-    <value>This copy moves from its older version to LocalExile's newest changes, and Play then updates it each day. The newest changes may be less stable. Your saves are backed up first.</value>
-  </data>
   <data name="Text_ad050d3449ef" xml:space="preserve">
     <value>Tracked files modified</value>
   </data>
@@ -6206,6 +6215,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_bb7234ec1245" xml:space="preserve">
     <value>Register</value>
+  </data>
+  <data name="Text_bb7f72918e71" xml:space="preserve">
+    <value>Your old LocalExile is still in {0}. After you have played, Control asks whether to delete it.</value>
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>Settings could not be loaded</value>
@@ -6989,9 +7001,6 @@ Client: {2}</value>
   <data name="Text_d5c6cc663b20" xml:space="preserve">
     <value>Replacing saved enable/disable overrides only; no mod binaries or save restore.</value>
   </data>
-  <data name="Text_d5d6149fadee" xml:space="preserve">
-    <value>The game or its servers are running from this folder. Waypoint stops them before it opens the other folder; the servers save first.</value>
-  </data>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>no timings: {0}</value>
   </data>
@@ -7139,9 +7148,6 @@ Dependencies: {2}
   <data name="Text_da86bbbc05e9" xml:space="preserve">
     <value>About Mods, Modules and Leagues</value>
   </data>
-  <data name="Text_da8ec7567c63" xml:space="preserve">
-    <value>Something did not stop. Close the game or stop the servers yourself, then change folder again.</value>
-  </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>Reset</value>
   </data>
@@ -7192,6 +7198,9 @@ Dependencies: {2}
   </data>
   <data name="Text_dc63ab18e32d" xml:space="preserve">
     <value>Saved enable choices do not confirm live load status.</value>
+  </data>
+  <data name="Text_dc6c0cd150d1" xml:space="preserve">
+    <value>The game or its servers are running from this folder. Waypoint stops them before it opens the other folder.</value>
   </data>
   <data name="Text_dc6c5ae4c245" xml:space="preserve">
     <value>Delete {0}?</value>
@@ -7328,6 +7337,9 @@ Dependencies: {2}
   <data name="Text_e0ad23f58ba8" xml:space="preserve">
     <value>The worst second's 99th percentile in the window</value>
   </data>
+  <data name="Text_e0b03d95aed1" xml:space="preserve">
+    <value>This copy moves from its older version to LocalExile's newest changes. After that you update it yourself from Versions. The newest changes may be less stable. Your saves are backed up first.</value>
+  </data>
   <data name="Text_e0bfbac4f14b" xml:space="preserve">
     <value>Harbinger</value>
   </data>
@@ -7364,9 +7376,6 @@ Dependencies: {2}
   </data>
   <data name="Text_e1ac34af368e" xml:space="preserve">
     <value>Setting up capture</value>
-  </data>
-  <data name="Text_e1bbf21f70bc" xml:space="preserve">
-    <value>Turns on Developer Mode and Advanced mode: every section, with branches and pull requests under Versions. Waypoint then no longer updates LocalExile by itself.</value>
   </data>
   <data name="Text_e1c753f8d16c" xml:space="preserve">
     <value>{0}: from {1} to {2} characters</value>
@@ -7700,6 +7709,9 @@ Dependencies: {2}
   </data>
   <data name="Text_eb1a70e39274" xml:space="preserve">
     <value>Discard</value>
+  </data>
+  <data name="Text_eb1f230afa51" xml:space="preserve">
+    <value>LocalExile's newest changes; things can break. You update it yourself from Versions.</value>
   </data>
   <data xml:space="preserve" name="Text_eb24997abb6c">
     <value>Select a LocalExile checkout in Settings.</value>
@@ -8125,6 +8137,9 @@ Mods at backup: </value>
   <data name="Text_f7a90ea11a44" xml:space="preserve">
     <value>See what happened</value>
   </data>
+  <data name="Text_f7b95d390f97" xml:space="preserve">
+    <value>To go back to your other LocalExile, use Change… on Control and choose {0}.</value>
+  </data>
   <data name="Text_f7bf8de0a782" xml:space="preserve">
     <value>Set up Give item?</value>
   </data>
@@ -8214,6 +8229,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fa77a5252d38" xml:space="preserve">
     <value>Gate</value>
+  </data>
+  <data name="Text_faa0f28e0c5b" xml:space="preserve">
+    <value>Don't offer again</value>
   </data>
   <data name="Text_faa6d163b29d" xml:space="preserve">
     <value>Color schemes, custom colors, reading fonts, text size and accessibility preferences.</value>

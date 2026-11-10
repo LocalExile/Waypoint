@@ -87,19 +87,27 @@ public partial class SetupTab : UserControl
         if (Busy()) return;
         var owner = Window.GetWindow(this);
         string current = Environment.CurrentDirectory;
+        // The folder the settings name: the guide saves its own as it goes.
+        string? saved = _shared.Settings.ServerPath;
         var guide = new SetupWizard(_shared.Settings, owner, current, newCopy, release, newest);
         await _shared.RunExclusiveAsync(L.Text("Setup guide"), () => { guide.ShowDialog(); return Task.CompletedTask; });
-        if (guide.Checkout is { } checkout && !checkout.Equals(current, StringComparison.OrdinalIgnoreCase))
+        bool elsewhere = false;
+        if (guide.Checkout is { } checkout && !Editions.SameFolder(checkout, current))
         {
-            // The guide has saved its checkout already; SwitchServer acts on a change.
-            _shared.Settings.ServerPath = current;
-            _shared.Settings.CreateAccountOnStart = guide.CreateAccountNext;
-            await App.SwitchServerAsync(owner, _shared, checkout);
-            return;
+            // The guide has saved its folder already, and the change of folder can still be turned down (the game runs,
+            // say). Until Waypoint starts again on the other folder the settings name the one they named before, and the
+            // account to create is noted only with the change.
+            _shared.Settings.ServerPath = saved;
+            _shared.Settings.Save();
+            if (await App.SwitchServerAsync(owner, _shared, checkout, createAccount: guide.CreateAccountNext)) return;
+            Dialog.Tell(owner, DialogKind.Info, L.Text("The folder was not changed"),
+                L.Text("Waypoint stays on this folder. The setup guide's folder is {0}: Change folder… on Play, or Change… on Control, opens it.", checkout));
+            elsewhere = true;
         }
         SetupFinished?.Invoke();
         await _shared.Workspace.RefreshAsync();
-        if (guide.CreateAccountNext) CreateAccountRequested?.Invoke();
+        // An account asked for at the end of the guide is the other folder's.
+        if (guide.CreateAccountNext && !elsewhere) CreateAccountRequested?.Invoke();
     }
 
     void FindCheckout(object sender, RoutedEventArgs e)
