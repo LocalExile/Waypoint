@@ -1634,6 +1634,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Full copy</value>
   </data>
+  <data name="Text_2f033ca03b8e" xml:space="preserve">
+    <value>Fewer tools</value>
+  </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>Base: {0}</value>
   </data>
@@ -2996,6 +2999,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_591889ac42e0" xml:space="preserve">
     <value>Open logs</value>
+  </data>
+  <data name="Text_5918cb537c7d" xml:space="preserve">
+    <value>More tools</value>
   </data>
   <data xml:space="preserve" name="Text_594623afa2ef">
     <value>Existing save database</value>
@@ -6612,6 +6618,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Unavailable</value>
   </data>
+  <data name="Text_ca20ea2d6a4c" xml:space="preserve">
+    <value>Takes Logs, Console and Tools out of this list. A link that leads to one still opens it.</value>
+  </data>
   <data xml:space="preserve" name="Text_ca4e5268289a">
     <value>{0} backups for {1}</value>
   </data>
@@ -7421,6 +7430,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop and the dev host: the game, the walk-map recorder, the servers and the account service</value>
+  </data>
+  <data name="Text_e48b0227bddb" xml:space="preserve">
+    <value>Adds Logs, Console and Tools to this list</value>
   </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>Previous day</value>

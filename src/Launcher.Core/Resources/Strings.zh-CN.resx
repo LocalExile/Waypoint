@@ -1634,6 +1634,9 @@
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>完整复制</value>
   </data>
+  <data name="Text_2f033ca03b8e" xml:space="preserve">
+    <value>更少工具</value>
+  </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>基础类型：{0}</value>
   </data>
@@ -2996,6 +2999,9 @@
   </data>
   <data name="Text_591889ac42e0" xml:space="preserve">
     <value>打开日志</value>
+  </data>
+  <data name="Text_5918cb537c7d" xml:space="preserve">
+    <value>更多工具</value>
   </data>
   <data name="Text_594623afa2ef" xml:space="preserve">
     <value>现有存档数据库</value>
@@ -6612,6 +6618,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ca1844969742" xml:space="preserve">
     <value>不可用</value>
   </data>
+  <data name="Text_ca20ea2d6a4c" xml:space="preserve">
+    <value>将“日志”“控制台”和“工具”从此列表中移除。指向其中任一部分的链接仍会打开它。</value>
+  </data>
   <data name="Text_ca4e5268289a" xml:space="preserve">
     <value>{1} 的 {0} 个备份</value>
   </data>
@@ -7421,6 +7430,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop 和 dev host：游戏、行走地图记录器、服务器和账号服务</value>
+  </data>
+  <data name="Text_e48b0227bddb" xml:space="preserve">
+    <value>将“日志”“控制台”和“工具”添加到此列表</value>
   </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>前一天</value>

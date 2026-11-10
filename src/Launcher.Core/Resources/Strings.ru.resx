@@ -1634,6 +1634,9 @@
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Полная копия</value>
   </data>
+  <data name="Text_2f033ca03b8e" xml:space="preserve">
+    <value>Меньше инструментов</value>
+  </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>База: {0}</value>
   </data>
@@ -2996,6 +2999,9 @@
   </data>
   <data name="Text_591889ac42e0" xml:space="preserve">
     <value>Открыть журналы</value>
+  </data>
+  <data name="Text_5918cb537c7d" xml:space="preserve">
+    <value>Больше инструментов</value>
   </data>
   <data xml:space="preserve" name="Text_594623afa2ef">
     <value>База сохранений</value>
@@ -6612,6 +6618,9 @@
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
   </data>
+  <data name="Text_ca20ea2d6a4c" xml:space="preserve">
+    <value>Убирает из этого списка разделы «Журналы», «Консоль» и «Инструменты». Ссылка, ведущая в один из них, по-прежнему его открывает.</value>
+  </data>
   <data xml:space="preserve" name="Text_ca4e5268289a">
     <value>Резервных копий: {0} · {1}</value>
   </data>
@@ -7421,6 +7430,9 @@
   </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop и dev host: игра, запись планировок, серверы и служба аккаунтов</value>
+  </data>
+  <data name="Text_e48b0227bddb" xml:space="preserve">
+    <value>Добавляет в этот список разделы «Журналы», «Консоль» и «Инструменты»</value>
   </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>Предыдущий день</value>

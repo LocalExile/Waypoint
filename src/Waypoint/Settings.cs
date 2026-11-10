@@ -41,6 +41,11 @@ sealed class Settings
     public bool Developer => DeveloperMode == true;
     [JsonIgnore]
     public bool Advanced => Developer && AdvancedMode == true;
+    /// <summary>Simple mode with its further sections, Logs, Console and Tools (the sidebar's "More tools"). Someone new
+    /// starts without them; someone who had Waypoint before keeps the sections they had (<see cref="Load"/>).</summary>
+    public bool? MoreSections { get; set; }
+    [JsonIgnore]
+    public bool More => MoreSections == true;
     /// <summary>Play's card for someone on the Latest side in Simple mode was answered with "Stay on Latest"
     /// (<see cref="Editions.Guides"/>).</summary>
     public bool LatestGuideDismissed { get; set; }
@@ -148,16 +153,22 @@ sealed class Settings
     {
         try
         {
-            if (System.IO.File.Exists(File))
-            {
-                var saved = JsonSerializer.Deserialize<Settings>(System.IO.File.ReadAllText(File), Options) ?? new();
-                saved.AdvancedMode ??= true;
-                saved.DeveloperMode ??= saved.AdvancedMode == true;
-                return saved;
-            }
+            if (System.IO.File.Exists(File)) return Saved(System.IO.File.ReadAllText(File));
         }
-        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true, DeveloperMode = true }; }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true, DeveloperMode = true, MoreSections = true }; }
         return Imported();
+    }
+
+    /// <summary>Settings as their file holds them, with what an older Waypoint did not save yet filled in so that nothing
+    /// changes for their owner: every section, and Simple mode's further ones.</summary>
+    internal static Settings Saved(string json)
+    {
+        var saved = JsonSerializer.Deserialize<Settings>(json, Options) ?? new();
+        saved.AdvancedMode ??= true;
+        saved.DeveloperMode ??= saved.AdvancedMode == true;
+        // Saved before Simple mode had its short list: Logs, Console and Tools stay where they were.
+        saved.MoreSections ??= true;
+        return saved;
     }
 
     /// <summary>The settings of the two launchers this one replaces: LocalExile Launcher's, then Waypoint's on top of them.
@@ -201,6 +212,7 @@ sealed class Settings
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException or InvalidDataException) { }
         settings.AdvancedMode ??= false;
         settings.DeveloperMode ??= settings.AdvancedMode == true;
+        settings.MoreSections ??= false;
         return settings;
     }
 

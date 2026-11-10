@@ -12,6 +12,8 @@
             <RadioButton x:Name="AdvancedMode" GroupName="Mode" Foreground="{DynamicResource Shell.SidebarText}" IsCheckedChanged="ModeChosen" />
           </StackPanel>
         </Border>
+        <!-- Simple mode's short list and its further sections: Logs, Console and Tools, one click away. -->
+        <Button x:Name="MoreLink" DockPanel.Dock="Bottom" Classes="quiet" Margin="16,0,12,10" HorizontalAlignment="Left" FontSize="12" Click="MoreClicked" />
         <ListBox x:Name="Sections" Classes="sections" Background="Transparent" Margin="6,0" SelectionChanged="SectionChanged">
           <ListBox.ItemTemplate>
             <DataTemplate>

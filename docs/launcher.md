@@ -298,9 +298,14 @@ question (a fork's pull request) has Cancel as its default.
 
 ## Simple and Advanced modes
 
-A new player starts in **Simple mode**, with five sections (Play, Mods, Tools, Accounts, Settings) and no status strip or branch
-chip: nothing to choose before playing. **Settings → Developer → Developer Mode**, off by default, adds the **Simple | Advanced** switch at the bottom of the sidebar:
-**Simple** has Play, Mods, Backups, Accounts, Logs, Console, Tools and Settings. **Advanced** replaces Play with Control, as that section has it, and adds Versions, Performance and Server timings. Setup is reached from Control. Turning Developer Mode off goes back to Simple
+A new user starts in **Simple mode**, with five sections (Play, Mods, Backups, Accounts, Settings; a source copy also has
+Modules and Leagues) and no status strip or branch chip: nothing to choose before playing. **More tools**, a link at the
+bottom of the sidebar, adds Logs, Console and Tools to the list, and **Fewer tools** takes them out again
+(`Settings.MoreSections`); a link that leads to one of them, such as Play's **See what happened**, opens it either way.
+Someone whose settings were saved before the short list keeps those three sections until they choose otherwise
+(`Settings.Saved`). **Settings → Developer → Developer Mode**, off by default, adds the **Simple | Advanced** switch at the
+bottom of the sidebar. **Advanced** replaces Play with Control, as that section has it, has Logs, Console and Tools, and adds
+Versions, Performance and Server timings. Setup is reached from Control. Turning Developer Mode off goes back to Simple
 mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer Mode on
 (`Settings.Load`).
 

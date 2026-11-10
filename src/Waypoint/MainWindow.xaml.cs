@@ -259,7 +259,9 @@ public partial class MainWindow : Window
         FrameworkElement[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
             ? s.View is GameSystemsTab || s.View is ControlTab or VersionsTab or ReleasesTab or ModsTab or BackupsTab or AccountsTab or PerformanceTab or TimingsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab
-            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
+            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or SettingsTab
+                // Simple mode's further sections, with "More tools". A link to one shows it either way (ShowSection).
+                || _shared.Settings.More && s.View is LogsTab or ConsoleTab or ToolsTab)).ToArray();
         // Developer Mode (Settings) unlocks the switch.
         ModeSwitch.Visibility = _shared.Settings.Developer ? Visibility.Visible : Visibility.Collapsed;
         var shown = Sections.SelectedItem as Section;
@@ -269,6 +271,7 @@ public partial class MainWindow : Window
         BranchChip.Visibility = advanced && !Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
+        ShowMore();
         // Developer Mode also decides whether Simple mode offers the Latest side.
         InstallView.ShowOffers();
         PlayView.ShowOffers();
@@ -348,8 +351,26 @@ public partial class MainWindow : Window
     }
 
     /// <summary>What a language change reaches beyond the bound text: names written from code.</summary>
+    /// <summary>The sidebar's link under Simple mode's list: Logs, Console and Tools shown or not. Advanced mode has them all.</summary>
+    void ShowMore()
+    {
+        bool more = _shared.Settings.More;
+        MoreLink.Visibility = _shared.Settings.Advanced ? Visibility.Collapsed : Visibility.Visible;
+        MoreLink.Content = L.Text(more ? "Fewer tools" : "More tools");
+        MoreLink.ToolTip = L.Text(more ? "Takes Logs, Console and Tools out of this list. A link that leads to one still opens it."
+            : "Adds Logs, Console and Tools to this list");
+    }
+
+    void MoreClicked(object sender, RoutedEventArgs e)
+    {
+        _shared.Settings.MoreSections = !_shared.Settings.More;
+        _shared.Settings.Save();
+        ShowMode();
+    }
+
     void ShowLanguage()
     {
+        ShowMore();
         Sections.Items.Refresh();
         if (Sections.SelectedItem is Section shown) SectionTitle.Text = shown.DisplayName;
         BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");

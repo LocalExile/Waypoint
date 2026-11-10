@@ -191,13 +191,22 @@ public partial class MainWindow : Window
 
     /// <summary>Simple mode's sections and nothing about the servers, or all of them. The section on show stays when the new
     /// list has it. Play and Versions each have a checkout's view and a release install's.</summary>
+    void MoreClicked(object? sender, RoutedEventArgs e)
+    {
+        _shared.Settings.MoreSections = !_shared.Settings.More;
+        _shared.Settings.Save();
+        ShowMode();
+    }
+
     void ShowMode()
     {
         bool advanced = _shared.Settings.Advanced;
         Control[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
             ? s.View is not (PlayTab or InstallTab or SetupTab) || s.View == Setup
-            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab)).ToArray();
+            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or SettingsTab
+                // Simple mode's further sections, with "More tools". A link to one shows it either way (ShowSection).
+                || _shared.Settings.More && s.View is LogsTab or ConsoleTab or ToolsTab)).ToArray();
         ModeSwitch.IsVisible = _shared.Settings.Developer;
         var shown = Sections.SelectedItem as Section;
         Sections.ItemsSource = sections;
@@ -207,6 +216,11 @@ public partial class MainWindow : Window
         BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
+        // The link under Simple mode's list: Logs, Console and Tools shown or not. Advanced mode has them all.
+        MoreLink.IsVisible = !advanced;
+        MoreLink.Content = L.Text(_shared.Settings.More ? "Fewer tools" : "More tools");
+        ToolTip.SetTip(MoreLink, L.Text(_shared.Settings.More ? "Takes Logs, Console and Tools out of this list. A link that leads to one still opens it."
+            : "Adds Logs, Console and Tools to this list"));
         // Developer Mode also decides whether Simple mode offers the Latest side.
         InstallView.ShowOffers();
         PlayView.ShowOffers();
