@@ -31,6 +31,15 @@ static class ModChecks
         check(ModCatalog.Read(stopped).Single().Fingerprint != alpha.Fingerprint, "changed binaries invalidate cached inventory fingerprints");
         Binary("beta", "{\"depends\":[\"missing\"]}");
         check(ModCatalog.Read(stopped).Single(m => m.Id == "beta").Status == "Dependency blocked", "missing dependencies are visible before launch");
+        // A mod may depend on a module (the Game module), which the Gateway resolves beside the mods: by its exact id.
+        Directory.CreateDirectory(Path.Combine(root, "Modules", "Core", "Game"));
+        File.WriteAllText(Path.Combine(root, "Modules", "Core", "Game", "module.json"), "{\"id\":\"Game\",\"assembly\":\"bin/game.dll\"}");
+        Binary("needsgame", "{\"depends\":[\"Game\"]}");
+        Binary("wrongcase", "{\"depends\":[\"game\"]}");
+        check(ModCatalog.Read(stopped).Single(m => m.Id == "needsgame").Status == "Gateway stopped"
+            && ModCatalog.Read(stopped).Single(m => m.Id == "wrongcase").Status == "Dependency blocked",
+            "a module dependency is met by a module's manifest, by its exact id");
+        foreach (string id in new[] { "needsgame", "wrongcase" }) Directory.Delete(Path.Combine(folder, id), recursive: true);
         Binary("escape", "{\"assembly\":\"../other.dll\"}");
         check(ModCatalog.Read(stopped).Single(m => m.Id == "escape").Status == "Invalid manifest", "manifest DLL paths cannot escape the selected mod folder");
         Binary("wrong", "{\"id\":\"other\"}");

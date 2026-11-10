@@ -303,7 +303,7 @@
                             </StackPanel>
                         </Button>
                         <Button x:Name="GiveButton" Style="{StaticResource Shell.PrimaryButton}" Click="GiveItem" IsEnabled="False"
-                                ToolTip="{l:Loc 'Put the item into the inventory of the character in game (the client control bridge)'}"
+                                ToolTip="{l:Loc 'Put the item into the inventory of the character in game (the Waypoint Tools mod)'}"
                                 AutomationProperties.Name="{l:Loc 'Give item'}" ToolTipService.ShowOnDisabled="True">
                             <StackPanel Orientation="Horizontal">
                                 <md:PackIcon Kind="GiftOutline" Margin="0,0,6,0" VerticalAlignment="Center" />

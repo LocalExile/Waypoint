@@ -667,7 +667,6 @@ public partial class SetupWizard : FormWindow
         CharactersChoice.Visibility = saves ? Visibility.Visible : Visibility.Collapsed;
         if (!saves) NewCharacters.IsChecked = true;
         UpdatesChoice.Visibility = DownloadChoice.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-        GiveItemChoice.Visibility = SwitchToSource.HasFrida(ChosenCheckout() ?? "") ? Visibility.Collapsed : Visibility.Visible;
         if (saves && !_oldRead) _ = ReadOldCharactersAsync(old);
     }
 
@@ -693,7 +692,7 @@ public partial class SetupWizard : FormWindow
         bool copying = NoClient.IsChecked != true && !HasClient(copy) && !Sharing;
         double gigabytes = copying && ClientList.SelectedItem is FoundClient client ? client.Bytes / 1e9 : 0;
         return new(copy, SwitchFrom ?? "", DownloadChoice.IsChecked == true, BringCharacters.IsChecked == true, _oldAccounts, _oldCharacters,
-            KeepBoth.IsChecked == true, TestedVersion.IsChecked == true, GiveItem.IsChecked == true || SwitchToSource.HasFrida(copy), Sharing, gigabytes,
+            KeepBoth.IsChecked == true, TestedVersion.IsChecked == true, Sharing, gigabytes,
             LocalExileReleases.HasSaves(copy) && !SwitchToSource.SavesBrought(copy), OwnSettings);
     }
 
@@ -733,8 +732,6 @@ public partial class SetupWizard : FormWindow
         tasks.Add(new(L.Text("Build LocalExile"), null, (detail, stop) => Bridge("Build", detail, stop)));
         if (prepare)
             tasks.Add(new(L.Text("Extract the game data"), null, (detail, stop) => SetupSequence.ExtractAsync(checkout, line => { Write(line); detail(line); }, stop)));
-        if (switching is { GiveItem: true })
-            tasks.Add(new(L.Text("Set up Give item"), () => SwitchToSource.HasFrida(checkout), (detail, stop) => SwitchToSource.InstallFridaAsync(checkout, line => { Write(line); detail(line); }, stop)));
         if (switching is { BringCharacters: true })
             tasks.Add(new(L.Text("Bring your characters"), () => SwitchToSource.SavesBrought(checkout), (detail, stop) => Bridge("ImportSaves", detail, stop, switching.Old)));
         return tasks;

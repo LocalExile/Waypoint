@@ -81,7 +81,7 @@ public partial class FolderPicker : UserControl
         // Developer Mode on a release, or a source copy, whose Control has the same button.
         NewCopy.IsVisible = !Repo.IsInstall || Editions.Offered(_shared.Settings);
         ToolTip.SetTip(NewCopy, Repo.IsInstall
-            ? L.Text("Sets up a second LocalExile from its source code, which has the item crafter. You can bring your characters.")
+            ? L.Text("Sets up a second LocalExile from its source code, which you can change and build yourself. You can bring your characters.")
             : L.Text("Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests"));
         Current.Classes.Add("open");
         List.IsOpen = true;

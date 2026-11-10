@@ -4,10 +4,6 @@
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel>
       <TextBlock x:Name="Intro" Classes="note" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left" />
-      <StackPanel x:Name="ReleaseNote" IsVisible="False" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left">
-        <TextBlock x:Name="ReleaseText" TextWrapping="Wrap" />
-        <Button x:Name="GetCrafterButton" HorizontalAlignment="Left" Margin="0,8,0,0" Click="GetCrafterClicked" />
-      </StackPanel>
       <WrapPanel>
         <!-- One card per tool. -->
         <Border Classes="card" Width="340" Margin="0,0,14,14">

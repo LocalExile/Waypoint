@@ -187,19 +187,16 @@ public partial class SetupWizard : Window
         NewCharacters.Content = L.Text("Start with a new database");
         NewNote.Text = L.Text("No accounts or characters yet. You create an account at the end.");
         OldTitle.Text = L.Text("Your current LocalExile");
-        OldText.Text = L.Text("Setup installs a new copy of LocalExile that has the item crafter. What should happen to the one you have now?");
+        OldText.Text = L.Text("Setup installs a new copy of LocalExile from its source code. What should happen to the one you have now?");
         KeepBoth.Content = L.Text("Keep both (recommended)");
         KeepNote.Text = L.Text("You can go back to your current one at any time. Each has its own characters and progress.");
         RemoveOldLater.Content = L.Text("Remove the old one later");
         RemoveNote.Text = L.Text("Once the new copy has worked for you, Waypoint will ask before deleting the old one.");
         UpdatesTitle.Text = L.Text("Updates");
         TestedVersion.Content = L.Text("Keep an older version that does not change");
-        TestedNote.Text = L.Text("LocalExile from 1 November, which the item crafter is known to work with. You can move to the newest changes later from Versions.");
+        TestedNote.Text = L.Text("LocalExile v0.4.2-beta, which this Waypoint is known to work with. You can move to the newest changes later from Versions.");
         NewestVersion.Content = L.Text("Get the newest changes");
         NewestNote.Text = L.Text("LocalExile's newest changes; things can break. You update it yourself from Versions.");
-        GiveItemTitle.Text = L.Text("Giving items");
-        GiveItem.Content = L.Text("Set up Give item (recommended)");
-        GiveItemNote.Text = L.Text("Installs Frida, a tool that talks to the running game. It takes about 180 MB, and some antivirus programs flag it. The game's chat box is too short for most items, so Give item needs it.");
         AccountTitle.Text = L.Text("Your local account");
         AccountText.Text = L.Text("You log in to the game with this. It stays on this PC, so do not reuse a real password.");
         AccountNameLabel.Text = L.Text("Account name");
@@ -748,7 +745,6 @@ public partial class SetupWizard : Window
         CharactersChoice.IsVisible = saves;
         if (!saves) NewCharacters.IsChecked = true;
         UpdatesChoice.IsVisible = DownloadChoice.IsChecked == true;
-        GiveItemChoice.IsVisible = !SwitchToSource.HasFrida(ChosenCheckout() ?? "");
         if (saves && !_oldRead) _ = ReadOldCharactersAsync(old);
     }
 
@@ -774,7 +770,7 @@ public partial class SetupWizard : Window
         bool copying = NoClient.IsChecked != true && !HasClient(copy) && !Sharing;
         double gigabytes = copying && ClientList.SelectedItem is FoundClient client ? client.Bytes / 1e9 : 0;
         return new(copy, SwitchFrom ?? "", DownloadChoice.IsChecked == true, BringCharacters.IsChecked == true, _oldAccounts, _oldCharacters,
-            KeepBoth.IsChecked == true, TestedVersion.IsChecked == true, GiveItem.IsChecked == true || SwitchToSource.HasFrida(copy), Sharing, gigabytes,
+            KeepBoth.IsChecked == true, TestedVersion.IsChecked == true, Sharing, gigabytes,
             LocalExileReleases.HasSaves(copy) && !SwitchToSource.SavesBrought(copy));
     }
 
@@ -813,8 +809,6 @@ public partial class SetupWizard : Window
         tasks.Add(new(L.Text("Build LocalExile"), null, (detail, stop) => Bridge("Build", detail, stop)));
         if (prepare)
             tasks.Add(new(L.Text("Extract the game data"), null, (detail, stop) => SetupSequence.ExtractAsync(checkout, line => { Write(line); detail(line); }, stop)));
-        if (switching is { GiveItem: true })
-            tasks.Add(new(L.Text("Set up Give item"), () => SwitchToSource.HasFrida(checkout), (detail, stop) => SwitchToSource.InstallFridaAsync(checkout, line => { Write(line); detail(line); }, stop)));
         if (switching is { BringCharacters: true })
             tasks.Add(new(L.Text("Bring your characters"), () => SwitchToSource.SavesBrought(checkout), (detail, stop) => Bridge("ImportSaves", detail, stop, switching.Old)));
         return tasks;

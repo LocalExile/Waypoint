@@ -117,11 +117,39 @@ public class CrafterCatalogTests
     }
 
     [Fact]
-    public void A_Gateway_is_only_asked_for_the_crafter_when_it_has_the_hook()
+    public void A_Gateway_is_only_asked_for_the_crafter_when_its_assembly_has_the_hook()
     {
-        // One built before the hook would take `crafter` for a normal start.
-        Assert.False(CrafterCatalog.HasCrafter(new CommandCatalog([new ChatCommand("item", "/item <name>")])));
-        Assert.True(CrafterCatalog.HasCrafter(new CommandCatalog([new ChatCommand("item", "/item <name>"), new ChatCommand("item_give", "/item_give <item as JSON>")])));
+        // One built before the hook would take `crafter` for a normal start; its assembly is read, not run.
+        string folder = Directory.CreateTempSubdirectory("waypoint-crafter-").FullName;
+        try
+        {
+            string with = Assembly(folder, "WithHook", "ItemCrafter"), without = Assembly(folder, "WithoutHook", "ItemRolls");
+            Assert.True(CrafterCatalog.HasCrafter(with));
+            Assert.False(CrafterCatalog.HasCrafter(without));
+            Assert.False(CrafterCatalog.HasCrafter(Path.Combine(folder, "missing.dll")));
+            File.WriteAllText(Path.Combine(folder, "text.dll"), "not an assembly");
+            Assert.False(CrafterCatalog.HasCrafter(Path.Combine(folder, "text.dll")));
+        }
+        finally { Directory.Delete(folder, recursive: true); }
+    }
+
+    [Fact]
+    public void A_releases_Gateway_is_read_from_the_assembly_beside_its_host()
+    {
+        Assert.Equal(Path.Combine("app", "GameServer.Gateway.dll"), CrafterCatalog.GatewayAssembly(Path.Combine("app", "GameServer.Gateway.exe")));
+        Assert.Equal(Path.Combine("app", "GameServer.Gateway.dll"), CrafterCatalog.GatewayAssembly(Path.Combine("app", "GameServer.Gateway")));
+        string built = Path.Combine("src", "GameServer.Gateway", "bin", "Debug", "net10.0", "GameServer.Gateway.dll");
+        Assert.Equal(built, CrafterCatalog.GatewayAssembly(built));
+    }
+
+    /// <summary>A small assembly on disk that defines one type, as a Gateway build defines ItemCrafter.</summary>
+    static string Assembly(string folder, string name, string type)
+    {
+        var builder = new System.Reflection.Emit.PersistedAssemblyBuilder(new System.Reflection.AssemblyName(name), typeof(object).Assembly);
+        builder.DefineDynamicModule(name).DefineType(type, System.Reflection.TypeAttributes.Public).CreateType();
+        string file = Path.Combine(folder, name + ".dll");
+        builder.Save(file);
+        return file;
     }
 
     [Fact]

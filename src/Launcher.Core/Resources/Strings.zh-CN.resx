@@ -174,6 +174,9 @@
   <data name="Text_048fe1d24504" xml:space="preserve">
     <value>这不是 LocalExile 所需的 3.29.3c 版本，因此准备很可能会失败。你仍然可以尝试，但请先检查版本：要复制的数据量很大。</value>
   </data>
+  <data name="Text_04fc6ba06c6e" xml:space="preserve">
+    <value>无法读取官方模组：{0}</value>
+  </data>
   <data name="Text_0516ac3163b5" xml:space="preserve">
     <value>要编辑的颜色</value>
   </data>
@@ -302,9 +305,6 @@
   </data>
   <data name="Text_098efbe9d148" xml:space="preserve">
     <value>元素球</value>
-  </data>
-  <data name="Text_099cb57aed76" xml:space="preserve">
-    <value>发放物品</value>
   </data>
   <data name="Text_09a216bf0611" xml:space="preserve">
     <value>客户端资源包</value>
@@ -560,6 +560,9 @@
   </data>
   <data name="Text_0fe48573aa2b" xml:space="preserve">
     <value>设置新副本…</value>
+  </data>
+  <data name="Text_0ff81662b90f" xml:space="preserve">
+    <value>将物品放入游戏中角色的背包（通过 Waypoint Tools 模组）</value>
   </data>
   <data name="Text_10103cd43afc" xml:space="preserve">
     <value>LocalExile 已安装。有了游戏客户端后，请再次运行此向导：开始游戏 → 完成安装。</value>
@@ -1622,8 +1625,8 @@
   <data name="Text_2dcb950944f5" xml:space="preserve">
     <value>尚未确认运行状态。</value>
   </data>
-  <data name="Text_2de6febbfacf" xml:space="preserve">
-    <value>安装 Frida，一个与运行中的游戏通信的工具。它约占 180 MB，某些杀毒软件会将其标记为可疑。游戏的聊天框对大多数物品来说太短，因此“发放物品”需要它。</value>
+  <data name="Text_2deddd866f78" xml:space="preserve">
+    <value>使用直接发送控制台命令、实时模组控制或行走地图功能时，Waypoint 会提示安装。</value>
   </data>
   <data name="Text_2deea4664d23" xml:space="preserve">
     <value>次要文本</value>
@@ -1666,6 +1669,9 @@
   </data>
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>完整复制</value>
+  </data>
+  <data name="Text_2efd6c79d96d" xml:space="preserve">
+    <value>安装 Waypoint Tools？</value>
   </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>基础类型：{0}</value>
@@ -2149,9 +2155,6 @@
   <data name="Text_3c8dedc73d20" xml:space="preserve">
     <value>遭遇与挑战</value>
   </data>
-  <data name="Text_3c94106d9402" xml:space="preserve">
-    <value>11 月 1 日的 LocalExile，已知物品制作器可以正常使用。之后可以在“版本”部分改用最新更改。</value>
-  </data>
   <data name="Text_3cc7bdb1ec13" xml:space="preserve">
     <value>此模式的可选模块。</value>
   </data>
@@ -2181,6 +2184,9 @@
   </data>
   <data name="Text_3d502d9e88cc" xml:space="preserve">
     <value>在标准联盟中创建；其他联盟可在游戏自带的角色创建界面中选择</value>
+  </data>
+  <data name="Text_3da865c1058e" xml:space="preserve">
+    <value>从源码设置第二个 LocalExile，你可以自行修改和构建它。你可以带上你的角色。</value>
   </data>
   <data name="Text_3db20e7a2c35" xml:space="preserve">
     <value>当前存档会先备份再移到一旁，绝不会删除；仅对一次切换有效</value>
@@ -2226,9 +2232,6 @@
   </data>
   <data name="Text_3f8635c36da3" xml:space="preserve">
     <value>恢复贮藏的更改</value>
-  </data>
-  <data name="Text_3f8a8eaffe42" xml:space="preserve">
-    <value>安装向导会新装一份带有物品制作器的 LocalExile。你现有的那份要如何处理？</value>
   </data>
   <data name="Text_3f8c65be8e28" xml:space="preserve">
     <value>工艺台</value>
@@ -2307,9 +2310,6 @@
   </data>
   <data name="Text_42154791e774" xml:space="preserve">
     <value>语言已保存。</value>
-  </data>
-  <data name="Text_4225d78569c5" xml:space="preserve">
-    <value>物品制作器位于“工具”中。</value>
   </data>
   <data name="Text_4228aeb07c41" xml:space="preserve">
     <value>规则</value>
@@ -2580,9 +2580,6 @@
   </data>
   <data name="Text_4a1c51ca77b8" xml:space="preserve">
     <value>启用设置将在下次启动 Gateway 时生效。“构建所选”会编译此模组的源码。</value>
-  </data>
-  <data name="Text_4a1d58e62d25" xml:space="preserve">
-    <value>“发放物品”需要 Frida。</value>
   </data>
   <data name="Text_4a416d8a0cdb" xml:space="preserve">
     <value>此源码副本中不可用</value>
@@ -2974,6 +2971,9 @@
   <data name="Text_55b612083b47" xml:space="preserve">
     <value>为 LocalExile 提供独立的设置和已保存的登录信息，让你平常的游戏保留自己的设置</value>
   </data>
+  <data name="Text_55cd62661ffd" xml:space="preserve">
+    <value>Waypoint Tools 没有回应。游戏是否在运行，且有角色在区域中？</value>
+  </data>
   <data name="Text_55f68b111c40" xml:space="preserve">
     <value>为 LocalExile 提供独立的游戏设置，你平时的游戏保留自己的设置。</value>
   </data>
@@ -3297,9 +3297,6 @@
   </data>
   <data name="Text_6117d05e41be" xml:space="preserve">
     <value>没有更新</value>
-  </data>
-  <data name="Text_612fd44c6d19" xml:space="preserve">
-    <value>从源码设置第二个 LocalExile，它带有物品制作器。你可以带上你的角色。</value>
   </data>
   <data name="Text_612ffc5ce9d4" xml:space="preserve">
     <value>等待中…</value>
@@ -4092,9 +4089,6 @@
   <data name="Text_798ca2ce18bf" xml:space="preserve">
     <value>创建账号</value>
   </data>
-  <data name="Text_799b5aca373e" xml:space="preserve">
-    <value>配置“发放物品”</value>
-  </data>
   <data name="Text_79c2f38c55c2" xml:space="preserve">
     <value>复制地图详情</value>
   </data>
@@ -4365,6 +4359,9 @@
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>复制发放此物品的聊天命令</value>
   </data>
+  <data name="Text_82dab4842651" xml:space="preserve">
+    <value>LocalExile v0.4.2-beta，已知可与此 Waypoint 正常配合。之后可以在“版本”部分改用最新更改。</value>
+  </data>
   <data name="Text_8300d2d40c93" xml:space="preserve">
     <value>完成：{0}（{1:0} 秒）。</value>
   </data>
@@ -4592,9 +4589,6 @@
   </data>
   <data name="Text_89d29dccbe1f" xml:space="preserve">
     <value>在侧边栏添加“简易 | 高级”切换开关。在发行版安装中，高级模式会增加状态条、性能和服务器耗时；其他版块需要源码副本。</value>
-  </data>
-  <data name="Text_89eeaab14d03" xml:space="preserve">
-    <value>使用直接发送控制台命令、发放物品、实时模组控制或行走地图功能时，Waypoint 会提示安装。</value>
   </data>
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>双击命令可将其填入输入行。</value>
@@ -4927,6 +4921,9 @@
   <data name="Text_9491bfb97e66" xml:space="preserve">
     <value>正在等待游戏窗口关闭，不会强制终止。</value>
   </data>
+  <data name="Text_94984f98e642" xml:space="preserve">
+    <value>Waypoint Tools 未安装：原因见“日志”。</value>
+  </data>
   <data name="Text_949d1326b83e" xml:space="preserve">
     <value>正在检查客户端可执行文件并保留现有登录密钥。</value>
   </data>
@@ -5114,6 +5111,9 @@
   <data name="Text_98d3dd871595" xml:space="preserve">
     <value>最新 {0}</value>
   </data>
+  <data name="Text_98f334a494f1" xml:space="preserve">
+    <value>“发放物品”需要 Waypoint Tools 模组：它把物品交给游戏中的角色。要从官方模组安装它吗？</value>
+  </data>
   <data name="Text_990c09b02baf" xml:space="preserve">
     <value>LocalExile {0} 已发布；当前为 {1}。你的角色、密钥和游戏客户端都会保留。</value>
   </data>
@@ -5152,6 +5152,9 @@
   </data>
   <data name="Text_99efec87ba2a" xml:space="preserve">
     <value>解决工作区冲突</value>
+  </data>
+  <data name="Text_9a05eeed8b20" xml:space="preserve">
+    <value>“发放物品”通过 Waypoint Tools 模组完成，但没有正在运行的游戏加载了它。请开始游戏，如果它已关闭，请在“模组”中开启它，用角色进入一个区域，然后再次发放物品。</value>
   </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>已删除 {0} 个已保存的物品</value>
@@ -5405,9 +5408,6 @@
   </data>
   <data name="Text_a08f0f94673a" xml:space="preserve">
     <value>不显示</value>
-  </data>
-  <data name="Text_a09188c15b56" xml:space="preserve">
-    <value>不安装 Frida。当你点击“发放物品”时，Waypoint 会再次提供安装。</value>
   </data>
   <data name="Text_a0b23bdf2ea5" xml:space="preserve">
     <value>桥接程序需要安装了 frida 的 Python，但尚未安装：高级模式下的“安装”部分介绍了安装方法</value>
@@ -5673,6 +5673,9 @@
   <data name="Text_a7984ca9bfc9" xml:space="preserve">
     <value>请输入名称和密码。</value>
   </data>
+  <data name="Text_a7af7ac59384" xml:space="preserve">
+    <value>“发放物品”需要 Waypoint Tools 模组。</value>
+  </data>
   <data name="Text_a7ba608e8a20" xml:space="preserve">
     <value>端口仍被占用。检查完后请点击“继续”：Waypoint 会再次询问。</value>
   </data>
@@ -5799,9 +5802,6 @@
   <data name="Text_ac15c0c9a3e0" xml:space="preserve">
     <value>显示前 1000 个打开的 PR。输入 PR 编号以获取其他 PR。</value>
   </data>
-  <data name="Text_ac1f5a0e46c1" xml:space="preserve">
-    <value>游戏未运行：请启动游戏，用角色进入一个区域，然后再次发放物品。</value>
-  </data>
   <data name="Text_ac4f361600ac" xml:space="preserve">
     <value>Waypoint 无法读取 {0} 中副本的版本。</value>
   </data>
@@ -5837,9 +5837,6 @@
   </data>
   <data name="Text_adb0547b2fad" xml:space="preserve">
     <value>重启完成。</value>
-  </data>
-  <data name="Text_adb32bc18285" xml:space="preserve">
-    <value>你的 LocalExile 版本还没有物品制作器。新的 LocalExile 副本中有，而且你可以把角色一起迁移过去。</value>
   </data>
   <data name="Text_adb8a7038d6c" xml:space="preserve">
     <value>选择一个模组以查看其依赖项和操作。</value>
@@ -5915,6 +5912,9 @@
   </data>
   <data name="Text_afc05ca34f9e" xml:space="preserve">
     <value>在你的复刻（origin）上，不在 LocalExile 上</value>
+  </data>
+  <data name="Text_afc5d553e253" xml:space="preserve">
+    <value>Waypoint Tools 已安装。正在运行的游戏会在一秒内加载它：用角色进入一个区域，然后再次发放物品。</value>
   </data>
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>联盟</value>
@@ -6462,9 +6462,6 @@
   <data name="Text_c176bcfe0c3f" xml:space="preserve">
     <value>LocalExile 暂无可下载的发行版。</value>
   </data>
-  <data name="Text_c18c0a3bb845" xml:space="preserve">
-    <value>将物品放入游戏中角色的背包（通过客户端控制桥接程序）</value>
-  </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>返回我的模组</value>
   </data>
@@ -6705,6 +6702,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c8ae1bb777a0" xml:space="preserve">
     <value>Gateway 在同一监视进程下启动了新进程。如果游戏回到了登录界面，请重新登录。</value>
   </data>
+  <data name="Text_c8b0828a4c7a" xml:space="preserve">
+    <value>官方模组中还没有 Waypoint Tools。</value>
+  </data>
   <data name="Text_c8b5d313ef89" xml:space="preserve">
     <value>这个副本将从经过测试的版本改为 LocalExile 的最新更改，之后“开始游戏”会每天更新它。较新的更改未经测试，可能会出现问题。会先备份你的存档。</value>
   </data>
@@ -6752,6 +6752,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_c9efab217fdd" xml:space="preserve">
     <value>无法从 GitHub 下载 {0}；请稍后重试。</value>
+  </data>
+  <data name="Text_ca0a76c99b1e" xml:space="preserve">
+    <value>安装向导会从源码新装一份 LocalExile。你现有的那份要如何处理？</value>
   </data>
   <data name="Text_ca1844969742" xml:space="preserve">
     <value>不可用</value>
@@ -6883,9 +6886,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ce29b7f85b9e" xml:space="preserve">
     <value>已是最新</value>
-  </data>
-  <data name="Text_ce4ea471720d" xml:space="preserve">
-    <value>获取物品制作器…</value>
   </data>
   <data name="Text_ce6e37f200be" xml:space="preserve">
     <value>正在生成地图 …</value>
@@ -7593,6 +7593,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e448d0ca53ec" xml:space="preserve">
     <value>正在获取最新更新</value>
   </data>
+  <data name="Text_e460de11bb28" xml:space="preserve">
+    <value>Waypoint Tools 已从源代码安装：它会在下次启动服务器时构建，或在“模组”中使用“构建模组”。然后用角色进入一个区域，再次发放物品。</value>
+  </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop 和 dev host：游戏、行走地图记录器、服务器和账号服务</value>
   </data>
@@ -7712,9 +7715,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e8797965019b" xml:space="preserve">
     <value>切换到发布版？</value>
-  </data>
-  <data name="Text_e8857091f9bb" xml:space="preserve">
-    <value>配置“发放物品”（推荐）</value>
   </data>
   <data name="Text_e889c27dc68e" xml:space="preserve">
     <value>刷新模组详情</value>
@@ -8377,9 +8377,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_fad198a3ed81" xml:space="preserve">
     <value>打开 Waypoint 的数据文件夹</value>
   </data>
-  <data name="Text_faff88ba75c3" xml:space="preserve">
-    <value>安装 Frida，以便使用“发放物品”。</value>
-  </data>
   <data name="Text_fb05bf5a9f8f" xml:space="preserve">
     <value>种子：{0}</value>
   </data>
@@ -8526,6 +8523,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fef63c5ce56d" xml:space="preserve">
     <value>发布版有自己的角色。你的角色留在最新版中，等你切换回来。</value>
+  </data>
+  <data name="Text_fefcc7a6858a" xml:space="preserve">
+    <value>正在安装 Waypoint Tools …</value>
   </data>
   <data name="Text_ff6c6bc8e40c" xml:space="preserve">
     <value>服务器源码副本</value>

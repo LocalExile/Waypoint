@@ -102,9 +102,9 @@ work from, beside a source checkout. It has no `live.ps1`, source or git, so `Re
   enabled or disabled while the game is closed.
 - **Console** lists the release Gateway's commands and copies a line to paste into the game's chat, because a release has no
   client control bridge or Frida. Nothing can read the replies.
-- **Tools** explains why it is unavailable. v0.1.0-beta's Gateway has no `crafter` mode, and asking a Gateway for a mode it lacks
-  starts it serving, so a release's is never asked. Giving an item would need the bridge as well. **Get the item crafter…** starts
-  the move to a source copy ([below](#from-a-release-to-a-source-copy)).
+- **Tools** offers the item crafter as on a source copy. Its window reads the release Gateway's assembly before asking it for
+  the `crafter` mode ([below](#tools-the-item-crafter)), so a release older than the hook says so instead of starting a server.
+  **Give item** goes through the Waypoint Tools mod, as on a source copy.
 
 Waypoint drives it only through `LocalExile.exe --json` (`LocalExileTool`), one JSON event per line:
 
@@ -166,8 +166,7 @@ chosen new or empty folder and sets it up; on a release the list has it only wit
 
 ### From a release to a source copy
 
-A source copy has what no release has yet, such as the item crafter. **Tools → Get the item crafter…**, or **Set up a new copy…** on a
-release, opens the guide's source route with one more page, **Your characters**, after the client (`SwitchToSource.cs`). The release's
+A source copy has what no release has yet. **Set up a new copy…** on a release opens the guide's source route with one more page, **Your characters**, after the client (`SwitchToSource.cs`). The release's
 client comes first in the list, and is shared rather than copied when its keys fit. **Browse…** on this route refuses a release, which
 has no source to build, and turns to the download instead.
 
@@ -188,11 +187,10 @@ has no source to build, and turns to the download instead.
   are on one drive, and deletes the release's program files. Its `data` and `Mods` stay, and so does anything a release does not
   ship. **Keep it** drops the question and leaves the release as it is.
 - **Updates**, for a download: **Keep an older version that does not change** puts the copy on its own branch `waypoint-tested` at
-  `SwitchToSource.TestedCommit` (LocalExile v0.2.0-beta, e28909f6). **Get the newest changes** leaves it on `main`. Nothing moves
+  `SwitchToSource.TestedCommit` (LocalExile v0.4.2-beta, a6e3b6a2). **Get the newest changes** leaves it on `main`. Nothing moves
   either by itself: its user updates the copy, or moves it from the older version to the newest changes, from Versions. Changing
-  the commit means testing it again: a release's database opened on it, and an item given.
-- **Giving items**: **Set up Give item** installs Frida into the copy's `.venv`, which git ignores. Left out, the crafter offers it
-  again the first time **Give item** is pressed.
+  the commit means testing it again: a release's database opened on it, and an item given through the Waypoint Tools mod
+  (v0.4.0-beta or later).
 
 The Run page lists what these choices will do instead of its steps until **Start setup**. The last page says where everything
 is: the copy plays from Control, and **Change…** there is the way back to the release.
@@ -408,8 +406,8 @@ source copy is where they can come along. The list replaced the **Release | Late
 Developer Mode on, and asks what that switch asked on the way to a source copy; on the way to a release the offer waits on
 the release's Play page instead of being a question. **Set up a new copy…** in the list of a release, which sets up a copy
 from source, still shows only with Developer Mode on (`Editions.Offered`): a source copy needs .NET, Git, Python and Node
-and is LocalExile's newest, less tested code, which is not what someone who came to play wants. **Run setup guide…** and
-**Tools → Get the item crafter…** stay for everyone.
+and is LocalExile's newest, less tested code, which is not what someone who came to play wants. **Run setup guide…** stays for
+everyone.
 
 - **Between two source copies, or two releases**: nothing is asked beyond what runs.
 - **Release → source copy** (`Editions.BringAlongAsync`): bring your characters? The question says first that Latest has
@@ -418,8 +416,7 @@ and is LocalExile's newest, less tested code, which is not what someone who came
   **Keep Latest's own** leaves both as they are; **Cancel** stays on the release. The saves of the release are backed up
   first while automatic backups are on (Backups), and the question says so. It is asked once nothing runs, after
   **Stop and switch**; with **Switch without stopping** nothing is asked and nothing is brought, since saves in use are
-  not copied. **Tools → Get the item crafter…** asks the same on its way to the source copy Waypoint remembers
-  (`LatestFolder`).
+  not copied.
 - **Source copy → release**, by whatever way: the release keeps its own characters, and the copy's stay in their folder.
   Waypoint notes that folder (`Editions.LeftFor`, `Settings.BringFrom`), and the release's Play page then shows a card
   while that folder is still a source copy with saves (`Editions.BringFrom`): "Your characters are still in {folder}",
@@ -449,9 +446,6 @@ and is LocalExile's newest, less tested code, which is not what someone who came
   - When they fit, Waypoint asks, then copies them with the adapter's `ImportSaves`: the source copy is only read, the
     release's own saves are backed up (with **Automatic backups** off too) and set aside first, and the release keeps
     its own mod choices.
-- On a release, **Tools → Get the item crafter…** switches to the source copy Waypoint remembers, with the same question, and
-  otherwise opens the guide as before, with the older version chosen (`waypoint-tested`). Either way that copy is then shown
-  in Advanced mode, and is moved to newer code only from Versions, by its user.
 
 A link to a section Simple mode's list lacks (a log, from a failure) shows that section without selecting anything.
 
@@ -470,7 +464,7 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters, searchable; registering an account; creating a character; creating, duplicating, renaming, setting a password and deleting with everything stopped | the list and those changes are the adapter's (`QueryAccounts`, `Register`, `ManageAccount`, `AccountData.py`; [account-management.md](account-management.md)); Register and Create go through the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `register`, `create_character`; Waypoint builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
-| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter` and `/item_give` through the client control bridge; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout |
+| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter`, and items given through the Waypoint Tools mod; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout |
 | Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
 ### No longer reached
@@ -782,7 +776,7 @@ missing from the client copy and keeps what exists (keys, `Game.patched.exe`), a
 instructions first. The **Python** requirement runs the Python the extraction would use (the checkout's `.venv`, else the one on
 PATH) and wants a 3.9 or newer, so the Microsoft Store's python shortcut does not count.
 
-Frida is optional for ordinary play. On Windows, direct console commands and game status, Give item, walk maps, live mod
+Frida is optional for ordinary play. On Windows, direct console commands and game status, walk maps, live mod
 controls and game-data reload offer **Install Frida** when their Python cannot load it. Declining leaves the requested action
 unstarted; Console keeps the unsent text. A queued mod build ends when preparation is declined or fails; only a busy
 workspace is retried, so **Not now** does not reopen the prompt. Installation uses the checkout's `.venv`, shows output in
@@ -821,7 +815,10 @@ not assumed **Up to date** without repository evidence. **Open folder**, Refresh
 
 **My Mods** lists the installed mods (from the manifests under
 `Mods/Binaries` and `Mods/Source`, script mods included: loose `.cs` files in `Mods/Binaries/<id>/`) with their client
-versions and author; the Action column says what it needs (Update, Build, Reinstall) or that it is up to date. A row's check box turns the mod on or off at once: Waypoint rewrites
+versions and author; the Action column says what it needs (Update, Build, Reinstall) or that it is up to date. A mod whose
+`depends` names something that is neither another usable mod nor one of the checkout's modules (`Modules/**/module.json`,
+by its exact id, as the Gateway resolves it) is **Dependency blocked**, with what it needs; `"Game"`, the Game module,
+counts as there (`ModCatalog.ModuleIds`). A row's check box turns the mod on or off at once: Waypoint rewrites
 the server's `mod-state.txt` (no backup, no client), which a stopped Gateway reads at its next start and a running one
 applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
 Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs
@@ -1199,11 +1196,20 @@ write and gives it to the character in game.
   the values are the ones that give the line's numbers (outside the tier's range only when no tier gives them).
   Enchantments and lines no modifier words are left out. Uniques are refused: the crafter makes normal, magic and rare
   items. `ItemImport.cs`, `ItemImportWindow`.
-- **Give item** sends `/item_give <the item as JSON>` through the client control bridge, as the Console does, so the
-  character must be in game; the item goes into the main inventory and the Gateway's reply shows in the status line.
-  When Frida is missing, it offers to install it into the checkout's `.venv` before sending. The copy button puts that command
-  on the clipboard, but the game's chat box stops at 175 characters and a rare's command is about 530, so it says so when the command is too long: the
-  bridge sends the same message without that limit.
+- **Give item** gives the item to the character in game, into the main inventory, through the Waypoint Tools mod
+  (LocalExile-Mods' `waypoint-tools`, `WaypointToolsMod.cs`), the same on a source copy and a release; it needs no other
+  mod and no Frida. The mod counts as loaded when its `data/waypoint-tools/loaded.json` names a Gateway process that still
+  runs and lists `item_give`. Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
+  item and no character, and the mod gives it to the one character in game on that connection's next tick, then answers
+  in `replies/<id>.json`, which Waypoint reads and deletes; the answer shows in the status line. Nothing goes over the
+  network and nothing limits the item's length. An answer not there in 35 seconds (the mod waits 30 for a character in
+  game) takes the request back, so a Gateway started later does not give it. With several characters in game the mod
+  answers that it needs a name.
+  Without the mod loaded: when it is installed, the status line says to play, turn it on in Mods and enter an area; when
+  it is not, Waypoint offers to install it from the official mods, as Browse would: its release, or on a source copy its
+  source, which `live.ps1` builds before the Gateway starts (or **Build mod** in Mods). The copy button puts
+  `/item_give <the item as JSON>` (the `gm-commands` mod's command) on the clipboard, but the game's chat box stops at 175
+  characters and a rare's command is about 530, so it says so when the command is too long.
 - **Reset** starts over as the window opens: an empty item, every search and filter cleared, the Base page. It asks
   first when the item on screen has changes no save holds; saved items stay.
 
@@ -1211,9 +1217,12 @@ The data is the Gateway's own (`GameServer.Gateway crafter`, read once per Gatew
 can have (the server's own rolling rules), their stat descriptions in English (the checkout's
 `data/stat-descriptions.txt`) and the name words. `CrafterCatalog.cs` reads it and words the modifiers.
 
-A Gateway built before the hook does not know `crafter` and would start for real, so Waypoint first asks `commands`,
-which is safe, and goes on only if that lists `/item_give`, which came with the hook. If not, the window says the
-checkout needs updating and building; nothing starts.
+A Gateway built before the hook does not know `crafter` and would start for real, so Waypoint first reads the Gateway's
+assembly (`GameServer.Gateway.dll`, beside a release's `app\GameServer.Gateway.exe`) without running it, and goes on only
+if it defines `ItemCrafter`, which came with the hook (`CrafterCatalog.HasCrafter`). `/item_give`, which came with it too,
+moved to the `gm-commands` mod in v0.4.0-beta, so the `commands` list no longer tells. If not, the window says the
+checkout needs updating and building; nothing starts. A release has the hook from v0.2.2-beta; its modifier wording comes
+from `client.db` from v0.4.0-beta.
 
 ### Tools: the lab layout
 
@@ -1278,7 +1287,7 @@ adapter does not know can be browsed but not changed.
 | `AppearanceDialog.cs`, `ColorPickerDialog.cs`, `AccountActionDialog.cs`, `WindowBehaviorChoices.cs` | the appearance, an account change, the close choices |
 | `Workspace.cs`, `OutputPanel.xaml` | the app's side of the adapter: the last inspection, the operations and their output |
 | `SetupTab`, `ModsTab`, `BackupsTab`, `SettingsTab` | those sections |
-| `ToolsTab`, `ItemCrafterWindow`, `CrafterCatalog.cs`, `CraftedItems.cs`, `ItemImport.cs`, `ItemImportWindow` | the Tools section; the item crafter, the Gateway's crafter data and the game's wording of modifiers, the saved items, importing an item copied from Path of Building or the game |
+| `ToolsTab`, `ItemCrafterWindow`, `CrafterCatalog.cs`, `CraftedItems.cs`, `ItemImport.cs`, `ItemImportWindow`, `src/Launcher.Core/WaypointToolsMod.cs` | the Tools section; the item crafter, the Gateway's crafter data and the game's wording of modifiers, the saved items, importing an item copied from Path of Building or the game, giving it through the Waypoint Tools mod |
 | `Loc.cs`, `src/Launcher.Core/Localization.cs`, `src/Launcher.Core/Resources/` | interface text in XAML and code, the languages (`L.Languages`) and their catalogs |
 | `src/Launcher.Core/` | the adapter's client (`RuntimeClient.cs`, `BridgeScripts.cs`), the mods, backups, accounts, setup guidance, checkout discovery, diagnostics, the single instance |
 | `scripts/` | the adapter: `RuntimeBridge.ps1` and its parts, `SaveBackup.py`, `AccountData.py` |

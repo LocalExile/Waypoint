@@ -102,6 +102,28 @@ public static class ModCatalog
         return new(id, Text("version", "0"), kind, dependencies, assembly, enabled.ValueKind != JsonValueKind.False,
             Text("name", ""), Text("description", ""), Text("author", ""), ClientCompatibility.Read(Field(ClientCompatibility.Field)));
     }
+    /// <summary>The ids of the checkout's modules (<c>Modules/**/module.json</c>, as Game Systems reads them), which a mod may
+    /// depend on beside other mods. None when they cannot be read.</summary>
+    internal static HashSet<string> ModuleIds(string root)
+    {
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        try
+        {
+            foreach (string file in GameSystems.Manifests(Path.Combine(root, "Modules"), "module.json"))
+            {
+                try
+                {
+                    using var json = JsonDocument.Parse(File.ReadAllText(file));
+                    ids.Add(json.RootElement.TryGetProperty("id", out var id) && id.ValueKind == JsonValueKind.String
+                        ? id.GetString()! : Path.GetFileName(Path.GetDirectoryName(file)!));
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException) { }
+            }
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+        return ids;
+    }
+
     public static ModEntry[] Read(RuntimeSnapshot snapshot)
     {
         var environment = snapshot.ModEnvironment;
@@ -162,11 +184,15 @@ public static class ModCatalog
             }
         }
         var runtime = ParseRuntimeReport(environment.RuntimeReport);
+        var modules = ModuleIds(snapshot.Root);
         foreach (var original in entries.Values.ToArray())
         {
             var entry = original with { Enabled = choices.GetValueOrDefault(original.Id, original.Enabled) };
             if (entry.Status.StartsWith("Invalid", StringComparison.Ordinal) || entry.Status == "Missing DLL") continue;
-            string[] missing = entry.Depends.Where(id => !entries.TryGetValue(id, out var dep) || !dep.Enabled || dep.Status is "Missing DLL" or "Not built" || dep.Status.StartsWith("Invalid", StringComparison.Ordinal)).ToArray();
+            // A dependency is another mod or, as the Gateway's ModHost.Dependency has it, one of the modules (the Game module).
+            string[] missing = entry.Depends.Where(id => entries.TryGetValue(id, out var dep)
+                ? !dep.Enabled || dep.Status is "Missing DLL" or "Not built" || dep.Status.StartsWith("Invalid", StringComparison.Ordinal)
+                : !modules.Contains(id)).ToArray();
             string status = !environment.Enabled ? "Mods disabled globally" : !entry.Enabled ? "Disabled" : entry.Status == "Not built" ? "Not built"
                 : missing.Length > 0 ? "Dependency blocked" : snapshot.Services.Any(s => s.Name == "Gateway" && s.IsRunning) ? "Not checked" : "Gateway stopped";
             string detail = missing.Length > 0 ? "Needs: " + string.Join(", ", missing) : entry.Detail;

@@ -20,8 +20,8 @@ sealed record SavedRow(CraftedItem Item, PackIconKind Icon, string Name, string 
 /// <summary>
 /// The item crafter (Tools section): a base, its rarity, item level, quality, sockets, states and influences, a rare's
 /// name and the modifiers with their values, shown as the item would read in game. Save keeps it in Waypoint's own
-/// saved-items file; Give item sends /item_give through the client control bridge, so the character in game gets it in
-/// the inventory. The data is the Gateway's own (<see cref="CrafterCatalog"/>); no game artwork is used.
+/// saved-items file; Give item hands the item to the Waypoint Tools mod in the running Gateway
+/// (<see cref="WaypointToolsMod"/>), so the character in game gets it in the inventory. The data is the Gateway's own (<see cref="CrafterCatalog"/>); no game artwork is used.
 /// </summary>
 public partial class ItemCrafterWindow : FormWindow
 {
@@ -1095,23 +1095,63 @@ public partial class ItemCrafterWindow : FormWindow
         Status(L.Text("Giving {0} …", ItemName()));
         try
         {
-            if (!await FridaSetup.EnsureAsync(_shared, this, L.Text("Give item"), line => Status(line)))
+            // Through the Waypoint Tools mod in the running Gateway, on a source copy and a release alike.
+            string root = Environment.CurrentDirectory;
+            if (!WaypointToolsMod.Loaded(root, "item_give"))
             {
-                Status(L.Text("Give item needs Frida."), error: true);
+                await OfferWaypointTools(root);
                 return;
             }
-            var (ok, lines) = ClientBridge.Replies(await _shared.Bridge.SendAsync(Command(), wait: 2));
-            string reply = lines.Count > 0 ? string.Join(" ", lines) : L.Text("(no reply)");
-            if (!ok && reply.Contains("not running", StringComparison.OrdinalIgnoreCase))
-                Status(L.Text("The game is not running: start it, enter an area with a character, then give the item again."), error: true);
-            else Status(reply, error: !ok || !reply.StartsWith("Added", StringComparison.Ordinal));
-            _shared.Logs.Write($"item crafter: /item_give {_base.Id}: {reply}", ok ? Severity.Info : Severity.Error);
+            var answer = await WaypointToolsMod.GiveItemAsync(root, _item.Spec(), character: null, TimeSpan.FromSeconds(35));
+            Status(answer.Message, error: !answer.Ok);
+            _shared.Logs.Write($"item crafter: {WaypointToolsMod.Id} item_give {_base.Id}: {answer.Message}", answer.Ok ? Severity.Info : Severity.Error);
         }
-        catch (Exception ex) when (ex is InvalidOperationException or TimeoutException or IOException or System.Text.Json.JsonException)
+        catch (Exception ex) when (ex is InvalidOperationException or TimeoutException or IOException or System.Text.Json.JsonException
+            or UnauthorizedAccessException or System.Net.Http.HttpRequestException or TaskCanceledException or InvalidDataException)
         {
             Status(ex.Message, error: true);
         }
         finally { GiveButton.IsEnabled = _base is not null; }
+    }
+
+    /// <summary>Give item goes through the Waypoint Tools mod: says why it is not loaded, or offers to install it from the
+    /// official mods as Browse would (its release, or on a source copy its source, built when the servers start).</summary>
+    async Task OfferWaypointTools(string root)
+    {
+        if (WaypointToolsMod.Installed(root))
+        {
+            Status(L.Text("Give item uses the Waypoint Tools mod, and no running game has it loaded. Play, turn it on in Mods if it is off, enter an area with a character, then give the item again."), error: true);
+            return;
+        }
+        if (!Dialog.Ask(this, DialogKind.Question, L.Text("Install Waypoint Tools?"),
+                L.Text("Give item needs the Waypoint Tools mod: it gives the item to the character in game. Install it from the official mods?"),
+                L.Text("Install"), L.Text("Not now")))
+        {
+            Status(L.Text("Give item needs the Waypoint Tools mod."), error: true);
+            return;
+        }
+        Status(L.Text("Installing Waypoint Tools …"));
+        var browser = new ModBrowser(_shared);
+        await browser.ReadAsync(ModSource.Official, again: true);
+        var installed = _shared.Workspace.Latest is { } state ? ModCatalog.Read(state) : [];
+        if (browser.Items(ModSource.Official, installed).FirstOrDefault(i => i.Listing.Id == WaypointToolsMod.Id) is not { } item)
+        {
+            Status(browser.Error(ModSource.Official) is { } error
+                ? L.Text("The official mods could not be read: {0}", error)
+                : L.Text("The official mods do not list Waypoint Tools yet."), error: true);
+            return;
+        }
+        if (item.NeedsBuild && ModBrowser.CannotInstallSource() is { } reason) { Status(reason, error: true); return; }
+        if (item.Incompatible && !Dialog.Ask(this, DialogKind.Warning, item.Title, ModBrowser.IncompatibleQuestion(), L.Text("Install"), L.Text("Cancel")))
+        {
+            Status(L.Text("Give item needs the Waypoint Tools mod."), error: true);
+            return;
+        }
+        var result = await browser.InstallAsync(item);
+        Status(result is not { Ok: true } ? L.Text("Waypoint Tools was not installed: Logs has why.")
+            // A source project is built by live.ps1 before it starts the Gateway, or by Build in My Mods.
+            : item.NeedsBuild ? L.Text("Waypoint Tools is installed from source: it is built when the servers start next, or with Build mod in Mods. Then enter an area with a character and give the item again.")
+            : L.Text("Waypoint Tools is installed. A running game loads it within a second: enter an area with a character, then give the item again."), error: result is not { Ok: true });
     }
 
     void Status(string text, bool error = false)
