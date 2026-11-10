@@ -1267,6 +1267,9 @@
   <data name="Text_25d99e3dbef3" xml:space="preserve">
     <value>live.ps1 выполняется; смените сервер, когда он завершится.</value>
   </data>
+  <data name="Text_25e19b1298a9" xml:space="preserve">
+    <value>Отправка /reload через встроенный помощник выбранного репозитория; ожидание подтверждения Gateway.</value>
+  </data>
   <data name="Text_25e7df197704" xml:space="preserve">
     <value>мосту нужен Python с frida, который не установлен: его настроит кнопка «Выдать предмет» в конструкторе предметов</value>
   </data>
@@ -2211,6 +2214,9 @@
   </data>
   <data xml:space="preserve" name="Text_40ef19a35d79">
     <value>Службы остановлены.</value>
+  </data>
+  <data name="Text_4115d7cc67e2" xml:space="preserve">
+    <value>Сохранения, сделанные до разделения баз данных, помещаются в data/saves.db, но этот LocalExile его не использует: его база данных персонажей указана в другом месте.</value>
   </data>
   <data name="Text_411aa8a7f208" xml:space="preserve">
     <value>Эти порты нужны LocalExile, но один из них занят самой Windows, поэтому Waypoint не будет его завершать. Посмотрите, что его использует, освободите порт и повторите попытку.</value>
@@ -5666,6 +5672,9 @@
   </data>
   <data xml:space="preserve" name="Text_ac7fcf0ba22e">
     <value>Нет установленных модов</value>
+  </data>
+  <data name="Text_acb46a58f4f7" xml:space="preserve">
+    <value>Эти сохранения из более новой версии LocalExile, где учётные записи и персонажи хранятся в отдельных базах данных. Сначала переключитесь на эту версию.</value>
   </data>
   <data xml:space="preserve" name="Text_acb4bce11dae">
     <value>Выполняется операция с рабочей папкой.</value>

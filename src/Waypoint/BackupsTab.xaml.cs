@@ -49,7 +49,7 @@ public partial class BackupsTab : UserControl
         try
         {
             string? selected = Chosen?.Id;
-            var backups = BackupCatalog.Read(state.SaveDatabase);
+            var backups = BackupCatalog.Read(state);
             BackupList.ItemsSource = backups;
             BackupList.SelectedItem = backups.FirstOrDefault(b => b.Id == selected);
             Status.Text = L.Text("{0} backups for {1}", backups.Length, state.SaveDatabase);
@@ -99,8 +99,8 @@ public partial class BackupsTab : UserControl
 
     void OpenFolder(object sender, RoutedEventArgs e)
     {
-        if (State is { } state && Directory.Exists(BackupCatalog.DirectoryFor(state.SaveDatabase)))
-            Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { BackupCatalog.DirectoryFor(state.SaveDatabase) }, UseShellExecute = false })?.Dispose();
+        if (State is { } state && Directory.Exists(BackupCatalog.DirectoryFor(state)))
+            Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { BackupCatalog.DirectoryFor(state) }, UseShellExecute = false })?.Dispose();
     }
 
     bool Confirm(string title, string text, string action) =>

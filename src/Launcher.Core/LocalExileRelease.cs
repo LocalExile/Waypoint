@@ -86,7 +86,14 @@ public static class LocalExileReleases
     public static bool IsSetUp(string folder) =>
         File.Exists(Path.Combine(folder, "Client", "Game.patched.exe")) && File.Exists(Path.Combine(folder, "data", "login-keys.json")) && HasSaves(folder);
 
-    public static bool HasSaves(string folder) => File.Exists(Path.Combine(folder, "data", "saves.db"));
+    /// <summary>Whether the install has saves: data\saves.db, or from the database split on data\characters.db (with auth.db).</summary>
+    public static bool HasSaves(string folder) =>
+        File.Exists(Path.Combine(folder, "data", "saves.db")) || File.Exists(Path.Combine(folder, "data", "characters.db"));
+
+    /// <summary>The save databases a release may hold, each with its journal: saves.db before the database split, auth.db and
+    /// characters.db after it, and a saves.db its servers have not yet moved over.</summary>
+    static readonly string[] SaveFiles = ["saves.db", "saves.db-wal", "saves.db-shm", "characters.db", "characters.db-wal", "characters.db-shm",
+        "auth.db", "auth.db-wal", "auth.db-shm"];
 
     /// <summary>GitHub's "latest release" answer; null when its tag is no version.</summary>
     public static LocalExileRelease? ParseRelease(string json)
@@ -245,11 +252,10 @@ public static class LocalExileReleases
     /// the zip brings no way back. Null when there are no saves yet.</summary>
     public static string? BackUpSaves(string folder, ReleaseVersion? from, DateTime now)
     {
-        string[] files = ["saves.db", "saves.db-wal", "saves.db-shm"];
         if (!HasSaves(folder)) return null;
         string target = Path.Combine(folder, "backups", $"before-update-{from?.ToString() ?? "unknown"}-{now:yyyyMMdd-HHmmss}");
         Directory.CreateDirectory(target);
-        foreach (string name in files)
+        foreach (string name in SaveFiles)
             if (Path.Combine(folder, "data", name) is var source && File.Exists(source)) File.Copy(source, Path.Combine(target, name));
         return target;
     }

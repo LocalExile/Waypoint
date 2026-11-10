@@ -12,14 +12,16 @@ function Assert-AccountsStopped($snapshot) {
 }
 
 function Invoke-AccountData($request) {
-    Assert-Physical $script:savePath
+    $databases = @(Get-AccountDatabases)
+    foreach ($database in $databases) { Assert-Physical $database }
+    $arguments = @($databases[0], $script:root) + @($databases | Select-Object -Skip 1)
     $python = Get-Python
     $oldEncoding = $env:PYTHONIOENCODING
     $OutputEncoding = [Text.UTF8Encoding]::new($false)
     try {
         $env:PYTHONIOENCODING = 'utf-8'
         # The process pipe carries the request; credentials are never arguments or temporary files.
-        $raw = ($request | ConvertTo-Json -Depth 6 -Compress) | & $python (Join-Path $PSScriptRoot 'AccountData.py') $script:savePath $script:root
+        $raw = ($request | ConvertTo-Json -Depth 6 -Compress) | & $python (Join-Path $PSScriptRoot 'AccountData.py') @arguments
         $code = $LASTEXITCODE
         try { $reply = ($raw -join "`n") | ConvertFrom-Json } catch { throw 'The account-data helper did not return a valid result. No account result can be confirmed.' }
         Require ($code -eq 0 -and $reply.Ok) $(if ($reply.Message) { [string]$reply.Message } else { 'Account data could not be read or changed.' })

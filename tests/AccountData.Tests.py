@@ -257,5 +257,88 @@ class AccountDataTests(unittest.TestCase):
             data.run(alias, self.root, {"Action": "List"})
 
 
+# LocalExile's sql/base/ from the database split on (LocalExile/LocalExile#758), with the updates table its SqlUpdater keeps.
+UPDATES = "CREATE TABLE updates(name TEXT PRIMARY KEY,hash TEXT NOT NULL,state TEXT NOT NULL,applied_utc TEXT NOT NULL,speed_ms INTEGER NOT NULL) STRICT;"
+AUTH_SCHEMA = UPDATES + "CREATE TABLE accounts(id TEXT PRIMARY KEY,name TEXT NOT NULL UNIQUE COLLATE NOCASE,account TEXT NOT NULL) STRICT;"
+CHARACTERS_SCHEMA = UPDATES + '''
+    CREATE TABLE account_characters(id TEXT PRIMARY KEY,account_id TEXT NOT NULL,name TEXT NOT NULL UNIQUE COLLATE NOCASE,created_utc TEXT NOT NULL,character TEXT NOT NULL) STRICT;
+    CREATE TABLE account_friends(owner TEXT NOT NULL,friend TEXT NOT NULL,PRIMARY KEY(owner,friend),CHECK(owner<>friend)) STRICT;
+    CREATE TABLE characters(name TEXT PRIMARY KEY COLLATE NOCASE,save TEXT NOT NULL) STRICT;
+    CREATE TABLE deleted_characters(name TEXT NOT NULL,deleted_utc TEXT NOT NULL,save TEXT NOT NULL) STRICT;
+    CREATE TABLE meta(key TEXT PRIMARY KEY,value TEXT NOT NULL) STRICT;
+    CREATE TABLE stash_tabs(account TEXT NOT NULL COLLATE NOCASE,tab INTEGER NOT NULL,items TEXT NOT NULL,PRIMARY KEY(account,tab)) STRICT;
+    CREATE TABLE stashes(account TEXT PRIMARY KEY COLLATE NOCASE,save TEXT NOT NULL) STRICT;'''
+
+
+class SplitLayoutTests(unittest.TestCase):
+    """characters.db with the accounts in auth.db, as the servers keep them after the split."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="waypoint-split-")
+        self.root = Path(self.temp.name)
+        (self.root / "data").mkdir()
+        self.characters, self.auth = self.root / "data/characters.db", self.root / "data/auth.db"
+        self.account, self.other, self.char = (str(uuid.uuid4()) for _ in range(3))
+        with connect(self.auth) as db:
+            db.executescript(AUTH_SCHEMA)
+            for identity, name in ((self.account, "Alpha"), (self.other, "Beta")):
+                record = {"Id": identity, "Name": name, "PasswordHash": "h", "PasswordSalt": "s", "CreatedUtc": "2026-01-01T00:00:00Z"}
+                db.execute("INSERT INTO accounts VALUES(?,?,?)", (identity, name, json.dumps(record)))
+        with connect(self.characters) as db:
+            db.executescript(CHARACTERS_SCHEMA + "INSERT INTO meta VALUES('accounts_imported','fixture');")
+            char = {"Id": self.char, "AccountId": self.account, "Name": "Hero", "Class": 3, "Level": 12, "League": "Standard",
+                    "AreaId": "1_1_1", "CreatedUtc": "2026-01-01T00:00:00Z", "LastPlayedUtc": "2026-01-02T00:00:00Z", "PortraitFrame": 2}
+            db.execute("INSERT INTO account_characters VALUES(?,?,?,?,?)", (self.char, self.account, "Hero", char["CreatedUtc"], json.dumps(char)))
+            db.execute("INSERT INTO characters VALUES(?,?)", ("Hero", json.dumps({"MainAscendancy": {"Selection": {"Family": "Normal", "Id": "Witch3"}}})))
+            db.execute("INSERT INTO stashes VALUES(?,?)", ("Alpha", '{"Gold":1}'))
+            db.execute("INSERT INTO stash_tabs VALUES(?,?,?)", ("Alpha", 0, "[]"))
+            db.execute("INSERT INTO account_friends VALUES(?,?)", (self.account, self.other))
+            db.execute("INSERT INTO account_friends VALUES(?,?)", (self.other, self.account))
+        # The client tables are in client.db; data/tables/ comes only from a full extraction.
+        with connect(self.root / "data/client.db") as db:
+            db.execute("CREATE TABLE Ascendancy(_row INTEGER PRIMARY KEY, Id TEXT, Name TEXT, LeagueName TEXT)")
+            db.execute("INSERT INTO Ascendancy VALUES(0,'Witch3','Elementalist','Harbinger')")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def run_request(self, request):
+        return data.run(self.characters, self.root, request, self.auth)
+
+    def test_listing_and_changes_span_both_databases(self):
+        before = (self.characters.read_bytes(), self.auth.read_bytes())
+        view = self.run_request({"Action": "List"})
+        self.assertEqual(before, (self.characters.read_bytes(), self.auth.read_bytes()))
+        self.assertTrue(view["Writable"], view["Notice"])
+        alpha = next(a for a in view["Accounts"] if a["Id"] == self.account)
+        self.assertEqual(alpha["Characters"][0]["Ascendancy"], "Elementalist")
+        alpha = next(a for a in self.run_request({"Action": "Rename", "AccountId": self.account, "ExpectedRevision": alpha["Revision"],
+                                                  "Name": "Gamma"})["Accounts"] if a["Id"] == self.account)
+        with connect(self.auth) as db:
+            self.assertEqual(db.execute("SELECT name FROM accounts WHERE id=?", (self.account,)).fetchone()[0], "Gamma")
+        with connect(self.characters) as db:
+            self.assertEqual([r[0] for r in db.execute("SELECT account FROM stashes UNION ALL SELECT account FROM stash_tabs")], ["Gamma", "Gamma"])
+        self.run_request({"Action": "Delete", "AccountId": self.account, "ExpectedRevision": alpha["Revision"], "Name": "Gamma"})
+        with connect(self.auth) as db:
+            self.assertEqual([r[0] for r in db.execute("SELECT name FROM accounts")], ["Beta"])
+        with connect(self.characters) as db:
+            for table in ("account_characters", "characters", "stashes", "stash_tabs", "account_friends"):
+                self.assertEqual(db.execute('SELECT count(*) FROM "' + table + '"').fetchone()[0], 0, table)
+            self.assertEqual(db.execute("SELECT name FROM deleted_characters").fetchone()[0], "Hero")
+
+    def test_unfamiliar_split_layout_is_read_only(self):
+        with connect(self.auth) as db:
+            db.execute("CREATE TABLE future_sessions(id TEXT)")
+        view = self.run_request({"Action": "List"})
+        self.assertFalse(view["Writable"])
+        alpha = next(a for a in view["Accounts"] if a["Id"] == self.account)
+        with self.assertRaises(data.AccountError):
+            self.run_request({"Action": "Delete", "AccountId": self.account, "ExpectedRevision": alpha["Revision"], "Name": "Alpha"})
+        with connect(self.characters) as db:
+            db.execute("CREATE TABLE accounts(id TEXT PRIMARY KEY,name TEXT,account TEXT)")
+        with self.assertRaisesRegex(data.AccountError, "not supported"):
+            self.run_request({"Action": "List"})
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

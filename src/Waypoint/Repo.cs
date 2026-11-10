@@ -121,6 +121,8 @@ static class Repo
         && !script.Contains("-ClientOnly cannot be combined with -NoClient, -Only or -Walkmaps", StringComparison.Ordinal);
 
     public static string ExtractScript { get; } = Path.Combine("scripts", "dev", "extract-data.ps1");
+    /// <summary>extract-data.ps1 -List, for only the entries the servers read when the script has -Servers (live.ps1 extracts those).</summary>
+    public static string[] ExtractListArguments => Launcher.Core.SetupSequence.ExtractsForServers(".") ? ["-Servers", "-List"] : ["-List"];
     public static string ClientControl { get; } = Path.Combine("scripts", "dev", "client_control.py");
     public static string Logs { get; } = "logs";
 

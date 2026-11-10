@@ -63,7 +63,7 @@ partial class BackupsTab : UserControl
         try
         {
             string? selected = Chosen?.Id;
-            var backups = BackupCatalog.Read(state.SaveDatabase);
+            var backups = BackupCatalog.Read(state);
             BackupList.ItemsSource = backups;
             BackupList.SelectedItem = backups.FirstOrDefault(b => b.Id == selected);
             Status.Text = L.Text("{0} backups for {1}", backups.Length, state.SaveDatabase);
@@ -113,8 +113,8 @@ partial class BackupsTab : UserControl
 
     void OpenFolder(object? sender, RoutedEventArgs e)
     {
-        if (State is { } state && Directory.Exists(BackupCatalog.DirectoryFor(state.SaveDatabase)))
-            ViewTools.Open(BackupCatalog.DirectoryFor(state.SaveDatabase));
+        if (State is { } state && Directory.Exists(BackupCatalog.DirectoryFor(state)))
+            ViewTools.Open(BackupCatalog.DirectoryFor(state));
     }
 
     bool Confirm(string title, string text, string action) =>

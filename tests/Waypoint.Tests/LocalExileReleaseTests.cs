@@ -173,6 +173,22 @@ public class LocalExileReleaseTests
         finally { Directory.Delete(folder, recursive: true); }
     }
 
+    [Fact]
+    public void Split_saves_are_copied_with_an_unmigrated_saves_db_before_an_update()
+    {
+        string folder = TempFolder();
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(folder, "data"));
+            foreach (string name in new[] { "characters.db", "characters.db-wal", "auth.db", "auth.db-wal", "saves.db.migrated" })
+                File.WriteAllText(Path.Combine(folder, "data", name), name);
+            Assert.True(LocalExileReleases.HasSaves(folder));
+            string backup = LocalExileReleases.BackUpSaves(folder, ReleaseVersion.Parse("0.3.0"), new DateTime(2026, 11, 10, 12, 0, 0))!;
+            Assert.Equal(["auth.db", "auth.db-wal", "characters.db", "characters.db-wal"], Directory.GetFiles(backup).Select(f => Path.GetFileName(f)!).Order().ToArray());
+        }
+        finally { Directory.Delete(folder, recursive: true); }
+    }
+
     [Theory]
     [InlineData("exile_1", "secret", "secret", true)]
     [InlineData("ab", "secret", "secret", false)]             // too short a name

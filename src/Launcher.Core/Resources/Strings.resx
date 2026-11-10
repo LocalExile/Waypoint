@@ -1267,6 +1267,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_25d99e3dbef3" xml:space="preserve">
     <value>live.ps1 is running; change the server when it is done.</value>
   </data>
+  <data name="Text_25e19b1298a9" xml:space="preserve">
+    <value>Sending /reload through the selected checkout's native client helper; waiting for Gateway confirmation.</value>
+  </data>
   <data name="Text_25e7df197704" xml:space="preserve">
     <value>the bridge needs Python with frida, which is not installed: Give item in the item crafter sets it up</value>
   </data>
@@ -2211,6 +2214,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_40ef19a35d79">
     <value>Stop completed.</value>
+  </data>
+  <data name="Text_4115d7cc67e2" xml:space="preserve">
+    <value>Saves from before the database split go to data/saves.db, which this LocalExile does not use: its characters database is set elsewhere.</value>
   </data>
   <data name="Text_411aa8a7f208" xml:space="preserve">
     <value>LocalExile needs these ports, and Windows itself is using one of them, so Waypoint will not end it. Look at what uses it, free the port, and try again.</value>
@@ -5666,6 +5672,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_ac7fcf0ba22e">
     <value>No installed mods</value>
+  </data>
+  <data name="Text_acb46a58f4f7" xml:space="preserve">
+    <value>These saves are from a newer LocalExile, with accounts and characters in their own databases. Switch to that version first.</value>
   </data>
   <data xml:space="preserve" name="Text_acb4bce11dae">
     <value>A workspace operation is in progress.</value>

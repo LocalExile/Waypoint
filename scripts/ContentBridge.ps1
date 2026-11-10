@@ -1,13 +1,14 @@
 # Public module/league files only. No server code is imported or executed.
 function Invoke-LeagueData($environment, $request, [string]$action, [string]$phase) {
-    Assert-Physical $script:savePath
+    $databases = @(Get-AccountDatabases)
+    foreach ($database in $databases) { Assert-Physical $database }
     $python = Get-Python
     $OutputEncoding = [Text.UTF8Encoding]::new($false)
     $oldEncoding = $env:PYTHONIOENCODING
     try {
         $env:PYTHONIOENCODING = 'utf-8'
         $history = Join-Path (Get-WaypointData) 'config-history'
-        $raw = ($request | ConvertTo-Json -Depth 30 -Compress) | & $python (Join-Path $PSScriptRoot 'LeagueData.py') $environment.Modules $environment.Leagues $environment.Choices $script:savePath $history $action $phase
+        $raw = ($request | ConvertTo-Json -Depth 30 -Compress) | & $python (Join-Path $PSScriptRoot 'LeagueData.py') $environment.Modules $environment.Leagues $environment.Choices $databases[0] $history $action $phase @($databases | Select-Object -Skip 1)
         $code = $LASTEXITCODE
         try { $reply = ($raw -join "`n") | ConvertFrom-Json } catch { throw 'The league helper did not return a valid result. Nothing can be confirmed.' }
         Require ($code -eq 0 -and $reply.Ok) $(if ($reply.Message) { [string]$reply.Message } else { 'League validation failed.' })

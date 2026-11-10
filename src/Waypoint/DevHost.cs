@@ -10,7 +10,7 @@ namespace Waypoint;
 /// The dev account service (GameServer.Host, GettingStarted step 8): the launcher registers accounts and creates
 /// characters through its JSON-lines protocol (Agents/docs/dev-server.md), as GameServer.DevClient does. Started on
 /// demand like live.ps1 starts the servers (detached, output in logs/launcher-host.log), and left running: it shares
-/// data/saves.db with Auth, and neither caches it.
+/// the save databases (data/saves.db, or auth.db and characters.db) with Auth, and neither caches them.
 /// </summary>
 static class DevHost
 {
