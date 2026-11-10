@@ -53,7 +53,7 @@ try {
     Set-Content -LiteralPath (At 'src/GameServer.Gateway/Modding/ModSettings.cs') '// settings fixture'
     $snapshot = [pscustomobject]@{ Conflicts=@() }
     $envInfo = Get-ContentEnvironment
-    Check ($envInfo.CanChoose -and $envInfo.CanEditSettings) 'source hooks expose module and league capabilities'
+    Check ($envInfo.CanChoose -and $envInfo.CanEditSettings -and -not $envInfo.ShippedLeaguesFixed) 'source hooks expose module and league capabilities, and a checkout''s leagues are its user''s'
     $Action='SaveContentSettings'; $ModId='Example'; $ModTarget='Modules'; $ModExpectedHash='missing'; $ModStaged=Stage '{"count":2}'
     Save-ContentFile $snapshot
     Check ([IO.File]::ReadAllText((At 'data/modules/Example.json')) -eq '{"count":2}' -and $script:backups -eq 1) 'module values save after backup to the module namespace'
@@ -106,13 +106,11 @@ try {
     Refused { Save-ContentFile $snapshot } 'definition changes during backup block creation'
     Check (-not (Test-Path -LiteralPath (At 'Leagues/Concurrent Change'))) 'concurrent changes do not leave a partially created league'
     $script:changeLeagueDuringBackup=$false
+    # LocalExile reads its leagues once, when a server starts: one made while a server runs is there at its next start.
     $ModStaged=StageCreation 'Running Writer'; $script:running=$true
-    Refused { Save-ContentFile $snapshot } 'running writers prevent league creation'
+    Save-ContentFile $snapshot
+    Check (Test-Path -LiteralPath (At 'Leagues/Running Writer/league.json') -PathType Leaf) 'a league is created while the servers run'
     $script:running=$false
-    $ModStaged=StageCreation 'New Writer'; $script:startDuringBackup=$true
-    Refused { Save-ContentFile $snapshot } 'writers are checked again after backup'
-    Check (-not (Test-Path -LiteralPath (At 'Leagues/New Writer'))) 'a newly running writer cannot race league creation'
-    $script:running=$false; $script:startDuringBackup=$false
     function StageVisibility($visible) {
         $review=(Invoke-LeagueData (Get-ContentEnvironment) @{} 'Inspect' 'check').Review
         Stage (@{league='Standard'; visible=$visible; review=$review} | ConvertTo-Json -Depth 30)
@@ -122,14 +120,51 @@ try {
     $hidden=Get-Content -LiteralPath (At 'Leagues/Standard/league.json') -Raw | ConvertFrom-Json
     Check (-not $hidden.creatable -and -not $hidden.ended) 'visibility hides only new character creation without ending the league'
     $ModStaged=StageVisibility $true; $script:running=$true
-    Refused { Save-ContentFile $snapshot } 'visibility changes require stopped writers'
-    $script:running=$false
     Save-ContentFile $snapshot
-    Check ((Get-Content -LiteralPath (At 'Leagues/Standard/league.json') -Raw | ConvertFrom-Json).creatable) 'a hidden league can be offered again without changing its identity'
+    $script:running=$false
+    Check ((Get-Content -LiteralPath (At 'Leagues/Standard/league.json') -Raw | ConvertFrom-Json).creatable) 'a hidden league is offered again without changing its identity, while the servers run too'
+    # A release: what it takes follows from its version, never from files that happen to be there (the source hooks of
+    # this fixture are still in place).
     $script:isRelease=$true
     $envInfo=Get-ContentEnvironment
-    Check (-not $envInfo.CanChoose -and -not $envInfo.CanEditSettings -and -not $envInfo.CanCreate) 'release installs never infer new capabilities from files alone'
+    Check (-not $envInfo.CanChoose -and -not $envInfo.CanEditSettings -and -not $envInfo.CanCreate) 'a release without a readable version takes no module or league change'
     Refused { Save-ContentFile $snapshot } 'legacy release configuration remains read-only'
+    Set-Content -LiteralPath (At 'release.json') '{"version":"0.1.0-beta"}'
+    $envInfo=Get-ContentEnvironment
+    Check (-not $envInfo.CanChoose -and -not $envInfo.CanEditSettings -and -not $envInfo.CanCreate) 'a release older than 0.2.0-beta takes no module or league change'
+    $Action='SaveContentSettings'; $ModId='Example'; $ModTarget='Modules'; $ModExpectedHash=Get-ModFileHash (At 'data/modules/Example.json'); $ModStaged=Stage '{"count":5}'
+    Refused { Save-ContentFile $snapshot } 'an older release refuses module settings'
+    Check (-not [IO.File]::ReadAllText((At 'data/modules/Example.json')).Contains('"count":5')) 'an older release keeps its module values'
+    Set-Content -LiteralPath (At 'release.json') '{"version":"0.3.0-beta"}'
+    $envInfo=Get-ContentEnvironment
+    Check ($envInfo.CanChoose -and $envInfo.CanEditSettings -and $envInfo.CanCreate) 'a release from 0.2.0-beta on takes module choices, settings and new leagues'
+    Check ($envInfo.ShippedLeaguesFixed) 'the leagues that came with a release are the release''s own'
+    $before=$script:backups; $ModStaged=Stage '{"count":5}'
+    Save-ContentFile $snapshot
+    Check ([IO.File]::ReadAllText((At 'data/modules/Example.json')) -eq '{"count":5}' -and $script:backups -eq $before + 1) 'a release saves module values after a backup, under its data folder'
+    $ModId='Standard'; $ModTarget='Leagues'; $ModExpectedHash=Get-ModFileHash (At 'data/leagues/Standard.json'); $ModStaged=Stage '{"level":3}'
+    Save-ContentFile $snapshot
+    Check ([IO.File]::ReadAllText((At 'data/leagues/Standard.json')) -eq '{"level":3}') 'a release saves league settings under its data folder'
+    $Action='SaveLeagueModules'; $ModId=''; $ModTarget=''; $ModExpectedHash='missing'; $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example"],"remove":[]}}'
+    Save-ContentFile $snapshot
+    Check ([IO.File]::ReadAllText((At 'data/league-modules.json')).Contains('Optional/Example')) 'a release saves per-league module choices under its data folder'
+    $shipped=[IO.File]::ReadAllText((At 'Leagues/Standard/league.json'))
+    # A new league is a folder of its own, which an update of the release leaves alone: it writes only its zip's files.
+    $Action='CreateLeague'; $ModStaged=StageCreation 'Release Event'
+    Save-ContentFile $snapshot
+    Check ((Test-Path -LiteralPath (At 'Leagues/Release Event/.waypoint-league.json') -PathType Leaf) -and [IO.File]::ReadAllText((At 'Leagues/Standard/league.json')) -ceq $shipped) 'a release takes a new league beside the ones it shipped'
+    # The leagues it shipped are its files, which an update writes over; one made in Waypoint is its user's.
+    $Action='SetLeagueVisibility'; $ModStaged=StageVisibility $false
+    Refused { Save-ContentFile $snapshot } 'a release refuses hiding a league it shipped'
+    Check ([IO.File]::ReadAllText((At 'Leagues/Standard/league.json')) -ceq $shipped) 'a release''s own league definitions stay as shipped'
+    $review=(Invoke-LeagueData (Get-ContentEnvironment) @{} 'Inspect' 'check').Review
+    $ModStaged=Stage (@{league='Release Event'; visible=$false; review=$review} | ConvertTo-Json -Depth 30)
+    Save-ContentFile $snapshot
+    Check (-not (Get-Content -LiteralPath (At 'Leagues/Release Event/league.json') -Raw | ConvertFrom-Json).creatable) 'a release hides a league made in Waypoint'
+    $review=(Invoke-LeagueData (Get-ContentEnvironment) @{} 'Inspect' 'check').Review
+    $ModStaged=Stage (@{league='..\Standard'; visible=$false; review=$review} | ConvertTo-Json -Depth 30)
+    Refused { Save-ContentFile $snapshot } 'a release refuses a league name that leaves its Leagues folder'
+    Remove-Item -LiteralPath (At 'release.json')
     $script:isRelease=$false
     $env:Game_LEAGUE_MODULES='data/custom-choices.json'
     Check ((Get-ContentEnvironment).Choices -eq [IO.Path]::GetFullPath((At 'data/custom-choices.json'))) 'configured override paths are honored'

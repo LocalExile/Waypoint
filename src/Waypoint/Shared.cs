@@ -41,7 +41,7 @@ sealed class Shared : IDisposable
     {
         Metrics = new Metrics(Monitor);
         // The player's other LocalExile folders: their clients are the first place a move to another client build looks.
-        ClientUpdate.KnownFolders = () => [Settings.ServerPath, Settings.ReleaseFolder, Settings.LatestFolder];
+        ClientUpdate.KnownFolders = () => [Settings.ServerPath, Settings.ReleaseFolder, Settings.LatestFolder, .. Settings.KnownFolders];
         Workspace = new Workspace(this);
         // The log on disk leaves out the account and character names Waypoint comes to know.
         if (SessionLog.Current is { } disk) disk.PrivateNames = () => Workspace.PrivateNames;

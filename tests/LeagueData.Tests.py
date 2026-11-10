@@ -60,6 +60,15 @@ class LeagueDataTests(unittest.TestCase):
             self.modules, self.leagues, self.choices, self.database, self.history)), action, phase],
             input=payload, capture_output=True, env=dict(os.environ, PYTHONIOENCODING="utf-8"), check=False)
 
+    def test_cli_runs_under_a_python_that_does_not_look_beside_the_script(self):
+        # A release's bundled Python is the embeddable one, which leaves the script's folder off its module path; -I does
+        # the same to this Python. The helper finds AccountData beside itself all the same.
+        completed = subprocess.run([sys.executable, "-I", str(Path(data.__file__)), *map(str, (
+            self.modules, self.leagues, self.choices, self.database, self.history)), "Inspect", "check"],
+            input=b"{}", capture_output=True, cwd=self.root)
+        self.assertEqual(completed.returncode, 0, completed.stderr.decode("utf-8", "replace"))
+        self.assertTrue(json.loads(completed.stdout)["Ok"])
+
     def test_cli_accepts_utf8_requests_with_or_without_a_bom_and_preserves_unicode(self):
         for prefix, name in ((b"", "Plain Event"), (b"\xef\xbb\xbf", "BOM Event")):
             with self.subTest(bom=bool(prefix)):
@@ -130,26 +139,69 @@ class LeagueDataTests(unittest.TestCase):
         with self.assertRaisesRegex(data.AccountError, "Void"):
             self.run_request(self.request(name="Other League"))
 
-    def test_cross_family_and_unobserved_whole_combinations_are_blocked(self):
-        request = self.request("Survivors")
-        request["modules"].append("Core/Vendors")
-        with self.assertRaisesRegex(data.AccountError, "not defined"):
-            self.run_request(request)
-        self.profile("With X", ["Core/Game", "Extra/X"], base="Standard", ssf=True, entryOf="Standard", entryKind="ssf")
-        self.profile("With Y", ["Core/Game", "Extra/Y"], base="Standard", ssf=True, entryOf="Standard", entryKind="ssf")
-        request = self.request("SSF Standard")
-        request["modules"] = ["Core/Game", "Extra/X", "Extra/Y"]
-        with self.assertRaisesRegex(data.AccountError, "not defined"):
-            self.run_request(request)
-        request["modules"] = ["Core/Game", "Extra/X"]
-        self.run_request(request)
+    def standard_as_shipped(self):
+        # As LocalExile ships it, Standard has no parent, and a league that leads to it is not isolated. The other
+        # leagues of this fixture lead to Void, as Survivors does.
+        self.write(self.leagues / "Standard/league.json", {"name": "Standard", "parent": None, "description": "Fixture profile.", "base": "Standard"})
 
-    def test_shared_game_base_does_not_make_distinct_leagues_compatible(self):
-        self.profile("Phrecia", ["Core/Game", "Extra/X"], base="Standard", parent="Standard")
+    def choose(self, league, add=(), remove=()):
+        current = data.read_json(self.choices) if self.choices.exists() else {}
+        return {"league": league, "review": self.review(), "choices": {**current, league: {"add": list(add), "remove": list(remove)}}}
+
+    def test_any_module_goes_with_any_league_but_one_made_for_an_isolated_league(self):
+        self.standard_as_shipped()
+        self.profile("Ruthless", ["Core/Game", "Core/Vendors", "Extra/X"], base="Standard", parent="Standard", form="ruthless")
+        # A core module the league does not ship with, and another league's own module: a module has no knowledge of
+        # leagues, and any league can list it.
+        self.run_request(self.choose("Ruthless", ["Core/Harvest"]), action="SaveLeagueModules")
+        self.run_request(self.choose("Standard", ["Extra/X"]), action="SaveLeagueModules")
+        self.run_request(self.choose("Survivors", ["Core/Vendors", "Extra/X", "Extra/Y"]), action="SaveLeagueModules")
+        saved = data.read_json(self.choices)
+        self.assertEqual((saved["Ruthless"]["add"], saved["Standard"]["add"]), (["Core/Harvest"], ["Extra/X"]))
+        # A module LocalExile ships only in an isolated league stays out of the leagues that lead to Standard...
+        for league in ("Standard", "Ruthless"):
+            with self.assertRaisesRegex(data.AccountError, "isolated"):
+                self.run_request(self.choose(league, ["Survivors/Skills"]), action="SaveLeagueModules")
+        # ...goes with another isolated league, and with a new league, which is isolated whatever it is made from.
+        self.run_request(self.choose("Hardcore", ["Survivors/Skills"]), action="SaveLeagueModules")
         request = self.request()
-        request["modules"] = ["Core/Game", "Extra/X"]
-        with self.assertRaisesRegex(data.AccountError, "not defined"):
-            self.run_request(request)
+        request["modules"].append("Survivors/Skills")
+        self.run_request(request)
+        # What a module needs has to be on.
+        with self.assertRaisesRegex(data.AccountError, "needs"):
+            self.run_request(self.choose("Hardcore", ["Survivors/Run"]), action="SaveLeagueModules")
+
+    def test_a_module_no_shipped_league_lists_is_an_add_on_that_is_never_required(self):
+        # Extra/X is in no league's list: an add-on, as PlayerBots is. LocalExile's own guide turns it on this way.
+        shipped = (self.leagues / "Standard/modules.json").read_text(encoding="utf-8")
+        self.run_request(self.choose("Standard", ["Extra/X"]), action="SaveLeagueModules")
+        self.assertEqual(data.read_json(self.choices)["Standard"]["add"], ["Extra/X"])
+        self.assertEqual(shipped, (self.leagues / "Standard/modules.json").read_text(encoding="utf-8"))
+        # A league made in Waypoint with an add-on ticked lists it in its own file, and can still untick it.
+        self.profile("My Bots", ["Core/Game", "Core/Vendors", "Extra/X"], base="Standard")
+        self.write(self.leagues / "My Bots/.waypoint-league.json", {"version": 1, "template": "Standard"})
+        self.run_request(self.choose("My Bots", remove=["Extra/X"]), action="SaveLeagueModules")
+        self.assertEqual(data.read_json(self.choices)["My Bots"]["remove"], ["Extra/X"])
+        # Its dependencies still count.
+        self.write(self.modules / "Extra/Needy/module.json", {"id": "Needy", "depends": ["Harvest"]})
+        with self.assertRaisesRegex(data.AccountError, "needs"):
+            self.run_request(self.choose("Survivors", ["Extra/Needy"]), action="SaveLeagueModules")
+
+    def test_a_league_that_lists_a_module_that_is_not_installed_can_still_be_edited(self):
+        # A typo in a hand edit, or a module taken away since: LocalExile logs it and loads the league without it.
+        self.write(self.leagues / "Standard/modules.json", {"modules": ["Core/Game", "Core/Vendors", "Core/Harvest", "PlayerBot"]})
+        # Another change goes through with the entry left as it is, and the entry itself can be taken off the list.
+        self.run_request(self.choose("Standard", remove=["Core/Harvest"]), action="SaveLeagueModules")
+        self.run_request(self.choose("Standard", remove=["PlayerBot"]), action="SaveLeagueModules")
+        self.assertEqual(data.read_json(self.choices)["Standard"]["remove"], ["PlayerBot"])
+        # What the user's saved choices added earlier counts as listed too; a new one that is not installed is refused.
+        self.write(self.choices, {"Standard": {"add": ["Gone"], "remove": []}})
+        self.run_request(self.choose("Standard", ["Gone", "Extra/X"]), action="SaveLeagueModules")
+        with self.assertRaisesRegex(data.AccountError, "missing"):
+            self.run_request(self.choose("Standard", ["Gone", "Nowhere"]), action="SaveLeagueModules")
+        # A new league starts from installed modules only.
+        with self.assertRaisesRegex(data.AccountError, "missing"):
+            self.run_request(self.request())
 
     def test_hidden_profiles_remain_valid_for_customization_and_existing_characters(self):
         self.run_request(self.request())
@@ -159,12 +211,23 @@ class LeagueDataTests(unittest.TestCase):
         self.assertEqual(data.read_json(self.choices)["My League"]["remove"], ["Core/Harvest"])
         self.run_request(self.request("SSF Standard", "New Solo League"))
 
-    def test_core_and_dedicated_gameplay_bundle_cannot_be_removed(self):
-        for template, removed in (("Standard", "Core/Game"), ("Survivors", "Survivors/Run")):
-            request = self.request(template)
-            request["modules"].remove(removed)
-            with self.assertRaises(data.AccountError):
-                self.run_request(request)
+    def test_the_game_cannot_be_removed_and_a_leagues_own_bundle_can(self):
+        # The game is what LocalExile requires.
+        request = self.request("Standard")
+        request["modules"].remove("Core/Game")
+        with self.assertRaisesRegex(data.AccountError, "Game"):
+            self.run_request(request)
+        with self.assertRaisesRegex(data.AccountError, "Game"):
+            self.run_request(self.choose("Standard", remove=["Core/Game"]), action="SaveLeagueModules")
+        # A league's own bundle can be left out: LocalExile loads the league without it and keeps its saved data. The
+        # interface asks first; here the choice is simply taken. What a module needs still has to be on.
+        self.run_request(self.choose("Survivors", remove=["Survivors/Run"]), action="SaveLeagueModules")
+        self.assertEqual(data.read_json(self.choices)["Survivors"]["remove"], ["Survivors/Run"])
+        with self.assertRaisesRegex(data.AccountError, "needs"):
+            self.run_request(self.choose("Survivors", remove=["Survivors/Skills"]), action="SaveLeagueModules")
+        request = self.request("Survivors")
+        request["modules"].remove("Survivors/Run")
+        self.run_request(request)
 
     def test_dependency_errors_and_cycles_block_writes(self):
         self.write(self.modules / "Core/Harvest/module.json", {"id": "Harvest", "depends": ["Vendors"]})

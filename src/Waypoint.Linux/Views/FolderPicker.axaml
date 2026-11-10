@@ -1,0 +1,154 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:l="clr-namespace:Waypoint"
+             x:Class="Waypoint.FolderPicker">
+  <UserControl.Styles>
+    <StyleInclude Source="/Views/Table.axaml" />
+    <!-- The folder in use, in the sidebar: the whole box is the button that opens the list. The presenter has its own name:
+         the theme's hover colours are for PART_ContentPresenter. -->
+    <Style Selector="Button.currentFolder">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.SidebarText}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.SidebarSelected}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="10,7,8,8" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <ContentPresenter Name="Body" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.currentFolder:pointerover, Button.currentFolder.open">
+      <Setter Property="Background" Value="{DynamicResource Shell.SidebarSelected}" />
+    </Style>
+    <!-- A row of the list, or an action under it: the whole row is the button. -->
+    <Style Selector="Button.folderRow">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.Text}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="10,8" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <ContentPresenter Name="Body" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}"
+                            CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <!-- A folder's row: the one in use is shaded, as well as labelled. -->
+    <Style Selector="Button.folderRow.inUse">
+      <Setter Property="Background" Value="{DynamicResource Shell.Panel}" />
+    </Style>
+    <Style Selector="Button.folderRow:pointerover">
+      <Setter Property="Background" Value="{DynamicResource Shell.Cell}" />
+    </Style>
+    <!-- "Take it off the list", at the end of a row: it shows while the mouse is on the row or the keyboard is in it, and
+         keeps its place meanwhile, so that no row changes width. -->
+    <Style Selector="Button.forget">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Width" Value="24" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="6,0,-4,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <ContentPresenter Name="Body" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}"
+                            CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.folderRow:pointerover Button.forget, Button.folderRow:focus-within Button.forget">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="Button.forget:pointerover">
+      <Setter Property="Background" Value="{DynamicResource Shell.Border}" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.Text}" />
+    </Style>
+  </UserControl.Styles>
+  <Panel>
+    <Button x:Name="Current" Classes="currentFolder" Click="OpenList">
+      <DockPanel>
+        <icons:MaterialIcon DockPanel.Dock="Right" Kind="ChevronDown" Width="16" Height="16" Margin="4,0,0,0" VerticalAlignment="Center" Opacity="0.75" />
+        <icons:MaterialIcon x:Name="CurrentIcon" DockPanel.Dock="Left" Kind="PackageVariantClosed" Width="17" Height="17" Margin="0,0,10,0" VerticalAlignment="Center" />
+        <StackPanel>
+          <TextBlock x:Name="CurrentTitle" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource Shell.SidebarStrong}"
+                     TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="CurrentPath" FontSize="11" Opacity="0.72" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+      </DockPanel>
+    </Button>
+    <!-- The list: a card over the window. It closes on a click anywhere else and on Escape. -->
+    <Popup x:Name="List" PlacementTarget="{Binding #Current}" Placement="BottomEdgeAlignedLeft" VerticalOffset="4"
+           IsLightDismissEnabled="True" Closed="ListClosed">
+      <Border x:Name="Card" MinWidth="330" MaxWidth="460" Padding="6" CornerRadius="8" BorderThickness="1"
+              Background="{DynamicResource Shell.Background}" BorderBrush="{DynamicResource Shell.Border}"
+              KeyboardNavigation.TabNavigation="Cycle" KeyDown="ListKey">
+        <StackPanel>
+          <ItemsControl x:Name="Rows">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Button Classes="folderRow" Classes.inUse="{Binding InUse}" Click="RowClicked" ToolTip.Tip="{Binding Tip}" Opacity="{Binding Strength}"
+                        Margin="0,1" AutomationProperties.Name="{Binding Spoken}">
+                  <DockPanel>
+                    <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Width="18" Height="18" Margin="0,0,12,0" VerticalAlignment="Center"
+                                        Foreground="{DynamicResource Shell.TextSecondary}" />
+                    <Button DockPanel.Dock="Right" Classes="forget" Click="ForgetClicked" IsVisible="{Binding ForgetShown}"
+                            ToolTip.Tip="{l:Loc 'Take this folder off the list. The folder and its files stay where they are.'}"
+                            AutomationProperties.Name="{l:Loc 'Take it off the list'}">
+                      <icons:MaterialIcon Kind="Close" Width="14" Height="14" />
+                    </Button>
+                    <Border DockPanel.Dock="Right" Classes="badge accent" IsVisible="{Binding InUse}">
+                      <TextBlock Text="{l:Loc 'In use'}" />
+                    </Border>
+                    <Border DockPanel.Dock="Right" Classes="badge warning" IsVisible="{Binding MissingShown}">
+                      <TextBlock Text="{l:Loc 'Not found'}" />
+                    </Border>
+                    <StackPanel>
+                      <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{Binding ShortPath}" FontSize="11.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"
+                                 Foreground="{DynamicResource Shell.TextSecondary}" />
+                    </StackPanel>
+                  </DockPanel>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <Border Height="1" Margin="6" Background="{DynamicResource Shell.Border}" />
+          <Button x:Name="AddFolder" Classes="folderRow" Click="AddClicked"
+                  ToolTip.Tip="{l:Loc 'Choose a LocalExile folder that is already on this PC: a release, or a copy of its source. Waypoint opens it and keeps it in this list.'}">
+            <StackPanel Orientation="Horizontal">
+              <icons:MaterialIcon Kind="FolderPlusOutline" Width="18" Height="18" Margin="0,0,12,0" VerticalAlignment="Center"
+                                  Foreground="{DynamicResource Shell.TextSecondary}" />
+              <TextBlock Text="{l:Loc 'Add a folder you already have…'}" FontSize="13" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button x:Name="NewCopy" Classes="folderRow" Click="NewCopyClicked">
+            <StackPanel Orientation="Horizontal">
+              <icons:MaterialIcon Kind="Download" Width="18" Height="18" Margin="0,0,12,0" VerticalAlignment="Center"
+                                  Foreground="{DynamicResource Shell.TextSecondary}" />
+              <TextBlock Text="{l:Loc 'Set up a new copy…'}" FontSize="13" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Border>
+    </Popup>
+  </Panel>
+</UserControl>

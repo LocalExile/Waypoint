@@ -115,6 +115,10 @@ public sealed partial class GameSystemsTab
         FooterButton(L.Text("Cancel"), DiscardCurrent);
         Dispatch(() => search.Focus());
     }
+    /// <summary>What the draft leaves out of the bundle of the league it starts from; empty when that bundle is whole.</summary>
+    string DraftBundleWarning() => _catalog is not null && _draftTemplate is not null && _catalog.BundleLeftOut(_draftTemplate, _draftModules) is { Count: > 0 } left
+        ? L.Text("Without {0}, the new league has the mode of {1} but not its rules or content.", string.Join(", ", left.Select(ModuleTitle)), _draftTemplate.Name) : "";
+
     string? DraftError()
     {
         if (_draftTemplate is null || _catalog is null) return L.Text("Choose a starting league." );
@@ -132,9 +136,11 @@ public sealed partial class GameSystemsTab
             _validation.Text = error is null ? L.Text("Next, choose modules and review your league.") : string.IsNullOrEmpty(_draftName?.Text) || nameError is not null
                 ? L.Text("Complete the league details to continue.") : L.Text("Cannot continue: {0}", error);
         }
-        else _validation.Text = error is not null ? L.Text("Cannot create: {0}", error) : !WritersStopped ? L.Text("Close the game and stop services to create this league. Your draft is kept.")
-            : L.Text("Ready to create. Existing leagues and saves are preserved.");
-        if (_primary is not null) _primary.IsEnabled = !Busy && error is null && (_draftStep == 1 || WritersStopped);
+        // Nothing waits for the servers to stop: LocalExile reads its leagues when a server starts, so a league made
+        // while one runs is there at its next start.
+        else _validation.Text = error is not null ? L.Text("Cannot create: {0}", error)
+            : L.Text("Ready to create. Existing leagues and saves are preserved.") + (DraftBundleWarning() is { Length: > 0 } apart ? " " + apart : "");
+        if (_primary is not null) _primary.IsEnabled = !Busy && error is null;
     }
     async Task CreateLeagueAsync()
     {
@@ -144,7 +150,11 @@ public sealed partial class GameSystemsTab
             string name = _draftName?.Text ?? "";
             var request = _catalog.PlanCreate(_draftTemplate, name, _draftDescription?.Text ?? "", _draftModules);
             string consequence = _draftTemplate.Hardcore ? L.Text("Hardcore death in this custom league is permanent.") : L.Text("Its characters and stash stay separate from Standard.");
-            if (!Dialog.Ask(Owner, DialogKind.Question, L.Text("Create league"), L.Text("Create {0} with {1}? {2} Existing leagues and saves are preserved.", name, _catalog.Modes(_draftTemplate), consequence), L.Text("Create"), L.Text("Cancel"))) return;
+            // The new league takes its mode from the league it starts from, whose own bundle may have been unticked.
+            string apart = DraftBundleWarning();
+            if (!Dialog.Ask(Owner, apart.Length > 0 ? DialogKind.Warning : DialogKind.Question, L.Text("Create league"),
+                    L.Text("Create the league \"{0}\" in {1} mode? {2} Existing leagues and saves are preserved.", name, _catalog.Modes(_draftTemplate), consequence)
+                    + (apart.Length > 0 ? "\n\n" + apart : ""), L.Text("Create"), L.Text("Cancel"))) return;
             var result = await SaveAsync("CreateLeague", request);
             if (result?.Ok != true) return;
             _creating = false; _choicesDirty = false; await RefreshAsync();

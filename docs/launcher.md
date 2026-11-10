@@ -156,9 +156,13 @@ It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK installs on Windows.
 
 ### The server folder
 
-**Change folder…** on Play and on a release's Versions, and **Change…** on Control, take a checkout or a release install, and Waypoint
-starts again on it. **Set up a new copy…** on Control and on a release's Versions, and on a release's Play with Developer Mode
-on, opens the setup guide on its source route, which clones LocalExile with git into a chosen new or empty folder and sets it up.
+The folder Waypoint works on is at the top of the sidebar, under its name: what it is (**Release 0.3.0-beta**, or
+**Source, main** for a source copy and its branch) over its path. A click opens the list of the LocalExile folders Waypoint
+knows, and a click on one starts Waypoint again on it ([Copies and changing folder](#copies-and-changing-folder)).
+**Add a folder you already have…** under the list takes a checkout or a release install that is already on this PC.
+**Change folder…** on a release's Versions and **Change…** on Control do the same. **Set up a new copy…** in the list, on
+Control and on a release's Versions opens the setup guide on its source route, which clones LocalExile with git into a
+chosen new or empty folder and sets it up; on a release the list has it only with Developer Mode on.
 
 ### From a release to a source copy
 
@@ -306,8 +310,10 @@ question (a fork's pull request) has Cancel as its default.
 
 **The mode follows the folder** (`Editions.Advanced`), and is worked out each time, never written:
 
-- **A release install** shows what its user chose. A new user starts in **Simple mode**, with one list of six sections
-  (Play, Mods, Backups, Accounts, Tools, Settings) and no status strip or branch chip: nothing to choose before playing.
+- **A release install** shows what its user chose. A new user starts in **Simple mode**, with one list of eight sections
+  (Play, Mods, Modules, Leagues, Backups, Accounts, Tools, Settings) and no status strip or branch chip: nothing to choose
+  before playing. Modules and Leagues are the sections a source copy has; what a release takes from them is under
+  [Modules and Leagues](#modules-and-leagues).
   Console and Logs are not in the list; two cards on Tools open them, and a link that leads to one, such as Play's **See
   what happened**, opens it too (`MainWindow.ShowSection`). **Settings → Developer → Developer Mode**, off by default, adds
   the **Simple | Advanced** switch at the bottom of the sidebar. **Advanced** replaces Play with Control, as that section has
@@ -335,7 +341,7 @@ now**, a way back after a failed start and **Go back to the version you had** (`
 choice above, and those parts are not reached ([No longer reached](#no-longer-reached) lists them). A source copy is updated
 from Versions, by its user.
 
-The quiet **Run setup guide…** link below the folder controls is always visible on Play, for both a source copy and a
+The quiet **Run setup guide…** link at the bottom of Play is always visible, for both a source copy and a
 release install, on Windows and Linux. It reopens the guide for the current folder to recheck requirements and refresh
 preparation, even when the main button says Play. Its tooltip explains this; the link is disabled while the game, servers or
 another operation run. A failed Play attempt with the recognized HNC mask error also recommends this link directly on the Play
@@ -347,8 +353,29 @@ A release install and a source copy ("Latest") are each a folder of their own, a
 and characters. Waypoint works on one at a time. Changing folder moves no file of either: Waypoint saves the other folder and
 starts again on it.
 
-Every way of changing folder goes through one step (`App.SwitchServerAsync`): **Change folder…** on Play, **Change…** and
-**Find automatically…** in Advanced mode, the setup guide when it made another copy, and the Release | Latest switch.
+**The folder list** (`FolderPicker`, `FolderList`) is the everyday way between them. It is at the top of the sidebar in
+both modes, for everyone: someone with one release sees that release and nothing about source copies.
+
+- It lists every folder Waypoint has run on and every folder added with **Add a folder you already have…**
+  (`Settings.KnownFolders`), releases first, then source copies, each in the order it came, so a row stays where its user
+  last saw it. Settings saved before the list name up to three folders (the one in use, the last release and the last
+  source copy); those stand in until the list is first written. Waypoint started with `--repo` shows that folder in the
+  list without saving it.
+- The list holds paths only. What a folder is, a release with its version or a source copy with its branch, is read from
+  the folder each time the list opens (`FolderList.Read`, off the UI thread), so a release updated or a copy switched to
+  another branch outside Waypoint shows as it is. The branch comes from the copy's `HEAD` file, a worktree's too
+  (`Repo.BranchIn`); no git process runs.
+- The folder in use is shaded and marked **In use**. A click on another row is the change of folder below.
+- A folder that is not there (moved, renamed, a drive not connected) stays in the list, greyed and marked **Not found**.
+  A click on it asks: **Find it…** takes its new place and puts that in the list instead, **Take it off the list**
+  removes the row, **Cancel** leaves it.
+- The small **×** on a row, shown while the mouse or the keyboard is on it, takes that folder off the list
+  (`FolderList.Forget`). Nothing in the folder is touched, and adding it again brings it back. The folder in use has none.
+- The sidebar has room for about 27 characters of a path, so a longer one keeps its end, which says which folder it is
+  (`FolderList.Short`); the tooltip has all of it.
+
+Every way of changing folder goes through one step (`App.SwitchServerAsync`): the folder list, **Change folder…** on a
+release's Versions, **Change…** and **Find automatically…** in Advanced mode, and the setup guide when it made another copy.
 
 - The folder is compared with the one in use (`Editions.SameFolder`), not the saved one, which differ when Waypoint was
   started with `--repo`.
@@ -374,24 +401,33 @@ Every way of changing folder goes through one step (`App.SwitchServerAsync`): **
   the window refuse to close, and a folder saved before a refused close would open at the next start instead.
 - The setup guide saves the folder it works on as it goes. When it made another copy and the change of folder then does
   not go on (**Cancel** above), the settings name again the folder they named before the guide, no Create account dialog
-  waits for the next start, and Waypoint says where the guide's folder is: **Change folder…** on Play, or **Change…** on Control, opens it.
+  waits for the next start, and Waypoint says where the guide's folder is: it is in the folder list from then on.
 
-**Release | Latest** at the top of a release's Play (`EditionSwitch`) is that change between the release Waypoint remembers
-and the source copy it remembers (`ReleaseFolder`, `LatestFolder`), with one question each way. It shows only with Developer
-Mode on, as does Play's **Set up a new copy…**, which sets up a copy from source (`Editions.Offered`): a source copy needs
-.NET, Git, Python and Node and is LocalExile's newest, less tested code, which is not what someone who came to play wants.
-**Run setup guide…** and **Tools → Get the item crafter…** stay for everyone. The saves of the folder left are backed up
-first while automatic backups are on (Backups), and the question says so.
+**Each folder has its own characters**, and a change of folder leaves them where they are. Going between a release and a
+source copy is where they can come along. The list replaced the **Release | Latest** switch that a release's Play had with
+Developer Mode on, and asks what that switch asked on the way to a source copy; on the way to a release the offer waits on
+the release's Play page instead of being a question. **Set up a new copy…** in the list of a release, which sets up a copy
+from source, still shows only with Developer Mode on (`Editions.Offered`): a source copy needs .NET, Git, Python and Node
+and is LocalExile's newest, less tested code, which is not what someone who came to play wants. **Run setup guide…** and
+**Tools → Get the item crafter…** stay for everyone.
 
-- Both ways to Latest say first that Latest has LocalExile's newest changes, reviewed, but possibly less stable than the release.
-- **Release → Latest**: bring your characters? **Bring my characters** copies them in (the adapter's `ImportSaves`, as the guide's
-  Your characters page: Latest's own are backed up and set aside first); **Keep Latest's own** leaves both as they are.
-- **Latest → Release**: the release keeps its own characters at the switch, and Latest's stay in their folder. Waypoint
-  notes that folder (`Settings.BringFrom`), and the release's Play page then shows a card while that folder is still a
-  source copy with saves (`Editions.BringFrom`): "Your characters are still in {folder}", with **Bring my characters…**,
-  **Not now** (until Waypoint starts again) and **Don't offer again**. That last one asks once and then drops the note
-  for good (`Editions.StopOfferingBring`): the characters stay in their folder, and the card returns only when someone
-  leaves a source copy for the release again.
+- **Between two source copies, or two releases**: nothing is asked beyond what runs.
+- **Release → source copy** (`Editions.BringAlongAsync`): bring your characters? The question says first that Latest has
+  LocalExile's newest changes, reviewed, but possibly less stable than the release. **Bring my characters** copies them in
+  (the adapter's `ImportSaves`, as the guide's Your characters page: that copy's own are backed up and set aside first);
+  **Keep Latest's own** leaves both as they are; **Cancel** stays on the release. The saves of the release are backed up
+  first while automatic backups are on (Backups), and the question says so. It is asked once nothing runs, after
+  **Stop and switch**; with **Switch without stopping** nothing is asked and nothing is brought, since saves in use are
+  not copied. **Tools → Get the item crafter…** asks the same on its way to the source copy Waypoint remembers
+  (`LatestFolder`).
+- **Source copy → release**, by whatever way: the release keeps its own characters, and the copy's stay in their folder.
+  Waypoint notes that folder (`Editions.LeftFor`, `Settings.BringFrom`), and the release's Play page then shows a card
+  while that folder is still a source copy with saves (`Editions.BringFrom`): "Your characters are still in {folder}",
+  with **Bring my characters…**, **Not now** (until Waypoint starts again) and **Don't offer again**. That last one asks
+  once and then drops the note (`Editions.StopOfferingBring`): the characters stay in their folder, and a later change of
+  folder from that copy does not bring the card back (`Settings.NoBringFrom`). It returns only when someone asks for it
+  by name: **Switch to the release…** on that copy's choice page, which also asks before it switches and backs the copy's
+  saves up first.
 - **Bring my characters…** (`Editions.BringToReleaseAsync`) first checks that they fit (`Editions.ReleaseTakesAsync`): the
   release's `release.json` names the commit it was built from, and the copy must be on that commit or an older one (git's
   `merge-base --is-ancestor`), with no changes of its user's own to the code: no tracked file that differs, and no new
@@ -455,9 +491,9 @@ to a user.
   `Git.MoveForwardAsync`, `Git.ResetToAsync` and `Git.FileAtSourceAsync` (`src/Waypoint/Git.cs`), and the settings
   `LastUpdateCheck`, `LastUpdate` and `UpdatesPausedUntil` (`src/Waypoint/Settings.cs`). `KeepUpToDate` is read only on a
   release now.
-- **`EditionSwitch`** (`src/Waypoint/EditionSwitch.xaml.cs`, `src/Waypoint.Linux/Views/EditionSwitch.axaml.cs`) shows only
-  on a release (`Editions.Offered`). On a source copy its two captions, `NewestLink` and `NewestClicked` are not reached, and
-  the choice page calls only `Choose(release: true)`, so the `LatestSetupRequested` of `PlayView.Edition` is never raised.
+- **The Release | Latest switch** (`EditionSwitch`) is gone: the sidebar's folder list replaced it. Its texts stay in the
+  catalogs until this cleanup. `EditionStep.SetUpLatest` is returned only when the source copy Waypoint remembers went
+  missing between two checks (`MainWindow.GoTo`).
 - **`Editions.MoveToNewestAsync`** is reached only from Control (`ControlTab.ClientFitsNow`), which answers its question for
   the user: the question's text is never shown, and its reset of `LastUpdateCheck` feeds nothing.
 - **Settings**: the source-copy tooltip of **Keep LocalExile up to date** ("Play gets the newest LocalExile at most once a
@@ -581,7 +617,10 @@ to a user.
 ### The setup guide
 
 With no checkout or release install, the first start opens the guide (`SetupWizard.xaml`); **Run setup guide…** on the Setup
-section, or **Finish setup** on a release install's Play, opens it any time. **Skip setup** leaves it: with nothing to open on,
+section, or **Finish setup** on a release install's Play, opens it any time. A saved folder that is not there any more is not
+a first start: Waypoint says which folder it can't find (`MissingFolderDialog`) and offers **Open** for each other folder of
+the list that is there, **Find it…**, **Set up again…** (the guide) and **Close**. Nothing is changed until one is chosen,
+and the missing folder stays in the list, marked **Not found**. **Skip setup** leaves it: with nothing to open on,
 Waypoint still needs a checkout, so the plain chooser follows.
 
 Its second page chooses the route. **The ready-to-play release**, the default, asks for a new or empty folder (or an existing
@@ -829,8 +868,15 @@ Install, Update, Uninstall and settings editing work there as in a source checko
 build a project from source). An older release (v0.1.0-beta, or one whose `release.json` has no readable version) keeps
 the mods it shipped with, built for the older mod API: Waypoint leaves its saved mod switches available (the server
 applies them at its next start) but disables install, update, uninstall and settings editing there
-(`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
-for read-only inspection in Advanced mode.
+(`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Modules and Leagues are listed in both modes, and a release from
+v0.2.0-beta on takes their changes too: which modules a league uses, and module and league settings. Those are its user's
+own files under `data\` (`data\league-modules.json`, `data\modules\`, `data\leagues\`), which the release's servers read
+from its folder and which no update of a release touches. A release has no source to look for a hook in, so what it takes
+follows from its version, as for its mods (`Get-ContentEnvironment`, `Test-LegacyReleaseMods`): an older release, or one
+whose version can't be read, stays read-only. A league can be made on such a release too: it ships its leagues as source
+with the compiler that builds them at each start, and an update writes only the files of its zip, so a new league's folder
+is left alone. The leagues that came with the release are the release's own files, which an update writes over: only a
+league made in Waypoint is hidden or shown there (`ContentEnvironment.ShippedLeaguesFixed`).
 
 v0.2.0-beta and v0.2.1-beta take downloaded mods but cannot load the compiled ones: their `GameServer.Modding.dll` carries
 the release's version (0.2.x), the mods of LocalExile-Mods are built for 1.0.0.0, and the server reports "Could not load
@@ -920,8 +966,35 @@ the servers when ready and never restarts them automatically. Existing character
 migrating leagues is not part of these controls.
 
 The module list appears below the mode selector. **Find a module** searches names, IDs and descriptions without changing
-the selection. Required modules stay readable and cannot be disabled; modules not defined for the mode are grouped under
-**Unavailable modules**. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
+the selection. Required modules stay readable and cannot be disabled; what can't be turned on for the league is grouped
+under **Unavailable modules**.
+
+**Which modules a league can have** follows LocalExile's own rules, in the interface (`GameSystems.ValidateComposition`)
+and again in the adapter (`LeagueData.py`, `validate_modules`). LocalExile says that a module has no knowledge of leagues
+and that any league can list it, so every installed module is a box to tick for every league that can be edited: a core
+module the league does not ship with (the Currency Exchange in an SSF or a Ruthless league), another league's module
+(Ruthless, the Phrecia ascendancies), and an add-on. What stays:
+
+- **The game and dependencies.** `Core/Game` cannot be removed, and what a module needs has to be on, as LocalExile itself
+  requires.
+- **A league's own bundle asks first** (`BundleModules`, `BundleLeftOut`): the modules outside `Core/` that its shipped
+  list names, such as Ruthless in a Ruthless league. LocalExile loads the league without them and keeps its saved data,
+  so they are boxes like any other. Once one is unticked, the line under the list says that the league will run without
+  the rules or content it is named for, that its characters stay as they are and that it can be turned back on; the
+  question before saving says it again, as a warning. A league made from one says the same about the new league. A
+  module someone added by hand to a shipped list counts as part of that league's bundle, since nothing tells the two
+  apart: it gets the same warning and can be unticked. Only the game is **Required** and locked.
+- **A module made for an isolated league stays in isolated leagues** (`IsolatedModule`, `Isolated`). A league is isolated
+  when its parents lead to Void, so nothing of it reaches Standard: Survivors is one, and so is every league made in
+  Waypoint. A module LocalExile ships only in such leagues (the three Survivors modules: a run starts by itself, refuses
+  ordinary exits and hands out rewards) shows as **For isolated leagues only** in a league that leads to Standard.
+- **An add-on** is a module that no league LocalExile ships lists (`GameSystems.AddOn`: PlayerBots and
+  NessaDevelopmentTabs, at the time of writing), off until its user lists it in the league they want it in, which is how
+  LocalExile's own guide turns PlayerBots on (`{"Standard": {"add": ["PlayerBots"]}}` in `data/league-modules.json`).
+  Saving writes that same entry. An add-on is never part of a bundle, in a league made in Waypoint that lists it either.
+- **A listed module that is not installed** (a typo in a hand edit, a module taken away since) shows as
+  **{path} (not installed)**, ticked. LocalExile skips it and loads the league, so the league stays editable; unticking
+  the entry takes it off the list. It is never required, and a new one that is not installed is refused. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
 preview and league settings are expandable. Search hides an empty unavailable group and updates its matching count.
 Refreshing or applying a change locks editing until the operation finishes;
 switching league or mode asks before discarding a draft.
@@ -933,8 +1006,10 @@ playable main card must remain visible, and visible mode options cannot lose the
 it does not end the league or prevent existing characters from entering it. Existing saves and stashes are not opened or
 changed by visibility edits. Void and ended leagues cannot be offered with these controls.
 
-Visibility editing requires stopped services/game and the source league-definition hook. After the optional backup,
-Waypoint checks writers and the full reviewed inventory again. Multi-file edits preserve comments and formatting, retain
+Visibility editing requires the league-definition hook (`CanCreate`), and on a release applies only to a league made in
+Waypoint. It does not wait for the game or the servers to stop: LocalExile reads its leagues once, when a server starts, so
+a change made while one runs is what its next start reads. After the optional backup,
+Waypoint checks the full reviewed inventory again. Multi-file edits preserve comments and formatting, retain
 the original files in configuration history, apply children before hiding parents (parents before showing children), and
 roll back their own writes on failure without overwriting another tool's changes. Visibility takes effect at the next
 server start. Per-account visibility requires a separate LocalExile hook and is not implied by this global control.
@@ -956,12 +1031,12 @@ invents unsupported flags. Modes of an existing league are not changed underneat
 another identity and card. New cards are independent, so they cannot displace an existing card's mode checkboxes.
 
 Custom leagues use Void as their parent and, for Hardcore, their death destination. A valid isolated Void definition must
-exist, hidden and without a parent; its module list may be empty or contain only the core Game foundation. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation requires the game and
-all save writers stopped, uses the normal optional save backup, and checks the writers again afterward. A read-only save
+exist, hidden and without a parent; its module list may be empty or contain only the core Game foundation. The review and confirmation explicitly warn that Hardcore death in a custom league is permanent. Existing leagues, characters, stashes, shipped definitions and source are preserved. Creation does not wait for the game
+or the servers to stop, for the same reason as visibility: a league made while a server runs is there at its next start. It
+uses the normal optional save backup. A read-only save
 inspection refuses names retained by characters, deleted-character records or stashes, and blocks unfamiliar schemas and
 pending imports rather than guessing. Names use 3–48 English letters, digits, spaces, underscores or hyphens.
-The final Create action and availability controls explain when running services block them; a creation draft remains
-editable while services run. Name feedback catches invalid or currently used names before proceeding; retained save names
+The final Create action and the availability controls work while services run. Name feedback catches invalid or currently used names before proceeding; retained save names
 are checked again by the adapter before creation.
 
 Only an existing empty league marker class is reusable. A profile with custom league code or only prebuilt binaries is
@@ -976,8 +1051,8 @@ files keep their existing behavior.
 Drafts review the complete relevant manifest/source inventory and user overrides. Adding, removing or changing a definition
 invalidates the draft; the backend checks again after backup. These checks enforce the declared structure, not every hidden
 assumption in arbitrary module code. LocalExile currently has no complete conflicts/supported-modes metadata contract.
-Broader cross-profile combinations need explicit compatibility declarations from LocalExile or the modules; unknown
-combinations remain blocked. The implemented controls require no LocalExile source changes.
+Waypoint adds one rule to LocalExile's, the modules of isolated leagues, and one warning, about a league's own bundle;
+a declaration from LocalExile or the modules of what belongs together would replace both. The implemented controls require no LocalExile source changes.
 
 **League card preview** shows the definition's name, description, Hardcore/SSF/form flags and linked mode variants in a
 collapsed, read-only panel. It reads files, not the running server's startup snapshot. LocalExile already reads descriptions
@@ -986,8 +1061,9 @@ and stashes, and mode links select real gameplay variants. There is no separate 
 does not edit league presentation or rewrite these definitions.
 
 The adapter supplies the selected profile's module, league and override paths. A source checkout must expose the shared
-settings hook before editing settings, and the league-override hook before editing membership. An older checkout or release
-with no verified hook remains read-only. No listing command or server startup is used to discover these capabilities.
+settings hook before editing settings, and the league-override hook before editing membership; an older checkout with no
+verified hook remains read-only. A release has no source: from v0.2.0-beta on it takes settings and membership, and an
+older one remains read-only. No listing command or server startup is used to discover these capabilities.
 
 ### Shared settings editor
 
@@ -1190,7 +1266,8 @@ adapter does not know can be browsed but not changed.
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
 | `Git.cs`, `PullRequests.cs`, `VersionsTab.xaml.cs` | git in the checkout and the parsing of its output, the open pull requests, the Versions section and its guards |
 | `PlayTab.xaml.cs`, `CheckoutUpdates.cs` | the one-time choice page of a source copy (`Editions.MustChoose`); what was Play's daily update there, no longer reached |
-| `EditionSwitch.xaml.cs`, `Editions.cs` | the mode per folder, the guarded change of folder, a release's Release \| Latest switch, the characters questions, the question about an old release |
+| `Editions.cs` | the mode per folder, the guarded change of folder, the characters questions, the question about an old release |
+| `FolderList.cs`, `FolderPicker.xaml.cs`, `MissingFolderDialog.cs` | the LocalExile folders Waypoint knows and what each is now; the sidebar's box and list; the question at startup when the saved folder is not there |
 | `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
 | `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |

@@ -14,14 +14,19 @@ enum EditionStep { Stay, SetUpRelease, SetUpLatest, Switch }
 /// </summary>
 static class Editions
 {
-    /// <summary>Notes the folder Waypoint runs on as the release or the Latest one.</summary>
+    /// <summary>Notes the folder Waypoint runs on: in the sidebar's list (<see cref="FolderList"/>), and as the release or
+    /// the Latest one.</summary>
     public static void Remember(Settings settings, string root)
     {
         bool release = LocalExileReleases.IsInstall(root);
         if (!release && !Repo.IsRoot(root)) return;
-        if (string.Equals(release ? settings.ReleaseFolder : settings.LatestFolder, root, StringComparison.OrdinalIgnoreCase)) return;
-        if (release) settings.ReleaseFolder = root; else settings.LatestFolder = root;
-        settings.Save();
+        bool changed = FolderList.Add(settings, root);
+        if (!string.Equals(release ? settings.ReleaseFolder : settings.LatestFolder, root, StringComparison.OrdinalIgnoreCase))
+        {
+            if (release) settings.ReleaseFolder = root; else settings.LatestFolder = root;
+            changed = true;
+        }
+        if (changed) settings.Save();
     }
 
     /// <summary>Whether a release install's Simple mode shows the Release | Latest switch and Play's "Set up a new copy…"
@@ -49,10 +54,14 @@ static class Editions
     }
 
     /// <summary>Noted before Waypoint starts again on <paramref name="folder"/>: a source copy someone goes to on purpose is
-    /// Advanced mode's, with nothing to ask there.</summary>
-    public static void LeftFor(Settings settings, string folder)
+    /// Advanced mode's, with nothing to ask there. Leaving the source copy in <paramref name="from"/> for a release, by
+    /// whatever way, makes its characters the ones that release's Play page offers (<see cref="BringFrom"/>), unless its
+    /// user said "Don't offer again" for that copy (<see cref="Settings.NoBringFrom"/>).</summary>
+    public static void LeftFor(Settings settings, string folder, string? from = null)
     {
         if (!LocalExileReleases.IsInstall(folder)) settings.SourceChoiceMade = true;
+        else if (from is { Length: > 0 } && Repo.IsRoot(from) && !settings.NoBringFrom.Any(no => FolderList.Same(no, from)))
+            settings.BringFrom = from;
     }
 
     /// <summary>At startup, on <paramref name="root"/>: any folder but the one the settings named when they were read
@@ -121,8 +130,9 @@ static class Editions
         Repo.IsInstall && settings.BringFrom is { Length: > 0 } from && Repo.IsRoot(from) && LocalExileReleases.HasSaves(from) ? from : null;
 
     /// <summary>"Don't offer again" on the characters card: the note of that folder is dropped, on its user's word, and
-    /// the card is gone for good. Nothing in either folder changes. The offer returns only when someone leaves a source
-    /// copy for the release again (<see cref="PrepareAsync"/>). True when it was dropped.</summary>
+    /// a later change of folder from that copy does not bring the card back (<see cref="Settings.NoBringFrom"/>). Nothing
+    /// in either folder changes. The offer returns only when someone asks for it: "Switch to the release…" on that copy's
+    /// own page (<see cref="PrepareAsync"/>). True when it was dropped.</summary>
     public static bool StopOfferingBring(Shared shared, Func<DialogKind, string, string, string[], int> ask)
     {
         if (BringFrom(shared.Settings) is not { } from) return false;
@@ -130,6 +140,7 @@ static class Editions
                 L.Text("Your characters stay in {0}, as they are. Waypoint will not offer to bring them to this release again.", from),
                 [L.Text("Don't offer again"), L.Text("Cancel")]) != 0) return false;
         shared.Settings.BringFrom = null;
+        if (!shared.Settings.NoBringFrom.Any(no => FolderList.Same(no, from))) shared.Settings.NoBringFrom.Add(from);
         shared.Settings.Save();
         shared.Logs.Write($"characters from {from} to this release: not offered again, on the user's word", Severity.Info);
         return true;
@@ -251,10 +262,22 @@ static class Editions
         (release ? settings.ReleaseFolder : settings.LatestFolder) is { Length: > 0 } folder
         && (release ? LocalExileReleases.IsInstall(folder) : Repo.IsRoot(folder)) ? folder : null;
 
+    /// <summary>Going from a release to the source copy in <paramref name="to"/> through the sidebar's list: that copy
+    /// has its own characters, and the release's can come along, which is asked once nothing runs
+    /// (<see cref="PrepareAsync"/>'s question, with that copy's own backed up and set aside first). While something still
+    /// runs ("Switch without stopping") nothing is asked and nothing is brought: saves in use are not copied. False when
+    /// the change of folder should not go on.</summary>
+    public static async Task<bool> BringAlongAsync(Shared shared, string to, Func<DialogKind, string, string, string[], int> ask)
+    {
+        if (!Repo.IsInstall || !Repo.IsRoot(to) || shared.IsLiveRunning || Running(shared)) return true;
+        return (await PrepareAsync(shared, toRelease: false, ask, to)).Step == EditionStep.Switch;
+    }
+
     /// <summary>The questions of a switch, answered through <paramref name="ask"/> (a dialog: its buttons' index, -1 when closed),
-    /// with the saves brought or backed up as answered. Nothing changes until the player has chosen.</summary>
+    /// with the saves brought or backed up as answered. Nothing changes until the player has chosen. The other side is the
+    /// folder remembered for it, or <paramref name="to"/>: the one chosen in the sidebar's list.</summary>
     public static async Task<(EditionStep Step, string? Folder)> PrepareAsync(Shared shared, bool toRelease,
-        Func<DialogKind, string, string, string[], int> ask)
+        Func<DialogKind, string, string, string[], int> ask, string? to = null)
     {
         if (toRelease == Repo.IsInstall) return (EditionStep.Stay, null);
         if (shared.IsLiveRunning || shared.Monitor.Latest.Any(s => s.Running))
@@ -266,9 +289,15 @@ static class Editions
         static string OneWay() => L.Text("Characters go back to a release only when it is the same as or newer than Latest: a newer LocalExile may save things an older release can't read.");
         static string Later() => L.Text("On the release's Play page Waypoint offers to bring your characters, when the release is the same as or newer than this copy.");
         // Leaving a source copy for the release: its characters are the ones to offer there.
-        void Waiting() { shared.Settings.BringFrom = Environment.CurrentDirectory; shared.Settings.Save(); }
+        // Asked for by name here, so an earlier "Don't offer again" for this copy no longer holds.
+        void Waiting()
+        {
+            shared.Settings.BringFrom = Environment.CurrentDirectory;
+            shared.Settings.NoBringFrom.RemoveAll(no => FolderList.Same(no, Environment.CurrentDirectory));
+            shared.Settings.Save();
+        }
         (EditionStep, string?) Go(EditionStep step) { Waiting(); return (step, null); }
-        string? folder = Folder(shared.Settings, toRelease);
+        string? folder = to ?? Folder(shared.Settings, toRelease);
         if (folder is null)
             return toRelease
                 ? ask(DialogKind.Info, L.Text("You don't have a release yet"),

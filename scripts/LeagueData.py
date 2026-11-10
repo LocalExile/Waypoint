@@ -10,6 +10,9 @@ import sqlite3
 import sys
 import uuid
 
+# A release runs this with its own Python, the embeddable one, which does not look for modules beside the script it
+# runs: without this line the import below fails there, and every league change with it.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from AccountData import AccountError, inspect_schema, open_saves, physical, record, require
 
 
@@ -162,18 +165,45 @@ def family_name(profile, profiles):
     return profile["name"]
 
 
-def validate_modules(profile, selected, systems, profiles):
+def isolated(profile, profiles):
+    """A league whose characters never reach Standard: its parents lead to Void. Survivors is one, and every league made
+    in Waypoint."""
+    at, seen = profile, set()
+    while at and at["name"].casefold() not in seen:
+        seen.add(at["name"].casefold())
+        parent = at["data"].get("parent")
+        if not parent:
+            return at["name"].casefold() == "void"
+        at = next((p for p in profiles if p["name"].casefold() == parent.casefold()), None)
+    return False
+
+
+def validate_modules(profile, selected, systems, profiles, new=False, listed=()):
+    """Whether these modules can run together for the league, by what LocalExile itself asks: the game, each module's own
+    dependencies, and nothing made for an isolated league in one that leads to Standard. A module has no knowledge of
+    leagues (LocalExile's modules.md), so any other module goes with any league. A league's own bundle (Ruthless in a
+    Ruthless league) can be left out too: LocalExile loads the league without it and keeps its saved data, and the
+    interface asks its user first. `new`: the modules are for a league made from this one, which is isolated whatever
+    its template is. `listed`: what the league lists now, which may name a module that is not installed."""
     require(playable(profile), "Ended or non-playable league definitions are read-only.")
-    active = {path.rsplit("/", 1)[-1].casefold(): path for path in selected}
+
+    def installed(path):
+        identifier = path.rsplit("/", 1)[-1].casefold()
+        return identifier in systems and systems[identifier]["path"].casefold() == path.casefold()
+
+    # A listed module that is not installed: LocalExile logs it and loads the league without it. One the league already
+    # lists stays until its user unticks it; one that is new here is refused.
+    known = {p.casefold() for p in listed}
+    require(all(installed(p) or p.casefold() in known for p in selected), "A selected module is missing.")
+    active = {path.rsplit("/", 1)[-1].casefold(): path for path in selected if installed(path)}
     require("game" in active, "The Game module is required.")
-    for identifier, path in active.items():
-        require(identifier in systems and systems[identifier]["path"].casefold() == path.casefold(), "A selected module is missing.")
-    required = [p for p in profile["modules"] if not p.casefold().startswith("core/") or p.rsplit("/", 1)[-1].casefold() == "game"]
-    require(all(p.casefold() in {s.casefold() for s in selected} for p in required), "Keep the required gameplay bundle enabled.")
-    require(any(not p["custom"] and playable(p) and p["base"].casefold() == profile["base"].casefold()
-                and family_name(p, profiles).casefold() == family_name(profile, profiles).casefold() and p["mode"] == profile["mode"]
-                and {s.casefold() for s in selected} <= {s.casefold() for s in p["modules"]} for p in profiles),
-            "This module combination is not defined for this league and mode. Unknown combinations are blocked.")
+    # A module LocalExile ships only in isolated leagues (the Survivors modules: a run starts by itself, refuses ordinary
+    # exits and hands out rewards) stays in isolated leagues.
+    if not new and not isolated(profile, profiles):
+        for path in active.values():
+            users = [p for p in profiles if not p["custom"] and path.casefold() in {m.casefold() for m in p["modules"]}]
+            require(not users or not all(isolated(p, profiles) for p in users),
+                    path.rsplit("/", 1)[-1] + " is made for an isolated league and cannot be turned on in a league that leads to Standard.")
     visiting, done = set(), set()
 
     def visit(identifier):
@@ -363,7 +393,10 @@ def run(modules, leagues, choices, database, history, action, request, apply=Fal
         for path in added:
             if not any(p.rsplit("/", 1)[-1].casefold() == path.rsplit("/", 1)[-1].casefold() for p in selected):
                 selected.append(path)
-        validate_modules(profile, selected, systems, profiles)
+        # What this league's saved choices add now, read as LocalExile reads it: a missing or odd list adds nothing.
+        saved = next((v for k, v in current.items() if k.casefold() == target.casefold() and isinstance(v, dict)), {})
+        adds = [p.replace("\\", "/") for p in saved.get("add") or [] if isinstance(p, str)] if isinstance(saved.get("add"), list) else []
+        validate_modules(profile, selected, systems, profiles, listed=profile["modules"] + adds)
         if apply:
             physical(choices.parent).mkdir(parents=True, exist_ok=True)
             if choices.exists():
@@ -396,7 +429,7 @@ def run(modules, leagues, choices, database, history, action, request, apply=Fal
                 and ((p["folder"] / "Source").is_dir() or (p["folder"] / "Binaries/league.dll").is_file()) for p in profiles), "The Void destination is missing or not isolated.")
     unused_saved_name(database, name, auth)
     selected = paths(request.get("modules"))
-    validate_modules(template, selected, systems, profiles)
+    validate_modules(template, selected, systems, profiles, new=True)
     if not apply:
         return
     definition = dict(template["data"])

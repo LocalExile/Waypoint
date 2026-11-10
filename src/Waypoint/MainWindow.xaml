@@ -48,7 +48,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- The sidebar: the name and the sections. -->
+        <!-- The sidebar: the name, the folder in use and the sections. -->
         <Border Background="{DynamicResource Shell.Sidebar}">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="14,12,0,10">
@@ -56,6 +56,8 @@
                     <Image Source="{DynamicResource BrandArtwork}" Width="38" Height="38" RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock Text="Waypoint" FontSize="21" FontWeight="Bold" Foreground="{DynamicResource Shell.SidebarStrong}" Margin="8,0,0,0" VerticalAlignment="Center" />
                 </StackPanel>
+                <!-- The LocalExile folder everything below works on, and the way to the others (FolderPicker). -->
+                <l:FolderPicker x:Name="Folders" DockPanel.Dock="Top" Margin="10,0,10,10" WindowChrome.IsHitTestVisibleInChrome="True" />
                 <Border DockPanel.Dock="Top" Height="1" Background="{DynamicResource Shell.SidebarDivider}" Margin="10,0,10,10" />
                 <TextBlock x:Name="Version" DockPanel.Dock="Bottom" Foreground="{DynamicResource Shell.SidebarText}" Opacity="0.6"
                            FontSize="11" Margin="18,0,0,12" />
