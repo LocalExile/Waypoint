@@ -135,6 +135,14 @@ public partial class MainWindow : Window
         ReleasesView.ChangeFolderRequested += Setup.ChangeFolder;
         Control.ChangeFolderRequested += Setup.ChangeFolder;
         PlayView.NewCopyRequested += Setup.SetUpNewCopy;
+        // The Latest card's "Use Advanced mode": Developer Mode and every section, as Settings would turn them on.
+        PlayView.AdvancedRequested += () =>
+        {
+            _shared.Settings.DeveloperMode = true;
+            _shared.Settings.AdvancedMode = true;
+            _shared.Settings.Save();
+            ShowMode();
+        };
         // Simple mode's Release | Latest switch, when the other side is not set up yet.
         foreach (var edition in new[] { PlayView.Edition, InstallView.Edition })
         {
@@ -199,6 +207,9 @@ public partial class MainWindow : Window
         BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
+        // Developer Mode also decides whether Simple mode offers the Latest side.
+        InstallView.ShowOffers();
+        PlayView.ShowOffers();
         SettingsView.ShowMode();
     }
 

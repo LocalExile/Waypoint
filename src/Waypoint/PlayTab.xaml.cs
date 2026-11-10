@@ -29,6 +29,8 @@ public partial class PlayTab : UserControl
     internal event Action? ChangeFolderRequested;
     /// <summary>The player wants a new git copy set up.</summary>
     internal event Action? NewCopyRequested;
+    /// <summary>The Latest card's "Use Advanced mode".</summary>
+    internal event Action? AdvancedRequested;
     /// <summary>The checkout moved: what reads it reads it again.</summary>
     internal event Action? CheckoutChanged;
 
@@ -104,6 +106,7 @@ public partial class PlayTab : UserControl
             ? Visibility.Visible : Visibility.Collapsed;
         RemoveOldCard.Visibility = !busy && !AnythingRunning && Replaced is not null ? Visibility.Visible : Visibility.Collapsed;
         if (Replaced is { } replaced) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
+        LatestCard.Visibility = !busy && !AnythingRunning && !needsSetup && Editions.Guides(S) ? Visibility.Visible : Visibility.Collapsed;
         Offer.Show(!busy && !AnythingRunning && !needsSetup && !Checking);
     }
 
@@ -382,6 +385,21 @@ public partial class PlayTab : UserControl
     void ChangeFolderClicked(object sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
 
     void NewCopyClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
+    /// <summary>As the release's view: the switch again when Developer Mode changes.</summary>
+    internal void ShowOffers() => Edition.Refresh();
+
+    // The Latest card (Editions.Guides). The release is the switch's own way there, with its question about characters.
+    void GuideReleaseClicked(object sender, RoutedEventArgs e) => Edition.Choose(release: true);
+
+    void GuideAdvancedClicked(object sender, RoutedEventArgs e) => AdvancedRequested?.Invoke();
+
+    void GuideStayClicked(object sender, RoutedEventArgs e)
+    {
+        S.LatestGuideDismissed = true;
+        S.Save();
+        Show();
+    }
 
     void DetailsClicked(object sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

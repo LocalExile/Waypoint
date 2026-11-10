@@ -102,6 +102,7 @@ partial class InstallTab : UserControl
         if (!Repo.IsInstall) return;
         _ = LookForOlderAsync();
         Edition.Attach(shared);
+        ShowOffers();
         StepList.ItemsSource = _steps;
         shared.Monitor.Sampled += _ => Dispatcher.UIThread.Post(Show);
         shared.LiveRunning += _ => Dispatcher.UIThread.Post(Show);
@@ -429,6 +430,15 @@ partial class InstallTab : UserControl
     void ChangeFolderClicked(object? sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
 
     void NewCopyClicked(object? sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
+    /// <summary>The Latest side's two offers, the switch and the copy from source, only for those who asked
+    /// (<see cref="Editions.Offered"/>). The setup guide below stays for everyone.</summary>
+    internal void ShowOffers()
+    {
+        if (_shared is null) return;
+        Edition.Refresh();
+        NewCopyLink.IsVisible = Editions.Offered(_shared.Settings);
+    }
 
     void DetailsClicked(object? sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

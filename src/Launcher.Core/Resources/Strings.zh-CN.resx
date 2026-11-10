@@ -639,6 +639,9 @@
   <data name="Text_12c439264448" xml:space="preserve">
     <value>伊泽洛，第 {0} 战</value>
   </data>
+  <data name="Text_12e5f2dd9f23" xml:space="preserve">
+    <value>你正在使用“最新版”：LocalExile 的最新改动，可能不如发布版稳定。对大多数人来说，发布版更合适。若要自己选择分支和拉取请求，请使用高级模式。</value>
+  </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>此发行版未声明兼容可下载模组的设置。请使用兼容的源码副本进行编辑。</value>
   </data>
@@ -1595,6 +1598,9 @@
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>正在提取游戏数据</value>
   </data>
+  <data name="Text_2e22ad395b03" xml:space="preserve">
+    <value>切换到发布版…</value>
+  </data>
   <data name="Text_2e24eb8ac337" xml:space="preserve">
     <value>近战</value>
   </data>
@@ -2355,6 +2361,9 @@
   </data>
   <data name="Text_46124e023603" xml:space="preserve">
     <value>声音</value>
+  </data>
+  <data name="Text_4627badb67be" xml:space="preserve">
+    <value>一切保持不变：“开始游戏”会继续更新此副本。上方的“发布版 | 最新版”开关仍然保留。</value>
   </data>
   <data name="Text_464848ad8a15" xml:space="preserve">
     <value>正在检查先决条件和所选安装。</value>
@@ -4749,6 +4758,9 @@
   <data name="Text_92c1cdfdf4cb" xml:space="preserve">
     <value>已启用</value>
   </data>
+  <data name="Text_92d2f77408b3" xml:space="preserve">
+    <value>使用高级模式</value>
+  </data>
   <data name="Text_92ed295821cb" xml:space="preserve">
     <value>这个游戏客户端与其他 LocalExile 副本共用：切换也会更改它们的设置。</value>
   </data>
@@ -5144,6 +5156,9 @@
   </data>
   <data name="Text_9ceecb44ac12" xml:space="preserve">
     <value>物品制作器已重置：请选择基础类型。</value>
+  </data>
+  <data name="Text_9cf4586fdd9e" xml:space="preserve">
+    <value>开启开发者模式和高级模式：显示所有部分，分支和拉取请求在“版本”部分。可在设置中再次关闭。</value>
   </data>
   <data name="Text_9cf951e82d56" xml:space="preserve">
     <value>多实例测试模式</value>
@@ -7010,6 +7025,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d8205881eccd" xml:space="preserve">
     <value>GitHub PR 列表不可用。本地/已获取的分支仍可使用；输入 PR 编号可直接尝试。</value>
   </data>
+  <data name="Text_d82d265d278c" xml:space="preserve">
+    <value>安装或打开 LocalExile 的正式发布版。它有自己的角色；你在这里的角色会保留在此文件夹中。</value>
+  </data>
   <data name="Text_d838ad216459" xml:space="preserve">
     <value>✓  游戏运行中</value>
   </data>
@@ -7730,6 +7748,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ee80fc3f5cc0" xml:space="preserve">
     <value>尚无存档数据库。创建第一个账号即可初始化 LocalExile。</value>
+  </data>
+  <data name="Text_ee9a2f329c99" xml:space="preserve">
+    <value>继续使用“最新版”</value>
   </data>
   <data name="Text_ee9b6f783cc6" xml:space="preserve">
     <value>监视进程正在运行，但 Gateway 没有运行中的子进程。请打开 Gateway 输出查看构建错误。</value>

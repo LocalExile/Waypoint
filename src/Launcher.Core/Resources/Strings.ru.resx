@@ -639,6 +639,9 @@
   <data name="Text_12c439264448" xml:space="preserve">
     <value>Изаро, бой {0}</value>
   </data>
+  <data name="Text_12e5f2dd9f23" xml:space="preserve">
+    <value>Вы используете «Новейшую»: новейшие изменения LocalExile, которые могут быть менее стабильны, чем релиз. Большинству лучше подходит релиз. Чтобы самому выбирать ветки и запросы на слияние, включите расширенный режим.</value>
+  </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>Этот релиз не заявляет совместимость с настройками загружаемых модов. Для их изменения используйте совместимую копию исходного кода.</value>
   </data>
@@ -1595,6 +1598,9 @@
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>Извлечение данных игры</value>
   </data>
+  <data name="Text_2e22ad395b03" xml:space="preserve">
+    <value>Перейти на релиз…</value>
+  </data>
   <data name="Text_2e24eb8ac337" xml:space="preserve">
     <value>Ближний бой</value>
   </data>
@@ -2355,6 +2361,9 @@
   </data>
   <data name="Text_46124e023603" xml:space="preserve">
     <value>Звук</value>
+  </data>
+  <data name="Text_4627badb67be" xml:space="preserve">
+    <value>Ничего не меняется: кнопка «Играть» по-прежнему обновляет эту копию. Переключатель «Релиз | Новейшая» выше остаётся.</value>
   </data>
   <data xml:space="preserve" name="Text_464848ad8a15">
     <value>Проверка требований и выбранной установки.</value>
@@ -4749,6 +4758,9 @@
   <data xml:space="preserve" name="Text_92c1cdfdf4cb">
     <value>Включён</value>
   </data>
+  <data name="Text_92d2f77408b3" xml:space="preserve">
+    <value>Включить расширенный режим</value>
+  </data>
   <data name="Text_92ed295821cb" xml:space="preserve">
     <value>Этот игровой клиент общий с другими копиями LocalExile: переключение изменит и их настройки.</value>
   </data>
@@ -5144,6 +5156,9 @@
   </data>
   <data name="Text_9ceecb44ac12" xml:space="preserve">
     <value>Конструктор сброшен: выберите базу.</value>
+  </data>
+  <data name="Text_9cf4586fdd9e" xml:space="preserve">
+    <value>Включает режим разработчика и расширенный режим: все разделы, ветки и запросы на слияние в разделе «Версии». Отключить можно в настройках.</value>
   </data>
   <data name="Text_9cf951e82d56" xml:space="preserve">
     <value>Тестовый режим нескольких экземпляров</value>
@@ -7010,6 +7025,9 @@
   <data xml:space="preserve" name="Text_d8205881eccd">
     <value>Список PR GitHub недоступен. Локальные и полученные ветки доступны; можно ввести номер PR напрямую.</value>
   </data>
+  <data name="Text_d82d265d278c" xml:space="preserve">
+    <value>Устанавливает или открывает опубликованный релиз LocalExile. Персонажи у него свои; те, что есть здесь, остаются в этой папке.</value>
+  </data>
   <data xml:space="preserve" name="Text_d838ad216459">
     <value>✓  Игра запущена</value>
   </data>
@@ -7730,6 +7748,9 @@
   </data>
   <data name="Text_ee80fc3f5cc0" xml:space="preserve">
     <value>Базы сохранений пока нет. Создайте первый аккаунт для инициализации LocalExile.</value>
+  </data>
+  <data name="Text_ee9a2f329c99" xml:space="preserve">
+    <value>Остаться на «Новейшей»</value>
   </data>
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Отслеживание работает, но дочерний процесс Gateway не запущен. Проверьте ошибки сборки в выводе Gateway.</value>

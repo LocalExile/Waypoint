@@ -52,6 +52,7 @@ public partial class InstallTab : UserControl
         _ = LookForOlderAsync();
         Offer.Attach(shared.Settings);
         Edition.Attach(shared);
+        ShowOffers();
         Profile.Attach(shared);
         StepList.ItemsSource = _steps;
         shared.Monitor.Sampled += _ => Dispatcher.BeginInvoke(Show);
@@ -379,6 +380,15 @@ public partial class InstallTab : UserControl
     void ChangeFolderClicked(object sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
 
     void NewCopyClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
+    /// <summary>The Latest side's two offers, the switch and the copy from source, only for those who asked
+    /// (<see cref="Editions.Offered"/>). The setup guide below stays for everyone.</summary>
+    internal void ShowOffers()
+    {
+        if (_shared is null) return;
+        Edition.Refresh();
+        NewCopyLink.Visibility = Editions.Offered(_shared.Settings) ? Visibility.Visible : Visibility.Collapsed;
+    }
 
     void DetailsClicked(object sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

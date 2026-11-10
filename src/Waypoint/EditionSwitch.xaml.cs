@@ -22,8 +22,12 @@ public partial class EditionSwitch : UserControl
         Show();
     }
 
+    /// <summary>Developer Mode changed, or a copy was set up: shown or not again.</summary>
+    internal void Refresh() { if (_shared is not null) Show(); }
+
     void Show()
     {
+        Visibility = Editions.Offered(_shared.Settings) ? Visibility.Visible : Visibility.Collapsed;
         ReleaseChoice.IsChecked = Repo.IsInstall;
         LatestChoice.IsChecked = !Repo.IsInstall;
         // The crafter's route can leave the copy on the tested version, which Play does not move.

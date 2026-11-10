@@ -41,6 +41,9 @@ sealed class Settings
     public bool Developer => DeveloperMode == true;
     [JsonIgnore]
     public bool Advanced => Developer && AdvancedMode == true;
+    /// <summary>Play's card for someone on the Latest side in Simple mode was answered with "Stay on Latest"
+    /// (<see cref="Editions.Guides"/>).</summary>
+    public bool LatestGuideDismissed { get; set; }
     /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>); on a release install, a
     /// newer release shows the update card.</summary>
     public bool KeepUpToDate { get; set; } = true;

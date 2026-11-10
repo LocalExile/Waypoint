@@ -22,6 +22,18 @@ static class Editions
         settings.Save();
     }
 
+    /// <summary>Whether Simple mode offers the Latest side (the Release | Latest switch, a release's "Set up a new copy…").
+    /// A source copy needs .NET, Git, Python and Node and changes every day, which is not what someone who came to play
+    /// wants, so a release install shows neither. They stay for anyone who asked: Developer Mode is on, Waypoint runs on a
+    /// source copy now (the way back to the release stays), or a Latest copy was set up before.</summary>
+    public static bool Offered(Settings settings) => settings.Developer || !Repo.IsInstall || Folder(settings, release: false) is not null;
+
+    /// <summary>Whether Simple mode's Play shows its card to someone on the Latest side: the published release, Advanced
+    /// mode with its branches and pull requests, or as they are. Latest is no longer offered to someone who came to play
+    /// (<see cref="Offered"/>), and whoever is on it already is told once and chooses; nothing changes until they do, and
+    /// "Stay on Latest" ends the card. Developer Mode has made its choice.</summary>
+    public static bool Guides(Settings settings) => !Repo.IsInstall && !settings.Developer && !settings.LatestGuideDismissed;
+
     /// <summary>The remembered folder of that side, while it still is one.</summary>
     public static string? Folder(Settings settings, bool release) =>
         (release ? settings.ReleaseFolder : settings.LatestFolder) is { Length: > 0 } folder

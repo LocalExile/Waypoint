@@ -338,6 +338,18 @@ source copy that follows `main`. Each is a folder of its own with its own charac
 other folder. The saves of the folder left are backed up first while automatic backups are on (Backups), as for every other
 change, and the question says so; with them off nothing is backed up or asked.
 
+The switch is for those who asked for the Latest side (`Editions.Offered`). A source copy needs .NET, Git, Python and Node
+and changes every day, so a release install shows neither the switch nor Play's **Set up a new copy…** (which sets up a
+copy from source) unless Developer Mode is on or a Latest copy was set up before. On a source copy the switch always
+shows: it is the way back to the release. **Run setup guide…** and **Tools → Get the item crafter…** stay for everyone.
+
+Someone already on the Latest side in Simple mode is not moved: Play works as before and keeps the copy up to date. Play
+shows them a card until they answer it (`Editions.Guides`): Latest can be less stable than the release, and there are three
+ways on. **Switch to the release…** is the switch's own step to the release, with its question; the release has its own
+characters, and Latest's stay in their folder. **Use Advanced mode** turns on Developer Mode and Advanced mode, where
+Versions has branches and pull requests. **Stay on Latest** ends the card (`LatestGuideDismissed`) and changes nothing
+else. The card is not shown with Developer Mode on, on a release install, during setup or while something runs.
+
 - Both ways to Latest say first that Latest has LocalExile's newest changes, reviewed, but possibly less stable than the release.
 - **Release → Latest**: bring your characters? **Bring my characters** copies them in (the adapter's `ImportSaves`, as the guide's
   Your characters page: Latest's own are backed up and set aside first); **Keep Latest's own** leaves both as they are.
