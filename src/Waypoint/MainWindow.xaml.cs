@@ -312,6 +312,9 @@ public partial class MainWindow : Window
 
     void OpenSettingsSection(object sender, RoutedEventArgs e) => ShowSection(SettingsView);
 
+    /// <summary>The header's button, in both modes: the report for whoever asked for the logs.</summary>
+    void ReportProblem(object sender, RoutedEventArgs e) => DiagnosticPreviewDialog.Show(this, _shared);
+
     /// <summary>Ctrl+1 to Ctrl+9 and Ctrl+(Shift+)Tab choose a section, F5 inspects the checkout again, Ctrl+Shift+R restores
     /// the default appearance: the way back from a palette that left the window unreadable.</summary>
     protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -371,10 +374,14 @@ public partial class MainWindow : Window
     /// <summary>An adapter operation failed: what, why, and its log.</summary>
     void ShowFailure(string stage, string message, string? log)
     {
+        bool hasLog = log is not null && File.Exists(log);
+        // Enter stays what it was: the log when there is one, else Close.
         int chosen = Dialog.Show(this, DialogKind.Error, L.Text(stage) + L.Text(" failed: "), L.Describe(message), null,
-            log is not null && File.Exists(log) ? [L.Text("Open log"), L.Text("Close")] : [L.Text("Close")]);
-        if (chosen == 0 && log is not null && File.Exists(log))
-            Process.Start(new ProcessStartInfo("notepad.exe") { ArgumentList = { log }, UseShellExecute = false })?.Dispose();
+            hasLog ? [L.Text("Open log"), L.Text("Diagnostic report"), L.Text("Close")] : [L.Text("Diagnostic report"), L.Text("Close")],
+            hasLog ? 0 : 1);
+        if (hasLog && chosen == 0)
+            Process.Start(new ProcessStartInfo("notepad.exe") { ArgumentList = { log! }, UseShellExecute = false })?.Dispose();
+        else if (chosen == (hasLog ? 1 : 0)) DiagnosticPreviewDialog.Show(this, _shared);
     }
 
     /// <summary>The header's button goes Light, Dark, System and keeps the rest of the appearance.</summary>

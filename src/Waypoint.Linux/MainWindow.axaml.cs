@@ -251,9 +251,13 @@ public partial class MainWindow : Window
 
     void ShowFailure(string stage, string message, string? log)
     {
+        bool hasLog = log is not null && File.Exists(log);
+        // Enter stays what it was: the log when there is one, else Close.
         int chosen = Dialog.Show(this, DialogKind.Error, L.Text(stage) + L.Text(" failed: "), L.Describe(message), null,
-            log is not null && File.Exists(log) ? [L.Text("Open log"), L.Text("Close")] : [L.Text("Close")]);
-        if (chosen == 0 && log is not null && File.Exists(log)) Process.Start(new ProcessStartInfo("xdg-open", [log]) { UseShellExecute = false })?.Dispose();
+            hasLog ? [L.Text("Open log"), L.Text("Diagnostic report"), L.Text("Close")] : [L.Text("Diagnostic report"), L.Text("Close")],
+            hasLog ? 0 : 1);
+        if (hasLog && chosen == 0) Process.Start(new ProcessStartInfo("xdg-open", [log!]) { UseShellExecute = false })?.Dispose();
+        else if (chosen == (hasLog ? 1 : 0)) DiagnosticPreviewDialog.Show(this, _shared);
     }
 
     void ShowStatus(IReadOnlyList<ServiceSample> samples)

@@ -33,6 +33,15 @@ static class Repo
     /// it shipped with, built for an older mod API, so Waypoint installs, updates and edits none there.</summary>
     public static bool LegacyReleaseMods => IsInstall && (ClientVersion is null || ClientVersion.CompareTo(FirstDownloadableModsRelease) < 0);
 
+    /// <summary>The first release whose GameServer.Modding.dll loads the compiled mods of LocalExile-Mods (LocalExile #762).</summary>
+    public static ReleaseVersion FirstReleaseLoadingMods { get; } = ReleaseVersion.Parse("0.2.2-beta")!;
+
+    /// <summary>A release made for downloadable mods but older than <see cref="FirstReleaseLoadingMods"/> (v0.2.0-beta,
+    /// v0.2.1-beta): its GameServer.Modding.dll carries the release's version (0.2.x), the mods are built for 1.0.0.0, and
+    /// the server refuses them with "Could not load file or assembly 'GameServer.Modding'". Waypoint only says so: nothing
+    /// is refused there, since a player must still be able to remove a mod, and a script mod is compiled by the server.</summary>
+    public static bool ReleaseModsMayNotLoad => IsInstall && !LegacyReleaseMods && ClientVersion!.CompareTo(FirstReleaseLoadingMods) < 0;
+
     /// <summary>Where the folder picker starts: a "LocalExile" folder beside the launcher's own repository when it is a
     /// checkout (the usual layout, LocalExile\ and LocalExile-Launcher\ side by side), else the launcher's folder.</summary>
     public static string Suggested(string launcherFolder)

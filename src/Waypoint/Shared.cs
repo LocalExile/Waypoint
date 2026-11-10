@@ -26,6 +26,8 @@ sealed class Shared : IDisposable
         // The player's other LocalExile folders: their clients are the first place a move to another client build looks.
         ClientUpdate.KnownFolders = () => [Settings.ServerPath, Settings.ReleaseFolder, Settings.LatestFolder];
         Workspace = new Workspace(this);
+        // The log on disk leaves out the account and character names Waypoint comes to know.
+        if (SessionLog.Current is { } disk) disk.PrivateNames = () => Workspace.PrivateNames;
         Monitor.Failed += e => Logs.Write($"service sample failed: {e.Message}", Severity.Error);
         Monitor.Exited += (service, pid) =>
         {
@@ -47,8 +49,9 @@ sealed class Shared : IDisposable
         {
             Logs.Write($"> {request.Describe()}", Severity.Info);
             void Line(string line) { Logs.Write(line); output(line); }
+            var clock = System.Diagnostics.Stopwatch.StartNew();
             int code = await Scripts.RunAsync(request, Line);
-            Logs.Write($"live.ps1 exited with {code}", code == 0 ? Severity.Info : Severity.Error);
+            Logs.Write($"live.ps1 exited with {code} after {SessionLog.Seconds(clock.Elapsed)}", code == 0 ? Severity.Info : Severity.Error);
             return code;
         }
         catch (Exception e) when (e is System.ComponentModel.Win32Exception or InvalidOperationException)

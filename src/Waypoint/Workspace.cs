@@ -107,6 +107,7 @@ sealed class Workspace(Shared shared)
     {
         BridgeResult? result = null;
         string stage = name, logPath = "";
+        var clock = System.Diagnostics.Stopwatch.StartNew();
         bool ran = await shared.RunExclusiveAsync(name, async () =>
         {
             LastFailure = null;
@@ -151,6 +152,9 @@ sealed class Workspace(Shared shared)
             shared.Logs.Write($"{name} failed: {result.Message}", Severity.Error);
             if (!quiet) Failed?.Invoke(result.FailedStage ?? stage, result.Message, logPath.Length > 0 ? logPath : null);
         }
+        // How it ended and how long it took, for the log: the failure itself is the line above.
+        shared.Logs.Write($"< {name}: {(result.Ok ? "done" : result.Cancelled ? "cancelled" : $"failed at {result.FailedStage ?? stage}")} after {SessionLog.Seconds(clock.Elapsed)}",
+            Severity.Info);
         Changed?.Invoke();
         return result;
     }
