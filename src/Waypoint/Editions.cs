@@ -22,17 +22,15 @@ static class Editions
         settings.Save();
     }
 
-    /// <summary>Whether Simple mode offers the Latest side (the Release | Latest switch, a release's "Set up a new copy…").
-    /// A source copy needs .NET, Git, Python and Node and changes every day, which is not what someone who came to play
-    /// wants, so a release install shows neither. They stay for anyone who asked: Developer Mode is on, Waypoint runs on a
-    /// source copy now (the way back to the release stays), or a Latest copy was set up before.</summary>
-    public static bool Offered(Settings settings) => settings.Developer || !Repo.IsInstall || Folder(settings, release: false) is not null;
+    /// <summary>Whether a release install's Simple mode shows the Release | Latest switch and Play's "Set up a new copy…"
+    /// (a copy from source). Simple mode plays the release; the Latest side, LocalExile's source, is for Advanced mode, so
+    /// only someone with Developer Mode on is shown the way to it.</summary>
+    public static bool Offered(Settings settings) => Repo.IsInstall && settings.Developer;
 
-    /// <summary>Whether Simple mode's Play shows its card to someone on the Latest side: the published release, Advanced
-    /// mode with its branches and pull requests, or as they are. Latest is no longer offered to someone who came to play
-    /// (<see cref="Offered"/>), and whoever is on it already is told once and chooses; nothing changes until they do, and
-    /// "Stay on Latest" ends the card. Developer Mode has made its choice.</summary>
-    public static bool Guides(Settings settings) => !Repo.IsInstall && !settings.Developer && !settings.LatestGuideDismissed;
+    /// <summary>Simple mode on a source copy: Play is not offered there. Its page asks for one of two things instead, the
+    /// published release (Simple mode stays) or Advanced mode (this copy stays, with branches and pull requests), each one
+    /// click away, so that whoever was on the Latest side in Simple mode goes on without being left anywhere.</summary>
+    public static bool MustChoose(Settings settings) => !Repo.IsInstall && !settings.Advanced;
 
     /// <summary>The remembered folder of that side, while it still is one.</summary>
     public static string? Folder(Settings settings, bool release) =>

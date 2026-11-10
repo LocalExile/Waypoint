@@ -84,27 +84,31 @@ partial class PlayTab : UserControl
     {
         bool needsSetup = NeedsSetup;
         bool busy = _working || _shared.IsLiveRunning;
+        // Simple mode plays the release: on a source copy this page asks for the release or Advanced mode instead of Play.
+        bool choose = Editions.MustChoose(S);
         FolderText.Text = Environment.CurrentDirectory;
         Headline.Text = _stage?.Invoke() ?? (GameRunning ? L.Text("The game is running")
+            : choose ? L.Text("Simple mode plays the release")
             : Checking ? L.Text("Getting ready")
             : needsSetup ? L.Text("LocalExile isn't ready yet")
             : L.Text("Ready to play"));
         MainButton.Content = needsSetup ? L.Text("Finish setup") : L.Text("Play");
-        MainButton.IsVisible = !(busy || GameRunning || Checking);
+        MainButton.IsVisible = !(choose || busy || GameRunning || Checking);
         Working.IsVisible = busy && S.Appearance?.ReduceMotion != true;
         string? note = _note?.Invoke() ?? (_olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;
         StopLink.IsVisible = !busy && AnythingRunning;
-        BehindPanel.IsVisible = !busy && !GameRunning && !needsSetup && _behind is > 0;
+        BehindPanel.IsVisible = !choose && !busy && !GameRunning && !needsSetup && _behind is > 0;
         BehindText.Text = _behind is { } behind ? L.Text("{0} new change(s) in LocalExile since your version.", behind) : "";
         UpdateNowLink.IsEnabled = !AnythingRunning;
         RunSetupLink.IsEnabled = !busy && !AnythingRunning && !Checking;
-        GoBackLink.IsVisible = !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
+        GoBackLink.IsVisible = !choose && !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
         RemoveOldCard.IsVisible = !busy && !AnythingRunning && Replaced is not null;
         if (Replaced is { } replaced) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
-        LatestCard.IsVisible = !busy && !AnythingRunning && !needsSetup && Editions.Guides(S);
+        // While something runs the choice waits, and "Stop playing" is what shows.
+        LatestCard.IsVisible = choose && !busy && !AnythingRunning;
     }
 
     /// <summary>The release this copy replaces, once the player has played here.</summary>
@@ -386,17 +390,10 @@ partial class PlayTab : UserControl
     /// <summary>As the release's view: the switch again when Developer Mode changes.</summary>
     internal void ShowOffers() => Edition.Refresh();
 
-    // The Latest card (Editions.Guides). The release is the switch's own way there, with its question about characters.
+    // The choice in place of Play (Editions.MustChoose). The release is the switch's own way there, with its question about characters.
     void GuideReleaseClicked(object? sender, RoutedEventArgs e) => Edition.Choose(release: true);
 
     void GuideAdvancedClicked(object? sender, RoutedEventArgs e) => AdvancedRequested?.Invoke();
-
-    void GuideStayClicked(object? sender, RoutedEventArgs e)
-    {
-        S.LatestGuideDismissed = true;
-        S.Save();
-        Show();
-    }
 
     void DetailsClicked(object? sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

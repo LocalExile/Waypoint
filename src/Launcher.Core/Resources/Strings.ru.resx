@@ -639,9 +639,6 @@
   <data name="Text_12c439264448" xml:space="preserve">
     <value>Изаро, бой {0}</value>
   </data>
-  <data name="Text_12e5f2dd9f23" xml:space="preserve">
-    <value>Вы используете «Новейшую»: новейшие изменения LocalExile, которые могут быть менее стабильны, чем релиз. Большинству лучше подходит релиз. Чтобы самому выбирать ветки и запросы на слияние, включите расширенный режим.</value>
-  </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>Этот релиз не заявляет совместимость с настройками загружаемых модов. Для их изменения используйте совместимую копию исходного кода.</value>
   </data>
@@ -972,6 +969,9 @@
   </data>
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>настройки игры отдельные ({0})</value>
+  </data>
+  <data name="Text_1cbd771e134f" xml:space="preserve">
+    <value>Эта папка — «Новейшая»: новейшие изменения LocalExile из исходного кода. Перейдите на релиз, чтобы остаться в простом режиме, или включите расширенный режим, чтобы играть в этой копии и выбирать ветки и запросы на слияние.</value>
   </data>
   <data name="Text_1cceb5ebd12e" xml:space="preserve">
     <value>Кратчайший путь</value>
@@ -2364,9 +2364,6 @@
   </data>
   <data name="Text_46124e023603" xml:space="preserve">
     <value>Звук</value>
-  </data>
-  <data name="Text_4627badb67be" xml:space="preserve">
-    <value>Ничего не меняется: кнопка «Играть» по-прежнему обновляет эту копию. Переключатель «Релиз | Новейшая» выше остаётся.</value>
   </data>
   <data xml:space="preserve" name="Text_464848ad8a15">
     <value>Проверка требований и выбранной установки.</value>
@@ -4861,6 +4858,9 @@
   <data xml:space="preserve" name="Text_9575a529260a">
     <value>Оформление и доступность</value>
   </data>
+  <data name="Text_9576946d6fd6" xml:space="preserve">
+    <value>В простом режиме играют в релиз</value>
+  </data>
   <data name="Text_95784099d97d" xml:space="preserve">
     <value>{0} ещё выполняется</value>
   </data>
@@ -5162,9 +5162,6 @@
   </data>
   <data name="Text_9ceecb44ac12" xml:space="preserve">
     <value>Конструктор сброшен: выберите базу.</value>
-  </data>
-  <data name="Text_9cf4586fdd9e" xml:space="preserve">
-    <value>Включает режим разработчика и расширенный режим: все разделы, ветки и запросы на слияние в разделе «Версии». Отключить можно в настройках.</value>
   </data>
   <data name="Text_9cf951e82d56" xml:space="preserve">
     <value>Тестовый режим нескольких экземпляров</value>
@@ -7323,6 +7320,9 @@
   <data name="Text_e1ac34af368e" xml:space="preserve">
     <value>Настройка записи</value>
   </data>
+  <data name="Text_e1bbf21f70bc" xml:space="preserve">
+    <value>Включает режим разработчика и расширенный режим: все разделы, ветки и запросы на слияние в разделе «Версии». После этого Waypoint больше не обновляет LocalExile сам.</value>
+  </data>
   <data name="Text_e1c753f8d16c" xml:space="preserve">
     <value>{0}: от {1} до {2} символов</value>
   </data>
@@ -7760,9 +7760,6 @@
   </data>
   <data name="Text_ee80fc3f5cc0" xml:space="preserve">
     <value>Базы сохранений пока нет. Создайте первый аккаунт для инициализации LocalExile.</value>
-  </data>
-  <data name="Text_ee9a2f329c99" xml:space="preserve">
-    <value>Остаться на «Новейшей»</value>
   </data>
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Отслеживание работает, но дочерний процесс Gateway не запущен. Проверьте ошибки сборки в выводе Gateway.</value>

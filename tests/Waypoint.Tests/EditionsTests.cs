@@ -7,20 +7,21 @@ namespace Waypoint.Tests;
 public sealed class EditionsTests
 {
     [Fact]
-    public void Someone_on_Latest_in_Simple_mode_is_guided_until_they_answer_and_never_forced()
+    public void Simple_mode_plays_the_release_and_a_source_copy_asks_for_the_release_or_Advanced_mode()
     {
         bool install = Repo.IsInstall;
         try
         {
+            // A source copy in Simple mode: no Play, the choice instead. Developer Mode alone is still Simple mode.
             Repo.IsInstall = false;
-            Assert.True(Editions.Guides(new Settings()));
-            // "Stay on Latest" ends the card and keeps the switch: the way to the release stays.
-            Assert.False(Editions.Guides(new Settings { LatestGuideDismissed = true }));
-            Assert.True(Editions.Offered(new Settings { LatestGuideDismissed = true }));
-            // Developer Mode has made its choice, and a release install has nothing to be guided away from.
-            Assert.False(Editions.Guides(new Settings { DeveloperMode = true }));
+            Assert.True(Editions.MustChoose(new Settings()));
+            Assert.True(Editions.MustChoose(new Settings { DeveloperMode = true, AdvancedMode = false }));
+            // Advanced mode is one of the two answers: the copy plays there.
+            Assert.False(Editions.MustChoose(new Settings { DeveloperMode = true, AdvancedMode = true }));
+            // The release is the other: Simple mode plays it.
             Repo.IsInstall = true;
-            Assert.False(Editions.Guides(new Settings()));
+            Assert.False(Editions.MustChoose(new Settings()));
+            Assert.False(Editions.MustChoose(new Settings { DeveloperMode = true, AdvancedMode = true }));
         }
         finally { Repo.IsInstall = install; }
     }
@@ -54,33 +55,23 @@ public sealed class EditionsTests
     }
 
     [Fact]
-    public void Simple_mode_offers_the_Latest_side_only_to_those_who_asked_for_it()
+    public void A_release_shows_the_way_to_Latest_only_with_Developer_Mode()
     {
-        string folder = Path.Combine(Path.GetTempPath(), "waypoint-editions-" + Guid.NewGuid().ToString("N"));
-        string latest = Path.Combine(folder, "latest");
         bool install = Repo.IsInstall;
         try
         {
-            Directory.CreateDirectory(Path.Combine(latest, "scripts", "dev"));
-            File.WriteAllText(Path.Combine(latest, "GameServer.slnx"), "");
-            File.WriteAllText(Path.Combine(latest, "scripts", "dev", "live.ps1"), "");
-
-            // A release install: someone who came to play sees neither the switch nor the copy from source.
+            // A release install: someone who came to play sees neither the switch nor the copy from source,
+            // whether or not a Latest copy was set up before.
             Repo.IsInstall = true;
             Assert.False(Editions.Offered(new Settings()));
+            Assert.False(Editions.Offered(new Settings { LatestFolder = Path.GetTempPath() }));
             Assert.True(Editions.Offered(new Settings { DeveloperMode = true }));
-            // A Latest copy set up before stays reachable, and one that is gone is not offered.
-            Assert.True(Editions.Offered(new Settings { LatestFolder = latest }));
-            Assert.False(Editions.Offered(new Settings { LatestFolder = Path.Combine(folder, "gone") }));
 
-            // On a source copy the switch stays: it is the way back to the release.
+            // On a source copy the page has the choice instead of the switch.
             Repo.IsInstall = false;
-            Assert.True(Editions.Offered(new Settings()));
+            Assert.False(Editions.Offered(new Settings()));
+            Assert.False(Editions.Offered(new Settings { DeveloperMode = true }));
         }
-        finally
-        {
-            Repo.IsInstall = install;
-            if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
-        }
+        finally { Repo.IsInstall = install; }
     }
 }

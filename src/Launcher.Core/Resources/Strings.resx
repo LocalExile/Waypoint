@@ -639,9 +639,6 @@
   <data name="Text_12c439264448" xml:space="preserve">
     <value>Izaro, fight {0}</value>
   </data>
-  <data name="Text_12e5f2dd9f23" xml:space="preserve">
-    <value>You are on Latest: LocalExile's newest changes, which can be less stable than the release. Most people are better off on the release. To pick branches and pull requests yourself, use Advanced mode.</value>
-  </data>
   <data name="Text_12f5e32b6a08" xml:space="preserve">
     <value>This release does not declare compatibility with downloadable mod settings. Use a compatible source checkout to edit them.</value>
   </data>
@@ -972,6 +969,9 @@ Close the game and anything else using that folder, then try again.</value>
   </data>
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>game settings are separate ({0})</value>
+  </data>
+  <data name="Text_1cbd771e134f" xml:space="preserve">
+    <value>This folder is Latest: LocalExile's newest changes, from its source. Switch to the release to keep Simple mode, or use Advanced mode to play this copy and pick branches and pull requests.</value>
   </data>
   <data name="Text_1cceb5ebd12e" xml:space="preserve">
     <value>Shortest way</value>
@@ -2364,9 +2364,6 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_46124e023603" xml:space="preserve">
     <value>Sound</value>
-  </data>
-  <data name="Text_4627badb67be" xml:space="preserve">
-    <value>Nothing changes: Play keeps this copy up to date. The Release | Latest switch above stays.</value>
   </data>
   <data xml:space="preserve" name="Text_464848ad8a15">
     <value>Checking prerequisites and the selected installation.</value>
@@ -4861,6 +4858,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_9575a529260a">
     <value>Appearance and accessibility</value>
   </data>
+  <data name="Text_9576946d6fd6" xml:space="preserve">
+    <value>Simple mode plays the release</value>
+  </data>
   <data name="Text_95784099d97d" xml:space="preserve">
     <value>{0} is still running</value>
   </data>
@@ -5162,9 +5162,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9ceecb44ac12" xml:space="preserve">
     <value>The crafter is reset: choose a base.</value>
-  </data>
-  <data name="Text_9cf4586fdd9e" xml:space="preserve">
-    <value>Turns on Developer Mode and Advanced mode: every section, with branches and pull requests under Versions. Settings turns it off again.</value>
   </data>
   <data name="Text_9cf951e82d56" xml:space="preserve">
     <value>Multiple-instance test mode</value>
@@ -7323,6 +7320,9 @@ Dependencies: {2}
   <data name="Text_e1ac34af368e" xml:space="preserve">
     <value>Setting up capture</value>
   </data>
+  <data name="Text_e1bbf21f70bc" xml:space="preserve">
+    <value>Turns on Developer Mode and Advanced mode: every section, with branches and pull requests under Versions. Waypoint then no longer updates LocalExile by itself.</value>
+  </data>
   <data name="Text_e1c753f8d16c" xml:space="preserve">
     <value>{0}: from {1} to {2} characters</value>
   </data>
@@ -7760,9 +7760,6 @@ Dependencies: {2}
   </data>
   <data name="Text_ee80fc3f5cc0" xml:space="preserve">
     <value>No save database exists yet. Create your first account to initialize LocalExile.</value>
-  </data>
-  <data name="Text_ee9a2f329c99" xml:space="preserve">
-    <value>Stay on Latest</value>
   </data>
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Watcher is alive but Gateway has no running child. Open Gateway output to inspect the build errors.</value>

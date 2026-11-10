@@ -343,17 +343,19 @@ source copy that follows `main`. Each is a folder of its own with its own charac
 other folder. The saves of the folder left are backed up first while automatic backups are on (Backups), as for every other
 change, and the question says so; with them off nothing is backed up or asked.
 
-The switch is for those who asked for the Latest side (`Editions.Offered`). A source copy needs .NET, Git, Python and Node
-and changes every day, so a release install shows neither the switch nor Play's **Set up a new copy…** (which sets up a
-copy from source) unless Developer Mode is on or a Latest copy was set up before. On a source copy the switch always
-shows: it is the way back to the release. **Run setup guide…** and **Tools → Get the item crafter…** stay for everyone.
+**Simple mode plays the release; the Latest side, LocalExile's source, is for Advanced mode.** A source copy needs .NET,
+Git, Python and Node and changes every day, so a release install shows neither the switch nor Play's **Set up a new
+copy…** (which sets up a copy from source) unless Developer Mode is on (`Editions.Offered`). **Run setup guide…** and
+**Tools → Get the item crafter…** stay for everyone.
 
-Someone already on the Latest side in Simple mode is not moved: Play works as before and keeps the copy up to date. Play
-shows them a card until they answer it (`Editions.Guides`): Latest can be less stable than the release, and there are three
-ways on. **Switch to the release…** is the switch's own step to the release, with its question; the release has its own
-characters, and Latest's stay in their folder. **Use Advanced mode** turns on Developer Mode and Advanced mode, where
-Versions has branches and pull requests. **Stay on Latest** ends the card (`LatestGuideDismissed`) and changes nothing
-else. The card is not shown with Developer Mode on, on a release install, during setup or while something runs.
+On a source copy in Simple mode, Play is not offered (`Editions.MustChoose`): the page says "Simple mode plays the
+release" and has two buttons in place of Play and the switch. **Switch to the release…** is the switch's own step to the
+release, with its question; the release has its own characters, and this copy's stay in its folder. **Use Advanced mode**
+turns on Developer Mode and Advanced mode, where this copy plays from Control, Versions has branches and pull requests,
+and Waypoint no longer updates the copy by itself. Each is one click, so whoever was on the Latest side in Simple mode
+goes on either way; until they choose, nothing of theirs is changed. While the game or a server runs the page shows that
+and **Stop playing**, and the choice comes after. The parts of Simple mode's Play that belong to a source copy (the daily
+update, **Update now**, **Go back to the version you had**) are not reached any more.
 
 - Both ways to Latest say first that Latest has LocalExile's newest changes, reviewed, but possibly less stable than the release.
 - **Release → Latest**: bring your characters? **Bring my characters** copies them in (the adapter's `ImportSaves`, as the guide's
