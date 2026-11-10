@@ -1264,6 +1264,9 @@
   <data name="Text_25d99e3dbef3" xml:space="preserve">
     <value>live.ps1 正在运行；请在其完成后再更换服务器。</value>
   </data>
+  <data name="Text_25e19b1298a9" xml:space="preserve">
+    <value>正在通过所选源码副本的原生客户端辅助程序发送 /reload；正在等待 Gateway 确认。</value>
+  </data>
   <data name="Text_25e7df197704" xml:space="preserve">
     <value>桥接程序需要装有 frida 的 Python，但尚未安装：物品制作器中的“发放物品”会完成设置</value>
   </data>
@@ -2208,6 +2211,9 @@
   </data>
   <data name="Text_40ef19a35d79" xml:space="preserve">
     <value>服务已停止。</value>
+  </data>
+  <data name="Text_4115d7cc67e2" xml:space="preserve">
+    <value>数据库拆分之前的存档会放到 data/saves.db，但此 LocalExile 不使用它：它的角色数据库设在别处。</value>
   </data>
   <data name="Text_411aa8a7f208" xml:space="preserve">
     <value>LocalExile 需要这些端口，而 Windows 本身正在使用其中一个，因此 Waypoint 不会结束它。请查看是什么在使用该端口，释放端口后重试。</value>
@@ -5648,6 +5654,9 @@
   </data>
   <data name="Text_ac7fcf0ba22e" xml:space="preserve">
     <value>未安装模组</value>
+  </data>
+  <data name="Text_acb46a58f4f7" xml:space="preserve">
+    <value>这些存档来自较新的 LocalExile，其账户和角色保存在各自的数据库中。请先切换到该版本。</value>
   </data>
   <data name="Text_acb4bce11dae" xml:space="preserve">
     <value>正在进行工作区操作。</value>

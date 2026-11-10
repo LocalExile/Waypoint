@@ -10,7 +10,7 @@ import sqlite3
 import sys
 import uuid
 
-from AccountData import AccountError, inspect_schema, physical, record, require
+from AccountData import AccountError, inspect_schema, open_saves, physical, record, require
 
 
 EMPTY_SOURCE = "public sealed class WaypointLeague : League { }\n"
@@ -191,11 +191,11 @@ def validate_modules(profile, selected, systems, profiles):
         visit(identifier)
 
 
-def unused_saved_name(database, name):
+def unused_saved_name(database, name, auth=None):
     database = physical(database)
     if not database.exists():
         return
-    with closing(sqlite3.connect(database.as_uri() + "?mode=ro", uri=True, timeout=2, isolation_level=None)) as db:
+    with closing(open_saves(database, auth)) as db:
         db.execute("BEGIN")
         require(inspect_schema(db), "The save layout or pending import cannot be safely inspected. League creation is blocked.")
         for table, column in (("account_characters", "character"), ("characters", "save"), ("deleted_characters", "save")):
@@ -328,7 +328,7 @@ def apply_visibility(changes, visible, expected, modules, leagues, choices, hist
                 temporary.unlink()
 
 
-def run(modules, leagues, choices, database, history, action, request, apply=False):
+def run(modules, leagues, choices, database, history, action, request, apply=False, auth=None):
     modules, leagues, choices, history = map(physical, (modules, leagues, choices, history))
     fields = {"review", "league", "visible"} if action == "SetLeagueVisibility" else {"review", "league", "choices"} if action == "SaveLeagueModules" else {"review", "template", "name", "description", "modules"}
     require(set(request) <= fields,
@@ -394,7 +394,7 @@ def run(modules, leagues, choices, database, history, action, request, apply=Fal
     require(any(p["name"] == "Void" and not p["data"].get("parent") and not p["data"].get("creatable", True)
                 and all(path.casefold() == "core/game" for path in p["modules"])
                 and ((p["folder"] / "Source").is_dir() or (p["folder"] / "Binaries/league.dll").is_file()) for p in profiles), "The Void destination is missing or not isolated.")
-    unused_saved_name(database, name)
+    unused_saved_name(database, name, auth)
     selected = paths(request.get("modules"))
     validate_modules(template, selected, systems, profiles)
     if not apply:
@@ -447,7 +447,8 @@ def main():
         if sys.argv[6] == "Inspect":
             print(json.dumps({"Ok": True, "Review": review(*map(Path, sys.argv[1:4]))}))
             return 0
-        run(*sys.argv[1:6], sys.argv[6], request, apply=sys.argv[7] == "apply")
+        # A split layout's auth.db follows the phase.
+        run(*sys.argv[1:6], sys.argv[6], request, apply=sys.argv[7] == "apply", auth=sys.argv[8] if len(sys.argv) > 8 else None)
         print(json.dumps({"Ok": True}))
         return 0
     except (AccountError, OSError, ValueError, TypeError, KeyError, sqlite3.Error) as error:

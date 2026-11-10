@@ -56,12 +56,14 @@ No LocalExile source changes, DLL references or game assets are added to the pro
 
 Accounts and account-character records are JSON in SQLite rows. Progress is stored separately by character name.
 Personal/guild stashes use account/league keys and separate tab rows. Main ascendancy is a durable family/id/revision
-selection in progress; display names come from this checkout's extracted `data/tables/Ascendancy.json`, using Name
-or LeagueName. Missing display data shows the durable ascendancy ID; absence of a selection falls back to base class.
+selection in progress; display names come from this checkout's extracted `data/tables/Ascendancy.json`, or its
+`data/client.db` from LocalExile's database split on, using Name or LeagueName. Missing display data shows the durable ascendancy ID; absence of a selection falls back to base class.
 
 Listings use one read-only SQLite snapshot and expose no credential verifiers. Mutations run parameterized SQL in
 one immediate transaction, verify identities, recheck the selected account revision and check database integrity.
-Known tables, columns, types, keys and JSON metadata are required for direct writes. Unknown layouts, extra
+From the database split on, the accounts are in `auth.db` and the rest in `characters.db`; the helper opens
+characters.db with auth.db attached, as the servers do, and a change commits in each file on its own after the backup of
+both. Known tables, columns, types, keys and JSON metadata are required for direct writes. Unknown layouts, extra
 tables/triggers/views or pending legacy imports remain read-only or are rejected when unreadable. This conservative
 contract can disable edits after an upstream/mod schema change until support is reviewed. Waypoint never initializes
 or migrates a database directly. Python with SQLite 3.37+ is required. Querying occurs on entry/reload or context

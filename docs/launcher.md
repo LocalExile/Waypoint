@@ -125,8 +125,9 @@ At start (**Keep LocalExile up to date**) and on **Check for updates**, Waypoint
 numbers only, cannot see). A newer one shows a green card beside Waypoint's own. **Update now** refuses while anything runs,
 since nothing is force-stopped for an update, and after a confirmation:
 
-1. copies `data\saves.db` and its journal to `backups\before-update-<version>-<time>\` (unless **Automatic backups** is off);
-   a failed copy means no update;
+1. copies the save databases and their journals (`data\saves.db`, or `auth.db` and `characters.db` from the database split on,
+   and a `saves.db` not yet migrated) to `backups\before-update-<version>-<time>\` (unless **Automatic backups** is off); a
+   failed copy means no update. The first start of a version with the split moves an old `saves.db` over by itself;
 2. downloads the zip into `.waypoint-update\` and checks it against the release's `.sha256`;
 3. refuses a zip with a path outside its `LocalExile/` folder, or one naming `Client\` or `data\` (other than `data\schema\`);
 4. extracts it into staging, then moves the files into place, the launcher and `release.json` last, so a cut-short update still
@@ -166,10 +167,12 @@ release, opens the guide's source route with one more page, **Your characters**,
 client comes first in the list, and is shared rather than copied when its keys fit. **Browse…** on this route refuses a release, which
 has no source to build, and turns to the download instead.
 
-- **Your characters**: **Bring my characters** copies the database, what a stopped release still holds in `saves.db-wal` included,
+- **Your characters**: **Bring my characters** copies the database (`saves.db`, or `characters.db` with `auth.db`), what a stopped
+  release still holds in its `-wal` included,
   with the same online backup Waypoint's backups use, and it is checked before anything here changes (the adapter's `ImportSaves`). The
   mod choices come along; mods the player added do not. Anything already in the folder is backed up and set aside, and
-  `data\saves-brought.json` keeps the guide run again from copying over newer progress. **Start with a new database** copies nothing,
+  `data\saves-brought.json` keeps the guide run again from copying over newer progress. A copy from before the database split
+  is migrated by the next server start; an older copy refuses split saves, which it cannot read. **Start with a new database** copies nothing,
   and the account dialog opens after Waypoint starts on the copy. The two never share one database: a newer server may write saves
   an older release cannot read.
 - **Your current LocalExile**: **Keep both** leaves it as it is. **Remove the old one later** leaves it until the player has pressed Play
@@ -415,7 +418,9 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
   list, the extracted data, Node and ooz, whether the checkout has the launcher hooks, whether the game settings are separate
   from the normal game's, the network mode in the settings file this client really uses (Predictive is preferred; Lockstep or
   "auto" passes with a hint on a server that serves any mode, and fails on an older one that serves only Predictive), and
-  Python with Frida. **Game data** runs `extract-data.ps1 -List`.
+  Python with Frida. **Game data** runs `extract-data.ps1 -List` (with `-Servers` when the script has it: from LocalExile's
+  database split on, the servers read the client tables from `client.db` and live.ps1 extracts only what they still read; the
+  setup guide's extraction and a start from the adapter do the same).
 - The services are found by process: a hot-reloaded Gateway by its own `GameServer.Gateway.exe` (rather than the
   `dotnet watch` around it), the other servers and a Gateway without hot reload by `GameServer.<Name>.dll` on a dotnet
   command line, the client by `Game.patched.exe`, the recorder by `walkmaps.py`. A port that listens without such a
@@ -473,7 +478,8 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
   process. git's output goes to the section's output and the launcher's log.
 
 - The **Build** panel shows the commit and what each server was built from, and the Gateway's last hot reload event. **Build
-  checkout** needs the servers stopped; **Reload game data** needs a client in game.
+  checkout** needs the servers stopped; **Reload game data** needs a client in game, and sends `/reload` (`/game_data reload`
+  before the database split).
 
 ### The setup guide
 
@@ -904,9 +910,11 @@ Reset to defaults asks first. Mod values use `data/mods/`, module values `data/m
 ### Backups
 
 Automatic backups run before a Gateway start, a switch of the checkout, and an account or mod change. A backup is a
-consistent SQLite copy, checked for integrity, with what it was made from (`backup.json`). **Restore saves** stops the
-servers, checks the backup, backs the current saves up, and moves them aside before putting the copy in place. Saved mod
-choices restore separately, with the Gateway stopped.
+consistent SQLite copy, checked for integrity, with what it was made from (`backup.json`). From LocalExile's database split
+on, it holds `characters.db` and `auth.db`, copied at the same moment; until the servers have moved an old `saves.db` over,
+that file is backed up as it is, and its older backups stay in the list. **Restore saves** stops the servers, checks the
+backup, backs the current saves up, and moves them aside before putting the copy in place; a `saves.db` backup goes back as
+`data\saves.db` for the servers to migrate at the next start. Saved mod choices restore separately, with the Gateway stopped.
 
 ### Logs and errors
 
@@ -1032,12 +1040,13 @@ A Gateway built before the mode would start for real, so Waypoint first asks `co
 
 ### Accounts
 
-The list is read from the checkout's save database through the adapter, with nothing running or built: every account with
+The list is read from the checkout's save database (`auth.db` and `characters.db` from LocalExile's database split on, or an
+old `saves.db` until the servers migrate it) through the adapter, with nothing running or built: every account with
 its characters, nothing secret. Showing the section reads it; **Reload accounts** reads it again.
 
 **Register** and **Create** are the dev protocol's `register`, `login` and `create_character` (the server's GettingStarted
 step 8), so they work beside running servers. The character is created in Standard; the game's own creation screen offers
-the other leagues. The dev host stays running afterwards (it shares `data\saves.db` with Auth and neither caches it);
+the other leagues. The dev host stays running afterwards (it shares the save databases with Auth and neither caches them);
 **Stop dev host** ends it, and so do Stop all and stopping everything on exit. Its output is the checkout's
 `logs\launcher-host.log`.
 

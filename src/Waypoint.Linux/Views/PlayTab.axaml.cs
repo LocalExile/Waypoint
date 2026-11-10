@@ -249,7 +249,7 @@ partial class PlayTab : UserControl
         return go;
     }
 
-    string? NewestBackup() => _shared.Workspace.Latest is { } state ? BackupCatalog.Read(state.SaveDatabase).FirstOrDefault()?.Id : null;
+    string? NewestBackup() => _shared.Workspace.Latest is { } state ? BackupCatalog.Read(state).FirstOrDefault()?.Id : null;
 
     /// <summary>The checkout and the saves as they were before <paramref name="update"/>. The saves first: restoring keeps
     /// a copy of the current ones, and that needs nothing of the newer version.</summary>

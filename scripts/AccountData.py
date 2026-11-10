@@ -1,6 +1,8 @@
 """Offline LocalExile account-data adapter. Requests arrive on stdin; credentials never leave it.
 
-Storage contract: LocalExile main 89b7aa908213ac8eb9b5ac5aa7ae54c14189c3e9.
+Storage contract: LocalExile main 89b7aa908213ac8eb9b5ac5aa7ae54c14189c3e9 (one saves.db), and from the database split on
+(LocalExile/LocalExile#758) characters.db with the accounts in auth.db, which this helper attaches as `auth` the way the
+servers do. A change across both files commits in each file on its own: RuntimeBridge backs both up first.
 This helper never initializes schemas, runs emulator code, or manages processes/backups.
 RuntimeBridge supplies ownership checks, writer serialization and the backup policy.
 """
@@ -29,9 +31,16 @@ SCHEMA = {
     "stash_tabs": ("account", "tab", "items"),
     "deleted_characters": ("name", "deleted_utc", "save"), "meta": ("key", "value"),
 }
+UPDATES = ("name", "hash", "state", "applied_utc", "speed_ms")
+# The split layout by database: the servers' sql/base/, plus the updates table each database records its SQL files in.
+SPLIT = {"main": {**{t: c for t, c in SCHEMA.items() if t != "accounts"}, "account_friends": ("owner", "friend"), "updates": UPDATES},
+         "auth": {"accounts": SCHEMA["accounts"], "updates": UPDATES}}
+KEYS = {"accounts": {"id": 1}, "account_characters": {"id": 1}, "characters": {"name": 1}, "stashes": {"account": 1},
+        "stash_tabs": {"account": 1, "tab": 2}, "meta": {"key": 1}, "account_friends": {"owner": 1, "friend": 2}, "updates": {"name": 1}}
+INTEGERS = {"tab", "speed_ms"}
 ACCOUNT_FIELDS = {"Id", "Name", "PasswordHash", "PasswordSalt", "CreatedUtc", "ClientDigestHash"}
 CHARACTER_FIELDS = {"Id", "AccountId", "Name", "Class", "Level", "League", "AreaId", "CreatedUtc",
-                    "LastPlayedUtc", "LastTown", "Portrait", "HardcoreDeath"}
+                    "LastPlayedUtc", "LastTown", "Portrait", "HardcoreDeath", "PortraitFrame"}
 CLASSES = ("Scion", "Marauder", "Ranger", "Witch", "Duelist", "Templar", "Shadow")
 ASCII_FOLD = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 
@@ -85,23 +94,43 @@ def stash_target(key, old, new):
     return guild + new + plain[len(old):]
 
 
+def split(db):
+    return any(r[1] == "auth" for r in db.execute("PRAGMA database_list"))
+
+
+def open_saves(path, auth=None, write=False):
+    """The save database, read-only unless write, with a split layout's auth.db attached as `auth`."""
+    mode = "?mode=rw" if write else "?mode=ro"
+    db = sqlite3.connect(physical(path).as_uri() + mode, uri=True, timeout=2, isolation_level=None)
+    try:
+        if auth is not None:
+            db.execute("ATTACH DATABASE ? AS auth", (physical(auth).as_uri() + mode,))
+    except BaseException:
+        db.close()
+        raise
+    return db
+
+
 def inspect_schema(db, check_import=True):
-    tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}
-    require({"accounts", "account_characters", "characters"} <= tables,
+    layout = SPLIT if split(db) else {"main": SCHEMA}
+    tables = {schema: {r[0] for r in db.execute('SELECT name FROM "' + schema + '".sqlite_master WHERE type=\'table\' AND name NOT LIKE \'sqlite_%\'')}
+              for schema in layout}
+    require({"accounts", "account_characters", "characters"} <= set().union(*tables.values()),
             "This database has no supported account tables. Use Create account to initialize LocalExile's account store.")
-    compatible = tables == set(SCHEMA)
-    for table, expected in SCHEMA.items():
-        info = list(db.execute('PRAGMA table_info("' + table + '")'))
-        columns = tuple(r[1] for r in info)
-        if table in ("accounts", "account_characters", "characters"):
-            require(set(expected) <= set(columns), "The account storage layout is not supported.")
-        compatible &= columns == expected
-        keys = {"accounts": {"id": 1}, "account_characters": {"id": 1}, "characters": {"name": 1},
-                "stashes": {"account": 1}, "stash_tabs": {"account": 1, "tab": 2}, "meta": {"key": 1}}
-        compatible &= all(r[2].upper() == ("INTEGER" if r[1] == "tab" else "TEXT") and
-                          r[5] == keys.get(table, {}).get(r[1], 0) for r in info)
-    compatible &= not bool(db.execute("SELECT 1 FROM sqlite_master WHERE type IN ('trigger','view') LIMIT 1").fetchone())
-    imported = "meta" in tables and db.execute("SELECT 1 FROM meta WHERE key='accounts_imported'").fetchone()
+    # Unqualified names must find the accounts in auth.db: the characters database has none of its own.
+    require("auth" not in layout or ("accounts" in tables["auth"] and "accounts" not in tables["main"]), "The account storage layout is not supported.")
+    compatible = all(tables[schema] == set(expected) for schema, expected in layout.items())
+    for schema, expected_tables in layout.items():
+        for table, expected in expected_tables.items():
+            info = list(db.execute('PRAGMA "' + schema + '".table_info("' + table + '")'))
+            columns = tuple(r[1] for r in info)
+            if table in ("accounts", "account_characters", "characters"):
+                require(set(expected) <= set(columns), "The account storage layout is not supported.")
+            compatible &= columns == expected
+            compatible &= all(r[2].upper() == ("INTEGER" if r[1] in INTEGERS else "TEXT") and
+                              r[5] == KEYS.get(table, {}).get(r[1], 0) for r in info)
+        compatible &= not bool(db.execute('SELECT 1 FROM "' + schema + '".sqlite_master WHERE type IN (\'trigger\',\'view\') LIMIT 1').fetchone())
+    imported = "meta" in tables["main"] and db.execute("SELECT 1 FROM main.meta WHERE key='accounts_imported'").fetchone()
     if check_import:
         compatible &= bool(imported)
     return bool(compatible)
@@ -134,7 +163,7 @@ def snapshot(db):
         ch["save"] = saved[0] if saved else None
         ch["progress"] = record(ch["save"]) if ch["save"] is not None else {}
         owners[ch["account_id"]]["characters"].append(ch)
-    tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    tables = {r[0] for r in db.execute("SELECT name FROM main.sqlite_master WHERE type='table'")}
     for table, collection in (("stashes", "stashes"), ("stash_tabs", "tabs")):
         if table not in tables:
             continue
@@ -162,13 +191,26 @@ def snapshot(db):
 def ascendancies(root):
     path = physical(Path(root) / "data" / "tables" / "Ascendancy.json")
     if not path.is_file():
-        return {}
+        return client_ascendancies(root)
     require(path.stat().st_size <= 16 * 1024 * 1024, "Ascendancy table is too large.")
     try:
         rows = json.loads(path.read_text(encoding="utf-8-sig"))
         return {r["Id"]: r for r in rows if isinstance(r, dict) and isinstance(r.get("Id"), str)}
     except (ValueError, KeyError, TypeError):
         return {}  # Account browsing remains available without extracted display-name data.
+
+
+def client_ascendancies(root):
+    # From the database split on, LocalExile keeps the client tables in data/client.db; data/tables/ comes only from a full extraction.
+    path = physical(Path(root) / "data" / "client.db")
+    if not path.is_file():
+        return {}
+    try:
+        with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=2)) as db:
+            return {r[0]: {"Id": r[0], "Name": r[1], "LeagueName": r[2]}
+                    for r in db.execute("SELECT Id, Name, LeagueName FROM Ascendancy") if isinstance(r[0], str)}
+    except sqlite3.Error:
+        return {}  # Account browsing remains available without the display names.
 
 
 def catalog(accounts, writable, root, can_register=False):
@@ -249,6 +291,8 @@ def change(db, accounts, request, root):
                 db.execute("INSERT INTO deleted_characters VALUES(?,?,?)", (ch["name"], now, ch["save"]))
             db.execute("DELETE FROM characters WHERE name=?", (ch["name"],))
         db.execute("DELETE FROM account_characters WHERE account_id=?", (a["id"],))
+        if db.execute("SELECT 1 FROM main.sqlite_master WHERE type='table' AND name='account_friends'").fetchone():
+            db.execute("DELETE FROM account_friends WHERE owner=? OR friend=?", (a["id"], a["id"]))
         for key in {r["account"] for r in a["stashes"] + a["tabs"]}:
             db.execute("DELETE FROM stashes WHERE account=?", (key,))
             db.execute("DELETE FROM stash_tabs WHERE account=?", (key,))
@@ -302,15 +346,17 @@ def change(db, accounts, request, root):
                     db.execute("UPDATE stash_tabs SET account=? WHERE account=? AND tab=?", (dest, row["account"], row["tab"]))
 
 
-def run(path, root, request):
+def run(path, root, request, auth=None):
+    """auth: a split layout's auth.db, beside the characters database at path; None for one saves.db."""
     require(sqlite3.sqlite_version_info >= (3, 37, 0), "Account management needs Python with SQLite 3.37 or newer. Update Python and try again.")
     path = physical(path)
+    auth = physical(auth) if auth else None
     action = request.get("Action")
-    if not path.exists():
+    if not path.exists() and (auth is None or not auth.exists()):
         require(action == "List", "No save database exists. Create an account through LocalExile first.")
         return {"Exists": False, "Writable": False, "CanRegister": True, "Notice": "No save database exists yet. Create your first account to initialize LocalExile.", "Accounts": []}
-    require(path.is_file(), "The selected save database is not a file.")
-    with closing(sqlite3.connect(path.as_uri() + ("?mode=ro" if action == "List" else "?mode=rw"), uri=True, timeout=2, isolation_level=None)) as db:
+    require(path.is_file() and (auth is None or auth.is_file()), "The selected save database is not a file.")
+    with closing(open_saves(path, auth, write=action != "List")) as db:
         db.row_factory = sqlite3.Row
         db.execute("PRAGMA foreign_keys=ON")
         db.execute("BEGIN" if action == "List" else "BEGIN IMMEDIATE")
@@ -332,10 +378,10 @@ def run(path, root, request):
 
 def main():
     try:
-        require(len(sys.argv) == 3, "Expected database and checkout paths.")
+        require(len(sys.argv) in (3, 4), "Expected database and checkout paths, and a split layout's auth database.")
         request = json.loads(sys.stdin.readline(1024 * 1024))
         require(isinstance(request, dict), "Invalid account request.")
-        result = run(sys.argv[1], sys.argv[2], request)
+        result = run(sys.argv[1], sys.argv[2], request, sys.argv[3] if len(sys.argv) == 4 else None)
         print(json.dumps({"Ok": True, "Catalog": result}, ensure_ascii=True))
     except (AccountError, OSError, ValueError, TypeError, KeyError, sqlite3.Error) as error:
         print(json.dumps({"Ok": False, "Message": str(error)}, ensure_ascii=True))

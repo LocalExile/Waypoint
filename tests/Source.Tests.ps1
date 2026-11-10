@@ -138,6 +138,53 @@ try {
     Check (-not $own.Ok -and $own.Message.Contains('own saves')) 'a folder cannot bring its own saves'
     $nothing = Operation 'ImportSaves' @('-SaveSource',(Join-Path $fixture 'Nowhere'))
     Check (-not $nothing.Ok -and $nothing.Message.Contains('no saves')) 'a folder without saves is refused'
+    # LocalExile from the database split on (sql/base/characters/): auth.db and characters.db, and an old saves.db its first
+    # server start moves over. Only files are checked here; the migration itself is the servers'.
+    $fixtureDb = Join-Path $PSScriptRoot 'SqliteFixture.py'
+    $backups = "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups"
+    function New-BackupFolder([scriptblock]$work) {
+        $before = @(Get-ChildItem $backups -Directory -Recurse | ForEach-Object FullName)
+        $result = & $work
+        $made = @(Get-ChildItem $backups -Filter backup.json -Recurse | Where-Object { $_.Directory.FullName -notin $before })
+        return @{ Result=$result; Folder=$(if ($made.Count -eq 1) { $made[0].Directory }) }
+    }
+    $checkout = $root
+    $root = Join-Path $fixture 'Split'
+    New-Item -ItemType Directory -Force "$root/scripts/dev", "$root/sql/base/characters", "$root/data" | Out-Null
+    Set-Content "$root/GameServer.slnx" '<Solution />'
+    Set-Content "$root/scripts/dev/live.ps1" 'param([switch]$ClientOnly)'
+    & python $fixtureDb init "$root/data/saves.db"
+    $early = New-BackupFolder { Operation 'Backup' }
+    Check ($early.Result.Ok -and $early.Result.Snapshot.SaveDatabase.EndsWith('data\characters.db') -and $early.Result.Snapshot.EarlierSaveDatabase.EndsWith('data\saves.db')) 'a split LocalExile names characters.db, and the saves.db its servers still migrate'
+    Check ($early.Folder -and (Test-Path "$($early.Folder.FullName)/saves.db")) 'before the first start, the old saves.db is backed up as it is'
+    Move-Item "$root/data/saves.db" "$root/data/saves.db.migrated"
+    & python $fixtureDb split "$root/data/characters.db" "$root/data/auth.db" 'split-one'
+    $pair = New-BackupFolder { Operation 'Backup' }
+    Check ($pair.Folder -and $pair.Folder.Parent.FullName -eq $early.Folder.Parent.FullName) 'the split databases keep the backup folder of the saves.db they came from'
+    & python $fixtureDb split-has "$($pair.Folder.FullName)/characters.db" "$($pair.Folder.FullName)/auth.db" 'split-one'
+    Check ($LASTEXITCODE -eq 0 -and -not (Test-Path "$($pair.Folder.FullName)/saves.db")) 'one backup holds characters.db and auth.db, with what was still in each WAL'
+    $splitFresh = Operation 'FreshSaves'
+    & python $fixtureDb split-empty "$root/data/characters.db" "$root/data/auth.db"
+    Check ($splitFresh.Ok -and $LASTEXITCODE -eq 0 -and (Test-Path "$root/data/saves.db.migrated")) 'a fresh start sets both databases aside together and leaves the migrated saves.db alone'
+    $splitRestore = Operation 'RestoreBackup' @('-BackupId',$pair.Folder.Name)
+    & python $fixtureDb split-has "$root/data/characters.db" "$root/data/auth.db" 'split-one'
+    Check ($splitRestore.Ok -and $LASTEXITCODE -eq 0) ('a split backup restores both databases: ' + $splitRestore.Message)
+    $oldRestore = Operation 'RestoreBackup' @('-BackupId',$early.Folder.Name)
+    & python $fixtureDb restored "$root/data/saves.db"
+    Check ($oldRestore.Ok -and $LASTEXITCODE -eq 0 -and -not (Test-Path "$root/data/characters.db") -and -not (Test-Path "$root/data/auth.db")) 'an older saves.db backup goes back as data/saves.db, for the servers to migrate, with the split databases set aside'
+    $newRelease = Join-Path $fixture 'Split release'
+    New-Item -ItemType Directory -Force "$newRelease/data" | Out-Null
+    Set-Content "$newRelease/LocalExile.exe" 'stand-in'
+    Set-Content "$newRelease/release.json" '{}'
+    & python $fixtureDb split "$newRelease/data/characters.db" "$newRelease/data/auth.db" 'release-split'
+    $splitImport = Operation 'ImportSaves' @('-SaveSource',$newRelease)
+    & python $fixtureDb split-has "$root/data/characters.db" "$root/data/auth.db" 'release-split'
+    Check ($splitImport.Ok -and $LASTEXITCODE -eq 0 -and -not (Test-Path "$root/data/saves.db")) ('a split release''s saves come in whole, and what was here goes aside: ' + $splitImport.Message)
+    $deletedPair = Operation 'DeleteBackup' @('-BackupId',$pair.Folder.Name)
+    Check ($deletedPair.Ok -and -not (Test-Path $pair.Folder.FullName)) ("a split backup is deleted with both databases: " + $deletedPair.Message)
+    $root = $checkout
+    $refused = Operation 'ImportSaves' @('-SaveSource',$newRelease)
+    Check (-not $refused.Ok -and $refused.Message.Contains('newer LocalExile')) 'an older LocalExile refuses split saves it cannot read'
     # A release has no GameServer.slnx: a build would only get MSBuild's "Project file does not exist".
     $checkout = $root
     $root = $release

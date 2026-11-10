@@ -10,12 +10,13 @@ $env:Game_MODULES_FOLDER = ''; $env:Game_LEAGUES_FOLDER = ''; $env:Game_LEAGUE_M
 . (Join-Path $PSScriptRoot '../scripts/ContentBridge.ps1')
 $tokens=$null; $errors=$null
 $ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot '../scripts/RuntimeBridge.ps1'), [ref]$tokens, [ref]$errors)
-foreach ($name in 'Require','Assert-Physical','Get-ContentEnvironment','Join-Relative') {
+foreach ($name in 'Require','Assert-Physical','Get-ContentEnvironment','Join-Relative','Get-AccountDatabases') {
     $function = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name }, $true)
     . ([scriptblock]::Create($function.Extent.Text))
 }
 function At([string]$path) { Join-Path $script:root $path }
 $script:savePath = At "data/saves.db"
+$script:splitSaves = $false
 function Get-Python { if ([Environment]::OSVersion.Platform -eq 'Win32NT') { 'python' } else { 'python3' } }
 function Get-WaypointData { Join-Path $fixture 'waypoint data' }
 function Set-Stage($stage, $detail) { }

@@ -21,24 +21,35 @@ public static class BackupCatalog
 {
     public static string Key(string database) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(database).ToLowerInvariant())))[..16];
     public static string DirectoryFor(string database) => Path.Combine(SettingsStore.BackupsDirectory, Key(database));
+    /// <summary>The installation's backup folder. A LocalExile from the database split on, with its default characters.db,
+    /// keeps the folder of the data\saves.db it came from (<see cref="RuntimeSnapshot.EarlierSaveDatabase"/>), as the adapter does.</summary>
+    public static string DirectoryFor(RuntimeSnapshot state) => DirectoryFor(state.EarlierSaveDatabase.Length > 0 ? state.EarlierSaveDatabase : state.SaveDatabase);
+    /// <summary>The installation's backups: of its saves, and of the saves.db its split databases came from.</summary>
+    public static SaveBackup[] Read(RuntimeSnapshot state) =>
+        Read(DirectoryFor(state), state.EarlierSaveDatabase.Length > 0 ? [state.SaveDatabase, state.EarlierSaveDatabase] : [state.SaveDatabase]);
+    public static SaveBackup[] Read(string database) => Read(DirectoryFor(database), [database]);
 
-    public static SaveBackup[] Read(string database)
+    /// <summary>A backup's databases: characters.db with auth.db (a LocalExile from the database split on), or saves.db.</summary>
+    public static string[] Files(string backup) =>
+        File.Exists(Path.Combine(backup, "characters.db")) ? ["characters.db", "auth.db"] : ["saves.db"];
+
+    static SaveBackup[] Read(string directory, string[] databases)
     {
-        string directory = DirectoryFor(database);
         if (!System.IO.Directory.Exists(directory) || Redirected(directory)) return [];
         var result = new List<SaveBackup>();
         foreach (string path in System.IO.Directory.EnumerateDirectories(directory))
         {
             string id = Path.GetFileName(path);
             if (!Regex.IsMatch(id, @"\A\d{8}-\d{6}-[0-9a-f]{8}\z") || Redirected(path)) continue;
-            string metadata = Path.Combine(path, "backup.json"), save = Path.Combine(path, "saves.db");
-            if (!File.Exists(metadata) || !File.Exists(save) || Redirected(metadata) || Redirected(save) || new FileInfo(metadata).Length > 4 * 1024 * 1024) continue;
+            string metadata = Path.Combine(path, "backup.json");
+            string[] saves = Files(path).Select(name => Path.Combine(path, name)).Where(File.Exists).ToArray();
+            if (!File.Exists(metadata) || saves.Length == 0 || Redirected(metadata) || saves.Any(Redirected) || new FileInfo(metadata).Length > 4 * 1024 * 1024) continue;
             try
             {
                 using var doc = JsonDocument.Parse(File.ReadAllText(metadata));
                 string Value(string key) => doc.RootElement.TryGetProperty(key, out var item) && item.ValueKind == JsonValueKind.String ? item.GetString() ?? "" : "";
                 string Hash(string key) => Regex.IsMatch(Value(key), @"\A[0-9a-fA-F]{40}(?:[0-9a-fA-F]{24})?\z") ? Value(key) : "";
-                if (!DateTimeOffset.TryParse(Value("CreatedUtc"), out var created) || !string.Equals(Path.GetFullPath(Value("SaveDatabase")), Path.GetFullPath(database), StringComparison.OrdinalIgnoreCase)) continue;
+                if (!DateTimeOffset.TryParse(Value("CreatedUtc"), out var created) || !databases.Any(database => string.Equals(Path.GetFullPath(Value("SaveDatabase")), Path.GetFullPath(database), StringComparison.OrdinalIgnoreCase))) continue;
                 string label = Value("SourceLabel");
                 bool hasMods = doc.RootElement.TryGetProperty("Mods", out var mods) && mods.ValueKind == JsonValueKind.Object;
                 string modSummary = "";
@@ -83,7 +94,7 @@ public static class BackupCatalog
                         if (mods.TryGetProperty("RuntimeReport", out var report) && report.ValueKind == JsonValueKind.String) modHistory.Add(report.GetString()!);
                     }
                 }
-                result.Add(new(id, path, created, Hash("SourceCommit"), label.Length > 0 ? label : Value("SourceBranch"), Hash("LastBuildCommit"), Value("RequestedSource"), new FileInfo(save).Length, modSummary, hasMods, string.Join("\n", modHistory)));
+                result.Add(new(id, path, created, Hash("SourceCommit"), label.Length > 0 ? label : Value("SourceBranch"), Hash("LastBuildCommit"), Value("RequestedSource"), saves.Sum(save => new FileInfo(save).Length), modSummary, hasMods, string.Join("\n", modHistory)));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or ArgumentException or InvalidOperationException) { }
         }

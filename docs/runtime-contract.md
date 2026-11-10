@@ -50,8 +50,10 @@ the selected profile's resolved database before backup or mutation; desktop regi
 binding. A profile/location change while a dialog is open requires another review. It shares the global runtime writer mutex,
 requires stopped/known runtime inventory, makes the configured automatic save backup and checks inventory again.
 `AccountBridge.ps1` invokes `AccountData.py` through a UTF-8 stdin pipe, without transcribing passwords. The helper
-checks known tables/fields/import state, starts an immediate transaction, rechecks the selected account revision,
-validates names/destinations and commits all related row changes together. Unknown layouts are read-only or rejected.
+checks known tables/fields/import state (a split layout opens characters.db with auth.db attached as `auth`, as the
+servers do, and knows both files' tables, `updates` included), starts an immediate transaction, rechecks the selected account revision,
+validates names/destinations and commits all related row changes together (across the two split files, each commits
+on its own: the backup before covers both). Unknown layouts are read-only or rejected.
 Password/copy operations additionally recognize the selected checkout's verifier format. LocalExile source and DLLs
 remain independent of the distributable launcher. Registration retains the upstream temporary-service workflow and
 now follows the same backup and account runtime gates.
@@ -109,6 +111,11 @@ Existing-profile databases must exist; never silently fall back to a new empty d
 
 Only standard local listener, client and archive paths are supported. Custom TLS/CDN settings fail preflight.
 Normal upstream operation uses `data/saves.db`; local-profile operation uses the profile's explicit existing database.
+A LocalExile with `sql/base/characters/` (a checkout or a release from LocalExile/LocalExile#758 on) splits it: accounts in
+`data/auth.db` and the rest in `data/characters.db` (`Game_AUTH_DB`, `Game_CHARACTERS_DB`; without `Game_AUTH_DB`, auth.db
+beside a `characters.db`, else `<name>-auth.db`, as `SaveDatabase.AuthPathFor` does). The snapshot's `SaveDatabase` is then
+characters.db and `AuthDatabase` its auth.db. Its first server start migrates an old `data/saves.db`; until then that file is
+the saves, and the snapshot names it `EarlierSaveDatabase` (only for the default characters.db, the one the servers migrate).
 All production game-data paths remain relative to the selected checkout.
 
 ## Identity, readiness and stopping
@@ -136,7 +143,7 @@ server/watch root. Unknown peers fail closed. It sends Ctrl+C, then exits. The a
 captured server/watch subtree to exit and reports failure without forcing termination.
 The game is closed by its window and checked process identity; service shutdown requires the game to be closed first.
 
-Start runs the upstream extraction script, builds missing selected services when no owned services are running,
+Start runs the upstream extraction script (with `-Servers` when the script declares it, as live.ps1 does), builds missing selected services when no owned services are running,
 then starts only verified missing services using upstream's standard Debug commands, root working directory,
 dedicated cmd consoles and checkout-specific logs. It sets the upstream Gateway-enter, packet-dump, watch-log
 and disabled-walkmaps environment defaults. Old logs for those services are archived without touching live services.
@@ -207,7 +214,10 @@ drive pending/applied/failed status; a successful build is not proof of applicat
 remain separate from historical log events. Auth/Patch, static initializers and extracted data have no generic reload guarantee.
 
 Save backups use Python's SQLite online backup API, including committed WAL pages, then `PRAGMA integrity_check`.
-They are keyed by canonical database path under the launcher's stable local data directory. Metadata records source
+A split layout's characters.db and auth.db are copied in one read transaction, so one backup holds the same moment of
+both; until its servers migrate it, the old saves.db is backed up as it is. Copies are left in rollback-journal mode, one
+file each. They are keyed by canonical database path under the launcher's stable local data directory; a default
+characters.db keeps the key of the `data/saves.db` it came from, so earlier backups stay listed. Metadata records source
 commit/branch at backup, requested source/fresh choice, time, and last Gateway build recorded at a successful launcher
 start. That build hash is not an attestation of later hot edits or external launches. Unknown history remains unknown.
 Automatic backups default on for current/fresh activation, build, Gateway startup/restart, data reload and restore;
@@ -217,11 +227,14 @@ externally saved edit or watcher-triggered restart. Backup failure blocks the su
 Restore validates the chosen backup and its save-store association, requires stopped owned runtime, backs up current
 saves when enabled, and replaces only saves. Fresh saves are created only after successful build. Replaced SQLite
 database/WAL/SHM files are moved to operation-local recovery even with automatic copying off. Redirected save/backup
-paths are refused. Deletion accepts only a validated backup ID in the selected store and its two known files; no broad
+paths are refused. A split backup restores both files; a saves.db backup into a split layout goes back as
+`data/saves.db` (its databases set aside) for the servers to migrate; an older LocalExile refuses a split backup or
+another installation's split saves. Deletion accepts only a validated backup ID in the selected store and its known files; no broad
 recursive deletion occurs. Client, keys, source and game-data overrides are outside a save snapshot.
 
-Explicit game-data reload uses upstream's optional native client helper for the owned client and ready Gateway. Only
-that disposable helper has captured streams (never live.ps1). The adapter waits for `Game data reloaded: revision N`
+Explicit game-data reload uses upstream's optional native client helper for the owned client and ready Gateway: it sends
+`/reload` to a split layout (world.db) and `/game_data reload` before it. Only that disposable helper has captured streams
+(never live.ps1). The adapter waits for `Game data reloaded: revision N`
 in the helper's new Gateway replies. A timeout, missing dependency or missing confirmation reports failure/uncertainty;
 the launcher never assumes submission means application. The helper never starts a game for this operation.
 
@@ -312,7 +325,7 @@ Duplicate keys and malformed JSON remain rejected before configuration writes.
 
 `CreateLeague` requires the source league-loader hook (`CanCreate`), a new safe name, an empty marker template and isolated
 Void. The adapter checks stopped save writers before and after the optional backup. `LeagueData.py` opens the selected
-database read-only, verifies the known schema/import state and refuses retained league names in character and stash data.
+database read-only (with a split layout's auth.db attached), verifies the known schema/import state and refuses retained league names in character and stash data.
 It writes only a new physical directory, with independent identity, Void transitions and unchanged template mode flags.
 An exclusive directory reservation and a final no-replace manifest publication prevent partial leagues from being loaded
 or existing leagues from being overwritten. This operation never changes existing league source, saves or runtime state.

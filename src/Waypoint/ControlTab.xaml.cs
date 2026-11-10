@@ -524,8 +524,8 @@ public partial class ControlTab : UserControl
     async void CheckData(object sender, RoutedEventArgs e)
     {
         if (_shared.IsLiveRunning) { Say(() => L.Text("live.ps1 is running; check the game data when it is done.")); return; }
-        Append($"> {Repo.ExtractScript} -List");
-        int code = await Scripts.RunAsync(Repo.ExtractScript, ["-List"], line => Dispatcher.BeginInvoke(() => Append(line)));
+        Append($"> {Repo.ExtractScript} {string.Join(' ', Repo.ExtractListArguments)}");
+        int code = await Scripts.RunAsync(Repo.ExtractScript, Repo.ExtractListArguments, line => Dispatcher.BeginInvoke(() => Append(line)));
         Append($"(exit {code})");
     }
 

@@ -87,7 +87,59 @@ function Import-RuntimeProfile {
         Require (-not $value -or $value -ieq $entry.Value) "Adapter v1 requires the standard local value for $($entry.Key)."
     }
     Require (-not $env:Game_TLS_PFX -and -not $env:Game_CDN_PASSTHROUGH -and -not $env:Game_PATCH_WEB_ROOT -and -not $env:Game_PATCH_BACKUP_WEB_ROOT) 'Custom TLS/CDN patch settings are not supported by adapter v1.'
-    $script:savePath = if ($env:Game_SAVES_DB) { [IO.Path]::GetFullPath((Join-Relative $env:Game_SAVES_DB)) } else { At 'data/saves.db' }
+    Resolve-SaveLayout
+}
+# Where the saves are. A LocalExile with sql/base/characters/ (a checkout or a release from the database split on) keeps
+# accounts in auth.db and everything else in characters.db, and its first server start moves an old data/saves.db over
+# (its Agents/docs/dev/databases.md); an older one keeps everything in saves.db. $script:savePath names the saves either
+# way: characters.db, or saves.db. $script:earlierSavePath is the data/saves.db a split LocalExile still migrates: its
+# backups stay in the same backup folder, and it is backed up and set aside with the new files until the servers move it.
+function Resolve-SaveLayout {
+    $script:splitSaves = Test-Path -LiteralPath (At 'sql/base/characters') -PathType Container
+    $script:earlierSavePath = ''
+    $script:authPath = ''
+    if (-not $script:splitSaves) {
+        $script:savePath = if ($env:Game_SAVES_DB) { [IO.Path]::GetFullPath((Join-Relative $env:Game_SAVES_DB)) } else { At 'data/saves.db' }
+        return
+    }
+    $script:savePath = if ($env:Game_CHARACTERS_DB) { [IO.Path]::GetFullPath((Join-Relative $env:Game_CHARACTERS_DB)) } else { At 'data/characters.db' }
+    # The servers' rule (SaveDatabase.AuthPathFor): auth.db beside characters.db, else <name>-auth.db beside the file.
+    $name = [IO.Path]::GetFileNameWithoutExtension($script:savePath)
+    $script:authPath = if ($env:Game_AUTH_DB) { [IO.Path]::GetFullPath((Join-Relative $env:Game_AUTH_DB)) }
+        else { Join-Path (Split-Path $script:savePath) $(if ($name -ieq 'characters') { 'auth.db' } else { $name + '-auth.db' }) }
+    # The servers migrate data/saves.db only for the default characters.db (SavesMigration.MigrateIfNeeded).
+    if (Same-Path $script:savePath (At 'data/characters.db')) { $script:earlierSavePath = At 'data/saves.db' }
+}
+# The save files as they are now, each with the name it has in a backup. A split LocalExile whose servers have not yet
+# moved data/saves.db over has only that.
+function Get-SaveFiles {
+    if (-not $script:splitSaves) { return @(@{ Name='saves.db'; Path=$script:savePath } | Where-Object { Test-Path -LiteralPath $_.Path }) }
+    $current = @(@{ Name='characters.db'; Path=$script:savePath }, @{ Name='auth.db'; Path=$script:authPath } | Where-Object { Test-Path -LiteralPath $_.Path })
+    if ($current.Count) { return $current }
+    if ($script:earlierSavePath -and (Test-Path -LiteralPath $script:earlierSavePath)) { return @(@{ Name='saves.db'; Path=$script:earlierSavePath }) }
+    return @()
+}
+# The helper's database arguments: saves.db, or characters.db and its auth.db. Until a split LocalExile's servers have
+# moved an old data/saves.db over, the accounts are still there.
+function Get-AccountDatabases {
+    if (-not $script:splitSaves) { return @($script:savePath) }
+    if (-not (Test-Path -LiteralPath $script:savePath) -and -not (Test-Path -LiteralPath $script:authPath) -and
+        $script:earlierSavePath -and (Test-Path -LiteralPath $script:earlierSavePath)) { return @($script:earlierSavePath) }
+    return @($script:savePath, $script:authPath)
+}
+# Every file a restore or a fresh start sets aside, with its journal: the new files and an unmigrated saves.db.
+function Get-SavePaths {
+    $paths = @($script:savePath)
+    if ($script:authPath) { $paths += $script:authPath }
+    if ($script:earlierSavePath) { $paths += $script:earlierSavePath }
+    foreach ($path in $paths) { foreach ($suffix in @('','-wal','-shm')) { $path + $suffix } }
+}
+# Copies save files with the online backup (SaveBackup.py), all in one consistent read. $files: @{ Name; Path } each.
+function Copy-SaveFiles($files, [string]$destination) {
+    $arguments = @()
+    foreach ($file in @($files)) { Assert-Physical $file.Path; $arguments += @($file.Path, (Join-Path $destination $file.Name)) }
+    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') @arguments | Out-Host
+    return $LASTEXITCODE -eq 0
 }
 function Get-ContentEnvironment {
     $modules = if ($env:Game_MODULES_FOLDER) { Join-Relative $env:Game_MODULES_FOLDER } else { At 'Modules' }
@@ -249,7 +301,7 @@ function Get-Snapshot {
     $accountBlock = ''
     try { Assert-AccountsStopped ([pscustomobject]@{ Conflicts=$conflicts.ToArray(); Services=$services }) }
     catch { $accountBlock = $_.Exception.Message }
-    @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; SourceCommit=$commit; SourceBranch=$branch; AccountWriteBlockedReason=$accountBlock;
+    @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; AuthDatabase=$script:authPath; EarlierSaveDatabase=$script:earlierSavePath; SourceCommit=$commit; SourceBranch=$branch; AccountWriteBlockedReason=$accountBlock;
        SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); ModEnvironment=(Get-ModEnvironment $services); Capture=(Get-CaptureSnapshot $services); Content=(Get-ContentEnvironment) }
 }
 function Get-SourceSelectionPath {
@@ -312,7 +364,11 @@ function Start-Services($snapshot, [string[]]$selected) {
         Require ($LASTEXITCODE -eq 0) 'The checkout has uncommitted changes. Stop servers and build before starting additional services.'
     }
     Set-Stage 'Extracting data' 'Checking the upstream extraction manifest; missing or outdated data will be generated.'
-    & (At 'scripts/dev/extract-data.ps1')
+    # A LocalExile whose servers read the game data from client.db extracts only what they still read, as its live.ps1 does.
+    $extract = At 'scripts/dev/extract-data.ps1'
+    $extractArguments = @{}
+    if ((Get-Content -LiteralPath $extract -Raw) -match '\[switch\]\$Servers\b') { $extractArguments.Servers = $true }
+    & $extract @extractArguments
     if (-not $running.Count) {
         Set-Stage 'Building services' ($missing -join ', ')
         foreach ($name in $missing) {
@@ -457,21 +513,22 @@ function Get-Python {
 }
 function Backup-Saves($snapshot) {
     if ($NoBackup -and $Action -ne 'Backup') { Write-Host 'Automatic save backup is disabled.'; return }
-    if (-not (Test-Path -LiteralPath $script:savePath)) { Write-Host 'No save database exists yet; nothing to back up.'; return }
-    Assert-Physical $script:savePath
+    $files = @(Get-SaveFiles)
+    if (-not $files.Count) { Write-Host 'No save database exists yet; nothing to back up.'; return }
     $destination = Join-Path (Get-BackupDirectory) ((Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0,8))
     Assert-Physical $destination
     New-Item -ItemType Directory -Path $destination -Force | Out-Null
     Set-Stage 'Backing up saves' 'Creating a consistent SQLite snapshot and checking its integrity.'
-    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') $script:savePath (Join-Path $destination 'saves.db')
-    Require ($LASTEXITCODE -eq 0) 'Save backup failed. The requested change was not started. Read the operation log.'
+    Require (Copy-SaveFiles $files $destination) 'Save backup failed. The requested change was not started. Read the operation log.'
     $lastBuild = ''
     $historyPath = Join-Path (Get-BackupDirectory) 'last-launch.json'
     if (Test-Path -LiteralPath $historyPath) {
         Assert-Physical $historyPath
         try { $lastBuild = (Get-Content -LiteralPath $historyPath -Raw | ConvertFrom-Json).GatewayCommit } catch {}
     }
-    $metadata = @{ Repository=$script:root; SaveDatabase=$script:savePath; SourceCommit=$snapshot.SourceCommit; SourceBranch=$snapshot.SourceBranch; SourceLabel=$snapshot.SourceLabel;
+    # SaveDatabase names what was copied: saves.db (an unmigrated one too), or characters.db with auth.db (AuthDatabase).
+    $saved = if ($files[0].Name -eq 'saves.db') { $files[0].Path } else { $script:savePath }
+    $metadata = @{ Repository=$script:root; SaveDatabase=$saved; AuthDatabase=$script:authPath; Files=@($files | ForEach-Object { $_.Name }); SourceCommit=$snapshot.SourceCommit; SourceBranch=$snapshot.SourceBranch; SourceLabel=$snapshot.SourceLabel;
        LastBuildCommit=$lastBuild; RequestedKind=$SourceKind; RequestedSource=$SourceValue; StartFresh=[bool]$StartFresh; CreatedUtc=[datetime]::UtcNow.ToString('o'); Mods=(Get-ModBackupMetadata $snapshot) } |
         ConvertTo-Json -Depth 9
     Require ($metadata.Length -lt 4 * 1024 * 1024) 'Backup metadata exceeds its size limit; the requested change was not started.'
@@ -489,9 +546,11 @@ function Get-WaypointBackups {
     return Join-Path (Get-WaypointData) 'backups'
 }
 function Get-BackupDirectory {
+    # A split LocalExile's default saves keep the backup folder of the saves.db they came from, so its older backups stay listed.
+    $identity = if ($script:earlierSavePath) { $script:earlierSavePath } else { $script:savePath }
     $base = Get-WaypointBackups
     $sha = [Security.Cryptography.SHA256]::Create()
-    try { $key = ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($script:savePath.ToLowerInvariant())))).Replace('-','').Substring(0,16) }
+    try { $key = ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($identity.ToLowerInvariant())))).Replace('-','').Substring(0,16) }
     finally { $sha.Dispose() }
     return Join-Path $base $key
 }
@@ -506,35 +565,66 @@ function Record-SaveLaunch($snapshot) {
     Assert-Physical $path
     @{ GatewayCommit=$commit; SourceCommit=$snapshot.SourceCommit; LaunchedUtc=[datetime]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath $path -Encoding UTF8
 }
+# The databases in a backup or in another LocalExile's data folder: characters.db with auth.db, or saves.db. @{ Name; Path } each.
+function Get-SaveSet([string]$folder) {
+    $names = if (Test-Path -LiteralPath (Join-Path $folder 'characters.db')) { @('characters.db','auth.db') } else { @('saves.db') }
+    foreach ($name in $names) { Assert-Physical (Join-Path $folder $name) }
+    return @($names | Where-Object { Test-Path -LiteralPath (Join-Path $folder $_) -PathType Leaf } | ForEach-Object { @{ Name=$_; Path=(Join-Path $folder $_) } })
+}
+# Where a set of databases goes in this LocalExile. A split one takes characters.db and auth.db as they are, and an older
+# saves.db as data/saves.db, which its servers migrate at the next start; an older LocalExile cannot read the split files.
+function Get-SaveTargets($set) {
+    if (@($set | Where-Object { $_.Name -eq 'characters.db' }).Count) {
+        Require $script:splitSaves 'These saves are from a newer LocalExile, with accounts and characters in their own databases. Switch to that version first.'
+        return @($set | ForEach-Object { @{ Name=$_.Name; Path=$(if ($_.Name -eq 'auth.db') { $script:authPath } else { $script:savePath }) } })
+    }
+    $target = if ($script:splitSaves) { $script:earlierSavePath } else { $script:savePath }
+    Require $target 'Saves from before the database split go to data/saves.db, which this LocalExile does not use: its characters database is set elsewhere.'
+    return @(@{ Name='saves.db'; Path=$target })
+}
 function Get-SelectedBackup {
     Require ($BackupId -match '^\d{8}-\d{6}-[0-9a-f]{8}$') 'Select a backup from this installation.'
     $path = Join-Path (Get-BackupDirectory) $BackupId
     Assert-Physical $path
     Assert-Physical (Join-Path $path 'backup.json')
-    Assert-Physical (Join-Path $path 'saves.db')
     Require (Test-Path -LiteralPath (Join-Path $path 'backup.json')) 'Backup metadata is missing.'
     Require ((Get-Item -LiteralPath (Join-Path $path 'backup.json')).Length -lt 4 * 1024 * 1024) 'Backup metadata exceeds its size limit.'
     $meta = Get-Content -LiteralPath (Join-Path $path 'backup.json') -Raw | ConvertFrom-Json
-    Require (Same-Path $meta.SaveDatabase $script:savePath) 'This backup belongs to a different save database.'
-    Require (Test-Path -LiteralPath (Join-Path $path 'saves.db')) 'Backup database is missing.'
+    Require ((Same-Path $meta.SaveDatabase $script:savePath) -or (Same-Path $meta.SaveDatabase $script:earlierSavePath)) 'This backup belongs to a different save database.'
+    Require (@(Get-SaveSet $path).Count) 'Backup database is missing.'
     return $path
+}
+# Checked copies of a set of databases in a new folder of this operation, made before anything current is touched; null
+# when they could not be made.
+function Stage-Saves($set, [string]$name) {
+    $staged = Join-Path (Split-Path $ResultPath) $name
+    New-Item -ItemType Directory -Path $staged | Out-Null
+    if (-not (Copy-SaveFiles $set $staged)) { return $null }
+    return @($set | ForEach-Object { @{ Name=$_.Name; Path=(Join-Path $staged $_.Name) } })
+}
+function Install-Saves($staged, $targets) {
+    foreach ($target in $targets) {
+        $file = @($staged | Where-Object { $_.Name -eq $target.Name })[0]
+        Assert-Physical $target.Path
+        New-Item -ItemType Directory -Force -Path (Split-Path $target.Path) | Out-Null
+        Move-Item -LiteralPath $file.Path -Destination $target.Path
+    }
 }
 function Restore-SaveBackup($snapshot) {
     $path = Get-SelectedBackup
+    $targets = Get-SaveTargets (Get-SaveSet $path)
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
     Require (-not @($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Close the game before restoring saves. Owned servers will be stopped gracefully.'
     Stop-Services $snapshot $names
     Assert-SetupStopped (Get-Snapshot)
     # Stage and validate the selected snapshot before touching current saves.
     Set-Stage 'Checking restore' 'Verifying the selected SQLite backup.'
-    $staged = Join-Path (Split-Path $ResultPath) 'restore.db'
-    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') (Join-Path $path 'saves.db') $staged
-    Require ($LASTEXITCODE -eq 0) 'The selected backup could not be validated. Current saves were not changed.'
+    $staged = Stage-Saves (Get-SaveSet $path) 'restore'
+    Require $staged 'The selected backup could not be validated. Current saves were not changed.'
     Backup-Saves $snapshot
     Set-Stage 'Restoring saves' 'Replacing only this installation''s saves; source, client and keys are unchanged.'
     Move-PreviousSaves
-    New-Item -ItemType Directory -Force -Path (Split-Path $script:savePath) | Out-Null
-    Copy-Item -LiteralPath $staged -Destination $script:savePath
+    Install-Saves $staged $targets
     # This database has not yet been launched with the currently selected build.
     $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
     Assert-Physical $history
@@ -545,21 +635,20 @@ function Import-Saves($snapshot) {
     # Another LocalExile's saves into this checkout. That folder is only read: an online backup holds what is still in its WAL.
     Require ([IO.Path]::IsPathRooted($SaveSource)) 'Choose the LocalExile folder to bring the saves from.'
     $source = [IO.Path]::GetFullPath($SaveSource).TrimEnd('\')
-    $database = Join-Path $source 'data\saves.db'
-    Require (Test-Path -LiteralPath $database -PathType Leaf) 'That LocalExile folder has no saves.'
-    Require (-not (Same-Path $database $script:savePath)) 'Those are this LocalExile''s own saves.'
+    $set = @(Get-SaveSet (Join-Path $source 'data'))
+    Require $set.Count 'That LocalExile folder has no saves.'
+    Require (-not @($set | Where-Object { (Same-Path $_.Path $script:savePath) -or (Same-Path $_.Path $script:earlierSavePath) }).Count) 'Those are this LocalExile''s own saves.'
+    $targets = Get-SaveTargets $set
     Assert-SetupStopped $snapshot
     $inside = $source + '\'
     Require (-not @($script:processes | Where-Object { $_.ExecutablePath -and $_.ExecutablePath.StartsWith($inside, [StringComparison]::OrdinalIgnoreCase) }).Count) 'Close the game and stop your current LocalExile first.'
     Set-Stage 'Checking your saves' 'Making a consistent copy of your saves and checking it. The originals are not changed.'
-    $staged = Join-Path (Split-Path $ResultPath) 'import.db'
-    & (Get-Python) (Join-Path $PSScriptRoot 'SaveBackup.py') $database $staged
-    Require ($LASTEXITCODE -eq 0) 'Your saves could not be read. Nothing was changed.'
+    $staged = Stage-Saves $set 'import'
+    Require $staged 'Your saves could not be read. Nothing was changed.'
     Backup-Saves $snapshot
     Set-Stage 'Bringing your characters' 'Copying them into this LocalExile; anything already here is set aside.'
     Move-PreviousSaves
-    New-Item -ItemType Directory -Force -Path (Split-Path $script:savePath) | Out-Null
-    Move-Item -LiteralPath $staged -Destination $script:savePath
+    Install-Saves $staged $targets
     $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
     Assert-Physical $history
     if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
@@ -575,32 +664,45 @@ function Import-Saves($snapshot) {
 function Move-PreviousSaves {
     $recovery = Join-Path (Split-Path $ResultPath) 'previous-saves'
     New-Item -ItemType Directory -Path $recovery | Out-Null
-    foreach ($suffix in @('','-wal','-shm')) { Assert-Physical ($script:savePath + $suffix) }
-    foreach ($suffix in @('','-wal','-shm')) {
-        $source = $script:savePath + $suffix
-        if (Test-Path -LiteralPath $source) { Move-Item -LiteralPath $source -Destination (Join-Path $recovery ('saves.db' + $suffix)) }
+    $paths = @(Get-SavePaths)
+    foreach ($path in $paths) { Assert-Physical $path }
+    foreach ($path in $paths) {
+        if (-not (Test-Path -LiteralPath $path)) { continue }
+        $destination = Join-Path $recovery (Split-Path $path -Leaf)
+        if (Test-Path -LiteralPath $destination) { $destination = Join-Path $recovery ([guid]::NewGuid().ToString('N').Substring(0,8) + '-' + (Split-Path $path -Leaf)) }
+        Move-Item -LiteralPath $path -Destination $destination
     }
     Write-Host "Previous database retained for recovery: $recovery"
+}
+# Empty save databases where a fresh start leaves them: LocalExile's servers create their tables at the next start.
+function New-EmptySaves {
+    foreach ($path in @($script:savePath, $script:authPath) | Where-Object { $_ }) {
+        New-Item -ItemType Directory -Force -Path (Split-Path $path) | Out-Null
+        & (Get-Python) -c 'import sqlite3,sys; sqlite3.connect(sys.argv[1]).close()' $path
+        Require ($LASTEXITCODE -eq 0) 'Could not create the fresh save database. Previous saves remain in the recovery folder shown above.'
+    }
 }
 function Reload-GameData($snapshot) {
     Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
     Require ([bool]@($snapshot.Services | Where-Object { $_.Name -eq 'Game' -and $_.ProcessId }).Count) 'Enter the game with this installation before reloading game-data overrides.'
     Require ([bool]@($snapshot.Services | Where-Object { $_.Name -eq 'Gateway' -and $_.Status -eq 'Ready' }).Count) 'Gateway must be ready before reloading game data.'
-    Require (Test-Path -LiteralPath (At 'scripts/dev/client_control.py')) 'This revision has no supported native client-control helper. Use /game_data reload in game if supported.'
+    # A split LocalExile reads its game data from world.db, which /reload reads again; before it, /game_data reload.
+    $command = if ($script:splitSaves) { '/reload' } else { '/game_data reload' }
+    Require (Test-Path -LiteralPath (At 'scripts/dev/client_control.py')) "This revision has no supported native client-control helper. Use $command in game if supported."
     Backup-Saves $snapshot
-    Set-Stage 'Reloading game-data overrides' 'Sending /game_data reload through the selected checkout''s native client helper; waiting for Gateway confirmation.'
+    Set-Stage 'Reloading game-data overrides' "Sending $command through the selected checkout's native client helper; waiting for Gateway confirmation."
     $info = [Diagnostics.ProcessStartInfo]::new()
     $info.FileName = Get-Python
-    $info.Arguments = '"' + (At 'scripts/dev/client_control.py') + '" command "/game_data reload"'
+    $info.Arguments = '"' + (At 'scripts/dev/client_control.py') + '" command "' + $command + '"'
     $info.WorkingDirectory = $script:root; $info.UseShellExecute = $false; $info.CreateNoWindow = $true
     $info.RedirectStandardOutput = $true; $info.RedirectStandardError = $true
     $p = [Diagnostics.Process]::Start($info)
     try {
         $output = $p.StandardOutput.ReadToEndAsync(); $errorOutput = $p.StandardError.ReadToEndAsync()
         if (-not $p.WaitForExit(30000)) { $p.Kill(); throw 'Native helper timed out; only the disposable helper was stopped. Check Gateway logs to see whether the command applied.' }
-        Require ($p.ExitCode -eq 0) 'Native client helper failed. Check that this checkout''s Python has Frida installed, the supported client is in game, and native control is available. You can enter /game_data reload in game.'
+        Require ($p.ExitCode -eq 0) "Native client helper failed. Check that this checkout's Python has Frida installed, the supported client is in game, and native control is available. You can enter $command in game."
         $reply = $output.Result | ConvertFrom-Json
-        $confirmed = @($reply.result.replies | Where-Object { $_ -match '^Game data reloaded: revision [0-9]+\.?$' })
+        $confirmed = @($reply.result.replies | Where-Object { $_ -match '^Game data reloaded: revision [0-9]+(\.?$|;)' })
         Require ($reply.ok -eq $true -and $confirmed.Count -gt 0) 'Command sent, but Gateway did not confirm a game-data revision. Check Gateway logs; no success was assumed.'
         Write-Host ($confirmed -join "`n")
     } finally { $p.Dispose() }
@@ -664,12 +766,13 @@ function Switch-Source($snapshot) {
     Set-Stage 'Building selected revision' 'Services remain stopped. A failed build preserves the save database.'
     & dotnet build (At 'GameServer.slnx') --nologo -v minimal
     Require ($LASTEXITCODE -eq 0) 'Source switched, but the new revision did not build. Saves were preserved and services remain stopped. Review the build output or switch back.'
-    if ($StartFresh -and (Test-Path -LiteralPath $script:savePath)) {
+    # The revision decides where its saves are (saves.db, or auth.db and characters.db).
+    Resolve-SaveLayout
+    if ($StartFresh -and @(Get-SaveFiles).Count) {
         # A stopped SQLite database can still have committed WAL pages. Move the complete set aside together;
         # recovery files are retained locally even when automatic backup was disabled. No owner data is deleted.
         Move-PreviousSaves
-        & (Get-Python) -c 'import sqlite3,sys; sqlite3.connect(sys.argv[1]).close()' $script:savePath
-        Require ($LASTEXITCODE -eq 0) 'Could not create the fresh save database. Previous saves remain in the recovery folder shown above.'
+        New-EmptySaves
         $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
         Assert-Physical $history
         if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
@@ -678,12 +781,11 @@ function Switch-Source($snapshot) {
 }
 function Start-FreshSaves($snapshot) {
     Assert-SetupStopped $snapshot
-    if (-not (Test-Path -LiteralPath $script:savePath)) { Write-Host 'No save database exists yet; the next start creates one.'; return }
+    if (-not @(Get-SaveFiles).Count) { Write-Host 'No save database exists yet; the next start creates one.'; return }
     Backup-Saves $snapshot
     Set-Stage 'Starting fresh' 'Moving this installation''s saves aside; nothing is deleted.'
     Move-PreviousSaves
-    & (Get-Python) -c 'import sqlite3,sys; sqlite3.connect(sys.argv[1]).close()' $script:savePath
-    Require ($LASTEXITCODE -eq 0) 'Could not create the fresh save database. Previous saves remain in the recovery folder shown above.'
+    New-EmptySaves
     $history = Join-Path (Get-BackupDirectory) 'last-launch.json'
     Assert-Physical $history
     if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
@@ -969,9 +1071,10 @@ public static class NativeRuntime {
         'DeleteBackup' {
             $path = Get-SelectedBackup
             Set-Stage 'Deleting backup' $BackupId
-            Require (@(Get-ChildItem -LiteralPath $path -Force).Count -eq 2) 'The backup folder contains extra files. Open the folder and review them before deleting this backup.'
-            # Only the two known files and an empty, physically verified backup directory are removed.
-            Remove-Item -LiteralPath (Join-Path $path 'saves.db')
+            $files = @(Get-SaveSet $path)
+            Require (@(Get-ChildItem -LiteralPath $path -Force).Count -eq $files.Count + 1) 'The backup folder contains extra files. Open the folder and review them before deleting this backup.'
+            # Only the known files and an empty, physically verified backup directory are removed.
+            foreach ($file in $files) { Remove-Item -LiteralPath $file.Path }
             Remove-Item -LiteralPath (Join-Path $path 'backup.json')
             Remove-Item -LiteralPath $path
         }
