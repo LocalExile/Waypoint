@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Waypoint, the desktop launcher for a LocalExile server checkout (docs/launcher.md). `dotnet publish src/Waypoint -o publish`
-       puts one Waypoint.exe in publish\ (never -o .: the SDK leaves files under the output folder out of the sources). It references no server project: it drives a checkout through
+  <!-- Waypoint, the desktop launcher for a LocalExile server checkout (docs/launcher.md). `dotnet publish src/Waypoint -o .`
+       puts one Waypoint.exe in this repository's root. It references no server project: it drives a checkout through
        live.ps1, the Gateway's `commands`/`values` modes, the dev host's protocol, the server's logs and the adapter in
        scripts/ (Launcher.Core embeds it; BridgeScripts unpacks it). -->
   <PropertyGroup>

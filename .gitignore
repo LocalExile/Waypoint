@@ -1,5 +1,4 @@
-# The published launcher (dotnet publish src/Waypoint -o publish), and one an older -o . left in the root
-/publish/
+# The published launcher (dotnet publish src/Waypoint -o .)
 /Waypoint.exe
 
 # --- .NET ---
