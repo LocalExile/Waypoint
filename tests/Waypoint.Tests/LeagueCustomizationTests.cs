@@ -52,43 +52,120 @@ public sealed class LeagueCustomizationTests : IDisposable
     public void Any_module_goes_with_any_league_but_one_made_for_an_isolated_league()
     {
         Catalog();
-        // A league that leads to Standard, with a module of its own, as Ruthless and Phrecia are.
-        Write("Modules/Ruthless/module.json", """{"id":"Ruthless","depends":["Game"]}""");
-        Write("Leagues/Ruthless/league.json", """{"name":"Ruthless","base":"Standard","parent":"Standard","form":"ruthless","description":"Fixture."}""");
-        Write("Leagues/Ruthless/modules.json", """{"modules":["Core/Game","Core/Vendors","Ruthless"]}""");
-        Write("Leagues/Ruthless/Source/Fixture.cs", "public sealed class RuthlessLeague : League { }");
+        // A league that leads to Standard, with a module of its own, as Phrecia is.
+        Write("Modules/PhreciaAscendancies/module.json", """{"id":"PhreciaAscendancies","depends":["Game"]}""");
+        Write("Leagues/Phrecia/league.json", """{"name":"Phrecia","base":"Standard","parent":"Standard","description":"Fixture."}""");
+        Write("Leagues/Phrecia/modules.json", """{"modules":["Core/Game","Core/Vendors","PhreciaAscendancies"]}""");
+        Write("Leagues/Phrecia/Source/Fixture.cs", "public sealed class PhreciaLeague : League { }");
         var catalog = new GameSystems(Environment);
         var standard = catalog.Leagues.Single(l => l.Name == "Standard"); var survivors = catalog.Leagues.Single(l => l.Name == "Survivors");
-        var ruthless = catalog.Leagues.Single(l => l.Name == "Ruthless");
+        var phrecia = catalog.Leagues.Single(l => l.Name == "Phrecia");
         Assert.False(catalog.Isolated(standard));
-        Assert.False(catalog.Isolated(ruthless));
+        Assert.False(catalog.Isolated(phrecia));
         Assert.True(catalog.Isolated(survivors));
 
         // A core module the league does not ship with, and another league's own module: a module has no knowledge of
         // leagues, and any league can list it.
-        Assert.True(catalog.ModuleOffered(ruthless, "Core/Harvest"));
-        Assert.Null(catalog.CompositionError(ruthless, ["Core/Game", "Core/Vendors", "Ruthless", "Core/Harvest"]));
-        Assert.True(catalog.ModuleOffered(standard, "Ruthless"));
-        Assert.Null(catalog.CompositionError(standard, ["Core/Game", "Core/Vendors", "Ruthless"]));
+        Assert.True(catalog.ModuleOffered(phrecia, "Core/Harvest"));
+        Assert.Null(catalog.CompositionError(phrecia, ["Core/Game", "Core/Vendors", "PhreciaAscendancies", "Core/Harvest"]));
+        Assert.True(catalog.ModuleOffered(standard, "PhreciaAscendancies"));
+        Assert.Null(catalog.CompositionError(standard, ["Core/Game", "Core/Vendors", "PhreciaAscendancies"]));
         Assert.True(catalog.ModuleOffered(survivors, "Core/Vendors"));
-        Assert.Null(catalog.CompositionError(survivors, ["Core/Game", "Survivors/Run", "Core/Vendors", "Ruthless"]));
+        Assert.Null(catalog.CompositionError(survivors, ["Core/Game", "Survivors/Run", "Core/Vendors", "PhreciaAscendancies"]));
 
         // A module LocalExile ships only in an isolated league stays out of the leagues that lead to Standard...
         Assert.True(catalog.IsolatedModule("Survivors/Run"));
-        Assert.False(catalog.IsolatedModule("Ruthless"));
+        Assert.False(catalog.IsolatedModule("PhreciaAscendancies"));
         Assert.False(catalog.IsolatedModule("Core/Game"));
         Assert.False(catalog.ModuleOffered(standard, "Survivors/Run"));
-        Assert.False(catalog.ModuleOffered(ruthless, "Survivors/Run"));
+        Assert.False(catalog.ModuleOffered(phrecia, "Survivors/Run"));
         Assert.NotNull(catalog.CompositionError(standard, ["Core/Game", "Core/Vendors", "Survivors/Run"]));
         // ...and goes with a new league, which is isolated whatever it is made from.
         Assert.Null(catalog.CompositionError(standard, ["Core/Game", "Core/Vendors", "Survivors/Run"], forNewLeague: true));
         Assert.NotNull(catalog.PlanCreate(standard, "My Event", "Custom.", ["Core/Game", "Core/Vendors", "Survivors/Run"]));
 
         // The game is what LocalExile requires, and the one box that stays locked.
-        Assert.Equal(["Core/Game"], catalog.RequiredModules(ruthless));
+        Assert.Equal(["Core/Game"], catalog.RequiredModules(phrecia));
         Assert.Equal(["Core/Game"], catalog.RequiredModules(survivors));
         Assert.NotNull(catalog.CompositionError(standard, ["Core/Vendors"]));
         Assert.Null(catalog.CompositionError(standard, ["Core/Game", "Core/Vendors"]));
+    }
+    [Fact]
+    public void The_rules_of_a_game_mode_go_with_that_mode_and_with_a_league_made_in_Waypoint_on_a_base_that_has_it()
+    {
+        Catalog();
+        // As LocalExile ships Ruthless: one module, listed by the leagues of the form "ruthless" and by no other.
+        Write("Modules/Ruthless/module.json", """{"id":"Ruthless","depends":["Game"]}""");
+        Write("Modules/PlayerBots/module.json", """{"id":"PlayerBots","depends":["Game"]}""");
+        foreach (var (name, flags) in new[] { ("Ruthless", ",\"entryOf\":\"Standard\",\"entryKind\":\"form\""), ("SSF Ruthless", ",\"ssf\":true,\"entryOf\":\"SSF Standard\",\"entryKind\":\"form\"") })
+        {
+            Write($"Leagues/{name}/league.json", "{\"name\":\"" + name + "\",\"base\":\"Standard\",\"parent\":\"Standard\",\"form\":\"ruthless\",\"dataSet\":\"HardMode\",\"description\":\"Fixture.\"" + flags + "}");
+            Write($"Leagues/{name}/modules.json", """{"modules":["Core/Game","Core/Vendors","Ruthless"]}""");
+            Write($"Leagues/{name}/Source/Fixture.cs", "// template\npublic sealed class FixtureLeague : League { }");
+        }
+        // Leagues made in Waypoint: one from Standard, one from Survivors.
+        Profile("My Event", "Standard", """["Core/Game","Core/Vendors"]"""); Write("Leagues/My Event/.waypoint-league.json", """{"version":1,"template":"Standard"}""");
+        Profile("My Run", "Survivors", """["Core/Game","Survivors/Run"]"""); Write("Leagues/My Run/.waypoint-league.json", """{"version":1,"template":"Survivors"}""");
+        var catalog = new GameSystems(Environment);
+        GameLeague League(string name) => catalog.Leagues.Single(l => l.Name == name);
+
+        // The mode is read from the leagues that list the module, never from a name.
+        Assert.Equal("ruthless", catalog.ModeOf("Ruthless"));
+        Assert.Null(catalog.ModeOf("Core/Vendors"));    // listed by leagues of that mode and of none
+        Assert.Null(catalog.ModeOf("Survivors/Run"));   // its league has no mode
+        Assert.Null(catalog.ModeOf("PlayerBots"));      // listed by no league
+
+        // In a league of that mode it is the league's own.
+        Assert.True(catalog.ModuleOffered(League("Ruthless"), "Ruthless"));
+        Assert.Empty(catalog.RulesOnly(League("Ruthless"), ["Core/Game", "Ruthless"]));
+        // The leagues LocalExile ships in another mode have their own versions in that mode, and stay as they are.
+        foreach (string name in new[] { "Standard", "SSF Standard", "Survivors" })
+        {
+            Assert.False(catalog.ModuleOffered(League(name), "Ruthless"));
+            Assert.Contains("Standard", catalog.CompositionError(League(name), [.. League(name).BaseSystems, "Ruthless"]));
+        }
+        // A league made in Waypoint can have the rules, when the game base it was made on has that mode...
+        Assert.True(catalog.ModuleOffered(League("My Event"), "Ruthless"));
+        Assert.Null(catalog.CompositionError(League("My Event"), ["Core/Game", "Core/Vendors", "Ruthless"]));
+        // ...and its user is told that these are the rules without the rest of the mode.
+        Assert.Equal("Ruthless", Assert.Single(catalog.RulesOnly(League("My Event"), ["Core/Game", "Core/Vendors", "Ruthless"])).Path);
+        Assert.Empty(catalog.RulesOnly(League("My Event"), ["Core/Game", "Core/Vendors"]));
+        // Survivors' own base has no league of that mode, so a league made from Survivors does not get it.
+        Assert.False(catalog.ModuleOffered(League("My Run"), "Ruthless"));
+        Assert.NotNull(catalog.CompositionError(League("My Run"), ["Core/Game", "Survivors/Run", "Ruthless"]));
+
+        // The same for a league about to be made, and where one can start to have it.
+        Assert.True(catalog.ModuleOffered(League("Standard"), "Ruthless", forNewLeague: true));
+        Assert.NotNull(catalog.PlanCreate(League("Standard"), "My Hard Event", "Custom.", ["Core/Game", "Core/Vendors", "Ruthless"]));
+        Assert.False(catalog.ModuleOffered(League("Survivors"), "Ruthless", forNewLeague: true));
+        Assert.Throws<InvalidOperationException>(() => catalog.PlanCreate(League("Survivors"), "My Hard Run", "Custom.", ["Core/Game", "Survivors/Run", "Ruthless"]));
+        Assert.Equal(["Standard"], catalog.ModeStarts("Ruthless"));
+        Assert.Empty(catalog.ModeStarts("PlayerBots"));
+
+        // One that is already on where it does not fit, by a hand edit, stays until its user unticks it: another change
+        // still saves. It is not turned on anew, there or elsewhere.
+        Write("data/league-modules.json", """{"Standard":{"add":["Ruthless"],"remove":[]}}""");
+        catalog = new(Environment);
+        Assert.Contains("Ruthless", League("Standard").Systems);
+        Assert.False(catalog.ModuleOffered(League("Standard"), "Ruthless"));
+        Assert.Null(catalog.CompositionError(League("Standard"), [.. League("Standard").Systems, "PlayerBots"]));
+        Assert.Single(catalog.RulesOnly(League("Standard"), League("Standard").Systems));
+        Assert.NotNull(catalog.CompositionError(League("SSF Standard"), [.. League("SSF Standard").Systems, "Ruthless"]));
+
+        // A league made in Waypoint that lists the module does not change what the module is...
+        Write("Leagues/My Event/modules.json", """{"modules":["Core/Game","Core/Vendors","Ruthless"]}""");
+        catalog = new(Environment);
+        Assert.Equal("ruthless", catalog.ModeOf("Ruthless"));
+        // There it is an extra, not the league's own bundle: unticking it takes it back and says nothing about what
+        // the league is named for. In a league of that mode it is the bundle.
+        Assert.DoesNotContain("Ruthless", catalog.BundleModules(League("My Event")));
+        Assert.Empty(catalog.BundleLeftOut(League("My Event"), ["Core/Game", "Core/Vendors"]));
+        Assert.Contains("Ruthless", catalog.BundleModules(League("Ruthless")));
+        // ...and once a league LocalExile ships in another mode lists it, the files say it is no longer one mode's.
+        Write("Leagues/Standard/modules.json", """{"modules":["Core/Game","Core/Vendors","Core/Harvest","Ruthless"]}""");
+        catalog = new(Environment);
+        Assert.Null(catalog.ModeOf("Ruthless"));
+        Assert.True(catalog.ModuleOffered(League("SSF Standard"), "Ruthless"));
     }
     [Fact]
     public void A_league_can_run_without_its_own_bundle_and_its_user_is_told_what_is_left_out()

@@ -119,6 +119,23 @@ public sealed partial class GameSystemsTab
     string DraftBundleWarning() => _catalog is not null && _draftTemplate is not null && _catalog.BundleLeftOut(_draftTemplate, _draftModules) is { Count: > 0 } left
         ? L.Text("Without {0}, the new league has the mode of {1} but not its rules or content.", string.Join(", ", left.Select(ModuleTitle)), _draftTemplate.Name) : "";
 
+    /// <summary>What a module of a game mode means in a new league of another mode: the rules without the rest of the
+    /// mode, and where the whole mode is to be had. Empty when the draft has none.</summary>
+    string DraftModeWarning()
+    {
+        if (_catalog is null || _draftTemplate is null || _catalog.RulesOnly(_draftTemplate, _draftModules) is not { Count: > 0 } rules) return "";
+        // The whole mode is a choice of the first step, where the starting flag has a league of that mode to copy.
+        var whole = _draftCandidates.FirstOrDefault(c => ReferenceEquals(_catalog.FlagOf(c), _catalog.FlagOf(_draftTemplate))
+            && c.Hardcore == _draftTemplate.Hardcore && c.Ssf == _draftTemplate.Ssf
+            && rules.Any(m => c.Form.Equals(_catalog.ModeOf(m.Path), StringComparison.OrdinalIgnoreCase)));
+        return L.Text("{0} holds the rules of a game mode. The new league gets them without that mode's own skills, vendors and quest rewards, and the game does not show it as a league of that mode.",
+                string.Join(", ", rules.Select(ModuleTitle)))
+            + (whole is null ? "" : " " + L.Text("For the whole mode, go back and choose {0} as the game mode.", _catalog.ModePath(whole)));
+    }
+
+    /// <summary>Everything the draft calls for a word about before the league is made.</summary>
+    string DraftWarnings() => string.Join(" ", new[] { DraftBundleWarning(), DraftModeWarning() }.Where(text => text.Length > 0));
+
     string? DraftError()
     {
         if (_draftTemplate is null || _catalog is null) return L.Text("Choose a starting league." );
@@ -139,7 +156,7 @@ public sealed partial class GameSystemsTab
         // Nothing waits for the servers to stop: LocalExile reads its leagues when a server starts, so a league made
         // while one runs is there at its next start.
         else _validation.Text = error is not null ? L.Text("Cannot create: {0}", error)
-            : L.Text("Ready to create. Existing leagues and saves are preserved.") + (DraftBundleWarning() is { Length: > 0 } apart ? " " + apart : "");
+            : L.Text("Ready to create. Existing leagues and saves are preserved.") + (DraftWarnings() is { Length: > 0 } apart ? " " + apart : "");
         if (_primary is not null) _primary.IsEnabled = !Busy && error is null;
     }
     async Task CreateLeagueAsync()
@@ -151,7 +168,7 @@ public sealed partial class GameSystemsTab
             var request = _catalog.PlanCreate(_draftTemplate, name, _draftDescription?.Text ?? "", _draftModules);
             string consequence = _draftTemplate.Hardcore ? L.Text("Hardcore death in this custom league is permanent.") : L.Text("Its characters and stash stay separate from Standard.");
             // The new league takes its mode from the league it starts from, whose own bundle may have been unticked.
-            string apart = DraftBundleWarning();
+            string apart = DraftWarnings();
             if (!Dialog.Ask(Owner, apart.Length > 0 ? DialogKind.Warning : DialogKind.Question, L.Text("Create league"),
                     L.Text("Create the league \"{0}\" in {1} mode? {2} Existing leagues and saves are preserved.", name, _catalog.Modes(_draftTemplate), consequence)
                     + (apart.Length > 0 ? "\n\n" + apart : ""), L.Text("Create"), L.Text("Cancel"))) return;

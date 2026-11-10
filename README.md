@@ -88,7 +88,7 @@ number of source checkouts, and choosing one opens it: no file moves, and Waypoi
 **Modules** and **Leagues** can be edited on a release from v0.2.0-beta on and on a source checkout that exposes the
 supported settings and league-choice hooks: which modules a league uses, their settings, and new leagues. Any installed
 module can be ticked for any league when what it needs is on, Player Bots among them; turning off a league's own bundle
-(Ruthless in a Ruthless league) asks first, and the Survivors modules stay in isolated leagues. A release hides and shows only the leagues made in Waypoint. The league card's name, description and mode links have a read-only preview.
+(Ruthless in a Ruthless league) asks first, the Survivors modules stay in isolated leagues, and the rules of a game mode (Ruthless) go with that mode's leagues and with leagues made in Waypoint. A release hides and shows only the leagues made in Waypoint. The league card's name, description and mode links have a read-only preview.
 
 On a release install, **Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
 full control over branches and pull requests. Someone coming from an earlier launcher starts there.

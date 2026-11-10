@@ -900,6 +900,9 @@
   <data name="Text_1a6192ed0ec5" xml:space="preserve">
     <value>从最新更改开始。之后由你自己在“版本”部分更新此副本。</value>
   </data>
+  <data name="Text_1a6e5743a0b2" xml:space="preserve">
+    <value>只要所需的模块已启用，这里可以启用或停用任何已安装的模块。停用此联赛自身的模块组前会先询问，为独立联赛制作的模块只能用于独立联赛，游戏模式的规则则用于该模式的联赛以及在 Waypoint 中创建的联赛。</value>
+  </data>
   <data name="Text_1a6ff8f22cbb" xml:space="preserve">
     <value>准备好后即可开始。你可以随时停止，整个过程中游戏都可以保持关闭。</value>
   </data>
@@ -1174,6 +1177,9 @@
   <data name="Text_22695d9b9731" xml:space="preserve">
     <value>尚未读取。</value>
   </data>
+  <data name="Text_226cc5e45c9b" xml:space="preserve">
+    <value>若要完整的模式，请返回上一步，将游戏模式选为“{0}”。</value>
+  </data>
   <data name="Text_2288c47a9839" xml:space="preserve">
     <value>仅错误和警告</value>
   </data>
@@ -1408,6 +1414,9 @@
   </data>
   <data name="Text_282b08d0523c" xml:space="preserve">
     <value>获取 Node.js</value>
+  </data>
+  <data name="Text_282e649055dc" xml:space="preserve">
+    <value>{0} 包含一种游戏模式的规则。新联赛会采用这些规则，但不包含该模式自身的技能、商人和任务奖励，游戏也不会把它显示为该模式的联赛。</value>
   </data>
   <data name="Text_284c52af98f1" xml:space="preserve">
     <value>游戏运行中</value>
@@ -1943,6 +1952,9 @@
   </data>
   <data name="Text_375e15d846ce" xml:space="preserve">
     <value>Waypoint 薄荷绿</value>
+  </data>
+  <data name="Text_378a5666fe38" xml:space="preserve">
+    <value>游戏模式的规则</value>
   </data>
   <data name="Text_37a8eec1ce19" xml:space="preserve">
     <value>默认</value>
@@ -3743,6 +3755,9 @@
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>异能固定词缀</value>
+  </data>
+  <data name="Text_6f1f1b23d3fd" xml:space="preserve">
+    <value>在这里它只提供一种游戏模式的规则，不包含该模式自身的技能、商人和任务奖励。</value>
   </data>
   <data name="Text_6f20e73b9302" xml:space="preserve">
     <value>前缀</value>
@@ -6675,6 +6690,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c87d285421d0" xml:space="preserve">
     <value>无法选择经过测试的版本（git 退出代码 {0}）。</value>
   </data>
+  <data name="Text_c881ce2fb9a6" xml:space="preserve">
+    <value>{0} 包含一种游戏模式的规则。可以为在 Waypoint 中创建、并以下列之一为基础的联赛启用：{1}。</value>
+  </data>
   <data name="Text_c888f98938da" xml:space="preserve">
     <value>{0} 天前</value>
   </data>
@@ -7015,9 +7033,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d3c3517c3d57" xml:space="preserve">
     <value>此处已安装 LocalExile {0}。</value>
-  </data>
-  <data name="Text_d3d0b33deb9f" xml:space="preserve">
-    <value>只要所需的模块已启用，这里可以启用或停用任何已安装的模块。停用此联赛自身的模块组前会先询问，为独立联赛制作的模块只能用于独立联赛。</value>
   </data>
   <data name="Text_d3d8d0a92084" xml:space="preserve">
     <value>联盟设置</value>
@@ -7559,6 +7574,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e3b7b1ed944d" xml:space="preserve">
     <value>已发布的 LocalExile：经过测试，在你同意时更新。</value>
+  </data>
+  <data name="Text_e3ba7472396e" xml:space="preserve">
+    <value>{0} 包含一种游戏模式的规则。在此启用后，这些规则将从下次服务器启动起对此联赛的所有角色生效，但不包含该模式自身的技能、商人和任务奖励，游戏仍按原样显示此联赛。取消勾选即可恢复。</value>
   </data>
   <data name="Text_e3ebaa16dd9d" xml:space="preserve">
     <value>未找到</value>
@@ -8142,6 +8160,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f4ed6bccdcb2" xml:space="preserve">
     <value>惊悸迷雾</value>
+  </data>
+  <data name="Text_f4f3bad65021" xml:space="preserve">
+    <value>{0} 包含一种游戏模式的规则，用于该模式的联赛。</value>
   </data>
   <data name="Text_f4f5dca37b59" xml:space="preserve">
     <value>{0} / {1} 个账号</value>

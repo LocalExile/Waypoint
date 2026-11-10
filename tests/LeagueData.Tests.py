@@ -150,16 +150,16 @@ class LeagueDataTests(unittest.TestCase):
 
     def test_any_module_goes_with_any_league_but_one_made_for_an_isolated_league(self):
         self.standard_as_shipped()
-        self.profile("Ruthless", ["Core/Game", "Core/Vendors", "Extra/X"], base="Standard", parent="Standard", form="ruthless")
+        self.profile("Phrecia", ["Core/Game", "Core/Vendors", "Extra/X"], base="Standard", parent="Standard")
         # A core module the league does not ship with, and another league's own module: a module has no knowledge of
         # leagues, and any league can list it.
-        self.run_request(self.choose("Ruthless", ["Core/Harvest"]), action="SaveLeagueModules")
+        self.run_request(self.choose("Phrecia", ["Core/Harvest"]), action="SaveLeagueModules")
         self.run_request(self.choose("Standard", ["Extra/X"]), action="SaveLeagueModules")
         self.run_request(self.choose("Survivors", ["Core/Vendors", "Extra/X", "Extra/Y"]), action="SaveLeagueModules")
         saved = data.read_json(self.choices)
-        self.assertEqual((saved["Ruthless"]["add"], saved["Standard"]["add"]), (["Core/Harvest"], ["Extra/X"]))
+        self.assertEqual((saved["Phrecia"]["add"], saved["Standard"]["add"]), (["Core/Harvest"], ["Extra/X"]))
         # A module LocalExile ships only in an isolated league stays out of the leagues that lead to Standard...
-        for league in ("Standard", "Ruthless"):
+        for league in ("Standard", "Phrecia"):
             with self.assertRaisesRegex(data.AccountError, "isolated"):
                 self.run_request(self.choose(league, ["Survivors/Skills"]), action="SaveLeagueModules")
         # ...goes with another isolated league, and with a new league, which is isolated whatever it is made from.
@@ -170,6 +170,40 @@ class LeagueDataTests(unittest.TestCase):
         # What a module needs has to be on.
         with self.assertRaisesRegex(data.AccountError, "needs"):
             self.run_request(self.choose("Hardcore", ["Survivors/Run"]), action="SaveLeagueModules")
+
+    def test_the_rules_of_a_game_mode_go_with_that_mode_and_with_a_league_made_in_waypoint_on_a_base_that_has_it(self):
+        self.standard_as_shipped()
+        # As LocalExile ships Ruthless: a module listed by the leagues of the form "ruthless" and by no other.
+        self.profile("Ruthless", ["Core/Game", "Core/Vendors", "Extra/X"], base="Standard", parent="Standard", form="ruthless", dataSet="HardMode")
+        for name, base, modules in (("My Event", "Standard", ["Core/Game", "Core/Vendors"]), ("My Run", "Survivors", ["Core/Game", "Survivors/Skills"])):
+            self.profile(name, modules, base=base)
+            self.write(self.leagues / name / ".waypoint-league.json", {"version": 1, "template": base})
+        # The leagues LocalExile ships in another mode have their own versions in that mode, and stay as they are.
+        for league in ("Standard", "SSF Standard", "Survivors"):
+            with self.assertRaisesRegex(data.AccountError, "game mode"):
+                self.run_request(self.choose(league, ["Extra/X"]), action="SaveLeagueModules")
+        # A league made in Waypoint can have the rules when its game base has that mode; one made from Survivors cannot.
+        self.run_request(self.choose("My Event", ["Extra/X"]), action="SaveLeagueModules")
+        self.assertEqual(data.read_json(self.choices)["My Event"]["add"], ["Extra/X"])
+        with self.assertRaisesRegex(data.AccountError, "game mode"):
+            self.run_request(self.choose("My Run", ["Extra/X"]), action="SaveLeagueModules")
+        # The same for a league about to be made.
+        request = self.request(name="My Hard Event")
+        request["modules"].append("Extra/X")
+        self.run_request(request)
+        request = self.request("Survivors", "My Hard Run")
+        request["modules"].append("Extra/X")
+        with self.assertRaisesRegex(data.AccountError, "game mode"):
+            self.run_request(request)
+        # In a league of that mode it is a box like any other: off, and on again.
+        self.run_request(self.choose("Ruthless", remove=["Extra/X"]), action="SaveLeagueModules")
+        self.run_request(self.choose("Ruthless"), action="SaveLeagueModules")
+        # One already on where it does not fit, by a hand edit, stays while another change is saved...
+        self.write(self.choices, {"Standard": {"add": ["Extra/X"], "remove": []}})
+        self.run_request(self.choose("Standard", ["Extra/X", "Extra/Y"]), action="SaveLeagueModules")
+        # ...and once a league LocalExile ships in another mode lists it, the files say it is no longer one mode's.
+        self.write(self.leagues / "SSF Standard/modules.json", {"modules": ["Core/Game", "Core/Vendors", "Extra/X"]})
+        self.run_request(self.choose("Survivors", ["Extra/X"]), action="SaveLeagueModules")
 
     def test_a_module_no_shipped_league_lists_is_an_add_on_that_is_never_required(self):
         # Extra/X is in no league's list: an add-on, as PlayerBots is. LocalExile's own guide turns it on this way.
