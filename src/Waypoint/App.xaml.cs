@@ -27,6 +27,8 @@ public partial class App : Application
         // The first start's questions are windows too; closing one must not end the application.
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         Settings = Settings.Load();
+        // Waypoint's own log, from the first moment: the setup guide runs before there is a checkout.
+        SessionLog.Open(SupportReport.LogFolder, $"Waypoint {Updates.Current} · {Environment.OSVersion} · .NET {Environment.Version}");
         // The player's folders and tools, before anything reads a folder or starts a tool.
         Settings.ApplyPaths();
         // Before anything shows, the first start's questions included.
@@ -60,6 +62,8 @@ public partial class App : Application
             Environment.CurrentDirectory = root;
             Repo.IsInstall = LocalExileReleases.IsInstall(root);
             if (Repo.IsInstall) Repo.ClientVersion = LocalExileReleases.Installed(root);
+            SessionLog.Current?.Write("Folder: " + root);
+            foreach (string detail in SupportReport.Details(Settings.Advanced)) SessionLog.Current?.Write(detail);
             if (options.RepositoryPath is null) Editions.Remember(Settings, root);
             // A Python installed without its PATH option counts, for Waypoint and the scripts it runs.
             await Prerequisites.RefreshToolsAsync();
@@ -67,6 +71,7 @@ public partial class App : Application
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException
             or System.ComponentModel.Win32Exception or System.Security.SecurityException or InvalidOperationException)
         {
+            SessionLog.Current?.Write("Could not open Waypoint: " + ex, "ERROR");
             Dialog.Tell(null, DialogKind.Error, L.Text("Could not open Waypoint"), L.Text(ex.Message));
             ReleaseInstance();
             Shutdown(1);
@@ -192,6 +197,7 @@ public partial class App : Application
 
     static void Crashed(object exception)
     {
+        SessionLog.Current?.Write("Waypoint crashed: " + exception, "ERROR");
         try
         {
             Directory.CreateDirectory(Repo.Logs);
@@ -202,6 +208,7 @@ public partial class App : Application
 
     static void Unhandled(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
+        SessionLog.Current?.Write("Unexpected error: " + e.Exception, "ERROR");
         if (Dialog.Show(Current.MainWindow, DialogKind.Error, L.Text("Unexpected error"),
                 L.Text("Something failed; Waypoint keeps running. The details help a bug report."), e.Exception.ToString(),
                 [L.Text("OK"), L.Text("Copy details")]) == 1)

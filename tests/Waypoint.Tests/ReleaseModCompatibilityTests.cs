@@ -47,6 +47,34 @@ public class ReleaseModCompatibilityTests
         finally { (Repo.IsInstall, Repo.ClientVersion) = (install, client); }
     }
 
+    [Theory]
+    [InlineData("0.1.0-beta", false)] // Legacy: refused with its own message.
+    [InlineData("0.2.0-beta", true)]
+    [InlineData("0.2.1-beta", true)]
+    [InlineData("0.2.2-beta", false)]
+    [InlineData("0.3.0", false)]
+    public void A_release_that_cannot_load_compiled_mods_is_warned_and_never_refused(string version, bool warned)
+    {
+        var (install, client) = (Repo.IsInstall, Repo.ClientVersion);
+        try
+        {
+            Repo.IsInstall = true;
+            Repo.ClientVersion = ReleaseVersion.Parse(version);
+            Assert.Equal(warned, Repo.ReleaseModsMayNotLoad);
+            Assert.Equal(warned, ModsText.MayNotLoadNotice().Length > 0);
+            if (warned)
+            {
+                ModBrowser.RequireModernMods();
+                Assert.True(new BrowseItem(ModSource.Official, Listing, null, null).CanAct);
+                Assert.Contains("v0.2.2-beta", ModsText.MayNotLoadNotice());
+            }
+            // A source checkout builds its own GameServer.Modding: never warned.
+            Repo.IsInstall = false;
+            Assert.False(Repo.ReleaseModsMayNotLoad);
+        }
+        finally { (Repo.IsInstall, Repo.ClientVersion) = (install, client); }
+    }
+
     [Fact]
     public void An_incompatible_mod_is_marked_but_still_installable()
     {

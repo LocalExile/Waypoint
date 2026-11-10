@@ -23,7 +23,7 @@ param(
     [string]$ModStaged = '',
     [ValidateSet('','Binaries','Source','Modules','Leagues')][string]$ModTarget = '',
     [string]$ModExpectedHash = '',
-    [ValidatePattern('^$|^[0-9a-fA-F]{64}$')][string]$ClientExecutableHash = ''
+    [ValidatePattern('^$|^[0-9a-fA-F]{64}(,[0-9a-fA-F]{64})*$')][string]$ClientExecutableHash = ''
 )
 . (Join-Path $PSScriptRoot 'ModBridge.ps1')
 . (Join-Path $PSScriptRoot 'AccountBridge.ps1')
@@ -720,9 +720,12 @@ function Prepare-Client($snapshot) {
     $prepared = At 'Client/Game.patched.exe'
     $gameHash = if (Test-Path -LiteralPath $game) { (Get-FileHash -LiteralPath $game -Algorithm SHA256).Hash } else { '' }
     $originalHash = if (Test-Path -LiteralPath $original) { (Get-FileHash -LiteralPath $original -Algorithm SHA256).Hash } else { '' }
-    # Only a fingerprint from ClientLocator for this checkout's declared build authorizes a repair.
-    # Small launchers, future builds and a different checkout's build cannot replace an existing executable.
-    $refresh = $ClientExecutableHash -and $originalHash -eq $ClientExecutableHash -and $gameHash -and $gameHash -ne $originalHash
+    # Only a fingerprint from ClientLocator for this checkout's declared build authorizes a repair: one for each executable
+    # GGG shipped under the build's name (a hotfix keeps the name), comma-separated.
+    # Small launchers, future builds and a different checkout's build cannot replace an existing executable, and a
+    # Game.exe that is one of the build's own executables is valid as it is: the build's other one does not replace it.
+    $clientHashes = @($ClientExecutableHash -split ',' | Where-Object { $_ })
+    $refresh = $originalHash -and $clientHashes -contains $originalHash -and $gameHash -and $clientHashes -notcontains $gameHash
     Write-Host "Client/Game.exe SHA-256: $gameHash"
     Write-Host "Client/PathOfExile.exe SHA-256: $originalHash"
     Set-Stage 'Building preparation tools' 'Auth and Patch'
@@ -743,14 +746,14 @@ function Prepare-Client($snapshot) {
         if ($refresh) {
             $stagedGame = At ('Client/.waypoint-game-' + [guid]::NewGuid().ToString('N') + '.exe')
             [IO.File]::Copy($original, $stagedGame, $false)
-            Require ((Get-FileHash -LiteralPath $stagedGame -Algorithm SHA256).Hash -eq $ClientExecutableHash) 'The client changed during preparation. Close its official launcher and try again.'
+            Require ((Get-FileHash -LiteralPath $stagedGame -Algorithm SHA256).Hash -eq $originalHash) 'The client changed during preparation. Close its official launcher and try again.'
             $inputGame = $stagedGame
         }
         if (-not $keys) {
             & dotnet $auth keygen $inputGame
             Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3c.'
         }
-        $knownGame = $ClientExecutableHash -and ($refresh -or $gameHash -eq $ClientExecutableHash)
+        $knownGame = $refresh -or ($gameHash -and $clientHashes -contains $gameHash)
         $stalePatch = $patched -and $knownGame -and (
             (Get-Item -LiteralPath $prepared).Length -ne (Get-Item -LiteralPath $inputGame).Length -or
             (Get-Item -LiteralPath $prepared).LastWriteTimeUtc -lt (Get-Item -LiteralPath $inputGame).LastWriteTimeUtc -or

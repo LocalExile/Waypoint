@@ -189,9 +189,12 @@ static class AccountUi
     }
 }
 
-/// <summary>The report for a bug: redacted, previewed, and copied only when the player asks.</summary>
+/// <summary>The report for a bug: redacted, previewed, and copied or saved as a file only when the user asks.</summary>
 public sealed class DiagnosticPreviewDialog : FormWindow
 {
+    /// <summary>The report for support (<see cref="SupportReport"/>): Waypoint's own log and every server's newest lines.</summary>
+    internal static void Show(Window? owner, Shared shared) => new DiagnosticPreviewDialog(owner!, SupportReport.For(shared)).ShowDialog();
+
     public DiagnosticPreviewDialog(Window owner, Func<string[], string> create)
     {
         DialogLayout.Configure(this, owner, L.Text("Diagnostic report preview"), 820);
@@ -221,7 +224,32 @@ public sealed class DiagnosticPreviewDialog : FormWindow
             try { Clipboard.SetText(preview.Text); copy.Content = L.Text("Copied"); }
             catch (System.Runtime.InteropServices.COMException) { copy.Content = L.Text("Clipboard busy — try again"); }
         };
-        buttons.Children.Add(copy); buttons.Children.Add(new Button { Content = L.Text("Close"), IsCancel = true });
+        var save = new Button { Content = L.Text("Save as a file"), ToolTip = L.Text("Saves the reviewed report as one text file and shows it, ready to attach or drag into a chat") };
+        save.Click += (_, _) =>
+        {
+            try
+            {
+                string path = SupportReport.Save(SupportReport.Folder, preview.Text, DateTime.Now);
+                save.Content = L.Text("Saved");
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"/select,\"{path}\"") { UseShellExecute = false })?.Dispose();
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
+            {
+                Dialog.Tell(this, DialogKind.Warning, L.Text("Could not save the report"), e.Message);
+            }
+        };
+        var folder = new Button { Content = L.Text("Open log folder"), ToolTip = L.Text("Waypoint's own log files, kept between sessions") };
+        folder.Click += (_, _) =>
+        {
+            try
+            {
+                Directory.CreateDirectory(SupportReport.LogFolder);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe") { ArgumentList = { SupportReport.LogFolder }, UseShellExecute = false })?.Dispose();
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception) { }
+        };
+        buttons.Children.Add(copy); buttons.Children.Add(save); buttons.Children.Add(folder);
+        buttons.Children.Add(new Button { Content = L.Text("Close"), IsCancel = true });
         Grid.SetRow(buttons, 3); grid.Children.Add(buttons); Content = grid;
     }
 }

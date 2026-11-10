@@ -429,7 +429,8 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
   while the game already runs stays open. The tray icon's menu shows the window, stops everything or exits.
 - A failure on a background thread (the process sampling, a runtime counter session, the log reading) is reported in
   Waypoint's log, never ends it: a server that `live.ps1` stops ends its counter stream anywhere, even inside
-  a block. Anything that still ends the process is written to the checkout's `logs\launcher-crash.log`.
+  a block. Anything that still ends the process is written to the checkout's `logs\launcher-crash.log` and to
+  Waypoint's own log on disk.
 
 ### Versions
 
@@ -511,7 +512,9 @@ or a source copy on its own branch `waypoint-3.29.3b` at the head of the server'
 LocalExile works with one Path of Exile build at a time. v0.2.0-beta moved from 3.29.3b to **3.29.3c**: a 3.29.3b client no
 longer logs in to it, and v0.1.0-beta (the server's `3.29.3b` branch) is the last LocalExile for 3.29.3b. `ClientLocator.Builds`
 holds each build Waypoint knows (the SHA-256 and size of its `PathOfExile.exe`, and for an older build its last release and
-commit); `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
+commit), with a row for each executable GGG shipped under the build's name: the 3.29.3.5 hotfix is still 3.29.3c, with
+another `PathOfExile.exe`, and LocalExile runs both with the same code. A hotfix Waypoint has no row for shows as "not
+the 3.29.3c build" in the setup guide, which warns before the copy and lets the player go on. `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
 `scripts/release/build-release.ps1`), so a folder pinned to an older version keeps its own.
 
 The rule: a player who has a 3.29.3c client plays on 3.29.3c; one who has only 3.29.3b keeps the last LocalExile for it. Waypoint
@@ -730,6 +733,13 @@ applies them at its next start) but disables install, update, uninstall and sett
 (`Repo.LegacyReleaseMods`). This is checked in the adapter (`Test-LegacyReleaseMods`) as well as in the interface. Simple mode on a release keeps its existing sections; Modules and Leagues are available
 for read-only inspection in Advanced mode.
 
+v0.2.0-beta and v0.2.1-beta take downloaded mods but cannot load the compiled ones: their `GameServer.Modding.dll` carries
+the release's version (0.2.x), the mods of LocalExile-Mods are built for 1.0.0.0, and the server reports "Could not load
+file or assembly 'GameServer.Modding, Version=1.0.0.0'" (fixed in LocalExile #762, first released as v0.2.2-beta). On
+those two the Mods section only warns, above its other notices, that the release has this bug and that updating LocalExile
+fixes it (`Repo.ReleaseModsMayNotLoad`). Nothing is refused: a player can still uninstall a mod there, and a script mod
+is compiled by the server itself.
+
 ### Modules and Leagues
 
 **Modules** lists gameplay systems from the selected checkout's `Modules/`, without loading server assemblies. Select one
@@ -915,9 +925,21 @@ or a crash is an error, and a warning or a slow handler ("took 73 ms") is a warn
 error. A server that exits while no `live.ps1` run is going on is reported as an error in the launcher's log and in
 "All errors"; a client closed by its player is not.
 
-**Diagnostic report** builds a report for a bug: the versions, the services, what is missing, the recent operations and the
-log on screen, with paths, account and character names and credentials redacted. It is previewed first, more names can be
-removed there, and it goes to the clipboard only when asked.
+Waypoint keeps a log of its own on disk, `logs\waypoint.log` in its own folder (`%LOCALAPPDATA%\Waypoint`, or
+`WAYPOINT_HOME`), not the checkout's (`SessionLog`). It holds every line of the launcher's log, so each `live.ps1` run and
+adapter operation with how it ended and how long it took, the setup guide's steps (the guide runs before there is a
+checkout, and its own log goes with its window), and the errors behind "Could not open Waypoint" and "Unexpected error".
+Sessions follow one another in the file; at 1 MB it is set aside as `waypoint.1.log`, and two older files are kept. Every
+line is redacted as a report is before it is written. On the launcher's log, **Open file** opens it.
+
+**Diagnostic report** builds the report a user gives when someone asks for their logs (`SupportReport`): the versions,
+the LocalExile release or source checkout, the services, what is missing, the recent operations, the end of Waypoint's
+log on disk and the newest lines of every server log and the game's, with paths, account and character names and
+credentials redacted. It is previewed first, and more names can be removed there. **Copy reviewed report** puts it on the
+clipboard; **Save as a file** writes it to `reports\waypoint-report-<date>-<time>.txt` in Waypoint's folder and shows the
+file, ready to attach or drag into a chat; **Open log folder** shows the log files themselves. Nothing is sent by
+Waypoint. The same report opens from three places: the lifebuoy button in the window's header (Windows, in Simple and
+Advanced mode), the **Diagnostic report** button on an operation's failure dialog, and this section's button.
 
 ### Console
 

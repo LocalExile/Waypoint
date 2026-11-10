@@ -100,9 +100,12 @@ static class AccountUi
     }
 }
 
-/// <summary>The report for a bug: redacted, previewed, and copied only when the player asks.</summary>
+/// <summary>The report for a bug: redacted, previewed, and copied or saved as a file only when the user asks.</summary>
 sealed class DiagnosticPreviewDialog : FormWindow
 {
+    /// <summary>The report for support (<see cref="SupportReport"/>): Waypoint's own log and every server's newest lines.</summary>
+    internal static void Show(Window? owner, Shared shared) => new DiagnosticPreviewDialog(owner, SupportReport.For(shared)).ShowDialog();
+
     public DiagnosticPreviewDialog(Window? owner, Func<string[], string> create)
     {
         DialogLayout.Configure(this, owner, L.Text("Diagnostic report preview"), 820);
@@ -125,7 +128,29 @@ sealed class DiagnosticPreviewDialog : FormWindow
         var buttons = new WrapPanel { Margin = new Thickness(0, 14, 0, 0), ItemSpacing = 8 };
         var copy = new Button { Content = L.Text("Copy reviewed report") };
         copy.Click += async (_, _) => copy.Content = await ViewTools.Copy(this, preview.Text ?? "") ? L.Text("Copied") : L.Text("Clipboard busy — try again");
-        buttons.Children.Add(copy); buttons.Children.Add(Dismiss(L.Text("Close")));
+        var save = new Button { Content = L.Text("Save as a file") };
+        ToolTip.SetTip(save, L.Text("Saves the reviewed report as one text file and shows it, ready to attach or drag into a chat"));
+        save.Click += (_, _) =>
+        {
+            try
+            {
+                SupportReport.Save(SupportReport.Folder, preview.Text ?? "", DateTime.Now);
+                save.Content = L.Text("Saved");
+                ViewTools.Open(SupportReport.Folder);
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            {
+                Dialog.Tell(this, DialogKind.Warning, L.Text("Could not save the report"), e.Message);
+            }
+        };
+        var folder = new Button { Content = L.Text("Open log folder") };
+        ToolTip.SetTip(folder, L.Text("Waypoint's own log files, kept between sessions"));
+        folder.Click += (_, _) =>
+        {
+            try { Directory.CreateDirectory(SupportReport.LogFolder); ViewTools.Open(SupportReport.LogFolder); }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+        };
+        buttons.Children.Add(copy); buttons.Children.Add(save); buttons.Children.Add(folder); buttons.Children.Add(Dismiss(L.Text("Close")));
         Grid.SetRow(buttons, 3); grid.Children.Add(buttons); Content = grid;
     }
 }

@@ -579,6 +579,9 @@
   <data name="Text_10adc7d75e67" xml:space="preserve">
     <value>At least 4 characters. Credentials are not saved by Waypoint.</value>
   </data>
+  <data name="Text_10b451daffda" xml:space="preserve">
+    <value>Could not save the report</value>
+  </data>
   <data name="Text_10b654bcd6eb" xml:space="preserve">
     <value>Package status</value>
   </data>
@@ -2437,6 +2440,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_4859a908b868">
     <value>Hot reload</value>
   </data>
+  <data name="Text_4862da00cc97" xml:space="preserve">
+    <value>Open log folder</value>
+  </data>
   <data name="Text_48713a5c63fb" xml:space="preserve">
     <value>Stop playing</value>
   </data>
@@ -3555,6 +3561,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_6b43463e9003" xml:space="preserve">
     <value>Delete the local branches of pull requests that are no longer open?</value>
   </data>
+  <data name="Text_6b66c287b2d1" xml:space="preserve">
+    <value>LocalExile {0} has a bug that stops most downloaded mods from loading. Update LocalExile to {1} or newer to fix it. You can still install, change and remove mods here.</value>
+  </data>
   <data name="Text_6b8471643e7d" xml:space="preserve">
     <value>Stashed changes</value>
   </data>
@@ -3716,6 +3725,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_709e77536bf1" xml:space="preserve">
     <value>Invalid setting: {0}</value>
+  </data>
+  <data name="Text_70a3eff5efdf" xml:space="preserve">
+    <value>Report a problem: copy or save your logs for whoever is helping you</value>
   </data>
   <data name="Text_70b4554c1108" xml:space="preserve">
     <value>Your old characters stay in {0} until you delete that folder.</value>
@@ -4458,6 +4470,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_897b35f13239" xml:space="preserve">
     <value>{0}: from {1} to {2}</value>
   </data>
+  <data name="Text_897f7947157c" xml:space="preserve">
+    <value>Saves the reviewed report as one text file and shows it, ready to attach or drag into a chat</value>
+  </data>
   <data xml:space="preserve" name="Text_898a809683dd">
     <value>ReloadMod completed.</value>
   </data>
@@ -4670,6 +4685,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_9045b1ddb963" xml:space="preserve">
     <value>New account name</value>
+  </data>
+  <data name="Text_904f70502906" xml:space="preserve">
+    <value>Save as a file</value>
   </data>
   <data name="Text_9057a199a1c0" xml:space="preserve">
     <value>Port {0}: {1} (PID {2}), started {3:g}</value>
@@ -7325,6 +7343,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e2bec0c84c30" xml:space="preserve">
     <value>Requires {0}</value>
+  </data>
+  <data name="Text_e2c3e1dc9225" xml:space="preserve">
+    <value>Waypoint's own log files, kept between sessions</value>
   </data>
   <data name="Text_e2d0a54968ea" xml:space="preserve">
     <value>Delete</value>

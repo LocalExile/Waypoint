@@ -34,9 +34,11 @@ public sealed class ClientExtractionFailureTests : IDisposable
         File.WriteAllText(Path.Combine(folder, "scripts", "dev", "extract-data.ps1"), "Write-Output 'Node is missing'\nexit 1\n");
         var error = await Assert.ThrowsAsync<IOException>(() => SetupSequence.ExtractAsync(folder, _ => { }, CancellationToken.None));
         Assert.Equal("Node is missing", error.Message);
-        Assert.Equal(ClientLocator.KnownExecutable, ClientLocator.ExecutableHashFor("3.29.3c"));
-        Assert.NotNull(ClientLocator.ExecutableHashFor("3.29.3b"));
-        Assert.Null(ClientLocator.ExecutableHashFor("future build"));
+        // The release and its 3.29.3.5 hotfix are both the 3.29.3c build.
+        Assert.Equal(2, ClientLocator.ExecutableHashesFor("3.29.3c").Length);
+        Assert.Equal(ClientLocator.KnownExecutable, ClientLocator.ExecutableHashesFor("3.29.3c")[0]);
+        Assert.Single(ClientLocator.ExecutableHashesFor("3.29.3b"));
+        Assert.Empty(ClientLocator.ExecutableHashesFor("future build"));
     }
 
     [Theory]

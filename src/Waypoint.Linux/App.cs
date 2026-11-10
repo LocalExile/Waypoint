@@ -26,6 +26,8 @@ sealed class App : Avalonia.Application
     public void Prepare()
     {
         Settings = Settings.Load();
+        // Waypoint's own log, from the first moment: the setup guide runs before there is a checkout.
+        SessionLog.Open(SupportReport.LogFolder, $"Waypoint {Updates.Current} · {Environment.OSVersion} · .NET {Environment.Version}");
         // The player's folders and tools, before anything reads a folder or starts a tool.
         Settings.ApplyPaths();
         L.Current.SetLanguage(Settings.Language);
@@ -41,6 +43,7 @@ sealed class App : Avalonia.Application
         Avalonia.Threading.Dispatcher.UIThread.UnhandledException += (_, e) =>
         {
             e.Handled = true;
+            SessionLog.Current?.Write("Unexpected error: " + e.Exception, "ERROR");
             try
             {
                 Directory.CreateDirectory(Repo.Logs);
@@ -117,6 +120,8 @@ sealed class App : Avalonia.Application
         Environment.CurrentDirectory = root;
         Repo.IsInstall = LocalExileReleases.IsInstall(root);
         if (Repo.IsInstall) Repo.ClientVersion = LocalExileReleases.Installed(root);
+        SessionLog.Current?.Write("Folder: " + root);
+        foreach (string detail in SupportReport.Details(Settings.Advanced)) SessionLog.Current?.Write(detail);
         Editions.Remember(Settings, root);
         if (!Program.Rendering) GameSettings.Prepare(root);
     }

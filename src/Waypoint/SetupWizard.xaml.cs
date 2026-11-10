@@ -986,6 +986,8 @@ public partial class SetupWizard : FormWindow
     void Write(string line)
     {
         if (!Dispatcher.CheckAccess()) { Dispatcher.BeginInvoke(() => Write(line)); return; }
+        // The guide's own log goes with its window; the one on disk stays.
+        SessionLog.Current?.Write("setup: " + line);
         _log.AppendLine(line.TrimEnd());
         if (_log.Length > 100_000) _log.Remove(0, _log.Length - 80_000);
         Log.Text = _log.ToString();

@@ -683,6 +683,13 @@ static class ModsText
         return report.Count == 0 ? L.Text("Live load: not checked")
             : L.Text("Last checked: {0} loaded", report.Count(e => e.Value.Status == "Loaded (last checked)"));
     }
+    /// <summary>The Mods section's warning on a release whose server cannot load compiled mods
+    /// (<see cref="Repo.ReleaseModsMayNotLoad"/>); "" on any other. A warning only: every action stays available.</summary>
+    public static string MayNotLoadNotice() => Repo.ReleaseModsMayNotLoad
+        ? L.Text("LocalExile {0} has a bug that stops most downloaded mods from loading. Update LocalExile to {1} or newer to fix it. You can still install, change and remove mods here.",
+            "v" + Repo.ClientVersion, "v" + Repo.FirstReleaseLoadingMods)
+        : "";
+
     /// <summary>Presentation-only defaults, using the same native symbol family as the module library.</summary>
     public static ModIconKind Icon(string id) => id.ToLowerInvariant() switch
     {
