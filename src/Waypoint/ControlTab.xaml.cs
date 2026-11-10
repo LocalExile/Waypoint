@@ -538,6 +538,6 @@ public partial class ControlTab : UserControl
     void ChangeServer(object sender, RoutedEventArgs e)
     {
         if (_shared.IsLiveRunning) { Say(() => L.Text("live.ps1 is running; change the server when it is done.")); return; }
-        App.SwitchServer(Window.GetWindow(this), _shared.Settings);
+        _ = App.SwitchServerAsync(Window.GetWindow(this), _shared);
     }
 }

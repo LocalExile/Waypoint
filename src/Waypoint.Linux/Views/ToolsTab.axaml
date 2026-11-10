@@ -22,6 +22,29 @@
             </StackPanel>
           </DockPanel>
         </Border>
+        <!-- Simple mode's list has neither Console nor Logs: they open from here. Advanced mode lists both. -->
+        <Border x:Name="ConsoleCard" Classes="card" IsVisible="False" Width="340" Margin="0,0,14,14">
+          <DockPanel>
+            <Button x:Name="ConsoleButton" DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,12,0,0" Click="OpenConsole" />
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="Console" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                Foreground="{DynamicResource Shell.Accent}" />
+            <StackPanel>
+              <TextBlock x:Name="ConsoleTitle" FontSize="15" FontWeight="SemiBold" />
+              <TextBlock x:Name="ConsoleText" Classes="note" Margin="0,4,0,0" />
+            </StackPanel>
+          </DockPanel>
+        </Border>
+        <Border x:Name="LogsCard" Classes="card" IsVisible="False" Width="340" Margin="0,0,14,14">
+          <DockPanel>
+            <Button x:Name="LogsButton" DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,12,0,0" Click="OpenLogs" />
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="TextBoxOutline" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                Foreground="{DynamicResource Shell.Accent}" />
+            <StackPanel>
+              <TextBlock x:Name="LogsTitle" FontSize="15" FontWeight="SemiBold" />
+              <TextBlock x:Name="LogsText" Classes="note" Margin="0,4,0,0" />
+            </StackPanel>
+          </DockPanel>
+        </Border>
       </WrapPanel>
     </StackPanel>
   </ScrollViewer>

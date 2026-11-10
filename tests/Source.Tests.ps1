@@ -138,6 +138,18 @@ try {
     Check (-not $own.Ok -and $own.Message.Contains('own saves')) 'a folder cannot bring its own saves'
     $nothing = Operation 'ImportSaves' @('-SaveSource',(Join-Path $fixture 'Nowhere'))
     Check (-not $nothing.Ok -and $nothing.Message.Contains('no saves')) 'a folder without saves is refused'
+    # The other way, which Waypoint offers when the release is the same as or newer than the copy (Editions.ReleaseTakesAsync):
+    # this copy's saves into the release. The release's own go aside first, and the copy is only read.
+    $copyRoot = $root
+    $copyBefore = (Get-FileHash -LiteralPath "$copyRoot/data/saves.db").Hash
+    $releaseBackups = @(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse).Count
+    $root = $release
+    try { $toRelease = Operation 'ImportSaves' @('-SaveSource',$copyRoot) } finally { $root = $copyRoot }
+    Check $toRelease.Ok ('a copy''s saves are copied into a release: ' + $toRelease.Message)
+    & python (Join-Path $PSScriptRoot 'SqliteFixture.py') brought "$release/data/saves.db"
+    Check ($LASTEXITCODE -eq 0) 'the release holds the copy''s saves'
+    Check (@(Get-ChildItem "$env:LOCALAPPDATA/EmulatorWorkspaceLauncher/backups" -Filter backup.json -Recurse).Count -eq $releaseBackups + 1) 'the release''s own saves are backed up first'
+    Check ((Get-FileHash -LiteralPath "$copyRoot/data/saves.db").Hash -eq $copyBefore) 'the copy is only read'
     # LocalExile from the database split on (sql/base/characters/): auth.db and characters.db, and an old saves.db its first
     # server start moves over. Only files are checked here; the migration itself is the servers'.
     $fixtureDb = Join-Path $PSScriptRoot 'SqliteFixture.py'

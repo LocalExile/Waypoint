@@ -35,8 +35,9 @@ rules: the server's are in its `AGENTS.md`.
 - **A switch of the checkout never loses work.** It backs the saves up, stashes uncommitted changes, stops what runs, asks
   before running a fork's pull request, and refuses what would drop a local commit; keep those guards when changing
   `VersionsTab`.
-- **Waypoint moves a checkout by itself only in Simple mode, and only a plain copy of LocalExile**
-  (`CheckoutUpdates.PlainCopy`): anything of the player's own stays as it is, and Advanced mode never moves one. A release
+- **Waypoint never moves a source checkout by itself.** A source copy is shown in Advanced mode (`Editions.Advanced`),
+  where its user updates it from Versions; anything of the player's own stays as it is. Changing folder moves no file:
+  every way of doing it goes through `App.SwitchServerAsync`, which stops what runs only on the user's word. A release
   install is updated only when the player accepts the prompt, with the game closed; a zip that names `data\` (other than
   `data\schema\`) or `Client\` is refused.
 - **Saves are never overwritten in place.** Restoring or starting fresh moves the current database aside first, and a

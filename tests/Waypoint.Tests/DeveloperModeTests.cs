@@ -15,18 +15,17 @@ public class DeveloperModeTests
     public void Advanced_needs_Developer_Mode(bool? developer, bool? advanced, bool expected) =>
         Assert.Equal(expected, new Settings { DeveloperMode = developer, AdvancedMode = advanced }.Advanced);
 
-    // Simple mode's Logs, Console and Tools: off for someone new, kept for someone who had Waypoint before.
+    // What an older Waypoint did not save yet is filled in so that nothing changes for the settings' owner.
     [Fact]
-    public void Simple_mode_keeps_its_further_sections_for_settings_saved_before_the_short_list()
+    public void Saved_settings_keep_their_owner_where_they_were()
     {
-        Assert.False(new Settings().More);
-        Assert.True(Settings.Saved("{}").More);
-        Assert.True(Settings.Saved("""{"AdvancedMode":false,"DeveloperMode":false}""").More);
-        // Once chosen, the choice is what is saved.
-        Assert.False(Settings.Saved("""{"MoreSections":false}""").More);
-        Assert.True(Settings.Saved("""{"MoreSections":true}""").More);
-        // The other fill-ins are as they were.
+        // From before the modes: every section.
         Assert.True(Settings.Saved("{}").Advanced);
         Assert.False(Settings.Saved("""{"AdvancedMode":false}""").Advanced);
+        // The choice on a source copy is not made for anyone: whoever was in Simple mode there is asked (EditionsTests).
+        Assert.Null(Settings.Saved("""{"AdvancedMode":false,"DeveloperMode":false}""").SourceChoiceMade);
+        Assert.True(Settings.Saved("""{"SourceChoiceMade":true}""").SourceChoiceMade);
+        // A setting an earlier build of this branch wrote is ignored, not an error.
+        Assert.False(Settings.Saved("""{"AdvancedMode":false,"MoreSections":true}""").Advanced);
     }
 }

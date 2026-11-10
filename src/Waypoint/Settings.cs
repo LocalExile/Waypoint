@@ -41,11 +41,13 @@ sealed class Settings
     public bool Developer => DeveloperMode == true;
     [JsonIgnore]
     public bool Advanced => Developer && AdvancedMode == true;
-    /// <summary>Simple mode with its further sections, Logs, Console and Tools (the sidebar's "More tools"). Someone new
-    /// starts without them; someone who had Waypoint before keeps the sections they had (<see cref="Load"/>).</summary>
-    public bool? MoreSections { get; set; }
-    [JsonIgnore]
-    public bool More => MoreSections == true;
+    /// <summary>On a source copy, the choice between the release and Advanced mode is made or was never needed
+    /// (<see cref="Editions.MustChoose"/>). Unset in settings saved before that choice existed: whoever was in Simple mode
+    /// on a source copy then is asked once.</summary>
+    public bool? SourceChoiceMade { get; set; }
+    /// <summary>The source copy whose characters wait to come to the release: noted when its user leaves it for the release,
+    /// and offered on the release's Play page (<see cref="Editions.BringToReleaseAsync"/>).</summary>
+    public string? BringFrom { get; set; }
     /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>); on a release install, a
     /// newer release shows the update card.</summary>
     public bool KeepUpToDate { get; set; } = true;
@@ -152,19 +154,17 @@ sealed class Settings
         {
             if (System.IO.File.Exists(File)) return Saved(System.IO.File.ReadAllText(File));
         }
-        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true, DeveloperMode = true, MoreSections = true }; }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true, DeveloperMode = true }; }
         return Imported();
     }
 
     /// <summary>Settings as their file holds them, with what an older Waypoint did not save yet filled in so that nothing
-    /// changes for their owner: every section, and Simple mode's further ones.</summary>
+    /// changes for their owner: every section.</summary>
     internal static Settings Saved(string json)
     {
         var saved = JsonSerializer.Deserialize<Settings>(json, Options) ?? new();
         saved.AdvancedMode ??= true;
         saved.DeveloperMode ??= saved.AdvancedMode == true;
-        // Saved before Simple mode had its short list: Logs, Console and Tools stay where they were.
-        saved.MoreSections ??= true;
         return saved;
     }
 
@@ -209,7 +209,8 @@ sealed class Settings
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException or InvalidDataException) { }
         settings.AdvancedMode ??= false;
         settings.DeveloperMode ??= settings.AdvancedMode == true;
-        settings.MoreSections ??= false;
+        // Someone new who takes LocalExile's source is in Advanced mode at once: there is nothing to choose between.
+        settings.SourceChoiceMade ??= true;
         return settings;
     }
 

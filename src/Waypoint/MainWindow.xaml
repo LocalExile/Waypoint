@@ -69,15 +69,6 @@
                                      ToolTip="{l:Loc 'Adds the servers, branches and pull requests, backups, performance, logs and the console. Waypoint then never updates LocalExile by itself.'}" />
                     </UniformGrid>
                 </Border>
-                <!-- Simple mode's short list and its further sections: Logs, Console and Tools, one click away. -->
-                <Button x:Name="MoreLink" DockPanel.Dock="Bottom" Margin="18,0,12,10" HorizontalAlignment="Left" Cursor="Hand" Click="MoreClicked"
-                        Foreground="{DynamicResource Shell.SidebarText}" FontSize="12">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline" />
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
                 <ListBox x:Name="Sections" Background="Transparent" BorderThickness="0" Margin="6,0" SelectionChanged="SectionChanged"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemContainerStyle>

@@ -13,6 +13,8 @@ public partial class ToolsTab : UserControl
 
     /// <summary>The player wants a copy of LocalExile that has the crafter.</summary>
     internal event Action? NewCopyRequested;
+    /// <summary>Simple mode's way to the Console and Logs sections, which its list leaves out.</summary>
+    internal event Action? ConsoleRequested, LogsRequested;
 
     public ToolsTab() => InitializeComponent();
 
@@ -29,6 +31,14 @@ public partial class ToolsTab : UserControl
     }
 
     void GetCrafterClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
+    /// <summary>The two cards that lead to Console and Logs, for the mode whose list has neither.</summary>
+    internal void ShowMode(bool simple) =>
+        ConsoleCard.Visibility = LogsCard.Visibility = simple ? Visibility.Visible : Visibility.Collapsed;
+
+    void OpenConsole(object sender, RoutedEventArgs e) => ConsoleRequested?.Invoke();
+
+    void OpenLogs(object sender, RoutedEventArgs e) => LogsRequested?.Invoke();
 
     void OpenMapViewer(object sender, RoutedEventArgs e)
     {

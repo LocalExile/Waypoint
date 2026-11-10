@@ -82,6 +82,18 @@ public static class LocalExileReleases
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException) { return null; }
     }
 
+    /// <summary>The commit of LocalExile's code an install was built from (release.json's "commit"); null when it names none.</summary>
+    public static string? InstalledCommit(string folder)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(folder, ManifestName)));
+            return document.RootElement.TryGetProperty("commit", out var commit) && commit.ValueKind == JsonValueKind.String
+                && commit.GetString() is { } sha && System.Text.RegularExpressions.Regex.IsMatch(sha, @"\A[0-9a-fA-F]{7,40}\z") ? sha : null;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException) { return null; }
+    }
+
     /// <summary>Whether the install has gone through <c>LocalExile.exe setup</c>: its client is patched, with keys and saves.</summary>
     public static bool IsSetUp(string folder) =>
         File.Exists(Path.Combine(folder, "Client", "Game.patched.exe")) && File.Exists(Path.Combine(folder, "data", "login-keys.json")) && HasSaves(folder);

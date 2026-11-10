@@ -69,6 +69,9 @@
   <data name="Text_01c618fd5db4" xml:space="preserve">
     <value>Выбранный модуль отсутствует.</value>
   </data>
+  <data name="Text_01d43e181229" xml:space="preserve">
+    <value>Они в сохранности там, где находятся: в {0}.</value>
+  </data>
   <data name="Text_01deac2c6a06" xml:space="preserve">
     <value>Лабиринт дня каждой сложности в виде карты: комнаты, кратчайший путь к Изаро, ловушки, головоломки, тёмные святыни, ключи и двери.</value>
   </data>
@@ -227,6 +230,9 @@
   </data>
   <data name="Text_06afb73ab20b" xml:space="preserve">
     <value>Шаг 1 из 2 · Лига и режим</value>
+  </data>
+  <data name="Text_06c07d364810" xml:space="preserve">
+    <value>Персонажей пока нельзя перенести</value>
   </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: не целое число</value>
@@ -1219,6 +1225,9 @@
   <data name="Text_2494bdb5bc46" xml:space="preserve">
     <value>Загрузка аккаунтов…</value>
   </data>
+  <data name="Text_24d8d6631c8e" xml:space="preserve">
+    <value>Найдите команды сервера и используйте нужную в игре.</value>
+  </data>
   <data name="Text_24ee657570ef" xml:space="preserve">
     <value>Обновить мод</value>
   </data>
@@ -1634,9 +1643,6 @@
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Полная копия</value>
   </data>
-  <data name="Text_2f033ca03b8e" xml:space="preserve">
-    <value>Меньше инструментов</value>
-  </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>База: {0}</value>
   </data>
@@ -1973,6 +1979,9 @@
   </data>
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>Мастер настройки скачает новейшую версию LocalExile, соберёт её и может перенести ваших персонажей.</value>
+  </data>
+  <data name="Text_391b7011e22f" xml:space="preserve">
+    <value>Waypoint не удалось сравнить копию в {0} с этим релизом.</value>
   </data>
   <data name="Text_393d8d4eecb9" xml:space="preserve">
     <value>У этого флага нет связанных вариантов режима.</value>
@@ -2503,9 +2512,6 @@
   <data name="Text_4987ea348964" xml:space="preserve">
     <value>Выполняется {0}; в списках то, что репозиторий уже знал.</value>
   </data>
-  <data name="Text_49897adf0b24" xml:space="preserve">
-    <value>Персонажей нельзя перенести из «Новейшей» в релиз: более новый LocalExile может сохранить то, что старый релиз не прочитает.</value>
-  </data>
   <data xml:space="preserve" name="Text_49c266baaaa7">
     <value>Поиск</value>
   </data>
@@ -2950,6 +2956,9 @@
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>в выпуске {0} нет {1} с файлом .sha256</value>
   </data>
+  <data name="Text_572a2c0f42aa" xml:space="preserve">
+    <value>Перейти без остановки</value>
+  </data>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>Ничего не меняется. Если этот клиент использует настройки вашей обычной игры, выберите в игре «Режим работы сети» → «Рассинхронизация» (Networking Mode → Predictive) сами.</value>
   </data>
@@ -2996,9 +3005,6 @@
   </data>
   <data name="Text_591889ac42e0" xml:space="preserve">
     <value>Открыть журналы</value>
-  </data>
-  <data name="Text_5918cb537c7d" xml:space="preserve">
-    <value>Больше инструментов</value>
   </data>
   <data xml:space="preserve" name="Text_594623afa2ef">
     <value>База сохранений</value>
@@ -3165,6 +3171,9 @@
   </data>
   <data xml:space="preserve" name="Text_5f6d5cac3804">
     <value>Копирование сохранений</value>
+  </data>
+  <data name="Text_5f7d44dba864" xml:space="preserve">
+    <value>Ваши персонажи всё ещё в {0}. Waypoint может перенести их сюда, если этот релиз такой же, как та копия, или новее.</value>
   </data>
   <data xml:space="preserve" name="Text_5f9f3af82191">
     <value>Текст выделения</value>
@@ -3855,6 +3864,9 @@
   <data xml:space="preserve" name="Text_74160bd42b82">
     <value>Папка репозитория LocalExile</value>
   </data>
+  <data name="Text_7432384d695e" xml:space="preserve">
+    <value>Копия в {0} новее этого релиза или находится на ветке, которой в нём нет. Её персонажей можно будет перенести, когда выйдет более новый релиз: обновите тогда LocalExile и попробуйте ещё раз.</value>
+  </data>
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>Ремесло и торговля</value>
   </data>
@@ -4275,6 +4287,9 @@
   <data name="Text_82b8c45a6503" xml:space="preserve">
     <value>dev host остановлен</value>
   </data>
+  <data name="Text_82bf8676d099" xml:space="preserve">
+    <value>То, что записали Waypoint, серверы и игра: сюда стоит заглянуть, если что-то пошло не так.</value>
+  </data>
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>Скопировать чат-команду, которая выдаёт этот предмет</value>
   </data>
@@ -4379,6 +4394,9 @@
   </data>
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>Удалить сохранённый предмет</value>
+  </data>
+  <data name="Text_86166dd1d685" xml:space="preserve">
+    <value>Перенести моих персонажей…</value>
   </data>
   <data name="Text_861e03332619" xml:space="preserve">
     <value>Файлы программы в {0} будут удалены, и это нельзя отменить. Старые сохранения и моды останутся там, пока вы не удалите их сами. Если эта копия использует клиент игры с того же диска, сначала он будет перемещён сюда.</value>
@@ -4804,6 +4822,9 @@
   <data name="Text_93827aab09d1" xml:space="preserve">
     <value>Игра, моды, резервные копии, учётные записи, журналы, консоль и инструменты.</value>
   </data>
+  <data name="Text_93adccb219af" xml:space="preserve">
+    <value>LocalExile ещё работает</value>
+  </data>
   <data name="Text_93bcc3510b6f" xml:space="preserve">
     <value>Сундук с сокровищами</value>
   </data>
@@ -5056,6 +5077,9 @@
   </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>Удалено сохранённых предметов: {0}</value>
+  </data>
+  <data name="Text_9a3cdf338f34" xml:space="preserve">
+    <value>Перенести персонажей в релиз?</value>
   </data>
   <data name="Text_9a71843838e4" xml:space="preserve">
     <value>Установите .NET 10 SDK для Windows x64 со страницы загрузки Microsoft и нажмите «Проверить снова»: Waypoint заново читает PATH, так что перезапуск не нужен.</value>
@@ -5688,6 +5712,9 @@
   <data name="Text_ac1f5a0e46c1" xml:space="preserve">
     <value>Игра не запущена: запустите её, войдите персонажем в локацию и выдайте предмет снова.</value>
   </data>
+  <data name="Text_ac4f361600ac" xml:space="preserve">
+    <value>Waypoint не удалось прочитать версию копии в {0}.</value>
+  </data>
   <data xml:space="preserve" name="Text_ac7fcf0ba22e">
     <value>Нет установленных модов</value>
   </data>
@@ -5805,6 +5832,9 @@
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>Союз</value>
   </data>
+  <data name="Text_b00ef4aaae35" xml:space="preserve">
+    <value>В копии в {0} есть ваши собственные изменения кода LocalExile, поэтому её персонажи могут не подойти этому релизу.</value>
+  </data>
   <data name="Text_b016f6d52f72" xml:space="preserve">
     <value>Вы отложили изменения, когда ушли с {0}. Вернуть их сейчас?</value>
   </data>
@@ -5912,6 +5942,9 @@
   </data>
   <data xml:space="preserve" name="Text_b34ae7c4547d">
     <value>Локальный HEAD: </value>
+  </data>
+  <data name="Text_b3557e6a6fbe" xml:space="preserve">
+    <value>Ваши персонажи перенесены. Входите как обычно.</value>
   </data>
   <data name="Text_b370dc0062ea" xml:space="preserve">
     <value>live.ps1: собирает и запускает серверы, затем игру (закрывает запущенную)</value>
@@ -6110,6 +6143,9 @@
   </data>
   <data name="Text_b9f4f560cff4" xml:space="preserve">
     <value>Запрос на слияние не из списка открытых: его HEAD будет получен с GitHub по номеру</value>
+  </data>
+  <data name="Text_ba183803c449" xml:space="preserve">
+    <value>Ваши учётные записи, персонажи и тайник из {0} копируются сюда; та папка только читается. Собственные данные этого релиза сначала сохраняются в резервную копию и откладываются.</value>
   </data>
   <data name="Text_ba2cad95033e" xml:space="preserve">
     <value>#{0} — из форка</value>
@@ -6603,6 +6639,9 @@
   <data name="Text_c9b2c9b72ddd" xml:space="preserve">
     <value>Что делать при закрытии окна?</value>
   </data>
+  <data name="Text_c9be7a297f8d" xml:space="preserve">
+    <value>Персонажи возвращаются в релиз, только если он такой же, как «Новейшая», или новее: более новый LocalExile может сохранять то, что старый релиз не прочитает.</value>
+  </data>
   <data name="Text_c9cf9cba7b44" xml:space="preserve">
     <value>Читает ветки LocalExile и origin, а также открытые запросы на слияние LocalExile</value>
   </data>
@@ -6614,9 +6653,6 @@
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
-  </data>
-  <data name="Text_ca20ea2d6a4c" xml:space="preserve">
-    <value>Убирает из этого списка разделы «Журналы», «Консоль» и «Инструменты». Ссылка, ведущая в один из них, по-прежнему его открывает.</value>
   </data>
   <data xml:space="preserve" name="Text_ca4e5268289a">
     <value>Резервных копий: {0} · {1}</value>
@@ -6706,6 +6742,9 @@
   </data>
   <data name="Text_cca7aec3cf35" xml:space="preserve">
     <value>Вписать карту</value>
+  </data>
+  <data name="Text_ccbacd01c2c4" xml:space="preserve">
+    <value>На странице «Играть» релиза Waypoint предложит перенести ваших персонажей, если релиз такой же, как эта копия, или новее.</value>
   </data>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>Доступен только просмотр, пока игра или службы работают либо их принадлежность не подтверждена. Остановите их и обновите данные перед изменением аккаунтов.</value>
@@ -6950,6 +6989,9 @@
   <data name="Text_d5c6cc663b20" xml:space="preserve">
     <value>Заменяется только сохранённый выбор модов; DLL модов и сохранения не восстанавливаются.</value>
   </data>
+  <data name="Text_d5d6149fadee" xml:space="preserve">
+    <value>Игра или её серверы запущены из этой папки. Waypoint остановит их, прежде чем открыть другую папку; серверы сначала сохранят данные.</value>
+  </data>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>нет таймингов: {0}</value>
   </data>
@@ -7096,6 +7138,9 @@
   </data>
   <data name="Text_da86bbbc05e9" xml:space="preserve">
     <value>О модах, модулях и лигах</value>
+  </data>
+  <data name="Text_da8ec7567c63" xml:space="preserve">
+    <value>Что-то не остановилось. Закройте игру или остановите серверы сами, затем смените папку ещё раз.</value>
   </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>Сбросить</value>
@@ -7431,9 +7476,6 @@
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop и dev host: игра, запись планировок, серверы и служба аккаунтов</value>
   </data>
-  <data name="Text_e48b0227bddb" xml:space="preserve">
-    <value>Добавляет в этот список разделы «Журналы», «Консоль» и «Инструменты»</value>
-  </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>Предыдущий день</value>
   </data>
@@ -7469,6 +7511,9 @@
   </data>
   <data name="Text_e6128fcc2b1e" xml:space="preserve">
     <value>Использовать отдельные настройки</value>
+  </data>
+  <data name="Text_e61ca9b03292" xml:space="preserve">
+    <value>В этом релизе не указано, из какой версии кода LocalExile он собран, поэтому Waypoint не может определить, подходят ли ему ваши персонажи.</value>
   </data>
   <data xml:space="preserve" name="Text_e62daa01ba01">
     <value>Выберите и проверьте рабочую папку, чтобы увидеть её копии.</value>
@@ -7952,6 +7997,9 @@
   </data>
   <data xml:space="preserve" name="Text_f4047b3ea27a">
     <value>Пример кнопки</value>
+  </data>
+  <data name="Text_f4063d1b2a07" xml:space="preserve">
+    <value>Открыть консоль</value>
   </data>
   <data xml:space="preserve" name="Text_f418537ab654">
     <value>Параметры цвета и шрифта помогают подобрать удобный вид. Важные состояния также обозначаются текстом или символами.</value>

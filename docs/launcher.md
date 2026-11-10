@@ -298,78 +298,80 @@ question (a fork's pull request) has Cancel as its default.
 
 ## Simple and Advanced modes
 
-A new user starts in **Simple mode**, with five sections (Play, Mods, Backups, Accounts, Settings; a source copy also has
-Modules and Leagues) and no status strip or branch chip: nothing to choose before playing. **More tools**, a link at the
-bottom of the sidebar, adds Logs, Console and Tools to the list, and **Fewer tools** takes them out again
-(`Settings.MoreSections`); a link that leads to one of them, such as Play's **See what happened**, opens it either way.
-Someone whose settings were saved before the short list keeps those three sections until they choose otherwise
-(`Settings.Saved`). **Settings → Developer → Developer Mode**, off by default, adds the **Simple | Advanced** switch at the
-bottom of the sidebar. **Advanced** replaces Play with Control, as that section has it, has Logs, Console and Tools, and adds
-Versions, Performance and Server timings. Setup is reached from Control. Turning Developer Mode off goes back to Simple
-mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer Mode on
-(`Settings.Load`).
+**The mode follows the folder** (`Editions.Advanced`), and is worked out each time, never written:
 
-The quiet **Run setup guide…** link below the folder controls is always visible, for both a source copy and a release install,
-on Windows and Linux. It reopens the guide for the current folder to recheck requirements and refresh preparation, even when
-the main button says Play. Its tooltip explains this; the link is disabled while the game, servers or another operation run.
-A failed Play attempt with the recognized HNC mask error also recommends this link directly on the Play screen. Other startup
-errors keep their own guidance, and the full HNC diagnostic remains in the logs.
+- **A release install** shows what its user chose. A new user starts in **Simple mode**, with one list of six sections
+  (Play, Mods, Backups, Accounts, Tools, Settings) and no status strip or branch chip: nothing to choose before playing.
+  Console and Logs are not in the list; two cards on Tools open them, and a link that leads to one, such as Play's **See
+  what happened**, opens it too (`MainWindow.ShowSection`). **Settings → Developer → Developer Mode**, off by default, adds
+  the **Simple | Advanced** switch at the bottom of the sidebar. **Advanced** replaces Play with Control, as that section has
+  it, lists Console and Logs, and adds Versions, Performance and Server timings. Turning Developer Mode off goes back to
+  Simple mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer
+  Mode on (`Settings.Load`).
+- **A source copy** is always shown in Advanced mode, with no switch: Simple mode is for the release. It plays from Control,
+  Setup is reached from there, and Versions updates it and has branches and pull requests. Going to a source copy does not
+  change what was chosen on a release, so going back to the release shows Simple mode again.
 
-**Play** in Simple mode (`PlayTab`) is the Control section's Play with an update before it:
+**Someone who was in Simple mode on a source copy** before this rule is asked once (`Editions.MustChoose`,
+`Settings.SourceChoiceMade`). Their Play page says "Simple mode plays the release" and has two buttons in place of Play:
+**Switch to the release…** is the step to the release described below, and **Use Advanced mode** shows this copy in
+Advanced mode from then on. Each is one click, and until they choose nothing of theirs is changed. While the game or a
+server runs the page shows that and **Stop playing**, and the choice comes after. Nobody else sees the page: someone who had
+Advanced mode, someone new, and someone who goes to a source copy on purpose (`Editions.LeftFor`, called by every change of
+folder) are in Advanced mode at once.
 
-1. When `CheckoutUpdates.Due` says so (at most once a day; **Settings → Updates → Keep LocalExile up to date**, on by
-   default) and nothing runs, Waypoint fetches. No network is no reason not to play: the game starts as it is.
-2. Only a plain copy is moved (`CheckoutUpdates.PlainCopy`): on the default branch, with LocalExile as origin, no uncommitted
-   changes and no commits of its own. Anything else is the player's work and stays as it is, in either mode.
-3. The saves are backed up (unless **Automatic backups** is off); a failed backup means no update, and the game starts as
-   it is. Then the branch moves forward, fast-forward only, and the commit and backup before it are kept in the settings.
-4. `ControlTab.PlayAsync` runs, so a start is the same `live.ps1` run with the same port question.
-5. When that run fails after an update, Waypoint stops what runs, restores that backup, puts the checkout back
-   (`git reset --keep`) and starts again, and says so.
+Nothing moves a source copy by itself any more. Simple mode's Play page for a source copy had a once-a-day update, **Update
+now**, a way back after a failed start and **Go back to the version you had** (`CheckoutUpdates`); that page is now only the
+choice above, and those parts are not reached. A source copy is updated from Versions, by its user.
 
-**N new change(s) in LocalExile since your version** shows under the switch when a plain copy is behind LocalExile's branch.
-Play looks when it opens and every half hour, while nothing runs: a fetch and a count only, which neither moves the checkout nor
-counts as the day's update check. **Update now** beside it is that update at once, steps 2 and 3 above (backup, fast-forward, the
-way back kept), without starting the game; Play then builds and starts the new version.
+The quiet **Run setup guide…** link below the folder controls is always visible on Play, for both a source copy and a
+release install, on Windows and Linux. It reopens the guide for the current folder to recheck requirements and refresh
+preparation, even when the main button says Play. Its tooltip explains this; the link is disabled while the game, servers or
+another operation run. A failed Play attempt with the recognized HNC mask error also recommends this link directly on the Play
+screen. Other startup errors keep their own guidance, and the full HNC diagnostic remains in the logs.
 
-**Go back to the version you had** stays for a week after an update: the same way back, on request, and updates pause for a
-week. Restoring keeps a copy of the current saves first. A checkout follows `main`, which has no test results, so an update is
-`main` as it is: the way back catches a build or start that fails, not a bug in the game. A release install is different: see
-[Release installs](#release-installs).
+### Copies and changing folder
 
-**Release | Latest** at the top of Simple mode's Play (`EditionSwitch`, `Editions.cs`) moves between a release install and a
-source copy that follows `main`. Each is a folder of its own with its own characters; Waypoint remembers the last of each it ran on
-(`ReleaseFolder`, `LatestFolder`). Switching needs nothing running, then asks one question, and Waypoint starts again on the
-other folder. The saves of the folder left are backed up first while automatic backups are on (Backups), as for every other
-change, and the question says so; with them off nothing is backed up or asked.
+A release install and a source copy ("Latest") are each a folder of their own, anywhere, with their own build, game client
+and characters. Waypoint works on one at a time. Changing folder moves no file of either: Waypoint saves the other folder and
+starts again on it.
 
-**Simple mode plays the release; the Latest side, LocalExile's source, is for Advanced mode.** A source copy needs .NET,
-Git, Python and Node and changes every day, so a release install shows neither the switch nor Play's **Set up a new
-copy…** (which sets up a copy from source) unless Developer Mode is on (`Editions.Offered`). **Run setup guide…** and
-**Tools → Get the item crafter…** stay for everyone.
+Every way of changing folder goes through one step (`App.SwitchServerAsync`): **Change folder…** on Play, **Change…** and
+**Find automatically…** in Advanced mode, the setup guide when it made another copy, and the Release | Latest switch.
 
-On a source copy in Simple mode, Play is not offered (`Editions.MustChoose`): the page says "Simple mode plays the
-release" and has two buttons in place of Play and the switch. **Switch to the release…** is the switch's own step to the
-release, with its question; the release has its own characters, and this copy's stay in its folder. **Use Advanced mode**
-turns on Developer Mode and Advanced mode, where this copy plays from Control, Versions has branches and pull requests,
-and Waypoint no longer updates the copy by itself. Each is one click, so whoever was on the Latest side in Simple mode
-goes on either way; until they choose, nothing of theirs is changed. While the game or a server runs the page shows that
-and **Stop playing**, and the choice comes after. The parts of Simple mode's Play that belong to a source copy (the daily
-update, **Update now**, **Go back to the version you had**) are not reached any more, and its **Set up a new copy…**
-(another clone, for branches and pull requests) is Control's alone. **Change folder…** and **Run setup guide…** stay.
+- The folder is compared with the one in use (`Editions.SameFolder`), not the saved one, which differ when Waypoint was
+  started with `--repo`.
+- When the game or servers run, Waypoint asks first (`Editions.ReadyToLeaveAsync`): **Stop and switch** stops them as
+  **Stop playing** does and waits until they are gone; **Cancel** leaves everything as it is. Waypoint finds what runs by its
+  name, not its folder, so what is left running would show in the next folder as that folder's own. In Advanced mode or with
+  Developer Mode there is also **Switch without stopping**, for someone who keeps one copy's servers up while looking at
+  another.
+- The folder is saved only after that, and only when no operation is in progress: an operation is the one thing that makes
+  the window refuse to close, and a folder saved before a refused close would open at the next start instead.
+
+**Release | Latest** at the top of a release's Play (`EditionSwitch`) is that change between the release Waypoint remembers
+and the source copy it remembers (`ReleaseFolder`, `LatestFolder`), with one question each way. It shows only with Developer
+Mode on, as does Play's **Set up a new copy…**, which sets up a copy from source (`Editions.Offered`): a source copy needs
+.NET, Git, Python and Node and is LocalExile's newest, less tested code, which is not what someone who came to play wants.
+**Run setup guide…** and **Tools → Get the item crafter…** stay for everyone. The saves of the folder left are backed up
+first while automatic backups are on (Backups), and the question says so.
 
 - Both ways to Latest say first that Latest has LocalExile's newest changes, reviewed, but possibly less stable than the release.
 - **Release → Latest**: bring your characters? **Bring my characters** copies them in (the adapter's `ImportSaves`, as the guide's
   Your characters page: Latest's own are backed up and set aside first); **Keep Latest's own** leaves both as they are.
-- **Latest → Release**: the release keeps its own characters, and Latest's stay for the way back (**Switch**). Characters never
-  go from Latest to a release: a newer LocalExile may save what an older release can't read.
-- A side Waypoint has no folder for opens the setup guide: the release route, or the source route with **Get the newest changes**
-  chosen, which from a release has its Your characters page.
-- On a release, **Tools → Get the item crafter…** switches to the Latest copy when Waypoint has one, with the same question, and
-  otherwise opens the guide as before, with the older version chosen. A copy on that older version (`waypoint-tested`) is still the
-  Latest side, and the switch says it does not update, since Play does not move it. **Get the newest changes** under it backs the saves
-  up and switches the copy to LocalExile's default branch (`Editions.MoveToNewestAsync`; nothing is done with changes of the
-  player's own), and clears the last update check, so the next Play updates it as it updates any plain copy, with its way back.
+- **Latest → Release**: the release keeps its own characters at the switch, and Latest's stay in their folder. Waypoint
+  notes that folder (`Settings.BringFrom`), and the release's Play page then shows a card: "Your characters are still in
+  {folder}", with **Bring my characters…** and **Not now**.
+- **Bring my characters…** (`Editions.BringToReleaseAsync`) first checks that they fit (`Editions.ReleaseTakesAsync`): the
+  release's `release.json` names the commit it was built from, and the copy must be on that commit or an older one (git's
+  `merge-base --is-ancestor`), with no changes of its user's own to the code. That is the step every update of a release
+  makes. A copy that is ahead of the release, or on a branch the release does not hold, may have saved what the release
+  can't read: Waypoint says so, says the characters are safe where they are, and offers again once a newer release is
+  installed. When they fit, Waypoint asks, then copies them with the adapter's `ImportSaves`: the source copy is only read,
+  and the release's own saves are backed up and set aside first.
+- On a release, **Tools → Get the item crafter…** switches to the source copy Waypoint remembers, with the same question, and
+  otherwise opens the guide as before, with the older version chosen (`waypoint-tested`). Either way that copy is then shown
+  in Advanced mode, and is moved to newer code only from Versions, by its user.
 
 A link to a section Simple mode's list lacks (a log, from a failure) shows that section without selecting anything.
 

@@ -1,11 +1,8 @@
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.Threading;
 
@@ -152,47 +149,5 @@ sealed class DiagnosticPreviewDialog : FormWindow
         };
         buttons.Children.Add(copy); buttons.Children.Add(save); buttons.Children.Add(folder); buttons.Children.Add(Dismiss(L.Text("Close")));
         Grid.SetRow(buttons, 3); grid.Children.Add(buttons); Content = grid;
-    }
-}
-
-/// <summary>Choosing another checkout, and moving to it (the Windows app's App.ChooseServer and App.SwitchServer).</summary>
-static class ServerChoice
-{
-    /// <summary>The folder picker until it gives a server checkout; null when the player cancels.</summary>
-    public static async Task<string?> ChooseAsync(Window? owner)
-    {
-        if (owner?.StorageProvider is not { CanPickFolder: true } storage) return null;
-        string start = Repo.Suggested(Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory));
-        while (true)
-        {
-            var folders = await storage.OpenFolderPickerAsync(new FolderPickerOpenOptions
-            {
-                Title = L.Text("LocalExile server checkout (the folder with GameServer.slnx)"),
-                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(start),
-            });
-            if (folders.Count == 0 || folders[0].TryGetLocalPath() is not { } folder) return null;
-            if (Repo.IsRoot(folder) || LocalExileReleases.IsInstall(folder)) return Path.GetFullPath(folder);
-            Dialog.Tell(owner, DialogKind.Warning, L.Text("Not a server checkout"),
-                L.Text("{0} has no GameServer.slnx and scripts\\dev\\live.ps1.", folder), ok: L.Text("Choose again"));
-            start = folder;
-        }
-    }
-
-    /// <summary>Another checkout: saved in the settings, then Waypoint starts again on it (every section reads from the old
-    /// one). The new copy starts only once this one has exited: closing can still be cancelled.</summary>
-    public static async Task SwitchAsync(Window owner, Settings settings, string? chosen = null)
-    {
-        if ((chosen ?? await ChooseAsync(owner)) is not { } root || root == settings.ServerPath) return;
-        settings.ServerPath = root;
-        settings.Save();
-        if (Environment.ProcessPath is { } exe && Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.Exit += (_, _) =>
-            {
-                var start = new ProcessStartInfo(exe) { UseShellExecute = false };
-                // Run as `dotnet Waypoint.dll`, the process is dotnet itself.
-                if (Path.GetFileNameWithoutExtension(exe) == "dotnet") start.ArgumentList.Add(typeof(ServerChoice).Assembly.Location);
-                Process.Start(start)?.Dispose();
-            };
-        owner.Close();
     }
 }

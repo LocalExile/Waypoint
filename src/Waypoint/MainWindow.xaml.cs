@@ -165,14 +165,18 @@ public partial class MainWindow : Window
         InstallView.ChangeFolderRequested += Setup.ChangeFolder;
         ReleasesView.ChangeFolderRequested += Setup.ChangeFolder;
         PlayView.NewCopyRequested += Setup.SetUpNewCopy;
-        // The Latest card's "Use Advanced mode": Developer Mode and every section, as Settings would turn them on.
+        // The choice page's "Use Advanced mode": this copy is shown in Advanced mode from now on. The choice made on a
+        // release (Developer Mode, Simple or Advanced) is not touched.
         PlayView.AdvancedRequested += () =>
         {
-            _shared.Settings.DeveloperMode = true;
-            _shared.Settings.AdvancedMode = true;
+            _shared.Settings.SourceChoiceMade = true;
             _shared.Settings.Save();
+            _shared.Logs.Write("choice on a source copy: Advanced mode", Severity.Info);
             ShowMode();
         };
+        // Simple mode's Tools page leads to the two sections its list leaves out.
+        ToolsView.ConsoleRequested += () => ShowSection(ConsoleView);
+        ToolsView.LogsRequested += () => ShowSection(LogsView);
         // Simple mode's Release | Latest switch, when the other side is not set up yet.
         foreach (var edition in new[] { PlayView.Edition, InstallView.Edition })
         {
@@ -254,16 +258,16 @@ public partial class MainWindow : Window
     /// list has it.</summary>
     void ShowMode()
     {
-        bool advanced = _shared.Settings.Advanced;
+        // The mode follows the folder: a release shows its user's choice, a source copy Advanced mode.
+        bool advanced = Editions.Advanced(_shared.Settings);
         // Play and Versions each have a checkout's view and a release install's.
         FrameworkElement[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
             ? s.View is GameSystemsTab || s.View is ControlTab or VersionsTab or ReleasesTab or ModsTab or BackupsTab or AccountsTab or PerformanceTab or TimingsTab or LogsTab or ConsoleTab or ToolsTab or SettingsTab
-            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or SettingsTab
-                // Simple mode's further sections, with "More tools". A link to one shows it either way (ShowSection).
-                || _shared.Settings.More && s.View is LogsTab or ConsoleTab or ToolsTab)).ToArray();
-        // Developer Mode (Settings) unlocks the switch.
-        ModeSwitch.Visibility = _shared.Settings.Developer ? Visibility.Visible : Visibility.Collapsed;
+            // Simple mode's one list. Console and Logs open from Tools: ShowSection shows a section that is not listed.
+            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or ToolsTab or SettingsTab)).ToArray();
+        // Developer Mode (Settings) unlocks the switch, on a release: a source copy has no Simple mode to switch to.
+        ModeSwitch.Visibility = Repo.IsInstall && _shared.Settings.Developer ? Visibility.Visible : Visibility.Collapsed;
         var shown = Sections.SelectedItem as Section;
         Sections.ItemsSource = sections;
         Sections.SelectedItem = sections.Contains(shown) ? shown : sections[0];
@@ -271,18 +275,19 @@ public partial class MainWindow : Window
         BranchChip.Visibility = advanced && !Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
-        ShowMore();
+        ToolsView.ShowMode(simple: !advanced);
         // Developer Mode also decides whether Simple mode offers the Latest side.
         InstallView.ShowOffers();
         PlayView.ShowOffers();
         SettingsView.ShowMode();
     }
 
-    /// <summary>The sidebar's switch.</summary>
+    /// <summary>The sidebar's switch, which only a release shows. ShowMode also sets these buttons, on a source copy to
+    /// the mode worked out from the folder: that must never be saved as the choice made on a release.</summary>
     void ModeChosen(object sender, RoutedEventArgs e)
     {
         bool advanced = AdvancedMode.IsChecked == true;
-        if (advanced == _shared.Settings.Advanced) return;
+        if (!Repo.IsInstall || advanced == _shared.Settings.Advanced) return;
         _shared.Settings.AdvancedMode = advanced;
         _shared.Settings.Save();
         ShowMode();
@@ -351,26 +356,8 @@ public partial class MainWindow : Window
     }
 
     /// <summary>What a language change reaches beyond the bound text: names written from code.</summary>
-    /// <summary>The sidebar's link under Simple mode's list: Logs, Console and Tools shown or not. Advanced mode has them all.</summary>
-    void ShowMore()
-    {
-        bool more = _shared.Settings.More;
-        MoreLink.Visibility = _shared.Settings.Advanced ? Visibility.Collapsed : Visibility.Visible;
-        MoreLink.Content = L.Text(more ? "Fewer tools" : "More tools");
-        MoreLink.ToolTip = L.Text(more ? "Takes Logs, Console and Tools out of this list. A link that leads to one still opens it."
-            : "Adds Logs, Console and Tools to this list");
-    }
-
-    void MoreClicked(object sender, RoutedEventArgs e)
-    {
-        _shared.Settings.MoreSections = !_shared.Settings.More;
-        _shared.Settings.Save();
-        ShowMode();
-    }
-
     void ShowLanguage()
     {
-        ShowMore();
         Sections.Items.Refresh();
         if (Sections.SelectedItem is Section shown) SectionTitle.Text = shown.DisplayName;
         BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");

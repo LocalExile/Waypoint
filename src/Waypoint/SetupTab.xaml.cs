@@ -94,7 +94,7 @@ public partial class SetupTab : UserControl
             // The guide has saved its checkout already; SwitchServer acts on a change.
             _shared.Settings.ServerPath = current;
             _shared.Settings.CreateAccountOnStart = guide.CreateAccountNext;
-            App.SwitchServer(owner, _shared.Settings, checkout);
+            await App.SwitchServerAsync(owner, _shared, checkout);
             return;
         }
         SetupFinished?.Invoke();
@@ -107,12 +107,12 @@ public partial class SetupTab : UserControl
         if (Busy()) return;
         var owner = Window.GetWindow(this);
         var dialog = new CheckoutDialog(owner, _shared.Settings.ServerPath);
-        if (dialog.ShowDialog() == true) App.SwitchServer(owner, _shared.Settings, dialog.Chosen);
+        if (dialog.ShowDialog() == true) _ = App.SwitchServerAsync(owner, _shared, dialog.Chosen);
     }
 
     void ChangeCheckout(object sender, RoutedEventArgs e)
     {
-        if (!Busy()) App.SwitchServer(Window.GetWindow(this), _shared.Settings);
+        if (!Busy()) _ = App.SwitchServerAsync(Window.GetWindow(this), _shared);
     }
 
     bool Busy()

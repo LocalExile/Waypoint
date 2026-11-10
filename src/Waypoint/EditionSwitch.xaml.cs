@@ -56,6 +56,7 @@ public partial class EditionSwitch : UserControl
         Show();
         if (step == EditionStep.SetUpRelease) ReleaseSetupRequested?.Invoke();
         else if (step == EditionStep.SetUpLatest) LatestSetupRequested?.Invoke();
-        else if (step == EditionStep.Switch) App.SwitchServer(owner, _shared.Settings, folder);
+        // PrepareAsync has made sure nothing runs.
+        else if (step == EditionStep.Switch) await App.SwitchServerAsync(owner, _shared, folder, asked: true);
     }
 }

@@ -69,7 +69,7 @@ public partial class MainWindow : Window
     readonly ConsoleTab ConsoleView = new();
     readonly ToolsTab ToolsView = new();
     readonly SettingsTab SettingsView = new();
-    bool _closing, _deciding;
+    bool _closing, _deciding, _explicitExit;
 
     public MainWindow()
     {
@@ -135,14 +135,18 @@ public partial class MainWindow : Window
         ReleasesView.ChangeFolderRequested += Setup.ChangeFolder;
         Control.ChangeFolderRequested += Setup.ChangeFolder;
         PlayView.NewCopyRequested += Setup.SetUpNewCopy;
-        // The Latest card's "Use Advanced mode": Developer Mode and every section, as Settings would turn them on.
+        // The choice page's "Use Advanced mode": this copy is shown in Advanced mode from now on. The choice made on a
+        // release (Developer Mode, Simple or Advanced) is not touched.
         PlayView.AdvancedRequested += () =>
         {
-            _shared.Settings.DeveloperMode = true;
-            _shared.Settings.AdvancedMode = true;
+            _shared.Settings.SourceChoiceMade = true;
             _shared.Settings.Save();
+            _shared.Logs.Write("choice on a source copy: Advanced mode", Severity.Info);
             ShowMode();
         };
+        // Simple mode's Tools page leads to the two sections its list leaves out.
+        ToolsView.ConsoleRequested += () => ShowSection(ConsoleView);
+        ToolsView.LogsRequested += () => ShowSection(LogsView);
         // Simple mode's Release | Latest switch, when the other side is not set up yet.
         foreach (var edition in new[] { PlayView.Edition, InstallView.Edition })
         {
@@ -191,23 +195,17 @@ public partial class MainWindow : Window
 
     /// <summary>Simple mode's sections and nothing about the servers, or all of them. The section on show stays when the new
     /// list has it. Play and Versions each have a checkout's view and a release install's.</summary>
-    void MoreClicked(object? sender, RoutedEventArgs e)
-    {
-        _shared.Settings.MoreSections = !_shared.Settings.More;
-        _shared.Settings.Save();
-        ShowMode();
-    }
-
     void ShowMode()
     {
-        bool advanced = _shared.Settings.Advanced;
+        // The mode follows the folder: a release shows its user's choice, a source copy Advanced mode.
+        bool advanced = Editions.Advanced(_shared.Settings);
         Control[] others = Repo.IsInstall ? [PlayView, Versions] : [InstallView, ReleasesView];
         var sections = _sections.Where(s => !others.Contains(s.View) && (advanced
             ? s.View is not (PlayTab or InstallTab or SetupTab) || s.View == Setup
-            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or SettingsTab
-                // Simple mode's further sections, with "More tools". A link to one shows it either way (ShowSection).
-                || _shared.Settings.More && s.View is LogsTab or ConsoleTab or ToolsTab)).ToArray();
-        ModeSwitch.IsVisible = _shared.Settings.Developer;
+            // Simple mode's one list. Console and Logs open from Tools: ShowSection shows a section that is not listed.
+            : s.View is GameSystemsTab && !Repo.IsInstall || s.View is PlayTab or InstallTab or ModsTab or BackupsTab or AccountsTab or ToolsTab or SettingsTab)).ToArray();
+        // Developer Mode (Settings) unlocks the switch, on a release: a source copy has no Simple mode to switch to.
+        ModeSwitch.IsVisible = Repo.IsInstall && _shared.Settings.Developer;
         var shown = Sections.SelectedItem as Section;
         Sections.ItemsSource = sections;
         Sections.SelectedItem = sections.Contains(shown) ? shown : sections[0];
@@ -216,21 +214,19 @@ public partial class MainWindow : Window
         BranchName.Text = Repo.Branch() ?? L.Text("no git checkout");
         SimpleMode.IsChecked = !advanced;
         AdvancedMode.IsChecked = advanced;
-        // The link under Simple mode's list: Logs, Console and Tools shown or not. Advanced mode has them all.
-        MoreLink.IsVisible = !advanced;
-        MoreLink.Content = L.Text(_shared.Settings.More ? "Fewer tools" : "More tools");
-        ToolTip.SetTip(MoreLink, L.Text(_shared.Settings.More ? "Takes Logs, Console and Tools out of this list. A link that leads to one still opens it."
-            : "Adds Logs, Console and Tools to this list"));
+        ToolsView.ShowMode(simple: !advanced);
         // Developer Mode also decides whether Simple mode offers the Latest side.
         InstallView.ShowOffers();
         PlayView.ShowOffers();
         SettingsView.ShowMode();
     }
 
+    /// <summary>The sidebar's switch, which only a release shows. ShowMode also sets the two buttons, and on a source copy the
+    /// mode shown is not the saved choice: nothing is written there.</summary>
     void ModeChosen(object? sender, RoutedEventArgs e)
     {
         bool advanced = AdvancedMode.IsChecked == true;
-        if (advanced == _shared.Settings.Advanced) return;
+        if (!Repo.IsInstall || advanced == _shared.Settings.Advanced) return;
         _shared.Settings.AdvancedMode = advanced;
         _shared.Settings.Save();
         ShowMode();
@@ -319,12 +315,22 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>A real exit, without the question about what runs: Waypoint starts again on another folder, and whoever
+    /// asked for that has answered already. A run in progress still keeps the window open.</summary>
+    internal void ExitNow()
+    {
+        _explicitExit = true;
+        Close();
+    }
+
     /// <summary>As on Windows, without a tray to hide in: a run in progress keeps the window open, and running services are
     /// stopped or left as the settings say, after asking when they say to ask.</summary>
     void WindowClosing(object? sender, WindowClosingEventArgs e)
     {
         if (_closing) return;
         if (_deciding) { e.Cancel = true; return; }
+        bool explicitExit = _explicitExit;
+        _explicitExit = false;
         var settings = _shared.Settings;
         bool anything = _shared.Monitor.Latest.Any(s => s.Running && s.Service.Kind is not ServiceKind.Recorder);
         if (_shared.IsLiveRunning)
@@ -334,7 +340,7 @@ public partial class MainWindow : Window
             return;
         }
         bool stop = settings.StopServicesOnExit;
-        if (anything && settings.AlwaysAskOnClose)
+        if (anything && settings.AlwaysAskOnClose && !explicitExit)
         {
             e.Cancel = true;
             _deciding = true;

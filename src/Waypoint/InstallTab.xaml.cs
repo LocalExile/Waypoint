@@ -113,6 +113,26 @@ public partial class InstallTab : UserControl
         Elapsed.Text = _working ? L.Text("Running for {0}", _clock.Elapsed.ToString(@"m\:ss")) : "";
         VersionText.Text = LocalExileReleases.Installed(Folder) is { } version ? L.Text("LocalExile {0}", version) : "";
         Offer.Show(!busy && !AnythingRunning && !needsSetup);
+        string? from = _bringLater ? null : Editions.BringFrom(_shared.Settings);
+        BringCard.Visibility = from is not null && !busy && !AnythingRunning && !needsSetup ? Visibility.Visible : Visibility.Collapsed;
+        if (from is not null) BringText.Text = L.Text("Your characters are still in {0}. Waypoint can bring them here when this release is the same as or newer than that copy.", from);
+    }
+
+    /// <summary>"Not now" on the characters card: until Waypoint starts again.</summary>
+    bool _bringLater;
+
+    async void BringClicked(object sender, RoutedEventArgs e)
+    {
+        var owner = Window.GetWindow(this);
+        bool brought = await Editions.BringToReleaseAsync(_shared, (kind, title, message, buttons) => Dialog.Show(owner, kind, title, message, null, buttons));
+        if (brought) _note = () => L.Text("Your characters came with you. Log in as usual.");
+        Show();
+    }
+
+    void BringLaterClicked(object sender, RoutedEventArgs e)
+    {
+        _bringLater = true;
+        Show();
     }
 
     void MainClicked(object sender, RoutedEventArgs e)

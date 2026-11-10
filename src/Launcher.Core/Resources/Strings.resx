@@ -69,6 +69,9 @@
   <data name="Text_01c618fd5db4" xml:space="preserve">
     <value>A selected module is missing.</value>
   </data>
+  <data name="Text_01d43e181229" xml:space="preserve">
+    <value>They are safe where they are, in {0}.</value>
+  </data>
   <data name="Text_01deac2c6a06" xml:space="preserve">
     <value>The day's Labyrinth of every tier as a map: its rooms, the shortest way to Izaro, gauntlets, puzzles, Darkshrines, keys and doors.</value>
   </data>
@@ -227,6 +230,9 @@
   </data>
   <data name="Text_06afb73ab20b" xml:space="preserve">
     <value>1 of 2 · League and mode</value>
+  </data>
+  <data name="Text_06c07d364810" xml:space="preserve">
+    <value>Your characters can't come yet</value>
   </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: not a whole number</value>
@@ -1219,6 +1225,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_2494bdb5bc46" xml:space="preserve">
     <value>Loading accounts…</value>
   </data>
+  <data name="Text_24d8d6631c8e" xml:space="preserve">
+    <value>Look up the server's commands and use one in the game.</value>
+  </data>
   <data name="Text_24ee657570ef" xml:space="preserve">
     <value>Update mod</value>
   </data>
@@ -1634,9 +1643,6 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Full copy</value>
   </data>
-  <data name="Text_2f033ca03b8e" xml:space="preserve">
-    <value>Fewer tools</value>
-  </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>Base: {0}</value>
   </data>
@@ -1973,6 +1979,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>The setup guide downloads LocalExile's newest version and builds it, and can bring your characters.</value>
+  </data>
+  <data name="Text_391b7011e22f" xml:space="preserve">
+    <value>Waypoint could not compare the copy in {0} with this release.</value>
   </data>
   <data name="Text_393d8d4eecb9" xml:space="preserve">
     <value>No linked mode options on this flag.</value>
@@ -2503,9 +2512,6 @@ This checkout has modified tracked files.</value>
   <data name="Text_4987ea348964" xml:space="preserve">
     <value>{0} is running; the lists are what the checkout already knew.</value>
   </data>
-  <data name="Text_49897adf0b24" xml:space="preserve">
-    <value>Characters can't go from Latest to a release: a newer LocalExile may save things an older release can't read.</value>
-  </data>
   <data xml:space="preserve" name="Text_49c266baaaa7">
     <value>Search</value>
   </data>
@@ -2950,6 +2956,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>release {0} has no {1} with its .sha256</value>
   </data>
+  <data name="Text_572a2c0f42aa" xml:space="preserve">
+    <value>Switch without stopping</value>
+  </data>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>Nothing changes. If this client shares its settings with your normal game, you set Networking Mode to Predictive in the game yourself.</value>
   </data>
@@ -2996,9 +3005,6 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_591889ac42e0" xml:space="preserve">
     <value>Open logs</value>
-  </data>
-  <data name="Text_5918cb537c7d" xml:space="preserve">
-    <value>More tools</value>
   </data>
   <data xml:space="preserve" name="Text_594623afa2ef">
     <value>Existing save database</value>
@@ -3165,6 +3171,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_5f6d5cac3804">
     <value>Backing up saves</value>
+  </data>
+  <data name="Text_5f7d44dba864" xml:space="preserve">
+    <value>Your characters are still in {0}. Waypoint can bring them here when this release is the same as or newer than that copy.</value>
   </data>
   <data xml:space="preserve" name="Text_5f9f3af82191">
     <value>Selected text</value>
@@ -3855,6 +3864,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_74160bd42b82">
     <value>LocalExile repository folder</value>
   </data>
+  <data name="Text_7432384d695e" xml:space="preserve">
+    <value>The copy in {0} is newer than this release, or on a branch that is not in it. Its characters can come once a newer release is out: update LocalExile then, and try again.</value>
+  </data>
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>Crafting and trade</value>
   </data>
@@ -4275,6 +4287,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_82b8c45a6503" xml:space="preserve">
     <value>dev host stopped</value>
   </data>
+  <data name="Text_82bf8676d099" xml:space="preserve">
+    <value>What Waypoint, the servers and the game wrote down: where to look when something went wrong.</value>
+  </data>
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>Copy the chat command that gives this item</value>
   </data>
@@ -4379,6 +4394,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>Delete saved item</value>
+  </data>
+  <data name="Text_86166dd1d685" xml:space="preserve">
+    <value>Bring my characters…</value>
   </data>
   <data name="Text_861e03332619" xml:space="preserve">
     <value>This deletes the program files in {0}, and cannot be undone. Your old saves and mods stay there until you delete them yourself. A game client this copy uses moves here first when it is on the same drive.</value>
@@ -4804,6 +4822,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_93827aab09d1" xml:space="preserve">
     <value>Play, mods, backups, accounts, logs, the console and tools.</value>
   </data>
+  <data name="Text_93adccb219af" xml:space="preserve">
+    <value>LocalExile is still running</value>
+  </data>
   <data name="Text_93bcc3510b6f" xml:space="preserve">
     <value>Treasure chest</value>
   </data>
@@ -5056,6 +5077,9 @@ Dependencies: {3}
   </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>Deleted {0} saved items</value>
+  </data>
+  <data name="Text_9a3cdf338f34" xml:space="preserve">
+    <value>Bring your characters to the release?</value>
   </data>
   <data name="Text_9a71843838e4" xml:space="preserve">
     <value>Install the .NET 10 SDK for Windows x64 from Microsoft's download page, then Check again: Waypoint reads the PATH again, so it need not restart.</value>
@@ -5688,6 +5712,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_ac1f5a0e46c1" xml:space="preserve">
     <value>The game is not running: start it, enter an area with a character, then give the item again.</value>
   </data>
+  <data name="Text_ac4f361600ac" xml:space="preserve">
+    <value>Waypoint could not read the version of the copy in {0}.</value>
+  </data>
   <data xml:space="preserve" name="Text_ac7fcf0ba22e">
     <value>No installed mods</value>
   </data>
@@ -5805,6 +5832,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>Alliance</value>
   </data>
+  <data name="Text_b00ef4aaae35" xml:space="preserve">
+    <value>The copy in {0} has changes of your own to LocalExile's code, so its characters may not fit this release.</value>
+  </data>
   <data name="Text_b016f6d52f72" xml:space="preserve">
     <value>You stashed changes when you left {0}. Restore them now?</value>
   </data>
@@ -5912,6 +5942,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b34ae7c4547d">
     <value>Local HEAD: </value>
+  </data>
+  <data name="Text_b3557e6a6fbe" xml:space="preserve">
+    <value>Your characters came with you. Log in as usual.</value>
   </data>
   <data name="Text_b370dc0062ea" xml:space="preserve">
     <value>live.ps1: builds and starts the servers, then the game (closes a running one)</value>
@@ -6110,6 +6143,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_b9f4f560cff4" xml:space="preserve">
     <value>A pull request that is not in the open list: its head is fetched from GitHub by number</value>
+  </data>
+  <data name="Text_ba183803c449" xml:space="preserve">
+    <value>Your accounts, characters and stash in {0} are copied here; that folder is only read. This release's own are backed up and set aside first.</value>
   </data>
   <data name="Text_ba2cad95033e" xml:space="preserve">
     <value>#{0} comes from a fork</value>
@@ -6603,6 +6639,9 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   <data name="Text_c9b2c9b72ddd" xml:space="preserve">
     <value>What should closing the window do?</value>
   </data>
+  <data name="Text_c9be7a297f8d" xml:space="preserve">
+    <value>Characters go back to a release only when it is the same as or newer than Latest: a newer LocalExile may save things an older release can't read.</value>
+  </data>
   <data name="Text_c9cf9cba7b44" xml:space="preserve">
     <value>Reads the branches of LocalExile and origin, and LocalExile's open pull requests</value>
   </data>
@@ -6614,9 +6653,6 @@ Steam layout and a newer official client are unsupported. The launcher does not 
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Unavailable</value>
-  </data>
-  <data name="Text_ca20ea2d6a4c" xml:space="preserve">
-    <value>Takes Logs, Console and Tools out of this list. A link that leads to one still opens it.</value>
   </data>
   <data xml:space="preserve" name="Text_ca4e5268289a">
     <value>{0} backups for {1}</value>
@@ -6706,6 +6742,9 @@ Client: {2}</value>
   </data>
   <data name="Text_cca7aec3cf35" xml:space="preserve">
     <value>Fit the map</value>
+  </data>
+  <data name="Text_ccbacd01c2c4" xml:space="preserve">
+    <value>On the release's Play page Waypoint offers to bring your characters, when the release is the same as or newer than this copy.</value>
   </data>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>Read-only while the game or services are running, or ownership is uncertain. Stop them and reload before changing accounts.</value>
@@ -6950,6 +6989,9 @@ Client: {2}</value>
   <data name="Text_d5c6cc663b20" xml:space="preserve">
     <value>Replacing saved enable/disable overrides only; no mod binaries or save restore.</value>
   </data>
+  <data name="Text_d5d6149fadee" xml:space="preserve">
+    <value>The game or its servers are running from this folder. Waypoint stops them before it opens the other folder; the servers save first.</value>
+  </data>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>no timings: {0}</value>
   </data>
@@ -7096,6 +7138,9 @@ Dependencies: {2}
   </data>
   <data name="Text_da86bbbc05e9" xml:space="preserve">
     <value>About Mods, Modules and Leagues</value>
+  </data>
+  <data name="Text_da8ec7567c63" xml:space="preserve">
+    <value>Something did not stop. Close the game or stop the servers yourself, then change folder again.</value>
   </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>Reset</value>
@@ -7431,9 +7476,6 @@ Dependencies: {2}
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop and the dev host: the game, the walk-map recorder, the servers and the account service</value>
   </data>
-  <data name="Text_e48b0227bddb" xml:space="preserve">
-    <value>Adds Logs, Console and Tools to this list</value>
-  </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>Previous day</value>
   </data>
@@ -7469,6 +7511,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e6128fcc2b1e" xml:space="preserve">
     <value>Use separate settings</value>
+  </data>
+  <data name="Text_e61ca9b03292" xml:space="preserve">
+    <value>This release does not say which version of LocalExile's code it was built from, so Waypoint can't tell whether your characters fit it.</value>
   </data>
   <data xml:space="preserve" name="Text_e62daa01ba01">
     <value>Choose and check a workspace to see its backups.</value>
@@ -7952,6 +7997,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_f4047b3ea27a">
     <value>Sample button</value>
+  </data>
+  <data name="Text_f4063d1b2a07" xml:space="preserve">
+    <value>Open console</value>
   </data>
   <data xml:space="preserve" name="Text_f418537ab654">
     <value>Color and font preferences can help readability. Important states also keep their text or symbols.</value>

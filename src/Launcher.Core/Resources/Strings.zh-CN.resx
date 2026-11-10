@@ -69,6 +69,9 @@
   <data name="Text_01c618fd5db4" xml:space="preserve">
     <value>所选模块缺失。</value>
   </data>
+  <data name="Text_01d43e181229" xml:space="preserve">
+    <value>它们安全地保留在原处：{0}。</value>
+  </data>
   <data name="Text_01deac2c6a06" xml:space="preserve">
     <value>以地图显示当天每个难度的迷宫：房间、通往伊泽洛的最短路线、陷阱、谜题、黑影祭坛、钥匙和门。</value>
   </data>
@@ -227,6 +230,9 @@
   </data>
   <data name="Text_06afb73ab20b" xml:space="preserve">
     <value>第 1 步，共 2 步 · 赛季与模式</value>
+  </data>
+  <data name="Text_06c07d364810" xml:space="preserve">
+    <value>你的角色暂时还不能转移</value>
   </data>
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}：不是整数</value>
@@ -1219,6 +1225,9 @@
   <data name="Text_2494bdb5bc46" xml:space="preserve">
     <value>正在加载账号…</value>
   </data>
+  <data name="Text_24d8d6631c8e" xml:space="preserve">
+    <value>查找服务器命令，并在游戏中使用。</value>
+  </data>
   <data name="Text_24ee657570ef" xml:space="preserve">
     <value>更新模组</value>
   </data>
@@ -1634,9 +1643,6 @@
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>完整复制</value>
   </data>
-  <data name="Text_2f033ca03b8e" xml:space="preserve">
-    <value>更少工具</value>
-  </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>基础类型：{0}</value>
   </data>
@@ -1973,6 +1979,9 @@
   </data>
   <data name="Text_390dc6e41d4f" xml:space="preserve">
     <value>安装向导会下载并构建 LocalExile 的最新版本，还可以迁移你的角色。</value>
+  </data>
+  <data name="Text_391b7011e22f" xml:space="preserve">
+    <value>Waypoint 无法将 {0} 中的副本与此发布版进行比较。</value>
   </data>
   <data name="Text_393d8d4eecb9" xml:space="preserve">
     <value>此旗帜没有关联的模式选项。</value>
@@ -2503,9 +2512,6 @@
   <data name="Text_4987ea348964" xml:space="preserve">
     <value>{0} 正在运行；列表中显示的是源码副本已知的内容。</value>
   </data>
-  <data name="Text_49897adf0b24" xml:space="preserve">
-    <value>角色不能从最新版转回发布版：较新的 LocalExile 保存的内容，较旧的发布版可能无法读取。</value>
-  </data>
   <data name="Text_49c266baaaa7" xml:space="preserve">
     <value>搜索</value>
   </data>
@@ -2950,6 +2956,9 @@
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>发行版 {0} 中没有附带 .sha256 的 {1}</value>
   </data>
+  <data name="Text_572a2c0f42aa" xml:space="preserve">
+    <value>不停止直接切换</value>
+  </data>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>不做任何更改。如果此客户端与你平时玩的游戏共用设置，你需要自行在游戏中将“连线模式”设为“预测模式”（Networking Mode → Predictive）。</value>
   </data>
@@ -2996,9 +3005,6 @@
   </data>
   <data name="Text_591889ac42e0" xml:space="preserve">
     <value>打开日志</value>
-  </data>
-  <data name="Text_5918cb537c7d" xml:space="preserve">
-    <value>更多工具</value>
   </data>
   <data name="Text_594623afa2ef" xml:space="preserve">
     <value>现有存档数据库</value>
@@ -3165,6 +3171,9 @@
   </data>
   <data name="Text_5f6d5cac3804" xml:space="preserve">
     <value>正在备份存档</value>
+  </data>
+  <data name="Text_5f7d44dba864" xml:space="preserve">
+    <value>你的角色仍在 {0} 中。当此发布版与那个副本相同或更新时，Waypoint 可以把它们带到这里。</value>
   </data>
   <data name="Text_5f9f3af82191" xml:space="preserve">
     <value>选中项文本</value>
@@ -3855,6 +3864,9 @@
   <data name="Text_74160bd42b82" xml:space="preserve">
     <value>LocalExile 仓库文件夹</value>
   </data>
+  <data name="Text_7432384d695e" xml:space="preserve">
+    <value>{0} 中的副本比此发布版更新，或位于此发布版不包含的分支上。等更新的发布版推出后，其中的角色才能转移：届时请更新 LocalExile 并重试。</value>
+  </data>
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>工艺与交易</value>
   </data>
@@ -4275,6 +4287,9 @@
   <data name="Text_82b8c45a6503" xml:space="preserve">
     <value>dev host 已停止</value>
   </data>
+  <data name="Text_82bf8676d099" xml:space="preserve">
+    <value>Waypoint、服务器和游戏记录的内容：出现问题时可以在这里查看。</value>
+  </data>
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>复制发放此物品的聊天命令</value>
   </data>
@@ -4379,6 +4394,9 @@
   </data>
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>删除已保存的物品</value>
+  </data>
+  <data name="Text_86166dd1d685" xml:space="preserve">
+    <value>带上我的角色…</value>
   </data>
   <data name="Text_861e03332619" xml:space="preserve">
     <value>这会删除 {0} 中的程序文件，且无法撤销。你的旧存档和模组会保留在那里，直到你自己删除。如果此副本使用的游戏客户端位于同一驱动器，会先将其移到这里。</value>
@@ -4804,6 +4822,9 @@
   <data name="Text_93827aab09d1" xml:space="preserve">
     <value>“开始游戏”、模组、备份、账号、日志、控制台和工具。</value>
   </data>
+  <data name="Text_93adccb219af" xml:space="preserve">
+    <value>LocalExile 仍在运行</value>
+  </data>
   <data name="Text_93bcc3510b6f" xml:space="preserve">
     <value>宝箱</value>
   </data>
@@ -5056,6 +5077,9 @@
   </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>已删除 {0} 个已保存的物品</value>
+  </data>
+  <data name="Text_9a3cdf338f34" xml:space="preserve">
+    <value>要把你的角色带到发布版吗？</value>
   </data>
   <data name="Text_9a71843838e4" xml:space="preserve">
     <value>从 Microsoft 的下载页面安装适用于 Windows x64 的 .NET 10 SDK，然后点击“再次检查”：Waypoint 会重新读取 PATH，无需重启。</value>
@@ -5688,6 +5712,9 @@
   <data name="Text_ac1f5a0e46c1" xml:space="preserve">
     <value>游戏未运行：请启动游戏，用角色进入一个区域，然后再次发放物品。</value>
   </data>
+  <data name="Text_ac4f361600ac" xml:space="preserve">
+    <value>Waypoint 无法读取 {0} 中副本的版本。</value>
+  </data>
   <data name="Text_ac7fcf0ba22e" xml:space="preserve">
     <value>未安装模组</value>
   </data>
@@ -5805,6 +5832,9 @@
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>联盟</value>
   </data>
+  <data name="Text_b00ef4aaae35" xml:space="preserve">
+    <value>{0} 中的副本包含你自己对 LocalExile 代码的更改，因此其中的角色可能不适用于此发布版。</value>
+  </data>
   <data name="Text_b016f6d52f72" xml:space="preserve">
     <value>你离开 {0} 时贮藏了更改。现在恢复吗？</value>
   </data>
@@ -5912,6 +5942,9 @@
   </data>
   <data name="Text_b34ae7c4547d" xml:space="preserve">
     <value>本地 HEAD：</value>
+  </data>
+  <data name="Text_b3557e6a6fbe" xml:space="preserve">
+    <value>你的角色已一同转移。请照常登录。</value>
   </data>
   <data name="Text_b370dc0062ea" xml:space="preserve">
     <value>live.ps1：构建并启动服务器，然后启动游戏（会关闭正在运行的游戏）</value>
@@ -6110,6 +6143,9 @@
   </data>
   <data name="Text_b9f4f560cff4" xml:space="preserve">
     <value>不在打开列表中的拉取请求：按编号从 GitHub 获取其 head</value>
+  </data>
+  <data name="Text_ba183803c449" xml:space="preserve">
+    <value>{0} 中的账号、角色和仓库会被复制到这里；那个文件夹只会被读取。此发布版自己的数据会先备份并另行保存。</value>
   </data>
   <data name="Text_ba2cad95033e" xml:space="preserve">
     <value>#{0} 来自复刻</value>
@@ -6603,6 +6639,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c9b2c9b72ddd" xml:space="preserve">
     <value>关闭窗口时要执行什么操作？</value>
   </data>
+  <data name="Text_c9be7a297f8d" xml:space="preserve">
+    <value>只有当发布版与“最新版”相同或更新时，角色才能回到发布版：较新的 LocalExile 可能保存旧发布版无法读取的内容。</value>
+  </data>
   <data name="Text_c9cf9cba7b44" xml:space="preserve">
     <value>读取 LocalExile 和 origin 的分支，以及 LocalExile 中打开的拉取请求</value>
   </data>
@@ -6614,9 +6653,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ca1844969742" xml:space="preserve">
     <value>不可用</value>
-  </data>
-  <data name="Text_ca20ea2d6a4c" xml:space="preserve">
-    <value>将“日志”“控制台”和“工具”从此列表中移除。指向其中任一部分的链接仍会打开它。</value>
   </data>
   <data name="Text_ca4e5268289a" xml:space="preserve">
     <value>{1} 的 {0} 个备份</value>
@@ -6706,6 +6742,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cca7aec3cf35" xml:space="preserve">
     <value>适应窗口</value>
+  </data>
+  <data name="Text_ccbacd01c2c4" xml:space="preserve">
+    <value>当发布版与此副本相同或更新时，Waypoint 会在发布版的“开始游戏”页提供转移角色的选项。</value>
   </data>
   <data name="Text_cccbd64fecc9" xml:space="preserve">
     <value>游戏或服务正在运行，或无法确定其归属，因此为只读。请先停止它们并重新加载，再更改账号。</value>
@@ -6950,6 +6989,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d5c6cc663b20" xml:space="preserve">
     <value>仅替换已保存的启用/禁用设置；不恢复模组二进制文件或存档。</value>
   </data>
+  <data name="Text_d5d6149fadee" xml:space="preserve">
+    <value>游戏或其服务器正从此文件夹运行。Waypoint 会先停止它们，再打开另一个文件夹；服务器会先保存。</value>
+  </data>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>无耗时数据：{0}</value>
   </data>
@@ -7096,6 +7138,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_da86bbbc05e9" xml:space="preserve">
     <value>关于模组、模块和赛季</value>
+  </data>
+  <data name="Text_da8ec7567c63" xml:space="preserve">
+    <value>有程序未能停止。请自行关闭游戏或停止服务器，然后再次更改文件夹。</value>
   </data>
   <data name="Text_daee7606b339" xml:space="preserve">
     <value>重置</value>
@@ -7431,9 +7476,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop 和 dev host：游戏、行走地图记录器、服务器和账号服务</value>
   </data>
-  <data name="Text_e48b0227bddb" xml:space="preserve">
-    <value>将“日志”“控制台”和“工具”添加到此列表</value>
-  </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>前一天</value>
   </data>
@@ -7469,6 +7511,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e6128fcc2b1e" xml:space="preserve">
     <value>使用独立设置</value>
+  </data>
+  <data name="Text_e61ca9b03292" xml:space="preserve">
+    <value>此发布版没有说明它是由哪个版本的 LocalExile 代码构建的，因此 Waypoint 无法判断你的角色是否适用于它。</value>
   </data>
   <data name="Text_e62daa01ba01" xml:space="preserve">
     <value>选择并检查一个工作区，以查看其备份。</value>
@@ -7952,6 +7997,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f4047b3ea27a" xml:space="preserve">
     <value>示例按钮</value>
+  </data>
+  <data name="Text_f4063d1b2a07" xml:space="preserve">
+    <value>打开控制台</value>
   </data>
   <data name="Text_f418537ab654" xml:space="preserve">
     <value>颜色和字体首选项有助于提高可读性。重要状态也会保留其文字或符号。</value>

@@ -56,9 +56,10 @@ public partial class SettingsTab : UserControl
         UseProfile.IsChecked = S.UseLocalProfile;
         DeveloperMode.IsChecked = S.Developer;
         DeveloperNote.Text = L.Text("Adds a Simple | Advanced switch to the sidebar. Advanced replaces Play with Control, and adds Versions, performance and server timings.");
-        KeepUpToDate.Visibility = S.Advanced && !Repo.IsInstall ? Visibility.Collapsed : Visibility.Visible;
+        // A source copy is updated from Versions, by its user: nothing moves it by itself any more.
+        KeepUpToDate.Visibility = Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
         if (Repo.IsInstall) KeepUpToDate.ToolTip = L.Text("When Waypoint starts, look for a newer LocalExile release and offer to install it.");
-        CheckoutGroup.Visibility = S.Advanced && !Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
+        CheckoutGroup.Visibility = Editions.Advanced(S) && !Repo.IsInstall ? Visibility.Visible : Visibility.Collapsed;
         _loading = false;
     }
 
@@ -162,12 +163,12 @@ public partial class SettingsTab : UserControl
         if (Busy()) return;
         var owner = Window.GetWindow(this);
         var dialog = new CheckoutDialog(owner, S.ServerPath);
-        if (dialog.ShowDialog() == true) App.SwitchServer(owner, S, dialog.Chosen);
+        if (dialog.ShowDialog() == true) _ = App.SwitchServerAsync(owner, _shared, dialog.Chosen);
     }
 
     void ChangeCheckout(object sender, RoutedEventArgs e)
     {
-        if (!Busy()) App.SwitchServer(Window.GetWindow(this), S);
+        if (!Busy()) _ = App.SwitchServerAsync(Window.GetWindow(this), _shared);
     }
 
     void OpenData(object sender, RoutedEventArgs e)
@@ -191,7 +192,8 @@ public partial class SettingsTab : UserControl
         GameSettingsRow.Children.Clear();
         // A power user's page: with Developer Mode, and whenever something there is chosen or cannot be used, so that what
         // startup reports can always be changed here.
-        PathsGroup.Visibility = S.Developer || S.PathsChosen || Settings.PathProblems.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        PathsGroup.Visibility = S.Developer || !Repo.IsInstall && Editions.Advanced(S) || S.PathsChosen || Settings.PathProblems.Count > 0
+            ? Visibility.Visible : Visibility.Collapsed;
         AddPathRow(PathKind.Data, null, L.Text("Waypoint's data"), S.DataFolder);
         AddPathRow(PathKind.Backups, null, L.Text("Save backups"), S.BackupsFolder);
         AddGameSettingsRow();
