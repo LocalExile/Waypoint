@@ -54,7 +54,7 @@ public sealed partial class GameSystems
         return value;
     }
     static string Id(string path) => Normal(path).Split('/')[^1];
-    static IEnumerable<string> Manifests(string folder, string manifest)
+    internal static IEnumerable<string> Manifests(string folder, string manifest)
     {
         if (!Directory.Exists(folder)) yield break;
         var pending = new Stack<(string Folder, int Depth)>(); pending.Push((folder, 0)); int count = 0;

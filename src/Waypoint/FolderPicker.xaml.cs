@@ -81,7 +81,7 @@ public partial class FolderPicker : UserControl
         // Developer Mode on a release, or a source copy, whose Control has the same button.
         NewCopy.Visibility = !Repo.IsInstall || Editions.Offered(_shared.Settings) ? Visibility.Visible : Visibility.Collapsed;
         NewCopy.ToolTip = Repo.IsInstall
-            ? L.Text("Sets up a second LocalExile from its source code, which has the item crafter. You can bring your characters.")
+            ? L.Text("Sets up a second LocalExile from its source code, which you can change and build yourself. You can bring your characters.")
             : L.Text("Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests");
         // The window's zoom does not reach a popup, which is a window of its own.
         Card.LayoutTransform = Theme.Zoom == 1 ? Transform.Identity : new ScaleTransform(Theme.Zoom, Theme.Zoom);

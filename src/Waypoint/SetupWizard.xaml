@@ -180,7 +180,7 @@
                         </StackPanel>
                         <TextBlock Text="{l:Loc 'Your current LocalExile'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" />
                         <TextBlock x:Name="OldFolder" Style="{StaticResource Caption}" Margin="0,2,0,0" />
-                        <TextBlock Text="{l:Loc 'Setup installs a new copy of LocalExile that has the item crafter. What should happen to the one you have now?'}" TextWrapping="Wrap" Margin="0,6,0,6" />
+                        <TextBlock Text="{l:Loc 'Setup installs a new copy of LocalExile from its source code. What should happen to the one you have now?'}" TextWrapping="Wrap" Margin="0,6,0,6" />
                         <RadioButton x:Name="KeepBoth" GroupName="Old" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Keep both (recommended)'}" IsChecked="True" />
                         <TextBlock Text="{l:Loc 'You can go back to your current one at any time. Each has its own characters and progress.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
                         <RadioButton x:Name="RemoveOldLater" GroupName="Old" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Remove the old one later'}" />
@@ -188,15 +188,9 @@
                         <StackPanel x:Name="UpdatesChoice">
                             <TextBlock Text="{l:Loc 'Updates'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,6" />
                             <RadioButton x:Name="TestedVersion" GroupName="Updates" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Keep an older version that does not change'}" IsChecked="True" />
-                            <TextBlock Text="{l:Loc 'LocalExile from 1 November, which the item crafter is known to work with. You can move to the newest changes later from Versions.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
+                            <TextBlock Text="{l:Loc 'LocalExile v0.4.2-beta, which this Waypoint is known to work with. You can move to the newest changes later from Versions.'}" Style="{StaticResource Caption}" Margin="27,0,0,8" />
                             <RadioButton x:Name="NewestVersion" GroupName="Updates" Style="{StaticResource ChoiceRadio}" Content="{l:Loc 'Get the newest changes'}" />
                             <TextBlock Text="{l:Loc 'LocalExile\'s newest changes; things can break. You update it yourself from Versions.'}" Style="{StaticResource Caption}" Margin="27,0,0,14" />
-                        </StackPanel>
-                        <StackPanel x:Name="GiveItemChoice">
-                            <TextBlock Text="{l:Loc 'Giving items'}" FontSize="{DynamicResource Font18}" FontWeight="SemiBold" Margin="0,0,0,6" />
-                            <CheckBox x:Name="GiveItem" Content="{l:Loc 'Set up Give item (recommended)'}" IsChecked="True" />
-                            <TextBlock Text="{l:Loc 'Installs Frida, a tool that talks to the running game. It takes about 180 MB, and some antivirus programs flag it. The game\'s chat box is too short for most items, so Give item needs it.'}"
-                                       Style="{StaticResource Caption}" Margin="27,0,0,0" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

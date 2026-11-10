@@ -35,8 +35,8 @@ offers two ways to get LocalExile:
 | [Node.js](https://nodejs.org/en/download) | The bundle-decompression dependency |
 | Your own standalone PoE **3.29.3c** client | A separate copy in the checkout's `Client` folder; Steam layout and other builds are unsupported |
 
-Frida (`pip install frida`) is optional: it is needed for walk maps, the console, live mod control and the item crafter's Give
-item, not for ordinary play. The crafter offers to install it.
+Frida (`pip install frida`) is optional: it is needed for walk maps, the console and live mod control, not for ordinary play.
+The item crafter's Give item uses the Waypoint Tools mod instead, which it offers to install.
 
 1. Download `Waypoint.exe` from the latest release on this repository's **Releases** page.
 2. Put it anywhere and start it.
@@ -72,8 +72,7 @@ them), the item crafter, the tray and the appearance editor.
 
 On a release install some sections do less, because a release has no source, Frida or per-service control: **Console** copies
 commands for you to paste into the game's chat, **Mods** installs a mod's release but cannot build one from source, **Control** starts and stops
-everything together, and **Tools** needs a source checkout: **Get the item crafter…** sets one up beside your release and can bring
-your characters. When a newer LocalExile release is out, a green card offers to install it.
+everything together, and the item crafter's **Give item** goes through the Waypoint Tools mod, which it offers to install. When a newer LocalExile release is out, a green card offers to install it.
 Nothing changes until you accept and the game is closed. Your saves are copied first, and `data\` and `Client\` are kept.
 **Settings → Keep LocalExile up to date** turns the prompt off.
 

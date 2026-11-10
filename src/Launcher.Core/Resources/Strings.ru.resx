@@ -174,6 +174,9 @@
   <data name="Text_048fe1d24504" xml:space="preserve">
     <value>Это не сборка 3.29.3c, нужная LocalExile, поэтому подготовка, скорее всего, не удастся. Можно попробовать, но сначала проверьте версию: копия большая.</value>
   </data>
+  <data name="Text_04fc6ba06c6e" xml:space="preserve">
+    <value>Не удалось прочитать официальные моды: {0}</value>
+  </data>
   <data xml:space="preserve" name="Text_0516ac3163b5">
     <value>Какие цвета изменять</value>
   </data>
@@ -302,9 +305,6 @@
   </data>
   <data name="Text_098efbe9d148" xml:space="preserve">
     <value>Стихийные сферы</value>
-  </data>
-  <data name="Text_099cb57aed76" xml:space="preserve">
-    <value>Выдача предметов</value>
   </data>
   <data xml:space="preserve" name="Text_09a216bf0611">
     <value>Архив клиента</value>
@@ -560,6 +560,9 @@
   </data>
   <data name="Text_0fe48573aa2b" xml:space="preserve">
     <value>Настроить новую копию…</value>
+  </data>
+  <data name="Text_0ff81662b90f" xml:space="preserve">
+    <value>Положить предмет в инвентарь персонажа в игре (через мод Waypoint Tools)</value>
   </data>
   <data name="Text_10103cd43afc" xml:space="preserve">
     <value>LocalExile установлен. Когда у вас будет клиент игры, запустите этот мастер снова: «Играть» → «Завершить настройку».</value>
@@ -1622,8 +1625,8 @@
   <data xml:space="preserve" name="Text_2dcb950944f5">
     <value>Состояние в игре не подтверждено.</value>
   </data>
-  <data name="Text_2de6febbfacf" xml:space="preserve">
-    <value>Устанавливает Frida — инструмент, который взаимодействует с запущенной игрой. Она занимает около 180 МБ, а некоторые антивирусы на неё реагируют. Чат игры слишком короткий для большинства предметов, поэтому без неё выдача не работает.</value>
+  <data name="Text_2deddd866f78" xml:space="preserve">
+    <value>Waypoint предложит установить её при отправке команд из консоли, управлении модами в игре или записи карт проходимости.</value>
   </data>
   <data xml:space="preserve" name="Text_2deea4664d23">
     <value>Вспомогательный текст</value>
@@ -1666,6 +1669,9 @@
   </data>
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Полная копия</value>
+  </data>
+  <data name="Text_2efd6c79d96d" xml:space="preserve">
+    <value>Установить Waypoint Tools?</value>
   </data>
   <data name="Text_2f0bd5f62bba" xml:space="preserve">
     <value>База: {0}</value>
@@ -2149,9 +2155,6 @@
   <data name="Text_3c8dedc73d20" xml:space="preserve">
     <value>Встречи и испытания</value>
   </data>
-  <data name="Text_3c94106d9402" xml:space="preserve">
-    <value>LocalExile от 1 ноября, с которым точно работает конструктор предметов. Перейти на последние изменения можно позже в разделе «Версии».</value>
-  </data>
   <data name="Text_3cc7bdb1ec13" xml:space="preserve">
     <value>Необязательный модуль для этого режима.</value>
   </data>
@@ -2181,6 +2184,9 @@
   </data>
   <data name="Text_3d502d9e88cc" xml:space="preserve">
     <value>В лиге «Стандарт»; другие лиги доступны на экране создания персонажа в игре</value>
+  </data>
+  <data name="Text_3da865c1058e" xml:space="preserve">
+    <value>Настраивает второй LocalExile из исходного кода, который можно менять и собирать самому. Вы можете перенести своих персонажей.</value>
   </data>
   <data name="Text_3db20e7a2c35" xml:space="preserve">
     <value>Текущие сохранения копируются и убираются в сторону, но не удаляются; действует на одно переключение</value>
@@ -2226,9 +2232,6 @@
   </data>
   <data name="Text_3f8635c36da3" xml:space="preserve">
     <value>Вернуть отложенные изменения</value>
-  </data>
-  <data name="Text_3f8a8eaffe42" xml:space="preserve">
-    <value>Настройка установит новую копию LocalExile с конструктором предметов. Что сделать с той, что есть сейчас?</value>
   </data>
   <data name="Text_3f8c65be8e28" xml:space="preserve">
     <value>Верстак</value>
@@ -2307,9 +2310,6 @@
   </data>
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Язык сохранён.</value>
-  </data>
-  <data name="Text_4225d78569c5" xml:space="preserve">
-    <value>Конструктор предметов находится в разделе «Инструменты».</value>
   </data>
   <data name="Text_4228aeb07c41" xml:space="preserve">
     <value>Правила</value>
@@ -2580,9 +2580,6 @@
   </data>
   <data xml:space="preserve" name="Text_4a1c51ca77b8">
     <value>Выбор модов применяется при следующем запуске Gateway. «Собрать выбранный» компилирует исходники мода.</value>
-  </data>
-  <data name="Text_4a1d58e62d25" xml:space="preserve">
-    <value>Для выдачи предметов нужна Frida.</value>
   </data>
   <data name="Text_4a416d8a0cdb" xml:space="preserve">
     <value>Недоступно в этой копии</value>
@@ -2974,6 +2971,9 @@
   <data name="Text_55b612083b47" xml:space="preserve">
     <value>Даёт LocalExile собственные настройки и сохранённый вход, а у вашей обычной игры остаются свои</value>
   </data>
+  <data name="Text_55cd62661ffd" xml:space="preserve">
+    <value>Waypoint Tools не ответил. Игра запущена, а персонаж находится в локации?</value>
+  </data>
   <data name="Text_55f68b111c40" xml:space="preserve">
     <value>Дать LocalExile собственные настройки игры, а у вашей обычной игры останутся свои.</value>
   </data>
@@ -3297,9 +3297,6 @@
   </data>
   <data name="Text_6117d05e41be" xml:space="preserve">
     <value>Обновлений нет</value>
-  </data>
-  <data name="Text_612fd44c6d19" xml:space="preserve">
-    <value>Настраивает второй LocalExile из исходного кода, в котором есть конструктор предметов. Вы можете перенести своих персонажей.</value>
   </data>
   <data name="Text_612ffc5ce9d4" xml:space="preserve">
     <value>Ожидание…</value>
@@ -4092,9 +4089,6 @@
   <data xml:space="preserve" name="Text_798ca2ce18bf">
     <value>Создать аккаунт</value>
   </data>
-  <data name="Text_799b5aca373e" xml:space="preserve">
-    <value>Настройка выдачи предметов</value>
-  </data>
   <data name="Text_79c2f38c55c2" xml:space="preserve">
     <value>Копировать сведения о карте</value>
   </data>
@@ -4365,6 +4359,9 @@
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>Скопировать чат-команду, которая выдаёт этот предмет</value>
   </data>
+  <data name="Text_82dab4842651" xml:space="preserve">
+    <value>LocalExile v0.4.2-beta, с которым точно работает этот Waypoint. Перейти на последние изменения можно позже в разделе «Версии».</value>
+  </data>
   <data name="Text_8300d2d40c93" xml:space="preserve">
     <value>Готово: {0} ({1:0} с).</value>
   </data>
@@ -4592,9 +4589,6 @@
   </data>
   <data name="Text_89d29dccbe1f" xml:space="preserve">
     <value>Добавляет на боковую панель переключатель «Простой | Расширенный». В установленном выпуске расширенный режим добавляет строку состояния, производительность и время работы сервера; остальным разделам нужен исходный код.</value>
-  </data>
-  <data name="Text_89eeaab14d03" xml:space="preserve">
-    <value>Waypoint предложит установить её при отправке команд из консоли, выдаче предметов, управлении модами в игре или записи карт проходимости.</value>
   </data>
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>Дважды щёлкните команду, чтобы подставить её в строку.</value>
@@ -4927,6 +4921,9 @@
   <data xml:space="preserve" name="Text_9491bfb97e66">
     <value>Ожидание закрытия окна игры без принудительного завершения.</value>
   </data>
+  <data name="Text_94984f98e642" xml:space="preserve">
+    <value>Waypoint Tools не установлен: причина в разделе «Журналы».</value>
+  </data>
   <data name="Text_949d1326b83e" xml:space="preserve">
     <value>Проверка исполняемых файлов клиента с сохранением текущих ключей входа.</value>
   </data>
@@ -5114,6 +5111,9 @@
   <data name="Text_98d3dd871595" xml:space="preserve">
     <value>Последняя {0}</value>
   </data>
+  <data name="Text_98f334a494f1" xml:space="preserve">
+    <value>Для «Выдать предмет» нужен мод Waypoint Tools: он выдаёт предмет персонажу в игре. Установить его из официальных модов?</value>
+  </data>
   <data name="Text_990c09b02baf" xml:space="preserve">
     <value>Вышел LocalExile {0}; у вас {1}. Персонажи, ключи и клиент игры сохранятся.</value>
   </data>
@@ -5152,6 +5152,9 @@
   </data>
   <data xml:space="preserve" name="Text_99efec87ba2a">
     <value>Устраните конфликт рабочей папки</value>
+  </data>
+  <data name="Text_9a05eeed8b20" xml:space="preserve">
+    <value>«Выдать предмет» работает через мод Waypoint Tools, а ни одна запущенная игра его не загрузила. Нажмите «Играть», включите мод в разделе «Моды», если он выключен, войдите в локацию персонажем и выдайте предмет снова.</value>
   </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>Удалено сохранённых предметов: {0}</value>
@@ -5405,9 +5408,6 @@
   </data>
   <data name="Text_a08f0f94673a" xml:space="preserve">
     <value>Не отображается</value>
-  </data>
-  <data name="Text_a09188c15b56" xml:space="preserve">
-    <value>Не устанавливать Frida. Waypoint снова предложит её при нажатии «Выдать предмет».</value>
   </data>
   <data name="Text_a0b23bdf2ea5" xml:space="preserve">
     <value>мосту нужен Python с frida, а он не установлен: как установить, показано в разделе «Подготовка» в расширенном режиме</value>
@@ -5673,6 +5673,9 @@
   <data name="Text_a7984ca9bfc9" xml:space="preserve">
     <value>Введите имя и пароль.</value>
   </data>
+  <data name="Text_a7af7ac59384" xml:space="preserve">
+    <value>Для «Выдать предмет» нужен мод Waypoint Tools.</value>
+  </data>
   <data name="Text_a7ba608e8a20" xml:space="preserve">
     <value>Порт всё ещё занят. Когда разберётесь, нажмите «Продолжить»: Waypoint спросит снова.</value>
   </data>
@@ -5799,9 +5802,6 @@
   <data xml:space="preserve" name="Text_ac15c0c9a3e0">
     <value>Показаны первые 1000 открытых PR. Введите номер другого PR, чтобы получить его.</value>
   </data>
-  <data name="Text_ac1f5a0e46c1" xml:space="preserve">
-    <value>Игра не запущена: запустите её, войдите персонажем в локацию и выдайте предмет снова.</value>
-  </data>
   <data name="Text_ac4f361600ac" xml:space="preserve">
     <value>Waypoint не удалось прочитать версию копии в {0}.</value>
   </data>
@@ -5837,9 +5837,6 @@
   </data>
   <data xml:space="preserve" name="Text_adb0547b2fad">
     <value>Перезапуск завершён.</value>
-  </data>
-  <data name="Text_adb32bc18285" xml:space="preserve">
-    <value>В вашей версии LocalExile пока нет конструктора предметов. Он есть в новой копии LocalExile, и вы можете перенести туда своих персонажей.</value>
   </data>
   <data xml:space="preserve" name="Text_adb8a7038d6c">
     <value>Выберите мод, чтобы увидеть зависимости и доступные действия.</value>
@@ -5915,6 +5912,9 @@
   </data>
   <data name="Text_afc05ca34f9e" xml:space="preserve">
     <value>В вашем форке (origin), но не в LocalExile</value>
+  </data>
+  <data name="Text_afc5d553e253" xml:space="preserve">
+    <value>Waypoint Tools установлен. Запущенная игра загрузит его за секунду: войдите в локацию персонажем и выдайте предмет снова.</value>
   </data>
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>Союз</value>
@@ -6462,9 +6462,6 @@
   <data name="Text_c176bcfe0c3f" xml:space="preserve">
     <value>У LocalExile пока нет выпуска для загрузки.</value>
   </data>
-  <data name="Text_c18c0a3bb845" xml:space="preserve">
-    <value>Положить предмет в инвентарь персонажа в игре (через мост управления клиентом)</value>
-  </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>Назад к моим модам</value>
   </data>
@@ -6705,6 +6702,9 @@
   <data xml:space="preserve" name="Text_c8ae1bb777a0">
     <value>Gateway запустил новый процесс в том же сеансе отслеживания. Войдите повторно, если игра вернулась на экран входа.</value>
   </data>
+  <data name="Text_c8b0828a4c7a" xml:space="preserve">
+    <value>В официальных модах пока нет Waypoint Tools.</value>
+  </data>
   <data name="Text_c8b5d313ef89" xml:space="preserve">
     <value>Эта копия уйдёт с проверенной версии на последние изменения LocalExile, и «Играть» будет обновлять её каждый день. Новые изменения не проверены, и что-то может сломаться. Сначала будет создана резервная копия ваших сохранений.</value>
   </data>
@@ -6752,6 +6752,9 @@
   </data>
   <data name="Text_c9efab217fdd" xml:space="preserve">
     <value>Не удалось скачать {0} с GitHub; попробуйте позже.</value>
+  </data>
+  <data name="Text_ca0a76c99b1e" xml:space="preserve">
+    <value>Настройка установит новую копию LocalExile из исходного кода. Что сделать с той, что есть сейчас?</value>
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
@@ -6883,9 +6886,6 @@
   </data>
   <data name="Text_ce29b7f85b9e" xml:space="preserve">
     <value>Актуальна</value>
-  </data>
-  <data name="Text_ce4ea471720d" xml:space="preserve">
-    <value>Получить конструктор предметов…</value>
   </data>
   <data name="Text_ce6e37f200be" xml:space="preserve">
     <value>Создание карты …</value>
@@ -7593,6 +7593,9 @@
   <data name="Text_e448d0ca53ec" xml:space="preserve">
     <value>Получение последнего обновления</value>
   </data>
+  <data name="Text_e460de11bb28" xml:space="preserve">
+    <value>Waypoint Tools установлен из исходного кода: он соберётся при следующем запуске серверов или командой «Собрать мод» в разделе «Моды». Затем войдите в локацию персонажем и выдайте предмет снова.</value>
+  </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop и dev host: игра, запись планировок, серверы и служба аккаунтов</value>
   </data>
@@ -7712,9 +7715,6 @@
   </data>
   <data name="Text_e8797965019b" xml:space="preserve">
     <value>Переключиться на релиз?</value>
-  </data>
-  <data name="Text_e8857091f9bb" xml:space="preserve">
-    <value>Настроить выдачу предметов (рекомендуется)</value>
   </data>
   <data name="Text_e889c27dc68e" xml:space="preserve">
     <value>Обновить сведения о моде</value>
@@ -8377,9 +8377,6 @@
   <data name="Text_fad198a3ed81" xml:space="preserve">
     <value>Открыть папку данных Waypoint</value>
   </data>
-  <data name="Text_faff88ba75c3" xml:space="preserve">
-    <value>Установить Frida, чтобы работала кнопка «Выдать предмет».</value>
-  </data>
   <data name="Text_fb05bf5a9f8f" xml:space="preserve">
     <value>Сид: {0}</value>
   </data>
@@ -8526,6 +8523,9 @@
   </data>
   <data name="Text_fef63c5ce56d" xml:space="preserve">
     <value>У релиза свои персонажи. Ваши останутся здесь, в «Новейшей», до вашего возвращения.</value>
+  </data>
+  <data name="Text_fefcc7a6858a" xml:space="preserve">
+    <value>Установка Waypoint Tools …</value>
   </data>
   <data name="Text_ff6c6bc8e40c" xml:space="preserve">
     <value>Репозиторий сервера</value>

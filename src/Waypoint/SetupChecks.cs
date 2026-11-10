@@ -91,7 +91,7 @@ static class SetupChecks
             if (!p.WaitForExit(10000)) { p.Kill(); return new(null, L.Text("Frida is optional; its availability could not be checked.")); }
             return p.ExitCode == 0 ? new(true, L.Text("Frida installed (optional game tools)"))
                 : new(null, L.Text("Frida is optional and not installed; normal play is available."),
-                    L.Text("Waypoint offers to install it when you use direct console commands, Give item, live mod controls or walk maps."));
+                    L.Text("Waypoint offers to install it when you use direct console commands, live mod controls or walk maps."));
         }
         catch (System.ComponentModel.Win32Exception)
         {

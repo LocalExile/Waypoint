@@ -191,12 +191,6 @@ public partial class MainWindow : Window
         PlayView.ReleaseRequested += () => GoTo(release: true);
         ReleasesView.NewCopyRequested += Setup.SetUpNewCopy;
         Control.NewCopyRequested += Setup.SetUpNewCopy;
-        // The crafter needs a source copy: the Latest one Waypoint knows, or a new one through the guide (its tested version).
-        ToolsView.NewCopyRequested += () =>
-        {
-            if (Editions.Folder(_shared.Settings, release: false) is null) Setup.SetUpNewCopy();
-            else GoTo(release: false);
-        };
         Control.InstallPlayRequested += () =>
         {
             ShowSection(InstallView);

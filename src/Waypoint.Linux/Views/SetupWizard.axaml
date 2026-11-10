@@ -186,11 +186,6 @@
               <RadioButton x:Name="NewestVersion" GroupName="Updates" />
               <TextBlock x:Name="NewestNote" Classes="note" Margin="27,0,0,14" />
             </StackPanel>
-            <StackPanel x:Name="GiveItemChoice">
-              <TextBlock x:Name="GiveItemTitle" Classes="page" Margin="0,0,0,6" />
-              <CheckBox x:Name="GiveItem" IsChecked="True" />
-              <TextBlock x:Name="GiveItemNote" Classes="note" Margin="27,0,0,0" />
-            </StackPanel>
           </StackPanel>
         </ScrollViewer>
 

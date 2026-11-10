@@ -66,8 +66,9 @@ sealed class CrafterCatalog
         DateTime built = File.GetLastWriteTimeUtc(dll);
         if (_loaded is { } loaded && loaded.Built == built) return loaded;
         // A Gateway built before the crafter hook does not know `crafter` and starts for real: the saves, Auth, the port.
-        // /item_give came with the hook, and `commands` is safe on every Gateway with the launcher hooks.
-        if (!HasCrafter(await CommandCatalog.LoadAsync())) throw new InvalidOperationException(NoCrafter);
+        // Its assembly says whether it has the hook (the ItemCrafter type), read without running it. /item_give, which
+        // came with the hook, moved to the gm-commands mod in v0.4.0-beta, so `commands` no longer lists it everywhere.
+        if (!HasCrafter(GatewayAssembly(dll))) throw new InvalidOperationException(NoCrafter);
         string output = await CommandCatalog.AskGateway(TimeSpan.FromSeconds(90), dll, "crafter");
         var catalog = Parse(output);
         if (catalog.Bases.Count == 0) throw new InvalidOperationException(NoCrafter);
@@ -77,8 +78,30 @@ sealed class CrafterCatalog
 
     static string NoCrafter => L.Text("This checkout's Gateway has no item crafter yet: update LocalExile, then play or start the servers once to build it.");
 
-    /// <summary>Whether this Gateway build has the crafter hook.</summary>
-    internal static bool HasCrafter(CommandCatalog commands) => commands.Of("/item_give") is not null;
+    /// <summary>The Gateway's managed assembly: a release's <c>app\GameServer.Gateway.exe</c> (or the Linux host without an
+    /// extension) is an apphost beside <c>GameServer.Gateway.dll</c>; a checkout's build is the .dll itself.</summary>
+    internal static string GatewayAssembly(string gateway) =>
+        gateway.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ? gateway
+        : gateway.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? gateway[..^4] + ".dll"
+        : gateway + ".dll";
+
+    /// <summary>Whether this Gateway build has the crafter hook: its assembly defines <c>ItemCrafter</c> (LocalExile's
+    /// GameServer.Gateway/Item/ItemCrafter.cs, which came with the <c>crafter</c> mode). Read from the metadata alone.</summary>
+    internal static bool HasCrafter(string assembly)
+    {
+        try
+        {
+            using var stream = File.OpenRead(assembly);
+            using var pe = new System.Reflection.PortableExecutable.PEReader(stream);
+            if (!pe.HasMetadata) return false;
+            var metadata = System.Reflection.Metadata.PEReaderExtensions.GetMetadataReader(pe);
+            return metadata.TypeDefinitions.Any(t => metadata.StringComparer.Equals(metadata.GetTypeDefinition(t).Name, "ItemCrafter"));
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or BadImageFormatException or InvalidOperationException)
+        {
+            return false;
+        }
+    }
 
     /// <summary>The `crafter` mode's JSON lines; other lines (the Gateway's own log) are skipped.</summary>
     internal static CrafterCatalog Parse(string jsonLines)

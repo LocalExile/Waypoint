@@ -11,8 +11,6 @@ public partial class ToolsTab : UserControl
     MapViewerWindow? _mapViewer;
     LabLayoutWindow? _labLayout;
 
-    /// <summary>The player wants a copy of LocalExile that has the crafter.</summary>
-    internal event Action? NewCopyRequested;
     /// <summary>Simple mode's way to the Console and Logs sections, which its list leaves out.</summary>
     internal event Action? ConsoleRequested, LogsRequested;
 
@@ -24,13 +22,9 @@ public partial class ToolsTab : UserControl
         MapButton.IsEnabled = !Repo.IsInstall && MapViewerHelper.IsAvailable(Environment.CurrentDirectory);
         MapButton.ToolTip = MapButton.IsEnabled ? null : L.Text("The map viewer needs a source checkout with the terrain generator and extracted game data.");
         ToolTipService.SetShowOnDisabled(MapButton, true);
-        // Asking a Gateway for a mode it lacks starts it serving, so a release's is not asked.
-        if (!Repo.IsInstall) return;
-        CrafterButton.IsEnabled = false;
-        ReleaseNote.Visibility = Visibility.Visible;
+        // The crafter is offered on a release too: its window reads the Gateway's assembly before asking it for the
+        // `crafter` mode (CrafterCatalog.HasCrafter), and gives items through the Waypoint Tools mod there.
     }
-
-    void GetCrafterClicked(object sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
 
     /// <summary>The two cards that lead to Console and Logs, for the mode whose list has neither.</summary>
     internal void ShowMode(bool simple) =>
