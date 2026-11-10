@@ -102,6 +102,7 @@ partial class InstallTab : UserControl
         if (!Repo.IsInstall) return;
         _ = LookForOlderAsync();
         Edition.Attach(shared);
+        ShowOffers();
         StepList.ItemsSource = _steps;
         shared.Monitor.Sampled += _ => Dispatcher.UIThread.Post(Show);
         shared.LiveRunning += _ => Dispatcher.UIThread.Post(Show);
@@ -160,6 +161,41 @@ partial class InstallTab : UserControl
         FolderText.Text = Folder;
         Elapsed.Text = _working ? L.Text("Running for {0}", _clock.Elapsed.ToString(@"m\:ss")) : "";
         VersionText.Text = LocalExileReleases.Installed(Folder) is { } version ? L.Text("LocalExile {0}", version) : "";
+        string? from = _bringLater ? null : Editions.BringFrom(_shared.Settings);
+        // The check holds the folder as any work does (busy): its card stays, and says what Waypoint is doing.
+        BringCard.IsVisible = from is not null && (_bringChecking || !busy && !AnythingRunning) && !needsSetup;
+        if (from is not null) BringText.Text = L.Text("Your characters are still in {0}. Waypoint can bring them here when this release is the same as or newer than that copy.", from);
+        BringButton.Content = _bringChecking ? L.Text("Checking…") : L.Text("Bring my characters…");
+        BringNeverLink.Content = L.Text("Don't offer again");
+        BringButton.IsEnabled = BringLaterButton.IsEnabled = BringNeverLink.IsEnabled = !_bringChecking;
+    }
+
+    /// <summary>"Not now" on the characters card: until Waypoint starts again.</summary>
+    bool _bringLater;
+    /// <summary>Waypoint is finding out whether the characters fit, which may fetch LocalExile's newest code.</summary>
+    bool _bringChecking;
+
+    async void BringClicked(object? sender, RoutedEventArgs e)
+    {
+        var owner = ViewTools.Owner(this);
+        bool brought = await Editions.BringToReleaseAsync(_shared, (kind, title, message, buttons) => Dialog.Show(owner, kind, title, message, null, buttons),
+            checking => { _bringChecking = checking; Show(); });
+        if (brought) _note = () => L.Text("Your characters came with you. Log in as usual.");
+        Show();
+    }
+
+    /// <summary>"Don't offer again" on the characters card: for good, after one question.</summary>
+    void BringNeverClicked(object? sender, RoutedEventArgs e)
+    {
+        var owner = ViewTools.Owner(this);
+        Editions.StopOfferingBring(_shared, (kind, title, message, buttons) => Dialog.Show(owner, kind, title, message, null, buttons));
+        Show();
+    }
+
+    void BringLaterClicked(object? sender, RoutedEventArgs e)
+    {
+        _bringLater = true;
+        Show();
     }
 
     void MainClicked(object? sender, RoutedEventArgs e)
@@ -429,6 +465,15 @@ partial class InstallTab : UserControl
     void ChangeFolderClicked(object? sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
 
     void NewCopyClicked(object? sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
+    /// <summary>The Latest side's two offers, the switch and the copy from source, only for those who asked
+    /// (<see cref="Editions.Offered"/>). The setup guide below stays for everyone.</summary>
+    internal void ShowOffers()
+    {
+        if (_shared is null) return;
+        Edition.Refresh();
+        NewCopyLink.IsVisible = Editions.Offered(_shared.Settings);
+    }
 
     void DetailsClicked(object? sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

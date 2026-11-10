@@ -27,6 +27,8 @@ public partial class App : Application
         // The first start's questions are windows too; closing one must not end the application.
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         Settings = Settings.Load();
+        // The folder the settings name before anything else writes one: the guide saves its own.
+        string? saved = Settings.ServerPath;
         // Waypoint's own log, from the first moment: the setup guide runs before there is a checkout.
         SessionLog.Open(SupportReport.LogFolder, $"Waypoint {Updates.Current} · {Environment.OSVersion} · .NET {Environment.Version}");
         // The player's folders and tools, before anything reads a folder or starts a tool.
@@ -53,6 +55,9 @@ public partial class App : Application
                 }
             }
             if (root is null) { Shutdown(0); return; }
+            // A source copy its user went to on purpose (the guide, the chooser, --repo, the folder Waypoint was started
+            // in) is Advanced mode's, with nothing to choose there. Saved at once: the guide has saved its folder already.
+            if (Editions.Arrived(Settings, root, saved)) Settings.Save();
             if (Settings.ServerPath != root && options.RepositoryPath is null)
             {
                 Settings.ServerPath = root;
@@ -63,7 +68,7 @@ public partial class App : Application
             Repo.IsInstall = LocalExileReleases.IsInstall(root);
             if (Repo.IsInstall) Repo.ClientVersion = LocalExileReleases.Installed(root);
             SessionLog.Current?.Write("Folder: " + root);
-            foreach (string detail in SupportReport.Details(Settings.Advanced)) SessionLog.Current?.Write(detail);
+            foreach (string detail in SupportReport.Details(Editions.Advanced(Settings))) SessionLog.Current?.Write(detail);
             if (options.RepositoryPath is null) Editions.Remember(Settings, root);
             // A Python installed without its PATH option counts, for Waypoint and the scripts it runs.
             await Prerequisites.RefreshToolsAsync();
@@ -172,17 +177,44 @@ public partial class App : Application
         }
     }
 
-    /// <summary>Another checkout: saved in the settings, then Waypoint starts again on it (every section reads from the old
-    /// one). The new copy starts only once this one has exited: closing can still be cancelled.</summary>
-    internal static void SwitchServer(Window owner, Settings settings, string? chosen = null)
+    /// <summary>Another LocalExile folder: Waypoint starts again on it (every section reads from the old one), and no file of
+    /// either folder is moved. Every way of changing folder comes through here. What still runs is stopped first on the
+    /// user's word (<see cref="Editions.ReadyToLeaveAsync"/>; <paramref name="asked"/>: the caller has seen to it), and the
+    /// folder is saved only once nothing can refuse the close: an operation in progress is the one thing that does, and a
+    /// folder saved before a refused close would open at the next start instead. <paramref name="createAccount"/>: the
+    /// next start opens the Create account dialog, noted only with the folder. True when Waypoint is starting again;
+    /// false when everything is as it was.</summary>
+    internal static async Task<bool> SwitchServerAsync(Window owner, Shared shared, string? chosen = null, bool asked = false, bool createAccount = false)
     {
-        if ((chosen ?? ChooseServer(owner)) is not { } root || root == settings.ServerPath) return;
-        settings.ServerPath = root;
-        settings.Save();
+        // One change of folder at a time: the first is stopping what runs.
+        if (shared.Leaving) return false;
+        // The folder in use, not the saved one: started with --repo, they differ.
+        if ((chosen ?? ChooseServer(owner)) is not { } root || Editions.SameFolder(root, Environment.CurrentDirectory)) return false;
+        try
+        {
+            if (!asked && !await Editions.ReadyToLeaveAsync(shared, root, (kind, title, message, buttons) => Dialog.Show(owner, kind, title, message, null, buttons))) return false;
+            // Windows is signing its user out, which closed the window during the wait: nothing is saved or started.
+            if (Current is App { IsSessionEnding: true }) return false;
+            if (shared.IsLiveRunning)
+            {
+                Dialog.Tell(owner, DialogKind.Info, L.Text("{0} is still running", shared.BusyWith), L.Text("Wait for the current operation before changing checkout."));
+                return false;
+            }
+            var settings = shared.Settings;
+            shared.Logs.Write($"change of folder: from {Environment.CurrentDirectory} to {root}", Severity.Info);
+            Editions.LeftFor(settings, root);
+            settings.ServerPath = root;
+            if (createAccount) settings.CreateAccountOnStart = true;
+            settings.Save();
+        }
+        // Up to here the window did not close once Waypoint had begun to stop what ran: now it may, or is usable again.
+        finally { shared.Leaving = false; }
         StartAgain(owner);
+        return true;
     }
 
-    /// <summary>Waypoint again, once this one has exited: after a change every section reads anew (its folders, say).</summary>
+    /// <summary>Waypoint again, once this one has exited: after a change every section reads anew (its folders, say). What
+    /// runs is left as it is (<see cref="MainWindow.ExitNow"/>).</summary>
     internal static void StartAgain(Window owner)
     {
         if (Environment.ProcessPath is { } exe)

@@ -41,8 +41,15 @@ sealed class Settings
     public bool Developer => DeveloperMode == true;
     [JsonIgnore]
     public bool Advanced => Developer && AdvancedMode == true;
-    /// <summary>Simple mode's Play updates a plain copy of LocalExile (<see cref="CheckoutUpdates"/>); on a release install, a
-    /// newer release shows the update card.</summary>
+    /// <summary>On a source copy, the choice between the release and Advanced mode is made or was never needed
+    /// (<see cref="Editions.MustChoose"/>). Unset in settings saved before that choice existed: whoever was in Simple mode
+    /// on a source copy then is asked once.</summary>
+    public bool? SourceChoiceMade { get; set; }
+    /// <summary>The source copy whose characters wait to come to the release: noted when its user leaves it for the release,
+    /// and offered on the release's Play page (<see cref="Editions.BringToReleaseAsync"/>).</summary>
+    public string? BringFrom { get; set; }
+    /// <summary>On a release install, a newer release shows the update card. On a source copy it was the switch of Play's
+    /// daily update (<see cref="CheckoutUpdates"/>), which is no longer reached, as the three settings below.</summary>
     public bool KeepUpToDate { get; set; } = true;
     /// <summary>When Play last looked for an update of LocalExile.</summary>
     public DateTimeOffset? LastUpdateCheck { get; set; }
@@ -50,7 +57,7 @@ sealed class Settings
     public DateTimeOffset? UpdatesPausedUntil { get; set; }
     /// <summary>The update Play made last, until the player went back from it.</summary>
     public CheckoutUpdate? LastUpdate { get; set; }
-    /// <summary>The guide's "Remove the old one later", until the player has decided on Play.</summary>
+    /// <summary>The guide's "Remove the old one later", until the player has decided on Control (<see cref="Editions.Replaced"/>).</summary>
     public ReleaseToRemove? RemoveRelease { get; set; }
     /// <summary>The guide ended in another folder and an account comes next: the start on that folder opens it.</summary>
     public bool CreateAccountOnStart { get; set; }
@@ -145,16 +152,20 @@ sealed class Settings
     {
         try
         {
-            if (System.IO.File.Exists(File))
-            {
-                var saved = JsonSerializer.Deserialize<Settings>(System.IO.File.ReadAllText(File), Options) ?? new();
-                saved.AdvancedMode ??= true;
-                saved.DeveloperMode ??= saved.AdvancedMode == true;
-                return saved;
-            }
+            if (System.IO.File.Exists(File)) return Saved(System.IO.File.ReadAllText(File));
         }
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new() { AdvancedMode = true, DeveloperMode = true }; }
         return Imported();
+    }
+
+    /// <summary>Settings as their file holds them, with what an older Waypoint did not save yet filled in so that nothing
+    /// changes for their owner: every section.</summary>
+    internal static Settings Saved(string json)
+    {
+        var saved = JsonSerializer.Deserialize<Settings>(json, Options) ?? new();
+        saved.AdvancedMode ??= true;
+        saved.DeveloperMode ??= saved.AdvancedMode == true;
+        return saved;
     }
 
     /// <summary>The settings of the two launchers this one replaces: LocalExile Launcher's, then Waypoint's on top of them.
@@ -198,6 +209,8 @@ sealed class Settings
         catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException or InvalidDataException) { }
         settings.AdvancedMode ??= false;
         settings.DeveloperMode ??= settings.AdvancedMode == true;
+        // Someone new who takes LocalExile's source is in Advanced mode at once: there is nothing to choose between.
+        settings.SourceChoiceMade ??= true;
         return settings;
     }
 

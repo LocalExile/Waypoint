@@ -157,8 +157,8 @@ It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK installs on Windows.
 ### The server folder
 
 **Change folder…** on Play and on a release's Versions, and **Change…** on Control, take a checkout or a release install, and Waypoint
-starts again on it. **Set up a new copy…** there and on Control opens the setup guide on its source route, which clones LocalExile
-with git into a chosen new or empty folder and sets it up.
+starts again on it. **Set up a new copy…** on Control and on a release's Versions, and on a release's Play with Developer Mode
+on, opens the setup guide on its source route, which clones LocalExile with git into a chosen new or empty folder and sets it up.
 
 ### From a release to a source copy
 
@@ -170,22 +170,28 @@ has no source to build, and turns to the download instead.
 - **Your characters**: **Bring my characters** copies the database (`saves.db`, or `characters.db` with `auth.db`), what a stopped
   release still holds in its `-wal` included,
   with the same online backup Waypoint's backups use, and it is checked before anything here changes (the adapter's `ImportSaves`). The
-  mod choices come along; mods the player added do not. Anything already in the folder is backed up and set aside, and
+  mod choices come along; mods the player added do not. Anything already in the folder is backed up (with **Automatic
+  backups** off too: every character there is replaced) and set aside, and
   `data\saves-brought.json` keeps the guide run again from copying over newer progress. A copy from before the database split
   is migrated by the next server start; an older copy refuses split saves, which it cannot read. **Start with a new database** copies nothing,
   and the account dialog opens after Waypoint starts on the copy. The two never share one database: a newer server may write saves
   an older release cannot read.
-- **Your current LocalExile**: **Keep both** leaves it as it is. **Remove the old one later** leaves it until the player has pressed Play
-  on the copy and closed the game; Play then asks. **Delete the old one…** moves a shared client into the copy when both are on one
-  drive, and deletes the release's program files. Its `data` and `Mods` stay, and so does anything a release does not ship.
+- **Your current LocalExile**: **Keep both** leaves it as it is. **Remove the old one later** (`Settings.RemoveRelease`) leaves it
+  until the user has started the game on the copy and closed it. The copy is shown in Advanced mode and plays from Control, so
+  Control notes the start (Play, or the game's own Start: `Editions.PlayedOn`) and then, while nothing runs, asks above its table
+  whether the new copy has worked (`Editions.Replaced`); someone who chose this under an earlier Waypoint, which asked on Play, is
+  asked there too. **Delete the old one…** holds the folder as any other work does, moves a shared client into the copy when both
+  are on one drive, and deletes the release's program files. Its `data` and `Mods` stay, and so does anything a release does not
+  ship. **Keep it** drops the question and leaves the release as it is.
 - **Updates**, for a download: **Keep an older version that does not change** puts the copy on its own branch `waypoint-tested` at
-  `SwitchToSource.TestedCommit` (LocalExile v0.2.0-beta, e28909f6), which Play never moves, because only a plain copy on the default
-  branch is updated. **Get the newest
-  changes** leaves it on `main`. Changing the commit means testing it again: a release's database opened on it, and an item given.
+  `SwitchToSource.TestedCommit` (LocalExile v0.2.0-beta, e28909f6). **Get the newest changes** leaves it on `main`. Nothing moves
+  either by itself: its user updates the copy, or moves it from the older version to the newest changes, from Versions. Changing
+  the commit means testing it again: a release's database opened on it, and an item given.
 - **Giving items**: **Set up Give item** installs Frida into the copy's `.venv`, which git ignores. Left out, the crafter offers it
   again the first time **Give item** is pressed.
 
-The Run page lists what these choices will do instead of its steps until **Start setup**.
+The Run page lists what these choices will do instead of its steps until **Start setup**. The last page says where everything
+is: the copy plays from Control, and **Change…** there is the way back to the release.
 
 On its first start Waypoint asks for the server checkout: the folder with `GameServer.slnx` and
 `scripts\dev\live.ps1`. It searches the usual folders and lists what it finds, marking those at the upstream's HEAD
@@ -207,8 +213,8 @@ player chooses otherwise, so backups made by an earlier Waypoint are still liste
 ### Folders and tools
 
 **Settings → Folders and tools** (`PathChoices.cs`) chooses where Waypoint keeps its files and which programs it uses. It shows
-with Developer Mode, and also whenever something there is chosen or a choice cannot be used, so what startup reports can always be
-changed there. **Settings → Game settings**, for everyone, has the game settings profile (below). A field
+with Developer Mode, on a source copy (Advanced mode), and also whenever something there is chosen or a choice cannot be used, so
+what startup reports can always be changed there. **Settings → Game settings**, for everyone, has the game settings profile (below). A field
 left empty is the default, which is where every Waypoint before this setting kept things, so an existing setup changes nothing.
 Each field takes a typed path as well as **Browse…** (on Linux a picker may be missing), and **Save** applies it.
 
@@ -298,58 +304,118 @@ question (a fork's pull request) has Cancel as its default.
 
 ## Simple and Advanced modes
 
-A new player starts in **Simple mode**, with five sections (Play, Mods, Tools, Accounts, Settings) and no status strip or branch
-chip: nothing to choose before playing. **Settings → Developer → Developer Mode**, off by default, adds the **Simple | Advanced** switch at the bottom of the sidebar:
-**Simple** has Play, Mods, Backups, Accounts, Logs, Console, Tools and Settings. **Advanced** replaces Play with Control, as that section has it, and adds Versions, Performance and Server timings. Setup is reached from Control. Turning Developer Mode off goes back to Simple
-mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer Mode on
-(`Settings.Load`).
+**The mode follows the folder** (`Editions.Advanced`), and is worked out each time, never written:
 
-The quiet **Run setup guide…** link below the folder controls is always visible, for both a source copy and a release install,
-on Windows and Linux. It reopens the guide for the current folder to recheck requirements and refresh preparation, even when
-the main button says Play. Its tooltip explains this; the link is disabled while the game, servers or another operation run.
-A failed Play attempt with the recognized HNC mask error also recommends this link directly on the Play screen. Other startup
-errors keep their own guidance, and the full HNC diagnostic remains in the logs.
+- **A release install** shows what its user chose. A new user starts in **Simple mode**, with one list of six sections
+  (Play, Mods, Backups, Accounts, Tools, Settings) and no status strip or branch chip: nothing to choose before playing.
+  Console and Logs are not in the list; two cards on Tools open them, and a link that leads to one, such as Play's **See
+  what happened**, opens it too (`MainWindow.ShowSection`). **Settings → Developer → Developer Mode**, off by default, adds
+  the **Simple | Advanced** switch at the bottom of the sidebar. **Advanced** replaces Play with Control, as that section has
+  it, lists Console and Logs, and adds Versions, Performance and Server timings. Turning Developer Mode off goes back to
+  Simple mode. Someone who used an earlier launcher, or Waypoint before the modes, starts in Advanced mode with Developer
+  Mode on (`Settings.Load`).
+- **A source copy** is always shown in Advanced mode, with no switch: Simple mode is for the release. It plays from Control,
+  Setup is reached from there, and Versions updates it and has branches and pull requests. Going to a source copy does not
+  change what was chosen on a release, so going back to the release shows Simple mode again. Settings shows no Developer
+  group there: Developer Mode is set on a release, and nothing on a source copy writes it or the mode.
 
-**Play** in Simple mode (`PlayTab`) is the Control section's Play with an update before it:
+**Someone who was in Simple mode on a source copy** before this rule is asked once (`Editions.MustChoose`,
+`Settings.SourceChoiceMade`). Their Play page says "Simple mode plays the release" and has two buttons in place of Play:
+**Switch to the release…** is the step to the release described below, and **Use Advanced mode** shows this copy in
+Advanced mode from then on. Each is one click, and until they choose nothing of theirs is changed. While the game or a
+server runs the page shows that and **Stop playing**, and the choice comes after. Nobody else sees the page: someone who had
+Advanced mode, someone new, and someone who goes to a source copy on purpose are in Advanced mode at once. On purpose is
+every change of folder (`Editions.LeftFor`) and, at startup, any folder but the one the settings named
+(`Editions.Arrived`): the first start's guide or its chooser, `--repo` (on Linux a folder as the argument), and the folder
+Waypoint was started in. Only someone who starts on the saved source copy is asked. The button's tooltip says what it
+does: this copy in Advanced mode, and a release keeps the mode chosen there.
 
-1. When `CheckoutUpdates.Due` says so (at most once a day; **Settings → Updates → Keep LocalExile up to date**, on by
-   default) and nothing runs, Waypoint fetches. No network is no reason not to play: the game starts as it is.
-2. Only a plain copy is moved (`CheckoutUpdates.PlainCopy`): on the default branch, with LocalExile as origin, no uncommitted
-   changes and no commits of its own. Anything else is the player's work and stays as it is, in either mode.
-3. The saves are backed up (unless **Automatic backups** is off); a failed backup means no update, and the game starts as
-   it is. Then the branch moves forward, fast-forward only, and the commit and backup before it are kept in the settings.
-4. `ControlTab.PlayAsync` runs, so a start is the same `live.ps1` run with the same port question.
-5. When that run fails after an update, Waypoint stops what runs, restores that backup, puts the checkout back
-   (`git reset --keep`) and starts again, and says so.
+Nothing moves a source copy by itself any more. Simple mode's Play page for a source copy had a once-a-day update, **Update
+now**, a way back after a failed start and **Go back to the version you had** (`CheckoutUpdates`); that page is now only the
+choice above, and those parts are not reached ([No longer reached](#no-longer-reached) lists them). A source copy is updated
+from Versions, by its user.
 
-**N new change(s) in LocalExile since your version** shows under the switch when a plain copy is behind LocalExile's branch.
-Play looks when it opens and every half hour, while nothing runs: a fetch and a count only, which neither moves the checkout nor
-counts as the day's update check. **Update now** beside it is that update at once, steps 2 and 3 above (backup, fast-forward, the
-way back kept), without starting the game; Play then builds and starts the new version.
+The quiet **Run setup guide…** link below the folder controls is always visible on Play, for both a source copy and a
+release install, on Windows and Linux. It reopens the guide for the current folder to recheck requirements and refresh
+preparation, even when the main button says Play. Its tooltip explains this; the link is disabled while the game, servers or
+another operation run. A failed Play attempt with the recognized HNC mask error also recommends this link directly on the Play
+screen. Other startup errors keep their own guidance, and the full HNC diagnostic remains in the logs.
 
-**Go back to the version you had** stays for a week after an update: the same way back, on request, and updates pause for a
-week. Restoring keeps a copy of the current saves first. A checkout follows `main`, which has no test results, so an update is
-`main` as it is: the way back catches a build or start that fails, not a bug in the game. A release install is different: see
-[Release installs](#release-installs).
+### Copies and changing folder
 
-**Release | Latest** at the top of Simple mode's Play (`EditionSwitch`, `Editions.cs`) moves between a release install and a
-source copy that follows `main`. Each is a folder of its own with its own characters; Waypoint remembers the last of each it ran on
-(`ReleaseFolder`, `LatestFolder`). Switching needs nothing running, then asks one question, and Waypoint starts again on the
-other folder. The saves of the folder left are backed up first while automatic backups are on (Backups), as for every other
-change, and the question says so; with them off nothing is backed up or asked.
+A release install and a source copy ("Latest") are each a folder of their own, anywhere, with their own build, game client
+and characters. Waypoint works on one at a time. Changing folder moves no file of either: Waypoint saves the other folder and
+starts again on it.
+
+Every way of changing folder goes through one step (`App.SwitchServerAsync`): **Change folder…** on Play, **Change…** and
+**Find automatically…** in Advanced mode, the setup guide when it made another copy, and the Release | Latest switch.
+
+- The folder is compared with the one in use (`Editions.SameFolder`), not the saved one, which differ when Waypoint was
+  started with `--repo`.
+- When the game or servers run, Waypoint asks first (`Editions.ReadyToLeaveAsync`): **Stop and switch** stops them as
+  **Stop playing** does and waits until they are gone; **Cancel** leaves everything as it is. The question promises no more
+  than that: the stop ends the processes, and does not wait for a save.
+- From the stop until Waypoint starts again or the change is given up (`Shared.Leaving`), the window is not usable and
+  its title says "Waypoint: stopping …", as when it stops what runs before closing. Closing the window then does nothing:
+  it closes by itself when the wait ends, so a close in that time can't leave the other folder saved with the window still
+  open. A second change of folder does not start meanwhile.
+- Waypoint finds what runs by its name, not its folder, so what is left running shows in the next folder as that folder's
+  own. **Switch without stopping**, for someone who keeps one copy's servers up while looking at another, is therefore
+  offered only with Developer Mode, or in Advanced mode when the other folder is a source copy too
+  (`Editions.MayLeaveRunning`): without Developer Mode, nobody leaves a source copy's servers running by choice on the way
+  to a release. Only **Switch anyway**, after a stop that left something running, opens a release so.
+  It leaves everything running for that restart, whatever **When Waypoint exits** is set to; an ordinary exit and the
+  tray's Exit still follow that setting.
+- Each folder's stop ends only what was started from that folder. When something still runs after **Stop and switch**
+  (it was started from another folder, or it would not end), nobody is refused: Waypoint says so and asks, **Switch
+  anyway** or **Cancel**. Switch anyway opens the other folder with it still running, shown there as that folder's own; if
+  it was started from that folder, it can be stopped there.
+- The folder is saved only after that, and only when no operation is in progress: an operation is the one thing that makes
+  the window refuse to close, and a folder saved before a refused close would open at the next start instead.
+- The setup guide saves the folder it works on as it goes. When it made another copy and the change of folder then does
+  not go on (**Cancel** above), the settings name again the folder they named before the guide, no Create account dialog
+  waits for the next start, and Waypoint says where the guide's folder is: **Change folder…** on Play, or **Change…** on Control, opens it.
+
+**Release | Latest** at the top of a release's Play (`EditionSwitch`) is that change between the release Waypoint remembers
+and the source copy it remembers (`ReleaseFolder`, `LatestFolder`), with one question each way. It shows only with Developer
+Mode on, as does Play's **Set up a new copy…**, which sets up a copy from source (`Editions.Offered`): a source copy needs
+.NET, Git, Python and Node and is LocalExile's newest, less tested code, which is not what someone who came to play wants.
+**Run setup guide…** and **Tools → Get the item crafter…** stay for everyone. The saves of the folder left are backed up
+first while automatic backups are on (Backups), and the question says so.
 
 - Both ways to Latest say first that Latest has LocalExile's newest changes, reviewed, but possibly less stable than the release.
 - **Release → Latest**: bring your characters? **Bring my characters** copies them in (the adapter's `ImportSaves`, as the guide's
   Your characters page: Latest's own are backed up and set aside first); **Keep Latest's own** leaves both as they are.
-- **Latest → Release**: the release keeps its own characters, and Latest's stay for the way back (**Switch**). Characters never
-  go from Latest to a release: a newer LocalExile may save what an older release can't read.
-- A side Waypoint has no folder for opens the setup guide: the release route, or the source route with **Get the newest changes**
-  chosen, which from a release has its Your characters page.
-- On a release, **Tools → Get the item crafter…** switches to the Latest copy when Waypoint has one, with the same question, and
-  otherwise opens the guide as before, with the older version chosen. A copy on that older version (`waypoint-tested`) is still the
-  Latest side, and the switch says it does not update, since Play does not move it. **Get the newest changes** under it backs the saves
-  up and switches the copy to LocalExile's default branch (`Editions.MoveToNewestAsync`; nothing is done with changes of the
-  player's own), and clears the last update check, so the next Play updates it as it updates any plain copy, with its way back.
+- **Latest → Release**: the release keeps its own characters at the switch, and Latest's stay in their folder. Waypoint
+  notes that folder (`Settings.BringFrom`), and the release's Play page then shows a card while that folder is still a
+  source copy with saves (`Editions.BringFrom`): "Your characters are still in {folder}", with **Bring my characters…**,
+  **Not now** (until Waypoint starts again) and **Don't offer again**. That last one asks once and then drops the note
+  for good (`Editions.StopOfferingBring`): the characters stay in their folder, and the card returns only when someone
+  leaves a source copy for the release again.
+- **Bring my characters…** (`Editions.BringToReleaseAsync`) first checks that they fit (`Editions.ReleaseTakesAsync`): the
+  release's `release.json` names the commit it was built from, and the copy must be on that commit or an older one (git's
+  `merge-base --is-ancestor`), with no changes of its user's own to the code: no tracked file that differs, and no new
+  file under `sql`, `src` or `Modules` (a database change waiting to be applied, source the servers compile). A league
+  made in Waypoint's Leagues section, or shown or hidden there, is not such a change. That is the step every update of
+  a release makes. A copy that is ahead of the release, or on a branch the release does not hold, may have saved what the
+  release can't read: Waypoint says so, says the characters are safe where they are, and offers again once a newer release
+  is installed.
+  - When the copy has never seen the release's commit, Waypoint fetches LocalExile's branches once, by LocalExile's public
+    address into `refs/launcher/upstream`, whatever the copy's origin is (`Git.FetchUpstreamInAsync`): a fork may not have
+    that commit, nothing is asked for, and no branch or remote of the copy changes. The fetch is ended after two minutes;
+    when it fails, Waypoint says to check the connection and try again.
+  - While it checks, the card's button reads **Checking…** and Play waits: the check holds the folder as any other work
+    does.
+  - The check compares the copy's current commit, not the code its saves were last played on, which nothing records: a
+    copy that ran newer code and was then put back on an older commit with its saves left in place passes it, and the
+    release then gets saves newer than itself. The release's own saves are backed up first, so they can be restored from
+    Backups.
+  - When they fit, Waypoint asks, then copies them with the adapter's `ImportSaves`: the source copy is only read, the
+    release's own saves are backed up (with **Automatic backups** off too) and set aside first, and the release keeps
+    its own mod choices.
+- On a release, **Tools → Get the item crafter…** switches to the source copy Waypoint remembers, with the same question, and
+  otherwise opens the guide as before, with the older version chosen (`waypoint-tested`). Either way that copy is then shown
+  in Advanced mode, and is moved to newer code only from Versions, by its user.
 
 A link to a section Simple mode's list lacks (a log, from a failure) shows that section without selecting anything.
 
@@ -357,7 +423,7 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 
 | Section | What it does | How |
 |---|---|---|
-| Play | Simple mode's home: one sentence and one button, an update before the start, the way back | `PlayTab`, `CheckoutUpdates`; the Control section's Play |
+| Play | Simple mode's home on a release: one sentence and one button. On a source copy only the one-time choice between the release and Advanced mode | `InstallTab` and the release's `LocalExile.exe`; `PlayTab`, `Editions.MustChoose` |
 | Control | Play, Start servers, Stop servers, Stop all and the Hot reload, Skip build, Skip data check and Walk maps switches; every service as a table row with its state and one Start/Stop button; the script's output; the server folder and the setup checks | `live.ps1` (or `live.local.ps1`, see below), `-NoClient`, `-Stop -NoClient`, `-ClientOnly`, `-Stop`, `-Only <server>`, `-Walkmaps`, `-NoBuild`, `-NoExtract`, `-NoHotReload`; Close game ends the client's process, Stop all also the dev host |
 | Setup | every requirement of the checkout with its next step: instructions, Prepare client, Install dependency, Create account, the Client folder, the setup guide | the adapter's `Inspect`, `PrepareClient` and `Dependencies` |
 | Versions | what the checkout runs and how far it is from LocalExile: LocalExile's branches and open pull requests, a fork's branches, the checkout's own, switching between them, updating the current one, going back to the default branch, restoring stashed changes, deleting the branches of closed pull requests; the commit and the built versions, Build checkout, Reload game data, fresh saves | git in the checkout (`fetch --prune`, `switch`, `merge --ff-only`, `pull --ff-only`, `stash`, `fetch <LocalExile> pull/<n>/head`); the open pull requests from GitHub's public API; the adapter's `Backup`, `Build`, `ReloadData`, `FreshSaves` |
@@ -371,8 +437,38 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 | Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter` and `/item_give` through the client control bridge; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout |
 | Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
+### No longer reached
+
+Simple mode plays the release, so the parts below, which served Simple mode on a source copy, are still in the code but are
+not reached. They are left for one cleanup, on Windows and in the Linux copies of the views alike; nothing here is offered
+to a user.
+
+- **`PlayTab`** (`src/Waypoint/PlayTab.xaml.cs`, `src/Waypoint.Linux/Views/PlayTab.axaml.cs` and their views) is listed only
+  as the choice page (`Editions.MustChoose`), where `MainButton`, `BehindPanel` with `UpdateNowLink`, `GoBackLink` and
+  `NewCopyLink` are hidden. Not reached: `MainClicked`, `PlayAsync`, `UpdateAsync`, `ClientAllowsUpdateAsync`, `NewestBackup`,
+  `GoBackAsync`, `GoBackClicked`, `UpdateNowClicked`, `NewCopyClicked`, `DetailsClicked` with `DetailsLink` and `_failed`
+  (only those set it), and the events `NewCopyRequested`, `DetailsRequested` and `CheckoutChanged` with what the window
+  attaches to them. The half-hour look for changes is no longer started, so `_lookAgain`, `LookForChangesAsync`, `LookAsync`
+  and `_behind` are not reached either: it was a `git fetch` holding the folder for a number the page no longer shows.
+- **With them**: `CheckoutUpdates` and its `CheckoutUpdate` record (`src/Waypoint/CheckoutUpdates.cs`; its tests remain),
+  `ClientUpdate.BeforeUpdate` and `ClientUpdate.Answer` (`src/Launcher.Core/ClientUpdate.cs`; their tests remain),
+  `Git.MoveForwardAsync`, `Git.ResetToAsync` and `Git.FileAtSourceAsync` (`src/Waypoint/Git.cs`), and the settings
+  `LastUpdateCheck`, `LastUpdate` and `UpdatesPausedUntil` (`src/Waypoint/Settings.cs`). `KeepUpToDate` is read only on a
+  release now.
+- **`EditionSwitch`** (`src/Waypoint/EditionSwitch.xaml.cs`, `src/Waypoint.Linux/Views/EditionSwitch.axaml.cs`) shows only
+  on a release (`Editions.Offered`). On a source copy its two captions, `NewestLink` and `NewestClicked` are not reached, and
+  the choice page calls only `Choose(release: true)`, so the `LatestSetupRequested` of `PlayView.Edition` is never raised.
+- **`Editions.MoveToNewestAsync`** is reached only from Control (`ControlTab.ClientFitsNow`), which answers its question for
+  the user: the question's text is never shown, and its reset of `LastUpdateCheck` feeds nothing.
+- **Settings**: the source-copy tooltip of **Keep LocalExile up to date** ("Play gets the newest LocalExile at most once a
+  day…": `SettingsTab.xaml`, and the other branch in the Linux `SettingsTab.axaml.cs`), since the box shows only on a release.
+- The texts only these parts use are still in the three catalogs, and go with them.
+
 ### Control
 
+- Above the table, on a source copy that replaced a release through the guide's **Remove the old one later**: once the
+  game has been started here and nothing runs, "Has the new copy worked for you?" with **Delete the old one…** and **Keep
+  it** ([From a release to a source copy](#from-a-release-to-a-source-copy)).
 - The toolbar holds `live.ps1`'s switches and the actions on everything: **Stop all**, **Stop servers**, **Start
   servers** and **Play**, the one blue button. While a server runs, Start servers reads **Restart servers**: the same
   `live.ps1 -NoClient` rebuilds and restarts all three, which is what edits hot reload does not cover need (Auth,
@@ -524,8 +620,8 @@ the 3.29.3c build" in the setup guide, which warns before the copy and lets the 
 `scripts/release/build-release.ps1`), so a folder pinned to an older version keeps its own.
 
 The rule: a player who has a 3.29.3c client plays on 3.29.3c; one who has only 3.29.3b keeps the last LocalExile for it. Waypoint
-looks when a folder is about to start the game (Play, and Control's Play or Start game; not Start servers, a restart or a stop)
-and before Simple mode's daily update moves a source copy. It looks at that folder's client and, when it matters, takes a quick
+looks when a folder is about to start the game (Play, and Control's Play or Start game; not Start servers, a restart or a stop).
+It looks at that folder's client and, when it matters, takes a quick
 look (two seconds: the player's other LocalExile folders and the usual places first, a plain client before one another LocalExile
 prepared) for a client of another build. Clients it merely finds are never changed. `ClientUpdate` decides:
 
@@ -554,11 +650,8 @@ prepared) for a client of another build. Clients it merely finds are never chang
   after the question above (or, with no client found elsewhere, one that only says LocalExile needs the update), a release updates
   itself to the newest release on the Play page (`ClientUpdate.UpdateReleaseAsync`, saves copied first when Automatic backups is
   on), then moves to the found client as above. A copy on an older version of its own goes to the newest changes
-  (`Editions.MoveToNewestAsync`); any other checkout is told how, since Waypoint moves one only on the player's word.
-- **Simple mode's daily update** reads the client build the newer LocalExile needs (`git show <what the branch follows>:
-  scripts/release/build-release.ps1`, `ClientUpdate.BeforeUpdate`) before the copy moves. A client that will not fit is settled
-  first: with a 3.29.3c client found, the same question (Not now keeps the copy where it is); with only 3.29.3b, the copy stays and
-  the page says why.
+  (`Editions.MoveToNewestAsync`); any other checkout is told to update it on Versions (`ClientUpdate.HowToUpdateCopy`), since
+  Waypoint moves one only on the player's word.
 - **A client of no build Waypoint knows** is left to LocalExile's own check.
 
 While a folder runs the 3.29.3b version and no 3.29.3c client is there, Play shows a quiet note (not a warning) that versions for
@@ -876,8 +969,8 @@ not silently cloned. Waypoint writes a known empty marker into the new league's 
 settings declarations, and its own `.waypoint-league.json` marker. It publishes the complete league manifest last, without
 replacing an existing directory. It never builds or starts LocalExile. The new league is available on the next server start.
 
-New league files and visibility edits are the player's own checkout changes. Simple mode's existing update guard keeps
-such a customized checkout in place instead of automatically moving it to newer source. Module overrides in ignored data
+New league files and visibility edits are the player's own checkout changes. Waypoint never moves a source checkout by
+itself, so such a customized checkout stays in place. Module overrides in ignored data
 files keep their existing behavior.
 
 Drafts review the complete relevant manifest/source inventory and user overrides. Adding, removing or changing a definition
@@ -919,7 +1012,8 @@ Reset to defaults asks first. Mod values use `data/mods/`, module values `data/m
 
 ### Backups
 
-Automatic backups run before a Gateway start, a switch of the checkout, and an account or mod change. A backup is a
+Automatic backups run before a Gateway start, a switch of the checkout, and an account or mod change. Bringing
+characters into a folder always backs that folder's own saves up first, with the switch off too. A backup is a
 consistent SQLite copy, checked for integrity, with what it was made from (`backup.json`). From LocalExile's database split
 on, it holds `characters.db` and `auth.db`, copied at the same moment; until the servers have moved an old `saves.db` over,
 that file is backed up as it is, and its older backups stay in the list. **Restore saves** stops the servers, checks the
@@ -1095,8 +1189,8 @@ adapter does not know can be browsed but not changed.
 | `scripts/` | the adapter: `RuntimeBridge.ps1` and its parts, `SaveBackup.py`, `AccountData.py` |
 | `RuntimeCounters.cs`, `Metrics.cs`, `TimeSeries.cs`, `LineChart.cs` | the runtime counter sessions, the history, the charts (drawn directly: the WPF chart libraries pull in .NET Framework builds of SkiaSharp) |
 | `Git.cs`, `PullRequests.cs`, `VersionsTab.xaml.cs` | git in the checkout and the parsing of its output, the open pull requests, the Versions section and its guards |
-| `PlayTab.xaml.cs`, `CheckoutUpdates.cs` | Simple mode's home; when Play may update the checkout |
-| `EditionSwitch.xaml.cs`, `Editions.cs` | Simple mode's Release \| Latest switch: the two folders, the saves questions |
+| `PlayTab.xaml.cs`, `CheckoutUpdates.cs` | the one-time choice page of a source copy (`Editions.MustChoose`); what was Play's daily update there, no longer reached |
+| `EditionSwitch.xaml.cs`, `Editions.cs` | the mode per folder, the guarded change of folder, a release's Release \| Latest switch, the characters questions, the question about an old release |
 | `OperationTimings.cs`, `TimingsTab.xaml.cs` | the Gateway's operation timings (its meter's histogram intervals) and their window |
 | `LogTail.cs`, `LogHub.cs` | following the logs, the severities |
 | `CommandCatalog.cs`, `Completion.cs`, `ClientBridge.cs` | the Gateway's command list and argument values, the suggestions, the bridge process |

@@ -22,8 +22,12 @@ public partial class EditionSwitch : UserControl
         Show();
     }
 
+    /// <summary>Developer Mode changed, or a copy was set up: shown or not again.</summary>
+    internal void Refresh() { if (_shared is not null) Show(); }
+
     void Show()
     {
+        IsVisible = Editions.Offered(_shared.Settings);
         ReleaseChoice.IsChecked = Repo.IsInstall;
         LatestChoice.IsChecked = !Repo.IsInstall;
         // The crafter's route can leave the copy on the tested version, which Play does not move.
@@ -52,6 +56,7 @@ public partial class EditionSwitch : UserControl
         Show();
         if (step == EditionStep.SetUpRelease) ReleaseSetupRequested?.Invoke();
         else if (step == EditionStep.SetUpLatest) LatestSetupRequested?.Invoke();
-        else if (step == EditionStep.Switch && owner is not null) App.SwitchServer(owner, _shared.Settings, folder);
+        // PrepareAsync has made sure nothing runs.
+        else if (step == EditionStep.Switch && owner is not null) await App.SwitchServerAsync(owner, _shared, folder, asked: true);
     }
 }

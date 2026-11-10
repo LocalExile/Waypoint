@@ -10,7 +10,7 @@
       <RadioButton x:Name="ReleaseChoice" GroupName="Edition" Content="{l:Loc 'Release'}" Click="Chosen"
                    ToolTip.Tip="{l:Loc 'The published release of LocalExile, updated when you accept a new one.'}" />
       <RadioButton x:Name="LatestChoice" GroupName="Edition" Content="{l:Loc 'Latest'}" Click="Chosen"
-                   ToolTip.Tip="{l:Loc 'LocalExile as it is being made: the newest changes, updated when you play.'}" />
+                   ToolTip.Tip="{l:Loc 'LocalExile as it is being made: the newest changes, from its source, in Advanced mode.'}" />
     </StackPanel>
     <TextBlock x:Name="Caption" Classes="note" TextAlignment="Center" TextWrapping="Wrap" Margin="0,8,0,0" />
     <!-- A copy on the tested version: the way onto the newest changes. -->

@@ -53,11 +53,15 @@ partial class SettingsTab : UserControl
         KeepUpToDate.IsChecked = S.KeepUpToDate;
         UseProfile.IsChecked = S.UseLocalProfile;
         DeveloperMode.IsChecked = S.Developer;
+        // Developer Mode is a release's: there it unlocks the switch. A source copy is in Advanced mode whatever it says,
+        // and nothing shown there writes the mode chosen on a release.
+        DeveloperGroup.IsVisible = Repo.IsInstall;
         DeveloperNote.Text = L.Text("Adds a Simple | Advanced switch to the sidebar. Advanced replaces Play with Control, and adds Versions, performance and server timings.");
-        KeepUpToDate.IsVisible = !(S.Advanced && !Repo.IsInstall);
+        // A source copy is updated from Versions, by its user: nothing moves it by itself any more.
+        KeepUpToDate.IsVisible = Repo.IsInstall;
         ToolTip.SetTip(KeepUpToDate, Repo.IsInstall ? L.Text("When Waypoint starts, look for a newer LocalExile release and offer to install it.")
             : L.Text("Play gets the newest LocalExile at most once a day, after backing up your saves. A copy with your own changes is left alone."));
-        CheckoutGroup.IsVisible = S.Advanced && !Repo.IsInstall;
+        CheckoutGroup.IsVisible = Editions.Advanced(S) && !Repo.IsInstall;
         _loading = false;
     }
 
@@ -144,7 +148,7 @@ partial class SettingsTab : UserControl
     /// <summary>On, the sidebar gets its switch and Simple mode stays until it is used. Off, Waypoint goes back to Simple mode.</summary>
     void DeveloperModeClicked(object? sender, RoutedEventArgs e)
     {
-        if (_loading || _shared is null) return;
+        if (_loading || _shared is null || !Repo.IsInstall) return;
         S.DeveloperMode = DeveloperMode.IsChecked == true;
         if (!S.Developer) S.AdvancedMode = false;
         S.Save();
@@ -174,12 +178,12 @@ partial class SettingsTab : UserControl
         if (Busy() || ViewTools.Owner(this) is not { } owner) return;
         var dialog = new CheckoutDialog(owner, S.ServerPath);
         await Ui.ShowAsync(dialog, owner);
-        if (dialog.Chosen is not null) await ServerChoice.SwitchAsync(owner, S, dialog.Chosen);
+        if (dialog.Chosen is not null) await App.SwitchServerAsync(owner, _shared, dialog.Chosen);
     }
 
     async void ChangeCheckout(object? sender, RoutedEventArgs e)
     {
-        if (!Busy() && ViewTools.Owner(this) is { } owner) await ServerChoice.SwitchAsync(owner, S);
+        if (!Busy() && ViewTools.Owner(this) is { } owner) await App.SwitchServerAsync(owner, _shared);
     }
 
     void OpenData(object? sender, RoutedEventArgs e)
@@ -198,7 +202,9 @@ partial class SettingsTab : UserControl
     {
         PathRows.Children.Clear();
         GameSettingsRow.Children.Clear();
-        PathsCard.IsVisible = S.Developer || S.PathsChosen || Settings.PathProblems.Count > 0;
+        // A power user's page: with Developer Mode, on a source copy in Advanced mode, and whenever something there is
+        // chosen or cannot be used, so that what startup reports can always be changed here.
+        PathsCard.IsVisible = S.Developer || !Repo.IsInstall && Editions.Advanced(S) || S.PathsChosen || Settings.PathProblems.Count > 0;
         AddPathRow(PathKind.Data, null, L.Text("Waypoint's data"), S.DataFolder);
         AddPathRow(PathKind.Backups, null, L.Text("Save backups"), S.BackupsFolder);
         AddPathRow(PathKind.WinePrefix, null, L.Text("Wine prefix"), S.WinePrefix);

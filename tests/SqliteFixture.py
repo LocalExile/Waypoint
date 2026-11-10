@@ -20,6 +20,12 @@ if mode.startswith("split"):
                 db.commit()
             assert pathlib.Path(path + "-wal").stat().st_size > 0 and pathlib.Path(auth + "-wal").stat().st_size > 0
             os._exit(0)
+        elif mode == "split-rename":
+            # A label only this pair holds.
+            characters.execute("update characters set name=?", (label,))
+            accounts.execute("update accounts set name=?", (label,))
+            characters.commit()
+            accounts.commit()
         elif mode == "split-has":
             assert characters.execute("select name from characters").fetchone()[0] == label
             assert accounts.execute("select name from accounts").fetchone()[0] == label
@@ -38,6 +44,11 @@ with sqlite3.connect(path) as db:
         os._exit(0)
     elif mode == "brought":
         assert db.execute("select name from characters").fetchone()[0] == "release-character"
+    elif mode == "rename":
+        # A character only this database holds.
+        db.execute("update characters set name=?", (sys.argv[3],))
+    elif mode == "has":
+        assert db.execute("select name from characters").fetchone()[0] == sys.argv[3]
     elif mode in ("init", "wal"):
         if mode == "wal":
             db.execute("PRAGMA journal_mode=WAL")

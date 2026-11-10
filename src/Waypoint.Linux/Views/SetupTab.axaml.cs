@@ -106,19 +106,27 @@ public partial class SetupTab : UserControl
         if (Busy()) return;
         var owner = Ui.Owner(this);
         string current = Environment.CurrentDirectory;
+        // The folder the settings name: the guide saves its own as it goes.
+        string? saved = _shared.Settings.ServerPath;
         var guide = new SetupWizard(_shared.Settings, owner, current, newCopy, release, newest);
         await _shared.RunExclusiveAsync(L.Text("Setup guide"), () => Ui.ShowAsync(guide, owner));
-        if (guide.Checkout is { } checkout && !checkout.Equals(current, StringComparison.Ordinal))
+        bool elsewhere = false;
+        if (guide.Checkout is { } checkout && !Editions.SameFolder(checkout, current))
         {
-            // The guide has saved its checkout already; SwitchServer acts on a change.
-            _shared.Settings.ServerPath = current;
-            _shared.Settings.CreateAccountOnStart = guide.CreateAccountNext;
-            App.SwitchServer(owner!, _shared.Settings, checkout);
-            return;
+            // The guide has saved its folder already, and the change of folder can still be turned down (the game runs,
+            // say). Until Waypoint starts again on the other folder the settings name the one they named before, and the
+            // account to create is noted only with the change.
+            _shared.Settings.ServerPath = saved;
+            _shared.Settings.Save();
+            if (await App.SwitchServerAsync(owner!, _shared, checkout, createAccount: guide.CreateAccountNext)) return;
+            Dialog.Tell(owner, DialogKind.Info, L.Text("The folder was not changed"),
+                L.Text("Waypoint stays on this folder. The setup guide's folder is {0}: Change folder… on Play, or Change… on Control, opens it.", checkout));
+            elsewhere = true;
         }
         SetupFinished?.Invoke();
         await _shared.Workspace.RefreshAsync();
-        if (guide.CreateAccountNext) CreateAccountRequested?.Invoke();
+        // An account asked for at the end of the guide is the other folder's.
+        if (guide.CreateAccountNext && !elsewhere) CreateAccountRequested?.Invoke();
     }
 
     async void FindCheckout(object? sender, RoutedEventArgs e)
@@ -127,12 +135,12 @@ public partial class SetupTab : UserControl
         var owner = Ui.Owner(this);
         var dialog = new CheckoutDialog(owner, _shared.Settings.ServerPath);
         await Ui.ShowAsync(dialog, owner);
-        if (dialog.Chosen is not null) App.SwitchServer(owner!, _shared.Settings, dialog.Chosen);
+        if (dialog.Chosen is not null) await App.SwitchServerAsync(owner!, _shared, dialog.Chosen);
     }
 
-    void ChangeCheckout(object? sender, RoutedEventArgs e)
+    async void ChangeCheckout(object? sender, RoutedEventArgs e)
     {
-        if (!Busy()) App.SwitchServer(Ui.Owner(this)!, _shared.Settings);
+        if (!Busy()) await App.SwitchServerAsync(Ui.Owner(this)!, _shared);
     }
 
     bool Busy()

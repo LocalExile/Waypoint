@@ -5,10 +5,10 @@ using Avalonia.Threading;
 namespace Waypoint;
 
 /// <summary>
-/// Simple mode's home: Play, and nothing to choose. Play updates a plain copy of LocalExile at most once a day
-/// (<see cref="CheckoutUpdates"/>), then starts everything the way the Control section does: through live.ps1. A failed
-/// update never stops the player: without a network or a backup the game starts as it is, and an update that does not start
-/// goes back to the version before it, saves included.
+/// A source copy's page in Simple mode, which is now only the choice of <see cref="Editions.MustChoose"/>: the release, or
+/// this copy in Advanced mode. It was Simple mode's home, where Play updated a plain copy of LocalExile at most once a day
+/// (<see cref="CheckoutUpdates"/>) and went back to the version before a failed update; Simple mode plays the release now,
+/// so Play, the update and the way back here are no longer reached (docs/launcher.md, "No longer reached").
 /// </summary>
 partial class PlayTab : UserControl
 {
@@ -29,6 +29,8 @@ partial class PlayTab : UserControl
     internal event Action? ChangeFolderRequested;
     /// <summary>The player wants a new git copy set up.</summary>
     internal event Action? NewCopyRequested;
+    /// <summary>The Latest card's "Use Advanced mode".</summary>
+    internal event Action? AdvancedRequested;
     /// <summary>The checkout moved: what reads it reads it again.</summary>
     internal event Action? CheckoutChanged;
 
@@ -54,10 +56,10 @@ partial class PlayTab : UserControl
         shared.Workspace.Changed += () => Dispatcher.UIThread.Post(async () => await LookForOlderAsync());
         shared.LiveRunning += _ => Dispatcher.UIThread.Post(Show);
         L.Current.PropertyChanged += (_, _) => Show();
-        // LocalExile changes many times a day: Play says how far behind it is, without waiting for its daily update.
+        // Nothing here moves a source copy any more, so nothing looks how far behind it is: the half-hour fetch held the
+        // folder for a number this page no longer shows. The timer is not started; it and LookForChangesAsync wait for
+        // the cleanup (docs/launcher.md, "No longer reached").
         _lookAgain.Tick += async (_, _) => await LookForChangesAsync();
-        _lookAgain.Start();
-        Dispatcher.UIThread.Post(async () => await LookForChangesAsync());
         Show();
     }
 
@@ -82,32 +84,32 @@ partial class PlayTab : UserControl
     {
         bool needsSetup = NeedsSetup;
         bool busy = _working || _shared.IsLiveRunning;
+        // Simple mode plays the release: on a source copy this page asks for the release or Advanced mode instead of Play.
+        bool choose = Editions.MustChoose(S);
         FolderText.Text = Environment.CurrentDirectory;
         Headline.Text = _stage?.Invoke() ?? (GameRunning ? L.Text("The game is running")
+            : choose ? L.Text("Simple mode plays the release")
             : Checking ? L.Text("Getting ready")
             : needsSetup ? L.Text("LocalExile isn't ready yet")
             : L.Text("Ready to play"));
         MainButton.Content = needsSetup ? L.Text("Finish setup") : L.Text("Play");
-        MainButton.IsVisible = !(busy || GameRunning || Checking);
+        MainButton.IsVisible = !(choose || busy || GameRunning || Checking);
         Working.IsVisible = busy && S.Appearance?.ReduceMotion != true;
         string? note = _note?.Invoke() ?? (_olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;
         StopLink.IsVisible = !busy && AnythingRunning;
-        BehindPanel.IsVisible = !busy && !GameRunning && !needsSetup && _behind is > 0;
+        BehindPanel.IsVisible = !choose && !busy && !GameRunning && !needsSetup && _behind is > 0;
         BehindText.Text = _behind is { } behind ? L.Text("{0} new change(s) in LocalExile since your version.", behind) : "";
         UpdateNowLink.IsEnabled = !AnythingRunning;
         RunSetupLink.IsEnabled = !busy && !AnythingRunning && !Checking;
-        GoBackLink.IsVisible = !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
-        RemoveOldCard.IsVisible = !busy && !AnythingRunning && Replaced is not null;
-        if (Replaced is { } replaced) RemoveOldText.Text = L.Text("Has the new copy worked for you? You can delete your old LocalExile in {0} now.", replaced.Old);
+        // Another clone from source is Advanced mode's (Control has it): Simple mode plays the release.
+        NewCopyLink.IsVisible = !choose;
+        GoBackLink.IsVisible = !choose && !busy && !AnythingRunning && !needsSetup && CheckoutUpdates.CanGoBack(S.LastUpdate, DateTimeOffset.UtcNow);
+        // While something runs the choice waits, and "Stop playing" is what shows.
+        LatestCard.IsVisible = choose && !busy && !AnythingRunning;
     }
-
-    /// <summary>The release this copy replaces, once the player has played here.</summary>
-    ReleaseToRemove? Replaced => S.RemoveRelease is { Played: true } release && IsThisCopy(release) ? release : null;
-
-    static bool IsThisCopy(ReleaseToRemove release) => release.Copy.Equals(Environment.CurrentDirectory, StringComparison.OrdinalIgnoreCase);
 
     void Say(Func<string> stage)
     {
@@ -151,11 +153,6 @@ partial class PlayTab : UserControl
             if (_failed) _note = _control.ClientSetupFailed
                 ? () => ClientExtractionFailure.RecoveryHint
                 : () => L.Text("The game didn't start.");
-            if (code == 0 && S.RemoveRelease is { Played: false } release && IsThisCopy(release))
-            {
-                S.RemoveRelease = release with { Played = true };
-                S.Save();
-            }
         }
         finally
         {
@@ -337,48 +334,17 @@ partial class PlayTab : UserControl
         }
     }
 
-    async void RemoveOldClicked(object? sender, RoutedEventArgs e)
-    {
-        if (_working || Replaced is not { } release) return;
-        if (!Dialog.Ask(Owner, DialogKind.Warning, L.Text("Delete your old LocalExile?"),
-                L.Text("This deletes the program files in {0}, and cannot be undone. Your old saves and mods stay there until you delete them yourself. A game client this copy uses moves here first when it is on the same drive.", release.Old),
-                L.Text("Delete"))) return;
-        _working = true;
-        _failed = false;
-        _note = null;
-        Say(() => L.Text("Deleting your old LocalExile"));
-        try
-        {
-            var removed = await Task.Run(() => SwitchToSource.RemoveRelease(release.Old, Environment.CurrentDirectory));
-            S.RemoveRelease = null;
-            S.Save();
-            _note = removed.ClientMoved ? () => L.Text("Your old LocalExile is deleted, and the game client moved here. Your old saves are still in {0}.", Path.Combine(release.Old, "data"))
-                : () => L.Text("Your old LocalExile is deleted. Your old saves are still in {0}.", Path.Combine(release.Old, "data"));
-            CheckoutChanged?.Invoke();
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
-        {
-            _failed = true;
-            _note = () => L.Text("Waypoint couldn't delete your old LocalExile: {0}", ex.Message);
-        }
-        finally
-        {
-            _working = false;
-            _stage = null;
-            Show();
-        }
-    }
-
-    void KeepOldClicked(object? sender, RoutedEventArgs e)
-    {
-        S.RemoveRelease = null;
-        S.Save();
-        Show();
-    }
-
     void ChangeFolderClicked(object? sender, RoutedEventArgs e) => ChangeFolderRequested?.Invoke();
 
     void NewCopyClicked(object? sender, RoutedEventArgs e) => NewCopyRequested?.Invoke();
+
+    /// <summary>As the release's view: the switch again when Developer Mode changes.</summary>
+    internal void ShowOffers() => Edition.Refresh();
+
+    // The choice in place of Play (Editions.MustChoose). The release is the switch's own way there, with its question about characters.
+    void GuideReleaseClicked(object? sender, RoutedEventArgs e) => Edition.Choose(release: true);
+
+    void GuideAdvancedClicked(object? sender, RoutedEventArgs e) => AdvancedRequested?.Invoke();
 
     void DetailsClicked(object? sender, RoutedEventArgs e) => DetailsRequested?.Invoke();
 }

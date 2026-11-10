@@ -45,7 +45,11 @@ static class Git
     }
 
     /// <summary>Runs git with <paramref name="args"/>; each line of its output also goes to <paramref name="log"/>.</summary>
-    public static async Task<Result> RunAsync(Action<string>? log, params string[] args)
+    public static Task<Result> RunAsync(Action<string>? log, params string[] args) => RunAsync(log, null, args);
+
+    /// <summary>The same, ended when it has not finished within <paramref name="limit"/> (code -1): for work on the network
+    /// that its user waits for, which a connection that never answers would otherwise hold for good.</summary>
+    public static async Task<Result> RunAsync(Action<string>? log, TimeSpan? limit, string[] args)
     {
         var info = new ProcessStartInfo("git")
         {
@@ -75,7 +79,19 @@ static class Git
         p.ErrorDataReceived += (_, e) => Line(e.Data);
         p.BeginOutputReadLine();
         p.BeginErrorReadLine();
-        await p.WaitForExitAsync();
+        using var late = new CancellationTokenSource();
+        if (limit is { } time) late.CancelAfter(time);
+        try { await p.WaitForExitAsync(late.Token); }
+        catch (OperationCanceledException)
+        {
+            // git and what it started for the connection end together.
+            try { p.Kill(entireProcessTree: true); }
+            catch (Exception e) when (e is InvalidOperationException or System.ComponentModel.Win32Exception or AggregateException) { }
+            try { await p.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5)); }
+            catch (TimeoutException) { }
+            log?.Invoke($"git did not finish within {SessionLog.Seconds(limit!.Value)}");
+            lock (output) return new(-1, output.ToString().TrimEnd());
+        }
         lock (output) return new(p.ExitCode, output.ToString().TrimEnd());
     }
 
@@ -91,6 +107,12 @@ static class Git
         var upstream = await RunAsync(log, "fetch", "--prune", UpstreamUrl, $"+refs/heads/*:refs/{UpstreamRefs}/*");
         return upstream.Ok ? origin : upstream;
     }
+
+    /// <summary>LocalExile's branches into <c>refs/launcher/upstream</c> of the checkout in <paramref name="folder"/>, by
+    /// LocalExile's public address, whatever that checkout's origin is: nothing is asked for (no credentials, no helper's
+    /// window), no remote or branch of its user changes, and it ends after <paramref name="limit"/> at the latest.</summary>
+    public static Task<Result> FetchUpstreamInAsync(string folder, TimeSpan limit, Action<string>? log = null) =>
+        RunAsync(log, limit, ["-C", folder, "-c", "credential.helper=", "fetch", "--quiet", "--no-tags", UpstreamUrl, $"+refs/heads/*:refs/{UpstreamRefs}/*"]);
 
     /// <summary>The repository's names, the one it had before it moved to the organization included.</summary>
     internal static bool IsUpstream(string? repository) =>

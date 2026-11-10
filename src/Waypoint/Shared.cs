@@ -18,6 +18,23 @@ sealed class Shared : IDisposable
     public bool IsLiveRunning => Volatile.Read(ref _running) == 1;
     /// <summary>What holds the checkout while <see cref="IsLiveRunning"/>: "live.ps1", "git" or an operation's name.</summary>
     public string BusyWith { get; private set; } = "live.ps1";
+    bool _leaving;
+    /// <summary>Waypoint is stopping what runs before it leaves this folder for another
+    /// (<see cref="Editions.ReadyToLeaveAsync"/>), until it starts again there or the change is given up. Meanwhile the
+    /// window is not usable and does not close: a close in that time would leave the other folder saved and Waypoint set
+    /// to start again, with its window still open.</summary>
+    public bool Leaving
+    {
+        get => _leaving;
+        set
+        {
+            if (_leaving == value) return;
+            _leaving = value;
+            LeavingChanged?.Invoke();
+        }
+    }
+    /// <summary><see cref="Leaving"/> changed. Raised on the caller's thread.</summary>
+    public event Action? LeavingChanged;
     DateTime _quietUntil;
 
     public Shared()

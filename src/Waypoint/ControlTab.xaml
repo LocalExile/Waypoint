@@ -45,6 +45,18 @@
             </DockPanel>
         </Border>
 
+        <!-- The guide's "Remove the old one later": asked here once the user has played on this copy (Editions.Replaced). -->
+        <Border x:Name="RemoveOldCard" DockPanel.Dock="Top" Visibility="Collapsed" Margin="20,10,20,0" Padding="14,8" CornerRadius="6" BorderThickness="1"
+                Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                    <Button Content="{l:Loc 'Delete the old one…'}" Click="RemoveOldClicked" Margin="0,0,8,0" />
+                    <Button Content="{l:Loc 'Keep it'}" Click="KeepOldClicked" Margin="0" />
+                </StackPanel>
+                <TextBlock x:Name="RemoveOldText" TextWrapping="Wrap" VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+
         <!-- Below the table: live.ps1's output and the setup checks. -->
         <Grid DockPanel.Dock="Bottom" Height="230" Margin="20,8,20,12">
             <Grid.ColumnDefinitions>

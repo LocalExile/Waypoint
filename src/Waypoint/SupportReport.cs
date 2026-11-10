@@ -34,7 +34,7 @@ static class SupportReport
             if (lines.Count > 0) logs.Add(("LOG: " + source.Name, string.Join('\n', lines.Select(l => l.Text)), 150));
         }
         return DiagnosticReport.Create(state, Updates.Current.ToString(), workspace.OperationText, workspace.LastFailure, logs,
-            workspace.PrivateNames.Concat(additionalNames), Details(shared.Settings.Advanced));
+            workspace.PrivateNames.Concat(additionalNames), Details(Editions.Advanced(shared.Settings)));
     }
 
     /// <summary>The head's lines about this LocalExile: a release and its version or a source checkout, and Waypoint's mode.</summary>

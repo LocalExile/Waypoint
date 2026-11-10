@@ -17,14 +17,14 @@ public sealed record RemovedRelease(bool ClientMoved);
 
 /// <summary>
 /// Moving from a release to a source copy, which has what no release has yet (the item crafter, for one). The release is only
-/// read until the player, having played on the copy, asks for it to be removed. The saves are copied by the adapter
+/// read until the player, having played on the copy, asks for it to be removed (Control's question). The saves are copied by the adapter
 /// (<c>ImportSaves</c>); never one database for both, because a newer server may write saves an older release cannot read.
 /// </summary>
 public static class SwitchToSource
 {
     /// <summary>The LocalExile commit this Waypoint was tested with: a release's database opened on it, and an item was given.</summary>
     public const string TestedCommit = "e28909f68b5ada849c568310e4c702f47c7ca910";
-    /// <summary>A branch of the copy's own at that commit: only a plain copy on the default branch is moved by Play.</summary>
+    /// <summary>A branch of the copy's own at that commit, apart from the default branch its user updates from Versions.</summary>
     public const string TestedBranch = "waypoint-tested";
     /// <summary>What the game's chat box takes, measured: the rest of a longer line is lost. The client control bridge sends
     /// the same message without it, so Give item needs Frida for all but the smallest items.</summary>
@@ -38,10 +38,11 @@ public static class SwitchToSource
     public static bool SavesBrought(string copy) => File.Exists(Path.Combine(copy, "data", "saves-brought.json"));
 
     /// <summary>The branch of a copy on the last LocalExile made for an older client (<see cref="ClientLocator.LastVersionFor"/>):
-    /// like <see cref="TestedBranch"/>, Play never moves it.</summary>
+    /// like <see cref="TestedBranch"/>, a branch of the copy's own.</summary>
     public static string OlderBranch(string build) => "waypoint-" + build;
 
-    /// <summary>The copy is on a version of its own that Play never moves: the tested one, or the one for an older client.</summary>
+    /// <summary>The copy is on a version of its own, which stays until its user moves it from Versions: the tested one, or
+    /// the one for an older client.</summary>
     public static bool OnTestedVersion(string copy)
     {
         try
@@ -113,7 +114,7 @@ public static class SwitchToSource
         else lines.Add(new(L.Text("Start with no accounts or characters. You create an account at the end.")));
         lines.Add(c.GiveItem ? new(L.Text("Install Frida, so that Give item works."))
             : new(L.Text("Leave out Frida. Waypoint offers it again when you press Give item."), true));
-        if (c.Download) lines.Add(c.TestedVersion ? new(L.Text("Keep the older version; it won't update.")) : new(L.Text("Update to the newest changes once a day."), true));
+        if (c.Download) lines.Add(c.TestedVersion ? new(L.Text("Keep the older version; it won't update.")) : new(L.Text("Start on the newest changes. You update the copy yourself from Versions."), true));
         if (c.KeepOld) lines.Add(new(L.Text("Leave your current LocalExile as it is. Each copy keeps its own progress.")));
         else
         {
@@ -129,8 +130,8 @@ public static class SwitchToSource
         var text = new List<string> { L.Text("Your new copy is in {0}. Press Play in Waypoint to start it.", c.Copy) };
         if (c.BringCharacters) text.Add(L.Text("Your characters came with you, so log in as usual. Mods you added yourself did not: they are still in your old folder."));
         text.Add(L.Text("The item crafter is in Tools."));
-        text.Add(c.KeepOld ? L.Text("To go back to your other LocalExile, use Change folder… on Play and choose {0}.", c.Old)
-            : L.Text("Your old LocalExile is still in {0}. After you have played, Play asks whether to delete it.", c.Old));
+        text.Add(c.KeepOld ? L.Text("To go back to your other LocalExile, use Change… on Control and choose {0}.", c.Old)
+            : L.Text("Your old LocalExile is still in {0}. After you have played, Control asks whether to delete it.", c.Old));
         if (c.SharesClient) text.Add(L.Text("The new copy uses the game files in {0}, so do not delete that folder yourself.", c.Old));
         return string.Join("\n\n", text);
     }

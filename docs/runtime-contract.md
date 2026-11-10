@@ -221,7 +221,9 @@ characters.db keeps the key of the `data/saves.db` it came from, so earlier back
 commit/branch at backup, requested source/fresh choice, time, and last Gateway build recorded at a successful launcher
 start. That build hash is not an attestation of later hot edits or external launches. Unknown history remains unknown.
 Automatic backups default on for current/fresh activation, build, Gateway startup/restart, data reload and restore;
-users may disable them in either relevant UI page. Manual backup bypasses that preference. No backup occurs per
+users may disable them in either relevant UI page. Manual backup bypasses that preference, and so does `ImportSaves`,
+which replaces every character of the target: its saves are always backed up first. `ImportSaves` also copies the
+source folder's `mod-state.txt` into a source checkout, and leaves a release's own as it is. No backup occurs per
 externally saved edit or watcher-triggered restart. Backup failure blocks the subsequent requested change.
 
 Restore validates the chosen backup and its save-store association, requires stopped owned runtime, backs up current

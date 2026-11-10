@@ -11,9 +11,6 @@ Order: the collaboration items, then Simple mode, then isolated environments, th
 ## 1. Collaboration
 
 - Protect `main`: changes arrive through reviewed pull requests.
-- Ask the LocalExile maintainers to mark good commits, with a moving `stable` tag or releases, and have Simple mode's Play
-  follow that. It follows `main` now, which changes many times a day with no test results, so a player can get a bug
-  inside the game.
 
 ## 2. Simple mode
 

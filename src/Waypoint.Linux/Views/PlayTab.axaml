@@ -24,20 +24,24 @@
       <Button x:Name="DetailsLink" Classes="quiet" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" IsVisible="False" />
       <Button x:Name="StopLink" Classes="quiet" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" IsVisible="False" />
       <Button x:Name="GoBackLink" Classes="quiet" Content="{l:Loc 'Go back to the version you had'}" Margin="0,18,0,0" Click="GoBackClicked" IsVisible="False" />
-      <Border x:Name="RemoveOldCard" IsVisible="False" Margin="0,18,0,0" Padding="14,10" CornerRadius="6" BorderThickness="1"
+      <!-- Simple mode on a source copy: in place of Play, the release or Advanced mode (Editions.MustChoose). -->
+      <Border x:Name="LatestCard" IsVisible="False" Margin="0,18,0,0" Padding="14,10" CornerRadius="6" BorderThickness="1"
               Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
         <StackPanel>
-          <TextBlock x:Name="RemoveOldText" TextAlignment="Center" TextWrapping="Wrap" />
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8" Margin="0,10,0,0">
-            <Button Content="{l:Loc 'Delete the old one…'}" Click="RemoveOldClicked" />
-            <Button Content="{l:Loc 'Keep it'}" Click="KeepOldClicked" />
-          </StackPanel>
+          <TextBlock TextAlignment="Center" TextWrapping="Wrap"
+                     Text="{l:Loc 'This folder is Latest: LocalExile\'s newest changes, from its source. Switch to the release to keep Simple mode, or use Advanced mode to play this copy and pick branches and pull requests.'}" />
+          <WrapPanel HorizontalAlignment="Center" Margin="0,10,0,0" ItemSpacing="8" LineSpacing="6">
+            <Button Content="{l:Loc 'Switch to the release…'}" Click="GuideReleaseClicked"
+                    ToolTip.Tip="{l:Loc 'Sets up or opens LocalExile\'s published release. It has its own characters; the ones you have here stay in this folder.'}" />
+            <Button Content="{l:Loc 'Use Advanced mode'}" Click="GuideAdvancedClicked"
+                    ToolTip.Tip="{l:Loc 'Shows this copy in Advanced mode: every section, with branches and pull requests under Versions. A release keeps the mode you chose there.'}" />
+          </WrapPanel>
         </StackPanel>
       </Border>
       <TextBlock x:Name="FolderText" Classes="note" TextAlignment="Center" Margin="0,24,0,0" />
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16" Margin="0,4,0,0">
         <Button Classes="quiet" Content="{l:Loc 'Change folder…'}" Click="ChangeFolderClicked" />
-        <Button Classes="quiet" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
+        <Button x:Name="NewCopyLink" Classes="quiet" Content="{l:Loc 'Set up a new copy…'}" Click="NewCopyClicked"
                 ToolTip.Tip="{l:Loc 'Clones LocalExile with git into a folder you choose and sets it up, for branches and pull requests'}" />
       </StackPanel>
       <Button x:Name="RunSetupLink" Classes="quiet" FontSize="12.5" Margin="0,10,0,0"
