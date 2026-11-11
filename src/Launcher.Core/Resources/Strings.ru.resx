@@ -267,9 +267,6 @@
   <data name="Text_0858184ec92d" xml:space="preserve">
     <value>PID {0}</value>
   </data>
-  <data name="Text_0879a3e6c148" xml:space="preserve">
-    <value>Waypoint может сейчас скопировать игру в папку LocalExile. Сохранения, аккаунты и ключи входа сохранятся.</value>
-  </data>
   <data name="Text_087cc665f4f5" xml:space="preserve">
     <value>Остаться на проверенной версии (рекомендуется)</value>
   </data>
@@ -1839,6 +1836,9 @@
   <data name="Text_32afaa784333" xml:space="preserve">
     <value>Разделённый</value>
   </data>
+  <data name="Text_32b52bba1f76" xml:space="preserve">
+    <value>Ничего не изменилось: LocalExile по-прежнему запускается из {0} и в этот раз запустится оттуда. При следующем нажатии «Играть» попытка повторится, а копирование продолжится с того места, где остановилось.</value>
+  </data>
   <data name="Text_32d7e8208247" xml:space="preserve">
     <value>Управление</value>
   </data>
@@ -2511,6 +2511,9 @@
   </data>
   <data name="Text_47d8440d8c62" xml:space="preserve">
     <value>Сначала закройте игру. Gateway корректно перезапустится с включённой записью.</value>
+  </data>
+  <data name="Text_47d86be282e2" xml:space="preserve">
+    <value>«Отмена»: ничего не меняется, и игра не запускается.</value>
   </data>
   <data xml:space="preserve" name="Text_47e8b196a14c">
     <value>Обновить копии</value>
@@ -3372,9 +3375,6 @@
   </data>
   <data xml:space="preserve" name="Text_6249df4367d0">
     <value>Золото</value>
-  </data>
-  <data name="Text_626a7e01c9ee" xml:space="preserve">
-    <value>«Всё равно играть»: ничего не меняется, и Waypoint спросит снова при следующем нажатии «Играть».</value>
   </data>
   <data xml:space="preserve" name="Text_62a487dde87f">
     <value>Панель состояния</value>
@@ -6480,9 +6480,6 @@
   <data name="Text_c0862201e27e" xml:space="preserve">
     <value>Флакон</value>
   </data>
-  <data name="Text_c0952eaac9a3" xml:space="preserve">
-    <value>Ничего не изменилось: LocalExile по-прежнему запускается из {0}. Нажмите «Играть», чтобы попробовать снова; копирование продолжится с того места, где остановилось.</value>
-  </data>
   <data name="Text_c0973e9afb7d" xml:space="preserve">
     <value>Маяк</value>
   </data>
@@ -6883,6 +6880,9 @@
   </data>
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | отслеживание изменений, PID {1}</value>
+  </data>
+  <data name="Text_cbf5752b4420" xml:space="preserve">
+    <value>«Всё равно играть»: ничего не меняется, но обновление Path of Exile в этой папке может сломать этот LocalExile. Waypoint спросит снова при следующем нажатии «Играть».</value>
   </data>
   <data name="Text_cc2162d992f4" xml:space="preserve">
     <value>Клиент изменился во время подготовки. Закройте его официальный лаунчер и повторите попытку.</value>
@@ -8123,6 +8123,9 @@
   </data>
   <data name="Text_f2499338fc41" xml:space="preserve">
     <value>Сначала будет создана резервная копия ваших сохранений здесь.</value>
+  </data>
+  <data name="Text_f252a00aad25" xml:space="preserve">
+    <value>Перед запуском Waypoint скопирует игру в папку LocalExile. Сохранения, аккаунты и ключи входа сохранятся.</value>
   </data>
   <data name="Text_f25cdb3f89bd" xml:space="preserve">
     <value>имя персонажа: 3–32 латинские буквы, цифры, _ или -</value>

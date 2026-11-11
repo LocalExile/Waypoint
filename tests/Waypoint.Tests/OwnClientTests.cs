@@ -75,7 +75,8 @@ public class OwnClientTests : IDisposable
         Assert.DoesNotContain(plan.Copy.Files, f => f.Source.Contains(@"\logs\", StringComparison.OrdinalIgnoreCase));
         var (message, details) = OwnClient.Text(plan);
         Assert.Contains("no longer supported", message);
-        Assert.Contains("Play anyway", message);
+        Assert.Contains("the game does not start", message);
+        Assert.DoesNotContain("Play anyway", message);
         Assert.Contains(Retail, details);
         Assert.Contains(Client, details);
     }
@@ -212,14 +213,32 @@ public class OwnClientTests : IDisposable
     }
 
     [Fact]
-    public void Without_the_room_it_only_tells()
+    public void With_the_room_there_is_no_playing_on_without_the_copy()
+    {
+        Junction(Client, Retail);
+        var plan = OwnClient.Check(Folder)!;
+        string[]? shown = null;
+        Assert.Equal(OwnClient.Answer.Copy, OwnClient.Ask(plan, (_, _, _, buttons) => { shown = buttons; return 0; }, _ => { }));
+        Assert.Equal(["Copy now", "Open folder", "Cancel"], shown!);
+        // The last button, and a box closed without an answer, start nothing.
+        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => 2, _ => { }));
+        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => -1, _ => { }));
+    }
+
+    [Fact]
+    public void Without_the_room_playing_on_is_allowed_and_says_what_a_game_update_can_do()
     {
         Junction(Client, Retail);
         var plan = OwnClient.Check(Folder)! with { Free = 1000 };
         Assert.False(plan.HasSpace);
         string[]? shown = null;
-        Assert.False(OwnClient.Ask(plan, (_, message, _, buttons) => { shown = buttons; Assert.Contains("too full", message); return 0; }, _ => { }));
-        Assert.Equal(["Play anyway"], shown!);
+        string? said = null;
+        Assert.Equal(OwnClient.Answer.PlayAnyway, OwnClient.Ask(plan, (_, message, _, buttons) => { shown = buttons; said = message; return 0; }, _ => { }));
+        Assert.Equal(["Play anyway", "Open folder", "Cancel"], shown!);
+        Assert.Contains("too full", said);
+        Assert.Contains("a Path of Exile update in that folder can break this LocalExile", said);
+        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => 2, _ => { }));
+        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => -1, _ => { }));
     }
 
     [Fact]
@@ -229,53 +248,53 @@ public class OwnClientTests : IDisposable
         var plan = OwnClient.Check(Folder)!;
         var answers = new Queue<int>([1, 0]);
         string? opened = null;
-        Assert.True(OwnClient.Ask(plan, (_, _, _, buttons) => { Assert.Equal(3, buttons.Length); return answers.Dequeue(); }, path => opened = path));
+        Assert.Equal(OwnClient.Answer.Copy, OwnClient.Ask(plan, (_, _, _, _) => answers.Dequeue(), path => opened = path));
         Assert.Equal(Retail, opened, StringComparer.OrdinalIgnoreCase);
-        Assert.False(OwnClient.Ask(plan, (_, _, _, _) => -1, _ => { }));
-        Assert.False(OwnClient.Ask(plan, (_, _, _, _) => 2, _ => { }));
     }
 
     [Fact]
-    public async Task Play_anyway_changes_nothing_and_the_next_Play_asks_again()
+    public async Task Cancel_starts_nothing_and_Play_anyway_starts_from_the_link_and_both_are_asked_again()
     {
         Junction(Client, Retail);
         int asked = 0;
-        var result = await OwnClient.EnsureAsync(Folder, _ => { asked++; return false; }, null, Hold, default);
+        var result = await OwnClient.EnsureAsync(Folder, _ => { asked++; return OwnClient.Answer.Cancel; }, null, Hold, default);
+        Assert.Equal(OwnClient.Outcome.Cancelled, result.Outcome);
+        Assert.NotNull(result.Plan);
+        result = await OwnClient.EnsureAsync(Folder, _ => { asked++; return OwnClient.Answer.PlayAnyway; }, null, Hold, default);
         Assert.Equal(OwnClient.Outcome.None, result.Outcome);
         Assert.NotNull(result.Plan);
+        Assert.Equal(2, asked);
         Assert.True(IsLink(Client));
         Assert.False(Directory.Exists(Copy));
-        result = await OwnClient.EnsureAsync(Folder, _ => { asked++; return false; }, null, Hold, default);
-        Assert.Equal(OwnClient.Outcome.None, result.Outcome);
-        Assert.Equal(2, asked);
         Assert.Contains("Not supported", OwnClient.Notice);
     }
 
     [Fact]
-    public async Task Continue_moves_and_a_busy_folder_or_a_failure_leaves_the_link()
+    public async Task Copy_now_moves_and_a_busy_folder_or_a_failure_leaves_the_link()
     {
         Junction(Client, Retail);
-        var busy = await OwnClient.EnsureAsync(Folder, _ => true, null, _ => Task.FromResult(false), default);
+        var busy = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, _ => Task.FromResult(false), default);
         Assert.Equal(OwnClient.Outcome.Failed, busy.Outcome);
         Assert.True(IsLink(Client));
 
         // The copy cannot be written: a file stands where its folder would be.
         File.WriteAllText(Copy, "in the way");
-        var failed = await OwnClient.EnsureAsync(Folder, _ => true, null, Hold, default);
+        var failed = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, Hold, default);
         Assert.Equal(OwnClient.Outcome.Failed, failed.Outcome);
         Assert.NotNull(failed.Reason);
         Assert.True(IsLink(Client));
         Assert.True(File.Exists(Path.Combine(Client, "Content.ggpk")));
         Assert.Contains(Retail, OwnClient.FailedText(failed.Plan!, failed.Reason!));
+        Assert.Contains("starts from there this time", OwnClient.FailedText(failed.Plan!, failed.Reason!));
         File.Delete(Copy);
 
         using var stop = new CancellationTokenSource();
         stop.Cancel();
-        var stopped = await OwnClient.EnsureAsync(Folder, _ => true, null, Hold, stop.Token);
+        var stopped = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, Hold, stop.Token);
         Assert.Equal(OwnClient.Outcome.Stopped, stopped.Outcome);
         Assert.True(IsLink(Client));
 
-        var moved = await OwnClient.EnsureAsync(Folder, _ => true, null, Hold, default);
+        var moved = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, Hold, default);
         Assert.Equal(OwnClient.Outcome.Moved, moved.Outcome);
         Assert.False(IsLink(Client));
         Assert.Equal(OwnClient.Outcome.None, (await OwnClient.EnsureAsync(Folder, _ => throw new InvalidOperationException("asked"), null, Hold, default)).Outcome);

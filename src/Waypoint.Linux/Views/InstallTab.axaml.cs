@@ -257,9 +257,9 @@ partial class InstallTab : UserControl
     }
 
     /// <summary>A release that runs from the user's own Path of Exile folder (a link, which the setup guide no longer makes) gets
-    /// a copy of its own, asked on every Play until it is made (<see cref="OwnClient"/>): that way of running is not supported
-    /// any more, but nothing is refused. The link works until a whole copy takes its place, so whatever comes of it the game
-    /// still starts, as before or from the copy; false only when the user stopped the copy.</summary>
+    /// a copy of its own before the game starts (<see cref="OwnClient"/>): that way of running is not supported any more, and
+    /// only a user whose drive is too full for the copy may play on, warned. The link works until a whole copy takes its
+    /// place. False when nothing is to start: the user cancelled, or stopped the copy.</summary>
     async Task<bool> OwnClientAsync()
     {
         if (AnythingRunning) return true;
@@ -268,7 +268,7 @@ partial class InstallTab : UserControl
         var clock = new Stopwatch();
         long? startedAt = null;
         var result = await OwnClient.EnsureAsync(Folder,
-            // Play anyway is the button Enter presses: a box that opens while its user types must not start a long copy by accident.
+            // Cancel is the button Enter presses: a box that opens while its user types must not start a long copy by accident.
             plan => OwnClient.Ask(plan, (title, message, details, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, details, buttons, buttons.Length - 1), ViewTools.Open),
             copied => Dispatcher.UIThread.Post(() =>
             {
@@ -309,6 +309,9 @@ partial class InstallTab : UserControl
                 break;
             case OwnClient.Outcome.Stopped:
                 _note = () => L.Text("The copy was stopped, and nothing was changed. Press Play to go on with it.");
+                Show();
+                return false;
+            case OwnClient.Outcome.Cancelled:
                 Show();
                 return false;
         }

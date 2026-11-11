@@ -774,18 +774,21 @@ LocalExile's own setup can link a release's `Client` to the folder it was given 
 and the guide used to offer that as "Use this folder itself instead of a copy". Such a release runs from the user's own Path
 of Exile folder: LocalExile writes `Game.exe`, `Game.patched.exe` and the login list there, and a game update in that folder
 leaves LocalExile without the client it needs. The guide no longer offers it, and running that way is not supported any
-more: a release that was set up so is told on its Play page (`OwnClient.Notice`) and asked for a copy of its own on every
-Play until it has one (`OwnClient`, `src/Launcher.Core/OwnClient.cs`). Nothing is refused, because a user without the room
-for the copy would have no way to play:
+more: a release that was set up so is told on its Play page (`OwnClient.Notice`), and Play gives it a copy of its own before
+the game starts (`OwnClient`, `src/Launcher.Core/OwnClient.cs`). With the room for the copy there is no playing on without
+it. Only a user whose drive is too full may play on from the link, because a refusal would leave them no way to play:
 
 - **When**: on a release's Play, after the build check above found that the client fits, with nothing running. Only when
   `Client` is a link to a folder with a client that is not another LocalExile folder's `Client` (a shared client is that
   folder's, and stays), and the release is not inside the folder the link leads to. A source copy is never asked.
 - **The question**, on every Play: that this is no longer supported and why, then a box with both folders (the user's: only
-  read; the copy and its size), **Copy now**, **Open folder** and **Play anyway**. Play anyway changes nothing and the game
-  starts as before. Enter and Esc press Play anyway, so a box that opens while its user types cannot start the copy by
-  accident. Without the room for the copy (what is left to copy and 2 GB more) the box says so, with the two numbers, and
-  has only Play anyway.
+  read; the copy and its size), **Copy now**, **Open folder** and **Cancel**. Cancel changes nothing and starts nothing.
+  Enter and Esc press Cancel, so a box that opens while its user types cannot start the copy by accident.
+- **Without the room for the copy** (what is left to copy and 2 GB more) the box says so, with the two numbers, and that a
+  Path of Exile update in that folder can break this LocalExile; its buttons are **Play anyway**, **Open folder** and
+  **Cancel**. Play anyway starts the game from the link as before, and the next Play asks again.
+- **A copy that fails** is not the user's doing: the box says why, the game starts from the link this time, and the next
+  Play tries again.
 - **The copy** goes into `.waypoint-new-client` beside the link, with the resumable copy the guide uses, the patched
   executable included (it was patched for this folder's keys, and `IsSetUp` needs it). The link keeps working meanwhile. The
   page shows the progress and **Stop the copy**; a stop or a failure leaves the release as it was, and the next try goes on

@@ -267,9 +267,6 @@
   <data name="Text_0858184ec92d" xml:space="preserve">
     <value>pid {0}</value>
   </data>
-  <data name="Text_0879a3e6c148" xml:space="preserve">
-    <value>Waypoint can copy the game into this LocalExile folder now. Your saves, accounts and login keys are kept.</value>
-  </data>
   <data name="Text_087cc665f4f5" xml:space="preserve">
     <value>Stay on a tested version (recommended)</value>
   </data>
@@ -1839,6 +1836,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_32afaa784333" xml:space="preserve">
     <value>Split</value>
   </data>
+  <data name="Text_32b52bba1f76" xml:space="preserve">
+    <value>Nothing was changed: LocalExile still runs from {0}, and starts from there this time. The next Play tries again, and the copy goes on from where it stopped.</value>
+  </data>
   <data name="Text_32d7e8208247" xml:space="preserve">
     <value>Control</value>
   </data>
@@ -2511,6 +2511,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_47d8440d8c62" xml:space="preserve">
     <value>Close the game first. Gateway restarts gracefully with capture enabled.</value>
+  </data>
+  <data name="Text_47d86be282e2" xml:space="preserve">
+    <value>Cancel: nothing changes, and the game does not start.</value>
   </data>
   <data xml:space="preserve" name="Text_47e8b196a14c">
     <value>Refresh backups</value>
@@ -3372,9 +3375,6 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_6249df4367d0">
     <value>Gold</value>
-  </data>
-  <data name="Text_626a7e01c9ee" xml:space="preserve">
-    <value>Play anyway: nothing changes, and Waypoint asks again the next time you press Play.</value>
   </data>
   <data xml:space="preserve" name="Text_62a487dde87f">
     <value>Status banner</value>
@@ -6480,9 +6480,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c0862201e27e" xml:space="preserve">
     <value>Flask</value>
   </data>
-  <data name="Text_c0952eaac9a3" xml:space="preserve">
-    <value>Nothing was changed: LocalExile still runs from {0}. Press Play to try again; the copy goes on from where it stopped.</value>
-  </data>
   <data name="Text_c0973e9afb7d" xml:space="preserve">
     <value>Beacon</value>
   </data>
@@ -6883,6 +6880,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | hot reload watcher PID {1}</value>
+  </data>
+  <data name="Text_cbf5752b4420" xml:space="preserve">
+    <value>Play anyway: nothing changes, but a Path of Exile update in that folder can break this LocalExile. Waypoint asks again the next time you press Play.</value>
   </data>
   <data name="Text_cc2162d992f4" xml:space="preserve">
     <value>The client changed during preparation. Close its official launcher and try again.</value>
@@ -8123,6 +8123,9 @@ Dependencies: {2}
   </data>
   <data name="Text_f2499338fc41" xml:space="preserve">
     <value>Your saves here are backed up first.</value>
+  </data>
+  <data name="Text_f252a00aad25" xml:space="preserve">
+    <value>Waypoint copies the game into this LocalExile folder before it starts. Your saves, accounts and login keys are kept.</value>
   </data>
   <data name="Text_f25cdb3f89bd" xml:space="preserve">
     <value>character names are 3–32 letters, digits, _ or -</value>

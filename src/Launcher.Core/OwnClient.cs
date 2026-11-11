@@ -12,8 +12,10 @@ namespace Launcher.Core;
 /// <item>a stop or a failure leaves the release as it was, and the next try goes on from what was copied.</item>
 /// </list>
 /// A link to another LocalExile folder's client (a shared client) is that folder's, and is left alone.
-/// Running from the user's own folder is not supported any more, and Waypoint says so on every Play until the copy is made;
-/// it does not refuse to start, because a user without the room for the copy would have no way to play.
+/// Running from the user's own folder is not supported any more. With the room for the copy, the release starts the game
+/// only once it has it: Play makes the copy or starts nothing. Only a user whose drive is too full may play on from the
+/// link, told on every Play that a game update in that folder can break this LocalExile; a refusal would leave them no
+/// way to play at all.
 /// </summary>
 public static class OwnClient
 {
@@ -33,10 +35,23 @@ public static class OwnClient
         public long Copied => Copy.Total - Copy.Remaining;
     }
 
+    /// <summary>The user's answer to the question (<see cref="Ask"/>).</summary>
+    public enum Answer
+    {
+        /// <summary>Make the copy now.</summary>
+        Copy,
+        /// <summary>Only without the room for the copy: start from the link this time.</summary>
+        PlayAnyway,
+        /// <summary>Start nothing.</summary>
+        Cancel,
+    }
+
     public enum Outcome
     {
-        /// <summary>Nothing to do, or the user chose to play anyway: the folder starts as it is.</summary>
+        /// <summary>Nothing to do, or the drive is too full and the user chose to play anyway: the folder starts as it is.</summary>
         None,
+        /// <summary>The user did not agree to the copy: nothing starts, and nothing was changed.</summary>
+        Cancelled,
         /// <summary>The release has its own client now.</summary>
         Moved,
         /// <summary>The copy failed; the release is as it was and still starts.</summary>
@@ -78,34 +93,35 @@ public static class OwnClient
     public static (string Message, string Details) Text(Plan plan)
     {
         string lead = L.Text("This LocalExile runs from your own Path of Exile folder. That is no longer supported: LocalExile changes files there, and a game update in that folder would stop it working.");
-        string offer = (plan.HasSpace
-            ? L.Text("Waypoint can copy the game into this LocalExile folder now. Your saves, accounts and login keys are kept.")
+        string offer = plan.HasSpace
+            ? L.Text("Waypoint copies the game into this LocalExile folder before it starts. Your saves, accounts and login keys are kept.")
                 + (plan.Copied >= 100_000_000 ? " " + L.Text("The copy goes on from the {0:0.#} GB made earlier.", plan.Copied / 1e9) : "")
+                + "\n\n" + L.Text("Cancel: nothing changes, and the game does not start.")
             : L.Text("Waypoint can copy the game into this LocalExile folder, but the drive is too full: the copy needs {0:0.#} GB, and {1:0.#} GB is free. Free some space, then press Play again.",
-                    (plan.Copy.Remaining + ClientCopy.Margin) / 1e9, (plan.Free ?? 0) / 1e9))
-            + "\n\n" + L.Text("Play anyway: nothing changes, and Waypoint asks again the next time you press Play.");
+                    (plan.Copy.Remaining + ClientCopy.Margin) / 1e9, (plan.Free ?? 0) / 1e9)
+                + "\n\n" + L.Text("Play anyway: nothing changes, but a Path of Exile update in that folder can break this LocalExile. Waypoint asks again the next time you press Play.");
         string details = L.Text("Your Path of Exile folder (only read):") + "\n  " + plan.Source + "\n"
             + L.Text("The copy ({0:0.#} GB):", plan.Copy.Total / 1e9) + "\n  " + Path.Combine(plan.Folder, "Client");
         return (lead + " " + offer, details);
     }
 
-    /// <summary>The question: Copy now (true), or Play anyway (false, also for a box closed without an answer); Open folder
-    /// shows the user's folder and asks again. Without the room for the copy there is nothing to agree to, only to know.
-    /// <paramref name="show"/> shows a question (title, message, details, buttons) and answers the button chosen.</summary>
-    public static bool Ask(Plan plan, Func<string, string, string?, string[], int> show, Action<string> open)
+    /// <summary>The question. With the room for the copy: Copy now or Cancel, and there is no playing on without it. Without
+    /// the room: Play anyway, told what a game update can do, or Cancel. Open folder shows the user's folder and asks
+    /// again; a box closed without an answer is a Cancel. <paramref name="show"/> shows a question (title, message, details,
+    /// buttons) and answers the button chosen.</summary>
+    public static Answer Ask(Plan plan, Func<string, string, string?, string[], int> show, Action<string> open)
     {
         var (message, details) = Text(plan);
-        if (!plan.HasSpace)
-        {
-            show(Title, message, details, [L.Text("Play anyway")]);
-            return false;
-        }
-        string[] buttons = [L.Text("Copy now"), L.Text("Open folder"), L.Text("Play anyway")];
+        string[] buttons = [plan.HasSpace ? L.Text("Copy now") : L.Text("Play anyway"), L.Text("Open folder"), L.Text("Cancel")];
         while (true)
         {
             int chosen = show(Title, message, details, buttons);
-            if (chosen != 1) return chosen == 0;
-            open(plan.Source);
+            if (chosen == 1)
+            {
+                open(plan.Source);
+                continue;
+            }
+            return chosen != 0 ? Answer.Cancel : plan.HasSpace ? Answer.Copy : Answer.PlayAnyway;
         }
     }
 
@@ -133,13 +149,14 @@ public static class OwnClient
     public static string FailedTitle => L.Text("The copy did not finish");
 
     public static string FailedText(Plan plan, string reason) =>
-        reason + "\n\n" + L.Text("Nothing was changed: LocalExile still runs from {0}. Press Play to try again; the copy goes on from where it stopped.", plan.Source);
+        reason + "\n\n" + L.Text("Nothing was changed: LocalExile still runs from {0}, and starts from there this time. The next Play tries again, and the copy goes on from where it stopped.", plan.Source);
 
     /// <summary>Before a release starts the game: first what an earlier move left (<see cref="Finish"/>), then the folder. The
-    /// copy is asked on every start until it is made (<paramref name="ask"/>, true to go on). It is made
-    /// while <paramref name="exclusive"/> holds the folder (false: something else holds it). Whatever the outcome, the folder
-    /// still starts: only <see cref="Outcome.Stopped"/> is the user's word not to.</summary>
-    public static async Task<Result> EnsureAsync(string folder, Func<Plan, bool> ask, Action<ClientCopyProgress>? progress,
+    /// copy is asked on every start until it is made (<paramref name="ask"/>). It is made while <paramref name="exclusive"/>
+    /// holds the folder (false: something else holds it). The folder starts after <see cref="Outcome.None"/>,
+    /// <see cref="Outcome.Moved"/> and <see cref="Outcome.Failed"/> (a failure is not the user's doing, and the link still
+    /// works); <see cref="Outcome.Cancelled"/> and <see cref="Outcome.Stopped"/> are the user's word, and nothing starts.</summary>
+    public static async Task<Result> EnsureAsync(string folder, Func<Plan, Answer> ask, Action<ClientCopyProgress>? progress,
         Func<Func<Task>, Task<bool>> exclusive, CancellationToken stop)
     {
         var plan = await Task.Run(() =>
@@ -153,7 +170,8 @@ public static class OwnClient
             return Check(folder);
         });
         if (plan is null) return new(Outcome.None);
-        if (!ask(plan)) return new(Outcome.None, plan);
+        var answer = ask(plan);
+        if (answer != Answer.Copy) return new(answer == Answer.PlayAnyway ? Outcome.None : Outcome.Cancelled, plan);
         Exception? failure = null;
         bool stopped = false;
         bool ran = await exclusive(async () =>
