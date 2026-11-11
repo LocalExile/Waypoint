@@ -619,8 +619,8 @@ Waypoint still needs a checkout, so the plain chooser follows.
 
 Its second page chooses the route. **The ready-to-play release**, the default, asks for a new or empty folder (or an existing
 install), the client, and an account when the install has no saves. Its run is two steps: the zip, as an update does it, then
-`LocalExile.exe setup --json`, shown by its events' stage and progress. The client is copied unless the player chooses to use the
-folder itself. A stop waits out a step that writes the client or the keys. A `needs-input` answer returns to the page that gives
+`LocalExile.exe setup --json`, shown by its events' stage and progress. The client is always copied (`--client-mode copy`): the guide no
+longer offers to run a release from the chosen folder itself ([A release's own client](#a-releases-own-client)). A stop waits out a step that writes the client or the keys. A `needs-input` answer returns to the page that gives
 that option, and the run starts again from where it was. **The source code** is everything below.
 
 Until **Start setup** it only looks. It checks .NET 10, Git, Python and Node (a missing one has a button for its download page,
@@ -767,6 +767,42 @@ also passes through the Tools page, which lists umu-launcher (or a runner named 
 under Proton, and Next waits until it is found. The source route's tools include PowerShell 7, which runs the checkout's scripts.
 The client's folder goes to `LocalExile.exe` as a `Z:\` path: Proton gives the install a drive letter of its own, so an
 unqualified Unix path would land on that drive, while `Z:` is the root in every prefix.
+
+### A release's own client
+
+LocalExile's own setup can link a release's `Client` to the folder it was given instead of copying it (`--client-mode link`),
+and the guide used to offer that as "Use this folder itself instead of a copy". Such a release runs from the user's own Path
+of Exile folder: LocalExile writes `Game.exe`, `Game.patched.exe` and the login list there, and a game update in that folder
+leaves LocalExile without the client it needs. The guide no longer offers it, and running that way is not supported any
+more: a release that was set up so is told on its Play page (`OwnClient.Notice`) and asked for a copy of its own on every
+Play until it has one (`OwnClient`, `src/Launcher.Core/OwnClient.cs`). Nothing is refused, because a user without the room
+for the copy would have no way to play:
+
+- **When**: on a release's Play, after the build check above found that the client fits, with nothing running. Only when
+  `Client` is a link to a folder with a client that is not another LocalExile folder's `Client` (a shared client is that
+  folder's, and stays), and the release is not inside the folder the link leads to. A source copy is never asked.
+- **The question**, on every Play: that this is no longer supported and why, then a box with both folders (the user's: only
+  read; the copy and its size), **Copy now**, **Open folder** and **Play anyway**. Play anyway changes nothing and the game
+  starts as before. Enter and Esc press Play anyway, so a box that opens while its user types cannot start the copy by
+  accident. Without the room for the copy (what is left to copy and 2 GB more) the box says so, with the two numbers, and
+  has only Play anyway.
+- **The copy** goes into `.waypoint-new-client` beside the link, with the resumable copy the guide uses, the patched
+  executable included (it was patched for this folder's keys, and `IsSetUp` needs it). The link keeps working meanwhile. The
+  page shows the progress and **Stop the copy**; a stop or a failure leaves the release as it was, and the next try goes on
+  from what was copied. A file an earlier try copied counts only while it still has the size and time of the one in the
+  user's folder.
+- **The swap** happens only for a copy that is whole and matches the user's folder as it is then (every file's size and
+  time, and the build): `.waypoint-complete` is written into it, the link is set aside as `.waypoint-old-link` (a rename, so
+  it can be put back; on Linux the link is removed and made again if needed), the copy is renamed to `Client`, and the link
+  is removed, which removes nothing it leads to. A rename that fails puts the link back. A move cut short between those
+  steps is finished when Waypoint next opens the folder (`OwnClient.Finish`, before the page decides whether the release is
+  set up), forward when the copy is whole and back to the link otherwise. A `Client` that is a folder of its own is never
+  replaced.
+- **Afterwards** a box names the files LocalExile left in the user's folder, for the user to delete (`Game.exe`,
+  `Game.patched.exe`, and `config.json` only when it is the one naming LocalExile's own settings). Waypoint deletes nothing
+  there and does not put that folder's login list back.
+- A copy begun for a link that is gone since is removed (`OwnClient.Discard`): only Waypoint's own folder, and never while
+  `Client` is a link.
 
 ### Setup
 
@@ -1302,6 +1338,7 @@ adapter does not know can be browsed but not changed.
 | `DevHost.cs`, `AccountList.cs` | the dev host and its account list |
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
 | `SetupWizard.xaml`, `PortCheck.cs` | the setup guide; what holds a server's port, and the question about it |
+| `src/Launcher.Core/OwnClient.cs` | a release that runs from the user's own game folder gets a copy of its own |
 | `src/Launcher.Core/SetupGuide.cs`, `ClientLocator.cs`, `ClientCopy.cs` | the guide's engine: tools that can be stopped, the prerequisites, the steps, finding a client, the resumable copy |
 | `src/Launcher.Core/SwitchToSource.cs` | moving from a release to a source copy: what the choices will do, the older version (`TestedCommit`), Frida, removing the release |
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |

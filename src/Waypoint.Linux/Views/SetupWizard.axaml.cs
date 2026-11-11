@@ -177,7 +177,6 @@ public partial class SetupWizard : Window
         ExistingChoice.Content = L.Text("Use a LocalExile folder I already have");
         BrowseExisting.Content = L.Text("Browse…");
         ClientTitle.Text = L.Text("Your game client");
-        LinkClient.Content = new TextBlock { Text = L.Text("Use this folder itself instead of a copy. It saves the space, but LocalExile then changes that client."), TextWrapping = TextWrapping.Wrap };
         BrowseClientButton.Content = L.Text("Browse…");
         SearchAgain.Content = L.Text("Search again");
         NoClient.Content = L.Text("Set up the rest now, and add the client later");
@@ -685,7 +684,6 @@ public partial class SetupWizard : Window
         var client = ClientList.SelectedItem as FoundClient;
         _sharedKeys = null;
         ShareClient.IsVisible = false;
-        LinkClient.IsVisible = UsingRelease && client is not null;
         if (client is not null) ClientNote.Text = ClientWarning(client);
         UpdateButtons();
         if (UsingRelease || client is not { Kind: ClientKind.Ready } || ChosenCheckout() is not { } checkout) return;
@@ -722,7 +720,7 @@ public partial class SetupWizard : Window
                 ? L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release)
                 : L.Text("Only a {0} client was found, so this copy moves to the last LocalExile made for it.", chosen)) + " " + ClientUpdate.OlderNoteFor(chosen);
         if (client.KnownBuild == false && client.Build is null) return L.Text("This is not the 3.29.3c build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
-        if (Sharing || LinkClient.IsChecked == true) return "";
+        if (Sharing) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining
             ? L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9) : "";
@@ -870,7 +868,7 @@ public partial class SetupWizard : Window
     async Task PrepareReleaseAsync(string folder, string? client, Action<string> detail, CancellationToken stop)
     {
         List<string> arguments = ["setup"];
-        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", LinkClient.IsChecked == true ? "link" : "copy"]);
+        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", "copy"]);
         string? password = null;
         if (AccountProblem() is null)
         {

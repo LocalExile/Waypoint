@@ -142,7 +142,6 @@
           <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
             <TextBlock x:Name="ClientNote" Classes="note" Margin="0,0,0,6" />
             <CheckBox x:Name="ShareClient" IsVisible="False" Margin="0,0,0,6" IsCheckedChanged="ShareChanged" />
-            <CheckBox x:Name="LinkClient" IsVisible="False" Margin="0,0,0,6" IsCheckedChanged="ShareChanged" />
             <WrapPanel>
               <Button x:Name="BrowseClientButton" Click="BrowseClient" Margin="0,0,6,6" />
               <Button x:Name="SearchAgain" Click="SearchClientsClicked" Margin="0,0,6,6" />

@@ -267,6 +267,9 @@
   <data name="Text_0858184ec92d" xml:space="preserve">
     <value>pid {0}</value>
   </data>
+  <data name="Text_0879a3e6c148" xml:space="preserve">
+    <value>Waypoint can copy the game into this LocalExile folder now. Your saves, accounts and login keys are kept.</value>
+  </data>
   <data name="Text_087cc665f4f5" xml:space="preserve">
     <value>Stay on a tested version (recommended)</value>
   </data>
@@ -377,6 +380,9 @@
   </data>
   <data name="Text_0bcd66e677f4" xml:space="preserve">
     <value>Layers</value>
+  </data>
+  <data name="Text_0bdd646b28d0" xml:space="preserve">
+    <value>The copy ({0:0.#} GB):</value>
   </data>
   <data name="Text_0bf671c970d1" xml:space="preserve">
     <value>Python {0} is installed in {1} but not on PATH. Waypoint uses it anyway, for itself and the scripts it runs.</value>
@@ -579,6 +585,9 @@
   <data name="Text_104975033d07" xml:space="preserve">
     <value>Tattoos</value>
   </data>
+  <data name="Text_1050275e6f9a" xml:space="preserve">
+    <value>Not supported: this LocalExile runs from your own Path of Exile folder. Press Play to give it a copy of its own.</value>
+  </data>
   <data xml:space="preserve" name="Text_108040ac289a">
     <value>Ruby</value>
   </data>
@@ -599,6 +608,9 @@
   </data>
   <data name="Text_10b654bcd6eb" xml:space="preserve">
     <value>Package status</value>
+  </data>
+  <data name="Text_10cbe6678d7c" xml:space="preserve">
+    <value>LocalExile has its own copy of the game</value>
   </data>
   <data name="Text_10d911351fa4" xml:space="preserve">
     <value>Voyage</value>
@@ -972,6 +984,9 @@ Close the game and anything else using that folder, then try again.</value>
   </data>
   <data xml:space="preserve" name="Text_1c304451f9d9">
     <value>Checkbox marks</value>
+  </data>
+  <data name="Text_1c3643eca8cc" xml:space="preserve">
+    <value>LocalExile now runs from {0}, and no longer uses {1}.</value>
   </data>
   <data name="Text_1c487bf88ba7" xml:space="preserve">
     <value>Hidden from new characters</value>
@@ -2218,6 +2233,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3e55c7d756db" xml:space="preserve">
     <value>the mod is larger than {0} files or 64 MB; nothing was installed</value>
   </data>
+  <data name="Text_3e56f666f5c7" xml:space="preserve">
+    <value>The game folder changed while it was copied, so the copy was not used.</value>
+  </data>
   <data name="Text_3e8cf9c948a6" xml:space="preserve">
     <value>Nothing was changed. Press Play to try again.</value>
   </data>
@@ -2229,6 +2247,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3ee0b304b03f" xml:space="preserve">
     <value>Stop and switch</value>
+  </data>
+  <data name="Text_3ef05989c9d5" xml:space="preserve">
+    <value>This LocalExile runs from your own Path of Exile folder. That is no longer supported: LocalExile changes files there, and a game update in that folder would stop it working.</value>
   </data>
   <data name="Text_3f8635c36da3" xml:space="preserve">
     <value>Restore stashed changes</value>
@@ -2310,6 +2331,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Language saved.</value>
+  </data>
+  <data name="Text_422369f81997" xml:space="preserve">
+    <value>Play anyway</value>
   </data>
   <data name="Text_4228aeb07c41" xml:space="preserve">
     <value>Rules</value>
@@ -2526,6 +2550,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_48db6ba05959" xml:space="preserve">
     <value>Shows this copy in Advanced mode: every section, with branches and pull requests under Versions. A release keeps the mode you chose there.</value>
+  </data>
+  <data name="Text_48f4cfabd619" xml:space="preserve">
+    <value>Stop the copy</value>
   </data>
   <data name="Text_48fe4f837791" xml:space="preserve">
     <value>League created. It becomes available after the next server start.</value>
@@ -3298,6 +3325,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data name="Text_6117d05e41be" xml:space="preserve">
     <value>No update</value>
   </data>
+  <data name="Text_6127b0284790" xml:space="preserve">
+    <value>Copy now</value>
+  </data>
   <data name="Text_612ffc5ce9d4" xml:space="preserve">
     <value>Waiting…</value>
   </data>
@@ -3342,6 +3372,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data xml:space="preserve" name="Text_6249df4367d0">
     <value>Gold</value>
+  </data>
+  <data name="Text_626a7e01c9ee" xml:space="preserve">
+    <value>Play anyway: nothing changes, and Waypoint asks again the next time you press Play.</value>
   </data>
   <data xml:space="preserve" name="Text_62a487dde87f">
     <value>Status banner</value>
@@ -3783,6 +3816,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7006fe9be9c1" xml:space="preserve">
     <value>(deleted fork)</value>
   </data>
+  <data name="Text_7007dd92aa08" xml:space="preserve">
+    <value>The copy was stopped, and nothing was changed. Press Play to go on with it.</value>
+  </data>
   <data xml:space="preserve" name="Text_7013af4c42fe">
     <value>Setup</value>
   </data>
@@ -4136,6 +4172,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7b1412689a1e" xml:space="preserve">
     <value>live.ps1 selects the local gateway itself; step 6 keeps a backup</value>
+  </data>
+  <data name="Text_7b1aa067a784" xml:space="preserve">
+    <value>The copy is ready, but it could not take the link's place.</value>
   </data>
   <data name="Text_7b1b95097ad5" xml:space="preserve">
     <value>extract-data.ps1 -List: which extracted files are missing or stale</value>
@@ -4638,6 +4677,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8b45bb20e077" xml:space="preserve">
     <value>Learning</value>
   </data>
+  <data name="Text_8b4e556e77d1" xml:space="preserve">
+    <value>LocalExile needs its own copy of the game</value>
+  </data>
   <data name="Text_8b54d84a7e03" xml:space="preserve">
     <value>{0} mods · {1} installed · {2} updates · read {3:t}</value>
   </data>
@@ -4800,6 +4842,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_9057fd0f98cc" xml:space="preserve">
     <value>Game client</value>
   </data>
+  <data name="Text_9083961e8e49" xml:space="preserve">
+    <value>LocalExile left these files in your Path of Exile folder. Your normal game does not need them, and you can delete them: {0}</value>
+  </data>
   <data name="Text_909523b40339" xml:space="preserve">
     <value>Mods are add-ons installed for this checkout. Enable, update and configure them in Mods.</value>
   </data>
@@ -4838,6 +4883,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_9275216c6094" xml:space="preserve">
     <value>Start capture</value>
+  </data>
+  <data name="Text_9291be794a8e" xml:space="preserve">
+    <value>Waypoint can copy the game into this LocalExile folder, but the drive is too full: the copy needs {0:0.#} GB, and {1:0.#} GB is free. Free some space, then press Play again.</value>
   </data>
   <data name="Text_929433e4be1d" xml:space="preserve">
     <value>Boots</value>
@@ -5304,9 +5352,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9da3e9b26c5e" xml:space="preserve">
     <value>Port held by another</value>
   </data>
-  <data name="Text_9da689a1ee2c" xml:space="preserve">
-    <value>Use this folder itself instead of a copy. It saves the space, but LocalExile then changes that client.</value>
-  </data>
   <data name="Text_9da9ae7b30ae" xml:space="preserve">
     <value>No modifier is worded like this</value>
   </data>
@@ -5745,6 +5790,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_aa6a199107e9" xml:space="preserve">
     <value>The servers are not running</value>
   </data>
+  <data name="Text_aaa372fe3f2b" xml:space="preserve">
+    <value>The copy goes on from the {0:0.#} GB made earlier.</value>
+  </data>
   <data name="Text_aaa73ac77213" xml:space="preserve">
     <value>Snake</value>
   </data>
@@ -6177,6 +6225,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b808698f20e7" xml:space="preserve">
     <value>Nothing was switched.</value>
   </data>
+  <data name="Text_b82e832d8028" xml:space="preserve">
+    <value>This folder's game client is no longer a link, so there is nothing to copy.</value>
+  </data>
   <data name="Text_b82eacd81525" xml:space="preserve">
     <value>the release holds an unsafe path, {0}; nothing was changed</value>
   </data>
@@ -6333,6 +6384,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_bc7b7aee59a2" xml:space="preserve">
     <value>This feature needs Frida. Frida is optional for normal play.</value>
   </data>
+  <data name="Text_bc7cbf5b3607" xml:space="preserve">
+    <value>The copy did not finish</value>
+  </data>
   <data name="Text_bca0785c9799" xml:space="preserve">
     <value>Window behavior saved.</value>
   </data>
@@ -6425,6 +6479,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c0862201e27e" xml:space="preserve">
     <value>Flask</value>
+  </data>
+  <data name="Text_c0952eaac9a3" xml:space="preserve">
+    <value>Nothing was changed: LocalExile still runs from {0}. Press Play to try again; the copy goes on from where it stopped.</value>
   </data>
   <data name="Text_c0973e9afb7d" xml:space="preserve">
     <value>Beacon</value>
@@ -8033,6 +8090,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_f0f05a7102c2">
     <value>Choose color: {0}</value>
+  </data>
+  <data name="Text_f0f452809ed9" xml:space="preserve">
+    <value>Your Path of Exile folder (only read):</value>
   </data>
   <data name="Text_f1067859a57b" xml:space="preserve">
     <value>Looking for updates</value>

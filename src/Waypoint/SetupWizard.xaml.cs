@@ -148,9 +148,6 @@ public partial class SetupWizard : FormWindow
     /// <summary>A new install has no saves, so no account yet; LocalExile.exe asks when one with saves has none.</summary>
     bool AccountNeeded => UsingRelease && NoClient.IsChecked != true && (_accountAsked || ChosenCheckout() is not { } folder || !LocalExileReleases.HasSaves(folder));
 
-    /// <summary>The client will be a link rather than a folder of its own.</summary>
-    bool LinkedClient => Sharing || LinkClient.IsChecked == true;
-
     /// <summary>How the client will keep its settings once it is in place: a copy brings along the source's config.json. Null
     /// when there is no client yet.</summary>
     ClientSettingsState? PlannedSettings()
@@ -158,7 +155,7 @@ public partial class SetupWizard : FormWindow
         string? checkout = ChosenCheckout();
         if (HasClient(checkout)) return ClientSettings.Read(Path.Combine(checkout!, "Client"));
         if (NoClient.IsChecked == true || ClientList.SelectedItem is not FoundClient client) return null;
-        return ClientSettings.Read(client.Folder, LinkedClient);
+        return ClientSettings.Read(client.Folder, Sharing);
     }
 
     /// <summary>Waypoint can't tell what a change would reach, so the player decides.</summary>
@@ -595,7 +592,6 @@ public partial class SetupWizard : FormWindow
         var client = ClientList.SelectedItem as FoundClient;
         _sharedKeys = null;
         ShareClient.Visibility = Visibility.Collapsed;
-        LinkClient.Visibility = UsingRelease && client is not null ? Visibility.Visible : Visibility.Collapsed;
         if (client is not null) ClientNote.Text = ClientWarning(client);
         ShowRail();
         UpdateButtons();
@@ -622,7 +618,7 @@ public partial class SetupWizard : FormWindow
         string? checkout = ChosenCheckout();
         bool has = HasClient(checkout);
         string client = has ? Path.Combine(checkout!, "Client") : (ClientList.SelectedItem as FoundClient)?.Folder ?? "";
-        bool linked = has ? ClientSettings.IsLink(client) : LinkedClient;
+        bool linked = has ? ClientSettings.IsLink(client) : Sharing;
         SettingsWhy.Text = ClientSettings.WhyUnknown(client, linked);
         OwnSettingsNote.Text = L.Text("LocalExile keeps its own graphics, keys and saved login in {0}, and starts with the network mode it needs. Your normal game's settings are only read, once, as a starting point.", ClientSettings.OwnFolderPath);
     }
@@ -645,7 +641,7 @@ public partial class SetupWizard : FormWindow
                 ? L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release)
                 : L.Text("Only a {0} client was found, so this copy moves to the last LocalExile made for it.", chosen)) + " " + ClientUpdate.OlderNoteFor(chosen);
         if (client.KnownBuild == false && client.Build is null) return L.Text("This is not the 3.29.3c build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
-        if (Sharing || LinkClient.IsChecked == true) return "";
+        if (Sharing) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining
             ? L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9) : "";
@@ -798,7 +794,7 @@ public partial class SetupWizard : FormWindow
     async Task PrepareReleaseAsync(string folder, string? client, Action<string> detail, CancellationToken stop)
     {
         List<string> arguments = ["setup"];
-        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", LinkClient.IsChecked == true ? "link" : "copy"]);
+        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", "copy"]);
         string? password = null;
         if (AccountProblem() is null)
         {
