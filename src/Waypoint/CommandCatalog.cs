@@ -34,12 +34,35 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
         return new(Parse(await AskGateway(TimeSpan.FromSeconds(30), dll, "commands")), built);
     }
 
+    // One question at a time: each one keeps the Waypoint Tools mod's loaded.json and puts it back, which another question
+    // running beside it would undo.
+    static readonly SemaphoreSlim Asking = new(1, 1);
+
     /// <summary>Runs the built Gateway in one of its listing modes and returns what it printed. The process never outlives
     /// the question, whatever it was doing.</summary>
     internal static async Task<string> AskGateway(TimeSpan timeout, params string[] arguments)
     {
         if (!Repo.IsInstall && !Repo.HasLauncherHooks())
             throw new InvalidOperationException(L.Text("This checkout is older than the launcher hooks, so its Gateway cannot list commands: pull the server's main branch."));
+        await Asking.WaitAsync();
+        // The commands and values modes load the mods too: Waypoint Tools would then name this question in loaded.json, and
+        // Give item would find no game with it loaded once the question exits (WaypointToolsMod.KeepLoaded).
+        string root = Environment.CurrentDirectory;
+        string? loaded = WaypointToolsMod.KeepLoaded(root);
+        int question = 0;
+        try
+        {
+            return await AskAsync(timeout, arguments, id => question = id);
+        }
+        finally
+        {
+            if (question != 0) WaypointToolsMod.PutBack(root, loaded, question);
+            Asking.Release();
+        }
+    }
+
+    static async Task<string> AskAsync(TimeSpan timeout, string[] arguments, Action<int> started)
+    {
         // A release's Gateway is its own executable.
 #if WINDOWS
         bool program = arguments[0].EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
@@ -56,6 +79,7 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
         info.Environment["TMPDIR"] = temp;
 #endif
         using var process = Process.Start(info)!;
+        started(process.Id);
         try
         {
             string output = await process.StandardOutput.ReadToEndAsync().WaitAsync(timeout);

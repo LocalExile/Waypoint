@@ -45,6 +45,55 @@ public static class WaypointToolsMod
         }
     }
 
+    /// <summary><c>loaded.json</c> as a running Gateway wrote it, to put back after a question to the Gateway
+    /// (<see cref="PutBack"/>); null when no running process wrote it.</summary>
+    /// <remarks>The Gateway's <c>commands</c> and <c>values</c> modes load the mods to list theirs: this mod then writes its
+    /// <c>loaded.json</c> with the question's process, which exits without unloading it, and Give item would find no game
+    /// with the mod loaded until the mod loads again.</remarks>
+    public static string? KeepLoaded(string root, Func<int, bool>? running = null)
+    {
+        try
+        {
+            string file = Path.Combine(Root(root), "loaded.json");
+            if (!File.Exists(file)) return null;
+            string text = File.ReadAllText(file);
+            return Pid(text) is int pid && (running ?? Running)(pid) ? text : null;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>After the question to the Gateway that ran as process <paramref name="question"/>: puts back what
+    /// <see cref="KeepLoaded"/> kept, when the question wrote over it and the Gateway that wrote it still runs. Anything
+    /// else (the mod unloaded or loaded again meanwhile, that Gateway stopped) stays as it is.</summary>
+    public static void PutBack(string root, string? kept, int question, Func<int, bool>? running = null)
+    {
+        if (kept is null || Pid(kept) is not int pid) return;
+        try
+        {
+            string file = Path.Combine(Root(root), "loaded.json");
+            if (!File.Exists(file) || Pid(File.ReadAllText(file)) != question || !(running ?? Running)(pid)) return;
+            File.WriteAllText(file + ".tmp", kept);
+            File.Move(file + ".tmp", file, overwrite: true);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+    }
+
+    /// <summary>The process a <c>loaded.json</c> names, or null when it names none or is not JSON.</summary>
+    static int? Pid(string text)
+    {
+        try
+        {
+            return JsonNode.Parse(text) is JsonObject json ? (int?)json["pid"] : null;
+        }
+        catch (Exception e) when (e is JsonException or FormatException or InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
     static bool Running(int pid)
     {
         try

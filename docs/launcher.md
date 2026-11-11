@@ -1199,7 +1199,10 @@ write and gives it to the character in game.
 - **Give item** gives the item to the character in game, into the main inventory, through the Waypoint Tools mod
   (LocalExile-Mods' `waypoint-tools`, `WaypointToolsMod.cs`), the same on a source copy and a release; it needs no other
   mod and no Frida. The mod counts as loaded when its `data/waypoint-tools/loaded.json` names a Gateway process that still
-  runs and lists `item_give`. Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
+  runs and lists `item_give`. The Gateway's `commands` and `values` modes, which the Console and the lab layout ask,
+  load the mods too, so the mod writes that file with the question's process, which exits without unloading it: Waypoint
+  asks one question at a time, keeps the file a running Gateway wrote and puts it back when the question wrote over it
+  (`CommandCatalog.AskGateway`). Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
   item and no character, and the mod gives it to the one character in game on that connection's next tick, then answers
   in `replies/<id>.json`, which Waypoint reads and deletes; the answer shows in the status line. Nothing goes over the
   network and nothing limits the item's length. An answer not there in 35 seconds (the mod waits 30 for a character in

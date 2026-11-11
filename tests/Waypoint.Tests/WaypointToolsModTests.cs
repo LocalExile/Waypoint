@@ -32,6 +32,44 @@ public class WaypointToolsModTests : IDisposable
     }
 
     [Fact]
+    public void A_Gateway_question_that_loaded_the_mod_gives_loaded_json_back_to_the_running_Gateway()
+    {
+        const string gateway = """{"protocol":1,"version":"1.0.0","pid":42,"actions":["item_give"]}""";
+        WriteLoaded(gateway);
+        string? kept = WaypointToolsMod.KeepLoaded(_root, pid => pid == 42);
+        Assert.Equal(gateway, kept);
+        // The `commands` question (process 7) loaded the mods, which wrote over it, and exited.
+        WriteLoaded("""{"protocol":1,"version":"1.0.0","pid":7,"actions":["item_give"]}""");
+        WaypointToolsMod.PutBack(_root, kept, question: 7, running: pid => pid == 42);
+        Assert.Equal(gateway, File.ReadAllText(Data("loaded.json")));
+        Assert.True(WaypointToolsMod.Loaded(_root, "item_give", pid => pid == 42));
+        Assert.Empty(Directory.GetFiles(Data(), "*.tmp"));
+    }
+
+    [Fact]
+    public void Loaded_json_is_put_back_only_over_the_question_and_for_a_Gateway_that_still_runs()
+    {
+        const string gateway = """{"protocol":1,"pid":42,"actions":["item_give"]}""";
+        // Nothing to keep when the process that wrote it has stopped.
+        WriteLoaded(gateway);
+        Assert.Null(WaypointToolsMod.KeepLoaded(_root, _ => false));
+        // The Gateway loaded the mod again meanwhile: what it wrote now stays.
+        const string reloaded = """{"protocol":1,"version":"1.0.1","pid":42,"actions":["item_give"]}""";
+        WriteLoaded(reloaded);
+        WaypointToolsMod.PutBack(_root, gateway, question: 7, running: _ => true);
+        Assert.Equal(reloaded, File.ReadAllText(Data("loaded.json")));
+        // The Gateway stopped while the question ran.
+        const string question = """{"protocol":1,"pid":7,"actions":["item_give"]}""";
+        WriteLoaded(question);
+        WaypointToolsMod.PutBack(_root, gateway, question: 7, running: _ => false);
+        Assert.Equal(question, File.ReadAllText(Data("loaded.json")));
+        // The mod unloaded: no file comes back.
+        File.Delete(Data("loaded.json"));
+        WaypointToolsMod.PutBack(_root, gateway, question: 7, running: _ => true);
+        Assert.False(File.Exists(Data("loaded.json")));
+    }
+
+    [Fact]
     public void Installed_means_its_folder_has_a_manifest()
     {
         Assert.False(WaypointToolsMod.Installed(_root));
