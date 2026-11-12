@@ -945,6 +945,9 @@
   <data name="Text_1a8b0672f8cf" xml:space="preserve">
     <value>Папка не создана</value>
   </data>
+  <data name="Text_1aaf1a848f9a" xml:space="preserve">
+    <value>Заменить: используемый клиент будет удалён безвозвратно. Автономный клиент нельзя загрузить заново.</value>
+  </data>
   <data xml:space="preserve" name="Text_1ac6734160c8">
     <value>Восстановить сохранения…</value>
   </data>
@@ -1638,7 +1641,7 @@
     <value>dev host не запустился (logs\launcher-host.err): {0}</value>
   </data>
   <data name="Text_2c3f135fbffc" xml:space="preserve">
-    <value>Оставить обе: нужно ещё {0:0.#} ГБ, и вернуться можно в любой момент.</value>
+    <value>Сохранить обе: нужно ещё {0:0.#} ГБ, и вернуться можно в любой момент.</value>
   </data>
   <data name="Text_2c4117e5b038" xml:space="preserve">
     <value>Обновить до {0}?</value>
@@ -2812,6 +2815,9 @@
   <data name="Text_4dc176316802" xml:space="preserve">
     <value>Режим игры и видимость</value>
   </data>
+  <data name="Text_4dd23f223774" xml:space="preserve">
+    <value>В этой папке уже есть все версии, которые есть в Steam для этого LocalExile.</value>
+  </data>
   <data name="Text_4de3fe11186f" xml:space="preserve">
     <value>У каждой записи должен быть уникальный непустой ключ.</value>
   </data>
@@ -3142,9 +3148,6 @@
   <data name="Text_5774139d115b" xml:space="preserve">
     <value>Лейтенанты</value>
   </data>
-  <data name="Text_579c51ae71e3" xml:space="preserve">
-    <value>Заменить: используемый клиент будет удалён безвозвратно. Автономный клиент нельзя загрузить из Steam заново.</value>
-  </data>
   <data name="Text_57b7b5924c6b" xml:space="preserve">
     <value>Всё на месте. Нажмите «Играть» в Waypoint, чтобы запустить серверы и игру. В первый раз в самой игре выберите Настройки → Игра → Режим работы сети → Рассинхронизация (Options → Game → Networking Mode → Predictive).</value>
   </data>
@@ -3252,9 +3255,6 @@
   <data name="Text_5aeae0f3a80d" xml:space="preserve">
     <value>Счётчики .NET:</value>
   </data>
-  <data name="Text_5b0a0be85f80" xml:space="preserve">
-    <value>В этой папке уже есть все версии, с которыми работает этот LocalExile.</value>
-  </data>
   <data name="Text_5b18a6940649" xml:space="preserve">
     <value>Пароль ещё раз</value>
   </data>
@@ -3272,6 +3272,9 @@
   </data>
   <data name="Text_5bb7de320b88" xml:space="preserve">
     <value>В {0} есть собственные коммиты, которых нет в запросе на слияние ({1}); сначала отправьте или перенесите их</value>
+  </data>
+  <data name="Text_5c0209779da4" xml:space="preserve">
+    <value>Загрузить из Steam</value>
   </data>
   <data name="Text_5c1a1026eda3" xml:space="preserve">
     <value>Всё на месте. Нажмите «Играть» в Waypoint, чтобы запустить серверы и игру. У LocalExile собственные настройки игры, поэтому у вашей обычной Path of Exile остаются свои.</value>
@@ -3480,9 +3483,6 @@
   </data>
   <data name="Text_61f82c126875" xml:space="preserve">
     <value>LocalExile {0} — самый новый выпуск.</value>
-  </data>
-  <data name="Text_6201111b83a0" xml:space="preserve">
-    <value>и</value>
   </data>
   <data name="Text_62076cdbb40a" xml:space="preserve">
     <value>Переключено на {0}.</value>
@@ -4007,9 +4007,6 @@
   </data>
   <data name="Text_71c4cf22a93b" xml:space="preserve">
     <value>Без проверки данных</value>
-  </data>
-  <data name="Text_71cff9c08ae3" xml:space="preserve">
-    <value>Загрузить {0} из Steam</value>
   </data>
   <data name="Text_71d637842972" xml:space="preserve">
     <value>Настройки игры не переключены</value>
@@ -5579,9 +5576,6 @@
   </data>
   <data xml:space="preserve" name="Text_9e2b60866e8b">
     <value>Проверяем репозиторий…</value>
-  </data>
-  <data name="Text_9e3d43889f26" xml:space="preserve">
-    <value>Здесь Waypoint не может загрузить игру.</value>
   </data>
   <data xml:space="preserve" name="Text_9e471951a1b4">
     <value>Среда</value>
@@ -7157,6 +7151,9 @@
   <data name="Text_cc4a7b5f5a97" xml:space="preserve">
     <value>Для этой лиги определён только режим «{0}». Другие режимы выбрать нельзя.</value>
   </data>
+  <data name="Text_cc51fa5b015a" xml:space="preserve">
+    <value>Для этого LocalExile Waypoint не может загрузить игру.</value>
+  </data>
   <data name="Text_cc60bacb8e65" xml:space="preserve">
     <value>Общие для всех лиг, в которых работает этот мод.</value>
   </data>
@@ -7283,9 +7280,6 @@
   <data xml:space="preserve" name="Text_d10cdbf98c85">
     <value>ВЫБРАННЫЕ ИСХОДНИКИ</value>
   </data>
-  <data name="Text_d12bce4a1886" xml:space="preserve">
-    <value>Укажите папку с PathOfExile.exe и Content.ggpk. Это должна быть автономная установка 3.29.3c: версии Steam и Epic не подходят, а скачать игру Waypoint не может.</value>
-  </data>
   <data name="Text_d1373700538f" xml:space="preserve">
     <value>Ошибка: {0} завершился с кодом {1}; см. вывод и раздел «Журналы».</value>
   </data>
@@ -7306,9 +7300,6 @@
   </data>
   <data name="Text_d1a286ac991d" xml:space="preserve">
     <value>настройки игры: Waypoint не может определить, что ещё их использует</value>
-  </data>
-  <data name="Text_d1b12bc36c2f" xml:space="preserve">
-    <value>Вход в Steam</value>
   </data>
   <data name="Text_d1cbffcbd10b" xml:space="preserve">
     <value>в файле .sha256 выпуска нет SHA-256</value>
@@ -7699,6 +7690,9 @@
   </data>
   <data xml:space="preserve" name="Text_ddc95fd087c9">
     <value>Подготовьте существующую копию клиента инструментами Auth и Patch LocalExile. Имеющиеся ключи сохраняются. Будут созданы недостающие ключи и Game.patched.exe, а список шлюзов копии будет настроен на localhost. Готовые исполняемые файлы не перезаписываются.</value>
+  </data>
+  <data name="Text_ddeb42b088c7" xml:space="preserve">
+    <value>В Steam есть {0}.</value>
   </data>
   <data xml:space="preserve" name="Text_ddf65dfc3807">
     <value>Копий пока нет. Нажмите «Создать копию», чтобы сохранить текущий прогресс.</value>
@@ -8689,9 +8683,6 @@
   <data name="Text_f91058b1dfbd" xml:space="preserve">
     <value>Мастер настройки</value>
   </data>
-  <data name="Text_f91b77dbdf52" xml:space="preserve">
-    <value>Взять с этого ПК</value>
-  </data>
   <data name="Text_f938c3286fd7" xml:space="preserve">
     <value>Очистить</value>
   </data>
@@ -8730,6 +8721,9 @@
   </data>
   <data name="Text_fa2f3df21cac" xml:space="preserve">
     <value>конфликты блокировок/с</value>
+  </data>
+  <data name="Text_fa3112c6e2fd" xml:space="preserve">
+    <value>Взять клиент с этого ПК</value>
   </data>
   <data name="Text_fa3589d27498" xml:space="preserve">
     <value>Дворянка</value>

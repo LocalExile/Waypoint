@@ -59,6 +59,8 @@ public partial class FolderPicker : UserControl
     {
         _shared = shared;
         L.Current.PropertyChanged += (_, _) => ShowCurrent();
+        // Another reading font or zoom makes the same path wider or narrower in the same sidebar. After the layout has it.
+        Theme.Changed += () => Dispatcher.BeginInvoke(() => PathLine.Refit(CurrentPath), System.Windows.Threading.DispatcherPriority.Loaded);
         ShowCurrent();
     }
 

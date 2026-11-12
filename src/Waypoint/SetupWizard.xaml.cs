@@ -556,11 +556,15 @@ public partial class SetupWizard : FormWindow
             ClientStatus.Text = usable > 0 ? L.Text("Found {0} on this PC. Choose the one to use.", usable)
                 : L.Text("No usable client was found. Searched {0}.", string.Join(", ", result.Searched));
             string warning = ClientList.SelectedItem is FoundClient chosen ? ClientWarning(chosen) : "";
+            // Without a client, the Play page's Finish setup can download the game: said here, where the user is stuck, and
+            // only where it will hold. That is a release (a source copy's Play page has no download) whose LocalExile
+            // lists a build Steam can deliver; one not installed yet will be the newest, which does.
+            bool download = usable == 0 && DepotTool.Supported && UsingRelease
+                && (checkout is null || !LocalExileReleases.IsInstall(checkout) || await Task.Run(() => ClientVersions.FirstDownload(checkout) is not null));
             ClientNote.Text = usable == 0
                     ? L.Text("Choose a folder with PathOfExile.exe and Content.ggpk: a standalone Path of Exile {0} install. Steam and Epic installs do not work here.", NeededClient)
-                        // Without one, the Play page's Finish setup can download the game: said here, where the user is stuck.
-                        + " " + (DepotTool.Supported ? L.Text("If you have no such folder, tick the box below. Finish setup on the Play page can then download the game from Steam.")
-                            : L.Text("Waypoint cannot download the game here."))
+                        + " " + (download ? L.Text("If you have no such folder, tick the box below. Finish setup on the Play page can then download the game from Steam.")
+                            : L.Text("Waypoint cannot download the game for this LocalExile."))
                 : warning.Length > 0 ? warning
                 : result.Limited ? L.Text("The search stopped at its time limit; Browse if your client is not listed.") : "";
         }

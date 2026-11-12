@@ -107,6 +107,14 @@ public static class ClientVersions
         return newest;
     }
 
+    /// <summary>For a LocalExile folder with no game client at all, in use or kept: the newest build its LocalExile lists
+    /// that Steam can deliver. Null when the folder has a client, its LocalExile lists none (before v0.5.0-beta), or this
+    /// Waypoint cannot run the download tool. It is what Finish setup offers, and the one test for whether the setup guide
+    /// may say so. It can ask the folder's launcher, which takes a moment: never on the UI thread.</summary>
+    public static ListedBuild? FirstDownload(string folder) =>
+        DepotTool.Supported && Layout(folder) == ClientLayout.None && Kept(folder).Count == 0
+            ? Newest(Offered(LocalExileBuilds.Of(folder) ?? [], null, whole: true, [])) : null;
+
     /// <summary>Whether a version is more than one build in the list (a release and its hotfix), whether Steam can deliver
     /// each or not: its builds are then told apart by LocalExile's own name for each.</summary>
     public static bool Several(IEnumerable<ListedBuild> builds, string? version) => builds.Count(b => b.Version == version) > 1;

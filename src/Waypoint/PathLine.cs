@@ -32,6 +32,9 @@ static class PathLine
     public static string? GetPath(TextBlock line) => (string?)line.GetValue(PathProperty);
     public static void SetPath(TextBlock line, string? path) => line.SetValue(PathProperty, path);
 
+    /// <summary>Fits the line again where its width did not change but its letters did: another reading font, another zoom.</summary>
+    public static void Refit(TextBlock line) => Fit(line);
+
     static void Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is not TextBlock line) return;
@@ -63,6 +66,8 @@ static class PathLine
                 int kept = (low + high + 1) / 2;
                 if (Width(line, "…" + path[^kept..]) <= width) low = kept; else high = kept - 1;
             }
+            // Never half of a character that takes two units (an emoji, a rare Han character).
+            if (low > 0 && char.IsLowSurrogate(path[^low])) low--;
             text = "…" + path[^low..];
         }
         if (line.Text != text) line.Text = text;

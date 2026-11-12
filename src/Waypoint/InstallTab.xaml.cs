@@ -30,22 +30,25 @@ public partial class InstallTab : UserControl
     string? _clientVersion;
     /// <summary>The folder has no game client at all: the page says so, and Finish setup asks where one should come from.</summary>
     bool _noClient;
+    /// <summary>The folder has no client in use but has kept ones: the Game client window puts one back, by a rename.</summary>
+    bool _keptOnly;
     /// <summary>For a folder with no client, in use or kept: the newest version its LocalExile runs that Steam can
-    /// deliver (3.29.3d for LocalExile v0.5.0-beta). Finish setup offers to download it. Null when there is none to offer:
-    /// an older LocalExile, a Waypoint that cannot run the download tool.</summary>
+    /// deliver (3.29.3d for LocalExile v0.5.0-beta, <see cref="ClientVersions.FirstDownload"/>). Finish setup offers to
+    /// download it. Null when there is none to offer: an older LocalExile, a Waypoint that cannot run the download tool.</summary>
     ListedBuild? _offer;
 
     async Task LookForOwnFolderAsync()
     {
         string folder = Folder;
-        (_linked, _clientVersion, _noClient, _offer) = await Task.Run(() =>
+        var read = await Task.Run(() =>
         {
             bool none = ClientVersions.Layout(folder) == ClientLayout.None;
             // Asking LocalExile for its list can take a moment: only for a folder that has no client, and never on the UI thread.
-            var offer = none && DepotTool.Supported && ClientVersions.Kept(folder).Count == 0
-                ? ClientVersions.Newest(ClientVersions.Offered(LocalExileBuilds.Of(folder) ?? [], null, whole: true, [])) : null;
-            return (OwnClient.Check(folder), FolderList.ClientOf(folder), none, offer);
+            return (OwnClient.Check(folder), FolderList.ClientOf(folder), none, none && ClientVersions.Kept(folder).Count != 0, none ? ClientVersions.FirstDownload(folder) : null);
         });
+        // The user may have changed folder while this one was read: what was read is not said of another.
+        if (!FolderList.Same(folder, Folder)) return;
+        (_linked, _clientVersion, _noClient, _keptOnly, _offer) = read;
         Show();
     }
     readonly ObservableCollection<StepRow> _steps = [];
@@ -135,7 +138,7 @@ public partial class InstallTab : UserControl
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
         string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
-            : _noClient && !busy ? L.Text("No game client in this folder yet.")
+            : _noClient && !_keptOnly && !busy ? L.Text("No game client in this folder yet.")
             : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.Visibility = note is null ? Visibility.Collapsed : Visibility.Visible;
@@ -190,10 +193,18 @@ public partial class InstallTab : UserControl
         {
             // A folder with no game client: where it should come from is asked now, when it matters. Steam has the newest
             // version this LocalExile runs; the setup guide takes a client that is already on this PC.
+            // A folder whose only clients are kept ones: the Game client window puts one back in use, by a rename.
+            if (_noClient && _keptOnly && DepotTool.Supported && !_working && !_checking && !AnythingRunning)
+            {
+                if (OpenClientVersions() && !LocalExileReleases.IsSetUp(Folder)) SetupRequested?.Invoke();
+                return;
+            }
             if (_noClient && _offer is { } offer && !_working && !_checking && !AnythingRunning)
             {
-                int answer = Dialog.Show(Window.GetWindow(this), DialogKind.Question, L.Text("Get the game client"), L.Text("No game client in this folder yet."), null,
-                    [L.Text("Download {0} from Steam", L.Text("Path of Exile {0}", offer.Version)), L.Text("Use one on this PC"), L.Text("Cancel")], 2);
+                // The version is in the sentence, so that the buttons stay short enough to be read whole in any language.
+                int answer = Dialog.Show(Window.GetWindow(this), DialogKind.Question, L.Text("Get the game client"),
+                    L.Text("No game client in this folder yet.") + " " + L.Text("Steam has {0}.", L.Text("Path of Exile {0}", offer.Version)), null,
+                    [L.Text("Download from Steam"), L.Text("Use a client on this PC"), L.Text("Cancel")], 2);
                 if (answer == 0)
                 {
                     // With the client there, the guide has only the account left to ask for.

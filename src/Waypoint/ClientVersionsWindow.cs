@@ -74,6 +74,8 @@ sealed class ClientVersionsWindow : FormWindow
     bool _busy;
     /// <summary>A download ended with a client that can be played: closing the window is the next step.</summary>
     bool _ready;
+    /// <summary>The window is closed: nothing more is started from it.</summary>
+    bool _closed;
 
     /// <summary>The folder's client changed: the window that opened this one reads the folder again.</summary>
     public bool Changed { get; private set; }
@@ -160,7 +162,11 @@ sealed class ClientVersionsWindow : FormWindow
         // The buttons follow what runs: LocalExile's own setup starts its tools for a moment, and a game may close meanwhile.
         void Sampled(IReadOnlyList<ServiceSample> _) => Dispatcher.BeginInvoke(() => { if (!_busy) Enable(); });
         _shared.Monitor.Sampled += Sampled;
-        Closed += (_, _) => _shared.Monitor.Sampled -= Sampled;
+        Closed += (_, _) =>
+        {
+            _closed = true;
+            _shared.Monitor.Sampled -= Sampled;
+        };
         Content = root;
         Closing += (_, e) =>
         {
@@ -178,7 +184,8 @@ sealed class ClientVersionsWindow : FormWindow
                     await Task.Run(() => ClientVersions.FinishDeletes(_folder));
                     Say("");
                 }, stoppable: false);
-            if (_downloadNewest && !Running && _layout == ClientLayout.None && !Rows.Any(row => row.Here) && ClientVersions.Newest(_offered) is { } newest)
+            // The window can be closed while the folders are read: a closed window starts no download.
+            if (_downloadNewest && !_closed && !Running && _layout == ClientLayout.None && !Rows.Any(row => row.Here) && ClientVersions.Newest(_offered) is { } newest)
                 await GetAsync(newest);
         };
     }
@@ -213,7 +220,7 @@ sealed class ClientVersionsWindow : FormWindow
     {
         string? chosen = Selected?.Client;
         var paths = FolderList.Paths(_shared.Settings, _folder);
-        var (layout, current, unfinished, builds, rows, started, linked) = await Task.Run(() =>
+        var (layout, current, unfinished, builds, rows, started, linked, tooOld) = await Task.Run(() =>
         {
             // In the background, with its user looking: a launcher that failed to answer earlier is asked once more.
             var listed = LocalExileBuilds.Of(_folder, again: true);
@@ -249,7 +256,7 @@ sealed class ClientVersionsWindow : FormWindow
             }
             string next = Path.Combine(_folder, ClientVersions.NextFolder);
             return (ClientVersions.Layout(_folder), FolderList.ClientOf(_folder), ClientVersions.UnfinishedBuild(_folder), listed, found,
-                Directory.Exists(next) ? ClientVersions.SizeOf(next) : 0, OwnClient.Check(_folder));
+                Directory.Exists(next) ? ClientVersions.SizeOf(next) : 0, OwnClient.Check(_folder), LocalExileBuilds.TooOld(_folder));
         });
         _started = started;
         _linked = linked;
@@ -274,8 +281,10 @@ sealed class ClientVersionsWindow : FormWindow
 
         // Beside the download button: only why it is off, or what it will go on from.
         string note = !DepotTool.Supported ? L.Text("The Steam download works on 64-bit Windows only for now.")
-            : builds is null ? L.Text("This LocalExile lists no versions to download. LocalExile v0.5.0-beta and later do.")
-            : _offered.Count == 0 && builds.Any(b => b.FromSteam) ? L.Text("This folder already has every version this LocalExile runs.") : "";
+            // No list is a LocalExile from before it had one, or one that did not answer just now: not the same thing.
+            : builds is null ? (tooOld ? L.Text("This LocalExile lists no versions to download. LocalExile v0.5.0-beta and later do.")
+                : L.Text("Waypoint could not read the versions this LocalExile runs. Open this window again."))
+            : _offered.Count == 0 && builds.Any(b => b.FromSteam) ? L.Text("This folder already has every version Steam has for this LocalExile.") : "";
         if (started > 100_000_000) note = (note.Length > 0 ? note + " " : "") + L.Text("{0:0.#} GB of an unfinished download is kept in this folder.", started / 1e9);
         _note.Text = note;
         _note.Visibility = note.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -371,8 +380,9 @@ sealed class ClientVersionsWindow : FormWindow
     {
         if (_linked is not null) return L.Text("This folder's game client is a link to another folder. Make a copy of it first.");
         var used = Rows.FirstOrDefault(row => row.Here && row.InUse);
+        // A link that leads to no game has no line in the list: where it leads is read from the folder.
         return used is { Shared: true } ? L.Text("This folder shares the game client of another LocalExile folder: what changes there changes here.")
-            : L.Text("Client is a link to {0}, not a copy.", used?.LinkTarget ?? "");
+            : L.Text("Client is a link to {0}, not a copy.", used?.LinkTarget ?? ClientLocator.RealPath(Path.Combine(_folder, "Client")));
     }
 
     /// <summary>Under the list, of the line chosen: what stops it from being used or changed here. Nothing for a line that
@@ -595,7 +605,11 @@ sealed class ClientVersionsWindow : FormWindow
                 progress => Dispatcher.BeginInvoke(() => Say(L.Text("Downloading from Steam. {0}", progress.Detail), progress.Fraction, working: true)), Log, stop), CancellationToken.None);
             Say(L.Text("Downloading from Steam. {0}", ""), working: true);
             var result = await Run();
-            if (result.Outcome == SteamOutcome.SignInNeeded && await SignInAsync(stop)) result = await Run();
+            if (result.Outcome == SteamOutcome.SignInNeeded && await SignInAsync(stop))
+            {
+                Say(L.Text("Downloading from Steam. {0}", ""), working: true);
+                result = await Run();
+            }
             Say(result.Outcome == SteamOutcome.Done ? L.Text("{0} is whole now, and kept in this folder.", Label(build.Version, build)) : SteamDownload.Explain(result));
         });
     }
@@ -683,7 +697,11 @@ sealed class ClientVersionsWindow : FormWindow
             Say(L.Text("Asking Steam how large {0} is …", Version(build.Version)), working: true);
             var (bytes, sized) = await SteamDownload.SizeAsync(Tool, build, Account!, Scratch, Log, stop);
             if (sized.Outcome == SteamOutcome.SignInNeeded && await SignInAsync(stop))
+            {
+                // The sign-in's own words are over: the step says itself again.
+                Say(L.Text("Asking Steam how large {0} is …", Version(build.Version)), working: true);
                 (bytes, sized) = await SteamDownload.SizeAsync(Tool, build, Account!, Scratch, Log, stop);
+            }
             if (bytes is not { } size)
             {
                 Say(SteamDownload.Explain(sized));
@@ -743,7 +761,8 @@ sealed class ClientVersionsWindow : FormWindow
         }
         string setting = _shared.Settings.ClientSwitch;
         // "Always update in place" is for a client from Steam. A standalone one would be deleted for good, so it is asked about.
-        if (setting == nameof(SwitchWay.UpdateInPlace) && canInPlace && shares) return SwitchWay.UpdateInPlace;
+        // It also asks when an unfinished keep-both left a download behind, which updating in place deletes: the question says so.
+        if (setting == nameof(SwitchWay.UpdateInPlace) && canInPlace && shares && _started <= 100_000_000) return SwitchWay.UpdateInPlace;
         if (setting == nameof(SwitchWay.KeepBoth) && canBoth) return SwitchWay.KeepBoth;
         if (!canInPlace && !canBoth)
         {
@@ -754,7 +773,7 @@ sealed class ClientVersionsWindow : FormWindow
             ? L.Text("Update in place: it needs no extra space, but {0} is removed from this PC.", Label(_current, _currentBuild))
                 // What an unfinished keep-both left is not needed for this way, and goes.
                 + (_started > 100_000_000 ? " " + L.Text("It also deletes the {0:0.#} GB already downloaded.", _started / 1e9) : "")
-            : L.Text("Replace: the client in use is deleted permanently. Steam cannot download a standalone client again.");
+            : L.Text("Replace: the client in use is deleted permanently. A standalone client cannot be downloaded again.");
         string keep = L.Text("Keep both: it needs {0:0.#} GB more, and you can switch back at any time.", Math.Max(0, both - ClientVersions.Margin - _started) / 1e9);
         var texts = new List<string> { facts };
         var ways = new List<(string Button, SwitchWay Way)>();

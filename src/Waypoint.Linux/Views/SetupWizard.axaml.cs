@@ -652,7 +652,7 @@ public partial class SetupWizard : Window
             string warning = ClientList.SelectedItem is FoundClient chosen ? ClientWarning(chosen) : "";
             ClientNote.Text = usable == 0
                     ? L.Text("Choose a folder with PathOfExile.exe and Content.ggpk: a standalone Path of Exile {0} install. Steam and Epic installs do not work here.", NeededClient)
-                        + " " + L.Text("Waypoint cannot download the game here.")
+                        + " " + L.Text("Waypoint cannot download the game for this LocalExile.")
                 : warning.Length > 0 ? warning
                 : result.Limited ? L.Text("The search stopped at its time limit; Browse if your client is not listed.") : "";
         }

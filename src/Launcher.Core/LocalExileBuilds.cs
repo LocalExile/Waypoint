@@ -39,6 +39,14 @@ public static class LocalExileBuilds
 
     const string SourceList = "src/GameServer.Core/Protocol/ClientBuilds.cs";
 
+    /// <summary>Whether the folder is a release from before LocalExile could list its builds. Such a folder has no list
+    /// for good; any other that answers none may only have failed to answer.</summary>
+    public static bool TooOld(string folder)
+    {
+        try { return LocalExileReleases.IsInstall(folder) && (LocalExileReleases.Installed(folder) is not { } version || version.CompareTo(FirstWithList) < 0); }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException) { return false; }
+    }
+
     /// <summary>For tests only: what <see cref="Of"/> answers instead of asking a LocalExile.</summary>
     public static Func<string, IReadOnlyList<ListedBuild>?>? Override { get; set; }
 

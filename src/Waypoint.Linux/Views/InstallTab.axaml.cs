@@ -62,6 +62,8 @@ partial class InstallTab : UserControl
     /// <summary>This release's client is a link to the user's own Path of Exile folder: the page says what LocalExile says at
     /// every start (<see cref="OwnClient.Notice"/>) and offers the copy. Looked for in the background.</summary>
     OwnClient.Plan? _linked;
+    /// <summary>The folder has no game client at all, in use or kept: the page says so.</summary>
+    bool _noClient;
 
     /// <summary>Which version of the game this release's client is, under the Play button beside LocalExile's own version.</summary>
     string? _clientVersion;
@@ -69,7 +71,8 @@ partial class InstallTab : UserControl
     async Task LookForOwnFolderAsync()
     {
         string folder = Folder;
-        (_linked, _clientVersion) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder)));
+        (_linked, _clientVersion, _noClient) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder),
+            ClientVersions.Layout(folder) == ClientLayout.None && ClientVersions.Kept(folder).Count == 0));
         Show();
     }
     readonly ObservableCollection<StepRow> _steps = [];
@@ -166,7 +169,9 @@ partial class InstallTab : UserControl
         Working.IsVisible = busy && (_shared.Settings.Appearance?.ReduceMotion != true || _total is > 0);
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
-        string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link) : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
+        string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
+            : _noClient && !busy ? L.Text("No game client in this folder yet.")
+            : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;

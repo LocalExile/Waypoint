@@ -615,7 +615,7 @@ to a user.
 ### The setup guide
 
 With no checkout or release install, the first start opens the guide (`SetupWizard.xaml`); **Run setup guide…** on the Setup
-section, or **Finish setup** on a release install's Play, opens it any time. A saved folder that is not there any more is not
+section, or **Finish setup** on a release install's Play, opens it any time (for a folder with no game client, Finish setup first asks where the client should come from). A saved folder that is not there any more is not
 a first start: Waypoint says which folder it can't find (`MissingFolderDialog`) and offers **Open** for each other folder of
 the list that is there, **Find it…**, **Set up again…** (the guide) and **Close**. Nothing is changed until one is chosen,
 and the missing folder stays in the list, marked **Not found**. **Skip setup** leaves it: with nothing to open on,
@@ -645,7 +645,7 @@ LocalExile cannot use is refused with the reason ([Game client builds](#game-cli
 about before a 70 GB copy, but not refused. For a new folder the guide sets up what the client fits: the newest LocalExile when a
 3.29.3c client was found, and only when the player has nothing but 3.29.3b, the last LocalExile made for it (release v0.1.0-beta,
 or a source copy on its own branch `waypoint-3.29.3b` at the head of the server's `3.29.3b` branch), with the quiet note below.
-**Set up the rest now** goes on without a client. The game is never downloaded.
+**Set up the rest now** goes on without a client. The guide itself never downloads the game: without a client, **Finish setup** on a release's Play page can get one from Steam ([The game client from Steam](#the-game-client-from-steam)), and the guide's note says so only where that holds (`ClientVersions.FirstDownload`).
 
 ### Game client builds
 
@@ -833,8 +833,8 @@ one with the user's own Steam account. Windows on x64 only for now.
   from the UI thread).
 - **From Finish setup.** A release folder with no game client, in use or kept, has nothing to finish setup with. Its
   Play page says "No game client in this folder yet.", and **Finish setup** asks where the client should come from:
-  **Download Path of Exile 3.29.3d from Steam** (the newest version its LocalExile lists that Steam can deliver,
-  `ClientVersions.Newest`), **Use one on this PC** (the setup guide, as before) or Cancel. The download opens this window
+  **Download from Steam** (the question names the version: the newest its LocalExile lists that Steam can deliver,
+  `ClientVersions.Newest`), **Use a client on this PC** (the setup guide, as before) or Cancel. The download opens this window
   and starts at once (`downloadNewest`): the sign-in when there is none, then the question with the size, which Enter
   cancels. When the client is there and the folder still needs an account, the guide opens next. A LocalExile that
   lists nothing (before v0.5.0-beta), and a Waypoint that cannot run the tool, go to the guide as before.
