@@ -404,7 +404,7 @@ sealed class ClientVersionsWindow : FormWindow
                 : _layout == ClientLayout.Link ? LinkReason() : "";
         if (row.LinkTarget is { } target)
             return row.Shared ? L.Text("This folder shares the game client of another LocalExile folder: what changes there changes here.")
-                : _linked is { } plan ? OwnClient.Notice(plan) : L.Text("Client is a link to {0}, not a copy.", target);
+                : OwnClient.Notice(target);
         return row.HalfWayTo is not null ? L.Text("This client is incomplete and cannot be used.") : "";
     }
 

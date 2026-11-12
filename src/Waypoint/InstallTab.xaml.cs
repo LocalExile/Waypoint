@@ -32,6 +32,9 @@ public partial class InstallTab : UserControl
     bool _noClient;
     /// <summary>The folder has no client in use but has kept ones: the Game client window puts one back, by a rename.</summary>
     bool _keptOnly;
+    /// <summary>The game folder outside LocalExile the client is a link to, also one Waypoint cannot copy (a Steam
+    /// install): LocalExile warns about every such link, and so does this page.</summary>
+    string? _linkedTo;
     /// <summary>For a folder with no client, in use or kept: the newest version its LocalExile runs that Steam can
     /// deliver (3.29.3d for LocalExile v0.5.0-beta, <see cref="ClientVersions.FirstDownload"/>). Finish setup offers to
     /// download it. Null when there is none to offer: an older LocalExile, a Waypoint that cannot run the download tool.</summary>
@@ -44,11 +47,12 @@ public partial class InstallTab : UserControl
         {
             bool none = ClientVersions.Layout(folder) == ClientLayout.None;
             // Asking LocalExile for its list can take a moment: only for a folder that has no client, and never on the UI thread.
-            return (OwnClient.Check(folder), FolderList.ClientOf(folder), none, none && ClientVersions.Kept(folder).Count != 0, none ? ClientVersions.FirstDownload(folder) : null);
+            return (OwnClient.Check(folder), FolderList.ClientOf(folder), none, none && ClientVersions.Kept(folder).Count != 0, none ? ClientVersions.FirstDownload(folder) : null,
+                OwnClient.LinkedOutside(folder));
         });
         // The user may have changed folder while this one was read: what was read is not said of another.
         if (!FolderList.Same(folder, Folder)) return;
-        (_linked, _clientVersion, _noClient, _keptOnly, _offer) = read;
+        (_linked, _clientVersion, _noClient, _keptOnly, _offer, _linkedTo) = read;
         Show();
     }
     readonly ObservableCollection<StepRow> _steps = [];
@@ -138,6 +142,7 @@ public partial class InstallTab : UserControl
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
         string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
+            : _linkedTo is { } target ? OwnClient.Notice(target)
             : _noClient && !_keptOnly && !busy ? L.Text("No game client in this folder yet.")
             : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";

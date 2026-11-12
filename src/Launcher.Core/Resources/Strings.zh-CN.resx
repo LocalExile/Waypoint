@@ -723,6 +723,9 @@
   <data name="Text_140bedbf9c3f" xml:space="preserve">
     <value>无</value>
   </data>
+  <data name="Text_1415df2f0832" xml:space="preserve">
+    <value>Waypoint 在这里不会下载游戏。你需要自己拥有 LocalExile 支持的流放之路版本的独立版。</value>
+  </data>
   <data name="Text_14189860e58d" xml:space="preserve">
     <value>Client 是指向 {0} 的链接，其他 LocalExile 副本可能也在使用该文件夹，因此 Waypoint 不会更改它。请在那里准备客户端，或运行安装向导在此处放置客户端。</value>
   </data>
@@ -953,9 +956,6 @@
   </data>
   <data name="Text_1aee4597ab3b" xml:space="preserve">
     <value>创建账号…</value>
-  </data>
-  <data name="Text_1b071ef8f91d" xml:space="preserve">
-    <value>Waypoint 不会下载游戏。你需要自备一份独立版的流放之路 3.29.3c。</value>
   </data>
   <data name="Text_1b12c338d9d5" xml:space="preserve">
     <value>物品标签</value>
@@ -8709,6 +8709,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f9d2f04d4584" xml:space="preserve">
     <value>正在启动、重新构建或重启；请检查 Gateway 输出中的错误</value>
+  </data>
+  <data name="Text_f9e5bd641897" xml:space="preserve">
+    <value>你需要一个 LocalExile 支持的流放之路客户端：你自己的独立版，或者（对于发行版）在本向导之后从 Steam 下载的客户端。</value>
   </data>
   <data name="Text_f9ebd5052336" xml:space="preserve">
     <value>不是 3.29.3c 版本</value>

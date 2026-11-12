@@ -723,6 +723,9 @@
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>нет</value>
   </data>
+  <data name="Text_1415df2f0832" xml:space="preserve">
+    <value>Здесь Waypoint не загружает игру. Нужна ваша автономная копия версии Path of Exile, с которой работает LocalExile.</value>
+  </data>
   <data name="Text_14189860e58d" xml:space="preserve">
     <value>Client — это ссылка на {0}. Эту папку могут использовать другие копии LocalExile, поэтому Waypoint не будет её менять. Подготовьте клиент там или запустите мастер настройки, чтобы разместить клиент здесь.</value>
   </data>
@@ -953,9 +956,6 @@
   </data>
   <data name="Text_1aee4597ab3b" xml:space="preserve">
     <value>Создать аккаунт…</value>
-  </data>
-  <data name="Text_1b071ef8f91d" xml:space="preserve">
-    <value>Waypoint не скачивает игру. Нужна ваша собственная автономная копия Path of Exile 3.29.3c.</value>
   </data>
   <data name="Text_1b12c338d9d5" xml:space="preserve">
     <value>Метки предметов</value>
@@ -8709,6 +8709,9 @@
   </data>
   <data xml:space="preserve" name="Text_f9d2f04d4584">
     <value>Запуск, сборка или перезапуск; проверьте вывод Gateway на ошибки</value>
+  </data>
+  <data name="Text_f9e5bd641897" xml:space="preserve">
+    <value>Нужен клиент Path of Exile, с которым работает LocalExile: ваша автономная копия или, для релиза, клиент, загруженный из Steam после этого мастера.</value>
   </data>
   <data name="Text_f9ebd5052336" xml:space="preserve">
     <value>не сборка 3.29.3c</value>

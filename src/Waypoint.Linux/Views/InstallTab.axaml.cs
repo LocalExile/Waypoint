@@ -64,6 +64,8 @@ partial class InstallTab : UserControl
     OwnClient.Plan? _linked;
     /// <summary>The folder has no game client at all, in use or kept: the page says so.</summary>
     bool _noClient;
+    /// <summary>The game folder outside LocalExile the client is a link to, also one Waypoint cannot copy.</summary>
+    string? _linkedTo;
 
     /// <summary>Which version of the game this release's client is, under the Play button beside LocalExile's own version.</summary>
     string? _clientVersion;
@@ -71,8 +73,8 @@ partial class InstallTab : UserControl
     async Task LookForOwnFolderAsync()
     {
         string folder = Folder;
-        (_linked, _clientVersion, _noClient) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder),
-            ClientVersions.Layout(folder) == ClientLayout.None && ClientVersions.Kept(folder).Count == 0));
+        (_linked, _clientVersion, _noClient, _linkedTo) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder),
+            ClientVersions.Layout(folder) == ClientLayout.None && ClientVersions.Kept(folder).Count == 0, OwnClient.LinkedOutside(folder)));
         Show();
     }
     readonly ObservableCollection<StepRow> _steps = [];
@@ -170,6 +172,7 @@ partial class InstallTab : UserControl
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
         string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
+            : _linkedTo is { } target ? OwnClient.Notice(target)
             : _noClient && !busy ? L.Text("No game client in this folder yet.")
             : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";

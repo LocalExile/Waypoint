@@ -74,8 +74,27 @@ public static class OwnClient
 
     /// <summary>The standing line on a release's Play page while its client is such a link: LocalExile's own warning, in
     /// its words.</summary>
-    public static string Notice(Plan plan) =>
-        L.Text("Client is a link to {0}, not a copy. LocalExile changes files in that folder, and a Path of Exile update there can break this LocalExile. A separate copy is safe from both.", plan.Source);
+    public static string Notice(Plan plan) => Notice(plan.Source);
+
+    /// <summary>The same warning for any game folder outside LocalExile that a client is a link to, whether or not Waypoint
+    /// can make the copy (<see cref="LinkedOutside"/>).</summary>
+    public static string Notice(string source) =>
+        L.Text("Client is a link to {0}, not a copy. LocalExile changes files in that folder, and a Path of Exile update there can break this LocalExile. A separate copy is safe from both.", source);
+
+    /// <summary>The game folder outside LocalExile that the folder's <c>Client</c> is a link to, standalone or from Steam;
+    /// null for a client of its own and for a link to another LocalExile's client. LocalExile warns about every such
+    /// link, so the Play page does too, also where <see cref="Check"/> has no copy to offer.</summary>
+    public static string? LinkedOutside(string folder)
+    {
+        try
+        {
+            string client = Path.Combine(folder, "Client");
+            if (!ClientSettings.IsLink(client)) return null;
+            string source = Path.TrimEndingDirectorySeparator(Path.GetFullPath(ClientLocator.RealPath(client)));
+            return InLocalExile(source) || ClientVersions.FilesOf(source) == ClientLayout.None ? null : source;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or System.Security.SecurityException) { return null; }
+    }
 
     public static string Title => L.Text("Make a copy of the game for LocalExile?");
 
@@ -98,11 +117,13 @@ public static class OwnClient
     public static bool Ask(Plan plan, Func<string, string, string?, string[], int> show, Action<string> open)
     {
         var (message, details) = Text(plan);
-        string[] buttons = plan.HasSpace ? [L.Text("Copy now"), L.Text("Open folder"), L.Text("Cancel")] : [L.Text("OK"), L.Text("Open folder")];
+        // The last button is the one Enter and Esc press: Cancel, or OK where there is nothing to agree to.
+        string[] buttons = plan.HasSpace ? [L.Text("Copy now"), L.Text("Open folder"), L.Text("Cancel")] : [L.Text("Open folder"), L.Text("OK")];
+        int look = plan.HasSpace ? 1 : 0;
         while (true)
         {
             int chosen = show(Title, message, details, buttons);
-            if (chosen != 1) return plan.HasSpace && chosen == 0;
+            if (chosen != look) return plan.HasSpace && chosen == 0;
             open(plan.Source);
         }
     }

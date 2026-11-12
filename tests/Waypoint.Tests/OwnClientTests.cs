@@ -238,8 +238,9 @@ public class OwnClientTests : IDisposable
         Assert.False(plan.HasSpace);
         string[]? shown = null;
         string? said = null;
-        Assert.False(OwnClient.Ask(plan, (_, message, _, buttons) => { shown = buttons; said = message; return 0; }, _ => { }));
-        Assert.Equal(["OK", "Open folder"], shown!);
+        // OK is last: it is the button Enter and Esc press. Open folder would only bring the box back.
+        Assert.False(OwnClient.Ask(plan, (_, message, _, buttons) => { shown = buttons; said = message; return 1; }, _ => { }));
+        Assert.Equal(["Open folder", "OK"], shown!);
         Assert.Contains("too full", said);
         Assert.Contains("nothing changes", said);
     }

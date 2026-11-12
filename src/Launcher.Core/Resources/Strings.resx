@@ -723,6 +723,9 @@
   <data xml:space="preserve" name="Text_140bedbf9c3f">
     <value>none</value>
   </data>
+  <data name="Text_1415df2f0832" xml:space="preserve">
+    <value>Waypoint does not download the game here. You need your own standalone copy of a Path of Exile version that LocalExile runs.</value>
+  </data>
   <data name="Text_14189860e58d" xml:space="preserve">
     <value>Client is a link to {0}, and other copies of LocalExile may share that folder, so Waypoint will not change it. Prepare it there, or run the setup guide to put a client here.</value>
   </data>
@@ -953,9 +956,6 @@
   </data>
   <data name="Text_1aee4597ab3b" xml:space="preserve">
     <value>Create account…</value>
-  </data>
-  <data name="Text_1b071ef8f91d" xml:space="preserve">
-    <value>Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3c.</value>
   </data>
   <data name="Text_1b12c338d9d5" xml:space="preserve">
     <value>Item tags</value>
@@ -8709,6 +8709,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_f9d2f04d4584">
     <value>Starting, rebuilding or restarting; inspect Gateway output for errors</value>
+  </data>
+  <data name="Text_f9e5bd641897" xml:space="preserve">
+    <value>You need a Path of Exile client that LocalExile runs: your own standalone copy, or for a release one downloaded from Steam after this guide.</value>
   </data>
   <data name="Text_f9ebd5052336" xml:space="preserve">
     <value>not the 3.29.3c build</value>

@@ -161,7 +161,7 @@ public partial class SetupWizard : Window
         WelcomeTwo.Text = L.Text("2.  Finds your game client, or lets you point to it");
         WelcomeThree.Text = L.Text("3.  Copies the client and prepares it");
         WelcomeStop.Text = L.Text("You can stop at any point: what is finished stays finished, and the guide continues from there next time. Setup never changes your own Path of Exile install.");
-        WelcomeGame.Text = L.Text("Waypoint does not download the game. You need your own standalone copy of Path of Exile 3.29.3c.");
+        WelcomeGame.Text = L.Text("Waypoint does not download the game here. You need your own standalone copy of a Path of Exile version that LocalExile runs.");
         SourceTitle.Text = L.Text("How do you want LocalExile?");
         ReleaseChoice.Content = L.Text("The ready-to-play release (recommended)");
         SourceChoice.Content = L.Text("The source code, for working on LocalExile");

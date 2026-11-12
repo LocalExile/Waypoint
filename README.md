@@ -12,11 +12,12 @@ Launcher, and the setup, mod, backup, account, appearance and language tools of 
 It is a separate tool: it references no server project and drives a checkout only through what the server offers outside
 tools (`scripts/dev/live.ps1`, the Gateway's `commands`/`values` modes, the dev host's protocol, the client control bridge,
 the logs) and through its own adapter in `scripts/`. Every start goes through `live.ps1`, so the server's rules apply
-unchanged. It does not download Path of Exile, bundle LocalExile or offer a public server.
+unchanged. It does not bundle Path of Exile or LocalExile, and does not offer a public server.
 
 ## Install
 
-Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, and your own standalone PoE **3.29.3c** client (a player who has only 3.29.3b gets
+Requirements: Windows 10/11 x64, the .NET 10 Desktop Runtime, and a PoE **3.29.3c** or **3.29.3d** client: your own standalone one, or for a release one Waypoint downloads from Steam
+with your own Steam account ([The game client from Steam](docs/launcher.md#the-game-client-from-steam)) (a player who has only 3.29.3b gets
 the last LocalExile made for it, see [Game client builds](docs/launcher.md#game-client-builds)). The setup guide
 offers two ways to get LocalExile:
 
@@ -33,7 +34,7 @@ offers two ways to get LocalExile:
 | [Git](https://git-scm.com/downloads/win) | Branches and pull requests |
 | [Python 3.9+](https://www.python.org/downloads/windows/) | Data extraction, consistent save backups, the account tools. Tick the installer's *Add python.exe to PATH*; Waypoint also finds a Python installed without it |
 | [Node.js](https://nodejs.org/en/download) | The bundle-decompression dependency |
-| Your own standalone PoE **3.29.3c** client | A separate copy in the checkout's `Client` folder; Steam layout and other builds are unsupported |
+| Your own standalone PoE **3.29.3c** or **3.29.3d** client | A separate copy in the checkout's `Client` folder; Steam layout and other builds are unsupported |
 
 Frida (`pip install frida`) is optional: it is needed for walk maps, the console and live mod control, not for ordinary play.
 The item crafter's Give item uses the Waypoint Tools mod instead, which it offers to install.
@@ -54,7 +55,7 @@ where they are. Neither old file is changed.
 
 Linux has its own executable and interface (`src/Waypoint.Linux`, Avalonia) over the same engine, and the Windows app is
 built as before. It needs the .NET 10 SDK, [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own
-standalone PoE **3.29.3c** client. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
+standalone PoE **3.29.3c** or **3.29.3d** client. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
 Python 3.9+ and Node.js.
 
 ```bash

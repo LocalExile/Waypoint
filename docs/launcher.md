@@ -62,7 +62,9 @@ The random seed button uses the server's normal instance seed range; manually en
 A release is a git tag `v<major>.<minor>.<patch>` pushed to GitHub. The release workflow
 (`.github/workflows/release.yml`) runs the tests, publishes `Waypoint.exe` with the tag's version
 (`-p:Version`), writes its SHA-256 to `Waypoint.exe.sha256`, and attaches both to a GitHub release of the tag
-with generated notes. A tag that is not `v1.2.3` fails the workflow. The CI workflow (`ci.yml`) builds and tests every
+with generated notes. Before publishing it runs `tools/Get-DepotDownloader.ps1 -Source`, so the exe carries the Steam
+download tool and the release also gets that tool's source zip ([The game client from Steam](#the-game-client-from-steam));
+a release fails when the tool cannot be fetched or its hash differs. A tag that is not `v1.2.3` fails the workflow. The CI workflow (`ci.yml`) builds and tests every
 push to `main` and every pull request, and runs the adapter's checks and the translation check.
 
 ```powershell
