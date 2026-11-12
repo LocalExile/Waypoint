@@ -199,8 +199,9 @@ sealed class ClientVersionsWindow : FormWindow
 
     IEnumerable<Row> Rows => _list.Items.OfType<ListBoxItem>().Select(item => item.Tag).OfType<Row>();
     Row? Selected => (_list.SelectedItem as ListBoxItem)?.Tag as Row;
-    /// <summary>The build a client of the folder in use that is half-way to another one was on its way to.</summary>
-    ListedBuild? Unfinished => _unfinished is null ? null : (_builds ?? []).FirstOrDefault(b => b.FromSteam && Resumes(b));
+    /// <summary>The build a client of the folder in use that is half-way to another one was on its way to. A mark that
+    /// names only the version means the latest build of it that LocalExile lists (a hotfix, not its release).</summary>
+    ListedBuild? Unfinished => _unfinished is null ? null : (_builds ?? []).LastOrDefault(b => b.FromSteam && Resumes(b));
     bool Running => _shared.Monitor.Latest.Any(s => s.Running) || _shared.IsLiveRunning;
     string? Account => SteamDownload.IsAccountName(_shared.Settings.SteamAccount) ? _shared.Settings.SteamAccount : null;
     /// <summary>A build by its version and LocalExile's own name for it: "Path of Exile 3.29.3c: 3.29.3.5 hotfix of
@@ -591,7 +592,7 @@ sealed class ClientVersionsWindow : FormWindow
     }
 
     /// <summary>The build a copy that was set aside half-way was on its way to, when Steam can deliver it.</summary>
-    ListedBuild? HalfWay(KeptClient kept) => (_builds ?? []).FirstOrDefault(b => b.FromSteam && b.Version == kept.HalfWayTo
+    ListedBuild? HalfWay(KeptClient kept) => (_builds ?? []).LastOrDefault(b => b.FromSteam && b.Version == kept.HalfWayTo
         && (kept.HalfWayToBuild is null || kept.HalfWayToBuild == b.ExecutableSha256));
 
     /// <summary>Makes a copy that was set aside half-way whole where it is (<see cref="ClientVersions.FinishKeptAsync"/>).</summary>
