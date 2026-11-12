@@ -97,6 +97,16 @@ public static class ClientVersions
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return null; }
     }
 
+    /// <summary>The newest of the builds on offer: the highest version, and of a version's builds the first offered, which
+    /// is the latest LocalExile lists (a hotfix before its release). Null when nothing is on offer.</summary>
+    public static ListedBuild? Newest(IEnumerable<ListedBuild> offered)
+    {
+        ListedBuild? newest = null;
+        foreach (var build in offered)
+            if (newest is null || ClientLocator.IsOlder(newest.Version, build.Version)) newest = build;
+        return newest;
+    }
+
     /// <summary>Whether a version is more than one build in the list (a release and its hotfix), whether Steam can deliver
     /// each or not: its builds are then told apart by LocalExile's own name for each.</summary>
     public static bool Several(IEnumerable<ListedBuild> builds, string? version) => builds.Count(b => b.Version == version) > 1;

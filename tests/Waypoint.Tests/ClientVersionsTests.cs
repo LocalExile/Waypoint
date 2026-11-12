@@ -106,6 +106,19 @@ public class ClientVersionsTests : IDisposable
     }
 
     [Fact]
+    public void The_newest_build_on_offer_is_the_highest_version_whatever_the_order_and_a_hotfix_before_its_release()
+    {
+        static ListedBuild Build(string version, string name) => new(version, name, name, null, "238960", [new("238961", "1")]);
+        ListedBuild release = Build("3.29.3c", "release"), hotfix = Build("3.29.3c", "hotfix"), d = Build("3.29.3d", "d");
+        // As Offered gives them (newest first), and in an order no list has today: the version decides, not the place.
+        Assert.Same(d, ClientVersions.Newest([d, hotfix, release]));
+        Assert.Same(d, ClientVersions.Newest([hotfix, release, d]));
+        // Of one version's builds, the first offered: LocalExile's latest of them.
+        Assert.Same(hotfix, ClientVersions.Newest([hotfix, release]));
+        Assert.Null(ClientVersions.Newest([]));
+    }
+
+    [Fact]
     public void A_version_of_two_listed_builds_is_several_whether_Steam_delivers_both_or_not()
     {
         // LocalExile v0.5.0-beta's own list: the 3.29.3c release has no Steam data, its hotfix has.

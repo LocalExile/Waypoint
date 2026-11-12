@@ -373,8 +373,8 @@ both modes, for everyone: someone with one release sees that release and nothing
   removes the row, **Cancel** leaves it.
 - The small **×** on a row, shown while the mouse or the keyboard is on it, takes that folder off the list
   (`FolderList.Forget`). Nothing in the folder is touched, and adding it again brings it back. The folder in use has none.
-- The sidebar has room for about 27 characters of a path, so a longer one keeps its end, which says which folder it is
-  (`FolderList.Short`); the tooltip has all of it.
+- The sidebar is too narrow for most paths, so a path keeps its end, which says which folder it is, and loses its
+  start behind dots: never dots at both ends (`PathLine`, fitted to the width the line has). The tooltip has all of it.
 
 Every way of changing folder goes through one step (`App.SwitchServerAsync`): the folder list, **Change folder…** on a
 release's Versions, **Change…** and **Find automatically…** in Advanced mode, and the setup guide when it made another copy.
@@ -791,36 +791,53 @@ The official launcher only ever gives the newest game, so once the game moves on
 longer be had from it. Steam still serves them, and a release's **Game client…** (under Play; `ClientVersionsWindow`) gets
 one with the user's own Steam account. Windows on x64 only for now.
 
-- **The list** is the game clients this PC has for LocalExile, drawn as the sidebar's folder list draws its folders:
-  every client in a LocalExile folder Waypoint knows (`FolderList`), the one each folder uses (`Client\`) and those it set
-  aside (`Clients\`). A line gives the version with LocalExile's own name for the build (a version can be several builds:
-  3.29.3c has a release and the 3.29.3.5 hotfix), then **Steam version** or **Standalone version**
-  (`ClientVersions.FilesOf`), the folder it belongs to and, for one set aside, its size, then where it is. **In use**
-  marks the client of the folder in use. Only that folder's clients are changed here: **Use this version** brings a kept
-  one back by two renames, **Delete this copy…** deletes a kept one (a deletion that was cut short is finished when the
-  window opens, `ClientVersions.FinishDeletes`), and a client of another folder only opens its folder (that folder is
-  chosen in the sidebar to change it; a source copy looks after its own). Nothing here runs while the game or a server
-  does (the window says so on a line of its own).
-  - **A linked client** is shown where it is used, with where it leads first on its location line. One that leads to
-    another LocalExile folder's `Client` reads "shares another LocalExile folder's client"; one that leads to a game
-    folder outside LocalExile (`OwnClient.InLocalExile` says which) reads "linked to a game folder", and for the folder
-    in use the window repeats LocalExile's warning and offers **Make a copy…**, which is the Play page's own copy
+- **The window says little by itself.** Its title and its list carry what it is; no sentence explains it. A button
+  beside the list shows only for the line it applies to; the one button that is the likely next step has the primary
+  style (`Enable`, `Lead`: the chosen line's own action when it can run, else **Make a copy…**, else **Download a
+  version…**, and **Close** after a download that ended ready to play); a sentence appears only where something is
+  blocked or not safe, or when a thing happens. Its English is short, whole sentences, so that it translates cleanly.
+- **The list** is the game clients this PC has for LocalExile, drawn as the sidebar's folder list draws its folders. The
+  clients of the folder in use come first: the one it uses (`Client\`, marked **In use**) and those it set aside
+  (`Clients\`). Those of the other LocalExile folders Waypoint knows (`FolderList`) follow under **Other folders**,
+  quieter, each with its folder's title. A line is the version (with LocalExile's own name for the build only where the
+  version is several builds: 3.29.3c has a release and the 3.29.3.5 hotfix), then **Steam version** or **Standalone
+  version** (`ClientVersions.FilesOf`) and what is particular about it (a kept one's size, half-way, linked), then where
+  it is. The path keeps its end and loses its start behind dots when the line is too narrow (`PathLine`); the tooltip
+  has all of it and the build's name. A folder with no client says so in the list's first line.
+  Only the folder in use is changed here: **Use this version** brings a kept one back by two renames, **Delete this
+  copy…** deletes a kept one (a deletion that was cut short is finished when the window opens,
+  `ClientVersions.FinishDeletes`), and a client of another folder only opens its folder (the line under the list says to
+  choose that folder in the sidebar; a source copy looks after its own). Nothing here runs while the game or a server
+  does: the window says so on a line above the list.
+  - **A linked client** is shown where it is used, as the link and then where it leads. One that leads to another
+    LocalExile folder's `Client` reads "shares another LocalExile folder's client"; one that leads to a game folder
+    outside LocalExile (`OwnClient.InLocalExile` says which) reads "linked to a game folder", and for the folder in use
+    the line under the list is LocalExile's warning and **Make a copy…** is the primary button: the Play page's own copy
     ([A client linked to the user's game](#a-client-linked-to-the-users-game)). A linked `Client` is neither replaced by
-    a kept one nor downloaded over.
-  - **A client half-way to another version** (it carries `.waypoint-switching`) says so on its line, in any folder. The
-    one in use is finished by **Finish the switch**. A kept copy in that state cannot be used; **Finish this copy** makes
-    it whole where it is, as the build it was on its way to (`ClientVersions.FinishKeptAsync`: Steam sends what is
-    missing, the copy is checked as a client in use is, the mark goes and the folder takes that version's name). When
-    Steam cannot deliver that build for this LocalExile it can only be deleted, and when the list could not be read the
-    window says that instead. Current Waypoint never sets a half-way client aside; this is for one that got there
-    another way.
+    a kept one nor downloaded over; the download button's tooltip says why it is off.
+  - **A client half-way to another version** (it carries `.waypoint-switching`) says so on its line, in the warning
+    colour for the folder in use. The one in use is finished by **Finish the switch**. A kept copy in that state cannot
+    be used; **Finish this copy** makes it whole where it is, as the build it was on its way to
+    (`ClientVersions.FinishKeptAsync`: Steam sends what is missing, the copy is checked as a client in use is, the mark
+    goes and the folder takes that version's name). When Steam cannot deliver that build for this LocalExile it can only
+    be deleted, and when the list could not be read the window says that instead. Current Waypoint never sets a half-way
+    client aside; this is for one that got there another way.
 - **Download a version…** is apart from the list, as setting up a new copy is apart from the sidebar's folders. It opens
   the builds the folder's LocalExile lists that Steam can deliver and the folder does not hold (`ClientVersions.Offered`;
   which versions, and Steam's app, depots and manifests for each, are LocalExile's to say: `LocalExile.exe builds`,
-  [Game client builds](#game-client-builds)), each with LocalExile's name for it, and the one chosen is downloaded into
-  the folder in use. A LocalExile that lists nothing gets nothing from Steam; one that failed to answer is asked once
-  more when the window opens (`LocalExileBuilds.Of(folder, again: true)`, at most every half minute, never from the UI
-  thread). Enter in the list of versions is Cancel.
+  [Game client builds](#game-client-builds)), newest first, each with LocalExile's name for it, and the one chosen is
+  downloaded into the folder in use. Enter in that list is Cancel. Beside the button a note shows only when there is a
+  reason it is off (a LocalExile that lists nothing, a folder that already has every version, a PC the tool does not
+  run on) or something a download will go on from (what an unfinished one left). A LocalExile that failed to answer is
+  asked once more when the window opens (`LocalExileBuilds.Of(folder, again: true)`, at most every half minute, never
+  from the UI thread).
+- **From Finish setup.** A release folder with no game client, in use or kept, has nothing to finish setup with. Its
+  Play page says "No game client in this folder yet.", and **Finish setup** asks where the client should come from:
+  **Download Path of Exile 3.29.3d from Steam** (the newest version its LocalExile lists that Steam can deliver,
+  `ClientVersions.Newest`), **Use one on this PC** (the setup guide, as before) or Cancel. The download opens this window
+  and starts at once (`downloadNewest`): the sign-in when there is none, then the question with the size, which Enter
+  cancels. When the client is there and the folder still needs an account, the guide opens next. A LocalExile that
+  lists nothing (before v0.5.0-beta), and a Waypoint that cannot run the tool, go to the guide as before.
 
 - **The tool.** Waypoint does not speak to Steam itself: it runs [DepotDownloader](https://github.com/SteamRE/DepotDownloader)
   (GPL-2.0), a program of its own (`DepotTool`, `SteamDownload` in `src/Launcher.Core/SteamDownload.cs`). A released
@@ -831,19 +848,21 @@ one with the user's own Steam account. Windows on x64 only for now.
   `%LOCALAPPDATA%\Waypoint\tools\DepotDownloader`, checked against the same SHA-256. A Waypoint built without the zip
   fetches that release then. Neither Steam nor SteamCMD has to be on the PC.
 - **The sign-in.** Steam's anonymous account cannot fetch the game, so the user signs in once, with an account that has
-  Path of Exile in its library. **Sign in with the Steam app…** is the tool's own QR sign-in: Waypoint draws the code the
-  tool prints (`SteamSignInWindow`), the user scans it with the Steam mobile app and approves, and the picture follows when
-  Steam changes the code. The tool gives up after about two minutes without an approval: the window then says so and
-  offers **New code**. **Sign in with a password…** is for someone without that app: Waypoint asks only the account's
-  name, and the tool asks for the password and the Steam Guard code in a console window of its own, which stays open after
-  a failure. Either way Waypoint sees no password and no token: the tool keeps the sign-in (in the Windows user's isolated
-  storage, by where the tool runs from, which is why its folder has no version in its name), and Waypoint keeps the
-  account's name (`Settings.SteamAccount`), which names that sign-in on later runs and is shown in the window. **Forget the
-  sign-in** drops the name.
+  Path of Exile in its library. There is no sign-in button in the window: a download signs in when it needs to. That is
+  the tool's own QR sign-in: Waypoint draws the code the tool prints (`SteamSignInWindow`), the user scans it with the
+  Steam mobile app and approves, and the picture follows when Steam changes the code. The tool gives up after about two
+  minutes without an approval: the window then says so and offers **New code**. **Sign in with a password…** in that
+  window is for someone without the app: Waypoint asks only the account's name, and the tool asks for the password and
+  the Steam Guard code in a console window of its own, which stays open after a failure. Either way Waypoint sees no
+  password and no token: the tool keeps the sign-in (in the Windows user's isolated storage, by where the tool runs from,
+  which is why its folder has no version in its name), and Waypoint keeps the account's name (`Settings.SteamAccount`),
+  which names that sign-in on later runs and is shown at the foot of the window once there is one, with **Forget the
+  sign-in**, which drops the name.
   When Steam no longer takes the remembered sign-in, the next download asks again. A log never gets the code or the name.
 - **Getting a version.** Waypoint first asks Steam how large the build is (its manifests, a few seconds). A folder with no
   client downloads it whole. A folder that has one is asked how to move, each time (`SwitchWay`), with only the ways the
-  drive has room for:
+  drive has room for. The question's title names the build; its text gives the size (when the whole build is
+  downloaded) and the free room, then one line a way, which says what that way costs:
   - **Update in place**: the one client is brought to the other version where it is. Only what differs is downloaded and
     it needs no more room, but the version it was is gone. The client carries `.waypoint-switching` (the version and
     the build's executable hash) until it is whole: Play starts nothing on it meanwhile, and **Finish the switch** on its
@@ -863,7 +882,7 @@ one with the user's own Steam account. Windows on x64 only for now.
   lists); a rename that fails puts the old client back. **Stop** keeps what was fetched, and the next try goes on from it:
   the window says how much is there, and it counts as room the next try does not need again (the question still gives
   the drive's own free space). Updating a client from Steam in place needs no second folder and removes what one was
-  begun in, which the window says too.
+  begun in, which the question says on that way's line.
 - **Afterwards** Waypoint runs `LocalExile.exe setup`, which makes `Game.exe` and the copy patched for the folder's keys
   from the client that came in (Waypoint removes the ones made for the build before it, and the client's `config.json`,
   which names LocalExile's own game settings, goes with it). A folder that still needs an account is finished from Play.

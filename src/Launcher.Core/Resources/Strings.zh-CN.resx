@@ -51,12 +51,6 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>没有与搜索匹配的模组。</value>
   </data>
-  <data name="Text_0154fb2224a4" xml:space="preserve">
-    <value>它支持的版本都已在此文件夹中。</value>
-  </data>
-  <data name="Text_016b695919cd" xml:space="preserve">
-    <value>两者都保留：完整下载 {0}（{1:0.#} GB），当前使用的客户端被保留在一旁。之后可以立即切换回去。</value>
-  </data>
   <data name="Text_01846401bd51" xml:space="preserve">
     <value>脚本</value>
   </data>
@@ -140,9 +134,6 @@
   </data>
   <data name="Text_0397d2f08fb2" xml:space="preserve">
     <value>已构建的文件与已确认的运行状态分开显示。LocalExile 监视模组文件，与 Gateway 代码热重载相互独立。构建或重新加载会重置模组的内存状态，并可能重新加载依赖它的模组。禁用某个依赖项可能会卸载其他模组。更改会影响此 Gateway 上的所有角色。</value>
-  </data>
-  <data name="Text_039f1393d80b" xml:space="preserve">
-    <value>Steam：已以 {0} 登录。登录信息由下载工具保存；Waypoint 只保存这个名称。</value>
   </data>
   <data name="Text_03aaf79a604f" xml:space="preserve">
     <value>停止服务器</value>
@@ -771,6 +762,9 @@
   <data name="Text_1557c3e70bff" xml:space="preserve">
     <value>通往试炼者广场的门</value>
   </data>
+  <data name="Text_1558ae0e00fc" xml:space="preserve">
+    <value>正在使用的客户端正在切换到 {0}，尚未完成，无法保留。它会被就地更新。</value>
+  </data>
   <data name="Text_15689b1ef00b" xml:space="preserve">
     <value>LocalExile 所需的工具</value>
   </data>
@@ -1282,6 +1276,9 @@
   <data name="Text_240f51c01b28" xml:space="preserve">
     <value>密码只能使用英文字母、数字和常用符号。</value>
   </data>
+  <data name="Text_24160e806da2" xml:space="preserve">
+    <value>获取游戏客户端</value>
+  </data>
   <data name="Text_241b991ef5b7" xml:space="preserve">
     <value>联盟卡片预览</value>
   </data>
@@ -1365,6 +1362,9 @@
   </data>
   <data name="Text_25ec5c9141d3" xml:space="preserve">
     <value>live.ps1 -NoClient：重新构建并重启 Patch、Auth 和 Gateway（用于拉取之后，或修改了 Gateway 以外的内容时）；Gateway 自身的代码修改会通过热重载自动生效。正在运行的客户端会保留。</value>
+  </data>
+  <data name="Text_25f3f73bc5a3" xml:space="preserve">
+    <value>这个 LocalExile 没有列出可下载的版本。LocalExile v0.5.0-beta 及更高版本才会列出。</value>
   </data>
   <data name="Text_260a08977944" xml:space="preserve">
     <value>正在创建一致的 SQLite 快照并检查其完整性。</value>
@@ -1619,9 +1619,6 @@
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>保存模组设置</value>
   </data>
-  <data name="Text_2bbdf43d1c29" xml:space="preserve">
-    <value>此文件夹中保留了未完成的版本切换的 {0:0.#} GB，下次下载会从这里继续。</value>
-  </data>
   <data name="Text_2bc430e7e225" xml:space="preserve">
     <value>旧的 {0} 客户端已移除。你的存档、账号和登录密钥都会保留。</value>
   </data>
@@ -1639,6 +1636,9 @@
   </data>
   <data name="Text_2c2da2a749f0" xml:space="preserve">
     <value>dev host 未能启动（logs\launcher-host.err）：{0}</value>
+  </data>
+  <data name="Text_2c3f135fbffc" xml:space="preserve">
+    <value>保留两者：还需要 {0:0.#} GB，并且随时可以切换回去。</value>
   </data>
   <data name="Text_2c4117e5b038" xml:space="preserve">
     <value>要更新到 {0} 吗？</value>
@@ -1793,9 +1793,6 @@
   <data name="Text_2ff712f20f9c" xml:space="preserve">
     <value>副本没有切换</value>
   </data>
-  <data name="Text_2ffa675debc7" xml:space="preserve">
-    <value>两者都保留：当前使用的客户端会被保留在一旁，{0} 由它的副本生成，因此只下载有差异的部分。需要额外 {1:0.#} GB 空间，之后可以立即切换回去。</value>
-  </data>
   <data name="Text_300d052f22b0" xml:space="preserve">
     <value>你的角色</value>
   </data>
@@ -1938,6 +1935,9 @@
   <data name="Text_3455a18c69a8" xml:space="preserve">
     <value>{0:0.0} / {1:0.0} GB · {2:0} MB/s · {3}</value>
   </data>
+  <data name="Text_348589f30dfd" xml:space="preserve">
+    <value>已忘记。下载工具会在这台电脑上保留它自己的登录状态，直到 Steam 将其终止。</value>
+  </data>
   <data name="Text_348e16b56997" xml:space="preserve">
     <value>Waypoint（从源码构建）</value>
   </data>
@@ -2055,9 +2055,6 @@
   <data name="Text_3829bf0ef80f" xml:space="preserve">
     <value>此安装中未找到模块或联盟。</value>
   </data>
-  <data name="Text_386258776f9e" xml:space="preserve">
-    <value>可以在设置中将其中一种方式设为每次都使用。</value>
-  </data>
   <data name="Text_3864a7129335" xml:space="preserve">
     <value>打开相邻区域</value>
   </data>
@@ -2162,9 +2159,6 @@
   </data>
   <data name="Text_3b0bd8704408" xml:space="preserve">
     <value>要将 LocalExile 放在哪里？</value>
-  </data>
-  <data name="Text_3b12dd3d29b3" xml:space="preserve">
-    <value>你的 Steam 账号名（登录 Steam 时使用的名称）。接下来会在下载工具自己的窗口中询问密码和 Steam 令牌验证码：</value>
   </data>
   <data name="Text_3b161ef01c24" xml:space="preserve">
     <value>核心规则</value>
@@ -2434,9 +2428,6 @@
   <data name="Text_433e00b3f109" xml:space="preserve">
     <value>清空视图；文件不会被更改</value>
   </data>
-  <data name="Text_4344a161348a" xml:space="preserve">
-    <value>{0} 将从 Steam 下载到这个 LocalExile 文件夹：{1:0.#} GB。</value>
-  </data>
   <data name="Text_43580afd3423" xml:space="preserve">
     <value>将物品保存在已保存列表中，以便之后再回来编辑</value>
   </data>
@@ -2461,9 +2452,6 @@
   <data name="Text_4406ed643196" xml:space="preserve">
     <value>{0} 的副本名称：</value>
   </data>
-  <data name="Text_442244872d39" xml:space="preserve">
-    <value>把链接的游戏复制到此 LocalExile 文件夹，这样那个游戏的更新就不会破坏它。“开始游戏”页面会先询问并显示复制进度。</value>
-  </data>
   <data name="Text_4426efcaf970" xml:space="preserve">
     <value>请刷新工作区以查看模块和联盟。</value>
   </data>
@@ -2484,9 +2472,6 @@
   </data>
   <data name="Text_44a8e8881f95" xml:space="preserve">
     <value>LocalExile 的最新改动，在你游戏时更新。它有自己的角色。</value>
-  </data>
-  <data name="Text_44bbccca6c35" xml:space="preserve">
-    <value>此文件夹中保留了未完成的版本切换的 {0:0.#} GB。选择保留两者会从这里继续；就地更新会将其删除。</value>
   </data>
   <data name="Text_44bc3799892c" xml:space="preserve">
     <value>治疗</value>
@@ -2920,9 +2905,6 @@
   <data name="Text_50896dc6ab48" xml:space="preserve">
     <value>下载版本…</value>
   </data>
-  <data name="Text_50976c0fe076" xml:space="preserve">
-    <value>此文件夹还没有游戏客户端。“完成设置”会使用这台电脑上已有的客户端；“游戏客户端…”可以从 Steam 下载一个。</value>
-  </data>
   <data name="Text_509b359509d5" xml:space="preserve">
     <value>固定词缀</value>
   </data>
@@ -3085,9 +3067,6 @@
   <data name="Text_553decbc612d" xml:space="preserve">
     <value>要将 LocalExile 更新到 {0} 吗？</value>
   </data>
-  <data name="Text_554d680a6462" xml:space="preserve">
-    <value>这个副本是在切换到 {0} 的中途被保留的，因此并不完整。“完成此副本”会从 Steam 下载其余部分；在此之前无法使用。</value>
-  </data>
   <data name="Text_5559b6621735" xml:space="preserve">
     <value>{0} 中没有 Content.ggpk 和 PathOfExile.exe，因此不是独立版客户端。</value>
   </data>
@@ -3120,6 +3099,9 @@
   </data>
   <data name="Text_55f68b111c40" xml:space="preserve">
     <value>为 LocalExile 提供独立的游戏设置，你平时的游戏保留自己的设置。</value>
+  </data>
+  <data name="Text_5625e06b57d8" xml:space="preserve">
+    <value>你的 Steam 账户名（登录 Steam 时使用的名称）：</value>
   </data>
   <data name="Text_5634c7509b09" xml:space="preserve">
     <value>在激活分支/PR、构建、启动/重启 Gateway、重新加载游戏数据、更改模组和恢复存档之前，会自动备份。备份失败时会阻止该更改。模组历史会记录模组选择、清单版本、DLL 指纹和最近一次确认的运行时报告。恢复存档不会切换源码、客户端文件、登录密钥或游戏数据覆盖。恢复模组选择绝不会安装 DLL 或替换存档。Waypoint 会记录最近启动的 Gateway；外部启动和每次热编辑都不会被跟踪。</value>
@@ -3160,6 +3142,9 @@
   <data name="Text_5774139d115b" xml:space="preserve">
     <value>副官</value>
   </data>
+  <data name="Text_579c51ae71e3" xml:space="preserve">
+    <value>替换：正在使用的客户端会被永久删除。独立客户端无法再从 Steam 下载。</value>
+  </data>
   <data name="Text_57b7b5924c6b" xml:space="preserve">
     <value>一切就绪。在 Waypoint 中点击“开始游戏”即可启动服务器和游戏。首次进入游戏时，请在游戏中设置：选项 → 游戏 → 连线模式 → 预测模式（Options → Game → Networking Mode → Predictive）。</value>
   </data>
@@ -3177,9 +3162,6 @@
   </data>
   <data name="Text_5841335d26d5" xml:space="preserve">
     <value>自动备份已关闭。在进行可能需要撤销的更改前，请在“备份”中手动备份。</value>
-  </data>
-  <data name="Text_584c0b102711" xml:space="preserve">
-    <value>你的 LocalExile 文件夹中还没有游戏客户端。</value>
   </data>
   <data name="Text_5870f9bfd157" xml:space="preserve">
     <value>风暴</value>
@@ -3215,9 +3197,6 @@
   </data>
   <data name="Text_595d778513d6" xml:space="preserve">
     <value>Waypoint 仍使用此文件夹。安装向导的文件夹 {0} 已在侧边栏顶部的文件夹列表中：在那里选择它即可打开。</value>
-  </data>
-  <data name="Text_5972baef21c1" xml:space="preserve">
-    <value>你的各个 LocalExile 文件夹中的游戏客户端。在这里更改的是正在使用的文件夹。</value>
   </data>
   <data name="Text_59976865a56d" xml:space="preserve">
     <value>安装 .NET 10 SDK；可用 dotnet --list-sdks 检查</value>
@@ -3267,14 +3246,14 @@
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>联赛卡片的关联存在循环。</value>
   </data>
-  <data name="Text_5ad31b8bcf92" xml:space="preserve">
-    <value>选择要从 Steam 下载到此文件夹的版本。如果文件夹已有客户端，接下来会询问如何切换，除非已在设置中指定方式。</value>
-  </data>
   <data name="Text_5ae573789edf" xml:space="preserve">
     <value>重新设置…</value>
   </data>
   <data name="Text_5aeae0f3a80d" xml:space="preserve">
     <value>.NET 计数器：</value>
+  </data>
+  <data name="Text_5b0a0be85f80" xml:space="preserve">
+    <value>此文件夹已有这个 LocalExile 支持的所有版本。</value>
   </data>
   <data name="Text_5b18a6940649" xml:space="preserve">
     <value>再次输入密码</value>
@@ -3338,6 +3317,9 @@
   </data>
   <data name="Text_5dd4cef18a27" xml:space="preserve">
     <value>live.ps1 输出</value>
+  </data>
+  <data name="Text_5de68a8da4e2" xml:space="preserve">
+    <value>未登录 Steam。</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>模组选择适用于所有赛季。已保存的选项不代表实际加载状态。</value>
@@ -3403,6 +3385,9 @@
   <data name="Text_5fdc6c8aaff9" xml:space="preserve">
     <value>分支（{0}）</value>
   </data>
+  <data name="Text_5fdf06c21965" xml:space="preserve">
+    <value>如果没有这样的文件夹，请勾选下方的选项。之后“开始游戏”页面上的“完成设置”可以从 Steam 下载游戏。</value>
+  </data>
   <data name="Text_60013d44d694" xml:space="preserve">
     <value>仅提供此赛季已定义的模式。</value>
   </data>
@@ -3411,9 +3396,6 @@
   </data>
   <data name="Text_60540eaada37" xml:space="preserve">
     <value>LocalExile.exe：启动服务器，然后启动游戏</value>
-  </data>
-  <data name="Text_60727dbb0009" xml:space="preserve">
-    <value>这个 LocalExile 支持流放之路 {0}。此文件夹还没有的版本会使用你自己的 Steam 账号从 Steam 下载到其中。</value>
   </data>
   <data name="Text_6073ce437aaa" xml:space="preserve">
     <value>此 DepotDownloader 与 Waypoint 预期的版本不符，因此未使用。</value>
@@ -3520,6 +3502,9 @@
   <data name="Text_62a6da8735c1" xml:space="preserve">
     <value>物体</value>
   </data>
+  <data name="Text_62a7423a9239" xml:space="preserve">
+    <value>{0} 已下载。</value>
+  </data>
   <data name="Text_62b9bdf3765e" xml:space="preserve">
     <value>安装检查 · {0} 项需要注意</value>
   </data>
@@ -3568,14 +3553,14 @@
   <data name="Text_6425c4d51b31" xml:space="preserve">
     <value>· 非在此创建</value>
   </data>
+  <data name="Text_6443a33bc8c7" xml:space="preserve">
+    <value>同时会删除已下载的 {0:0.#} GB。</value>
+  </data>
   <data name="Text_646204c2d8fb" xml:space="preserve">
     <value>你的 LocalExile 文件夹</value>
   </data>
   <data name="Text_646c61108060" xml:space="preserve">
     <value>打开 Client 文件夹</value>
-  </data>
-  <data name="Text_64774b0cffbd" xml:space="preserve">
-    <value>请在打开的窗口中登录。Steam 接受登录后，该窗口会自动关闭。</value>
   </data>
   <data name="Text_64a298faf914" xml:space="preserve">
     <value>伊泽洛</value>
@@ -3783,9 +3768,6 @@
   <data name="Text_69ea40204735" xml:space="preserve">
     <value>正在关闭账号服务</value>
   </data>
-  <data name="Text_69fdcf1926ab" xml:space="preserve">
-    <value>原地更新：现有的这一个客户端变为 {0}。只下载有差异的部分，不需要额外空间，但之后这台电脑上将不再有 {1}。</value>
-  </data>
   <data name="Text_6a01b4f4e1a2" xml:space="preserve">
     <value>在赛季中管理</value>
   </data>
@@ -3821,9 +3803,6 @@
   </data>
   <data name="Text_6b43463e9003" xml:space="preserve">
     <value>删除已不再打开的拉取请求的本地分支吗？</value>
-  </data>
-  <data name="Text_6b5c34177ddf" xml:space="preserve">
-    <value>用 Steam 手机应用扫描的二维码。Waypoint 不会接触密码。</value>
   </data>
   <data name="Text_6b66c287b2d1" xml:space="preserve">
     <value>LocalExile {0} 有一个错误，会导致大多数下载的模组无法加载。请将 LocalExile 更新到 {1} 或更高版本以修复。你仍然可以在这里安装、更改和移除模组。</value>
@@ -4029,6 +4008,9 @@
   <data name="Text_71c4cf22a93b" xml:space="preserve">
     <value>跳过数据检查</value>
   </data>
+  <data name="Text_71cff9c08ae3" xml:space="preserve">
+    <value>从 Steam 下载 {0}</value>
+  </data>
   <data name="Text_71d637842972" xml:space="preserve">
     <value>游戏设置没有切换</value>
   </data>
@@ -4224,9 +4206,6 @@
   <data name="Text_77f818c944f1" xml:space="preserve">
     <value>打开两个文件夹</value>
   </data>
-  <data name="Text_77fd4638ffc1" xml:space="preserve">
-    <value>正在使用的客户端正在切换到 {0}，尚未完成，因此无法原样保留。它会在原处变为 {1}，只下载有差异的部分。</value>
-  </data>
   <data name="Text_780287165a99" xml:space="preserve">
     <value>Waypoint 退出后，游戏和服务保持运行。</value>
   </data>
@@ -4323,9 +4302,6 @@
   <data name="Text_7ac5b6d5456b" xml:space="preserve">
     <value>显示服务详情</value>
   </data>
-  <data name="Text_7ad06003b2a6" xml:space="preserve">
-    <value>正在完成被中断的删除…</value>
-  </data>
   <data name="Text_7ad35008821d" xml:space="preserve">
     <value>添加已有的文件夹…</value>
   </data>
@@ -4382,6 +4358,9 @@
   </data>
   <data name="Text_7c0189e54acf" xml:space="preserve">
     <value>打开安装向导</value>
+  </data>
+  <data name="Text_7c530d863d6f" xml:space="preserve">
+    <value>要更改此客户端，请在侧边栏中选择它所在的文件夹。</value>
   </data>
   <data name="Text_7c5cd03233bd" xml:space="preserve">
     <value>{0}：请选择 {1} 到 {2} 项</value>
@@ -4557,14 +4536,14 @@
   <data name="Text_819282fd4810" xml:space="preserve">
     <value>以“{1}”模式创建“{0}”？{2} 现有赛季和存档会保留。</value>
   </data>
-  <data name="Text_81aafeb265b4" xml:space="preserve">
-    <value>这个副本是在切换到 {0} 的中途被保留的，因此并不完整。Steam 无法为这个 LocalExile 提供该版本，所以只能删除此副本。</value>
-  </data>
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! 没有 {0} 建议：{1}</value>
   </data>
   <data name="Text_81f5df978e9d" xml:space="preserve">
     <value>已停止。已下载的内容会保留，下次将从这里继续。</value>
+  </data>
+  <data name="Text_821acaae8b95" xml:space="preserve">
+    <value>就地更新：不需要额外空间，但 {0} 会从这台电脑上移除。</value>
   </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>此联赛的父联赛链缺失或存在循环。请先恢复其定义再编辑。</value>
@@ -4580,9 +4559,6 @@
   </data>
   <data name="Text_82bf8676d099" xml:space="preserve">
     <value>Waypoint、服务器和游戏记录的内容：出现问题时可以在这里查看。</value>
-  </data>
-  <data name="Text_82c585371bb8" xml:space="preserve">
-    <value>Steam：未登录。从 Steam 获取版本需要用你的 Steam 账号登录一次，且该账号的库中要有流放之路。</value>
   </data>
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>复制发放此物品的聊天命令</value>
@@ -4628,9 +4604,6 @@
   </data>
   <data name="Text_83cfb8ea3107" xml:space="preserve">
     <value>从源码构建</value>
-  </data>
-  <data name="Text_83dc29422d3b" xml:space="preserve">
-    <value>未登录 Steam。</value>
   </data>
   <data name="Text_83e5d63b7b18" xml:space="preserve">
     <value>创建模式变体</value>
@@ -4800,6 +4773,9 @@
   <data name="Text_88fccfb10a8d" xml:space="preserve">
     <value>正在运行 {0} …</value>
   </data>
+  <data name="Text_893aee79287a" xml:space="preserve">
+    <value>Steam：已登录为 {0}</value>
+  </data>
   <data name="Text_8944f4c1333f" xml:space="preserve">
     <value>从磁盘安装模组文件夹：项目会被构建，已构建的模组或脚本会被复制。</value>
   </data>
@@ -4968,6 +4944,9 @@
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>第 2 代</value>
   </data>
+  <data name="Text_8de52cb427b1" xml:space="preserve">
+    <value>选择一个包含 PathOfExile.exe 和 Content.ggpk 的文件夹：流放之路 {0} 的独立安装。Steam 和 Epic 的安装在这里不可用。</value>
+  </data>
   <data name="Text_8e18a81993ce" xml:space="preserve">
     <value>客户端未运行</value>
   </data>
@@ -5012,6 +4991,9 @@
   </data>
   <data name="Text_8f0d1b30eba5" xml:space="preserve">
     <value>宠物</value>
+  </data>
+  <data name="Text_8f1ebfba27b1" xml:space="preserve">
+    <value>此文件夹中保留了 {0:0.#} GB 未完成的下载。</value>
   </data>
   <data name="Text_8f3bd2dddf93" xml:space="preserve">
     <value>设置区域采集</value>
@@ -5408,9 +5390,6 @@
   <data name="Text_998195e4aaa2" xml:space="preserve">
     <value>重新搜索</value>
   </data>
-  <data name="Text_998fad21d399" xml:space="preserve">
-    <value>选择这个 LocalExile 支持的版本，并从 Steam 下载到此文件夹。</value>
-  </data>
   <data name="Text_99a52df3ff3d" xml:space="preserve">
     <value>键</value>
   </data>
@@ -5514,9 +5493,6 @@
   <data name="Text_9c508bc48078" xml:space="preserve">
     <value>准备中</value>
   </data>
-  <data name="Text_9c5330fc998a" xml:space="preserve">
-    <value>替换：完整下载 {0}（{1:0.#} GB），然后删除当前使用的客户端。独立版客户端与 Steam 的文件没有任何共用部分。</value>
-  </data>
   <data name="Text_9c5499b7d628" xml:space="preserve">
     <value>更新失败：{0}</value>
   </data>
@@ -5603,6 +5579,9 @@
   </data>
   <data name="Text_9e2b60866e8b" xml:space="preserve">
     <value>正在检查源码副本…</value>
+  </data>
+  <data name="Text_9e3d43889f26" xml:space="preserve">
+    <value>Waypoint 在这里无法下载游戏。</value>
   </data>
   <data name="Text_9e471951a1b4" xml:space="preserve">
     <value>环境</value>
@@ -5726,9 +5705,6 @@
   </data>
   <data name="Text_a266fe9c4d1d" xml:space="preserve">
     <value>内存</value>
-  </data>
-  <data name="Text_a268915aee32" xml:space="preserve">
-    <value>{0} 已就位并准备就绪。关闭此窗口并点击“开始游戏”。</value>
   </data>
   <data name="Text_a2b0e1cca90c" xml:space="preserve">
     <value>重新加载此已启用的模组及依赖它的模组。</value>
@@ -6036,9 +6012,6 @@
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>停止 dev host</value>
   </data>
-  <data name="Text_aa105a875e46" xml:space="preserve">
-    <value>此客户端属于另一个 LocalExile 文件夹。要更改它，请在侧边栏中选择那个文件夹。</value>
-  </data>
   <data name="Text_aa128a84671e" xml:space="preserve">
     <value>客户端设置需要处理。请点击下方的“运行设置向导”，重新检查并刷新设置，然后再次尝试开始游戏。</value>
   </data>
@@ -6086,6 +6059,9 @@
   </data>
   <data name="Text_ab744cb0b649" xml:space="preserve">
     <value>Waypoint 无法删除旧的 LocalExile：{0}</value>
+  </data>
+  <data name="Text_ab87e80fe726" xml:space="preserve">
+    <value>请在打开的窗口中输入密码和 Steam 令牌验证码。Waypoint 看不到它们。</value>
   </data>
   <data name="Text_ab8c3af14fb6" xml:space="preserve">
     <value>最小化到托盘</value>
@@ -6330,9 +6306,6 @@
   <data name="Text_b2d54e04976a" xml:space="preserve">
     <value>客户端准备完成。</value>
   </data>
-  <data name="Text_b2f51d59c287" xml:space="preserve">
-    <value>这个副本是在切换到 {0} 的中途被保留的，因此并不完整。暂时无法读取这个 LocalExile 支持的版本：请重新打开此窗口以完成该副本。</value>
-  </data>
   <data name="Text_b2feff991def" xml:space="preserve">
     <value>使用你的 LocalExile 账号登录：在“电邮”（Email）字段中填写账号名称。关闭游戏会停止服务器。</value>
   </data>
@@ -6404,9 +6377,6 @@
   </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>滚动到每一条新行</value>
-  </data>
-  <data name="Text_b50a2f4c081f" xml:space="preserve">
-    <value>这个 LocalExile 不提供它支持的游戏版本列表，因此无法为它从 Steam 获取任何内容。LocalExile v0.5.0-beta 及更高版本提供该列表。</value>
   </data>
   <data name="Text_b588f80b6484" xml:space="preserve">
     <value>打开失败阶段的日志</value>
@@ -6618,9 +6588,6 @@
   <data name="Text_bb213b706609" xml:space="preserve">
     <value>目前没有联赛使用此模块。</value>
   </data>
-  <data name="Text_bb3fd4673d09" xml:space="preserve">
-    <value>{0} 已就位。请在“开始游戏”页面完成其设置。</value>
-  </data>
   <data name="Text_bb5e603fa102" xml:space="preserve">
     <value>接下来请选择模块并确认赛季配置。</value>
   </data>
@@ -6632,9 +6599,6 @@
   </data>
   <data name="Text_bb7f72918e71" xml:space="preserve">
     <value>你的旧 LocalExile 仍在 {0} 中。你玩过之后，“控制”部分会询问是否删除它。</value>
-  </data>
-  <data name="Text_bbaaa832f093" xml:space="preserve">
-    <value>已登录 Steam。</value>
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>无法加载设置</value>
@@ -6806,6 +6770,9 @@
   </data>
   <data name="Text_c176bcfe0c3f" xml:space="preserve">
     <value>LocalExile 暂无可下载的发行版。</value>
+  </data>
+  <data name="Text_c1879f2b1599" xml:space="preserve">
+    <value>此客户端不完整，无法使用。</value>
   </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>返回我的模组</value>
@@ -7367,9 +7334,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d239f70bf53f" xml:space="preserve">
     <value>正在检查采集依赖项</value>
   </data>
-  <data name="Text_d244fba55b73" xml:space="preserve">
-    <value>使用 Steam 应用登录…</value>
-  </data>
   <data name="Text_d24c41ae530a" xml:space="preserve">
     <value>意外错误</value>
   </data>
@@ -7580,6 +7544,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d8b8392e2c54" xml:space="preserve">
     <value>重试</value>
   </data>
+  <data name="Text_d8db81812799" xml:space="preserve">
+    <value>Steam 上没有适用于这个 LocalExile 的该版本。此副本只能删除。</value>
+  </data>
   <data name="Text_d8dcc0d28165" xml:space="preserve">
     <value>{0} 来自 {1}，不是官方模组。模组在你的电脑上以 Gateway 的权限运行：只从你信任的仓库安装。</value>
   </data>
@@ -7705,6 +7672,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_dcf6607f29a2" xml:space="preserve">
     <value>{0} 分钟前</value>
+  </data>
+  <data name="Text_dcf705148548" xml:space="preserve">
+    <value>下载大小为 {0:0.#} GB。</value>
   </data>
   <data name="Text_dd051395345d" xml:space="preserve">
     <value>剪贴板不可用。</value>
@@ -7943,6 +7913,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e33d34991e45" xml:space="preserve">
     <value>在 dotnet watch 下运行：保存的 Gateway 代码修改会在几秒内生效，游戏无需退出；热重载无法应用的修改会使 Gateway 自动重启。Auth、Patch 或共享项目的修改需要“重启服务器”。</value>
+  </data>
+  <data name="Text_e349e3c41efc" xml:space="preserve">
+    <value>此文件夹还没有游戏客户端。</value>
   </data>
   <data name="Text_e36274578842" xml:space="preserve">
     <value>{0} 不是空文件夹。请选择一个空文件夹用于下载。</value>
@@ -8328,14 +8301,14 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ee32fb834190" xml:space="preserve">
     <value>无法读取备份历史。请检查文件夹，然后尝试“刷新备份”。</value>
   </data>
-  <data name="Text_ee424662e2ba" xml:space="preserve">
-    <value>Waypoint 不再指定 Steam 账号。下载工具自己记住的登录信息会留在这台电脑上，直到 Steam 使其失效。</value>
-  </data>
   <data name="Text_ee597f010c9c" xml:space="preserve">
     <value>{0}/{1} 个服务器运行中</value>
   </data>
   <data name="Text_ee80fc3f5cc0" xml:space="preserve">
     <value>尚无存档数据库。创建第一个账号即可初始化 LocalExile。</value>
+  </data>
+  <data name="Text_ee97abb1dcc8" xml:space="preserve">
+    <value>{0} 已可以开始游戏。</value>
   </data>
   <data name="Text_ee9b6f783cc6" xml:space="preserve">
     <value>监视进程正在运行，但 Gateway 没有运行中的子进程。请打开 Gateway 输出查看构建错误。</value>
@@ -8716,6 +8689,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f91058b1dfbd" xml:space="preserve">
     <value>安装向导</value>
   </data>
+  <data name="Text_f91b77dbdf52" xml:space="preserve">
+    <value>使用这台电脑上已有的</value>
+  </data>
   <data name="Text_f938c3286fd7" xml:space="preserve">
     <value>清理</value>
   </data>
@@ -8853,6 +8829,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fc1c076ae7f5" xml:space="preserve">
     <value>{0} 个账号。</value>
+  </data>
+  <data name="Text_fc3ea4ecc38b" xml:space="preserve">
+    <value>Waypoint 无法读取这个 LocalExile 支持的版本。请重新打开此窗口。</value>
   </data>
   <data name="Text_fc5e4f92ee14" xml:space="preserve">
     <value>面向开发者：直接使用此文件夹，而不是副本。LocalExile 会修改那里的文件，而且该文件夹中的流放之路一旦更新，就可能导致这个 LocalExile 无法运行。</value>

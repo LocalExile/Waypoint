@@ -25,6 +25,10 @@ sealed class SteamSignInWindow : FormWindow
     /// <summary>The account the tool now remembers; null when the window closed without a sign-in.</summary>
     public string? Account { get; private set; }
 
+    /// <summary>The user has no Steam mobile app and asked for the tool's password prompt instead: the window that opened
+    /// this one runs it.</summary>
+    public bool UsePassword { get; private set; }
+
     public SteamSignInWindow(Window? owner, string tool, ListedBuild build, string scratch, Action<string> log)
     {
         (_tool, _build, _scratch, _log) = (tool, build, scratch, log);
@@ -44,6 +48,10 @@ sealed class SteamSignInWindow : FormWindow
         _again.Click += (_, _) => _ = RunAsync();
         var cancel = new Button { Content = L.Text("Cancel"), IsCancel = true };
         cancel.Click += (_, _) => Close();
+        var password = new Button { Content = L.Text("Sign in with a password…"), Margin = new Thickness(0, 0, 8, 0),
+            ToolTip = L.Text("Without the Steam mobile app: the download tool asks for the password and the Steam Guard code in a window of its own. Waypoint sees neither.") };
+        password.Click += (_, _) => { UsePassword = true; Close(); };
+        buttons.Children.Add(password);
         buttons.Children.Add(_again);
         buttons.Children.Add(cancel);
         root.Children.Add(buttons);

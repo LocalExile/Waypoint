@@ -69,7 +69,8 @@ public partial class FolderPicker : UserControl
         var folder = FolderList.Read(Environment.CurrentDirectory, current: true);
         CurrentIcon.Kind = IconOf(folder.Kind);
         CurrentTitle.Text = folder.Title;
-        CurrentPath.Text = FolderList.Short(folder.Path);
+        // The end of the path says which folder it is: the start is what goes when the sidebar is too narrow for it.
+        PathLine.SetPath(CurrentPath, folder.Path);
         ShowCurrentClient(folder, _client.Path == folder.Path ? _client.Version : null);
         _ = ReadCurrentClientAsync(folder);
     }
