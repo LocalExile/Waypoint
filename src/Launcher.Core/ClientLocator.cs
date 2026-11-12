@@ -19,21 +19,28 @@ public sealed record FoundClient(string Folder, ClientKind Kind, long Bytes, boo
         ClientKind.Ready => "Already prepared for LocalExile",
         ClientKind.Standalone => "Standalone client",
         _ => "Steam or Epic layout: it cannot be used",
-    }) + (Bytes > 0 ? $" · {Bytes / 1e9:0.#} GB" : "") + (Build is not null ? " · " + Build : KnownBuild == false ? " · " + L.Text("not the 3.29.3c build") : "");
+    }) + (Bytes > 0 ? $" · {Bytes / 1e9:0.#} GB" : "") + (Build is not null ? " · " + Build : KnownBuild == false ? " · " + L.Text("not a version LocalExile runs") : "");
     public bool Usable => Kind != ClientKind.Unsupported;
 }
 
 /// <param name="Searched">Where it looked, for the report when nothing is found.</param>
 public sealed record ClientSearchResult(FoundClient[] Clients, string[] Searched, bool Limited);
 
-/// <summary>Finds the player's game clients. Bounded and read-only: it never opens the game or changes a file. The server
-/// works only with one client build at a time (<see cref="Build"/>), whose executable has no version resource, so a build is
-/// recognized by its hash; the point is to warn before a copy of 70 GB, not to replace the server's own check when it makes the
-/// keys.</summary>
+/// <summary>Finds the player's game clients. Bounded and read-only: it never opens the game or changes a file. A LocalExile
+/// runs only the client builds in its own list (<see cref="LocalExileBuilds"/>), whose executables have no version resource,
+/// so a build is recognized by its hash; the point is to say which version a client is and to warn before a copy of 70 GB,
+/// not to replace the server's own check when it makes the keys.</summary>
 public static class ClientLocator
 {
-    /// <summary>The client build current LocalExile needs. LocalExile v0.2.0-beta moved to it and dropped 3.29.3b.</summary>
-    public const string Build = "3.29.3c";
+    /// <summary>The client versions the newest LocalExile runs, newest first: for a folder that has no LocalExile yet, and to
+    /// tell a folder on an older LocalExile. A folder that has a LocalExile is asked instead (<see cref="Supported"/>).
+    /// v0.2.0-beta moved to 3.29.3c and dropped 3.29.3b; v0.5.0-beta added 3.29.3d beside it.</summary>
+    public static IReadOnlyList<string> Current { get; } = ["3.29.3d", "3.29.3c"];
+
+    /// <summary>The newest of <see cref="Current"/>.</summary>
+    public static string Build => Current[0];
+
+    public static bool IsCurrent(string? build) => build is not null && Current.Contains(build);
 
     /// <summary>The last LocalExile made for an older client build: its release tag and the source commit (the head of the
     /// server's branch named after the build).</summary>
@@ -44,6 +51,8 @@ public static class ClientLocator
     /// for each executable GGG shipped under its name: a hotfix keeps the name and changes the file.</summary>
     static readonly (string Name, string Hash, long Length, OlderVersion? Older)[] Builds =
     [
+        // 3.29.3d (build 328228, GGG's patch of 2026-11-10): 3.29.3.5's code, which LocalExile runs from v0.5.0-beta.
+        ("3.29.3d", "e9ba3d31c4d922e1826ef01d02fd22178a001b29e17264b68fc2446efd41f53d", 79_394_136, null),
         // The 3.29.3c release (build 327984), then its 3.29.3.5 hotfix (build 328126), which LocalExile runs with the same code.
         ("3.29.3c", "cc8aa38345be2a837575215d2ce142ebecf7b007345843265b335ebb8ac5964c", 79_394_136, null),
         ("3.29.3c", "01a22facf36886b39bca74793c0d8c7295b1495f1625b4ebc7b23c2de32a70cf", 79_394_136, null),
@@ -54,9 +63,27 @@ public static class ClientLocator
     /// <summary>SHA-256 of the <see cref="Build"/> PathOfExile.exe as first released.</summary>
     public static string KnownExecutable => Builds.First(b => b.Name == Build).Hash;
 
+    /// <summary>Builds a LocalExile folder's own list named (<see cref="LocalExileBuilds"/>): the executable's hash and the
+    /// version it is. They are recognized like the rows above, so a build LocalExile comes to allow shows by its version
+    /// without a new Waypoint.</summary>
+    static readonly Dictionary<string, string> Learned = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Takes in a LocalExile's list. A hash Waypoint has a row for keeps that row's name.</summary>
+    public static void Learn(IEnumerable<ListedBuild> builds)
+    {
+        lock (Learned)
+            foreach (var build in builds)
+                if (!Builds.Any(b => b.Hash.Equals(build.ExecutableSha256, StringComparison.OrdinalIgnoreCase)) && Learned.TryAdd(build.ExecutableSha256, build.Version))
+                    lock (Identified) Identified.Clear();
+    }
+
     /// <summary>The original executables' fingerprints for a supported build, its hotfixes included; none for a build
     /// Waypoint does not know: unknown future builds are never repaired automatically.</summary>
-    public static string[] ExecutableHashesFor(string? build) => [.. Builds.Where(b => b.Name == build).Select(b => b.Hash)];
+    public static string[] ExecutableHashesFor(string? build)
+    {
+        lock (Learned)
+            return [.. Builds.Where(b => b.Name == build).Select(b => b.Hash), .. Learned.Where(l => l.Value == build).Select(l => l.Key.ToLowerInvariant())];
+    }
 
     /// <summary>The last LocalExile made for an older build; null for the current build or one Waypoint does not know.</summary>
     public static OlderVersion? LastVersionFor(string build) => Builds.FirstOrDefault(b => b.Name == build).Older;
@@ -85,7 +112,7 @@ public static class ClientLocator
         new[] { "PathOfExile.exe", "Game.exe" }.Select(n => Path.Combine(folder, n)).FirstOrDefault(File.Exists);
 
     /// <summary>Whether a client's executable is the <see cref="Build"/> build; null when there is none, or it cannot be read.</summary>
-    public static bool? IsKnownBuild(string folder) => Identify(folder) is { } build ? build == Build : null;
+    public static bool? IsKnownBuild(string folder) => Identify(folder) is { } build ? IsCurrent(build) : null;
 
     /// <summary>The named build of a client folder ("3.29.3b"); null when its executable is another one, missing or unreadable.</summary>
     public static string? BuildOf(string folder) => BuildOverride is { } read ? read(folder) : Identify(folder) is { Length: > 0 } build ? build : null;
@@ -94,21 +121,28 @@ public static class ClientLocator
     /// real build's hash).</summary>
     public static Func<string, string?>? BuildOverride { get; set; }
 
-    /// <summary>Whether build <paramref name="a"/> is older than <paramref name="b"/>; false when either is not one Waypoint knows.</summary>
-    public static bool IsOlder(string a, string b)
-    {
-        int ia = Array.FindIndex(Builds, x => x.Name == a), ib = Array.FindIndex(Builds, x => x.Name == b);
-        return ia >= 0 && ib >= 0 && ia > ib;
-    }
+    /// <summary>Whether version <paramref name="a"/> is older than <paramref name="b"/> ("3.29.3b" before "3.29.3c" before
+    /// "3.30.0"); false when either does not read as a version of the game.</summary>
+    public static bool IsOlder(string a, string b) => Parts(a) is { } x && Parts(b) is { } y && x.CompareTo(y) < 0;
+
+    static (int, int, int, int)? Parts(string version) =>
+        Regex.Match(version, @"\A(\d{1,4})\.(\d{1,4})\.(\d{1,4})([a-z]?)\z") is { Success: true } m
+            ? (int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value), m.Groups[4].Length == 0 ? 0 : m.Groups[4].Value[0] - 'a' + 1)
+            : null;
 
     static readonly Dictionary<(string, long, DateTime), string> Identified = [];
 
+    /// <summary>Anything this large is a game executable; the official launcher that can sit under the same name is well
+    /// under a megabyte. (LocalExile's own check draws the same line.)</summary>
+    const long GameExecutableSize = 16 << 20;
+
     /// <summary>The build's name, "" for an executable of no known build, null when there is none or it cannot be read. A
-    /// checkout's PathOfExile.exe can be the small launcher, so Game.exe is read too. Remembered by path, size and time.</summary>
+    /// checkout's PathOfExile.exe can be the small launcher, so Game.exe is read too, and a Steam install's game is
+    /// PathOfExileSteam.exe. Remembered by path, size and time.</summary>
     static string? Identify(string folder)
     {
         bool any = false;
-        foreach (string name in new[] { "PathOfExile.exe", "Game.exe" })
+        foreach (string name in new[] { "PathOfExile.exe", "PathOfExileSteam.exe", "Game.exe" })
         {
             string executable = Path.Combine(folder, name);
             try
@@ -122,11 +156,15 @@ public static class ClientLocator
                 if (build is null)
                 {
                     build = "";
-                    if (Builds.Any(b => b.Length == file.Length))
+                    bool learned;
+                    lock (Learned) learned = Learned.Count > 0;
+                    if (Builds.Any(b => b.Length == file.Length) || learned && file.Length >= GameExecutableSize)
                     {
                         using var stream = new FileStream(executable, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
                         string hash = Convert.ToHexStringLower(SHA256.HashData(stream));
-                        build = Builds.FirstOrDefault(b => b.Hash == hash).Name ?? "";
+                        build = Builds.FirstOrDefault(b => b.Hash == hash).Name;
+                        if (build is null) lock (Learned) build = Learned.GetValueOrDefault(hash);
+                        build ??= "";
                     }
                     lock (Identified) Identified[key] = build;
                 }
@@ -137,9 +175,35 @@ public static class ClientLocator
         return any ? "" : null;
     }
 
-    /// <summary>The client build a LocalExile folder needs: a release's release.json says; a checkout's release script names the
-    /// one its release would be made for (a checkout pinned to an older version names its own). Null when neither says.</summary>
+    /// <summary>The client versions a LocalExile folder runs, newest first: its own list when it has one
+    /// (<see cref="LocalExileBuilds"/>, whose builds are then recognized here too), and otherwise the one version its
+    /// release.json or release script names. Empty when nothing says.</summary>
+    public static IReadOnlyList<string> Supported(string folder)
+    {
+        if (LocalExileBuilds.Of(folder) is { Count: > 0 } listed)
+        {
+            Learn(listed);
+            return [.. listed.Select(b => b.Version).Distinct().OrderByDescending(v => Parts(v) ?? default)];
+        }
+        return Named(folder) is { } one ? [one] : [];
+    }
+
+    /// <summary>Whether the folder's LocalExile runs a client of this version.</summary>
+    public static bool Supports(string folder, string build) => Supported(folder).Contains(build);
+
+    /// <summary>The client version to hold a LocalExile folder's client against: the version of the client it has when its
+    /// LocalExile runs that one, and otherwise the newest it runs. Null when nothing says what it runs.</summary>
     public static string? Needed(string folder)
+    {
+        var supported = Supported(folder);
+        if (supported.Count == 0) return null;
+        string client = Path.Combine(folder, "Client");
+        return Directory.Exists(client) && BuildOf(client) is { } have && supported.Contains(have) ? have : supported[0];
+    }
+
+    /// <summary>The one client build a LocalExile folder names: a release's release.json; a checkout's release script names the
+    /// one its release would be made for (a checkout pinned to an older version names its own). Null when neither says.</summary>
+    static string? Named(string folder)
     {
         try
         {

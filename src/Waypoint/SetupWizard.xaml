@@ -120,6 +120,9 @@
                     <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
                         <TextBlock x:Name="ClientNote" Style="{StaticResource Caption}" Margin="0,0,0,6" />
                         <CheckBox x:Name="ShareClient" Visibility="Collapsed" Margin="0,0,0,6" Checked="ShareChanged" Unchecked="ShareChanged" />
+                        <CheckBox x:Name="LinkClient" Visibility="Collapsed" Margin="0,0,0,6" Checked="ShareChanged" Unchecked="ShareChanged">
+                            <TextBlock TextWrapping="Wrap" Text="{l:Loc 'For developers: use this folder itself instead of a copy. LocalExile changes files there, and a Path of Exile update in that folder can break this LocalExile.'}" />
+                        </CheckBox>
                         <WrapPanel>
                             <Button Content="{l:Loc 'Browse…'}" Click="BrowseClient" />
                             <Button x:Name="SearchAgain" Content="{l:Loc 'Search again'}" Click="SearchClientsClicked" />

@@ -177,6 +177,7 @@ public partial class SetupWizard : Window
         ExistingChoice.Content = L.Text("Use a LocalExile folder I already have");
         BrowseExisting.Content = L.Text("Browse…");
         ClientTitle.Text = L.Text("Your game client");
+        LinkClient.Content = new TextBlock { Text = L.Text("For developers: use this folder itself instead of a copy. LocalExile changes files there, and a Path of Exile update in that folder can break this LocalExile."), TextWrapping = TextWrapping.Wrap };
         BrowseClientButton.Content = L.Text("Browse…");
         SearchAgain.Content = L.Text("Search again");
         NoClient.Content = L.Text("Set up the rest now, and add the client later");
@@ -585,8 +586,13 @@ public partial class SetupWizard : Window
 
     /// <summary>The client build to set up for: the folder's own; for a new one the current build when a client of it was
     /// found, and only when none was, an older build a found client has (its last LocalExile is set up, <see cref="OlderToSetUp"/>).</summary>
-    string NeededClient => FolderNeeds ?? (_clients.Any(c => c.Usable && c.Build == ClientLocator.Build) ? ClientLocator.Build
-        : _clients.Where(c => c.Usable && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build);
+    string NeededClient => FolderNeeds ?? ClientLocator.Current.FirstOrDefault(version => _clients.Any(c => c.Usable && c.Build == version))
+        ?? _clients.Where(c => c.Usable && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build;
+
+    /// <summary>Whether the LocalExile being set up runs a client of this version. A folder that has a LocalExile says so
+    /// itself (<see cref="ClientLocator.Supported"/>); one that has none yet gets the newest, which runs every current version.</summary>
+    bool Runs(string build) => FolderNeeds is not null && ChosenCheckout() is { } folder ? ClientLocator.Supports(folder, build)
+        : build == NeededClient || ClientLocator.IsCurrent(build) && ClientLocator.IsCurrent(NeededClient);
 
     /// <summary>With a client of an older build chosen: that build, whose last LocalExile is set up instead of the newest. For a
     /// new folder, and for a source copy that needs a newer client than any found (<see cref="CanGoBackFor"/>).</summary>
@@ -597,11 +603,11 @@ public partial class SetupWizard : Window
     /// older one the player has, so that nobody is left without a version to play. A release cannot go back in place.</summary>
     bool CanGoBackFor(string build) => FolderNeeds is { } needs && ChosenCheckout() is { } folder && !LocalExileReleases.IsInstall(folder)
         && RepositoryDiscovery.IsLocalExile(folder) && ClientLocator.IsOlder(build, needs) && ClientLocator.LastVersionFor(build) is not null
-        && !_clients.Any(c => c.Usable && c.Build == needs);
+        && !_clients.Any(c => c.Usable && c.Build is { } found && Runs(found));
 
     /// <summary>A client of a known build other than the one needed cannot be used: it would fail at the login. One of a build
     /// Waypoint does not know is the player's call (<see cref="ClientWarning"/>).</summary>
-    bool Fits(FoundClient client) => client.Build is not { } build || build == NeededClient || CanGoBackFor(build);
+    bool Fits(FoundClient client) => client.Build is not { } build || Runs(build) || CanGoBackFor(build);
 
     static bool HasClient(string? checkout) =>
         checkout is not null && ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone;
@@ -684,6 +690,7 @@ public partial class SetupWizard : Window
         var client = ClientList.SelectedItem as FoundClient;
         _sharedKeys = null;
         ShareClient.IsVisible = false;
+        LinkClient.IsVisible = UsingRelease && client is not null && _settings.Developer;
         if (client is not null) ClientNote.Text = ClientWarning(client);
         UpdateButtons();
         if (UsingRelease || client is not { Kind: ClientKind.Ready } || ChosenCheckout() is not { } checkout) return;
@@ -705,6 +712,10 @@ public partial class SetupWizard : Window
     /// <summary>The chosen client is shared through a link, with the keys of this folder, instead of copied.</summary>
     bool Sharing => _sharedKeys is not null && ShareClient.IsChecked == true;
 
+    /// <summary>For developers only, as LocalExile's own <c>--client-mode link</c> is: the release's client is a link to the
+    /// chosen folder instead of a copy of it. Never offered without Developer Mode.</summary>
+    bool Linking => _settings.Developer && LinkClient.IsChecked == true;
+
     /// <summary>A wrong client only fails later, at the keys, after a long copy: this says so now. It stays the player's call,
     /// because a build Waypoint does not know may be one a newer server supports.</summary>
     string ClientWarning(FoundClient client)
@@ -719,8 +730,8 @@ public partial class SetupWizard : Window
             return (FolderNeeds is null
                 ? L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release)
                 : L.Text("Only a {0} client was found, so this copy moves to the last LocalExile made for it.", chosen)) + " " + ClientUpdate.OlderNoteFor(chosen);
-        if (client.KnownBuild == false && client.Build is null) return L.Text("This is not the 3.29.3c build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
-        if (Sharing) return "";
+        if (client.KnownBuild == false && client.Build is null) return L.Text("Waypoint does not know this as a version LocalExile runs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
+        if (Sharing || Linking) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining
             ? L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9) : "";
@@ -868,7 +879,7 @@ public partial class SetupWizard : Window
     async Task PrepareReleaseAsync(string folder, string? client, Action<string> detail, CancellationToken stop)
     {
         List<string> arguments = ["setup"];
-        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", "copy"]);
+        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", Linking ? "link" : "copy"]);
         string? password = null;
         if (AccountProblem() is null)
         {

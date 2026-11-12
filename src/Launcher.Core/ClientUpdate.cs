@@ -3,10 +3,11 @@ using System.Text.RegularExpressions;
 namespace Launcher.Core;
 
 /// <summary>
-/// LocalExile moves to a new game client now and then (v0.2.0-beta: 3.29.3b to 3.29.3c), and a folder whose client and
-/// LocalExile are of different builds cannot log in. The rule: a player who has a client of the build current LocalExile needs
-/// plays on it; one who has only an older client keeps the last LocalExile made for it, with a quiet note that it will not
-/// last. Waypoint looks when a folder is about to start the game (Play), at that folder's
+/// LocalExile moves to a new game client now and then (v0.2.0-beta: 3.29.3b to 3.29.3c), and a folder whose client is no
+/// version its LocalExile runs cannot log in. A LocalExile can run several versions at once (v0.5.0-beta: 3.29.3c and
+/// 3.29.3d), and which ones is its own to say (<see cref="ClientLocator.Supported"/>): a client of any of them fits. The
+/// rule: a player who has a client of a version current LocalExile runs plays on it; one who has only an older client keeps
+/// the last LocalExile made for it, with a quiet note that it will not last. Waypoint looks when a folder is about to start the game (Play), at that folder's
 /// client and, for a client of another build, at the usual places (<see cref="FindClient"/>), never at every client on the PC,
 /// and settles what fits before anything starts (<see cref="Kind"/>). A move is asked once (<see cref="AskMove"/>) and the
 /// answer kept for the folder while Waypoint runs. A client of a build Waypoint does not know is left to LocalExile's own check.
@@ -52,28 +53,52 @@ public static class ClientUpdate
     public static Plan? Check(string folder, bool lookForNewer = false, CancellationToken stop = default, Func<string, CancellationToken, string?>? find = null)
     {
         find ??= FindClient;
-        if (ClientLocator.Needed(folder) is not { } need) return null;
+        // Every version this folder's LocalExile runs, newest first: a client of any of them fits.
+        var supported = ClientLocator.Supported(folder);
+        if (supported.Count == 0) return null;
+        string need = supported[0], oldest = supported[^1];
+        (string Version, string Folder)? FindAmong(IEnumerable<string> versions)
+        {
+            foreach (string version in versions)
+                if (find(version, stop) is { } at) return (version, at);
+            return null;
+        }
         string client = Path.Combine(folder, "Client");
         string? have = Directory.Exists(client) ? ClientLocator.BuildOf(client) : null;
         if (have is null)
         {
             // No client yet (or none Waypoint knows): only a player with nothing but an older client needs a word here.
-            if (Directory.Exists(client) || find(need, stop) is not null) return null;
-            foreach (string older in ClientLocator.OlderBuilds.Where(b => ClientLocator.IsOlder(b, need)))
+            if (Directory.Exists(client) || FindAmong(supported) is not null) return null;
+            foreach (string older in ClientLocator.OlderBuilds.Where(b => ClientLocator.IsOlder(b, oldest)))
                 if (find(older, stop) is { } olderClient)
                     return For(Kind.UseOlder, folder, older, need, olderClient, ClientLocator.LastVersionFor(older));
             return null;
         }
-        if (ClientLocator.IsOlder(have, need))
-            return find(need, stop) is { } found
-                ? For(Kind.Replace, folder, have, need, found)
+        if (supported.Contains(have))
+        {
+            // It fits. A folder still on a LocalExile made for an older client is told when a current client is on the PC.
+            if (lookForNewer && !supported.Any(ClientLocator.IsCurrent) && FindAmong(ClientLocator.Current) is { } newer)
+                return For(Kind.UpdateLocalExile, folder, newer.Version, have, newer.Folder);
+            return null;
+        }
+        if (ClientLocator.IsOlder(have, oldest))
+            return FindAmong(supported) is { } found
+                ? For(Kind.Replace, folder, have, found.Version, found.Folder)
                 : ClientLocator.LastVersionFor(have) is { } last ? For(Kind.UseOlder, folder, have, need, null, last) : null;
         if (ClientLocator.IsOlder(need, have))
             return For(Kind.UpdateLocalExile, folder, have, need);
-        if (lookForNewer && ClientLocator.IsOlder(need, ClientLocator.Build) && find(ClientLocator.Build, stop) is { } newer)
-            return For(Kind.UpdateLocalExile, folder, ClientLocator.Build, need, newer);
+        // A version between two this LocalExile runs: LocalExile's own check has the last word.
         return null;
     }
+
+    /// <summary>The version of the older client a folder's LocalExile was made for, when it runs none of the current ones
+    /// (<see cref="ClientLocator.Current"/>); null for a folder on a current LocalExile, or one that does not say.</summary>
+    public static string? OlderVersionOf(string folder) =>
+        ClientLocator.Supported(folder) is { Count: > 0 } supported && !supported.Any(ClientLocator.IsCurrent) ? supported[0] : null;
+
+    /// <summary>A quick look for a client of any version current LocalExile runs, the newest first; its folder, or null.</summary>
+    public static string? FindCurrent(CancellationToken stop = default) =>
+        ClientLocator.Current.Select(version => FindClient(version, stop)).FirstOrDefault(folder => folder is not null);
 
     /// <summary>A plan with what the folder's own client is: a link or a copy, where, and how big.</summary>
     static Plan For(Kind kind, string folder, string have, string need, string? found = null, ClientLocator.OlderVersion? older = null)
@@ -153,8 +178,7 @@ public static class ClientUpdate
 
     /// <summary>The quiet note for a folder on a LocalExile made for an older client than current LocalExile's: null when it is
     /// on the current one. Not a warning: the older version still works, it is only not kept up.</summary>
-    public static string? OlderNote(string folder) =>
-        ClientLocator.Needed(folder) is { } need && ClientLocator.IsOlder(need, ClientLocator.Build) ? OlderNoteFor(need) : null;
+    public static string? OlderNote(string folder) => OlderVersionOf(folder) is { } older ? OlderNoteFor(older) : null;
 
     public static string OlderNoteFor(string build) =>
         L.Text("LocalExile now uses Path of Exile {0}. When you can, move to it: versions for {1} won't be offered after 3.30 comes out.", ClientLocator.Build, build);

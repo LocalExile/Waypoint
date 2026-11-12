@@ -38,6 +38,8 @@
                     Height="52" MinWidth="200" Padding="40,0" Margin="0" FontSize="18" />
             <ProgressBar x:Name="Working" Height="4" Width="260" IsIndeterminate="True" Visibility="Collapsed" />
             <TextBlock x:Name="Note" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,18,0,0" Visibility="Collapsed" />
+            <!-- With the notice that the client is a link to the user's own game folder (OwnClient.Notice). -->
+            <Button x:Name="OwnCopyLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Make a copy…'}" Margin="0,8,0,0" Click="OwnCopyClicked" Visibility="Collapsed" />
             <Button x:Name="DetailsLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'See what happened'}" Margin="0,8,0,0" Click="DetailsClicked" />
             <Button x:Name="StopLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Stop playing'}" Margin="0,18,0,0" Click="StopClicked" />
             <!-- Characters left in the source copy this user came from, offered when they fit (Editions.BringToReleaseAsync).

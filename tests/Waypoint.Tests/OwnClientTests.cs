@@ -2,8 +2,9 @@ using System.Diagnostics;
 
 namespace Waypoint.Tests;
 
-/// <summary>A release that runs from the user's own Path of Exile folder gets a copy of its own (<see cref="OwnClient"/>): the
-/// link works until a whole copy takes its place, and the folder it led to is only read.</summary>
+/// <summary>A release whose client is a link to the user's own Path of Exile folder is told so in LocalExile's words, and can
+/// be given a copy of its own on the user's word (<see cref="OwnClient"/>): the link works until a whole copy takes its
+/// place, and the folder it led to is only read.</summary>
 [Collection(nameof(ClientUpdateTests))]
 public class OwnClientTests : IDisposable
 {
@@ -73,10 +74,10 @@ public class OwnClientTests : IDisposable
         Assert.True(plan.HasSpace);
         Assert.Contains(plan.Copy.Files, f => f.Target.EndsWith("Game.patched.exe", StringComparison.OrdinalIgnoreCase));
         Assert.DoesNotContain(plan.Copy.Files, f => f.Source.Contains(@"\logs\", StringComparison.OrdinalIgnoreCase));
+        // The standing line is LocalExile's own warning, with the folder the link leads to.
+        Assert.StartsWith($"Client is a link to {plan.Source}, not a copy. LocalExile changes files in that folder, and a Path of Exile update there can break this LocalExile.", OwnClient.Notice(plan));
         var (message, details) = OwnClient.Text(plan);
-        Assert.Contains("no longer supported", message);
-        Assert.Contains("the game does not start", message);
-        Assert.DoesNotContain("Play anyway", message);
+        Assert.Contains("The link works until the copy is whole", message);
         Assert.Contains(Retail, details);
         Assert.Contains(Client, details);
     }
@@ -84,12 +85,16 @@ public class OwnClientTests : IDisposable
     [Fact]
     public void A_link_to_another_LocalExiles_client_is_left_alone()
     {
-        string release = Path.Combine(_top, "Other release");
-        MakeClient(Path.Combine(release, "Client"));
-        File.WriteAllText(Path.Combine(release, LocalExileReleases.Launcher), "");
-        File.WriteAllText(Path.Combine(release, "release.json"), """{"version":"0.4.3-beta"}""");
-        Junction(Client, Path.Combine(release, "Client"));
-        Assert.Null(OwnClient.Check(Folder));
+        // LocalExile's own rule for its warning: the folder above the client holds a release.json or a GameServer.slnx.
+        foreach (string marker in new[] { "release.json", "GameServer.slnx" })
+        {
+            string other = Path.Combine(_top, "Other " + marker);
+            MakeClient(Path.Combine(other, "Client"));
+            File.WriteAllText(Path.Combine(other, marker), "{}");
+            Junction(Client, Path.Combine(other, "Client"));
+            Assert.Null(OwnClient.Check(Folder));
+            Directory.Delete(Client);
+        }
     }
 
     [Fact]
@@ -213,32 +218,30 @@ public class OwnClientTests : IDisposable
     }
 
     [Fact]
-    public void With_the_room_there_is_no_playing_on_without_the_copy()
+    public void The_copy_is_asked_and_only_Copy_now_agrees()
     {
         Junction(Client, Retail);
         var plan = OwnClient.Check(Folder)!;
         string[]? shown = null;
-        Assert.Equal(OwnClient.Answer.Copy, OwnClient.Ask(plan, (_, _, _, buttons) => { shown = buttons; return 0; }, _ => { }));
+        Assert.True(OwnClient.Ask(plan, (_, _, _, buttons) => { shown = buttons; return 0; }, _ => { }));
         Assert.Equal(["Copy now", "Open folder", "Cancel"], shown!);
-        // The last button, and a box closed without an answer, start nothing.
-        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => 2, _ => { }));
-        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => -1, _ => { }));
+        // The last button, and a box closed without an answer, change nothing.
+        Assert.False(OwnClient.Ask(plan, (_, _, _, _) => 2, _ => { }));
+        Assert.False(OwnClient.Ask(plan, (_, _, _, _) => -1, _ => { }));
     }
 
     [Fact]
-    public void Without_the_room_playing_on_is_allowed_and_says_what_a_game_update_can_do()
+    public void Without_the_room_it_only_tells()
     {
         Junction(Client, Retail);
         var plan = OwnClient.Check(Folder)! with { Free = 1000 };
         Assert.False(plan.HasSpace);
         string[]? shown = null;
         string? said = null;
-        Assert.Equal(OwnClient.Answer.PlayAnyway, OwnClient.Ask(plan, (_, message, _, buttons) => { shown = buttons; said = message; return 0; }, _ => { }));
-        Assert.Equal(["Play anyway", "Open folder", "Cancel"], shown!);
+        Assert.False(OwnClient.Ask(plan, (_, message, _, buttons) => { shown = buttons; said = message; return 0; }, _ => { }));
+        Assert.Equal(["OK", "Open folder"], shown!);
         Assert.Contains("too full", said);
-        Assert.Contains("a Path of Exile update in that folder can break this LocalExile", said);
-        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => 2, _ => { }));
-        Assert.Equal(OwnClient.Answer.Cancel, OwnClient.Ask(plan, (_, _, _, _) => -1, _ => { }));
+        Assert.Contains("nothing changes", said);
     }
 
     [Fact]
@@ -248,56 +251,49 @@ public class OwnClientTests : IDisposable
         var plan = OwnClient.Check(Folder)!;
         var answers = new Queue<int>([1, 0]);
         string? opened = null;
-        Assert.Equal(OwnClient.Answer.Copy, OwnClient.Ask(plan, (_, _, _, _) => answers.Dequeue(), path => opened = path));
+        Assert.True(OwnClient.Ask(plan, (_, _, _, _) => answers.Dequeue(), path => opened = path));
         Assert.Equal(Retail, opened, StringComparer.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public async Task Cancel_starts_nothing_and_Play_anyway_starts_from_the_link_and_both_are_asked_again()
+    public async Task Without_the_users_word_nothing_changes()
     {
         Junction(Client, Retail);
-        int asked = 0;
-        var result = await OwnClient.EnsureAsync(Folder, _ => { asked++; return OwnClient.Answer.Cancel; }, null, Hold, default);
-        Assert.Equal(OwnClient.Outcome.Cancelled, result.Outcome);
-        Assert.NotNull(result.Plan);
-        result = await OwnClient.EnsureAsync(Folder, _ => { asked++; return OwnClient.Answer.PlayAnyway; }, null, Hold, default);
+        var result = await OwnClient.MakeCopyAsync(Folder, _ => false, null, Hold, default);
         Assert.Equal(OwnClient.Outcome.None, result.Outcome);
         Assert.NotNull(result.Plan);
-        Assert.Equal(2, asked);
         Assert.True(IsLink(Client));
         Assert.False(Directory.Exists(Copy));
-        Assert.Contains("Not supported", OwnClient.Notice);
     }
 
     [Fact]
     public async Task Copy_now_moves_and_a_busy_folder_or_a_failure_leaves_the_link()
     {
         Junction(Client, Retail);
-        var busy = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, _ => Task.FromResult(false), default);
+        var busy = await OwnClient.MakeCopyAsync(Folder, _ => true, null, _ => Task.FromResult(false), default);
         Assert.Equal(OwnClient.Outcome.Failed, busy.Outcome);
         Assert.True(IsLink(Client));
 
         // The copy cannot be written: a file stands where its folder would be.
         File.WriteAllText(Copy, "in the way");
-        var failed = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, Hold, default);
+        var failed = await OwnClient.MakeCopyAsync(Folder, _ => true, null, Hold, default);
         Assert.Equal(OwnClient.Outcome.Failed, failed.Outcome);
         Assert.NotNull(failed.Reason);
         Assert.True(IsLink(Client));
         Assert.True(File.Exists(Path.Combine(Client, "Content.ggpk")));
         Assert.Contains(Retail, OwnClient.FailedText(failed.Plan!, failed.Reason!));
-        Assert.Contains("starts from there this time", OwnClient.FailedText(failed.Plan!, failed.Reason!));
         File.Delete(Copy);
 
         using var stop = new CancellationTokenSource();
         stop.Cancel();
-        var stopped = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, Hold, stop.Token);
+        var stopped = await OwnClient.MakeCopyAsync(Folder, _ => true, null, Hold, stop.Token);
         Assert.Equal(OwnClient.Outcome.Stopped, stopped.Outcome);
         Assert.True(IsLink(Client));
 
-        var moved = await OwnClient.EnsureAsync(Folder, _ => OwnClient.Answer.Copy, null, Hold, default);
+        var moved = await OwnClient.MakeCopyAsync(Folder, _ => true, null, Hold, default);
         Assert.Equal(OwnClient.Outcome.Moved, moved.Outcome);
         Assert.False(IsLink(Client));
-        Assert.Equal(OwnClient.Outcome.None, (await OwnClient.EnsureAsync(Folder, _ => throw new InvalidOperationException("asked"), null, Hold, default)).Outcome);
+        Assert.Equal(OwnClient.Outcome.None, (await OwnClient.MakeCopyAsync(Folder, _ => throw new InvalidOperationException("asked"), null, Hold, default)).Outcome);
     }
 
     [Fact]

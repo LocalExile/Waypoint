@@ -157,8 +157,12 @@ It needs the .NET 10 Desktop Runtime, which the .NET 10 SDK installs on Windows.
 ### The server folder
 
 The folder Waypoint works on is at the top of the sidebar, under its name: what it is (**Release 0.3.0-beta**, or
-**Source, main** for a source copy and its branch) over its path. A click opens the list of the LocalExile folders Waypoint
-knows, and a click on one starts Waypoint again on it ([Copies and changing folder](#copies-and-changing-folder)).
+**Source, main** for a source copy and its branch) over its path, and under that the version of its game client
+(**Path of Exile 3.29.3d**) once it is read. A click opens the list of the LocalExile folders Waypoint knows, each with its
+client's version beside its name, and a click on one starts Waypoint again on it. The version is the one the folder's own
+LocalExile gives that build ([Game client builds](#game-client-builds)); a folder with no client, or a client of a build
+nothing names, shows none. A release's Play page says the same beside LocalExile's version. A click on a folder starts
+Waypoint again on it ([Copies and changing folder](#copies-and-changing-folder)).
 **Add a folder you already have…** under the list takes a checkout or a release install that is already on this PC.
 **Change folder…** on a release's Versions and **Change…** on Control do the same. **Set up a new copy…** in the list, on
 Control and on a release's Versions opens the setup guide on its source route, which clones LocalExile with git into a
@@ -619,8 +623,9 @@ Waypoint still needs a checkout, so the plain chooser follows.
 
 Its second page chooses the route. **The ready-to-play release**, the default, asks for a new or empty folder (or an existing
 install), the client, and an account when the install has no saves. Its run is two steps: the zip, as an update does it, then
-`LocalExile.exe setup --json`, shown by its events' stage and progress. The client is always copied (`--client-mode copy`): the guide no
-longer offers to run a release from the chosen folder itself ([A release's own client](#a-releases-own-client)). A stop waits out a step that writes the client or the keys. A `needs-input` answer returns to the page that gives
+`LocalExile.exe setup --json`, shown by its events' stage and progress. The client is copied (`--client-mode copy`), as LocalExile's own launcher
+does it; only with Developer Mode on does the page offer to link the chosen folder instead
+([A client linked to the user's game](#a-client-linked-to-the-users-game)). A stop waits out a step that writes the client or the keys. A `needs-input` answer returns to the page that gives
 that option, and the run starts again from where it was. **The source code** is everything below.
 
 Until **Start setup** it only looks. It checks .NET 10, Git, Python and Node (a missing one has a button for its download page,
@@ -644,15 +649,27 @@ or a source copy on its own branch `waypoint-3.29.3b` at the head of the server'
 
 ### Game client builds
 
-LocalExile works with one Path of Exile build at a time. v0.2.0-beta moved from 3.29.3b to **3.29.3c**: a 3.29.3b client no
-longer logs in to it, and v0.1.0-beta (the server's `3.29.3b` branch) is the last LocalExile for 3.29.3b. `ClientLocator.Builds`
-holds each build Waypoint knows (the SHA-256 and size of its `PathOfExile.exe`, and for an older build its last release and
-commit), with a row for each executable GGG shipped under the build's name: the 3.29.3.5 hotfix is still 3.29.3c, with
-another `PathOfExile.exe`, and LocalExile runs both with the same code. A hotfix Waypoint has no row for shows as "not
-the 3.29.3c build" in the setup guide, which warns before the copy and lets the player go on. `ClientLocator.Needed` reads which build a folder's LocalExile needs (a release's `release.json`, a checkout's
-`scripts/release/build-release.ps1`), so a folder pinned to an older version keeps its own.
+**Which client versions a LocalExile runs is that LocalExile's to say**, so that the two never disagree. A release answers
+`LocalExile.exe builds --json` (from v0.5.0-beta: one `build` event per allowed build, with its version, its name, the
+SHA-256 of its unpatched executable, and its Steam index and manifests), and a source copy's list is its
+`src/GameServer.Core/Protocol/ClientBuilds.cs` (`LocalExileBuilds`, asked once per file and remembered until the file changes).
+`ClientLocator.Supported` gives a folder's versions, newest first; the builds a list names are recognized from then on by
+their executable's hash (`ClientLocator.Learn`), so a build LocalExile comes to allow shows by its version without a new
+Waypoint. A LocalExile that cannot say (a release before v0.5.0-beta, an older checkout) runs the one version its
+`release.json` or `scripts/release/build-release.ps1` names, and a release before the command is never asked.
 
-The rule: a player who has a 3.29.3c client plays on 3.29.3c; one who has only 3.29.3b keeps the last LocalExile for it. Waypoint
+LocalExile moves to a new client now and then. v0.2.0-beta moved from 3.29.3b to **3.29.3c**: a 3.29.3b client no longer logs
+in to it, and v0.1.0-beta (the server's `3.29.3b` branch) is the last LocalExile for 3.29.3b. v0.5.0-beta runs **3.29.3c and
+3.29.3d** side by side: a client of either fits. `ClientLocator.Builds` holds the builds Waypoint knows without asking (the
+SHA-256 and size of each `PathOfExile.exe`, and for an older build its last release and commit), with a row for each
+executable GGG shipped under a version's name: the 3.29.3.5 hotfix is still 3.29.3c. They serve the folders that cannot say,
+and `ClientLocator.Current` names the versions the newest LocalExile runs, for a folder that has no LocalExile yet. A client
+of no build that a list or a row names shows as "not a version LocalExile runs" in the setup guide, which warns before the
+copy and lets the player go on. `ClientLocator.Needed` is the version a folder's client is held against: its own when its
+LocalExile runs that one, and otherwise the newest it runs.
+
+The rule: a player who has a client of a version current LocalExile runs (3.29.3c or 3.29.3d) plays on it; one who has only
+3.29.3b keeps the last LocalExile for it. Waypoint
 looks when a folder is about to start the game (Play, and Control's Play or Start game; not Start servers, a restart or a stop).
 It looks at that folder's client and, when it matters, takes a quick
 look (two seconds: the player's other LocalExile folders and the usual places first, a plain client before one another LocalExile
@@ -768,44 +785,41 @@ under Proton, and Next waits until it is found. The source route's tools include
 The client's folder goes to `LocalExile.exe` as a `Z:\` path: Proton gives the install a drive letter of its own, so an
 unqualified Unix path would land on that drive, while `Z:` is the root in every prefix.
 
-### A release's own client
+### A client linked to the user's game
 
-LocalExile's own setup can link a release's `Client` to the folder it was given instead of copying it (`--client-mode link`),
-and the guide used to offer that as "Use this folder itself instead of a copy". Such a release runs from the user's own Path
-of Exile folder: LocalExile writes `Game.exe`, `Game.patched.exe` and the login list there, and a game update in that folder
-leaves LocalExile without the client it needs. The guide no longer offers it, and running that way is not supported any
-more: a release that was set up so is told on its Play page (`OwnClient.Notice`), and Play gives it a copy of its own before
-the game starts (`OwnClient`, `src/Launcher.Core/OwnClient.cs`). With the room for the copy there is no playing on without
-it. Only a user whose drive is too full may play on from the link, because a refusal would leave them no way to play:
+LocalExile's launcher always copies the client. Its `--client-mode link` makes `Client` a link to the folder it was given
+instead; that is for developers, and neither `LocalExile.exe` nor Waypoint offers it to anyone else. A release linked to the
+user's own Path of Exile folder runs from it: LocalExile writes `Game.exe`, `Game.patched.exe` and the login list there, and
+the game data is shared, so a game update in that folder can break the install. Waypoint follows LocalExile in each part:
 
-- **When**: on a release's Play, after the build check above found that the client fits, with nothing running. Only when
-  `Client` is a link to a folder with a client that is not another LocalExile folder's `Client` (a shared client is that
-  folder's, and stays), and the release is not inside the folder the link leads to. A source copy is never asked.
-- **The question**, on every Play: that this is no longer supported and why, then a box with both folders (the user's: only
-  read; the copy and its size), **Copy now**, **Open folder** and **Cancel**. Cancel changes nothing and starts nothing.
-  Enter and Esc press Cancel, so a box that opens while its user types cannot start the copy by accident.
-- **Without the room for the copy** (what is left to copy and 2 GB more) the box says so, with the two numbers, and that a
-  Path of Exile update in that folder can break this LocalExile; its buttons are **Play anyway**, **Open folder** and
-  **Cancel**. Play anyway starts the game from the link as before, and the next Play asks again.
-- **A copy that fails** is not the user's doing: the box says why, the game starts from the link this time, and the next
-  Play tries again.
-- **The copy** goes into `.waypoint-new-client` beside the link, with the resumable copy the guide uses, the patched
-  executable included (it was patched for this folder's keys, and `IsSetUp` needs it). The link keeps working meanwhile. The
-  page shows the progress and **Stop the copy**; a stop or a failure leaves the release as it was, and the next try goes on
-  from what was copied. A file an earlier try copied counts only while it still has the size and time of the one in the
-  user's folder.
-- **The swap** happens only for a copy that is whole and matches the user's folder as it is then (every file's size and
-  time, and the build): `.waypoint-complete` is written into it, the link is set aside as `.waypoint-old-link` (a rename, so
-  it can be put back; on Linux the link is removed and made again if needed), the copy is renamed to `Client`, and the link
-  is removed, which removes nothing it leads to. A rename that fails puts the link back. A move cut short between those
-  steps is finished when Waypoint next opens the folder (`OwnClient.Finish`, before the page decides whether the release is
-  set up), forward when the copy is whole and back to the link otherwise. A `Client` that is a folder of its own is never
-  replaced.
-- **Afterwards** a box names the files LocalExile left in the user's folder, for the user to delete (`Game.exe`,
-  `Game.patched.exe`, and `config.json` only when it is the one naming LocalExile's own settings). Waypoint deletes nothing
-  there and does not put that folder's login list back.
-- A copy begun for a link that is gone since is removed (`OwnClient.Discard`): only Waypoint's own folder, and never while
-  `Client` is a link.
+- **The setup guide** offers "For developers: use this folder itself instead of a copy" on a release's client page only with
+  Developer Mode on, with what it risks, and passes `--client-mode link` for it.
+- **The warning.** LocalExile warns at every start when `Client` is a link to anything but another LocalExile's `Client`
+  (the folder above it holds a `GameServer.slnx` or a `release.json`). Waypoint tells such a link by the same test
+  (`OwnClient.Check`) and shows the same words on the release's Play page (`OwnClient.Notice`), and LocalExile's own warning
+  is in the run's output. Nothing is refused, and Play starts the game as before. A source copy is not looked at.
+- **Make a copy…**, under that line, is the way out LocalExile's warning names, done safely (`OwnClient`,
+  `src/Launcher.Core/OwnClient.cs`). It asks first: a box with both folders (the user's: only read; the copy and its size),
+  **Copy now**, **Open folder** and **Cancel**. Enter and Esc press Cancel, so a box that opens while its user types cannot
+  start the copy by accident. Without the room for the copy (what is left to copy and 2 GB more) the box only says so, with
+  the two numbers.
+  - **The copy** goes into `.waypoint-new-client` beside the link, with the resumable copy the guide uses, the patched
+    executable included (it was patched for this folder's keys, and `IsSetUp` needs it). The link keeps working meanwhile.
+    The page shows the progress and **Stop the copy**; a stop or a failure leaves the release as it was, and the next try
+    goes on from what was copied. A file an earlier try copied counts only while it still has the size and time of the one
+    in the user's folder.
+  - **The swap** happens only for a copy that is whole and matches the user's folder as it is then (every file's size and
+    time, and the build): `.waypoint-complete` is written into it, the link is set aside as `.waypoint-old-link` (a rename,
+    so it can be put back; on Linux the link is removed and made again if needed), the copy is renamed to `Client`, and the
+    link is removed, which removes nothing it leads to. A rename that fails puts the link back. A move cut short between
+    those steps is finished when Waypoint next opens the folder (`OwnClient.Finish`, before the page decides whether the
+    release is set up), forward when the copy is whole and back to the link otherwise. A `Client` that is a folder of its
+    own is never replaced.
+  - **Afterwards** a box names the files LocalExile left in the user's folder, for the user to delete (`Game.exe`,
+    `Game.patched.exe`, and `config.json` only when it is the one naming LocalExile's own settings). Waypoint deletes
+    nothing there and does not put that folder's login list back.
+  - A copy begun for a link that is gone since is removed (`OwnClient.Discard`): only Waypoint's own folder, and never
+    while `Client` is a link.
 
 ### Setup
 
@@ -1341,7 +1355,8 @@ adapter does not know can be browsed but not changed.
 | `DevHost.cs`, `AccountList.cs` | the dev host and its account list |
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
 | `SetupWizard.xaml`, `PortCheck.cs` | the setup guide; what holds a server's port, and the question about it |
-| `src/Launcher.Core/OwnClient.cs` | a release that runs from the user's own game folder gets a copy of its own |
+| `src/Launcher.Core/LocalExileBuilds.cs` | the client builds a LocalExile folder runs, asked of that LocalExile (`builds`, or a checkout's `ClientBuilds.cs`) |
+| `src/Launcher.Core/OwnClient.cs` | a release whose client is a link to the user's game folder: LocalExile's warning, and the copy on the user's word |
 | `src/Launcher.Core/SetupGuide.cs`, `ClientLocator.cs`, `ClientCopy.cs` | the guide's engine: tools that can be stopped, the prerequisites, the steps, finding a client, the resumable copy |
 | `src/Launcher.Core/SwitchToSource.cs` | moving from a release to a source copy: what the choices will do, the older version (`TestedCommit`), Frida, removing the release |
 | `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |

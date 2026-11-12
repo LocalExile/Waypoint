@@ -582,9 +582,6 @@
   <data name="Text_104975033d07" xml:space="preserve">
     <value>Татуировки</value>
   </data>
-  <data name="Text_1050275e6f9a" xml:space="preserve">
-    <value>Не поддерживается: этот LocalExile запускается из вашей папки Path of Exile. Нажмите «Играть», чтобы сделать для него собственную копию.</value>
-  </data>
   <data xml:space="preserve" name="Text_108040ac289a">
     <value>Рубин</value>
   </data>
@@ -1836,9 +1833,6 @@
   <data name="Text_32afaa784333" xml:space="preserve">
     <value>Разделённый</value>
   </data>
-  <data name="Text_32b52bba1f76" xml:space="preserve">
-    <value>Ничего не изменилось: LocalExile по-прежнему запускается из {0} и в этот раз запустится оттуда. При следующем нажатии «Играть» попытка повторится, а копирование продолжится с того места, где остановилось.</value>
-  </data>
   <data name="Text_32d7e8208247" xml:space="preserve">
     <value>Управление</value>
   </data>
@@ -2248,9 +2242,6 @@
   <data name="Text_3ee0b304b03f" xml:space="preserve">
     <value>Остановить и переключить</value>
   </data>
-  <data name="Text_3ef05989c9d5" xml:space="preserve">
-    <value>Этот LocalExile запускается прямо из вашей папки Path of Exile. Это больше не поддерживается: LocalExile изменяет в ней файлы, а после обновления игры в этой папке он перестанет работать.</value>
-  </data>
   <data name="Text_3f8635c36da3" xml:space="preserve">
     <value>Вернуть отложенные изменения</value>
   </data>
@@ -2289,6 +2280,9 @@
   </data>
   <data name="Text_40bb50da160c" xml:space="preserve">
     <value>Ниже</value>
+  </data>
+  <data name="Text_40c450efea55" xml:space="preserve">
+    <value>Path of Exile {0}</value>
   </data>
   <data xml:space="preserve" name="Text_40e2fbc81bf9">
     <value>Подготовка репозитория</value>
@@ -2331,9 +2325,6 @@
   </data>
   <data xml:space="preserve" name="Text_42154791e774">
     <value>Язык сохранён.</value>
-  </data>
-  <data name="Text_422369f81997" xml:space="preserve">
-    <value>Всё равно играть</value>
   </data>
   <data name="Text_4228aeb07c41" xml:space="preserve">
     <value>Правила</value>
@@ -2409,6 +2400,9 @@
   </data>
   <data name="Text_44bc3799892c" xml:space="preserve">
     <value>Исцеление</value>
+  </data>
+  <data name="Text_4521809ad72e" xml:space="preserve">
+    <value>не версия, с которой работает LocalExile</value>
   </data>
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>Загрузка не удалась (код git {0}). Проверьте подключение и повторите попытку.</value>
@@ -2511,9 +2505,6 @@
   </data>
   <data name="Text_47d8440d8c62" xml:space="preserve">
     <value>Сначала закройте игру. Gateway корректно перезапустится с включённой записью.</value>
-  </data>
-  <data name="Text_47d86be282e2" xml:space="preserve">
-    <value>«Отмена»: ничего не меняется, и игра не запускается.</value>
   </data>
   <data xml:space="preserve" name="Text_47e8b196a14c">
     <value>Обновить копии</value>
@@ -2833,6 +2824,9 @@
   <data xml:space="preserve" name="Text_512f7f4147ad">
     <value>Нет подтверждённого процесса этой установки</value>
   </data>
+  <data name="Text_513a1539c93d" xml:space="preserve">
+    <value>Waypoint не знает эту версию как поддерживаемую LocalExile, поэтому подготовка, скорее всего, не удастся. Можно попробовать, но сначала проверьте версию: копия большая.</value>
+  </data>
   <data xml:space="preserve" name="Text_514d7286b5ae">
     <value>{0} · проверено в {1}</value>
   </data>
@@ -3018,6 +3012,9 @@
   </data>
   <data name="Text_565339bc4d33" xml:space="preserve">
     <value>ОК</value>
+  </data>
+  <data name="Text_5658d9dd60ca" xml:space="preserve">
+    <value>Сделать копию…</value>
   </data>
   <data xml:space="preserve" name="Text_5663485b8c0d">
     <value>Мод отключён.</value>
@@ -3815,9 +3812,6 @@
   </data>
   <data name="Text_7006fe9be9c1" xml:space="preserve">
     <value>(форк удалён)</value>
-  </data>
-  <data name="Text_7007dd92aa08" xml:space="preserve">
-    <value>Копирование остановлено, ничего не изменилось. Нажмите «Играть», чтобы продолжить.</value>
   </data>
   <data xml:space="preserve" name="Text_7013af4c42fe">
     <value>Подготовка</value>
@@ -4617,6 +4611,9 @@
   <data name="Text_897f7947157c" xml:space="preserve">
     <value>Сохраняет проверенный отчёт в один текстовый файл и показывает его: файл можно прикрепить или перетащить в чат</value>
   </data>
+  <data name="Text_8980e3e183e8" xml:space="preserve">
+    <value>Waypoint скопирует игру в папку LocalExile, а затем удалит ссылку. Ссылка работает, пока копия не готова целиком; сохранения, аккаунты и ключи входа сохранятся.</value>
+  </data>
   <data xml:space="preserve" name="Text_898a809683dd">
     <value>Мод перезагружен.</value>
   </data>
@@ -4676,9 +4673,6 @@
   </data>
   <data name="Text_8b45bb20e077" xml:space="preserve">
     <value>Обучение</value>
-  </data>
-  <data name="Text_8b4e556e77d1" xml:space="preserve">
-    <value>LocalExile нужна собственная копия игры</value>
   </data>
   <data name="Text_8b54d84a7e03" xml:space="preserve">
     <value>Модов: {0} · установлено: {1} · обновлений: {2} · прочитано в {3:t}</value>
@@ -4883,9 +4877,6 @@
   </data>
   <data name="Text_9275216c6094" xml:space="preserve">
     <value>Начать запись</value>
-  </data>
-  <data name="Text_9291be794a8e" xml:space="preserve">
-    <value>Waypoint может скопировать игру в папку LocalExile, но на диске мало места: для копии нужно {0:0.#} ГБ, а свободно {1:0.#} ГБ. Освободите место и снова нажмите «Играть».</value>
   </data>
   <data name="Text_929433e4be1d" xml:space="preserve">
     <value>Сапоги</value>
@@ -5495,6 +5486,9 @@
   </data>
   <data name="Text_a2e20a335700" xml:space="preserve">
     <value>Удалить аккаунт</value>
+  </data>
+  <data name="Text_a2eb75051e19" xml:space="preserve">
+    <value>Client — это ссылка на {0}, а не копия. LocalExile изменяет файлы в этой папке, и обновление Path of Exile в ней может сломать этот LocalExile. Отдельная копия защищает и от того, и от другого.</value>
   </data>
   <data name="Text_a307b32442e5" xml:space="preserve">
     <value>Проверка учётной записи</value>
@@ -6258,6 +6252,9 @@
   <data xml:space="preserve" name="Text_b8d31e852725">
     <value>включено</value>
   </data>
+  <data name="Text_b8e7df8e641d" xml:space="preserve">
+    <value>Сделать копию игры для LocalExile?</value>
+  </data>
   <data name="Text_b8f6fa5921eb" xml:space="preserve">
     <value>Для выдачи предметов нужна Frida — инструмент, который взаимодействует с запущенной игрой. Waypoint может установить её в эту папку LocalExile. Она занимает около 180 МБ, а некоторые антивирусы на неё реагируют.</value>
   </data>
@@ -6881,9 +6878,6 @@
   <data xml:space="preserve" name="Text_cbef8c5002e9">
     <value>{0} | отслеживание изменений, PID {1}</value>
   </data>
-  <data name="Text_cbf5752b4420" xml:space="preserve">
-    <value>«Всё равно играть»: ничего не меняется, но обновление Path of Exile в этой папке может сломать этот LocalExile. Waypoint спросит снова при следующем нажатии «Играть».</value>
-  </data>
   <data name="Text_cc2162d992f4" xml:space="preserve">
     <value>Клиент изменился во время подготовки. Закройте его официальный лаунчер и повторите попытку.</value>
   </data>
@@ -6961,6 +6955,9 @@
   </data>
   <data name="Text_cef20f906175" xml:space="preserve">
     <value>Строк: {0}</value>
+  </data>
+  <data name="Text_cf037a497023" xml:space="preserve">
+    <value>Копирование остановлено, ничего не изменилось. В следующий раз оно продолжится с этого места.</value>
   </data>
   <data name="Text_cf051d46df67" xml:space="preserve">
     <value>игровые данные ещё не извлечены (шаг 7)</value>
@@ -7051,6 +7048,9 @@
   </data>
   <data name="Text_d20c20b042c6" xml:space="preserve">
     <value>В PATH есть Python {0}; нужен 3.9 или новее. Установите его с python.org, отметив «Add python.exe to PATH».</value>
+  </data>
+  <data name="Text_d215388727a5" xml:space="preserve">
+    <value>Ничего не изменилось: LocalExile по-прежнему запускается из {0}. При следующей попытке копирование продолжится с того места, где остановилось.</value>
   </data>
   <data xml:space="preserve" name="Text_d22e9e7b8580">
     <value>Не собран</value>
@@ -8124,9 +8124,6 @@
   <data name="Text_f2499338fc41" xml:space="preserve">
     <value>Сначала будет создана резервная копия ваших сохранений здесь.</value>
   </data>
-  <data name="Text_f252a00aad25" xml:space="preserve">
-    <value>Перед запуском Waypoint скопирует игру в папку LocalExile. Сохранения, аккаунты и ключи входа сохранятся.</value>
-  </data>
   <data name="Text_f25cdb3f89bd" xml:space="preserve">
     <value>имя персонажа: 3–32 латинские буквы, цифры, _ или -</value>
   </data>
@@ -8506,6 +8503,9 @@
   <data name="Text_fc1c076ae7f5" xml:space="preserve">
     <value>Аккаунтов: {0}.</value>
   </data>
+  <data name="Text_fc5e4f92ee14" xml:space="preserve">
+    <value>Для разработчиков: использовать саму эту папку вместо копии. LocalExile изменяет в ней файлы, и обновление Path of Exile в этой папке может сломать этот LocalExile.</value>
+  </data>
   <data xml:space="preserve" name="Text_fca91d59bc5a">
     <value>Для начала выберите репозиторий.</value>
   </data>
@@ -8538,6 +8538,9 @@
   </data>
   <data name="Text_fdaabbacfdbf" xml:space="preserve">
     <value>dev host закрыл соединение</value>
+  </data>
+  <data name="Text_fdb9dc7fe815" xml:space="preserve">
+    <value>На диске недостаточно места для копии: нужно {0:0.#} ГБ, а свободно {1:0.#} ГБ. Освободите место и попробуйте снова; до тех пор ничего не меняется.</value>
   </data>
   <data name="Text_fdbe7939d897" xml:space="preserve">
     <value>опережает LocalExile на {0}, отстаёт на {1}</value>

@@ -1,21 +1,20 @@
 namespace Launcher.Core;
 
 /// <summary>
-/// A release whose <c>Client</c> is a link to the user's own Path of Exile folder (LocalExile's "use the folder itself", which
-/// Waypoint no longer offers) runs from that folder: LocalExile writes Game.exe, Game.patched.exe and the login list there, and
-/// a game update in it leaves LocalExile without the client it needs. This gives the release a copy of its own, and at no
-/// moment is the release without a client:
+/// A LocalExile whose <c>Client</c> is a link to the user's own Path of Exile folder (LocalExile's <c>--client-mode link</c>,
+/// which is for developers and which neither LocalExile nor Waypoint offers to anyone else) runs from that folder:
+/// LocalExile writes Game.exe, Game.patched.exe and the login list there, and a game update in it can break the install.
+/// LocalExile says so at every start, and Waypoint says the same on the Play page (<see cref="Notice"/>). Nothing is
+/// refused, and nothing is done unasked: what Waypoint adds is the way out LocalExile's warning names, a copy of its own,
+/// made on the user's word and without a moment in which the release has no client:
 /// <list type="bullet">
 /// <item>the copy is made beside the link (<see cref="NewFolder"/>), which keeps working meanwhile;</item>
 /// <item>only a copy that is whole, and still matches the folder it came from, takes the link's place;</item>
 /// <item>the folder the link led to is only ever read, and removing the link removes nothing in it;</item>
 /// <item>a stop or a failure leaves the release as it was, and the next try goes on from what was copied.</item>
 /// </list>
-/// A link to another LocalExile folder's client (a shared client) is that folder's, and is left alone.
-/// Running from the user's own folder is not supported any more. With the room for the copy, the release starts the game
-/// only once it has it: Play makes the copy or starts nothing. Only a user whose drive is too full may play on from the
-/// link, told on every Play that a game update in that folder can break this LocalExile; a refusal would leave them no
-/// way to play at all.
+/// A link to another LocalExile's client (the <c>Client</c> of a checkout or a release) is shared with it and is left alone,
+/// by the rule LocalExile's own warning uses.
 /// </summary>
 public static class OwnClient
 {
@@ -35,26 +34,13 @@ public static class OwnClient
         public long Copied => Copy.Total - Copy.Remaining;
     }
 
-    /// <summary>The user's answer to the question (<see cref="Ask"/>).</summary>
-    public enum Answer
-    {
-        /// <summary>Make the copy now.</summary>
-        Copy,
-        /// <summary>Only without the room for the copy: start from the link this time.</summary>
-        PlayAnyway,
-        /// <summary>Start nothing.</summary>
-        Cancel,
-    }
-
     public enum Outcome
     {
-        /// <summary>Nothing to do, or the drive is too full and the user chose to play anyway: the folder starts as it is.</summary>
+        /// <summary>Nothing to do, or the user did not want the copy: nothing was changed.</summary>
         None,
-        /// <summary>The user did not agree to the copy: nothing starts, and nothing was changed.</summary>
-        Cancelled,
         /// <summary>The release has its own client now.</summary>
         Moved,
-        /// <summary>The copy failed; the release is as it was and still starts.</summary>
+        /// <summary>The copy failed; the release is as it was.</summary>
         Failed,
         /// <summary>The user stopped the copy; the release is as it was.</summary>
         Stopped,
@@ -80,48 +66,44 @@ public static class OwnClient
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or System.Security.SecurityException) { return null; }
     }
 
-    /// <summary>The <c>Client</c> folder of a LocalExile checkout or release: shared with it, and that folder's to look after.</summary>
+    /// <summary>The <c>Client</c> folder of a LocalExile checkout or release: shared with it, and that folder's to look after.
+    /// The same test as LocalExile's own warning (<c>ClientInstall.LinkedInstall</c>): the folder above it holds a
+    /// <c>GameServer.slnx</c> or a <c>release.json</c>.</summary>
     static bool InLocalExile(string source) =>
-        Path.GetDirectoryName(source) is { Length: > 0 } parent && (RepositoryDiscovery.IsLocalExile(parent) || LocalExileReleases.IsInstall(parent));
+        Path.GetDirectoryName(source) is { Length: > 0 } parent && (File.Exists(Path.Combine(parent, "GameServer.slnx")) || File.Exists(Path.Combine(parent, "release.json")));
 
-    public static string Title => L.Text("LocalExile needs its own copy of the game");
+    /// <summary>The standing line on a release's Play page while its client is such a link: LocalExile's own warning, in
+    /// its words.</summary>
+    public static string Notice(Plan plan) =>
+        L.Text("Client is a link to {0}, not a copy. LocalExile changes files in that folder, and a Path of Exile update there can break this LocalExile. A separate copy is safe from both.", plan.Source);
 
-    /// <summary>The standing line on a release's Play page while it runs from the user's own folder.</summary>
-    public static string Notice => L.Text("Not supported: this LocalExile runs from your own Path of Exile folder. Press Play to give it a copy of its own.");
+    public static string Title => L.Text("Make a copy of the game for LocalExile?");
 
     /// <summary>The question, kept short, and the two folders set apart so that a long path does not push the words away.</summary>
     public static (string Message, string Details) Text(Plan plan)
     {
-        string lead = L.Text("This LocalExile runs from your own Path of Exile folder. That is no longer supported: LocalExile changes files there, and a game update in that folder would stop it working.");
-        string offer = plan.HasSpace
-            ? L.Text("Waypoint copies the game into this LocalExile folder before it starts. Your saves, accounts and login keys are kept.")
+        string message = plan.HasSpace
+            ? L.Text("Waypoint copies the game into this LocalExile folder and then removes the link. The link works until the copy is whole, and your saves, accounts and login keys are kept.")
                 + (plan.Copied >= 100_000_000 ? " " + L.Text("The copy goes on from the {0:0.#} GB made earlier.", plan.Copied / 1e9) : "")
-                + "\n\n" + L.Text("Cancel: nothing changes, and the game does not start.")
-            : L.Text("Waypoint can copy the game into this LocalExile folder, but the drive is too full: the copy needs {0:0.#} GB, and {1:0.#} GB is free. Free some space, then press Play again.",
-                    (plan.Copy.Remaining + ClientCopy.Margin) / 1e9, (plan.Free ?? 0) / 1e9)
-                + "\n\n" + L.Text("Play anyway: nothing changes, but a Path of Exile update in that folder can break this LocalExile. Waypoint asks again the next time you press Play.");
+            : L.Text("The drive is too full for the copy: it needs {0:0.#} GB, and {1:0.#} GB is free. Free some space and try again; until then nothing changes.",
+                (plan.Copy.Remaining + ClientCopy.Margin) / 1e9, (plan.Free ?? 0) / 1e9);
         string details = L.Text("Your Path of Exile folder (only read):") + "\n  " + plan.Source + "\n"
             + L.Text("The copy ({0:0.#} GB):", plan.Copy.Total / 1e9) + "\n  " + Path.Combine(plan.Folder, "Client");
-        return (lead + " " + offer, details);
+        return (message, details);
     }
 
-    /// <summary>The question. With the room for the copy: Copy now or Cancel, and there is no playing on without it. Without
-    /// the room: Play anyway, told what a game update can do, or Cancel. Open folder shows the user's folder and asks
-    /// again; a box closed without an answer is a Cancel. <paramref name="show"/> shows a question (title, message, details,
-    /// buttons) and answers the button chosen.</summary>
-    public static Answer Ask(Plan plan, Func<string, string, string?, string[], int> show, Action<string> open)
+    /// <summary>The question: Copy now (true) or Cancel; Open folder shows the user's folder and asks again; a box closed
+    /// without an answer is a Cancel. Without the room for the copy there is nothing to agree to, only to know.
+    /// <paramref name="show"/> shows a question (title, message, details, buttons) and answers the button chosen.</summary>
+    public static bool Ask(Plan plan, Func<string, string, string?, string[], int> show, Action<string> open)
     {
         var (message, details) = Text(plan);
-        string[] buttons = [plan.HasSpace ? L.Text("Copy now") : L.Text("Play anyway"), L.Text("Open folder"), L.Text("Cancel")];
+        string[] buttons = plan.HasSpace ? [L.Text("Copy now"), L.Text("Open folder"), L.Text("Cancel")] : [L.Text("OK"), L.Text("Open folder")];
         while (true)
         {
             int chosen = show(Title, message, details, buttons);
-            if (chosen == 1)
-            {
-                open(plan.Source);
-                continue;
-            }
-            return chosen != 0 ? Answer.Cancel : plan.HasSpace ? Answer.Copy : Answer.PlayAnyway;
+            if (chosen != 1) return plan.HasSpace && chosen == 0;
+            open(plan.Source);
         }
     }
 
@@ -149,14 +131,12 @@ public static class OwnClient
     public static string FailedTitle => L.Text("The copy did not finish");
 
     public static string FailedText(Plan plan, string reason) =>
-        reason + "\n\n" + L.Text("Nothing was changed: LocalExile still runs from {0}, and starts from there this time. The next Play tries again, and the copy goes on from where it stopped.", plan.Source);
+        reason + "\n\n" + L.Text("Nothing was changed: LocalExile still runs from {0}. The next try goes on from where the copy stopped.", plan.Source);
 
-    /// <summary>Before a release starts the game: first what an earlier move left (<see cref="Finish"/>), then the folder. The
-    /// copy is asked on every start until it is made (<paramref name="ask"/>). It is made while <paramref name="exclusive"/>
-    /// holds the folder (false: something else holds it). The folder starts after <see cref="Outcome.None"/>,
-    /// <see cref="Outcome.Moved"/> and <see cref="Outcome.Failed"/> (a failure is not the user's doing, and the link still
-    /// works); <see cref="Outcome.Cancelled"/> and <see cref="Outcome.Stopped"/> are the user's word, and nothing starts.</summary>
-    public static async Task<Result> EnsureAsync(string folder, Func<Plan, Answer> ask, Action<ClientCopyProgress>? progress,
+    /// <summary>The copy, on the user's word (<paramref name="ask"/>, true to go on): first what an earlier move left
+    /// (<see cref="Finish"/>), then the question, then the move while <paramref name="exclusive"/> holds the folder (false:
+    /// something else holds it). Whatever comes of it, the release still has a client that works.</summary>
+    public static async Task<Result> MakeCopyAsync(string folder, Func<Plan, bool> ask, Action<ClientCopyProgress>? progress,
         Func<Func<Task>, Task<bool>> exclusive, CancellationToken stop)
     {
         var plan = await Task.Run(() =>
@@ -169,9 +149,7 @@ public static class OwnClient
             catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
             return Check(folder);
         });
-        if (plan is null) return new(Outcome.None);
-        var answer = ask(plan);
-        if (answer != Answer.Copy) return new(answer == Answer.PlayAnyway ? Outcome.None : Outcome.Cancelled, plan);
+        if (plan is null || !ask(plan)) return new(Outcome.None, plan);
         Exception? failure = null;
         bool stopped = false;
         bool ran = await exclusive(async () =>

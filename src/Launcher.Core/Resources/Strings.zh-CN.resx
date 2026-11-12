@@ -582,9 +582,6 @@
   <data name="Text_104975033d07" xml:space="preserve">
     <value>纹身</value>
   </data>
-  <data name="Text_1050275e6f9a" xml:space="preserve">
-    <value>不受支持：这个 LocalExile 从你自己的流放之路文件夹运行。点击“开始游戏”为它创建自己的副本。</value>
-  </data>
   <data name="Text_108040ac289a" xml:space="preserve">
     <value>红宝石</value>
   </data>
@@ -1836,9 +1833,6 @@
   <data name="Text_32afaa784333" xml:space="preserve">
     <value>分化</value>
   </data>
-  <data name="Text_32b52bba1f76" xml:space="preserve">
-    <value>没有做任何更改：LocalExile 仍从 {0} 运行，这次也会从那里启动。下次点击“开始游戏”时会重试，复制会从中断处继续。</value>
-  </data>
   <data name="Text_32d7e8208247" xml:space="preserve">
     <value>控制</value>
   </data>
@@ -2248,9 +2242,6 @@
   <data name="Text_3ee0b304b03f" xml:space="preserve">
     <value>停止并切换</value>
   </data>
-  <data name="Text_3ef05989c9d5" xml:space="preserve">
-    <value>这个 LocalExile 直接从你自己的流放之路文件夹运行。这种方式已不再受支持：LocalExile 会修改那里的文件，而且该文件夹中的游戏一旦更新，它就无法运行。</value>
-  </data>
   <data name="Text_3f8635c36da3" xml:space="preserve">
     <value>恢复贮藏的更改</value>
   </data>
@@ -2289,6 +2280,9 @@
   </data>
   <data name="Text_40bb50da160c" xml:space="preserve">
     <value>下移</value>
+  </data>
+  <data name="Text_40c450efea55" xml:space="preserve">
+    <value>流放之路 {0}</value>
   </data>
   <data name="Text_40e2fbc81bf9" xml:space="preserve">
     <value>准备此源码副本</value>
@@ -2331,9 +2325,6 @@
   </data>
   <data name="Text_42154791e774" xml:space="preserve">
     <value>语言已保存。</value>
-  </data>
-  <data name="Text_422369f81997" xml:space="preserve">
-    <value>仍然游玩</value>
   </data>
   <data name="Text_4228aeb07c41" xml:space="preserve">
     <value>规则</value>
@@ -2409,6 +2400,9 @@
   </data>
   <data name="Text_44bc3799892c" xml:space="preserve">
     <value>治疗</value>
+  </data>
+  <data name="Text_4521809ad72e" xml:space="preserve">
+    <value>不是 LocalExile 支持的版本</value>
   </data>
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>下载失败（git 退出代码 {0}）。请检查网络连接后重试。</value>
@@ -2511,9 +2505,6 @@
   </data>
   <data name="Text_47d8440d8c62" xml:space="preserve">
     <value>请先关闭游戏。Gateway 将正常重启并启用采集。</value>
-  </data>
-  <data name="Text_47d86be282e2" xml:space="preserve">
-    <value>“取消”：不做任何更改，游戏也不会启动。</value>
   </data>
   <data name="Text_47e8b196a14c" xml:space="preserve">
     <value>刷新备份</value>
@@ -2833,6 +2824,9 @@
   <data name="Text_512f7f4147ad" xml:space="preserve">
     <value>此源码副本没有已验证的进程</value>
   </data>
+  <data name="Text_513a1539c93d" xml:space="preserve">
+    <value>Waypoint 不确定这是 LocalExile 支持的版本，因此准备过程很可能失败。你仍可尝试，但请先确认版本：复制的数据量很大。</value>
+  </data>
   <data name="Text_514d7286b5ae" xml:space="preserve">
     <value>{0} · 检查于 {1}</value>
   </data>
@@ -3018,6 +3012,9 @@
   </data>
   <data name="Text_565339bc4d33" xml:space="preserve">
     <value>确定</value>
+  </data>
+  <data name="Text_5658d9dd60ca" xml:space="preserve">
+    <value>创建副本…</value>
   </data>
   <data name="Text_5663485b8c0d" xml:space="preserve">
     <value>模组已禁用。</value>
@@ -3815,9 +3812,6 @@
   </data>
   <data name="Text_7006fe9be9c1" xml:space="preserve">
     <value>（已删除的复刻）</value>
-  </data>
-  <data name="Text_7007dd92aa08" xml:space="preserve">
-    <value>复制已停止，没有做任何更改。点击“开始游戏”可继续复制。</value>
   </data>
   <data name="Text_7013af4c42fe" xml:space="preserve">
     <value>安装</value>
@@ -4617,6 +4611,9 @@
   <data name="Text_897f7947157c" xml:space="preserve">
     <value>将已检查的报告保存为一个文本文件并显示它，可直接作为附件或拖入聊天</value>
   </data>
+  <data name="Text_8980e3e183e8" xml:space="preserve">
+    <value>Waypoint 会把游戏复制到这个 LocalExile 文件夹中，然后移除链接。在副本完整之前链接仍然有效，你的存档、账号和登录密钥都会保留。</value>
+  </data>
   <data name="Text_898a809683dd" xml:space="preserve">
     <value>模组已重新加载。</value>
   </data>
@@ -4676,9 +4673,6 @@
   </data>
   <data name="Text_8b45bb20e077" xml:space="preserve">
     <value>学习</value>
-  </data>
-  <data name="Text_8b4e556e77d1" xml:space="preserve">
-    <value>LocalExile 需要自己的游戏副本</value>
   </data>
   <data name="Text_8b54d84a7e03" xml:space="preserve">
     <value>{0} 个模组 · 已安装 {1} 个 · {2} 个更新 · 读取于 {3:t}</value>
@@ -4883,9 +4877,6 @@
   </data>
   <data name="Text_9275216c6094" xml:space="preserve">
     <value>开始采集</value>
-  </data>
-  <data name="Text_9291be794a8e" xml:space="preserve">
-    <value>Waypoint 可以把游戏复制到这个 LocalExile 文件夹中，但驱动器空间不足：复制需要 {0:0.#} GB，而可用空间只有 {1:0.#} GB。请释放一些空间，然后再次点击“开始游戏”。</value>
   </data>
   <data name="Text_929433e4be1d" xml:space="preserve">
     <value>靴子</value>
@@ -5495,6 +5486,9 @@
   </data>
   <data name="Text_a2e20a335700" xml:space="preserve">
     <value>删除账号</value>
+  </data>
+  <data name="Text_a2eb75051e19" xml:space="preserve">
+    <value>Client 是指向 {0} 的链接，而不是副本。LocalExile 会修改该文件夹中的文件，而且那里的流放之路一旦更新，就可能导致这个 LocalExile 无法运行。使用独立副本可以避免这两个问题。</value>
   </data>
   <data name="Text_a307b32442e5" xml:space="preserve">
     <value>正在检查你的账号</value>
@@ -6258,6 +6252,9 @@
   <data name="Text_b8d31e852725" xml:space="preserve">
     <value>已开启</value>
   </data>
+  <data name="Text_b8e7df8e641d" xml:space="preserve">
+    <value>为 LocalExile 创建游戏副本？</value>
+  </data>
   <data name="Text_b8f6fa5921eb" xml:space="preserve">
     <value>“发放物品”需要 Frida，这是一个与正在运行的游戏通信的工具。Waypoint 可以将它安装到此 LocalExile 文件夹中。它大约占用 180 MB，部分杀毒软件会将其标记为可疑。</value>
   </data>
@@ -6881,9 +6878,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cbef8c5002e9" xml:space="preserve">
     <value>{0} | 热重载监视进程 PID {1}</value>
   </data>
-  <data name="Text_cbf5752b4420" xml:space="preserve">
-    <value>“仍然游玩”：不做任何更改，但该文件夹中的流放之路一旦更新，就可能导致这个 LocalExile 无法运行。下次点击“开始游戏”时 Waypoint 会再次询问。</value>
-  </data>
   <data name="Text_cc2162d992f4" xml:space="preserve">
     <value>客户端在准备过程中发生了更改。请关闭其官方启动器后重试。</value>
   </data>
@@ -6961,6 +6955,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cef20f906175" xml:space="preserve">
     <value>{0} 行</value>
+  </data>
+  <data name="Text_cf037a497023" xml:space="preserve">
+    <value>复制已停止，没有做任何更改。下次会从这里继续。</value>
   </data>
   <data name="Text_cf051d46df67" xml:space="preserve">
     <value>游戏数据尚未提取（第 7 步）</value>
@@ -7051,6 +7048,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d20c20b042c6" xml:space="preserve">
     <value>PATH 中的 Python 是 {0}；需要 3.9 或更高版本。请从 python.org 安装，并勾选“Add python.exe to PATH”。</value>
+  </data>
+  <data name="Text_d215388727a5" xml:space="preserve">
+    <value>没有做任何更改：LocalExile 仍从 {0} 运行。下次重试时，复制会从中断处继续。</value>
   </data>
   <data name="Text_d22e9e7b8580" xml:space="preserve">
     <value>未构建</value>
@@ -8124,9 +8124,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f2499338fc41" xml:space="preserve">
     <value>会先备份你在这里的存档。</value>
   </data>
-  <data name="Text_f252a00aad25" xml:space="preserve">
-    <value>Waypoint 会在启动前把游戏复制到这个 LocalExile 文件夹中。你的存档、账号和登录密钥都会保留。</value>
-  </data>
   <data name="Text_f25cdb3f89bd" xml:space="preserve">
     <value>角色名称须为 3–32 个字母、数字、_ 或 -</value>
   </data>
@@ -8506,6 +8503,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_fc1c076ae7f5" xml:space="preserve">
     <value>{0} 个账号。</value>
   </data>
+  <data name="Text_fc5e4f92ee14" xml:space="preserve">
+    <value>面向开发者：直接使用此文件夹，而不是副本。LocalExile 会修改那里的文件，而且该文件夹中的流放之路一旦更新，就可能导致这个 LocalExile 无法运行。</value>
+  </data>
   <data name="Text_fca91d59bc5a" xml:space="preserve">
     <value>选择你的源码副本以开始。</value>
   </data>
@@ -8538,6 +8538,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fdaabbacfdbf" xml:space="preserve">
     <value>dev host 关闭了连接</value>
+  </data>
+  <data name="Text_fdb9dc7fe815" xml:space="preserve">
+    <value>驱动器空间不足，无法创建副本：需要 {0:0.#} GB，而可用空间只有 {1:0.#} GB。请释放一些空间后重试；在此之前不会做任何更改。</value>
   </data>
   <data name="Text_fdbe7939d897" xml:space="preserve">
     <value>领先 LocalExile {0} 个提交，落后 {1} 个</value>

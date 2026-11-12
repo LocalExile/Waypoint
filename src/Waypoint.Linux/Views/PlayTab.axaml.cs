@@ -68,12 +68,11 @@ partial class PlayTab : UserControl
     async Task LookForOlderAsync()
     {
         string folder = Environment.CurrentDirectory;
-        string? need = ClientLocator.Needed(folder);
+        string? need = await Task.Run(() => ClientLocator.Needed(folder));
         // Looked for again only when the folder's LocalExile changed (an update, a move to another version).
         if (need is not null && need == _olderLookedFor) return;
         _olderLookedFor = need;
-        _olderBuild = need is not null && ClientLocator.IsOlder(need, ClientLocator.Build)
-            && await Task.Run(() => ClientUpdate.FindClient(ClientLocator.Build, default)) is null ? need : null;
+        _olderBuild = await Task.Run(() => ClientUpdate.OlderVersionOf(folder) is { } made && ClientUpdate.FindCurrent() is null ? made : null);
         Show();
     }
 
