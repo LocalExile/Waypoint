@@ -69,7 +69,7 @@ public static class OwnClient
     /// <summary>The <c>Client</c> folder of a LocalExile checkout or release: shared with it, and that folder's to look after.
     /// The same test as LocalExile's own warning (<c>ClientInstall.LinkedInstall</c>): the folder above it holds a
     /// <c>GameServer.slnx</c> or a <c>release.json</c>.</summary>
-    static bool InLocalExile(string source) =>
+    public static bool InLocalExile(string source) =>
         Path.GetDirectoryName(source) is { Length: > 0 } parent && (File.Exists(Path.Combine(parent, "GameServer.slnx")) || File.Exists(Path.Combine(parent, "release.json")));
 
     /// <summary>The standing line on a release's Play page while its client is such a link: LocalExile's own warning, in

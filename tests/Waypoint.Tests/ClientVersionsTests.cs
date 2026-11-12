@@ -106,6 +106,89 @@ public class ClientVersionsTests : IDisposable
     }
 
     [Fact]
+    public void A_version_of_two_listed_builds_is_several_whether_Steam_delivers_both_or_not()
+    {
+        // LocalExile v0.5.0-beta's own list: the 3.29.3c release has no Steam data, its hotfix has.
+        ListedBuild[] listed = [new("3.29.3c", "release", "aa"), new("3.29.3c", "hotfix", "bb", null, "238960", [new("238961", "1")]),
+            new("3.29.3d", "release", "cc", null, "238960", [new("238961", "2")])];
+        Assert.True(ClientVersions.Several(listed, "3.29.3c"));
+        Assert.False(ClientVersions.Several(listed, "3.29.3d"));
+    }
+
+    [Fact]
+    public void A_clients_files_say_standalone_or_Steam_and_a_copy_being_deleted_is_not_listed()
+    {
+        Steam(Client, "3.29.3d");
+        Assert.Equal(ClientLayout.Steam, ClientVersions.FilesOf(Client));
+        File.WriteAllText(Path.Combine(Client, "Content.ggpk"), "archive");
+        Assert.Equal(ClientLayout.Standalone, ClientVersions.FilesOf(Client));
+        Assert.Equal(ClientLayout.None, ClientVersions.FilesOf(Path.Combine(Folder, "nothing")));
+
+        Steam(Path.Combine(Folder, ClientVersions.KeptFolder, "3.29.3c"), "3.29.3c");
+        Steam(Path.Combine(Folder, ClientVersions.KeptFolder, ".deleting-3.29.3b"), "3.29.3b");
+        Assert.Equal("3.29.3c", Assert.Single(ClientVersions.Kept(Folder)).Name);
+    }
+
+    [Fact]
+    public async Task A_client_half_way_to_another_version_is_never_set_aside_or_put_in_use()
+    {
+        var d = new ListedBuild("3.29.3d", "", "dd", null, "238960", [new("238962", "1")]);
+        Steam(Client, "3.29.3c");
+        File.WriteAllText(Path.Combine(Client, ClientVersions.Marker), "3.29.3d\ndd");
+        // Keeping both would put a client that is not whole in Clients\ under a whole one's name: refused before anything runs.
+        var result = await ClientVersions.SwitchAsync(Folder, d, SwitchWay.KeepBoth, "no tool is started", "nobody", null, _ => { }, CancellationToken.None);
+        Assert.Equal(SteamOutcome.Failed, result.Outcome);
+        Assert.False(Directory.Exists(Path.Combine(Folder, ClientVersions.KeptFolder)));
+        Assert.False(Directory.Exists(Path.Combine(Folder, ClientVersions.NextFolder)));
+        Assert.Equal("3.29.3d", ClientVersions.Unfinished(Folder));
+
+        // One that was set aside half-way by an earlier Waypoint says so, and does not come back into use.
+        File.Delete(Path.Combine(Client, ClientVersions.Marker));
+        string kept = Steam(Path.Combine(Folder, ClientVersions.KeptFolder, "3.29.3b"), "3.29.3b");
+        File.WriteAllText(Path.Combine(kept, ClientVersions.Marker), "3.29.3c");
+        Assert.Equal("3.29.3c", Assert.Single(ClientVersions.Kept(Folder)).HalfWayTo);
+        Assert.Throws<IOException>(() => ClientVersions.Use(Folder, "3.29.3b"));
+        Assert.Equal("game 3.29.3c", File.ReadAllText(Path.Combine(Client, "PathOfExileSteam.exe")));
+    }
+
+    [Fact]
+    public void A_deletion_of_a_kept_client_that_was_cut_short_is_finished_and_nothing_else_goes()
+    {
+        Steam(Client, "3.29.3d");
+        string kept = Steam(Path.Combine(Folder, ClientVersions.KeptFolder, "3.29.3c"), "3.29.3c");
+        Assert.False(ClientVersions.HasUnfinishedDeletes(Folder));
+        string remains = Steam(Path.Combine(Folder, ClientVersions.KeptFolder, ".deleting-3.29.3b"), "3.29.3b");
+        Assert.True(ClientVersions.HasUnfinishedDeletes(Folder));
+
+        ClientVersions.FinishDeletes(Folder);
+        Assert.False(Directory.Exists(remains));
+        Assert.False(ClientVersions.HasUnfinishedDeletes(Folder));
+        Assert.True(File.Exists(Path.Combine(kept, "PathOfExileSteam.exe")));
+        Assert.True(File.Exists(Path.Combine(Client, "PathOfExileSteam.exe")));
+    }
+
+    [Fact]
+    public async Task Only_a_kept_client_from_Steam_that_is_there_can_be_finished()
+    {
+        var d = new ListedBuild("3.29.3d", "", "dd", null, "238960", [new("238962", "1")]);
+        Steam(Client, "3.29.3d");
+        // The mark names the build it was on its way to, for the window to find it in LocalExile's list.
+        string kept = Steam(Path.Combine(Folder, ClientVersions.KeptFolder, "3.29.3c"), "3.29.3c");
+        File.WriteAllText(Path.Combine(kept, ClientVersions.Marker), "3.29.3d\ndd");
+        var half = Assert.Single(ClientVersions.Kept(Folder));
+        Assert.Equal(("3.29.3d", "dd"), (half.HalfWayTo, half.HalfWayToBuild));
+
+        // Nothing is started for a copy that is gone, or for one that is not a client from Steam: both are refused first.
+        var gone = await ClientVersions.FinishKeptAsync(Folder, "3.29.3b", d, "no tool is started", "nobody", null, _ => { }, CancellationToken.None);
+        Assert.Equal(SteamOutcome.Failed, gone.Outcome);
+        File.WriteAllText(Path.Combine(kept, "Content.ggpk"), "archive");
+        var standalone = await ClientVersions.FinishKeptAsync(Folder, "3.29.3c", d, "no tool is started", "nobody", null, _ => { }, CancellationToken.None);
+        Assert.Equal(SteamOutcome.Failed, standalone.Outcome);
+        Assert.True(File.Exists(Path.Combine(kept, ClientVersions.Marker)));
+        Assert.Equal("game 3.29.3d", File.ReadAllText(Path.Combine(Client, "PathOfExileSteam.exe")));
+    }
+
+    [Fact]
     public void An_unfinished_switch_names_its_build_when_the_mark_does()
     {
         Steam(Client, "3.29.3c");

@@ -1,27 +1,50 @@
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using MaterialDesignThemes.Wpf;
 
 namespace Waypoint;
 
 /// <summary>
-/// The versions of the game a release holds (<see cref="ClientVersions"/>): the one in use, those set aside, and those its
-/// LocalExile lists that Steam can deliver (<see cref="LocalExileBuilds"/>, <see cref="SteamDownload"/>). A version from
-/// Steam needs a Steam sign-in once, by the tool's own QR code (<see cref="SteamSignInWindow"/>) or, without the Steam
+/// The game clients this PC has for LocalExile, as the sidebar's folder list has its folders: every client in a LocalExile
+/// folder Waypoint knows (<see cref="FolderList"/>), the one each folder uses and those it set aside
+/// (<see cref="ClientVersions"/>), each with where it is and whether it came as the standalone game or from Steam. What is
+/// changed here is the folder in use: which of its own clients it uses, and, apart from the list, a version downloaded
+/// from Steam into it, of those its LocalExile lists (<see cref="LocalExileBuilds"/>, <see cref="SteamDownload"/>). A
+/// download needs a Steam sign-in once, by the tool's own QR code (<see cref="SteamSignInWindow"/>) or, without the Steam
 /// mobile app, by its own password prompt in a console window. With a client already there, how to move is asked each
 /// time (update the one client where it is, or keep both) unless Settings names one. Nothing here runs while the game
 /// or a server runs, and LocalExile's own setup prepares a client that just came in.
 /// </summary>
 sealed class ClientVersionsWindow : FormWindow
 {
-    /// <summary>A line of the list: the client in use, one set aside, or a version Steam can deliver.</summary>
-    /// <param name="Detail">Under the list while the line is chosen: which build it is in LocalExile's own words, and where.</param>
-    sealed record Row(string Text, string Detail, bool InUse = false, KeptClient? Kept = null, ListedBuild? Build = null);
+    /// <summary>A line of the list: one game client in one of the LocalExile folders Waypoint knows.</summary>
+    /// <param name="Folder">The LocalExile folder it is in.</param>
+    /// <param name="Client">The client's own folder.</param>
+    /// <param name="Files">Standalone or from Steam (<see cref="ClientVersions.FilesOf"/>).</param>
+    /// <param name="InUse">The client its folder uses (its <c>Client</c>); false for one set aside there.</param>
+    /// <param name="Build">Which build it is, when its executable is one its LocalExile lists.</param>
+    /// <param name="LinkTarget">Where a <c>Client</c> that is a link leads.</param>
+    /// <param name="Shared">The link leads to another LocalExile folder's <c>Client</c> (<see cref="OwnClient.InLocalExile"/>);
+    /// false for a link to a game folder outside LocalExile, which an update of that game can break.</param>
+    /// <param name="HalfWayTo">For a client in use that carries the mark of an update in place that did not finish: the
+    /// version it was on its way to. A kept one says so itself (<see cref="KeptClient.HalfWayTo"/>).</param>
+    sealed record Row(KnownFolder Folder, string Client, ClientLayout Files, bool InUse, string? Version, ListedBuild? Build,
+        KeptClient? Kept = null, string? LinkTarget = null, bool Shared = false, string? HalfWayTo = null)
+    {
+        /// <summary>A client of the folder in use: the only ones this window changes.</summary>
+        public bool Here => Folder.Current;
+    }
 
     readonly Shared _shared;
     readonly string _folder = Environment.CurrentDirectory;
-    readonly ListBox _list = new() { MinHeight = 170, Margin = new Thickness(0, 0, 12, 0) };
+    readonly ListBox _list = new() { MinHeight = 170, Margin = new Thickness(0, 0, 12, 0), HorizontalContentAlignment = HorizontalAlignment.Stretch };
+    readonly TextBlock _empty = new() { Margin = new Thickness(12, 10, 24, 0), Visibility = Visibility.Collapsed, IsHitTestVisible = false };
     readonly TextBlock _intro = new() { Margin = new Thickness(0, 0, 0, 12) };
+    /// <summary>Over the download button: which versions this folder's LocalExile runs, and where a download goes.</summary>
+    readonly TextBlock _steamIntro = new() { Margin = new Thickness(0, 12, 0, 8) };
     readonly TextBlock _detail = new() { Margin = new Thickness(0, 10, 0, 0) };
     readonly TextBlock _steam = new() { Margin = new Thickness(0, 12, 0, 6) };
     readonly TextBlock _status = new() { Margin = new Thickness(0, 12, 0, 0) };
@@ -29,8 +52,14 @@ sealed class ClientVersionsWindow : FormWindow
     /// said stays readable above it.</summary>
     readonly TextBlock _blocked = new() { Margin = new Thickness(0, 8, 0, 0), Visibility = Visibility.Collapsed };
     readonly ProgressBar _bar = new() { Height = 4, Margin = new Thickness(0, 8, 0, 0), Visibility = Visibility.Collapsed, Minimum = 0, Maximum = 1 };
-    readonly Button _use, _delete, _open, _signIn, _password, _forget, _stopButton;
+    readonly Button _use, _delete, _open, _copy, _download, _signIn, _password, _forget, _stopButton;
+    /// <summary>The copy the folder in use can have in place of a link to a game folder outside LocalExile (<see cref="OwnClient.Check"/>).</summary>
+    OwnClient.Plan? _linked;
     IReadOnlyList<ListedBuild>? _builds;
+    /// <summary>The builds Steam can deliver that the folder in use does not hold: what the download offers.</summary>
+    IReadOnlyList<ListedBuild> _offered = [];
+    /// <summary>The bytes a version change that did not finish left in the folder in use; the next one goes on from them.</summary>
+    long _started;
     ClientLayout _layout;
     string? _current, _unfinished, _unfinishedHash;
     /// <summary>The build of the client in use, when its executable is one LocalExile lists.</summary>
@@ -40,6 +69,10 @@ sealed class ClientVersionsWindow : FormWindow
 
     /// <summary>The folder's client changed: the window that opened this one reads the folder again.</summary>
     public bool Changed { get; private set; }
+
+    /// <summary>The user asked for a copy in place of the folder's linked client: the Play page makes it, with its own
+    /// question and progress, once this window is closed.</summary>
+    public bool CopyRequested { get; private set; }
 
     static ClientVersionsWindow()
     {
@@ -72,6 +105,14 @@ sealed class ClientVersionsWindow : FormWindow
         var line = new Border { Height = 1, Margin = new Thickness(0, 14, 0, 0) };
         line.SetResourceReference(Border.BackgroundProperty, "Shell.Border");
         below.Children.Add(line);
+        // Getting a version is apart from the list, as "Set up a new copy" is apart from the sidebar's folders.
+        below.Children.Add(_steamIntro);
+        _download = new Button { Content = L.Text("Download a version…"), HorizontalAlignment = HorizontalAlignment.Left,
+            ToolTip = L.Text("Choose a version this LocalExile runs and download it from Steam into this folder.") };
+        _download.SetResourceReference(StyleProperty, "Primary");
+        _download.Click += (_, _) => _ = DownloadAsync();
+        below.Children.Add(_download);
+        _steam.Margin = new Thickness(0, 14, 0, 6);
         below.Children.Add(_steam);
         var steamButtons = new WrapPanel();
         _signIn = Small(L.Text("Sign in with the Steam app…"), L.Text("A code to scan with the Steam mobile app. Waypoint sees no password."), () => _ = SignInAsync(null));
@@ -85,11 +126,24 @@ sealed class ClientVersionsWindow : FormWindow
         _use = Action(L.Text("Use this version"), () => _ = UseAsync());
         _delete = Action(L.Text("Delete this copy…"), () => _ = DeleteAsync());
         _open = Action(L.Text("Open folder"), OpenFolder);
+        _copy = Action(L.Text("Make a copy…"), () => { CopyRequested = true; Close(); });
+        _copy.ToolTip = L.Text("Copy the linked game into this LocalExile folder, so that an update of that game cannot break it. The Play page asks first and shows the copy.");
+        _copy.Visibility = Visibility.Collapsed;
         var buttons = new StackPanel { Width = 170 };
-        foreach (var button in new[] { _use, _delete, _open }) buttons.Children.Add(button);
+        foreach (var button in new[] { _use, _delete, _open, _copy }) buttons.Children.Add(button);
         DockPanel.SetDock(buttons, Dock.Right);
         root.Children.Add(buttons);
-        root.Children.Add(_list);
+        var clients = new Grid();
+        clients.Children.Add(_list);
+        clients.Children.Add(_empty);
+        root.Children.Add(clients);
+        ScrollViewer.SetHorizontalScrollBarVisibility(_list, ScrollBarVisibility.Disabled);
+        _empty.SetResourceReference(StyleProperty, "Shell.Secondary");
+        _empty.VerticalAlignment = VerticalAlignment.Top;
+        _steamIntro.SetResourceReference(StyleProperty, "Shell.Secondary");
+        // The secondary style is not the window's own text style: these lines wrap by their own word.
+        foreach (var text in new[] { _steamIntro, _steam, _detail, _status, _blocked, _empty }) text.TextWrapping = TextWrapping.Wrap;
+        _intro.Text = L.Text("The game clients in your LocalExile folders. What you change here is the folder in use.");
         _list.SelectionChanged += (_, _) => Enable();
         _status.SetResourceReference(StyleProperty, "Shell.Secondary");
         _detail.SetResourceReference(StyleProperty, "Shell.Secondary");
@@ -105,7 +159,18 @@ sealed class ClientVersionsWindow : FormWindow
             // A switch under way is not left running behind a closed window: Stop first, and what it fetched is kept.
             if (_busy) e.Cancel = true;
         };
-        Loaded += async (_, _) => await RefreshAsync();
+        Loaded += async (_, _) =>
+        {
+            await RefreshAsync();
+            // A kept client whose deletion was cut short is still on the drive under a name the list does not show.
+            if (!Running && await Task.Run(() => ClientVersions.HasUnfinishedDeletes(_folder)))
+                await WorkAsync(L.Text("Game client"), async _ =>
+                {
+                    Say(L.Text("Finishing a deletion that was cut short …"), working: true);
+                    await Task.Run(() => ClientVersions.FinishDeletes(_folder));
+                    Say("");
+                }, stoppable: false);
+        };
     }
 
     Button Action(string text, Action run)
@@ -123,6 +188,8 @@ sealed class ClientVersionsWindow : FormWindow
     }
 
     Row? Selected => (_list.SelectedItem as ListBoxItem)?.Tag as Row;
+    /// <summary>The build a client of the folder in use that is half-way to another one was on its way to.</summary>
+    ListedBuild? Unfinished => _unfinished is null ? null : (_builds ?? []).FirstOrDefault(b => b.FromSteam && Resumes(b));
     bool Running => _shared.Monitor.Latest.Any(s => s.Running) || _shared.IsLiveRunning;
     string? Account => SteamDownload.IsAccountName(_shared.Settings.SteamAccount) ? _shared.Settings.SteamAccount : null;
     /// <summary>A build by its version and LocalExile's own name for it: "Path of Exile 3.29.3c: 3.29.3.5 hotfix of
@@ -137,53 +204,176 @@ sealed class ClientVersionsWindow : FormWindow
     /// <summary>Whether the client in use is half-way to this very build.</summary>
     bool Resumes(ListedBuild build) => _unfinished == build.Version && (_unfinishedHash is null || _unfinishedHash == build.ExecutableSha256);
 
-    /// <summary>Reads the folder again, off the UI thread: sizes are summed and executables hashed.</summary>
+    /// <summary>Reads the folders again, off the UI thread: sizes are summed and executables hashed.</summary>
     async Task RefreshAsync()
     {
-        string client = Path.Combine(_folder, "Client");
-        var (layout, current, unfinished, builds, kept, here) = await Task.Run(() =>
+        string? chosen = Selected?.Client;
+        var paths = FolderList.Paths(_shared.Settings, _folder);
+        var (layout, current, unfinished, builds, rows, runs, started, linked) = await Task.Run(() =>
         {
-            var listed = LocalExileBuilds.Of(_folder);
-            var held = ClientVersions.Kept(_folder);
-            // Which build each client is, in LocalExile's own words: one version can be several builds (a hotfix).
-            var known = new Dictionary<string, ListedBuild>(StringComparer.OrdinalIgnoreCase);
-            foreach (string folder in held.Select(k => k.Folder).Prepend(client))
-                if (listed is not null && Directory.Exists(folder) && ClientLocator.ListedBuildOf(folder, listed) is { } build) known[folder] = build;
-            return (ClientVersions.Layout(_folder), FolderList.ClientOf(_folder), ClientVersions.UnfinishedBuild(_folder), listed, held, known);
+            // In the background, with its user looking: a launcher that failed to answer earlier is asked once more.
+            var listed = LocalExileBuilds.Of(_folder, again: true);
+            var found = new List<Row>();
+            // The folder in use first, then the others in the order the sidebar's list has them.
+            foreach (var known in FolderList.Read(paths, _folder).Where(f => f.Kind != FolderKind.Missing).OrderByDescending(f => f.Current))
+            {
+                try
+                {
+                    // Which build a client is, in the words of its own folder's LocalExile: one version can be several builds.
+                    var theirs = known.Current ? listed : LocalExileBuilds.Of(known.Path);
+                    ListedBuild? Named(string folder) => theirs is null ? null : ClientLocator.ListedBuildOf(folder, theirs);
+                    string client = Path.Combine(known.Path, "Client");
+                    if (ClientVersions.FilesOf(client) is var files and not ClientLayout.None)
+                    {
+                        // A linked client is shown where it is used, with where it leads: another LocalExile folder's
+                        // client, or a game folder outside LocalExile (the retail game's own).
+                        string? target = Launcher.Core.ClientSettings.IsLink(client) ? Path.TrimEndingDirectorySeparator(Path.GetFullPath(ClientLocator.RealPath(client))) : null;
+                        found.Add(new(known, client, files, InUse: true, FolderList.ClientOf(known.Path), Named(client),
+                            LinkTarget: target, Shared: target is not null && OwnClient.InLocalExile(target), HalfWayTo: ClientVersions.Unfinished(known.Path)));
+                    }
+                    foreach (var kept in ClientVersions.Kept(known.Path))
+                        found.Add(new(known, kept.Folder, ClientVersions.FilesOf(kept.Folder), InUse: false, kept.Version, Named(kept.Folder), kept));
+                }
+                // One folder that cannot be read (a drive gone, a launcher that will not start) leaves the others their lines.
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException or InvalidOperationException
+                    or System.ComponentModel.Win32Exception or System.Security.SecurityException or AggregateException) { }
+            }
+            string next = Path.Combine(_folder, ClientVersions.NextFolder);
+            return (ClientVersions.Layout(_folder), FolderList.ClientOf(_folder), ClientVersions.UnfinishedBuild(_folder), listed, found, ClientLocator.Supported(_folder),
+                Directory.Exists(next) ? ClientVersions.SizeOf(next) : 0, OwnClient.Check(_folder));
         });
+        _started = started;
+        _linked = linked;
         (_layout, _current, _unfinished, _unfinishedHash, _builds) = (layout, current, unfinished?.Version, unfinished?.ExecutableSha256, builds);
-        _currentBuild = here.GetValueOrDefault(client);
-        string Named(string folder) => here.TryGetValue(folder, out var build) && build.Name.Length > 0 ? Build(build) + "\n" + folder : folder;
+        _currentBuild = rows.FirstOrDefault(r => r.Here && r.InUse)?.Build;
+        // A copy set aside half-way is not that build whole: the build stays on offer.
+        _offered = ClientVersions.Offered(builds ?? [], _currentBuild, _unfinished is null, rows.Where(r => r.Here && r.Kept is { HalfWayTo: null }).Select(r => r.Build));
         _list.Items.Clear();
-        if (layout != ClientLayout.None)
-            Add(new(Label(current, _currentBuild) + "  ·  " + (_unfinished is null ? L.Text("in use") : L.Text("in use, half-way to {0}", _unfinished))
-                + (layout == ClientLayout.Link ? "  ·  " + L.Text("a link to another folder") : ""), Named(client), InUse: true), bold: true);
-        foreach (var kept1 in kept)
-            Add(new(Label(kept1.Version, here.GetValueOrDefault(kept1.Folder)) + "  ·  " + L.Text("kept, {0:0.#} GB", kept1.Bytes / 1e9), Named(kept1.Folder), Kept: kept1));
-        // One line a build Steam can deliver that is not here already: a version with a hotfix has a line for each.
-        foreach (var build in ClientVersions.Offered(builds ?? [], _currentBuild, _unfinished is null, kept.Select(k => here.GetValueOrDefault(k.Folder))))
-            Add(new(Label(build.Version, build) + "  ·  " + L.Text("from Steam"),
-                L.Text("{0}. It is downloaded from Steam with your Steam account.", Build(build)), Build: build));
-        var runs = ClientLocator.Supported(_folder);
-        _intro.Text = builds is null
+        foreach (var row in rows) Add(row);
+        _empty.Text = L.Text("No game client in your LocalExile folders yet.");
+        _empty.Visibility = rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        _steamIntro.Text = builds is null
             ? L.Text("This LocalExile does not say which game versions it runs, so nothing can be fetched from Steam for it. LocalExile v0.5.0-beta and later do.")
-            : L.Text("This LocalExile runs Path of Exile {0}. The version in use is the one in its Client folder; others can be kept beside it, or come from Steam with your own Steam account.",
-                runs.Count <= 1 ? string.Concat(runs) : string.Join(", ", runs.Take(runs.Count - 1)) + " " + L.Text("and") + " " + runs[^1]);
+            : L.Text("This LocalExile runs Path of Exile {0}. A version this folder does not have yet is downloaded from Steam into it, with your own Steam account.",
+                  runs.Count <= 1 ? string.Concat(runs) : string.Join(", ", runs.Take(runs.Count - 1)) + " " + L.Text("and") + " " + runs[^1])
+              + (_offered.Count == 0 && builds.Any(b => b.FromSteam) ? " " + L.Text("Every version it runs is already in this folder.") : "")
+              + (layout == ClientLayout.Link ? " " + L.Text("This folder's game client is a link to another folder. Make a copy of it first.") : "")
+              // Updating a client from Steam where it is needs no second folder, and removes what one was begun in.
+              + (started <= 100_000_000 ? "" : " " + (layout == ClientLayout.Steam
+                  ? L.Text("{0:0.#} GB of a version change that did not finish is kept in this folder. Keeping both goes on from it; updating in place deletes it.", started / 1e9)
+                  : L.Text("{0:0.#} GB of a version change that did not finish is kept in this folder, and the next download goes on from it.", started / 1e9)));
+        _list.SelectedItem = _list.Items.OfType<ListBoxItem>().FirstOrDefault(i => (i.Tag as Row)?.Client == chosen);
         if (_list.Items.Count > 0 && _list.SelectedItem is null) _list.SelectedIndex = 0;
         Enable();
     }
 
-    void Add(Row row, bool bold = false) => _list.Items.Add(new ListBoxItem { Content = row.Text, Tag = row, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal });
+    /// <summary>What a line says after the version: standalone or from Steam, which LocalExile folder it is in, and what
+    /// is particular about it.</summary>
+    string About(Row row)
+    {
+        var parts = new List<string> { row.Files == ClientLayout.Steam ? L.Text("Steam version") : L.Text("Standalone version"), row.Folder.Title };
+        if (row.Kept is { } kept) parts.Add(L.Text("kept, {0:0.#} GB", kept.Bytes / 1e9));
+        if (row is { InUse: true, HalfWayTo: { } unfinished }) parts.Add(L.Text("half-way to {0}", Version(unfinished)));
+        if (row.Kept is { HalfWayTo: { } other }) parts.Add(L.Text("half-way to {0}", Version(other)));
+        if (row.LinkTarget is not null) parts.Add(row.Shared ? L.Text("shares another LocalExile folder's client") : L.Text("linked to a game folder"));
+        return string.Join("  ·  ", parts);
+    }
+
+    /// <summary>Where a client's files are. For a linked one that is where the link leads, with the link after it: in a
+    /// narrow line the end is what goes.</summary>
+    static string Where(Row row) => row.LinkTarget is { } target ? target + "  ←  " + row.Client : row.Client;
+
+    /// <summary>A line drawn as the sidebar's folder list draws a folder: an icon, the name with what it is beside it, where
+    /// it is underneath, and "In use" on the client the folder in use takes.</summary>
+    void Add(Row row)
+    {
+        var line = new DockPanel();
+        var icon = new PackIcon { Kind = row.Files == ClientLayout.Steam ? PackIconKind.Steam : PackIconKind.GamepadVariantOutline, Width = 18, Height = 18,
+            Margin = new Thickness(0, 0, 12, 0), VerticalAlignment = VerticalAlignment.Center };
+        icon.SetResourceReference(ForegroundProperty, "Shell.TextSecondary");
+        DockPanel.SetDock(icon, Dock.Left);
+        line.Children.Add(icon);
+        if (row.Here && row.InUse)
+        {
+            var text = new TextBlock { Text = L.Text("In use") };
+            text.SetResourceReference(TextBlock.ForegroundProperty, "Shell.Accent");
+            var badge = new Border { Child = text };
+            badge.SetResourceReference(StyleProperty, "Shell.Badge");
+            badge.SetResourceReference(Border.BorderBrushProperty, "Shell.Accent");
+            DockPanel.SetDock(badge, Dock.Right);
+            line.Children.Add(badge);
+        }
+        var title = new TextBlock { FontSize = ThemeResources.Font(13), TextTrimming = TextTrimming.CharacterEllipsis, TextWrapping = TextWrapping.NoWrap };
+        title.Inlines.Add(new Run(Version(row.Version)) { FontWeight = FontWeights.SemiBold });
+        // Which build of the version, in LocalExile's own words: one version can be several builds (a hotfix).
+        if (row.Build is { Name.Length: > 0 } build)
+        {
+            var name = new Run("  " + build.Name);
+            name.SetResourceReference(TextElement.ForegroundProperty, "Shell.TextSecondary");
+            title.Inlines.Add(name);
+        }
+        var about = new TextBlock { Text = About(row), FontSize = ThemeResources.Font(11.5), Margin = new Thickness(0, 1, 0, 0), TextTrimming = TextTrimming.CharacterEllipsis,
+            TextWrapping = TextWrapping.NoWrap };
+        about.SetResourceReference(TextBlock.ForegroundProperty, "Shell.TextSecondary");
+        var where = new TextBlock { Text = Where(row), FontSize = ThemeResources.Font(11.5), Margin = new Thickness(0, 1, 0, 0), TextTrimming = TextTrimming.CharacterEllipsis,
+            TextWrapping = TextWrapping.NoWrap };
+        where.SetResourceReference(TextBlock.ForegroundProperty, "Shell.TextSecondary");
+        var words = new StackPanel();
+        words.Children.Add(title);
+        words.Children.Add(about);
+        words.Children.Add(where);
+        line.Children.Add(words);
+        var item = new ListBoxItem { Content = line, Tag = row, Padding = new Thickness(10, 7, 10, 8), HorizontalContentAlignment = HorizontalAlignment.Stretch, ToolTip = Where(row) };
+        AutomationProperties.SetName(item, string.Join(", ", new[] { Version(row.Version), row.Build?.Name, About(row), row.Here && row.InUse ? L.Text("In use") : null, row.Client }.Where(part => part is { Length: > 0 })));
+        _list.Items.Add(item);
+    }
+
+    /// <summary>Under the list, of the line chosen: why it cannot be changed from here, when it cannot.</summary>
+    string Detail(Row? row)
+    {
+        if (row is null) return "";
+        var lines = new List<string>();
+        if (!row.Here)
+            lines.Add(row.Folder.Kind == FolderKind.Source
+                ? L.Text("This client belongs to a source copy of LocalExile, which looks after its own client.")
+                : L.Text("This client belongs to another LocalExile folder. Choose that folder in the sidebar to change its client."));
+        else if (row.Kept is { HalfWayTo: null } && _unfinished is not null)
+            lines.Add(L.Text("The game client in use is half-way to another version. Finish that switch first."));
+        else if (row.Kept is { HalfWayTo: { } other } half)
+            lines.Add(_builds is null
+                // Not knowing the list is not the same as the list lacking the build: nothing here says "delete it".
+                ? L.Text("This copy was set aside half-way to {0}, so it is not whole. The versions this LocalExile runs could not be read just now: open this window again to finish the copy.", Version(other))
+                : HalfWay(half) is null
+                ? L.Text("This copy was set aside half-way to {0}, so it is not whole. Steam cannot deliver that version for this LocalExile, so the copy can only be deleted.", Version(other))
+                : L.Text("This copy was set aside half-way to {0}, so it is not whole. Finish this copy downloads the rest from Steam; until then it cannot be used.", Version(other)));
+        else if (row is { InUse: true, LinkTarget: { } target })
+            lines.Add(row.Shared ? L.Text("This folder shares the game client of another LocalExile folder: what changes there changes here.")
+                : _linked is { } plan ? OwnClient.Notice(plan) : L.Text("Client is a link to {0}, not a copy.", target));
+        return string.Join("\n", lines);
+    }
 
     void Enable()
     {
         var row = Selected;
         bool free = !_busy && !Running;
-        _use.IsEnabled = free && row is not null && (row.Kept is not null || row.Build is not null);
-        _use.Content = row?.Build is not null ? (Resumes(row.Build) ? L.Text("Finish the switch") : L.Text("Get this version…")) : L.Text("Use this version");
-        _delete.IsEnabled = free && row?.Kept is not null;
-        _open.IsEnabled = row is { InUse: true } or { Kept: not null };
-        _detail.Text = row?.Detail ?? "";
+        // Only the folder in use is changed here: one of its kept clients comes back, or its client half-way to another
+        // version is finished.
+        // A link is someone else's folder: nothing is swapped into its place or downloaded over it, and a switch that did
+        // not finish there is that folder's to finish.
+        bool link = _layout == ClientLayout.Link;
+        bool resume = !link && row is { Here: true, InUse: true } && Unfinished is not null;
+        // A copy that was set aside half-way is made whole where it is, as the build it was on its way to.
+        bool half = row is { Here: true, Kept.HalfWayTo: not null };
+        bool finish = half && HalfWay(row!.Kept!) is not null && DepotTool.Supported;
+        _use.IsEnabled = free && (row is { Here: true, Kept.HalfWayTo: null } && !link && _unfinished is null || resume || finish);
+        _use.Content = resume ? L.Text("Finish the switch") : half ? L.Text("Finish this copy") : L.Text("Use this version");
+        _copy.Visibility = row is { Here: true, InUse: true } && _linked is not null ? Visibility.Visible : Visibility.Collapsed;
+        _copy.IsEnabled = free;
+        _delete.IsEnabled = free && row is { Here: true, Kept: not null };
+        _open.IsEnabled = row is not null;
+        _detail.Text = Detail(row);
+        _detail.Visibility = _detail.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        _download.IsEnabled = free && !link && DepotTool.Supported && _offered.Count > 0;
         _signIn.IsEnabled = _password.IsEnabled = free && DepotTool.Supported && _builds is { Count: > 0 };
         _forget.IsEnabled = free && Account is not null;
         _steam.Text = !DepotTool.Supported ? L.Text("The Steam download works on 64-bit Windows only for now.")
@@ -317,13 +507,18 @@ sealed class ClientVersionsWindow : FormWindow
 
     void OpenFolder()
     {
-        string? folder = Selected switch { { Kept: { } kept } => kept.Folder, { InUse: true } => Path.Combine(_folder, "Client"), _ => null };
+        string? folder = Selected?.Client;
         if (folder is not null && Directory.Exists(folder)) Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { folder }, UseShellExecute = false })?.Dispose();
     }
 
     async Task UseAsync()
     {
-        if (Selected is not { } row) return;
+        if (Selected is not { Here: true } row) return;
+        if (row.Kept is { HalfWayTo: not null } half)
+        {
+            if (HalfWay(half) is { } target) await FinishKeptAsync(half, target);
+            return;
+        }
         if (row.Kept is { } kept)
         {
             await WorkAsync(L.Text("Game client"), async _ =>
@@ -334,7 +529,87 @@ sealed class ClientVersionsWindow : FormWindow
             }, stoppable: false);
             return;
         }
-        if (row.Build is { } build) await GetAsync(build);
+        if (row.InUse && Unfinished is { } build) await GetAsync(build);
+    }
+
+    /// <summary>The build a copy that was set aside half-way was on its way to, when Steam can deliver it.</summary>
+    ListedBuild? HalfWay(KeptClient kept) => (_builds ?? []).FirstOrDefault(b => b.FromSteam && b.Version == kept.HalfWayTo
+        && (kept.HalfWayToBuild is null || kept.HalfWayToBuild == b.ExecutableSha256));
+
+    /// <summary>Makes a copy that was set aside half-way whole where it is (<see cref="ClientVersions.FinishKeptAsync"/>).</summary>
+    async Task FinishKeptAsync(KeptClient kept, ListedBuild build)
+    {
+        await WorkAsync(L.Text("Game client"), async stop =>
+        {
+            if (!await ToolReadyAsync(stop)) return;
+            if (Account is null && !await SignInAsync(stop)) return;
+            Task<SteamResult> Run() => Task.Run(() => ClientVersions.FinishKeptAsync(_folder, kept.Name, build, Tool, Account!,
+                progress => Dispatcher.BeginInvoke(() => Say(L.Text("Downloading from Steam. {0}", progress.Detail), progress.Fraction, working: true)), Log, stop), CancellationToken.None);
+            Say(L.Text("Downloading from Steam. {0}", ""), working: true);
+            var result = await Run();
+            if (result.Outcome == SteamOutcome.SignInNeeded && await SignInAsync(stop)) result = await Run();
+            Say(result.Outcome == SteamOutcome.Done ? L.Text("{0} is whole now, and kept in this folder.", Label(build.Version, build)) : SteamDownload.Explain(result));
+        });
+    }
+
+    /// <summary>Apart from the list: which of the versions this folder's LocalExile runs to download from Steam into it.</summary>
+    async Task DownloadAsync()
+    {
+        if (_busy || _offered.Count == 0) return;
+        var pick = new PickWindow(this, _offered, _folder);
+        if (pick.ShowDialog() == true && pick.Chosen is { } build) await GetAsync(build);
+    }
+
+    /// <summary>The versions a download can be, each with LocalExile's own name for the build.</summary>
+    sealed class PickWindow : FormWindow
+    {
+        public ListedBuild? Chosen { get; private set; }
+
+        public PickWindow(Window owner, IReadOnlyList<ListedBuild> builds, string folder)
+        {
+            DialogLayout.Configure(this, owner, L.Text("Download a game version"), 560);
+            var root = new DockPanel { Margin = new Thickness(24) };
+            var list = new ListBox { MinHeight = 110, HorizontalContentAlignment = HorizontalAlignment.Stretch };
+            void Accept()
+            {
+                if ((list.SelectedItem as ListBoxItem)?.Tag is not ListedBuild build) return;
+                Chosen = build;
+                DialogResult = true;
+            }
+            var buttons = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 16, 0, 0) };
+            // Enter is Cancel, as in every question of this window: with a way named in Settings no question follows the pick.
+            var download = new Button { Content = L.Text("Download"), Margin = new Thickness(0, 0, 8, 0) };
+            download.SetResourceReference(StyleProperty, "Primary");
+            download.Click += (_, _) => Accept();
+            buttons.Children.Add(download);
+            buttons.Children.Add(new Button { Content = L.Text("Cancel"), IsCancel = true, IsDefault = true });
+            DockPanel.SetDock(buttons, Dock.Bottom);
+            root.Children.Add(buttons);
+            var intro = new TextBlock { Text = L.Text("Choose the version to download from Steam into this folder. When the folder has a client, how to move to it is asked next, unless Settings names the way."),
+                Margin = new Thickness(0, 0, 0, 4) };
+            DockPanel.SetDock(intro, Dock.Top);
+            root.Children.Add(intro);
+            var where = new TextBlock { Text = folder, Margin = new Thickness(0, 0, 0, 12), TextTrimming = TextTrimming.CharacterEllipsis };
+            where.SetResourceReference(StyleProperty, "Shell.Secondary");
+            DockPanel.SetDock(where, Dock.Top);
+            root.Children.Add(where);
+            foreach (var build in builds)
+            {
+                var text = new TextBlock { FontSize = ThemeResources.Font(13), TextTrimming = TextTrimming.CharacterEllipsis };
+                text.Inlines.Add(new Run(Version(build.Version)) { FontWeight = FontWeights.SemiBold });
+                var name = new Run("  " + build.Name);
+                name.SetResourceReference(TextElement.ForegroundProperty, "Shell.TextSecondary");
+                text.Inlines.Add(name);
+                var item = new ListBoxItem { Content = text, Tag = build, Padding = new Thickness(10, 7, 10, 8) };
+                AutomationProperties.SetName(item, ClientVersionsWindow.Build(build));
+                item.MouseDoubleClick += (_, _) => Accept();
+                list.Items.Add(item);
+            }
+            list.SelectedIndex = 0;
+            root.Children.Add(list);
+            Content = root;
+            Loaded += (_, _) => (list.SelectedItem as ListBoxItem)?.Focus();
+        }
     }
 
     async Task DeleteAsync()
@@ -357,6 +632,11 @@ sealed class ClientVersionsWindow : FormWindow
     {
         await WorkAsync(L.Text("Game client"), async stop =>
         {
+            if (_layout == ClientLayout.Link)
+            {
+                Say(L.Text("This folder's game client is a link to another folder. Make a copy of it first."));
+                return;
+            }
             if (!await ToolReadyAsync(stop)) return;
             if (Account is null && !await SignInAsync(stop)) return;
             Say(L.Text("Asking Steam how large {0} is …", Version(build.Version)), working: true);
@@ -389,7 +669,8 @@ sealed class ClientVersionsWindow : FormWindow
     {
         string target = Label(build.Version, build), title = L.Text("Get {0}?", Version(build.Version));
         long inPlace = ClientVersions.Needed(_layout, SwitchWay.UpdateInPlace, buildBytes, currentBytes), both = ClientVersions.Needed(_layout, SwitchWay.KeepBoth, buildBytes, currentBytes);
-        bool canInPlace = free is not { } room || room >= inPlace, canBoth = free is not { } space || space >= both;
+        // What an earlier try left in the folder is room this one does not need again; the sentence gives the drive's own figure.
+        bool canInPlace = free is not { } room || room + _started >= inPlace, canBoth = free is not { } space || space + _started >= both;
         string roomText = free is { } f ? L.Text("{0:0.#} GB is free on this drive.", f / 1e9) : "";
         if (_layout == ClientLayout.None)
         {
@@ -398,9 +679,22 @@ sealed class ClientVersionsWindow : FormWindow
             Ask(DialogKind.Warning, title, L.Text("The drive is too full: {0} needs {1:0.#} GB.", target, both / 1e9) + " " + roomText, null, L.Text("OK"));
             return null;
         }
-        if (Resumes(build) && canInPlace) return SwitchWay.UpdateInPlace;
+        if (_unfinished is not null)
+        {
+            // A client half-way to another version is made whole where it is, whichever build is asked for: it is not worth
+            // setting aside, and Settings' choice is for a client that is whole.
+            if (!canInPlace)
+            {
+                Ask(DialogKind.Warning, title, L.Text("The drive is too full: {0} needs {1:0.#} GB.", target, inPlace / 1e9) + " " + roomText, null, L.Text("OK"));
+                return null;
+            }
+            if (Resumes(build)) return SwitchWay.UpdateInPlace;
+            return Ask(DialogKind.Question, title, L.Text("The client in use is half-way to {0}, so it cannot be kept as it is. It becomes {1} where it is, and only what differs is downloaded.", Version(_unfinished), target)
+                + " " + roomText, null, L.Text("Update in place"), L.Text("Cancel")) == 0 ? SwitchWay.UpdateInPlace : null;
+        }
         string setting = _shared.Settings.ClientSwitch;
-        if (setting == nameof(SwitchWay.UpdateInPlace) && canInPlace) return SwitchWay.UpdateInPlace;
+        // "Always update in place" is for a client from Steam. A standalone one would be deleted for good, so it is asked about.
+        if (setting == nameof(SwitchWay.UpdateInPlace) && canInPlace && _layout == ClientLayout.Steam) return SwitchWay.UpdateInPlace;
         if (setting == nameof(SwitchWay.KeepBoth) && canBoth) return SwitchWay.KeepBoth;
         if (!canInPlace && !canBoth)
         {

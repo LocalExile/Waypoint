@@ -197,9 +197,13 @@ public partial class InstallTab : UserControl
         if (_working || _checking) return;
         var window = new ClientVersionsWindow(Window.GetWindow(this), _shared);
         window.ShowDialog();
-        if (!window.Changed) return;
-        ClientChanged?.Invoke();
-        InstallChanged();
+        if (window.Changed)
+        {
+            ClientChanged?.Invoke();
+            InstallChanged();
+        }
+        // "Make a copy…" on a linked client there is this page's own copy, with its question and its progress.
+        if (window.CopyRequested) OwnCopyClicked(this, new RoutedEventArgs());
     }
 
     async Task RunAsync(string[] arguments, bool withClient)

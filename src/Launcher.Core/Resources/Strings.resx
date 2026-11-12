@@ -51,6 +51,9 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>No mods match your search.</value>
   </data>
+  <data name="Text_0154fb2224a4" xml:space="preserve">
+    <value>Every version it runs is already in this folder.</value>
+  </data>
   <data name="Text_016b695919cd" xml:space="preserve">
     <value>Keep both: {0} is downloaded whole ({1:0.#} GB) and the client in use is set aside. Going back later is instant.</value>
   </data>
@@ -261,9 +264,6 @@
   <data name="Text_072da57facdc" xml:space="preserve">
     <value>Modifiers</value>
   </data>
-  <data name="Text_075d26d6fac7" xml:space="preserve">
-    <value>Get this version…</value>
-  </data>
   <data name="Text_07607d609f9a" xml:space="preserve">
     <value>Lighting</value>
   </data>
@@ -353,6 +353,9 @@
   </data>
   <data name="Text_0a6f2ed0b66a" xml:space="preserve">
     <value>Filter the commands by name or description</value>
+  </data>
+  <data name="Text_0a8ea7377c82" xml:space="preserve">
+    <value>Steam version</value>
   </data>
   <data xml:space="preserve" name="Text_0a9315c001d9">
     <value>Save and check</value>
@@ -1616,6 +1619,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2b79cd4ec41b" xml:space="preserve">
     <value>Save mod settings</value>
   </data>
+  <data name="Text_2bbdf43d1c29" xml:space="preserve">
+    <value>{0:0.#} GB of a version change that did not finish is kept in this folder, and the next download goes on from it.</value>
+  </data>
   <data name="Text_2bc430e7e225" xml:space="preserve">
     <value>The old {0} client was removed. Your saves, accounts and login keys stay.</value>
   </data>
@@ -2013,6 +2019,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_3680fcad01f4" xml:space="preserve">
     <value>Fonts</value>
   </data>
+  <data name="Text_36dd3350eceb" xml:space="preserve">
+    <value>Download a game version</value>
+  </data>
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>Find a module</value>
   </data>
@@ -2141,9 +2150,6 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3a9d88fcc07f" xml:space="preserve">
     <value>Redeemer</value>
-  </data>
-  <data name="Text_3abf014af387" xml:space="preserve">
-    <value>in use, half-way to {0}</value>
   </data>
   <data name="Text_3ac1a9ec4fa7" xml:space="preserve">
     <value>Currency</value>
@@ -2455,6 +2461,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4406ed643196" xml:space="preserve">
     <value>Name of the copy of {0}:</value>
   </data>
+  <data name="Text_442244872d39" xml:space="preserve">
+    <value>Copy the linked game into this LocalExile folder, so that an update of that game cannot break it. The Play page asks first and shows the copy.</value>
+  </data>
   <data name="Text_4426efcaf970" xml:space="preserve">
     <value>Refresh the workspace to inspect modules and leagues.</value>
   </data>
@@ -2475,6 +2484,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_44a8e8881f95" xml:space="preserve">
     <value>LocalExile's newest changes, updated when you play. Its characters are its own.</value>
+  </data>
+  <data name="Text_44bbccca6c35" xml:space="preserve">
+    <value>{0:0.#} GB of a version change that did not finish is kept in this folder. Keeping both goes on from it; updating in place deletes it.</value>
   </data>
   <data name="Text_44bc3799892c" xml:space="preserve">
     <value>Healing</value>
@@ -2556,6 +2568,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4709a224b4c0" xml:space="preserve">
     <value>The crafter makes no enchantments</value>
+  </data>
+  <data name="Text_473c0bd78c0b" xml:space="preserve">
+    <value>linked to a game folder</value>
   </data>
   <data name="Text_47453cf73f56" xml:space="preserve">
     <value>Availability changes apply at the next server start.</value>
@@ -2902,6 +2917,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_507d2cdd1d1b">
     <value>Fetching pull request</value>
   </data>
+  <data name="Text_50896dc6ab48" xml:space="preserve">
+    <value>Download a version…</value>
+  </data>
   <data name="Text_50976c0fe076" xml:space="preserve">
     <value>This folder has no game client yet. Finish setup takes one that is already on this PC; Game client… can download one from Steam.</value>
   </data>
@@ -3067,6 +3085,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_553decbc612d" xml:space="preserve">
     <value>Update LocalExile to {0}?</value>
   </data>
+  <data name="Text_554d680a6462" xml:space="preserve">
+    <value>This copy was set aside half-way to {0}, so it is not whole. Finish this copy downloads the rest from Steam; until then it cannot be used.</value>
+  </data>
   <data name="Text_5559b6621735" xml:space="preserve">
     <value>{0} has no Content.ggpk and PathOfExile.exe, so it is not a standalone client.</value>
   </data>
@@ -3157,6 +3178,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_5841335d26d5">
     <value>Automatic backups are off. Back up manually on Backups before changes you may want to undo.</value>
   </data>
+  <data name="Text_584c0b102711" xml:space="preserve">
+    <value>No game client in your LocalExile folders yet.</value>
+  </data>
   <data name="Text_5870f9bfd157" xml:space="preserve">
     <value>Storm</value>
   </data>
@@ -3191,6 +3215,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_595d778513d6" xml:space="preserve">
     <value>Waypoint stays on this folder. The setup guide's folder, {0}, is in the folder list at the top of the sidebar: choose it there to open it.</value>
+  </data>
+  <data name="Text_5972baef21c1" xml:space="preserve">
+    <value>The game clients in your LocalExile folders. What you change here is the folder in use.</value>
   </data>
   <data xml:space="preserve" name="Text_59976865a56d">
     <value>Install .NET 10 SDK; check with dotnet --list-sdks</value>
@@ -3239,6 +3266,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>The league card links contain a cycle.</value>
+  </data>
+  <data name="Text_5ad31b8bcf92" xml:space="preserve">
+    <value>Choose the version to download from Steam into this folder. When the folder has a client, how to move to it is asked next, unless Settings names the way.</value>
   </data>
   <data name="Text_5ae573789edf" xml:space="preserve">
     <value>Set up again…</value>
@@ -3381,6 +3411,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data name="Text_60540eaada37" xml:space="preserve">
     <value>LocalExile.exe: starts the servers, then the game</value>
+  </data>
+  <data name="Text_60727dbb0009" xml:space="preserve">
+    <value>This LocalExile runs Path of Exile {0}. A version this folder does not have yet is downloaded from Steam into it, with your own Steam account.</value>
   </data>
   <data name="Text_6073ce437aaa" xml:space="preserve">
     <value>This DepotDownloader is not the release Waypoint expects, so it was not used.</value>
@@ -3588,6 +3621,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_652e32ff2169" xml:space="preserve">
     <value>Walk maps · Frida. Saves area layout data as the game loads new areas. Optional; attaches only to this checkout's patched client. Existing captures are kept.</value>
   </data>
+  <data name="Text_654cf2f053de" xml:space="preserve">
+    <value>Standalone version</value>
+  </data>
   <data xml:space="preserve" name="Text_6561a8925313">
     <value>Branches and pull requests</value>
   </data>
@@ -3713,9 +3749,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_68a30385dbf5">
     <value>Every color scheme supports Light, Dark and System.</value>
-  </data>
-  <data name="Text_68a92f65faf7" xml:space="preserve">
-    <value>{0}. It is downloaded from Steam with your Steam account.</value>
   </data>
   <data name="Text_68e7e2420b8e" xml:space="preserve">
     <value>The account's password: the dev host logs in with it</value>
@@ -4191,6 +4224,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_77f818c944f1" xml:space="preserve">
     <value>Open both folders</value>
   </data>
+  <data name="Text_77fd4638ffc1" xml:space="preserve">
+    <value>The client in use is half-way to {0}, so it cannot be kept as it is. It becomes {1} where it is, and only what differs is downloaded.</value>
+  </data>
   <data name="Text_780287165a99" xml:space="preserve">
     <value>The game and services stay open after Waypoint exits.</value>
   </data>
@@ -4286,6 +4322,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7ac5b6d5456b" xml:space="preserve">
     <value>Show service details</value>
+  </data>
+  <data name="Text_7ad06003b2a6" xml:space="preserve">
+    <value>Finishing a deletion that was cut short …</value>
   </data>
   <data name="Text_7ad35008821d" xml:space="preserve">
     <value>Add a folder you already have…</value>
@@ -4517,6 +4556,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_819282fd4810" xml:space="preserve">
     <value>Create {0} with {1}? {2} Existing leagues and saves are preserved.</value>
+  </data>
+  <data name="Text_81aafeb265b4" xml:space="preserve">
+    <value>This copy was set aside half-way to {0}, so it is not whole. Steam cannot deliver that version for this LocalExile, so the copy can only be deleted.</value>
   </data>
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! no {0} suggestions: {1}</value>
@@ -4791,6 +4833,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>Double-click a command to put it in the line.</value>
   </data>
+  <data name="Text_8a12ed1c823b" xml:space="preserve">
+    <value>That copy is not a client from Steam, so Steam cannot finish it.</value>
+  </data>
   <data xml:space="preserve" name="Text_8a2d9427ded5">
     <value>Another game client is running. Close it before launching or restarting services.</value>
   </data>
@@ -5042,6 +5087,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_923f66176454" xml:space="preserve">
     <value>Downloading {0} … {1:N0} KB</value>
+  </data>
+  <data name="Text_9262f559cca1" xml:space="preserve">
+    <value>Client is a link to {0}, not a copy.</value>
   </data>
   <data name="Text_92646da937a1" xml:space="preserve">
     <value>Starts with Play or Start servers while Walk maps is on</value>
@@ -5360,6 +5408,9 @@ Dependencies: {3}
   <data name="Text_998195e4aaa2" xml:space="preserve">
     <value>Search again</value>
   </data>
+  <data name="Text_998fad21d399" xml:space="preserve">
+    <value>Choose a version this LocalExile runs and download it from Steam into this folder.</value>
+  </data>
   <data name="Text_99a52df3ff3d" xml:space="preserve">
     <value>Key</value>
   </data>
@@ -5498,6 +5549,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9cf951e82d56" xml:space="preserve">
     <value>Multiple-instance test mode</value>
+  </data>
+  <data name="Text_9d0f65f4866b" xml:space="preserve">
+    <value>half-way to {0}</value>
   </data>
   <data xml:space="preserve" name="Text_9d19ac7b2039">
     <value>Open logs folder</value>
@@ -5711,6 +5765,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a388bd2d373c" xml:space="preserve">
     <value>Uncommitted changes</value>
+  </data>
+  <data name="Text_a390f2eec6ba" xml:space="preserve">
+    <value>{0} is whole now, and kept in this folder.</value>
   </data>
   <data name="Text_a3986c49db0d" xml:space="preserve">
     <value>PowerShell 7 runs LocalExile's build and setup scripts</value>
@@ -5928,6 +5985,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_a80983dbe5df">
     <value>Needs Gateway running, an enabled built mod, and a client in a playable area (Python + Frida).</value>
   </data>
+  <data name="Text_a81c1cd77e8e" xml:space="preserve">
+    <value>This folder shares the game client of another LocalExile folder: what changes there changes here.</value>
+  </data>
   <data name="Text_a8233259d1a0" xml:space="preserve">
     <value>Item level {0}</value>
   </data>
@@ -5975,6 +6035,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a9f51233a4ef" xml:space="preserve">
     <value>Stop dev host</value>
+  </data>
+  <data name="Text_aa105a875e46" xml:space="preserve">
+    <value>This client belongs to another LocalExile folder. Choose that folder in the sidebar to change its client.</value>
   </data>
   <data name="Text_aa128a84671e" xml:space="preserve">
     <value>Client setup needs attention. Run setup guide below to recheck and refresh it, then try Play again.</value>
@@ -6266,6 +6329,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_b2d54e04976a">
     <value>PrepareClient completed.</value>
+  </data>
+  <data name="Text_b2f51d59c287" xml:space="preserve">
+    <value>This copy was set aside half-way to {0}, so it is not whole. The versions this LocalExile runs could not be read just now: open this window again to finish the copy.</value>
   </data>
   <data name="Text_b2feff991def" xml:space="preserve">
     <value>Log in with your LocalExile account: its name goes in the Email field. Closing the game stops the servers.</value>
@@ -8028,6 +8094,9 @@ Dependencies: {2}
   <data name="Text_e806a291cfc3" xml:space="preserve">
     <value>Testing</value>
   </data>
+  <data name="Text_e8353f44f2c9" xml:space="preserve">
+    <value>shares another LocalExile folder's client</value>
+  </data>
   <data name="Text_e8545ec7e575" xml:space="preserve">
     <value>Unresolved pack anchor</value>
   </data>
@@ -8079,9 +8148,6 @@ Dependencies: {2}
   <data name="Text_e9a58032e93d" xml:space="preserve">
     <value>The game is running</value>
   </data>
-  <data name="Text_e9ae982dd9de" xml:space="preserve">
-    <value>This LocalExile runs Path of Exile {0}. The version in use is the one in its Client folder; others can be kept beside it, or come from Steam with your own Steam account.</value>
-  </data>
   <data xml:space="preserve" name="Text_e9b13ad2ca83">
     <value>Allowing the temporary local service to shut down.</value>
   </data>
@@ -8093,6 +8159,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e9c6f4ddf770" xml:space="preserve">
     <value>Guardian portals</value>
+  </data>
+  <data name="Text_e9cdda970b82" xml:space="preserve">
+    <value>This client belongs to a source copy of LocalExile, which looks after its own client.</value>
   </data>
   <data xml:space="preserve" name="Text_e9d7f3ec4aa7">
     <value>Select a backup to restore or delete it.</value>
@@ -8276,6 +8345,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_eeaf954d8d43">
     <value>Setup and compatibility</value>
+  </data>
+  <data name="Text_eeb569895a88" xml:space="preserve">
+    <value>That copy was set aside half-way to another version, so it is not whole and cannot be used.</value>
   </data>
   <data name="Text_eecd85f698cf" xml:space="preserve">
     <value>Close the game and stop LocalExile services before changing player accounts.</value>
@@ -8475,6 +8547,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_f4702857c4a9">
     <value>
 Mods at backup: </value>
+  </data>
+  <data name="Text_f4a54a4c8d08" xml:space="preserve">
+    <value>Finish this copy</value>
   </data>
   <data name="Text_f4a639914413" xml:space="preserve">
     <value>Put every setting back to its default?</value>

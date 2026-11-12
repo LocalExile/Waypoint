@@ -20,7 +20,10 @@ public enum SwitchWay
 /// <summary>A client set aside in the folder's <c>Clients\</c>.</summary>
 /// <param name="Name">Its folder's name there.</param>
 /// <param name="Version">The version it is, when its executable is one a list or Waypoint names.</param>
-public sealed record KeptClient(string Name, string? Version, string Folder, long Bytes);
+/// <param name="HalfWayTo">For a client that was set aside while half-way to another version (it carries the mark): that
+/// version. Such a copy is not whole and cannot be used until it is finished (<see cref="ClientVersions.FinishKeptAsync"/>).</param>
+/// <param name="HalfWayToBuild">The executable hash of the build it was on its way to, when the mark names it.</param>
+public sealed record KeptClient(string Name, string? Version, string Folder, long Bytes, string? HalfWayTo = null, string? HalfWayToBuild = null);
 
 /// <param name="Stage">"copy" while the client in use is copied as a start, "download" while Steam's files come.</param>
 /// <param name="Fraction">0 to 1 of the stage, when it can be told.</param>
@@ -62,16 +65,31 @@ public static class ClientVersions
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException) { return ClientLayout.None; }
     }
 
+    /// <summary>Which of the two a client folder's files are, whether the folder is a link or not: a client that came as the
+    /// standalone game (<c>Content.ggpk</c>) or one that came from Steam.</summary>
+    public static ClientLayout FilesOf(string client)
+    {
+        try
+        {
+            if (File.Exists(Path.Combine(client, "Content.ggpk"))) return ClientLayout.Standalone;
+            return File.Exists(Path.Combine(client, "Bundles2", "_.index.bin")) ? ClientLayout.Steam : ClientLayout.None;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException) { return ClientLayout.None; }
+    }
+
     /// <summary>The version a client being updated where it is was on its way to, when that was cut short; null for a
     /// client that is whole.</summary>
     public static string? Unfinished(string folder) => UnfinishedBuild(folder)?.Version;
 
     /// <summary>The same, with the executable hash of the build it was on its way to when the mark names it.</summary>
-    public static (string Version, string? ExecutableSha256)? UnfinishedBuild(string folder)
+    public static (string Version, string? ExecutableSha256)? UnfinishedBuild(string folder) => MarkIn(Client(folder));
+
+    /// <summary>The mark in a client folder, the one in use or one set aside.</summary>
+    static (string Version, string? ExecutableSha256)? MarkIn(string client)
     {
         try
         {
-            string marker = Path.Combine(Client(folder), Marker);
+            string marker = Path.Combine(client, Marker);
             if (!File.Exists(marker)) return null;
             string[] lines = [.. File.ReadAllLines(marker).Select(l => l.Trim()).Where(l => l.Length > 0)];
             return (lines.Length > 0 ? lines[0] : "", lines.Length > 1 ? lines[1] : null);
@@ -79,9 +97,9 @@ public static class ClientVersions
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return null; }
     }
 
-    /// <summary>Whether a version has more than one build Steam can deliver (a release and its hotfix): its builds are then
-    /// told apart by LocalExile's own name for each.</summary>
-    public static bool Several(IEnumerable<ListedBuild> builds, string? version) => builds.Count(b => b.FromSteam && b.Version == version) > 1;
+    /// <summary>Whether a version is more than one build in the list (a release and its hotfix), whether Steam can deliver
+    /// each or not: its builds are then told apart by LocalExile's own name for each.</summary>
+    public static bool Several(IEnumerable<ListedBuild> builds, string? version) => builds.Count(b => b.Version == version) > 1;
 
     /// <summary>The builds to offer from Steam, newest first: every build Steam can deliver, less those the folder holds
     /// already (the one in use when it is whole, and those set aside).</summary>
@@ -114,12 +132,19 @@ public static class ClientVersions
             string store = Path.Combine(folder, KeptFolder);
             if (!Directory.Exists(store)) return kept;
             foreach (var entry in new DirectoryInfo(store).EnumerateDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase))
-                if (entry.LinkTarget is null && LayoutOf(entry.FullName) is ClientLayout.Standalone or ClientLayout.Steam)
-                    kept.Add(new(entry.Name, ClientLocator.BuildOf(entry.FullName), entry.FullName, SizeOf(entry.FullName)));
+                // A copy whose deletion was cut short (".deleting-<name>") is not a client to list.
+                if (entry.LinkTarget is null && !entry.Name.StartsWith(Deleting, StringComparison.Ordinal) && LayoutOf(entry.FullName) is ClientLayout.Standalone or ClientLayout.Steam)
+                {
+                    var mark = MarkIn(entry.FullName);
+                    kept.Add(new(entry.Name, ClientLocator.BuildOf(entry.FullName), entry.FullName, SizeOf(entry.FullName), mark?.Version, mark?.ExecutableSha256));
+                }
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
         return kept;
     }
+
+    /// <summary>The start of a kept client's name while it is being deleted.</summary>
+    const string Deleting = ".deleting-";
 
     /// <summary>A name in <c>Clients\</c> that is free: the version, or the version with a number.</summary>
     static string FreeName(string folder, string? version)
@@ -142,6 +167,7 @@ public static class ClientVersions
         var layout = Layout(folder);
         if (layout == ClientLayout.Link) throw new IOException(L.Text("This folder's game client is a link to another folder. Make a copy of it first."));
         if (Unfinished(folder) is not null) throw new IOException(L.Text("The game client in use is half-way to another version. Finish that switch first."));
+        if (MarkIn(kept) is not null) throw new IOException(L.Text("That copy was set aside half-way to another version, so it is not whole and cannot be used."));
         string? aside = null;
         if (Directory.Exists(client))
         {
@@ -160,11 +186,33 @@ public static class ClientVersions
     /// files, then deleted without following a link inside it.</summary>
     public static void Delete(string folder, string name)
     {
-        string kept = Path.Combine(folder, KeptFolder, name), going = Path.Combine(folder, KeptFolder, ".deleting-" + name);
+        string kept = Path.Combine(folder, KeptFolder, name), going = Path.Combine(folder, KeptFolder, Deleting + name);
+        FinishDeletes(folder);
         if (!Directory.Exists(kept)) return;
         if (Directory.Exists(going)) ClientLocator.DeleteTree(going);
         Directory.Move(kept, going);
         ClientLocator.DeleteTree(going);
+    }
+
+    /// <summary>Whether a deletion of a kept client was cut short (Waypoint closed, the PC went off): its remains are
+    /// still on the drive, under a name the list does not show.</summary>
+    public static bool HasUnfinishedDeletes(string folder)
+    {
+        try
+        {
+            string store = Path.Combine(folder, KeptFolder);
+            return Directory.Exists(store) && new DirectoryInfo(store).EnumerateDirectories(Deleting + "*").Any();
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
+    }
+
+    /// <summary>Finishes the deletions of kept clients that were cut short. Their user already said to delete them.</summary>
+    public static void FinishDeletes(string folder)
+    {
+        string store = Path.Combine(folder, KeptFolder);
+        if (!Directory.Exists(store)) return;
+        foreach (var entry in new DirectoryInfo(store).EnumerateDirectories(Deleting + "*").ToList())
+            if (entry.LinkTarget is null) ClientLocator.DeleteTree(entry.FullName);
     }
 
     /// <summary>The room a switch needs on the folder's drive, as far as it can be told before it starts.</summary>
@@ -196,8 +244,36 @@ public static class ClientVersions
     /// this folder's keys): gone, so that its next setup makes them again from the build that is there now.</summary>
     static void ForgetPrepared(string client)
     {
-        foreach (string name in new[] { "Game.exe", "Game.patched.exe", Seeded })
+        // The mark too: a copy of a client that was half-way carries it, and what was just verified is whole.
+        foreach (string name in new[] { "Game.exe", "Game.patched.exe", Seeded, Marker })
             if (File.Exists(Path.Combine(client, name))) File.Delete(Path.Combine(client, name));
+    }
+
+    /// <summary>
+    /// Makes a client that was set aside half-way to another version whole where it is, as the build it was on its way to:
+    /// Steam sends what is missing, the same check as for a client in use says it is whole, and only then does the mark go.
+    /// It is then a kept copy of that build, under that version's name. The client in use is not touched.
+    /// </summary>
+    public static async Task<SteamResult> FinishKeptAsync(string folder, string name, ListedBuild build, string tool, string account,
+        Action<SwitchProgress>? progress, Action<string> log, CancellationToken stop)
+    {
+        string kept = Path.Combine(folder, KeptFolder, name);
+        try
+        {
+            if (!Directory.Exists(kept)) return new(SteamOutcome.Failed, L.Text("{0} is no longer there.", kept));
+            if (new DirectoryInfo(kept).LinkTarget is not null || FilesOf(kept) != ClientLayout.Steam)
+                return new(SteamOutcome.Failed, L.Text("That copy is not a client from Steam, so Steam cannot finish it."));
+            var fetched = await SteamDownload.FetchAsync(tool, build, account, kept,
+                p => progress?.Invoke(new("download", (p.Depot - 1 + p.Percent / 100) / p.Depots, L.Text("Part {0} of {1}: {2:0.0}% · {3}", p.Depot, p.Depots, p.Percent, p.File))), log, stop);
+            if (fetched.Outcome != SteamOutcome.Done) return fetched;
+            if (!Holds(kept, build)) return new(SteamOutcome.Failed, L.Text("The download ended, but the client is not whole. Run it again."));
+            ForgetPrepared(kept);
+            // Its folder is named after the version it was: it is the build's now.
+            if (!string.Equals(name, build.Version, StringComparison.OrdinalIgnoreCase)) Directory.Move(kept, FreeName(folder, build.Version));
+            return new(SteamOutcome.Done);
+        }
+        catch (OperationCanceledException) { return new(SteamOutcome.Stopped); }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return new(SteamOutcome.Failed, e.Message); }
     }
 
     /// <summary>
@@ -214,6 +290,14 @@ public static class ClientVersions
         var layout = Layout(folder);
         if (layout == ClientLayout.Link) return new(SteamOutcome.Failed, L.Text("This folder's game client is a link to another folder. Make a copy of it first."));
         string client = Client(folder), next = Path.Combine(folder, NextFolder);
+        // A client half-way to another version is made whole where it is, whichever build is asked for: set aside or
+        // copied, it would be a client that is not whole under a whole one's name.
+        bool marked = Unfinished(folder) is not null;
+        if (marked && layout == ClientLayout.Steam && way != SwitchWay.UpdateInPlace)
+            return new(SteamOutcome.Failed, L.Text("The game client in use is half-way to another version. Finish that switch first."));
+        // A marked client that is not from Steam cannot be finished where it is (a broken or hand-altered folder): it is
+        // replaced by the build, and never set aside as if it were whole.
+        if (marked && layout != ClientLayout.Steam) way = SwitchWay.UpdateInPlace;
         void Downloading(SteamProgress p) =>
             progress?.Invoke(new("download", (p.Depot - 1 + p.Percent / 100) / p.Depots, L.Text("Part {0} of {1}: {2:0.0}% · {3}", p.Depot, p.Depots, p.Percent, p.File)));
         try

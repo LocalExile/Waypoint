@@ -43,10 +43,17 @@ public static class LocalExileBuilds
     public static Func<string, IReadOnlyList<ListedBuild>?>? Override { get; set; }
 
     static readonly Dictionary<(string, long, DateTime), IReadOnlyList<ListedBuild>?> Asked = [];
+    /// <summary>When a launcher last failed to answer (it did not start, ran out of time, or ended with an error).</summary>
+    static readonly Dictionary<(string, long, DateTime), long> Failed = [];
+    /// <summary>How long a launcher that failed to answer is left alone before it may be asked again, in milliseconds.</summary>
+    const long AskAgainAfter = 30_000;
 
-    /// <summary>The builds this folder's LocalExile runs; null when it cannot say. Remembered until the file that answered
-    /// changes (an update, a pull).</summary>
-    public static IReadOnlyList<ListedBuild>? Of(string folder)
+    /// <summary>The builds this folder's LocalExile runs; null when it cannot say. An answer is remembered until the file
+    /// that gave it changes (an update, a pull). A launcher that failed to answer (it did not start, ran out of time, ended
+    /// with an error) is not asked again by itself, because that can take ten seconds and many callers are on the UI
+    /// thread; <paramref name="again"/> asks it once more, at most every half minute, for a caller that is in the
+    /// background and whose user is looking at the list.</summary>
+    public static IReadOnlyList<ListedBuild>? Of(string folder, bool again = false)
     {
         if (Override is { } told) return told(folder);
         try
@@ -57,11 +64,17 @@ public static class LocalExileBuilds
             if (!file.Exists) return null;
             var key = (file.FullName, file.Length, file.LastWriteTimeUtc);
             lock (Asked)
+            {
                 if (Asked.TryGetValue(key, out var known)) return known;
+                if (Failed.TryGetValue(key, out long at) && (!again || Environment.TickCount64 - at < AskAgainAfter)) return null;
+            }
             var builds = release ? Ask(folder, file.FullName) : ParseSource(File.ReadAllText(file.FullName));
-            if (builds is { Count: 0 }) builds = null;
-            lock (Asked) Asked[key] = builds;
-            return builds;
+            lock (Asked)
+            {
+                if (builds is null) Failed[key] = Environment.TickCount64;
+                else Asked[key] = builds.Count == 0 ? null : builds;
+            }
+            return builds is { Count: > 0 } ? builds : null;
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or InvalidOperationException) { return null; }
     }
@@ -83,7 +96,8 @@ public static class LocalExileBuilds
         if (!process.WaitForExit(10_000))
         {
             try { process.Kill(entireProcessTree: true); }
-            catch (Exception e) when (e is InvalidOperationException or System.ComponentModel.Win32Exception) { }
+            // A child that cannot be ended makes Kill throw an AggregateException: still a launcher that did not answer.
+            catch (Exception e) when (e is InvalidOperationException or System.ComponentModel.Win32Exception or AggregateException) { }
             return null;
         }
         return process.ExitCode == 0 ? Parse(output.Result.Split('\n')) : null;
