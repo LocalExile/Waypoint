@@ -791,9 +791,11 @@ The official launcher only ever gives the newest game, so once the game moves on
 longer be had from it. Steam still serves them, and a release's **Game client…** (under Play; `ClientVersionsWindow`) gets
 one with the user's own Steam account. Which versions, and Steam's app, depots and manifests for each, are LocalExile's to
 say (`LocalExile.exe builds`, [Game client builds](#game-client-builds)): the window lists the client in use, those kept
-beside it, and each version of the list that Steam can deliver, with LocalExile's own name for the build (a version can be
-several builds: 3.29.3c from Steam is the 3.29.3.5 hotfix). A LocalExile that lists nothing gets nothing from Steam. Nothing
-here runs while the game or a server does. Windows on x64 only for now.
+beside it, and each build of the list that Steam can deliver and the folder does not hold (`ClientVersions.Offered`), with
+LocalExile's own name for the build under the list. A version can be several builds (3.29.3c has a release and the
+3.29.3.5 hotfix): when Steam can deliver more than one of a version, each has a line of its own with that name in it, and
+going from one to the other is a switch like any other. A LocalExile that lists nothing gets nothing from Steam. Nothing
+here runs while the game or a server does (the window says so on a line of its own). Windows on x64 only for now.
 
 - **The tool.** Waypoint does not speak to Steam itself: it runs [DepotDownloader](https://github.com/SteamRE/DepotDownloader)
   (GPL-2.0), a program of its own (`DepotTool`, `SteamDownload` in `src/Launcher.Core/SteamDownload.cs`). A released
@@ -818,13 +820,15 @@ here runs while the game or a server does. Windows on x64 only for now.
   client downloads it whole. A folder that has one is asked how to move, each time (`SwitchWay`), with only the ways the
   drive has room for:
   - **Update in place**: the one client is brought to the other version where it is. Only what differs is downloaded and
-    it needs no more room, but the version it was is gone. The client carries `.waypoint-switching` until it is whole: Play
-    starts nothing on it meanwhile, and the same choice again finishes it.
+    it needs no more room, but the version it was is gone. The client carries `.waypoint-switching` (the version and
+    the build's executable hash) until it is whole: Play starts nothing on it meanwhile, and the same choice again
+    finishes it.
   - **Keep both**: the client in use is set aside in the folder's `Clients\<version>` and the other version takes its
     place. With a client from Steam in use, the new one starts as a copy of it, so only what differs is downloaded; it
     needs the room of both.
   - A standalone client (`Content.ggpk`) shares nothing with Steam's files: the version is downloaded whole either way,
-    and **Replace** deletes the standalone one once the new client is in place.
+    and **Replace** deletes the standalone one once the new client is in place. Steam cannot bring a standalone client
+    back, so **Keep both** is the first button there. Enter and Esc are always Cancel.
   - **Settings → Game client versions** makes one way the way every time (`Settings.ClientSwitch`); a way the drive has
     no room for is asked about instead.
   Everything but an update in place is made ready in `.waypoint-next-client`, beside a client that goes on working, and

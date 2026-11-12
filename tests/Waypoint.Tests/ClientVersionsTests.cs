@@ -86,6 +86,39 @@ public class ClientVersionsTests : IDisposable
     }
 
     [Fact]
+    public void Every_build_Steam_can_deliver_is_offered_but_those_the_folder_holds()
+    {
+        static ListedBuild Build(string version, string name, string hash, bool steam = true) =>
+            new(version, name, hash, null, steam ? "238960" : null, steam ? [new("238961", "1" + hash.Length)] : null);
+        ListedBuild release = Build("3.29.3c", "release", "aa"), plain = Build("3.29.3c", "not on Steam", "ab", steam: false),
+            hotfix = Build("3.29.3c", "hotfix", "bb"), d = Build("3.29.3d", "release", "cc");
+        ListedBuild[] listed = [release, plain, hotfix, d];
+
+        // Newest first, a version's two builds each on a line of its own, and never one Steam cannot deliver.
+        Assert.Equal([d, hotfix, release], ClientVersions.Offered(listed, null, whole: true, []));
+        Assert.True(ClientVersions.Several(listed, "3.29.3c"));
+        Assert.False(ClientVersions.Several(listed, "3.29.3d"));
+        // The hotfix in use still leaves the release of the same version to get, and a kept build is not offered again.
+        Assert.Equal([d, release], ClientVersions.Offered(listed, hotfix, whole: true, []));
+        Assert.Equal([release], ClientVersions.Offered(listed, hotfix, whole: true, [d, null]));
+        // A client half-way to another build may also go back to the one it was.
+        Assert.Equal([d, hotfix, release], ClientVersions.Offered(listed, hotfix, whole: false, []));
+    }
+
+    [Fact]
+    public void An_unfinished_switch_names_its_build_when_the_mark_does()
+    {
+        Steam(Client, "3.29.3c");
+        Assert.Null(ClientVersions.UnfinishedBuild(Folder));
+        File.WriteAllText(Path.Combine(Client, ClientVersions.Marker), "3.29.3c\nbb\n");
+        Assert.Equal(("3.29.3c", "bb"), ClientVersions.UnfinishedBuild(Folder));
+        Assert.Equal("3.29.3c", ClientVersions.Unfinished(Folder));
+        // A mark with the version alone, as it was first written.
+        File.WriteAllText(Path.Combine(Client, ClientVersions.Marker), "3.29.3d");
+        Assert.Equal(("3.29.3d", null), ClientVersions.UnfinishedBuild(Folder));
+    }
+
+    [Fact]
     public void A_switch_needs_room_by_how_it_is_done()
     {
         const long build = 71_000_000_000, current = 70_000_000_000;

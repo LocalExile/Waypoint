@@ -39,7 +39,8 @@ public static class ClientVersions
     public const string KeptFolder = "Clients";
     /// <summary>Beside <c>Client</c> while another version is made ready to take its place.</summary>
     public const string NextFolder = ".waypoint-next-client";
-    /// <summary>In a client that is being updated where it is: the version it is on its way to.</summary>
+    /// <summary>In a client that is being updated where it is: the version it is on its way to and, on a second line, that
+    /// build's executable hash (one version can be several builds).</summary>
     public const string Marker = ".waypoint-switching";
     /// <summary>In <see cref="NextFolder"/> once the copy it starts from is whole.</summary>
     const string Seeded = ".waypoint-seeded";
@@ -63,14 +64,34 @@ public static class ClientVersions
 
     /// <summary>The version a client being updated where it is was on its way to, when that was cut short; null for a
     /// client that is whole.</summary>
-    public static string? Unfinished(string folder)
+    public static string? Unfinished(string folder) => UnfinishedBuild(folder)?.Version;
+
+    /// <summary>The same, with the executable hash of the build it was on its way to when the mark names it.</summary>
+    public static (string Version, string? ExecutableSha256)? UnfinishedBuild(string folder)
     {
         try
         {
             string marker = Path.Combine(Client(folder), Marker);
-            return File.Exists(marker) ? File.ReadAllText(marker).Trim() : null;
+            if (!File.Exists(marker)) return null;
+            string[] lines = [.. File.ReadAllLines(marker).Select(l => l.Trim()).Where(l => l.Length > 0)];
+            return (lines.Length > 0 ? lines[0] : "", lines.Length > 1 ? lines[1] : null);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return null; }
+    }
+
+    /// <summary>Whether a version has more than one build Steam can deliver (a release and its hotfix): its builds are then
+    /// told apart by LocalExile's own name for each.</summary>
+    public static bool Several(IEnumerable<ListedBuild> builds, string? version) => builds.Count(b => b.FromSteam && b.Version == version) > 1;
+
+    /// <summary>The builds to offer from Steam, newest first: every build Steam can deliver, less those the folder holds
+    /// already (the one in use when it is whole, and those set aside).</summary>
+    /// <param name="inUse">The build of the client in use, when its executable is a listed one.</param>
+    /// <param name="whole">False for a client half-way to another build: every build is then offered, the one it was too.</param>
+    /// <param name="kept">The builds of the clients set aside.</param>
+    public static IReadOnlyList<ListedBuild> Offered(IEnumerable<ListedBuild> builds, ListedBuild? inUse, bool whole, IEnumerable<ListedBuild?> kept)
+    {
+        var here = kept.Append(whole ? inUse : null).Where(b => b is not null).Select(b => b!.ExecutableSha256).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        return [.. builds.Where(b => b.FromSteam && !here.Contains(b.ExecutableSha256)).Reverse()];
     }
 
     /// <summary>The bytes of every file under a folder, links not followed; 0 when it cannot be read.</summary>
@@ -162,6 +183,8 @@ public static class ClientVersions
         {
             string index = Path.Combine(client, "Bundles2", "_.index.bin");
             if (!File.Exists(index) || ClientLocator.BuildOf(client) != build.Version) return false;
+            // Two builds of one version differ by their executable (a test has no real executable to hash).
+            if (ClientLocator.BuildOverride is null && ClientLocator.ListedBuildOf(client, [build]) is null) return false;
             if (build.SteamIndexSha256 is not { } expected) return true;
             using var stream = new FileStream(index, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return Convert.ToHexStringLower(SHA256.HashData(stream)) == expected;
@@ -198,7 +221,7 @@ public static class ClientVersions
             if (layout == ClientLayout.Steam && way == SwitchWay.UpdateInPlace)
             {
                 if (Directory.Exists(next)) ClientLocator.DeleteTree(next);
-                await File.WriteAllTextAsync(Path.Combine(client, Marker), build.Version, stop);
+                await File.WriteAllTextAsync(Path.Combine(client, Marker), build.Version + "\n" + build.ExecutableSha256, stop);
                 var updated = await SteamDownload.FetchAsync(tool, build, account, client, Downloading, log, stop);
                 if (updated.Outcome != SteamOutcome.Done) return updated;
                 if (!Holds(client, build)) return new(SteamOutcome.Failed, L.Text("The download ended, but the client is not whole. Run it again."));
