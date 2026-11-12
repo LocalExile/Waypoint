@@ -295,7 +295,7 @@ public static class ClientLocator
     }
 
     /// <summary>Deletes a folder without following a link inside it: a link is removed, never what it points to.</summary>
-    static void DeleteTree(string folder)
+    internal static void DeleteTree(string folder)
     {
         foreach (var entry in new DirectoryInfo(folder).EnumerateFileSystemInfos())
         {

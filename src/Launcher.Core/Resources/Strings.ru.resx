@@ -255,6 +255,9 @@
   <data name="Text_07a72f39e37a" xml:space="preserve">
     <value>В {0} нет объекта settings</value>
   </data>
+  <data name="Text_07abc4df0c8f" xml:space="preserve">
+    <value>Часть {0} из {1}: {2:0.0}% · {3}</value>
+  </data>
   <data xml:space="preserve" name="Text_07c99f3f9c05">
     <value>Ошибка компиляции</value>
   </data>
@@ -809,6 +812,9 @@
   </data>
   <data name="Text_1709305c9fa9" xml:space="preserve">
     <value>Уровень</value>
+  </data>
+  <data name="Text_1723a89c9f51" xml:space="preserve">
+    <value>{0:0.0} из {1:0.0} ГБ</value>
   </data>
   <data name="Text_1744b96470b5" xml:space="preserve">
     <value>Сеть</value>
@@ -2046,6 +2052,9 @@
   <data name="Text_39a30e6ba869" xml:space="preserve">
     <value>Подготовить существующую копию клиента средствами Auth и Patch из LocalExile. Текущие ключи входа сохраняются. Проверенный поддерживаемый PathOfExile.exe может обновить устаревшие Game.exe и его исправленную копию; сначала создаются резервные копии прежних исполняемых файлов. Клиенты, подключённые ссылкой, не изменяются.</value>
   </data>
+  <data name="Text_39b962416666" xml:space="preserve">
+    <value>Загрузка из Steam не завершена.</value>
+  </data>
   <data name="Text_39d2600b7211" xml:space="preserve">
     <value>Использовать как есть</value>
   </data>
@@ -2448,6 +2457,9 @@
   </data>
   <data xml:space="preserve" name="Text_4660c28f96b5">
     <value>Порт {0} занят другим процессом (PID {1}); {2} не принадлежит этой установке.</value>
+  </data>
+  <data name="Text_468422a52e4d" xml:space="preserve">
+    <value>LocalExile не указывает загрузку из Steam для этой версии.</value>
   </data>
   <data name="Text_46a268a1cf86" xml:space="preserve">
     <value>Вернуться к прежней версии</value>
@@ -3183,6 +3195,9 @@
   <data name="Text_5c55fea32942" xml:space="preserve">
     <value>Не удалось прочитать данные предметов: {0}</value>
   </data>
+  <data name="Text_5c611d70ff42" xml:space="preserve">
+    <value>В загруженном DepotDownloader нет программы, поэтому он не использован.</value>
+  </data>
   <data name="Text_5c6566e8941c" xml:space="preserve">
     <value>установите Python 3.9+ с python.org (шаг 9 в GettingStarted)</value>
   </data>
@@ -3900,6 +3915,9 @@
   <data name="Text_726c2b850161" xml:space="preserve">
     <value>Меняется интерфейс Waypoint. Названия репозиториев, пути, хеши коммитов, игровые команды и необработанные журналы остаются без перевода.</value>
   </data>
+  <data name="Text_7296e5b27d37" xml:space="preserve">
+    <value>{0} больше не существует.</value>
+  </data>
   <data name="Text_72ac0d580f8c" xml:space="preserve">
     <value>Копировать ID</value>
   </data>
@@ -4374,6 +4392,9 @@
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! нет подсказок {0}: {1}</value>
   </data>
+  <data name="Text_81f5df978e9d" xml:space="preserve">
+    <value>Остановлено. Загруженное сохранено, и следующая попытка продолжит с этого места.</value>
+  </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>В цепочке родителей этой лиги есть пропуск или цикл. Восстановите её определение перед редактированием.</value>
   </data>
@@ -4550,6 +4571,9 @@
   </data>
   <data name="Text_8815084551ec" xml:space="preserve">
     <value>live.ps1 уже выполняется.</value>
+  </data>
+  <data name="Text_881814634389" xml:space="preserve">
+    <value>Steam снова запрашивает вход.</value>
   </data>
   <data name="Text_88259cd6f621" xml:space="preserve">
     <value>Регистрация аккаунта</value>
@@ -5496,6 +5520,9 @@
   <data name="Text_a322defaba83" xml:space="preserve">
     <value>Сначала соберите или установите этот мод: его mod.json отсутствует.</value>
   </data>
+  <data name="Text_a32da23ceb3c" xml:space="preserve">
+    <value>В этом аккаунте Steam нет Path of Exile. Добавьте игру в библиотеку Steam (она бесплатная) и повторите попытку.</value>
+  </data>
   <data name="Text_a330c2786496" xml:space="preserve">
     <value>Всё равно запустить</value>
   </data>
@@ -5561,6 +5588,9 @@
   </data>
   <data name="Text_a49679d08a5c" xml:space="preserve">
     <value>загруженный {0} не совпадает со своим SHA-256; ничего не изменено</value>
+  </data>
+  <data name="Text_a4b0bb60c76a" xml:space="preserve">
+    <value>Загрузка из Steam пока работает только в 64-разрядной Windows.</value>
   </data>
   <data xml:space="preserve" name="Text_a4b0fb1fe1fc">
     <value>Работает другой сервер или процесс отслеживания (PID {0}). Остановите его из его установки перед запуском здесь.</value>
@@ -6219,6 +6249,9 @@
   <data name="Text_b808698f20e7" xml:space="preserve">
     <value>Переключение не выполнено.</value>
   </data>
+  <data name="Text_b81f380dbda0" xml:space="preserve">
+    <value>Используемый клиент игры наполовину переведён на другую версию. Сначала завершите это переключение.</value>
+  </data>
   <data name="Text_b82e832d8028" xml:space="preserve">
     <value>Клиент игры в этой папке больше не ссылка, поэтому копировать нечего.</value>
   </data>
@@ -6350,6 +6383,9 @@
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>Не удалось загрузить настройки</value>
+  </data>
+  <data name="Text_bbb6f1c2b26a" xml:space="preserve">
+    <value>Загрузка из Steam не завершена: {0}</value>
   </data>
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>Запуск игры</value>
@@ -7292,11 +7328,17 @@
   <data name="Text_d958fa43d8ce" xml:space="preserve">
     <value>Не переключено: нет резервной копии.</value>
   </data>
+  <data name="Text_d9b76ecaa96e" xml:space="preserve">
+    <value>Загруженный DepotDownloader не совпадает с выпуском, который ожидает Waypoint, поэтому он не использован. Повторите попытку позже.</value>
+  </data>
   <data name="Text_d9fe67c04cb0" xml:space="preserve">
     <value>Древний</value>
   </data>
   <data name="Text_da12ab901ff9" xml:space="preserve">
     <value>Фильтрация</value>
+  </data>
+  <data name="Text_da47f4a23bce" xml:space="preserve">
+    <value>Загрузка завершилась, но клиент получен не полностью. Запустите её ещё раз.</value>
   </data>
   <data xml:space="preserve" name="Text_da5562465e90">
     <value>{0} · {1}
@@ -7607,6 +7649,9 @@
   </data>
   <data name="Text_e2db0b44df99" xml:space="preserve">
     <value>Точка из данных комнаты; реальные монстры и их позиции могут отличаться.</value>
+  </data>
+  <data name="Text_e2f845426da4" xml:space="preserve">
+    <value>Клиент игры в этой папке — ссылка на другую папку. Сначала сделайте его копию.</value>
   </data>
   <data name="Text_e2f9115abb87" xml:space="preserve">
     <value>Укажите полный путь к папке.</value>

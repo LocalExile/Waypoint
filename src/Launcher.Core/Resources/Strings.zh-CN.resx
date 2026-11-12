@@ -255,6 +255,9 @@
   <data name="Text_07a72f39e37a" xml:space="preserve">
     <value>{0} 中没有 settings 对象</value>
   </data>
+  <data name="Text_07abc4df0c8f" xml:space="preserve">
+    <value>第 {0} 部分，共 {1} 部分：{2:0.0}% · {3}</value>
+  </data>
   <data name="Text_07c99f3f9c05" xml:space="preserve">
     <value>编译失败</value>
   </data>
@@ -809,6 +812,9 @@
   </data>
   <data name="Text_1709305c9fa9" xml:space="preserve">
     <value>等级</value>
+  </data>
+  <data name="Text_1723a89c9f51" xml:space="preserve">
+    <value>{0:0.0} / {1:0.0} GB</value>
   </data>
   <data name="Text_1744b96470b5" xml:space="preserve">
     <value>网络</value>
@@ -2046,6 +2052,9 @@
   <data name="Text_39a30e6ba869" xml:space="preserve">
     <value>使用 LocalExile 的 Auth 和 Patch 工具准备现有客户端副本。保留现有登录密钥。经过验证且受支持的 PathOfExile.exe 可用于更新过时的 Game.exe 及其修补副本；替换前会备份原有可执行文件。通过链接使用的客户端不会被修改。</value>
   </data>
+  <data name="Text_39b962416666" xml:space="preserve">
+    <value>从 Steam 下载未完成。</value>
+  </data>
   <data name="Text_39d2600b7211" xml:space="preserve">
     <value>按原样使用</value>
   </data>
@@ -2448,6 +2457,9 @@
   </data>
   <data name="Text_4660c28f96b5" xml:space="preserve">
     <value>端口 {0} 已被另一个进程（PID {1}）占用；{2} 不属于此源码副本。</value>
+  </data>
+  <data name="Text_468422a52e4d" xml:space="preserve">
+    <value>LocalExile 没有为此版本提供 Steam 下载信息。</value>
   </data>
   <data name="Text_46a268a1cf86" xml:space="preserve">
     <value>回到之前的版本</value>
@@ -3183,6 +3195,9 @@
   <data name="Text_5c55fea32942" xml:space="preserve">
     <value>无法读取物品数据：{0}</value>
   </data>
+  <data name="Text_5c611d70ff42" xml:space="preserve">
+    <value>下载的 DepotDownloader 中没有程序，因此未使用。</value>
+  </data>
   <data name="Text_5c6566e8941c" xml:space="preserve">
     <value>从 python.org 安装 Python 3.9+（GettingStarted 第 9 步）</value>
   </data>
@@ -3900,6 +3915,9 @@
   <data name="Text_726c2b850161" xml:space="preserve">
     <value>这会更改 Waypoint 的界面。仓库名称、路径、提交哈希、游戏内命令和原始日志会保留原文。</value>
   </data>
+  <data name="Text_7296e5b27d37" xml:space="preserve">
+    <value>{0} 已不存在。</value>
+  </data>
   <data name="Text_72ac0d580f8c" xml:space="preserve">
     <value>复制 ID</value>
   </data>
@@ -4374,6 +4392,9 @@
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! 没有 {0} 建议：{1}</value>
   </data>
+  <data name="Text_81f5df978e9d" xml:space="preserve">
+    <value>已停止。已下载的内容会保留，下次将从这里继续。</value>
+  </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>此联赛的父联赛链缺失或存在循环。请先恢复其定义再编辑。</value>
   </data>
@@ -4550,6 +4571,9 @@
   </data>
   <data name="Text_8815084551ec" xml:space="preserve">
     <value>live.ps1 已在运行。</value>
+  </data>
+  <data name="Text_881814634389" xml:space="preserve">
+    <value>Steam 要求重新登录。</value>
   </data>
   <data name="Text_88259cd6f621" xml:space="preserve">
     <value>注册账号</value>
@@ -5496,6 +5520,9 @@
   <data name="Text_a322defaba83" xml:space="preserve">
     <value>请先构建或安装此模组：缺少其二进制清单。</value>
   </data>
+  <data name="Text_a32da23ceb3c" xml:space="preserve">
+    <value>该 Steam 账号中没有流放之路。请在 Steam 中将游戏添加到库（免费），然后重试。</value>
+  </data>
   <data name="Text_a330c2786496" xml:space="preserve">
     <value>仍然启动</value>
   </data>
@@ -5561,6 +5588,9 @@
   </data>
   <data name="Text_a49679d08a5c" xml:space="preserve">
     <value>下载的 {0} 与其 SHA-256 不匹配；未做任何更改</value>
+  </data>
+  <data name="Text_a4b0bb60c76a" xml:space="preserve">
+    <value>从 Steam 下载目前仅支持 64 位 Windows。</value>
   </data>
   <data name="Text_a4b0fb1fe1fc" xml:space="preserve">
     <value>另一个服务器或监视进程正在运行（PID {0}）。请先从它所属的安装中停止它，再在此处启动。</value>
@@ -6219,6 +6249,9 @@
   <data name="Text_b808698f20e7" xml:space="preserve">
     <value>没有进行切换。</value>
   </data>
+  <data name="Text_b81f380dbda0" xml:space="preserve">
+    <value>正在使用的游戏客户端切换到另一个版本的过程尚未完成。请先完成这次切换。</value>
+  </data>
   <data name="Text_b82e832d8028" xml:space="preserve">
     <value>此文件夹的游戏客户端已不再是链接，因此无需复制。</value>
   </data>
@@ -6350,6 +6383,9 @@
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>无法加载设置</value>
+  </data>
+  <data name="Text_bbb6f1c2b26a" xml:space="preserve">
+    <value>从 Steam 下载未完成：{0}</value>
   </data>
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>正在启动游戏</value>
@@ -7292,11 +7328,17 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d958fa43d8ce" xml:space="preserve">
     <value>未切换：没有备份。</value>
   </data>
+  <data name="Text_d9b76ecaa96e" xml:space="preserve">
+    <value>下载的 DepotDownloader 与 Waypoint 预期的版本不符，因此未使用。请稍后重试。</value>
+  </data>
   <data name="Text_d9fe67c04cb0" xml:space="preserve">
     <value>异界尊师</value>
   </data>
   <data name="Text_da12ab901ff9" xml:space="preserve">
     <value>筛选</value>
+  </data>
+  <data name="Text_da47f4a23bce" xml:space="preserve">
+    <value>下载已结束，但客户端不完整。请再运行一次。</value>
   </data>
   <data name="Text_da5562465e90" xml:space="preserve">
     <value>{0} · {1}
@@ -7607,6 +7649,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e2db0b44df99" xml:space="preserve">
     <value>房间预设锚点；实际怪物及其位置可能不同。</value>
+  </data>
+  <data name="Text_e2f845426da4" xml:space="preserve">
+    <value>此文件夹的游戏客户端是指向另一个文件夹的链接。请先为它创建副本。</value>
   </data>
   <data name="Text_e2f9115abb87" xml:space="preserve">
     <value>请选择完整的文件夹路径。</value>

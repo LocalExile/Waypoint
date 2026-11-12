@@ -255,6 +255,9 @@
   <data name="Text_07a72f39e37a" xml:space="preserve">
     <value>{0} has no settings object</value>
   </data>
+  <data name="Text_07abc4df0c8f" xml:space="preserve">
+    <value>Part {0} of {1}: {2:0.0}% · {3}</value>
+  </data>
   <data xml:space="preserve" name="Text_07c99f3f9c05">
     <value>Compile failed</value>
   </data>
@@ -809,6 +812,9 @@
   </data>
   <data name="Text_1709305c9fa9" xml:space="preserve">
     <value>Level</value>
+  </data>
+  <data name="Text_1723a89c9f51" xml:space="preserve">
+    <value>{0:0.0} of {1:0.0} GB</value>
   </data>
   <data name="Text_1744b96470b5" xml:space="preserve">
     <value>Network</value>
@@ -2046,6 +2052,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_39a30e6ba869" xml:space="preserve">
     <value>Prepare the existing client copy using LocalExile's Auth and Patch tools. Existing login keys are retained. A verified supported PathOfExile.exe can refresh a stale Game.exe and its patched copy; previous executables are backed up first. Linked clients are never changed.</value>
   </data>
+  <data name="Text_39b962416666" xml:space="preserve">
+    <value>The Steam download did not finish.</value>
+  </data>
   <data name="Text_39d2600b7211" xml:space="preserve">
     <value>Use it as it is</value>
   </data>
@@ -2448,6 +2457,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_4660c28f96b5">
     <value>Port {0} is occupied by another process (PID {1}); {2} is not owned by this checkout.</value>
+  </data>
+  <data name="Text_468422a52e4d" xml:space="preserve">
+    <value>LocalExile names no Steam download for this version.</value>
   </data>
   <data name="Text_46a268a1cf86" xml:space="preserve">
     <value>Go back to the version you had</value>
@@ -3183,6 +3195,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data name="Text_5c55fea32942" xml:space="preserve">
     <value>The item data could not be read: {0}</value>
   </data>
+  <data name="Text_5c611d70ff42" xml:space="preserve">
+    <value>The downloaded DepotDownloader holds no program, so it was not used.</value>
+  </data>
   <data name="Text_5c6566e8941c" xml:space="preserve">
     <value>install Python 3.9+ from python.org (GettingStarted step 9)</value>
   </data>
@@ -3900,6 +3915,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_726c2b850161" xml:space="preserve">
     <value>This changes Waypoint's interface. Repository names, paths, commit hashes, in-game commands and raw logs keep their original text.</value>
   </data>
+  <data name="Text_7296e5b27d37" xml:space="preserve">
+    <value>{0} is no longer there.</value>
+  </data>
   <data name="Text_72ac0d580f8c" xml:space="preserve">
     <value>Copy ID</value>
   </data>
@@ -4374,6 +4392,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_81efa8f471e5" xml:space="preserve">
     <value>! no {0} suggestions: {1}</value>
   </data>
+  <data name="Text_81f5df978e9d" xml:space="preserve">
+    <value>Stopped. What was downloaded is kept, and the next try goes on from it.</value>
+  </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>This league has a missing or cyclic parent chain. Restore its definition before editing.</value>
   </data>
@@ -4550,6 +4571,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8815084551ec" xml:space="preserve">
     <value>live.ps1 is already running.</value>
+  </data>
+  <data name="Text_881814634389" xml:space="preserve">
+    <value>Steam asks for the sign-in again.</value>
   </data>
   <data name="Text_88259cd6f621" xml:space="preserve">
     <value>Register an account</value>
@@ -5496,6 +5520,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a322defaba83" xml:space="preserve">
     <value>Build or install this mod first; its binary manifest is missing.</value>
   </data>
+  <data name="Text_a32da23ceb3c" xml:space="preserve">
+    <value>That Steam account has no Path of Exile. Add the game to its library in Steam (it is free), then try again.</value>
+  </data>
   <data name="Text_a330c2786496" xml:space="preserve">
     <value>Start anyway</value>
   </data>
@@ -5561,6 +5588,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a49679d08a5c" xml:space="preserve">
     <value>the downloaded {0} does not match its SHA-256; nothing was changed</value>
+  </data>
+  <data name="Text_a4b0bb60c76a" xml:space="preserve">
+    <value>The Steam download works on 64-bit Windows only for now.</value>
   </data>
   <data xml:space="preserve" name="Text_a4b0fb1fe1fc">
     <value>Another server or watcher is running (PID {0}). Stop it from its own installation before launching here.</value>
@@ -6219,6 +6249,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b808698f20e7" xml:space="preserve">
     <value>Nothing was switched.</value>
   </data>
+  <data name="Text_b81f380dbda0" xml:space="preserve">
+    <value>The game client in use is half-way to another version. Finish that switch first.</value>
+  </data>
   <data name="Text_b82e832d8028" xml:space="preserve">
     <value>This folder's game client is no longer a link, so there is nothing to copy.</value>
   </data>
@@ -6350,6 +6383,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>Settings could not be loaded</value>
+  </data>
+  <data name="Text_bbb6f1c2b26a" xml:space="preserve">
+    <value>The Steam download did not finish: {0}</value>
   </data>
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>Starting the game</value>
@@ -7292,11 +7328,17 @@ Client: {2}</value>
   <data name="Text_d958fa43d8ce" xml:space="preserve">
     <value>Not switched: no backup.</value>
   </data>
+  <data name="Text_d9b76ecaa96e" xml:space="preserve">
+    <value>The downloaded DepotDownloader is not the release Waypoint expects, so it was not used. Try again later.</value>
+  </data>
   <data name="Text_d9fe67c04cb0" xml:space="preserve">
     <value>Elder</value>
   </data>
   <data name="Text_da12ab901ff9" xml:space="preserve">
     <value>Filtering</value>
+  </data>
+  <data name="Text_da47f4a23bce" xml:space="preserve">
+    <value>The download ended, but the client is not whole. Run it again.</value>
   </data>
   <data xml:space="preserve" name="Text_da5562465e90">
     <value>{0} · {1}
@@ -7607,6 +7649,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e2db0b44df99" xml:space="preserve">
     <value>Room-authored anchor; actual monsters and positions may differ.</value>
+  </data>
+  <data name="Text_e2f845426da4" xml:space="preserve">
+    <value>This folder's game client is a link to another folder. Make a copy of it first.</value>
   </data>
   <data name="Text_e2f9115abb87" xml:space="preserve">
     <value>Choose a full folder path.</value>
