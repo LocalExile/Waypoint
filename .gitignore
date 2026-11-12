@@ -1,6 +1,9 @@
 # The published launcher (dotnet publish src/Waypoint -o .)
 /Waypoint.exe
 
+# What tools/Get-DepotDownloader.ps1 fetches for a build (Waypoint.exe carries it; it is never committed)
+/tools/bundled/
+
 # --- .NET ---
 bin/
 obj/

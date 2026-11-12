@@ -103,6 +103,12 @@ sealed class Settings
     public bool GameSettingsOffered { get; set; }
     /// <summary>The client the setup guide copies from, kept so that a stopped setup goes on from the same one.</summary>
     public string? SetupClient { get; set; }
+    /// <summary>The Steam account whose sign-in the download tool remembers (<see cref="SteamDownload"/>): its name only,
+    /// which the tool is given to pick that sign-in. Never a password or a token: Waypoint sees neither.</summary>
+    public string? SteamAccount { get; set; }
+    /// <summary>How a folder that has a game client moves to another version from Steam: "" asks each time, else a
+    /// <see cref="SwitchWay"/> by name ("UpdateInPlace", "KeepBoth"), used when the drive has the room for it.</summary>
+    public string ClientSwitch { get; set; } = "";
     /// <summary>Pull requests from forks the player agreed to run (asked once each).</summary>
     public List<int> TrustedPullRequests { get; set; } = [];
     /// <summary>Pinned console lines, shown as buttons.</summary>

@@ -7,8 +7,13 @@ enum FolderKind { Release, Source, Missing }
 
 /// <summary>One LocalExile folder of the sidebar's list, as it is now: a release with its version, a source copy with its
 /// branch, or a folder that is not there (moved, renamed, a drive not connected).</summary>
-sealed record KnownFolder(string Path, FolderKind Kind, string? Detail, bool Current)
+/// <param name="Client">The version of the game client in the folder ("3.29.3d"), when it was asked for and the client is
+/// a build its LocalExile or Waypoint knows; null otherwise, and for a folder with no client.</param>
+sealed record KnownFolder(string Path, FolderKind Kind, string? Detail, bool Current, string? Client = null)
 {
+    /// <summary>The client's version as the list says it: "Path of Exile 3.29.3d".</summary>
+    public string? ClientText => FolderList.ClientText(Client);
+
     /// <summary>What the list calls it: "Release 0.3.0-beta", "Source, main", or the folder's own name while it is missing.</summary>
     public string Title => Kind switch
     {
@@ -78,13 +83,32 @@ static class FolderList
         return true;
     }
 
-    /// <summary>What <paramref name="path"/> is now.</summary>
-    public static KnownFolder Read(string path, bool current)
+    /// <summary>The version of the game client in a LocalExile folder; null when it has none, or one of no build that its
+    /// LocalExile lists or Waypoint knows. The folder's own list is asked first (<see cref="ClientLocator.Supported"/>), so
+    /// a build LocalExile came to allow after this Waypoint is named too. It reads the client's executable the first time:
+    /// never on the UI thread.</summary>
+    public static string? ClientOf(string path)
     {
         try
         {
-            if (LocalExileReleases.IsInstall(path)) return new(path, FolderKind.Release, LocalExileReleases.Installed(path)?.ToString(), current);
-            if (Repo.IsRoot(path)) return new(path, FolderKind.Source, Repo.BranchIn(path), current);
+            string client = System.IO.Path.Combine(path, "Client");
+            if (!Directory.Exists(client)) return null;
+            ClientLocator.Supported(path);
+            return ClientLocator.BuildOf(client);
+        }
+        catch (Exception e) when (e is ArgumentException or NotSupportedException or IOException or UnauthorizedAccessException) { return null; }
+    }
+
+    public static string? ClientText(string? version) => version is null ? null : L.Text("Path of Exile {0}", version);
+
+    /// <summary>What <paramref name="path"/> is now; with <paramref name="client"/>, also which version its game client is
+    /// (<see cref="ClientOf"/>, off the UI thread).</summary>
+    public static KnownFolder Read(string path, bool current, bool client = false)
+    {
+        try
+        {
+            if (LocalExileReleases.IsInstall(path)) return new(path, FolderKind.Release, LocalExileReleases.Installed(path)?.ToString(), current, client ? ClientOf(path) : null);
+            if (Repo.IsRoot(path)) return new(path, FolderKind.Source, Repo.BranchIn(path), current, client ? ClientOf(path) : null);
         }
         catch (Exception e) when (e is ArgumentException or NotSupportedException or IOException or UnauthorizedAccessException) { }
         return new(path, FolderKind.Missing, null, current);
@@ -95,8 +119,8 @@ static class FolderList
     public static IReadOnlyList<KnownFolder> Read(Settings settings, string current) => Read(Paths(settings, current), current);
 
     /// <summary>As above, of paths taken from the settings beforehand: the reading may run off the UI thread.</summary>
-    public static IReadOnlyList<KnownFolder> Read(IReadOnlyList<string> paths, string current) =>
-        [.. paths.Select(path => Read(path, Same(path, current))).OrderBy(folder => folder.Kind)];
+    public static IReadOnlyList<KnownFolder> Read(IReadOnlyList<string> paths, string current, bool client = false) =>
+        [.. paths.Select(path => Read(path, Same(path, current), client)).OrderBy(folder => folder.Kind)];
 
     /// <summary>A path for a narrow place, the sidebar: its end says which folder it is, so the start is what goes, at a
     /// separator where one is near. The whole path is in the tooltip.</summary>

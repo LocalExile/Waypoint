@@ -21,13 +21,15 @@ public static class ClientCopy
 {
     const int BufferSize = 4 * 1024 * 1024;
     /// <summary>Room left over on the drive, so a copy does not end with a full disk.</summary>
-    const long Margin = 2_000_000_000;
+    internal const long Margin = 2_000_000_000;
 
     /// <summary>A patched client only works with the keys it was patched for: they come with it when the checkout has none
-    /// yet, and otherwise it stays behind and the client is patched again.</summary>
-    public static ClientCopyPlan Plan(string source, string checkout)
+    /// yet, and otherwise it stays behind and the client is patched again. <paramref name="target"/> is another folder than
+    /// the checkout's <c>Client</c> to copy into; <paramref name="keepPatched"/> brings the patched executable whatever the keys
+    /// (<see cref="OwnClient"/>: the client the folder already runs from, patched for its own keys).</summary>
+    public static ClientCopyPlan Plan(string source, string checkout, string? target = null, bool keepPatched = false)
     {
-        string target = Path.Combine(checkout, "Client");
+        target ??= Path.Combine(checkout, "Client");
         string keys = Path.Combine(checkout, "data", "login-keys.json");
         string? sourceData = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(source)) is { } parent ? Path.Combine(parent, "data") : null;
         bool withKeys = ClientLocator.Classify(source) == ClientKind.Ready && !File.Exists(keys)
@@ -39,7 +41,7 @@ public static class ClientCopy
             string relative = Path.GetRelativePath(root, file.FullName);
             // The client's own logs are not part of the game; a leftover .partial is another copy's.
             if (relative.StartsWith("logs" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) || relative.EndsWith(".partial", StringComparison.OrdinalIgnoreCase)) continue;
-            if (!withKeys && relative.Equals("Game.patched.exe", StringComparison.OrdinalIgnoreCase)) continue;
+            if (!withKeys && !keepPatched && relative.Equals("Game.patched.exe", StringComparison.OrdinalIgnoreCase)) continue;
             files.Add(new(file.FullName, Path.Combine(target, relative), file.Length));
         }
         files = files.OrderBy(f => Path.GetFileName(f.Target).Equals("Content.ggpk", StringComparison.OrdinalIgnoreCase)).ToList();

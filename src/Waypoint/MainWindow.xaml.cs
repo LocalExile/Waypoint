@@ -162,6 +162,8 @@ public partial class MainWindow : Window
         PlayView.SetupRequested += Setup.OpenSetupGuide;
         PlayView.DetailsRequested += () => ShowSection(LogsView);
         InstallView.SetupRequested += Setup.OpenSetupGuide;
+        // Another version of the game came into the folder: the sidebar's box says which.
+        InstallView.ClientChanged += Folders.ShowCurrent;
         Control.ClientGuideRequested += Setup.OpenSetupGuide;
         InstallView.OlderReleaseRequested += Setup.SetUpRelease;
         InstallView.Updated += () =>

@@ -92,6 +92,8 @@
           <TextBlock x:Name="CurrentTitle" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource Shell.SidebarStrong}"
                      TextTrimming="CharacterEllipsis" />
           <TextBlock x:Name="CurrentPath" FontSize="11" Opacity="0.72" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
+          <!-- The version of the folder's game client, once it is read. -->
+          <TextBlock x:Name="CurrentClient" FontSize="11" Opacity="0.72" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" IsVisible="False" />
         </StackPanel>
       </DockPanel>
     </Button>
@@ -122,7 +124,9 @@
                       <TextBlock Text="{l:Loc 'Not found'}" />
                     </Border>
                     <StackPanel>
-                      <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                      <TextBlock FontSize="13" TextTrimming="CharacterEllipsis">
+                        <Run Text="{Binding Title}" FontWeight="SemiBold" /><Run Text="  " /><Run Text="{Binding Client}" Foreground="{DynamicResource Shell.TextSecondary}" />
+                      </TextBlock>
                       <TextBlock Text="{Binding ShortPath}" FontSize="11.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"
                                  Foreground="{DynamicResource Shell.TextSecondary}" />
                     </StackPanel>

@@ -56,10 +56,14 @@ public class ClientUpdateTests : IDisposable
     [Fact]
     public void Builds_are_ordered_and_the_older_one_keeps_its_last_version()
     {
-        Assert.Equal("3.29.3c", ClientLocator.Build);
+        Assert.Equal(["3.29.3d", "3.29.3c"], ClientLocator.Current);
+        Assert.Equal("3.29.3d", ClientLocator.Build);
         Assert.True(ClientLocator.IsOlder("3.29.3b", "3.29.3c"));
+        Assert.True(ClientLocator.IsOlder("3.29.3c", "3.29.3d"));
+        Assert.True(ClientLocator.IsOlder("3.29.3d", "3.30.0"));
         Assert.False(ClientLocator.IsOlder("3.29.3c", "3.29.3b"));
-        Assert.False(ClientLocator.IsOlder("3.29.3a", "3.29.3c"));
+        Assert.False(ClientLocator.IsOlder("3.29.3c", "3.29.3c"));
+        Assert.False(ClientLocator.IsOlder("not a version", "3.29.3c"));
         Assert.Equal(new ClientLocator.OlderVersion("v0.1.0-beta", "7724004c8f13fce2c5e8a8c29ff40ef4b4ef10de"), ClientLocator.LastVersionFor("3.29.3b"));
         Assert.Null(ClientLocator.LastVersionFor("3.29.3c"));
     }

@@ -57,6 +57,26 @@ partial class InstallTab : UserControl
     long? _current, _total;
     /// <summary>The words shown, as functions, so that a language change says them again.</summary>
     Func<string>? _headline, _note;
+    /// <summary>While the game client is copied into this release (<see cref="OwnCopyAsync"/>): Stop ends the copy.</summary>
+    CancellationTokenSource? _copyStop;
+    /// <summary>This release's client is a link to the user's own Path of Exile folder: the page says what LocalExile says at
+    /// every start (<see cref="OwnClient.Notice"/>) and offers the copy. Looked for in the background.</summary>
+    OwnClient.Plan? _linked;
+    /// <summary>The folder has no game client at all, in use or kept: the page says so.</summary>
+    bool _noClient;
+    /// <summary>The game folder outside LocalExile the client is a link to, also one Waypoint cannot copy.</summary>
+    string? _linkedTo;
+
+    /// <summary>Which version of the game this release's client is, under the Play button beside LocalExile's own version.</summary>
+    string? _clientVersion;
+
+    async Task LookForOwnFolderAsync()
+    {
+        string folder = Folder;
+        (_linked, _clientVersion, _noClient, _linkedTo) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder),
+            ClientVersions.Layout(folder) == ClientLayout.None && ClientVersions.Kept(folder).Count == 0, OwnClient.LinkedOutside(folder)));
+        Show();
+    }
     readonly ObservableCollection<StepRow> _steps = [];
     readonly StringBuilder _log = new();
     /// <summary>The step that runs now.</summary>
@@ -97,6 +117,11 @@ partial class InstallTab : UserControl
         _shared = shared;
         if (!Repo.IsInstall) return;
         _ = LookForOlderAsync();
+        // A move to a client of its own that was cut short as the copy took the link's place is finished first: until then the
+        // folder has no client, and this page would send the user to the setup guide.
+        try { OwnClient.Finish(Folder); }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { shared.Logs.Write($"the game client's move was not finished: {e.Message}", Severity.Warning); }
+        _ = LookForOwnFolderAsync();
         StepList.ItemsSource = _steps;
         shared.Monitor.Sampled += _ => Dispatcher.UIThread.Post(Show);
         shared.LiveRunning += _ => Dispatcher.UIThread.Post(Show);
@@ -110,6 +135,7 @@ partial class InstallTab : UserControl
     {
         if (!Repo.IsInstall) return;
         _ = LookForOlderAsync();
+        _ = LookForOwnFolderAsync();
         _needsSetup = false;
         _failed = false;
         _note = note;
@@ -124,12 +150,11 @@ partial class InstallTab : UserControl
     async Task LookForOlderAsync()
     {
         string folder = Environment.CurrentDirectory;
-        string? need = ClientLocator.Needed(folder);
+        string? need = await Task.Run(() => ClientLocator.Needed(folder));
         // Looked for again only when the folder's LocalExile changed (an update, a move to another version).
         if (need is not null && need == _olderLookedFor) return;
         _olderLookedFor = need;
-        _olderBuild = need is not null && ClientLocator.IsOlder(need, ClientLocator.Build)
-            && await Task.Run(() => ClientUpdate.FindClient(ClientLocator.Build, default)) is null ? need : null;
+        _olderBuild = await Task.Run(() => ClientUpdate.OlderVersionOf(folder) is { } made && ClientUpdate.FindCurrent() is null ? made : null);
         Show();
     }
 
@@ -146,14 +171,19 @@ partial class InstallTab : UserControl
         Working.IsVisible = busy && (_shared.Settings.Appearance?.ReduceMotion != true || _total is > 0);
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
-        string? note = _note?.Invoke() ?? (_olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
+        string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
+            : _linkedTo is { } target ? OwnClient.Notice(target)
+            : _noClient && !busy ? L.Text("No game client in this folder yet.")
+            : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;
         // A step that writes the client or the keys is not cut short.
-        StopLink.IsVisible = !_stopping && !LocalExileReleases.MustFinish(_stage) && (_working || AnythingRunning);
+        StopLink.IsVisible = !_stopping && !LocalExileReleases.MustFinish(_stage) && (_working || AnythingRunning || _copyStop is not null);
+        StopLink.Content = _copyStop is not null ? L.Text("Stop the copy") : L.Text("Stop playing");
+        OwnCopyLink.IsVisible = _linked is not null && _note is null && !busy && !AnythingRunning;
         Elapsed.Text = _working ? L.Text("Running for {0}", _clock.Elapsed.ToString(@"m\:ss")) : "";
-        VersionText.Text = LocalExileReleases.Installed(Folder) is { } version ? L.Text("LocalExile {0}", version) : "";
+        VersionText.Text = string.Join(" · ", new[] { LocalExileReleases.Installed(Folder) is { } version ? L.Text("LocalExile {0}", version) : null, FolderList.ClientText(_clientVersion) }.OfType<string>());
         string? from = _bringLater ? null : Editions.BringFrom(_shared.Settings);
         // The check holds the folder as any work does (busy): its card stays, and says what Waypoint is doing.
         BringCard.IsVisible = from is not null && (_bringChecking || !busy && !AnythingRunning) && !needsSetup;
@@ -234,6 +264,71 @@ partial class InstallTab : UserControl
                 _note = () => L.Text("Not started: the game client does not fit this LocalExile.");
                 Show();
                 return null;
+        }
+    }
+
+    /// <summary>The way out LocalExile's own warning names for a release whose client is a link to the user's Path of Exile
+    /// folder: a copy of its own (<see cref="OwnClient"/>), made only on the user's word from the page's link. The link works
+    /// until a whole copy takes its place, and nothing starts here.</summary>
+    async void OwnCopyClicked(object? sender, RoutedEventArgs e)
+    {
+        if (_working || _checking || _shared.IsLiveRunning || AnythingRunning) return;
+        _checking = true;
+        Show();
+        try { await OwnCopyAsync(); }
+        finally { _checking = false; }
+        Show();
+    }
+
+    async Task OwnCopyAsync()
+    {
+        var owner = ViewTools.Owner(this);
+        using var stop = new CancellationTokenSource();
+        var clock = new Stopwatch();
+        long? startedAt = null;
+        var result = await OwnClient.MakeCopyAsync(Folder,
+            // Cancel is the button Enter presses: a box that opens while its user types must not start a long copy by accident.
+            plan => OwnClient.Ask(plan, (title, message, details, buttons) => Dialog.Show(owner, DialogKind.Question, title, message, details, buttons, buttons.Length - 1), ViewTools.Open),
+            copied => Dispatcher.UIThread.Post(() =>
+            {
+                if (_copyStop is null) return;
+                startedAt ??= copied.Done;
+                double rate = (copied.Done - startedAt.Value) / Math.Max(clock.Elapsed.TotalSeconds, .1);
+                _current = copied.Done;
+                _total = copied.Total;
+                _note = () => L.Text("{0:0.0} of {1:0.0} GB · {2:0} MB/s · {3}", copied.Done / 1e9, copied.Total / 1e9, rate / 1e6, copied.File);
+                Show();
+            }),
+            work =>
+            {
+                _copyStop = stop;
+                clock.Start();
+                _headline = () => L.Text("Copying the game client");
+                _note = null;
+                Show();
+                return _shared.RunExclusiveAsync(L.Text("Copying the game client"), work);
+            },
+            stop.Token);
+        _copyStop = null;
+        _headline = null;
+        _note = null;
+        _current = _total = null;
+        if (result.Outcome == OwnClient.Outcome.Moved) _linked = null;
+        switch (result.Outcome)
+        {
+            case OwnClient.Outcome.Moved:
+                _shared.Logs.Write($"the game client was copied from {result.Plan!.Source}; this release has its own now", Severity.Info);
+                Show();
+                Dialog.Tell(owner, DialogKind.Info, OwnClient.DoneTitle, OwnClient.DoneText(result.Plan));
+                break;
+            case OwnClient.Outcome.Failed:
+                _shared.Logs.Write($"the game client was not copied: {result.Reason}", Severity.Warning);
+                Show();
+                Dialog.Tell(owner, DialogKind.Warning, OwnClient.FailedTitle, OwnClient.FailedText(result.Plan!, result.Reason ?? ""));
+                break;
+            case OwnClient.Outcome.Stopped:
+                _note = () => L.Text("The copy was stopped, and nothing was changed. It goes on from there next time.");
+                break;
         }
     }
 
@@ -444,6 +539,11 @@ partial class InstallTab : UserControl
 
     async void StopClicked(object? sender, RoutedEventArgs e)
     {
+        if (_copyStop is { } copy)
+        {
+            copy.Cancel();
+            return;
+        }
         if (_stopping) return;
         _stopping = true;
         _note = null;

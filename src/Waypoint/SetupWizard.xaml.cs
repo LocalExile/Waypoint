@@ -148,9 +148,6 @@ public partial class SetupWizard : FormWindow
     /// <summary>A new install has no saves, so no account yet; LocalExile.exe asks when one with saves has none.</summary>
     bool AccountNeeded => UsingRelease && NoClient.IsChecked != true && (_accountAsked || ChosenCheckout() is not { } folder || !LocalExileReleases.HasSaves(folder));
 
-    /// <summary>The client will be a link rather than a folder of its own.</summary>
-    bool LinkedClient => Sharing || LinkClient.IsChecked == true;
-
     /// <summary>How the client will keep its settings once it is in place: a copy brings along the source's config.json. Null
     /// when there is no client yet.</summary>
     ClientSettingsState? PlannedSettings()
@@ -158,7 +155,7 @@ public partial class SetupWizard : FormWindow
         string? checkout = ChosenCheckout();
         if (HasClient(checkout)) return ClientSettings.Read(Path.Combine(checkout!, "Client"));
         if (NoClient.IsChecked == true || ClientList.SelectedItem is not FoundClient client) return null;
-        return ClientSettings.Read(client.Folder, LinkedClient);
+        return ClientSettings.Read(client.Folder, Sharing || Linking);
     }
 
     /// <summary>Waypoint can't tell what a change would reach, so the player decides.</summary>
@@ -495,8 +492,13 @@ public partial class SetupWizard : FormWindow
 
     /// <summary>The client build to set up for: the folder's own; for a new one the current build when a client of it was
     /// found, and only when none was, an older build a found client has (its last LocalExile is set up, <see cref="OlderToSetUp"/>).</summary>
-    string NeededClient => FolderNeeds ?? (_clients.Any(c => c.Usable && c.Build == ClientLocator.Build) ? ClientLocator.Build
-        : _clients.Where(c => c.Usable && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build);
+    string NeededClient => FolderNeeds ?? ClientLocator.Current.FirstOrDefault(version => _clients.Any(c => c.Usable && c.Build == version))
+        ?? _clients.Where(c => c.Usable && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build;
+
+    /// <summary>Whether the LocalExile being set up runs a client of this version. A folder that has a LocalExile says so
+    /// itself (<see cref="ClientLocator.Supported"/>); one that has none yet gets the newest, which runs every current version.</summary>
+    bool Runs(string build) => FolderNeeds is not null && ChosenCheckout() is { } folder ? ClientLocator.Supports(folder, build)
+        : build == NeededClient || ClientLocator.IsCurrent(build) && ClientLocator.IsCurrent(NeededClient);
 
     /// <summary>With a client of an older build chosen: that build, whose last LocalExile is set up instead of the newest. For a
     /// new folder, and for a source copy that needs a newer client than any found (<see cref="CanGoBackFor"/>).</summary>
@@ -507,14 +509,15 @@ public partial class SetupWizard : FormWindow
     /// older one the player has, so that nobody is left without a version to play. A release cannot go back in place.</summary>
     bool CanGoBackFor(string build) => FolderNeeds is { } needs && ChosenCheckout() is { } folder && !LocalExileReleases.IsInstall(folder)
         && RepositoryDiscovery.IsLocalExile(folder) && ClientLocator.IsOlder(build, needs) && ClientLocator.LastVersionFor(build) is not null
-        && !_clients.Any(c => c.Usable && c.Build == needs);
+        && !_clients.Any(c => c.Usable && c.Build is { } found && Runs(found));
 
     /// <summary>A client of a known build other than the one needed cannot be used: it would fail at the login. One of a build
     /// Waypoint does not know is the player's call (<see cref="ClientWarning"/>).</summary>
-    bool Fits(FoundClient client) => client.Build is not { } build || build == NeededClient || CanGoBackFor(build);
+    bool Fits(FoundClient client) => client.Build is not { } build || Runs(build) || CanGoBackFor(build);
 
     static bool HasClient(string? checkout) =>
-        checkout is not null && ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone;
+        checkout is not null && (ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone
+            || ClientVersions.Layout(checkout) == ClientLayout.Steam);
 
     async void SearchClientsClicked(object sender, RoutedEventArgs e) => await FindClientsAsync();
 
@@ -553,7 +556,15 @@ public partial class SetupWizard : FormWindow
             ClientStatus.Text = usable > 0 ? L.Text("Found {0} on this PC. Choose the one to use.", usable)
                 : L.Text("No usable client was found. Searched {0}.", string.Join(", ", result.Searched));
             string warning = ClientList.SelectedItem is FoundClient chosen ? ClientWarning(chosen) : "";
-            ClientNote.Text = usable == 0 ? L.Text("Browse to a folder with PathOfExile.exe and Content.ggpk. It must be a standalone 3.29.3c install: Steam and Epic installs do not work, and Waypoint cannot download the game.")
+            // Without a client, the Play page's Finish setup can download the game: said here, where the user is stuck, and
+            // only where it will hold. That is a release (a source copy's Play page has no download) whose LocalExile
+            // lists a build Steam can deliver; one not installed yet will be the newest, which does.
+            bool download = usable == 0 && DepotTool.Supported && UsingRelease
+                && (checkout is null || !LocalExileReleases.IsInstall(checkout) || await Task.Run(() => ClientVersions.FirstDownload(checkout) is not null));
+            ClientNote.Text = usable == 0
+                    ? L.Text("Choose a folder with PathOfExile.exe and Content.ggpk: a standalone Path of Exile {0} install. Steam and Epic installs do not work here.", NeededClient)
+                        + " " + (download ? L.Text("If you have no such folder, tick the box below. Finish setup on the Play page can then download the game from Steam.")
+                            : L.Text("Waypoint cannot download the game for this LocalExile."))
                 : warning.Length > 0 ? warning
                 : result.Limited ? L.Text("The search stopped at its time limit; Browse if your client is not listed.") : "";
         }
@@ -595,7 +606,7 @@ public partial class SetupWizard : FormWindow
         var client = ClientList.SelectedItem as FoundClient;
         _sharedKeys = null;
         ShareClient.Visibility = Visibility.Collapsed;
-        LinkClient.Visibility = UsingRelease && client is not null ? Visibility.Visible : Visibility.Collapsed;
+        LinkClient.Visibility = UsingRelease && client is not null && _settings.Developer ? Visibility.Visible : Visibility.Collapsed;
         if (client is not null) ClientNote.Text = ClientWarning(client);
         ShowRail();
         UpdateButtons();
@@ -622,13 +633,17 @@ public partial class SetupWizard : FormWindow
         string? checkout = ChosenCheckout();
         bool has = HasClient(checkout);
         string client = has ? Path.Combine(checkout!, "Client") : (ClientList.SelectedItem as FoundClient)?.Folder ?? "";
-        bool linked = has ? ClientSettings.IsLink(client) : LinkedClient;
+        bool linked = has ? ClientSettings.IsLink(client) : Sharing || Linking;
         SettingsWhy.Text = ClientSettings.WhyUnknown(client, linked);
         OwnSettingsNote.Text = L.Text("LocalExile keeps its own graphics, keys and saved login in {0}, and starts with the network mode it needs. Your normal game's settings are only read, once, as a starting point.", ClientSettings.OwnFolderPath);
     }
 
     /// <summary>The chosen client is shared through a link, with the keys of this folder, instead of copied.</summary>
     bool Sharing => _sharedKeys is not null && ShareClient.IsChecked == true;
+
+    /// <summary>For developers only, as LocalExile's own <c>--client-mode link</c> is: the release's client is a link to the
+    /// chosen folder instead of a copy of it. Never offered without Developer Mode.</summary>
+    bool Linking => _settings.Developer && LinkClient.IsChecked == true;
 
     /// <summary>A wrong client only fails later, at the keys, after a long copy: this says so now. It stays the player's call,
     /// because a build Waypoint does not know may be one a newer server supports.</summary>
@@ -644,8 +659,8 @@ public partial class SetupWizard : FormWindow
             return (FolderNeeds is null
                 ? L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release)
                 : L.Text("Only a {0} client was found, so this copy moves to the last LocalExile made for it.", chosen)) + " " + ClientUpdate.OlderNoteFor(chosen);
-        if (client.KnownBuild == false && client.Build is null) return L.Text("This is not the 3.29.3c build LocalExile needs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
-        if (Sharing || LinkClient.IsChecked == true) return "";
+        if (client.KnownBuild == false && client.Build is null) return L.Text("Waypoint does not know this as a version LocalExile runs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
+        if (Sharing || Linking) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining
             ? L.Text("Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.", plan.Remaining / 1e9, free / 1e9) : "";
@@ -798,7 +813,7 @@ public partial class SetupWizard : FormWindow
     async Task PrepareReleaseAsync(string folder, string? client, Action<string> detail, CancellationToken stop)
     {
         List<string> arguments = ["setup"];
-        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", LinkClient.IsChecked == true ? "link" : "copy"]);
+        if (client is not null && !HasClient(folder)) arguments.AddRange(["--client", client, "--client-mode", Linking ? "link" : "copy"]);
         string? password = null;
         if (AccountProblem() is null)
         {

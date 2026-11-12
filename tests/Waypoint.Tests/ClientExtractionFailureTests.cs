@@ -36,7 +36,7 @@ public sealed class ClientExtractionFailureTests : IDisposable
         Assert.Equal("Node is missing", error.Message);
         // The release and its 3.29.3.5 hotfix are both the 3.29.3c build.
         Assert.Equal(2, ClientLocator.ExecutableHashesFor("3.29.3c").Length);
-        Assert.Equal(ClientLocator.KnownExecutable, ClientLocator.ExecutableHashesFor("3.29.3c")[0]);
+        Assert.Equal(ClientLocator.KnownExecutable, ClientLocator.ExecutableHashesFor(ClientLocator.Build)[0]);
         Assert.Single(ClientLocator.ExecutableHashesFor("3.29.3b"));
         Assert.Empty(ClientLocator.ExecutableHashesFor("future build"));
     }
