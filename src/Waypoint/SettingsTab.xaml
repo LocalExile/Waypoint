@@ -70,6 +70,19 @@
                 </StackPanel>
             </GroupBox>
 
+            <!-- How a release moves to another version of the game from Steam (ClientVersionsWindow). -->
+            <GroupBox x:Name="ClientSwitchGroup" Header="{l:Loc 'Game client versions'}">
+                <StackPanel>
+                    <TextBlock Text="{l:Loc 'When a LocalExile folder that has a game client gets another version from Steam:'}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                    <RadioButton x:Name="SwitchAsk" GroupName="ClientSwitch" Content="{l:Loc 'Ask each time'}" Checked="ClientSwitchChanged" />
+                    <RadioButton x:Name="SwitchKeepBoth" GroupName="ClientSwitch" Content="{l:Loc 'Always keep both versions'}" Checked="ClientSwitchChanged"
+                                 ToolTip="{l:Loc 'The client in use is set aside and the other version is made beside it. It needs the room of both, and going back is instant.'}" />
+                    <RadioButton x:Name="SwitchInPlace" GroupName="ClientSwitch" Content="{l:Loc 'Always update the one client in place'}" Checked="ClientSwitchChanged"
+                                 ToolTip="{l:Loc 'The one client becomes the other version. Only what differs is downloaded and it needs no more room, but the version it was is gone.'}" />
+                    <TextBlock Text="{l:Loc 'A way the drive has no room for is asked about instead.'}" Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                </StackPanel>
+            </GroupBox>
+
             <!-- LocalExile's game settings profile, for everyone; Manage… opens the Profiles window. -->
             <GroupBox Header="{l:Loc 'Game settings'}">
                 <StackPanel x:Name="GameSettingsRow" />

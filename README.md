@@ -134,6 +134,6 @@ dotnet publish src/Waypoint -o .
 A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
 how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
 
-Waypoint is under the [MIT license](LICENSE). OpenDyslexic is under the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt).
+Waypoint is under the [MIT license](LICENSE). What a released `Waypoint.exe` carries of others' work (DepotDownloader, GPL-2.0; OpenDyslexic, the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt)) is in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 This project is not affiliated with or endorsed by Grinding Gear Games.

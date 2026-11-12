@@ -175,6 +175,26 @@ public static class ClientLocator
         return any ? "" : null;
     }
 
+    /// <summary>LocalExile's own name for the build a client folder holds ("3.29.3.5 hotfix of 2026-11-09, build 328126"),
+    /// among the builds its list names: one version can be several builds. Null when the executable is none of them. It
+    /// reads the whole executable: never on the UI thread.</summary>
+    public static ListedBuild? ListedBuildOf(string folder, IEnumerable<ListedBuild> builds)
+    {
+        foreach (string name in new[] { "PathOfExile.exe", "PathOfExileSteam.exe", "Game.exe" })
+        {
+            try
+            {
+                var file = new FileInfo(Path.Combine(folder, name));
+                if (!file.Exists || file.Length < GameExecutableSize) continue;
+                using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                string hash = Convert.ToHexStringLower(SHA256.HashData(stream));
+                if (builds.FirstOrDefault(b => b.ExecutableSha256 == hash) is { } build) return build;
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+        }
+        return null;
+    }
+
     /// <summary>The client versions a LocalExile folder runs, newest first: its own list when it has one
     /// (<see cref="LocalExileBuilds"/>, whose builds are then recognized here too), and otherwise the one version its
     /// release.json or release script names. Empty when nothing says.</summary>

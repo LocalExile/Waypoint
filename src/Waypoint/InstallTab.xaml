@@ -58,7 +58,10 @@
             <l:SettingsOffer x:Name="Offer" />
             <TextBlock x:Name="VersionText" Style="{StaticResource Shell.Secondary}" TextAlignment="Center" Margin="0,24,0,0" />
             <!-- The folder, the way to another and a new copy are the sidebar's (FolderPicker). -->
-            <Button x:Name="RunSetupLink" Style="{StaticResource QuietLink}" Visibility="Visible" FontSize="12.5" Margin="0,10,0,0"
+            <!-- The versions of the game this release holds, and those Steam can deliver (ClientVersionsWindow). -->
+            <Button x:Name="ClientLink" Style="{StaticResource QuietLink}" Content="{l:Loc 'Game client…'}" FontSize="12.5" Margin="0,10,0,0" Click="ClientClicked"
+                    ToolTip="{l:Loc 'The versions of the game this LocalExile holds: get one from Steam, keep several, switch between them'}" />
+            <Button x:Name="RunSetupLink" Style="{StaticResource QuietLink}" Visibility="Visible" FontSize="12.5" Margin="0,4,0,0"
                     Content="{l:Loc 'Run setup guide…'}" Click="RunSetupClicked" ToolTipService.ShowOnDisabled="True"
                     ToolTip="{l:Loc 'Recheck requirements and refresh this setup, including client preparation. Close the game and stop servers first.'}" />
         </StackPanel>

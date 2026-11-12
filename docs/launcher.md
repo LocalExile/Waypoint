@@ -785,6 +785,58 @@ under Proton, and Next waits until it is found. The source route's tools include
 The client's folder goes to `LocalExile.exe` as a `Z:\` path: Proton gives the install a drive letter of its own, so an
 unqualified Unix path would land on that drive, while `Z:` is the root in every prefix.
 
+### The game client from Steam
+
+The official launcher only ever gives the newest game, so once the game moves on, the versions LocalExile runs can no
+longer be had from it. Steam still serves them, and a release's **Game client…** (under Play; `ClientVersionsWindow`) gets
+one with the user's own Steam account. Which versions, and Steam's app, depots and manifests for each, are LocalExile's to
+say (`LocalExile.exe builds`, [Game client builds](#game-client-builds)): the window lists the client in use, those kept
+beside it, and each version of the list that Steam can deliver, with LocalExile's own name for the build (a version can be
+several builds: 3.29.3c from Steam is the 3.29.3.5 hotfix). A LocalExile that lists nothing gets nothing from Steam. Nothing
+here runs while the game or a server does. Windows on x64 only for now.
+
+- **The tool.** Waypoint does not speak to Steam itself: it runs [DepotDownloader](https://github.com/SteamRE/DepotDownloader)
+  (GPL-2.0), a program of its own (`DepotTool`, `SteamDownload` in `src/Launcher.Core/SteamDownload.cs`). A released
+  `Waypoint.exe` carries the tool's official release for Windows x64, unchanged, so that a user's Waypoint downloads no
+  tool: `tools/Get-DepotDownloader.ps1` fetches it when Waypoint is built and holds it to its SHA-256, the project embeds
+  the zip when it is there, and the release workflow runs the script and attaches the tool's source beside `Waypoint.exe`
+  ([THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md)). The first time it is needed it is unpacked into
+  `%LOCALAPPDATA%\Waypoint\tools\DepotDownloader`, checked against the same SHA-256. A Waypoint built without the zip
+  fetches that release then. Neither Steam nor SteamCMD has to be on the PC.
+- **The sign-in.** Steam's anonymous account cannot fetch the game, so the user signs in once, with an account that has
+  Path of Exile in its library. **Sign in with the Steam app…** is the tool's own QR sign-in: Waypoint draws the code the
+  tool prints (`SteamSignInWindow`), the user scans it with the Steam mobile app and approves, and the picture follows when
+  Steam changes the code. The tool gives up after about two minutes without an approval: the window then says so and
+  offers **New code**. **Sign in with a password…** is for someone without that app: Waypoint asks only the account's
+  name, and the tool asks for the password and the Steam Guard code in a console window of its own, which stays open after
+  a failure. Either way Waypoint sees no password and no token: the tool keeps the sign-in (in the Windows user's isolated
+  storage, by where the tool runs from, which is why its folder has no version in its name), and Waypoint keeps the
+  account's name (`Settings.SteamAccount`), which names that sign-in on later runs and is shown in the window. **Forget the
+  sign-in** drops the name.
+  When Steam no longer takes the remembered sign-in, the next download asks again. A log never gets the code or the name.
+- **Getting a version.** Waypoint first asks Steam how large the build is (its manifests, a few seconds). A folder with no
+  client downloads it whole. A folder that has one is asked how to move, each time (`SwitchWay`), with only the ways the
+  drive has room for:
+  - **Update in place**: the one client is brought to the other version where it is. Only what differs is downloaded and
+    it needs no more room, but the version it was is gone. The client carries `.waypoint-switching` until it is whole: Play
+    starts nothing on it meanwhile, and the same choice again finishes it.
+  - **Keep both**: the client in use is set aside in the folder's `Clients\<version>` and the other version takes its
+    place. With a client from Steam in use, the new one starts as a copy of it, so only what differs is downloaded; it
+    needs the room of both.
+  - A standalone client (`Content.ggpk`) shares nothing with Steam's files: the version is downloaded whole either way,
+    and **Replace** deletes the standalone one once the new client is in place.
+  - **Settings → Game client versions** makes one way the way every time (`Settings.ClientSwitch`); a way the drive has
+    no room for is asked about instead.
+  Everything but an update in place is made ready in `.waypoint-next-client`, beside a client that goes on working, and
+  only a whole build is swapped in (its executable is the build's, and its `Bundles2\_.index.bin` has the hash LocalExile
+  lists); a rename that fails puts the old client back. **Stop** keeps what was fetched, and the next try goes on from it.
+- **Afterwards** Waypoint runs `LocalExile.exe setup`, which makes `Game.exe` and the copy patched for the folder's keys
+  from the client that came in (Waypoint removes the ones made for the build before it, and the client's `config.json`,
+  which names LocalExile's own game settings, goes with it). A folder that still needs an account is finished from Play.
+- **Kept versions.** `Client` is all LocalExile ever looks at; `Clients\` is Waypoint's own. **Use this version** on a kept
+  one swaps it with the one in use, two renames and no download, with what LocalExile prepared for it still there.
+  **Delete this copy…** asks first.
+
 ### A client linked to the user's game
 
 LocalExile's launcher always copies the client. Its `--client-mode link` makes `Client` a link to the folder it was given
@@ -1356,6 +1408,7 @@ adapter does not know can be browsed but not changed.
 | `SetupChecks.cs`, `Settings.cs` | the setup checks, the per-user settings |
 | `SetupWizard.xaml`, `PortCheck.cs` | the setup guide; what holds a server's port, and the question about it |
 | `src/Launcher.Core/LocalExileBuilds.cs` | the client builds a LocalExile folder runs, asked of that LocalExile (`builds`, or a checkout's `ClientBuilds.cs`) |
+| `ClientVersionsWindow.cs`, `SteamSignInWindow.cs`, `src/Launcher.Core/SteamDownload.cs`, `ClientVersions.cs` | a release's game client from Steam: the window, the QR sign-in, the tool and its lines, the versions a folder holds and the switch |
 | `src/Launcher.Core/OwnClient.cs` | a release whose client is a link to the user's game folder: LocalExile's warning, and the copy on the user's word |
 | `src/Launcher.Core/SetupGuide.cs`, `ClientLocator.cs`, `ClientCopy.cs` | the guide's engine: tools that can be stopped, the prerequisites, the steps, finding a client, the resumable copy |
 | `src/Launcher.Core/SwitchToSource.cs` | moving from a release to a source copy: what the choices will do, the older version (`TestedCommit`), Frida, removing the release |

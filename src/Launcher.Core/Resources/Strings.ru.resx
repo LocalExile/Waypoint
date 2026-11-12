@@ -51,6 +51,9 @@
   <data name="Text_0135b37a077c" xml:space="preserve">
     <value>Нет модов, подходящих под поиск.</value>
   </data>
+  <data name="Text_016b695919cd" xml:space="preserve">
+    <value>Сохранить обе: {0} загружается целиком ({1:0.#} ГБ), а используемый клиент откладывается. Вернуться потом можно мгновенно.</value>
+  </data>
   <data name="Text_01846401bd51" xml:space="preserve">
     <value>Скрипты</value>
   </data>
@@ -135,6 +138,9 @@
   <data xml:space="preserve" name="Text_0397d2f08fb2">
     <value>Собранные файлы и подтверждённое состояние запущенных модов отображаются отдельно. LocalExile отслеживает файлы модов независимо от горячей перезагрузки кода Gateway. Сборка или перезагрузка сбрасывает состояние мода в памяти и может перезагрузить зависимые моды. Отключение зависимости может выгрузить другие моды. Изменения затрагивают всех персонажей на этом Gateway.</value>
   </data>
+  <data name="Text_039f1393d80b" xml:space="preserve">
+    <value>Steam: вход выполнен как {0}. Вход хранит программа загрузки; Waypoint хранит только это имя.</value>
+  </data>
   <data xml:space="preserve" name="Text_03aaf79a604f">
     <value>Остановить серверы</value>
   </data>
@@ -213,6 +219,9 @@
   <data xml:space="preserve" name="Text_06291e8ea32e">
     <value>Найден и выбран: </value>
   </data>
+  <data name="Text_063f9cf4f212" xml:space="preserve">
+    <value>Версии клиента игры</value>
+  </data>
   <data name="Text_065699cd74f6" xml:space="preserve">
     <value>сборка из исходников</value>
   </data>
@@ -237,6 +246,9 @@
   <data name="Text_06c07d364810" xml:space="preserve">
     <value>Персонажей пока нельзя перенести</value>
   </data>
+  <data name="Text_06cade4850f6" xml:space="preserve">
+    <value>На этом диске свободно {0:0.#} ГБ.</value>
+  </data>
   <data name="Text_06f8025705e4" xml:space="preserve">
     <value>Без {0} эта лига будет работать без правил или содержимого, в честь которых она названа. Её персонажи останутся как есть, и модуль можно включить снова.</value>
   </data>
@@ -248,6 +260,9 @@
   </data>
   <data name="Text_072da57facdc" xml:space="preserve">
     <value>Модификаторы</value>
+  </data>
+  <data name="Text_075d26d6fac7" xml:space="preserve">
+    <value>Получить эту версию…</value>
   </data>
   <data name="Text_07607d609f9a" xml:space="preserve">
     <value>Освещение</value>
@@ -266,6 +281,9 @@
   </data>
   <data name="Text_07e9e8fac2d4" xml:space="preserve">
     <value>Показать при создании персонажей</value>
+  </data>
+  <data name="Text_080f331c01a0" xml:space="preserve">
+    <value>Завершить переключение</value>
   </data>
   <data name="Text_0858184ec92d" xml:space="preserve">
     <value>PID {0}</value>
@@ -350,6 +368,9 @@
   </data>
   <data name="Text_0ad5bf6f475d" xml:space="preserve">
     <value>Не удалось установить Frida. Проверьте подключение и повторите попытку.</value>
+  </data>
+  <data name="Text_0b012819fde4" xml:space="preserve">
+    <value>Копирование используемого клиента в качестве основы: {0}</value>
   </data>
   <data name="Text_0b046bdcbbe3" xml:space="preserve">
     <value>Готова новая версия Waypoint</value>
@@ -849,6 +870,9 @@
   <data name="Text_180eee2fdf76" xml:space="preserve">
     <value>Frida установлена (необязательные игровые инструменты)</value>
   </data>
+  <data name="Text_1817b12a16d5" xml:space="preserve">
+    <value>Если для выбранного способа на диске нет места, будет задан вопрос.</value>
+  </data>
   <data xml:space="preserve" name="Text_1826368b30f4">
     <value>Вывод выбранного журнала</value>
   </data>
@@ -1150,6 +1174,9 @@
   <data name="Text_2141a1190cb3" xml:space="preserve">
     <value>Аккаунт изменён.</value>
   </data>
+  <data name="Text_215731ae9bf2" xml:space="preserve">
+    <value>Клиент в этой папке переводился на Path of Exile {0}, и это не завершилось, поэтому запустить его нельзя. Откройте «Клиент игры» и завершите переключение.</value>
+  </data>
   <data name="Text_2164116b1adb" xml:space="preserve">
     <value>Не удалось продолжить: {0}</value>
   </data>
@@ -1216,6 +1243,9 @@
   <data name="Text_22e2bada8f1c" xml:space="preserve">
     <value>Обновления</value>
   </data>
+  <data name="Text_22f51c1eee46" xml:space="preserve">
+    <value>Когда папка LocalExile, в которой уже есть клиент игры, получает другую версию из Steam:</value>
+  </data>
   <data xml:space="preserve" name="Text_230841178e46">
     <value>Не удалось открыть страницу загрузки: </value>
   </data>
@@ -1230,6 +1260,9 @@
   </data>
   <data name="Text_2331c395597e" xml:space="preserve">
     <value>Не удалось проверить службы перед выходом.</value>
+  </data>
+  <data name="Text_2379bac67a0d" xml:space="preserve">
+    <value>{0}, {1:0.#} ГБ, будет удалена безвозвратно. Используемая версия не затрагивается.</value>
   </data>
   <data name="Text_237ce534dbd1" xml:space="preserve">
     <value>Недопустимая или повторяющаяся лига.</value>
@@ -1493,6 +1526,9 @@
   <data name="Text_297ca576d20c" xml:space="preserve">
     <value>Установка: {0:0} из {1:0} МБ</value>
   </data>
+  <data name="Text_297db64a4403" xml:space="preserve">
+    <value>Удалено.</value>
+  </data>
   <data xml:space="preserve" name="Text_297ef4c79b4b">
     <value>Уменьшить анимацию</value>
   </data>
@@ -1609,6 +1645,9 @@
   </data>
   <data name="Text_2c5c517cb9a3" xml:space="preserve">
     <value>До тех пор Waypoint работает со значениями по умолчанию. Измените или очистите их в разделе «Настройки» → «Папки и программы».</value>
+  </data>
+  <data name="Text_2c60146bb5dc" xml:space="preserve">
+    <value>Удалить эту копию игры?</value>
   </data>
   <data xml:space="preserve" name="Text_2cb93bc2b809">
     <value>Введите положительный номер PR LocalExile, включая закрытые PR</value>
@@ -1748,6 +1787,9 @@
   <data name="Text_2ff712f20f9c" xml:space="preserve">
     <value>Копия не переключена</value>
   </data>
+  <data name="Text_2ffa675debc7" xml:space="preserve">
+    <value>Сохранить обе: используемый клиент откладывается, а {0} создаётся из его копии, поэтому загружаются только отличия. Нужно ещё {1:0.#} ГБ, зато вернуться потом можно мгновенно.</value>
+  </data>
   <data name="Text_300d052f22b0" xml:space="preserve">
     <value>Ваши персонажи</value>
   </data>
@@ -1822,6 +1864,9 @@
   </data>
   <data xml:space="preserve" name="Text_3253dba2c477">
     <value>Переключить и собрать</value>
+  </data>
+  <data name="Text_3259626af713" xml:space="preserve">
+    <value>Это не похоже на имя аккаунта Steam. Нужно имя, с которым вы входите, а не отображаемое имя профиля.</value>
   </data>
   <data name="Text_32861db02c0a" xml:space="preserve">
     <value>Общие настройки</value>
@@ -1947,6 +1992,9 @@
   <data name="Text_35f1c8c13fd5" xml:space="preserve">
     <value>Эта копия исходников не предоставляет поддерживаемый способ создания лиг. Существующие лиги доступны для просмотра.</value>
   </data>
+  <data name="Text_35f9a04c426e" xml:space="preserve">
+    <value>Waypoint забудет, какой аккаунт Steam использовать. При следующей загрузке вход потребуется снова.</value>
+  </data>
   <data name="Text_360fe2a32742" xml:space="preserve">
     <value>Вызовов в секунду за период</value>
   </data>
@@ -1997,6 +2045,9 @@
   </data>
   <data name="Text_3829bf0ef80f" xml:space="preserve">
     <value>В этой установке не найдено модулей или лиг.</value>
+  </data>
+  <data name="Text_386258776f9e" xml:space="preserve">
+    <value>В настройках можно выбрать один из этих способов для всех случаев.</value>
   </data>
   <data name="Text_3864a7129335" xml:space="preserve">
     <value>Открыть соседнюю область</value>
@@ -2091,6 +2142,9 @@
   <data name="Text_3a9d88fcc07f" xml:space="preserve">
     <value>Избавительница</value>
   </data>
+  <data name="Text_3abf014af387" xml:space="preserve">
+    <value>используется, наполовину переведён на {0}</value>
+  </data>
   <data name="Text_3ac1a9ec4fa7" xml:space="preserve">
     <value>Валюта</value>
   </data>
@@ -2102,6 +2156,9 @@
   </data>
   <data name="Text_3b0bd8704408" xml:space="preserve">
     <value>Куда установить LocalExile?</value>
+  </data>
+  <data name="Text_3b12dd3d29b3" xml:space="preserve">
+    <value>Имя вашего аккаунта Steam (то, с которым вы входите в Steam). Пароль и код Steam Guard будут запрошены далее, в собственном окне программы загрузки:</value>
   </data>
   <data name="Text_3b161ef01c24" xml:space="preserve">
     <value>Основные правила</value>
@@ -2147,6 +2204,9 @@
   </data>
   <data xml:space="preserve" name="Text_3bdee2629899">
     <value>Текущие показатели процессов</value>
+  </data>
+  <data name="Text_3be0feca7417" xml:space="preserve">
+    <value>Спрашивать каждый раз</value>
   </data>
   <data xml:space="preserve" name="Text_3bf95cac512b">
     <value>Модов: {0} · {1}
@@ -2247,6 +2307,9 @@
   </data>
   <data xml:space="preserve" name="Text_3ea221ce95ba">
     <value>Текст основных кнопок</value>
+  </data>
+  <data name="Text_3edce074d607" xml:space="preserve">
+    <value>Новый код</value>
   </data>
   <data name="Text_3ee0b304b03f" xml:space="preserve">
     <value>Остановить и переключить</value>
@@ -2365,6 +2428,9 @@
   <data name="Text_433e00b3f109" xml:space="preserve">
     <value>Очищает окно; файл не меняется</value>
   </data>
+  <data name="Text_4344a161348a" xml:space="preserve">
+    <value>{0} будет загружена из Steam в эту папку LocalExile: {1:0.#} ГБ.</value>
+  </data>
   <data name="Text_43580afd3423" xml:space="preserve">
     <value>Сохранить предмет в списке, чтобы вернуться к нему позже</value>
   </data>
@@ -2395,6 +2461,9 @@
   <data xml:space="preserve" name="Text_442aded87a55">
     <value>Мониторинг</value>
   </data>
+  <data name="Text_444df3307147" xml:space="preserve">
+    <value>Всегда сохранять обе версии</value>
+  </data>
   <data name="Text_4460058aec6a" xml:space="preserve">
     <value>Игрового клиента ещё нет: его добавит мастер настройки.</value>
   </data>
@@ -2412,6 +2481,9 @@
   </data>
   <data name="Text_4521809ad72e" xml:space="preserve">
     <value>не версия, с которой работает LocalExile</value>
+  </data>
+  <data name="Text_4523b9c49473" xml:space="preserve">
+    <value>Закройте игру и остановите серверы, чтобы изменить клиент игры.</value>
   </data>
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>Загрузка не удалась (код git {0}). Проверьте подключение и повторите попытку.</value>
@@ -2659,6 +2731,9 @@
   <data xml:space="preserve" name="Text_4b8df1bf034b">
     <value>Инструкция для клиента</value>
   </data>
+  <data name="Text_4b9ba708b9b0" xml:space="preserve">
+    <value>Подготовка программы загрузки…</value>
+  </data>
   <data name="Text_4bcfdfe3c64c" xml:space="preserve">
     <value>Скрыть…</value>
   </data>
@@ -2788,6 +2863,9 @@
   <data name="Text_4ed39abd9069" xml:space="preserve">
     <value>Этот мастер подготовит LocalExile к игре. Он найдёт то, что у вас уже есть, и спросит, прежде чем что-либо скачивать или копировать.</value>
   </data>
+  <data name="Text_4ee6b21bdb7f" xml:space="preserve">
+    <value>Клиент игры наполовину переведён на другую версию</value>
+  </data>
   <data name="Text_4f0424e48178" xml:space="preserve">
     <value>Сохранено: {0}</value>
   </data>
@@ -2824,6 +2902,9 @@
   <data xml:space="preserve" name="Text_507d2cdd1d1b">
     <value>Получение PR</value>
   </data>
+  <data name="Text_50976c0fe076" xml:space="preserve">
+    <value>В этой папке пока нет клиента игры. «Завершить настройку» берёт клиент, уже имеющийся на этом ПК; «Клиент игры…» может загрузить его из Steam.</value>
+  </data>
   <data name="Text_509b359509d5" xml:space="preserve">
     <value>Собственное</value>
   </data>
@@ -2847,6 +2928,9 @@
   </data>
   <data name="Text_515509f0e334" xml:space="preserve">
     <value>{0:0} МБ</value>
+  </data>
+  <data name="Text_5159b5d6b9ec" xml:space="preserve">
+    <value>Код не был подтверждён вовремя, и Steam его отменил. Запросите новый, когда приложение Steam будет под рукой.</value>
   </data>
   <data name="Text_515ed25002b7" xml:space="preserve">
     <value>Перейти на Path of Exile {0}?</value>
@@ -3009,6 +3093,9 @@
   </data>
   <data name="Text_55cd62661ffd" xml:space="preserve">
     <value>Waypoint Tools не ответил. Игра запущена, а персонаж находится в локации?</value>
+  </data>
+  <data name="Text_55ee85f42f97" xml:space="preserve">
+    <value>Клиент игры…</value>
   </data>
   <data name="Text_55f68b111c40" xml:space="preserve">
     <value>Дать LocalExile собственные настройки игры, а у вашей обычной игры останутся свои.</value>
@@ -3195,9 +3282,6 @@
   <data name="Text_5c55fea32942" xml:space="preserve">
     <value>Не удалось прочитать данные предметов: {0}</value>
   </data>
-  <data name="Text_5c611d70ff42" xml:space="preserve">
-    <value>В загруженном DepotDownloader нет программы, поэтому он не использован.</value>
-  </data>
   <data name="Text_5c6566e8941c" xml:space="preserve">
     <value>установите Python 3.9+ с python.org (шаг 9 в GettingStarted)</value>
   </data>
@@ -3298,6 +3382,9 @@
   <data name="Text_60540eaada37" xml:space="preserve">
     <value>LocalExile.exe: запускает серверы, затем игру</value>
   </data>
+  <data name="Text_6073ce437aaa" xml:space="preserve">
+    <value>Этот DepotDownloader не совпадает с выпуском, который ожидает Waypoint, поэтому он не использован.</value>
+  </data>
   <data name="Text_607ce38cb664" xml:space="preserve">
     <value>Профиль не создан</value>
   </data>
@@ -3330,6 +3417,9 @@
   </data>
   <data name="Text_60d8629f9d8c" xml:space="preserve">
     <value>Поиск аккаунтов или персонажей</value>
+  </data>
+  <data name="Text_60e9e228c44a" xml:space="preserve">
+    <value>На диске недостаточно места: для {0} нужно {1:0.#} ГБ.</value>
   </data>
   <data name="Text_60ee2c29da51" xml:space="preserve">
     <value>Отложить и переключить</value>
@@ -3375,6 +3465,9 @@
   </data>
   <data name="Text_61f82c126875" xml:space="preserve">
     <value>LocalExile {0} — самый новый выпуск.</value>
+  </data>
+  <data name="Text_6201111b83a0" xml:space="preserve">
+    <value>и</value>
   </data>
   <data name="Text_62076cdbb40a" xml:space="preserve">
     <value>Переключено на {0}.</value>
@@ -3448,6 +3541,9 @@
   <data name="Text_646c61108060" xml:space="preserve">
     <value>Открыть папку Client</value>
   </data>
+  <data name="Text_64774b0cffbd" xml:space="preserve">
+    <value>Войдите в открывшемся окне. Оно закроется само, когда Steam примет вход.</value>
+  </data>
   <data name="Text_64a298faf914" xml:space="preserve">
     <value>Изаро</value>
   </data>
@@ -3465,6 +3561,9 @@
 {1}
 
 {2}</value>
+  </data>
+  <data name="Text_64c6c17ec05d" xml:space="preserve">
+    <value>используется</value>
   </data>
   <data name="Text_64cff1319d2f" xml:space="preserve">
     <value>Действие</value>
@@ -3555,6 +3654,9 @@
   <data name="Text_6737f194edf4" xml:space="preserve">
     <value>Начать с новой базы данных</value>
   </data>
+  <data name="Text_673a50377a1f" xml:space="preserve">
+    <value>Вход с паролем</value>
+  </data>
   <data name="Text_6747464f35f8" xml:space="preserve">
     <value>Всегда спрашивать при закрытии окна</value>
   </data>
@@ -3612,6 +3714,9 @@
   <data xml:space="preserve" name="Text_68a30385dbf5">
     <value>Для любой схемы доступны светлая, тёмная и системная темы.</value>
   </data>
+  <data name="Text_68a92f65faf7" xml:space="preserve">
+    <value>{0}. Загружается из Steam с вашим аккаунтом Steam.</value>
+  </data>
   <data name="Text_68e7e2420b8e" xml:space="preserve">
     <value>Пароль аккаунта: с ним dev host выполняет вход</value>
   </data>
@@ -3644,6 +3749,9 @@
   </data>
   <data xml:space="preserve" name="Text_69ea40204735">
     <value>Остановка службы учётных записей</value>
+  </data>
+  <data name="Text_69fdcf1926ab" xml:space="preserve">
+    <value>Обновить на месте: единственный клиент станет {0}. Загружаются только отличия, дополнительное место не нужно, но {1} после этого на этом ПК не останется.</value>
   </data>
   <data name="Text_6a01b4f4e1a2" xml:space="preserve">
     <value>Управление в разделе «Лиги»</value>
@@ -3681,6 +3789,9 @@
   <data name="Text_6b43463e9003" xml:space="preserve">
     <value>Удалить локальные ветки закрытых запросов на слияние?</value>
   </data>
+  <data name="Text_6b5c34177ddf" xml:space="preserve">
+    <value>Код для сканирования мобильным приложением Steam. Waypoint не видит пароль.</value>
+  </data>
   <data name="Text_6b66c287b2d1" xml:space="preserve">
     <value>В LocalExile {0} есть ошибка, из-за которой большинство скачанных модов не загружается. Обновите LocalExile до {1} или новее, чтобы исправить это. Устанавливать, изменять и удалять моды здесь по-прежнему можно.</value>
   </data>
@@ -3698,6 +3809,9 @@
   </data>
   <data name="Text_6be75605dc98" xml:space="preserve">
     <value>Припасы</value>
+  </data>
+  <data name="Text_6c0c38812795" xml:space="preserve">
+    <value>Удаление…</value>
   </data>
   <data name="Text_6c26340a1b96" xml:space="preserve">
     <value>База сохранений</value>
@@ -4044,6 +4158,9 @@
   <data name="Text_76eb7f69d808" xml:space="preserve">
     <value>На этом ПК найден Path of Exile {0}. Waypoint обновит LocalExile, а затем скопирует его поверх вашего текущего клиента.</value>
   </data>
+  <data name="Text_76f58af7c518" xml:space="preserve">
+    <value>Единственный клиент становится другой версией. Загружаются только отличия, дополнительное место не нужно, но прежняя версия не сохраняется.</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>Команды проходят через игровой клиент (scripts/dev/client_control.py): сначала запустите игру и войдите в область.</value>
   </data>
@@ -4212,6 +4329,9 @@
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>База</value>
   </data>
+  <data name="Text_7ba0dfac7b4a" xml:space="preserve">
+    <value>Ожидание входа в Steam…</value>
+  </data>
   <data name="Text_7bacc99e13ee" xml:space="preserve">
     <value>Найден только клиент {0}, поэтому эта копия перейдёт на последний LocalExile для него.</value>
   </data>
@@ -4281,8 +4401,14 @@
   <data name="Text_7ddb44d8a533" xml:space="preserve">
     <value>только что</value>
   </data>
+  <data name="Text_7de3d6ccd781" xml:space="preserve">
+    <value>Отсканируйте этот код мобильным приложением Steam (Steam Guard, затем кнопка сканирования) и подтвердите вход. Игра загружается с вашего аккаунта Steam, в библиотеке которого должна быть Path of Exile.</value>
+  </data>
   <data name="Text_7def4e5a805e" xml:space="preserve">
     <value>Кнопка «Играть» получает новейший LocalExile не чаще раза в день, сначала создав резервную копию сохранений. Копия с вашими изменениями остаётся нетронутой.</value>
+  </data>
+  <data name="Text_7df9d3eda9ca" xml:space="preserve">
+    <value>На диске хватает места только для одного способа.</value>
   </data>
   <data name="Text_7e12616f0ba4" xml:space="preserve">
     <value>Путь к запрошенному репозиторию пуст или слишком длинный.</value>
@@ -4313,6 +4439,9 @@
   </data>
   <data xml:space="preserve" name="Text_7ee581fb2eb4">
     <value>Мод включён.</value>
+  </data>
+  <data name="Text_7eeabbc32059" xml:space="preserve">
+    <value>Получить {0}?</value>
   </data>
   <data name="Text_7eeddee4e939" xml:space="preserve">
     <value>Игра, журналы и настройки.</value>
@@ -4410,6 +4539,9 @@
   <data name="Text_82bf8676d099" xml:space="preserve">
     <value>То, что записали Waypoint, серверы и игра: сюда стоит заглянуть, если что-то пошло не так.</value>
   </data>
+  <data name="Text_82c585371bb8" xml:space="preserve">
+    <value>Steam: вход не выполнен. Для версии из Steam нужен один раз ваш аккаунт Steam, в библиотеке которого есть Path of Exile.</value>
+  </data>
   <data name="Text_82d5739fc5a5" xml:space="preserve">
     <value>Скопировать чат-команду, которая выдаёт этот предмет</value>
   </data>
@@ -4446,11 +4578,17 @@
   <data name="Text_83c16d892df9" xml:space="preserve">
     <value>Синяя Waypoint</value>
   </data>
+  <data name="Text_83c1e56fd1a7" xml:space="preserve">
+    <value>Path of Exile, версия неизвестна</value>
+  </data>
   <data name="Text_83c2e65fdc63" xml:space="preserve">
     <value>этот коммит</value>
   </data>
   <data name="Text_83cfb8ea3107" xml:space="preserve">
     <value>Собирается из исходников</value>
+  </data>
+  <data name="Text_83dc29422d3b" xml:space="preserve">
+    <value>Вход в Steam не выполнен.</value>
   </data>
   <data name="Text_83e5d63b7b18" xml:space="preserve">
     <value>Создать вариант режима</value>
@@ -4752,11 +4890,17 @@
   <data name="Text_8d3a583f047c" xml:space="preserve">
     <value>Убрать {0} из каталога? Установленные из него моды останутся.</value>
   </data>
+  <data name="Text_8d4aed67f128" xml:space="preserve">
+    <value>Подготовка {0} для LocalExile…</value>
+  </data>
   <data xml:space="preserve" name="Text_8d525e5f158b">
     <value>Скопировано</value>
   </data>
   <data name="Text_8d616d350961" xml:space="preserve">
     <value>15 мин</value>
+  </data>
+  <data name="Text_8d968910c8ff" xml:space="preserve">
+    <value>Загрузка из Steam. {0}</value>
   </data>
   <data name="Text_8d99a834e478" xml:space="preserve">
     <value>До завершения изменений игра и все службы LocalExile должны оставаться остановленными.</value>
@@ -4887,6 +5031,9 @@
   <data name="Text_91c155b9f086" xml:space="preserve">
     <value>«Новейшая» содержит последние изменения LocalExile. Каждое изменение проверяется, но «Новейшая» может быть менее стабильной, чем релиз.</value>
   </data>
+  <data name="Text_91f18585d513" xml:space="preserve">
+    <value>Без мобильного приложения Steam: программа загрузки запросит пароль и код Steam Guard в собственном окне. Waypoint не видит ни то, ни другое.</value>
+  </data>
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>Удалить выбранные предметы (клавиша Delete); Ctrl или Shift выбирает несколько</value>
   </data>
@@ -4944,6 +5091,9 @@
   </data>
   <data xml:space="preserve" name="Text_93638ea9e0b0">
     <value>Оттенки серого</value>
+  </data>
+  <data name="Text_93672212b4c2" xml:space="preserve">
+    <value>Сохранить обе</value>
   </data>
   <data name="Text_9373ec518492" xml:space="preserve">
     <value>Имя новой лиги</value>
@@ -5031,6 +5181,9 @@
   </data>
   <data name="Text_95de366fb6a9" xml:space="preserve">
     <value>Сохранить конфигурацию игры</value>
+  </data>
+  <data name="Text_95e154398a4b" xml:space="preserve">
+    <value>Заменить</value>
   </data>
   <data name="Text_95e50255e771" xml:space="preserve">
     <value>Обновить все</value>
@@ -5310,11 +5463,17 @@
   <data name="Text_9c508bc48078" xml:space="preserve">
     <value>Подготовка</value>
   </data>
+  <data name="Text_9c5330fc998a" xml:space="preserve">
+    <value>Заменить: {0} загружается целиком ({1:0.#} ГБ), затем используемый клиент удаляется. У отдельного клиента нет общих файлов с файлами Steam.</value>
+  </data>
   <data name="Text_9c5499b7d628" xml:space="preserve">
     <value>Не удалось обновить: {0}</value>
   </data>
   <data name="Text_9c618d925c1c" xml:space="preserve">
     <value>Сервер обновлений: проверка обновлений клиента остаётся локальной</value>
+  </data>
+  <data name="Text_9c716e8cffe6" xml:space="preserve">
+    <value>Вход в Steam</value>
   </data>
   <data name="Text_9c8fdf7ac695" xml:space="preserve">
     <value>Папка не изменена</value>
@@ -5403,6 +5562,9 @@
   <data name="Text_9e86248cf235" xml:space="preserve">
     <value>Этап</value>
   </data>
+  <data name="Text_9e8a4047207b" xml:space="preserve">
+    <value>Всегда обновлять единственный клиент на месте</value>
+  </data>
   <data name="Text_9ea238c03a99" xml:space="preserve">
     <value>Зависимости от других модулей не указаны.</value>
   </data>
@@ -5444,6 +5606,9 @@
   </data>
   <data name="Text_9fd8a334357b" xml:space="preserve">
     <value>Базовый размер группы: {0}–{1}</value>
+  </data>
+  <data name="Text_9fef61dcf9c8" xml:space="preserve">
+    <value>Ожидание сканирования и подтверждения…</value>
   </data>
   <data name="Text_9ff9b19918a1" xml:space="preserve">
     <value>Скопируйте команду и вставьте её в чат игры сочетанием Ctrl+V.</value>
@@ -5499,14 +5664,23 @@
   <data name="Text_a20471ca67eb" xml:space="preserve">
     <value>LocalExile {0} нужен клиент Path of Exile {1}, а на этом ПК есть только {2}. После этого обновления играть не получится, пока у вас не будет клиента {1}.</value>
   </data>
+  <data name="Text_a209514cda81" xml:space="preserve">
+    <value>Удалить эту копию…</value>
+  </data>
   <data name="Text_a25890814951" xml:space="preserve">
     <value>Остановить службы перед выходом</value>
   </data>
   <data name="Text_a266fe9c4d1d" xml:space="preserve">
     <value>ПАМЯТЬ</value>
   </data>
+  <data name="Text_a268915aee32" xml:space="preserve">
+    <value>{0} на месте и готова. Закройте это окно и нажмите «Играть».</value>
+  </data>
   <data xml:space="preserve" name="Text_a2b0e1cca90c">
     <value>Перезагрузить включённый мод и зависимые от него моды.</value>
+  </data>
+  <data name="Text_a2ccd3ea028e" xml:space="preserve">
+    <value>ссылка на другую папку</value>
   </data>
   <data name="Text_a2e20a335700" xml:space="preserve">
     <value>Удалить аккаунт</value>
@@ -6018,6 +6192,9 @@
   <data name="Text_b0a3816e6bf3" xml:space="preserve">
     <value>Больше ничего устанавливать не нужно. Waypoint сообщит о новом выпуске и установит его за вас.</value>
   </data>
+  <data name="Text_b0b26459e256" xml:space="preserve">
+    <value>Забыть вход</value>
+  </data>
   <data name="Text_b0c35534bd56" xml:space="preserve">
     <value>Клавиатура: Ctrl+1–9 выбирает страницу · Ctrl+Tab / Ctrl+Shift+Tab переключает страницы · Ctrl+F открывает поиск на текущей странице · F5 обновляет локальное состояние. Параметры оформления и доступности можно изменить в настройках.</value>
   </data>
@@ -6041,6 +6218,9 @@
   </data>
   <data xml:space="preserve" name="Text_b186b72af3a9">
     <value>Поиск модов</value>
+  </data>
+  <data name="Text_b18923043162" xml:space="preserve">
+    <value>Теперь используется {0}. Версия, которую она заменила, сохранена.</value>
   </data>
   <data name="Text_b19d8f2b7795" xml:space="preserve">
     <value>Исходные значки модулей</value>
@@ -6158,6 +6338,9 @@
   </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>Прокручивать к каждой новой строке</value>
+  </data>
+  <data name="Text_b50a2f4c081f" xml:space="preserve">
+    <value>Этот LocalExile не сообщает, с какими версиями игры он работает, поэтому загрузить для него что-либо из Steam нельзя. LocalExile v0.5.0-beta и новее сообщают.</value>
   </data>
   <data xml:space="preserve" name="Text_b588f80b6484">
     <value>Журнал сбойного этапа</value>
@@ -6369,6 +6552,9 @@
   <data name="Text_bb213b706609" xml:space="preserve">
     <value>Сейчас ни одна лига не использует этот модуль.</value>
   </data>
+  <data name="Text_bb3fd4673d09" xml:space="preserve">
+    <value>{0} на месте. Завершите настройку на странице «Играть».</value>
+  </data>
   <data name="Text_bb5e603fa102" xml:space="preserve">
     <value>Далее выберите модули и проверьте свою лигу.</value>
   </data>
@@ -6380,6 +6566,9 @@
   </data>
   <data name="Text_bb7f72918e71" xml:space="preserve">
     <value>Старый LocalExile пока находится в {0}. Когда вы поиграете, раздел «Управление» спросит, удалить ли его.</value>
+  </data>
+  <data name="Text_bbaaa832f093" xml:space="preserve">
+    <value>Вход в Steam выполнен.</value>
   </data>
   <data name="Text_bbab9192a19e" xml:space="preserve">
     <value>Не удалось загрузить настройки</value>
@@ -6464,6 +6653,9 @@
   </data>
   <data name="Text_be7bb7f4faeb" xml:space="preserve">
     <value>% всей машины</value>
+  </data>
+  <data name="Text_be8d6dcfc5d9" xml:space="preserve">
+    <value>Открыть «Клиент игры»</value>
   </data>
   <data xml:space="preserve" name="Text_bed8374efd88">
     <value>Gateway работает без отслеживания изменений. Остановите серверы, чтобы изменить режим запуска.</value>
@@ -6624,6 +6816,9 @@
   <data name="Text_c43612e396ba" xml:space="preserve">
     <value>Внешний вид</value>
   </data>
+  <data name="Text_c45068ea0612" xml:space="preserve">
+    <value>из Steam</value>
+  </data>
   <data name="Text_c451c3692d31" xml:space="preserve">
     <value>Информация о модах недоступна</value>
   </data>
@@ -6675,6 +6870,9 @@
   <data name="Text_c651e0a3c2c6" xml:space="preserve">
     <value>Только лучший тир</value>
   </data>
+  <data name="Text_c654ec7659fd" xml:space="preserve">
+    <value>Используемый клиент откладывается, а другая версия создаётся рядом. Нужно место для обеих, зато вернуться можно мгновенно.</value>
+  </data>
   <data xml:space="preserve" name="Text_c66a58ec272f">
     <value>Развернуть Waypoint</value>
   </data>
@@ -6702,6 +6900,9 @@
   </data>
   <data name="Text_c70b1b11d134" xml:space="preserve">
     <value>Ремесленные (верстак)</value>
+  </data>
+  <data name="Text_c71631b07e40" xml:space="preserve">
+    <value>Обновить на месте</value>
   </data>
   <data name="Text_c71c66ea7e4c" xml:space="preserve">
     <value>Копьё</value>
@@ -7016,6 +7217,9 @@
   <data xml:space="preserve" name="Text_cfa63e97e7e5">
     <value>Включить мод</value>
   </data>
+  <data name="Text_cfc1d283500c" xml:space="preserve">
+    <value>сохранена, {0:0.#} ГБ</value>
+  </data>
   <data name="Text_cff965236d80" xml:space="preserve">
     <value>Папка LocalExile: {0}, {1}</value>
   </data>
@@ -7070,6 +7274,9 @@
   <data name="Text_d1a286ac991d" xml:space="preserve">
     <value>настройки игры: Waypoint не может определить, что ещё их использует</value>
   </data>
+  <data name="Text_d1b12bc36c2f" xml:space="preserve">
+    <value>Вход в Steam</value>
+  </data>
   <data name="Text_d1cbffcbd10b" xml:space="preserve">
     <value>в файле .sha256 выпуска нет SHA-256</value>
   </data>
@@ -7093,6 +7300,9 @@
   </data>
   <data name="Text_d239f70bf53f" xml:space="preserve">
     <value>Проверка зависимостей записи</value>
+  </data>
+  <data name="Text_d244fba55b73" xml:space="preserve">
+    <value>Войти через приложение Steam…</value>
   </data>
   <data name="Text_d24c41ae530a" xml:space="preserve">
     <value>Непредвиденная ошибка</value>
@@ -7226,6 +7436,9 @@
   <data name="Text_d6d6be81ee89" xml:space="preserve">
     <value>{0}: обновлено. «Перезапустить серверы» (или «Играть») соберёт новую версию.</value>
   </data>
+  <data name="Text_d6eafe823591" xml:space="preserve">
+    <value>Загрузить</value>
+  </data>
   <data name="Text_d6ee7457df7a" xml:space="preserve">
     <value>Игровой клиент в этой папке LocalExile — {0}, а её LocalExile нужен {1}. «Играть» предложит, что с этим сделать.</value>
   </data>
@@ -7327,9 +7540,6 @@
   </data>
   <data name="Text_d958fa43d8ce" xml:space="preserve">
     <value>Не переключено: нет резервной копии.</value>
-  </data>
-  <data name="Text_d9b76ecaa96e" xml:space="preserve">
-    <value>Загруженный DepotDownloader не совпадает с выпуском, который ожидает Waypoint, поэтому он не использован. Повторите попытку позже.</value>
   </data>
   <data name="Text_d9fe67c04cb0" xml:space="preserve">
     <value>Древний</value>
@@ -7487,6 +7697,9 @@
   <data name="Text_decaad6d7ea4" xml:space="preserve">
     <value>Waypoint может установить LocalExile {0}, последнюю версию для {1}, в новую папку. Эта папка останется как есть.</value>
   </data>
+  <data name="Text_ded8e14ee8b0" xml:space="preserve">
+    <value>Запрос размера {0} у Steam…</value>
+  </data>
   <data name="Text_deeb8da20758" xml:space="preserve">
     <value>репозиторий сервера поддерживает Waypoint</value>
   </data>
@@ -7558,6 +7771,9 @@
   </data>
   <data xml:space="preserve" name="Text_e10d850954a8">
     <value>Роза</value>
+  </data>
+  <data name="Text_e11572cb35d2" xml:space="preserve">
+    <value>Войти с паролем…</value>
   </data>
   <data name="Text_e11ed003f60a" xml:space="preserve">
     <value>ошибка сборки: GameServer.Host
@@ -7679,6 +7895,12 @@
   </data>
   <data name="Text_e3ba7472396e" xml:space="preserve">
     <value>{0} содержит правила режима игры. Если включить его здесь, они будут действовать для всех персонажей этой лиги со следующего запуска сервера, без собственных умений, торговцев и наград за задания этого режима, а игра по-прежнему будет показывать лигу как есть. Снимите флажок, чтобы вернуть всё назад.</value>
+  </data>
+  <data name="Text_e3c0265ee81c" xml:space="preserve">
+    <value>Использовать эту версию</value>
+  </data>
+  <data name="Text_e3e6dafb5393" xml:space="preserve">
+    <value>Версии игры в этом LocalExile: получить из Steam, хранить несколько, переключаться между ними</value>
   </data>
   <data name="Text_e3ebaa16dd9d" xml:space="preserve">
     <value>Не найдено</value>
@@ -7857,6 +8079,9 @@
   <data name="Text_e9a58032e93d" xml:space="preserve">
     <value>Игра запущена</value>
   </data>
+  <data name="Text_e9ae982dd9de" xml:space="preserve">
+    <value>Этот LocalExile работает с Path of Exile {0}. Используется версия из его папки Client; другие можно хранить рядом или получить из Steam со своим аккаунтом Steam.</value>
+  </data>
   <data xml:space="preserve" name="Text_e9b13ad2ca83">
     <value>Ожидание завершения временной локальной службы.</value>
   </data>
@@ -8025,11 +8250,17 @@
   <data name="Text_ede76ceab6f1" xml:space="preserve">
     <value>Режим игры</value>
   </data>
+  <data name="Text_ede8bca6ce47" xml:space="preserve">
+    <value>Запрос кода у Steam…</value>
+  </data>
   <data name="Text_ee21b15cbfce" xml:space="preserve">
     <value>Обновление {0} …</value>
   </data>
   <data xml:space="preserve" name="Text_ee32fb834190">
     <value>Не удалось прочитать историю. Проверьте папку и нажмите «Обновить копии».</value>
+  </data>
+  <data name="Text_ee424662e2ba" xml:space="preserve">
+    <value>Waypoint больше не указывает аккаунт Steam. Вход, запомненный самой программой загрузки, остаётся на этом ПК, пока Steam его не завершит.</value>
   </data>
   <data name="Text_ee597f010c9c" xml:space="preserve">
     <value>Работает серверов: {0} из {1}</value>

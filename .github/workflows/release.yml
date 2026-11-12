@@ -38,6 +38,11 @@ jobs:
           "number=$($Matches[1])" >> $env:GITHUB_OUTPUT
       - name: Test
         run: dotnet test Waypoint.slnx -c Release
+      # Waypoint.exe carries DepotDownloader's release (the game client from Steam). The script holds it to its SHA-256,
+      # and fetches the source of that same release, which goes beside Waypoint.exe: it is GPL-2.0 (THIRD-PARTY-NOTICES.md).
+      - name: DepotDownloader
+        shell: pwsh
+        run: ./tools/Get-DepotDownloader.ps1 -Source
       - name: Publish
         shell: pwsh
         run: |
@@ -49,6 +54,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create '${{ github.ref_name }}' out/Waypoint.exe out/Waypoint.exe.sha256
+          gh release create '${{ github.ref_name }}' out/Waypoint.exe out/Waypoint.exe.sha256 tools/bundled/DepotDownloader-3.4.0-source.zip
           --title 'Waypoint ${{ steps.version.outputs.number }}' --generate-notes --verify-tag
-          --notes 'Download **Waypoint.exe** below and run it; a Waypoint you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it.'
+          --notes 'Download **Waypoint.exe** below and run it; a Waypoint you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it. Waypoint.exe carries DepotDownloader (GPL-2.0, THIRD-PARTY-NOTICES.md): its source is DepotDownloader-3.4.0-source.zip below.'

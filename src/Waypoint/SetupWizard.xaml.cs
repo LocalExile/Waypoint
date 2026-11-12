@@ -516,7 +516,8 @@ public partial class SetupWizard : FormWindow
     bool Fits(FoundClient client) => client.Build is not { } build || Runs(build) || CanGoBackFor(build);
 
     static bool HasClient(string? checkout) =>
-        checkout is not null && ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone;
+        checkout is not null && (ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone
+            || ClientVersions.Layout(checkout) == ClientLayout.Steam);
 
     async void SearchClientsClicked(object sender, RoutedEventArgs e) => await FindClientsAsync();
 

@@ -28,11 +28,13 @@ public partial class InstallTab : UserControl
 
     /// <summary>Which version of the game this release's client is, under the Play button beside LocalExile's own version.</summary>
     string? _clientVersion;
+    /// <summary>The folder has no game client at all: the page says where one can come from.</summary>
+    bool _noClient;
 
     async Task LookForOwnFolderAsync()
     {
         string folder = Folder;
-        (_linked, _clientVersion) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder)));
+        (_linked, _clientVersion, _noClient) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder), ClientVersions.Layout(folder) == ClientLayout.None));
         Show();
     }
     readonly ObservableCollection<StepRow> _steps = [];
@@ -49,6 +51,8 @@ public partial class InstallTab : UserControl
     internal event Action? Updated;
     /// <summary>The window opens the logs.</summary>
     internal event Action? DetailsRequested;
+    /// <summary>The folder's game client changed (another version): the window reads the folder again.</summary>
+    internal event Action? ClientChanged;
 
     public InstallTab() => InitializeComponent();
 
@@ -109,6 +113,8 @@ public partial class InstallTab : UserControl
         bool needsSetup = _needsSetup || !LocalExileReleases.IsSetUp(Folder);
         bool busy = _working || _checking || _shared.IsLiveRunning;
         RunSetupLink.IsEnabled = !busy && !AnythingRunning;
+        ClientLink.IsEnabled = !busy;
+        ClientLink.Visibility = DepotTool.Supported ? Visibility.Visible : Visibility.Collapsed;
         Headline.Text = _headline?.Invoke() ?? (GameRunning ? L.Text("The game is running")
             : needsSetup ? L.Text("LocalExile isn't ready yet")
             : L.Text("Ready to play"));
@@ -117,7 +123,9 @@ public partial class InstallTab : UserControl
         Working.Visibility = busy && (!Theme.Current.ReduceMotion || _total is > 0) ? Visibility.Visible : Visibility.Collapsed;
         Working.IsIndeterminate = _total is not > 0;
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
-        string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link) : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
+        string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
+            : _noClient && DepotTool.Supported && !busy ? L.Text("This folder has no game client yet. Finish setup takes one that is already on this PC; Game client… can download one from Steam.")
+            : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.Visibility = note is null ? Visibility.Collapsed : Visibility.Visible;
         DetailsLink.Visibility = _failed && !busy ? Visibility.Visible : Visibility.Collapsed;
@@ -181,9 +189,31 @@ public partial class InstallTab : UserControl
     /// <summary>The Control section's Start servers. One LocalExile.exe holds an install, so the game cannot join them later.</summary>
     internal Task StartServersAsync() => RunAsync(["run", "--no-client", "--no-update-check"], false);
 
+    /// <summary>The game client's versions (<see cref="ClientVersionsWindow"/>). What it changed is read again here.</summary>
+    void ClientClicked(object sender, RoutedEventArgs e) => OpenClientVersions();
+
+    void OpenClientVersions()
+    {
+        if (_working || _checking) return;
+        var window = new ClientVersionsWindow(Window.GetWindow(this), _shared);
+        window.ShowDialog();
+        if (!window.Changed) return;
+        ClientChanged?.Invoke();
+        InstallChanged();
+    }
+
     async Task RunAsync(string[] arguments, bool withClient)
     {
         if (_working || _checking || _shared.IsLiveRunning) return;
+        // A client that was being brought to another version where it is, and was cut short, is neither version: nothing
+        // starts on it. The same switch run again finishes it.
+        if (withClient && ClientVersions.Unfinished(Folder) is { } unfinished)
+        {
+            if (Dialog.Ask(Window.GetWindow(this), DialogKind.Warning, L.Text("The game client is half-way to another version"),
+                    L.Text("This folder's client was being changed to Path of Exile {0} and that did not finish, so it cannot start. Open Game client and finish the switch.", unfinished),
+                    L.Text("Open Game client"))) OpenClientVersions();
+            return;
+        }
         _checking = true;
         Show();
         string[]? client;

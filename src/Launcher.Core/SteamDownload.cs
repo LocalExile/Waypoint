@@ -7,10 +7,12 @@ using System.Text.RegularExpressions;
 namespace Launcher.Core;
 
 /// <summary>
-/// DepotDownloader (github.com/SteamRE/DepotDownloader, GPL-2.0), the one outside program the Steam download needs. It is
-/// never part of Waypoint: its official release is fetched the first time it is needed, held to the SHA-256 written here,
-/// kept under Waypoint's own folder and run as a program of its own. It is self-contained, so nothing else is installed,
-/// and neither Steam nor SteamCMD has to be on the PC.
+/// DepotDownloader (github.com/SteamRE/DepotDownloader, GPL-2.0), the one outside program the Steam download needs. A
+/// released Waypoint.exe carries its official release, unchanged (<see cref="Bundled"/>; tools/Get-DepotDownloader.ps1
+/// fetches it when Waypoint is built, and THIRD-PARTY-NOTICES.md has its licence and where its source is), so a user's
+/// Waypoint downloads no tool. The first time it is needed it is unpacked under Waypoint's own folder, held to the SHA-256
+/// written here, and it runs as a program of its own. It is self-contained, so nothing else is installed, and neither
+/// Steam nor SteamCMD has to be on the PC. Only a Waypoint built without the zip (from source) fetches that same release.
 /// </summary>
 public static class DepotTool
 {
@@ -25,13 +27,34 @@ public static class DepotTool
     /// <summary>Only the build that was fetched, hashed and run: Windows on x64.</summary>
     public static bool Supported => OperatingSystem.IsWindows() && RuntimeInformation.OSArchitecture == Architecture.X64;
 
-    public static string Folder(string home) => Path.Combine(home, "tools", "DepotDownloader", Version);
-    public static string Executable(string home) => Path.Combine(Folder(home), ExeName);
-    public static bool Installed(string home) => File.Exists(Executable(home));
+    /// <summary>The release's zip as Waypoint.exe carries it; null from a build made without it. Set by the app.</summary>
+    public static Func<Stream?>? Bundled { get; set; }
 
-    /// <summary>Fetches and unpacks the release; throws <see cref="IOException"/> for a file that is not the one pinned. A
-    /// folder is used only once it is whole: it is unpacked beside its place and renamed into it.</summary>
-    public static async Task InstallAsync(string home, HttpClient http, Action<long, long>? progress, CancellationToken stop)
+    public static bool IsBundled
+    {
+        get
+        {
+            using var zip = Bundled?.Invoke();
+            return zip is not null;
+        }
+    }
+
+    /// <summary>One folder whatever the version: the tool keeps its remembered Steam sign-in by where it runs from, so a
+    /// newer version in the same place still has it. <see cref="VersionFile"/> says which version is unpacked there.</summary>
+    public static string Folder(string home) => Path.Combine(home, "tools", "DepotDownloader");
+    public static string Executable(string home) => Path.Combine(Folder(home), ExeName);
+    const string VersionFile = "waypoint-version.txt";
+
+    public static bool Installed(string home)
+    {
+        try { return File.Exists(Executable(home)) && File.ReadAllText(Path.Combine(Folder(home), VersionFile)).Trim() == Version; }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return false; }
+    }
+
+    /// <summary>Unpacks the release Waypoint.exe carries, or from a build without it fetches that release with
+    /// <paramref name="http"/>; throws <see cref="IOException"/> for a file that is not the one pinned. A folder is used
+    /// only once it is whole: it is unpacked beside its place and renamed into it.</summary>
+    public static async Task InstallAsync(string home, Func<HttpClient> http, Action<long, long>? progress, CancellationToken stop)
     {
         if (!Supported) throw new IOException(L.Text("The Steam download works on 64-bit Windows only for now."));
         if (Installed(home)) return;
@@ -40,24 +63,34 @@ public static class DepotTool
         Directory.CreateDirectory(staging);
         try
         {
-            using (var response = await GitHubDownload.GetAsync(http, WindowsUrl, stop))
+            await using (var carried = Bundled?.Invoke())
             {
-                response.EnsureSuccessStatusCode();
-                long total = response.Content.Headers.ContentLength ?? DownloadBytes, done = 0;
-                await using var from = await response.Content.ReadAsStreamAsync(stop);
-                await using var to = new FileStream(zip, FileMode.Create, FileAccess.Write, FileShare.None);
-                byte[] buffer = new byte[1 << 16];
-                int read;
-                while ((read = await from.ReadAsync(buffer, stop)) > 0)
+                if (carried is not null)
                 {
-                    await to.WriteAsync(buffer.AsMemory(0, read), stop);
-                    progress?.Invoke(done += read, total);
+                    await using var to = new FileStream(zip, FileMode.Create, FileAccess.Write, FileShare.None);
+                    await carried.CopyToAsync(to, stop);
+                }
+                else
+                {
+                    using var client = http();
+                    using var response = await GitHubDownload.GetAsync(client, WindowsUrl, stop);
+                    response.EnsureSuccessStatusCode();
+                    long total = response.Content.Headers.ContentLength ?? DownloadBytes, done = 0;
+                    await using var from = await response.Content.ReadAsStreamAsync(stop);
+                    await using var to = new FileStream(zip, FileMode.Create, FileAccess.Write, FileShare.None);
+                    byte[] buffer = new byte[1 << 16];
+                    int read;
+                    while ((read = await from.ReadAsync(buffer, stop)) > 0)
+                    {
+                        await to.WriteAsync(buffer.AsMemory(0, read), stop);
+                        progress?.Invoke(done += read, total);
+                    }
                 }
             }
             string hash;
             await using (var file = File.OpenRead(zip)) hash = Convert.ToHexStringLower(await SHA256.HashDataAsync(file, stop));
             if (hash != WindowsSha256)
-                throw new IOException(L.Text("The downloaded DepotDownloader is not the release Waypoint expects, so it was not used. Try again later."));
+                throw new IOException(L.Text("This DepotDownloader is not the release Waypoint expects, so it was not used."));
             string unpacked = Path.Combine(staging, "tool");
             Directory.CreateDirectory(unpacked);
             using (var archive = ZipFile.OpenRead(zip))
@@ -67,7 +100,8 @@ public static class DepotTool
                     if (entry.Name.Length == 0 || entry.FullName != entry.Name) continue;
                     entry.ExtractToFile(Path.Combine(unpacked, entry.Name), overwrite: true);
                 }
-            if (!File.Exists(Path.Combine(unpacked, ExeName))) throw new IOException(L.Text("The downloaded DepotDownloader holds no program, so it was not used."));
+            if (!File.Exists(Path.Combine(unpacked, ExeName))) throw new IOException(L.Text("This DepotDownloader is not the release Waypoint expects, so it was not used."));
+            await File.WriteAllTextAsync(Path.Combine(unpacked, VersionFile), Version, stop);
             Directory.CreateDirectory(Path.GetDirectoryName(folder)!);
             if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
             Directory.Move(unpacked, folder);
@@ -203,6 +237,47 @@ public static partial class SteamDownload
         }
         int exit = await ToolProcess.RunAsync(tool, [.. Arguments(build, build.Depots[^1], scratch), "-manifest-only", "-qr", "-remember-password"], scratch, Line, stop, input: "", utf8: true);
         return exit == 0 ? account : null;
+    }
+
+    [GeneratedRegex(@"\A[A-Za-z0-9_.@-]{2,64}\z")]
+    private static partial Regex AccountName();
+
+    /// <summary>Whether a text can be a Steam account's name: it goes on a command line, so nothing else is taken.</summary>
+    public static bool IsAccountName(string? name) => name is not null && AccountName().IsMatch(name);
+
+    /// <summary>
+    /// The tool's own sign-in with a password, for someone without the Steam mobile app: in a console window of the tool's
+    /// own, where it asks for the password (not shown as it is typed) and then for the Steam Guard code. Waypoint is given
+    /// the account's name and nothing else: it reads nothing from that window. True when the tool signed in and now
+    /// remembers the account. The window stays open after a failure, so that its reason can be read.
+    /// </summary>
+    public static async Task<bool> PasswordSignInAsync(string tool, ListedBuild build, string account, CancellationToken stop)
+    {
+        if (!build.FromSteam || !IsAccountName(account) || !OperatingSystem.IsWindows()) return false;
+        var depot = build.Depots[^1];
+        // Everything on this line is a number LocalExile listed, the checked account name, or a name written here: the
+        // tool is named from the working directory, so that no path has to be quoted for cmd. (With the dot: a PC can
+        // be set not to look for programs in the current folder.)
+        string line = $".\\{Path.GetFileName(tool)} -app {build.SteamApp} -depot {depot.Depot} -manifest {depot.Manifest} -manifest-only"
+            + $" -username {account} -remember-password -dir signin && exit /b 0 || (pause & exit /b 1)";
+        var start = new System.Diagnostics.ProcessStartInfo("cmd.exe")
+        {
+            WorkingDirectory = Path.GetDirectoryName(tool)!, UseShellExecute = false, CreateNoWindow = false,
+            Arguments = $"/d /s /c \"title Steam sign-in & {line}\"",
+        };
+        using var process = System.Diagnostics.Process.Start(start);
+        if (process is null) return false;
+        try
+        {
+            await process.WaitForExitAsync(stop);
+            return process.ExitCode == 0;
+        }
+        catch (OperationCanceledException)
+        {
+            try { if (!process.HasExited) process.Kill(entireProcessTree: true); }
+            catch (Exception e) when (e is InvalidOperationException or System.ComponentModel.Win32Exception) { }
+            return false;
+        }
     }
 
     /// <summary>How much room the build takes on disk, from its manifests (a few seconds, nothing else is fetched); null
