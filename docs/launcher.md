@@ -1405,7 +1405,8 @@ Advanced mode), the **Diagnostic report** button on an operation's failure dialo
 - The lists come from the Gateway the servers run (`src\GameServer.Gateway\bin\Debug`). When that build changes (Play,
   Restart Gateway or a hot reload after a pull), the next `/` reads the commands and their values again; **Reload
   commands** does it at once. The Gateway's catalogs write their own log lines beside the values ("[gateway] atlas: …"),
-  which the launcher skips. The loaded mods' commands are not in the list.
+  which the launcher skips. The Gateway that is asked loads the mods as well, so the commands of the mods that are
+  turned on are in the list.
 
 ### Tools: the item crafter
 
@@ -1445,7 +1446,11 @@ write and gives it to the character in game.
 - **Give item** gives the item to the character in game, into the main inventory, through the Waypoint Tools mod
   (LocalExile-Mods' `waypoint-tools`, `WaypointToolsMod.cs`), the same on a source copy and a release; it needs no other
   mod and no Frida. The mod counts as loaded when its `data/waypoint-tools/loaded.json` names a Gateway process that still
-  runs and lists `item_give`. Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
+  runs and lists `item_give`. A Gateway Waypoint asks a question (its commands, when Waypoint starts) loads the mods
+  too, and the mod up to 1.0.2 then writes that short-lived process into the file, over the Gateway that runs the game:
+  a Waypoint started while the game runs finds the mod "not loaded" until that Gateway loads the mod again (the game
+  started again, or the mod reloaded). The mod from 1.0.3 leaves the file to the Gateway that runs the game;
+  the file is the mod's, and Waypoint only reads it. Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
   item and no character, and the mod gives it to the one character in game on that connection's next tick, then answers
   in `replies/<id>.json`, which Waypoint reads and deletes; the answer shows in the status line. Nothing goes over the
   network and nothing limits the item's length. An answer not there in 35 seconds (the mod waits 30 for a character in
