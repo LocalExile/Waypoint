@@ -32,6 +32,37 @@ public class WaypointToolsModTests : IDisposable
     }
 
     [Fact]
+    public void A_question_to_a_Gateway_leaves_the_running_Gateways_announcement()
+    {
+        // The Gateway that runs the game (42) has the mod loaded. One asked for its commands (77) loads the mods too, and
+        // the mod up to 1.0.2 names it in loaded.json; it ends with the question.
+        const string game = """{"protocol":1,"version":"1.0.2","pid":42,"actions":["item_give"]}""";
+        const string asked = """{"protocol":1,"version":"1.0.2","pid":77,"actions":["item_give"]}""";
+        WriteLoaded(game);
+        string? before = WaypointToolsMod.Announced(_root);
+        WriteLoaded(asked);
+        Assert.False(WaypointToolsMod.Loaded(_root, "item_give", pid => pid == 42));
+        Assert.True(WaypointToolsMod.KeepLoaded(_root, before, asked: 77, pid => pid == 42));
+        Assert.Equal(game, File.ReadAllText(Data("loaded.json")));
+        Assert.True(WaypointToolsMod.Loaded(_root, "item_give", pid => pid == 42));
+        Assert.False(File.Exists(Data("loaded.json.tmp")));
+
+        // Left alone: a mod that did not write (1.0.3), a Gateway that stopped meanwhile, no file before, one written by
+        // another process than the asked one, and a file that is gone.
+        Assert.False(WaypointToolsMod.KeepLoaded(_root, before, asked: 77, pid => pid == 42));
+        WriteLoaded(asked);
+        Assert.False(WaypointToolsMod.KeepLoaded(_root, before, asked: 77, _ => false));
+        Assert.False(WaypointToolsMod.KeepLoaded(_root, null, asked: 77, _ => true));
+        Assert.False(WaypointToolsMod.KeepLoaded(_root, "not json", asked: 77, _ => true));
+        Assert.False(WaypointToolsMod.KeepLoaded(_root, before, asked: 78, _ => true));
+        Assert.Equal(asked, File.ReadAllText(Data("loaded.json")));
+        File.Delete(Data("loaded.json"));
+        Assert.Null(WaypointToolsMod.Announced(_root));
+        Assert.False(WaypointToolsMod.KeepLoaded(_root, before, asked: 77, _ => true));
+        Assert.False(File.Exists(Data("loaded.json")));
+    }
+
+    [Fact]
     public void Installed_means_its_folder_has_a_manifest()
     {
         Assert.False(WaypointToolsMod.Installed(_root));
