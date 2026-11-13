@@ -165,6 +165,11 @@ client's version beside its name, and a click on one starts Waypoint again on it
 LocalExile gives that build ([Game client builds](#game-client-builds)); a folder with no client, or a client of a build
 nothing names, shows none. A release's Play page says the same beside LocalExile's version. A click on a folder starts
 Waypoint again on it ([Copies and changing folder](#copies-and-changing-folder)).
+A client of a version the folder's LocalExile does not run (`FolderList.ClientFits`: after an update of LocalExile that left
+the client behind) shows in the warning colour, with a warning sign in the box and "does not fit" on its row of the list.
+**Game client…** under the list opens the Game client window for the folder in use
+([The game client from Steam](#the-game-client-from-steam)): the one way to it, the same for a release and a source copy,
+in Simple and in Advanced mode.
 **Add a folder you already have…** under the list takes a checkout or a release install that is already on this PC.
 **Change folder…** on a release's Versions and **Change…** on Control do the same. **Set up a new copy…** in the list, on
 Control and on a release's Versions opens the setup guide on its source route, which clones LocalExile with git into a
@@ -672,7 +677,15 @@ LocalExile runs that one, and otherwise the newest it runs.
 
 The rule: a player who has a client of a version current LocalExile runs (3.29.3c or 3.29.3d) plays on it; one who has only
 3.29.3b keeps the last LocalExile for it. Waypoint
-looks when a folder is about to start the game (Play, and Control's Play or Start game; not Start servers, a restart or a stop).
+looks when a folder is about to start the game (Play, and Control's Play or Start game), and before a source copy's Start
+servers, because `live.ps1` first reads the game data from the client and LocalExile refuses a client it does not run. Start
+servers is not checked with **Skip data check** (nothing is read from the client then), and after a Not now it goes on and
+is not asked again while Waypoint runs: the servers can run without the game, and LocalExile's own check has the last word.
+A restart of one server and a stop are never checked.
+When LocalExile refuses the client all the same (`ClientExtractionFailure.IsBuildRefusal`: its allowed-builds sentence in
+`live.ps1`'s output, which PowerShell wraps, or a release launcher's error), the run's last line and Control's status line
+say so in plain words and point to **Game client** in the folder list; a release's Play page says it under Play, with a
+**Game client…** link that shows only then.
 It looks at that folder's client and, when it matters, takes a quick
 look (two seconds: the player's other LocalExile folders and the usual places first, a plain client before one another LocalExile
 prepared) for a client of another build. Clients it merely finds are never changed. `ClientUpdate` decides:
@@ -790,9 +803,19 @@ unqualified Unix path would land on that drive, while `Z:` is the root in every 
 ### The game client from Steam
 
 The official launcher only ever gives the newest game, so once the game moves on, the versions LocalExile runs can no
-longer be had from it. Steam still serves them, and a release's **Game client…** (under Play; `ClientVersionsWindow`) gets
+longer be had from it. Steam still serves them, and **Game client…** (in the sidebar's folder list; `ClientVersionsWindow`)
+gets, for a release,
 one with the user's own Steam account. Windows on x64 only for now.
 
+- **A source copy** has the window too, with its list. It gets no Steam download yet (the line beside the button says so):
+  the adapter prepares only a standalone client for a checkout (`Prepare-Client` in `scripts/RuntimeBridge.ps1`). Its
+  linked client gets no warning and no **Make a copy…**: those are the release launcher's, and a developer links on purpose.
+- **A client that is no version this LocalExile runs** (none of the builds it lists; for a LocalExile with no list, a
+  version it does not name) says "does not fit this LocalExile" on its line, and the line under the list names the versions
+  it runs. When a quick look finds a client that fits on this PC (`ClientUpdate.Check`, as before a Play), that line says
+  where, and **Use another client…** is the primary button: the window closes and the move a Play would make is carried out
+  with nothing started after it (`ControlTab.MoveClientAsync` on a source copy, where the setup guide brings the client;
+  `InstallTab.MoveClientAsync` on a release, where LocalExile's own setup copies it in). Its question names both folders.
 - **The window says little by itself.** Its title and its list carry what it is; no sentence explains it. A button
   beside the list shows only for the line it applies to; the one button that is the likely next step has the primary
   style (`Enable`, `Lead`: the chosen line's own action when it can run, else **Make a copy…**, else **Download a

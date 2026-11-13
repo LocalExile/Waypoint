@@ -14,7 +14,9 @@ sealed class FolderRow(KnownFolder folder)
     public KnownFolder Folder { get; } = folder;
     public string Title => Folder.Title;
     /// <summary>Which version of the game the folder's client is, beside its title; empty when that is not known.</summary>
-    public string Client => Folder.ClientText ?? "";
+    public string Client => Folder.ClientLine ?? "";
+    /// <summary>A client its folder's LocalExile does not run is said in the warning colour.</summary>
+    public Brush ClientBrush => Theme.Brush(Folder.ClientFits ? "Shell.TextSecondary" : "Shell.Warning");
     public string Path => Folder.Path;
     /// <summary>The row has room for about this much of a path; the tooltip has all of it.</summary>
     public string ShortPath => FolderList.Short(Folder.Path, 52);
@@ -29,7 +31,7 @@ sealed class FolderRow(KnownFolder folder)
     public string Tip => Folder.Path;
     public string Spoken => Folder.Current ? L.Text("{0}, {1}, in use", Folder.Title, Folder.Path)
         : Folder.Kind == FolderKind.Missing ? L.Text("{0}, {1}, not found", Folder.Title, Folder.Path)
-        : Folder.ClientText is { } client ? $"{Folder.Title}, {client}, {Folder.Path}" : $"{Folder.Title}, {Folder.Path}";
+        : Folder.ClientLine is { } client ? $"{Folder.Title}, {client}, {Folder.Path}" : $"{Folder.Title}, {Folder.Path}";
     /// <summary>What a screen reader is given for the row as an item of the list.</summary>
     public override string ToString() => Spoken;
 }
@@ -45,6 +47,9 @@ public partial class FolderPicker : UserControl
 
     /// <summary>"Set up a new copy…": the setup guide's source route.</summary>
     internal event Action? NewCopyRequested;
+    /// <summary>"Game client…": the clients of the folder in use (<see cref="ClientVersionsWindow"/>). Here for a release
+    /// and for a source copy, in Simple and in Advanced mode: one place, whatever shows beside the sidebar.</summary>
+    internal event Action? GameClientRequested;
 
     public FolderPicker() => InitializeComponent();
 
@@ -73,28 +78,46 @@ public partial class FolderPicker : UserControl
         CurrentTitle.Text = folder.Title;
         // The end of the path says which folder it is: the start is what goes when the sidebar is too narrow for it.
         PathLine.SetPath(CurrentPath, folder.Path);
-        ShowCurrentClient(folder, _client.Path == folder.Path ? _client.Version : null);
+        ShowCurrentClient(folder, _client.Path == folder.Path ? _client.Version : null, _client.Path != folder.Path || _client.Fits);
         _ = ReadCurrentClientAsync(folder);
     }
 
     /// <summary>The version of the client in the folder in use, as last read: shown at once while it is read again.</summary>
-    (string Path, string? Version) _client = ("", null);
+    (string Path, string? Version, bool Fits) _client = ("", null, true);
 
     /// <summary>The client's version under the folder's name, once it is read (off the UI thread: the first reading hashes
     /// the executable).</summary>
     async Task ReadCurrentClientAsync(KnownFolder folder)
     {
-        string? version = await Task.Run(() => FolderList.ClientOf(folder.Path));
+        var (version, fits) = await Task.Run(() =>
+        {
+            string? read = FolderList.ClientOf(folder.Path);
+            return (read, FolderList.ClientFits(folder.Path, read));
+        });
         if (!FolderList.Same(folder.Path, Environment.CurrentDirectory)) return;
-        _client = (folder.Path, version);
-        ShowCurrentClient(folder, version);
+        _client = (folder.Path, version, fits);
+        ShowCurrentClient(folder, version, fits);
     }
 
-    void ShowCurrentClient(KnownFolder folder, string? version)
+    /// <param name="fits">The client is a version the folder's LocalExile runs. One that is not shows here with a warning
+    /// sign and in the warning colour: after an update of LocalExile that left the client behind, this is where it shows
+    /// first. The box is too narrow for more words: the tooltip and the list's row have them.</param>
+    void ShowCurrentClient(KnownFolder folder, string? version, bool fits)
     {
-        string? client = FolderList.ClientText(version);
-        CurrentClient.Text = client ?? "";
-        CurrentClient.Visibility = client is null ? Visibility.Collapsed : Visibility.Visible;
+        CurrentClient.Text = FolderList.ClientText(version) ?? "";
+        string? client = FolderList.ClientLine(version, fits);
+        CurrentClientLine.Visibility = client is null ? Visibility.Collapsed : Visibility.Visible;
+        CurrentClientAlert.Visibility = fits ? Visibility.Collapsed : Visibility.Visible;
+        if (fits)
+        {
+            CurrentClient.ClearValue(TextBlock.ForegroundProperty);
+            CurrentClient.Opacity = 0.72;
+        }
+        else
+        {
+            CurrentClient.SetResourceReference(TextBlock.ForegroundProperty, "Shell.Warning");
+            CurrentClient.Opacity = 1;
+        }
         string named = client is null ? folder.Title : $"{folder.Title}, {client}";
         // The box may be too narrow for a long branch name or path: all of it is here.
         Current.ToolTip = $"{folder.Title}{(client is null ? "" : "\n" + client)}\n{folder.Path}\n{L.Text("Click for your other LocalExile folders")}";
@@ -220,5 +243,11 @@ public partial class FolderPicker : UserControl
     {
         List.IsOpen = false;
         NewCopyRequested?.Invoke();
+    }
+
+    void GameClientClicked(object sender, RoutedEventArgs e)
+    {
+        List.IsOpen = false;
+        GameClientRequested?.Invoke();
     }
 }

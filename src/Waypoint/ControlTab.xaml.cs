@@ -241,13 +241,15 @@ public partial class ControlTab : UserControl
         Append($"> {request.Describe()}");
         Say(() => L.Text("Running {0} …", request.Describe()));
         var started = Stopwatch.StartNew();
-        int clientSetupFailure = 0;
+        int clientSetupFailure = 0, clientRefused = 0;
         int? code = await run(request, line =>
         {
             if (ClientExtractionFailure.IsHncFailure(line)) Interlocked.Exchange(ref clientSetupFailure, 1);
+            if (ClientExtractionFailure.IsBuildRefusal(line)) Interlocked.Exchange(ref clientRefused, 1);
             Dispatcher.BeginInvoke(() => Append(line));
         });
         ClientSetupFailed = code is not (null or 0) && clientSetupFailure != 0;
+        ClientRefused = code is not (null or 0) && clientRefused != 0;
         // The game started on this copy: the release its user wanted removed later is asked about once the game is closed.
         if (code == 0 && request.Mode is (LiveMode.All or LiveMode.Client) && Editions.PlayedOn(_shared.Settings, Environment.CurrentDirectory)) _shared.Settings.Save();
         double seconds = started.Elapsed.TotalSeconds;
@@ -255,6 +257,8 @@ public partial class ControlTab : UserControl
         {
             null => L.Text("live.ps1 is already running."),
             0 => L.Text("Done: {0} ({1:0} s).", request.Describe(), seconds),
+            // LocalExile's own check refused the client: said in plain words, the stack trace stays in the output.
+            _ when ClientRefused => ClientExtractionFailure.Refused + " " + L.Text("Choose Game client in the folder list to change it."),
             _ => L.Text("Failed: {0} exited with {1}; see the output and the Logs section.", request.Describe(), code),
         });
         Append(code is null ? "" : $"(exit {code})");
@@ -264,11 +268,14 @@ public partial class ControlTab : UserControl
     /// <summary>A start of the game with a client of another build than the checkout's LocalExile would fail at the login
     /// (<see cref="ClientUpdate"/>). A move to a client found elsewhere is asked once: an older client in this copy is then taken
     /// out and the guide brings the found one; a copy on an older version of its own goes to the newest changes. A player who has
-    /// nothing newer than an older client is asked about the older version. Starts without the game (servers, a restart, a stop)
-    /// go on as before.</summary>
+    /// nothing newer than an older client is asked about the older version. Start servers is checked as well, because
+    /// live.ps1 reads the game data from the client first and LocalExile refuses a client it does not run; not with Skip data
+    /// check, which reads nothing from it, and only until its user has answered once (<see cref="_serversAnswered"/>). A
+    /// restart of one server and a stop go on as before.</summary>
     async Task<bool> ClientFits(LiveRequest request, bool again = false)
     {
-        if (request.Mode is not (LiveMode.All or LiveMode.Client)) return true;
+        bool servers = request.Mode == LiveMode.Servers && !request.NoExtract && !_serversAnswered;
+        if (request.Mode is not (LiveMode.All or LiveMode.Client) && !servers) return true;
         if (_checking) return false;
         _checking = true;
         try { return await ClientFitsNow(request, again); }
@@ -277,6 +284,10 @@ public partial class ControlTab : UserControl
 
     /// <summary>A Play is being checked (<see cref="ClientFits"/>): a second one waits for nothing and starts nothing.</summary>
     bool _checking;
+
+    /// <summary>The user said no to what the check offered before a Start servers. The servers can run without the game, so
+    /// that start goes on, LocalExile's own check has the last word, and Start servers does not ask again while Waypoint runs.</summary>
+    bool _serversAnswered;
 
     async Task<bool> ClientFitsNow(LiveRequest request, bool again)
     {
@@ -314,10 +325,28 @@ public partial class ControlTab : UserControl
                 Dialog.Tell(owner, DialogKind.Warning, ClientUpdate.Title(plan!), ClientUpdate.Explain(plan!) + "\n\n" + ClientUpdate.HowToUpdateCopy);
                 return false;
             default:
-                Say(() => L.Text("Not started: the game client does not fit this LocalExile."));
+                if (request.Mode == LiveMode.Servers)
+                {
+                    _serversAnswered = true;
+                    return true;
+                }
+                if (!_moving) Say(() => L.Text("Not started: the game client does not fit this LocalExile."));
                 return false;
         }
     }
+
+    /// <summary>The Game client window's "Use another client…" on a source copy: the check and the move that come before a
+    /// Play (<see cref="ClientFitsNow"/>), with nothing started after them.</summary>
+    internal async Task MoveClientAsync()
+    {
+        if (Repo.IsInstall || _live || _checking) return;
+        _checking = _moving = true;
+        try { await ClientFitsNow(new LiveRequest(LiveMode.All), again: false); }
+        finally { _checking = _moving = false; }
+    }
+
+    /// <summary>The check runs for <see cref="MoveClientAsync"/>: nothing was about to start, so a no says nothing.</summary>
+    bool _moving;
 
     /// <summary>The setup guide, with <paramref name="client"/> chosen on its client page.</summary>
     void OpenGuideWith(string? client)
@@ -340,6 +369,10 @@ public partial class ControlTab : UserControl
 
     /// <summary>The last Play attempt failed with the recognized client preparation error.</summary>
     internal bool ClientSetupFailed { get; private set; }
+
+    /// <summary>The last run failed because LocalExile refused the folder's game client as a build it does not run
+    /// (<see cref="ClientExtractionFailure.IsBuildRefusal"/>).</summary>
+    internal bool ClientRefused { get; private set; }
 
     /// <summary>Play: also what the Versions section starts after a switch, and Simple mode's Play. The exit code of the run;
     /// null when none ran.</summary>

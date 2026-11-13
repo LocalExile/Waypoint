@@ -1261,6 +1261,9 @@
   <data name="Text_2331c395597e" xml:space="preserve">
     <value>Не удалось проверить службы перед выходом.</value>
   </data>
+  <data name="Text_236e3338110d" xml:space="preserve">
+    <value>{0}: не подходит</value>
+  </data>
   <data name="Text_2379bac67a0d" xml:space="preserve">
     <value>{0}, {1:0.#} ГБ, будет удалена безвозвратно. Используемая версия не затрагивается.</value>
   </data>
@@ -2539,6 +2542,9 @@
   <data name="Text_46aeaf289dba" xml:space="preserve">
     <value>Символы силы</value>
   </data>
+  <data name="Text_46bcf5c54ea6" xml:space="preserve">
+    <value>Клиент игры в этой папке — не та версия, с которой работает этот LocalExile.</value>
+  </data>
   <data name="Text_46cac231d89b" xml:space="preserve">
     <value>Золотая дверь</value>
   </data>
@@ -3248,6 +3254,9 @@
   </data>
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>Связи карточек лиг образуют цикл.</value>
+  </data>
+  <data name="Text_5aadedac23ef" xml:space="preserve">
+    <value>Чтобы сменить его, выберите «Клиент игры» в списке папок.</value>
   </data>
   <data name="Text_5ae573789edf" xml:space="preserve">
     <value>Настроить заново…</value>
@@ -4173,6 +4182,9 @@
   <data name="Text_76f58af7c518" xml:space="preserve">
     <value>Единственный клиент становится другой версией. Загружаются только отличия, дополнительное место не нужно, но прежняя версия не сохраняется.</value>
   </data>
+  <data name="Text_76f6e6b572fa" xml:space="preserve">
+    <value>Этот LocalExile работает с Path of Exile {0}.</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>Команды проходят через игровой клиент (scripts/dev/client_control.py): сначала запустите игру и войдите в область.</value>
   </data>
@@ -4562,6 +4574,9 @@
   </data>
   <data name="Text_82dab4842651" xml:space="preserve">
     <value>LocalExile v0.4.2-beta, с которым точно работает этот Waypoint. Перейти на последние изменения можно позже в разделе «Версии».</value>
+  </data>
+  <data name="Text_82e66db99fbb" xml:space="preserve">
+    <value>Использовать другой клиент…</value>
   </data>
   <data name="Text_8300d2d40c93" xml:space="preserve">
     <value>Готово: {0} ({1:0} с).</value>
@@ -5308,6 +5323,9 @@
   </data>
   <data name="Text_97bc1cb9f0ad" xml:space="preserve">
     <value>Перенести персонажей в «Новейшую»?</value>
+  </data>
+  <data name="Text_98050cf2b66c" xml:space="preserve">
+    <value>Waypoint пока не умеет подготавливать клиент из Steam для копии исходного кода.</value>
   </data>
   <data name="Text_9814c443a469" xml:space="preserve">
     <value>При выходе Waypoint сначала остановит службы этой рабочей копии. Если игра открыта, можно отменить выход или оставить всё работающим.</value>
@@ -6258,6 +6276,9 @@
   <data name="Text_b19d8f2b7795" xml:space="preserve">
     <value>Исходные значки модулей</value>
   </data>
+  <data name="Text_b2366092d10e" xml:space="preserve">
+    <value>Клиенты игры этой папки LocalExile: какая версия используется и как перейти на другую</value>
+  </data>
   <data xml:space="preserve" name="Text_b239a87356cd">
     <value>Репозиториев с HEAD LocalExile: {0}. Выберите один ниже или укажите другую папку.</value>
   </data>
@@ -7135,6 +7156,9 @@
   </data>
   <data name="Text_cba975052fbd" xml:space="preserve">
     <value>Сохраните настройки лиги перед применением выбора модулей.</value>
+  </data>
+  <data name="Text_cbd264e8d074" xml:space="preserve">
+    <value>На этом ПК есть клиент {0}: {1}</value>
   </data>
   <data name="Text_cbd8e345bf34" xml:space="preserve">
     <value>Сначала закройте игру и остановите текущий LocalExile.</value>
@@ -8195,6 +8219,9 @@
   </data>
   <data xml:space="preserve" name="Text_eb24997abb6c">
     <value>Выберите репозиторий LocalExile в настройках.</value>
+  </data>
+  <data name="Text_eb2725480fc1" xml:space="preserve">
+    <value>не подходит к этому LocalExile</value>
   </data>
   <data xml:space="preserve" name="Text_eb3ab0ad976b">
     <value>Ветки и PR не найдены. Очистите или измените поиск либо введите номер PR ниже.</value>

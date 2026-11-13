@@ -1261,6 +1261,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_2331c395597e" xml:space="preserve">
     <value>Could not verify services before exiting.</value>
   </data>
+  <data name="Text_236e3338110d" xml:space="preserve">
+    <value>{0}: does not fit</value>
+  </data>
   <data name="Text_2379bac67a0d" xml:space="preserve">
     <value>{0}, {1:0.#} GB, is deleted for good. The version in use is not touched.</value>
   </data>
@@ -2539,6 +2542,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_46aeaf289dba" xml:space="preserve">
     <value>Power symbols</value>
   </data>
+  <data name="Text_46bcf5c54ea6" xml:space="preserve">
+    <value>This folder's game client is not a version this LocalExile runs.</value>
+  </data>
   <data name="Text_46cac231d89b" xml:space="preserve">
     <value>Gold door</value>
   </data>
@@ -3248,6 +3254,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>The league card links contain a cycle.</value>
+  </data>
+  <data name="Text_5aadedac23ef" xml:space="preserve">
+    <value>Choose Game client in the folder list to change it.</value>
   </data>
   <data name="Text_5ae573789edf" xml:space="preserve">
     <value>Set up again…</value>
@@ -4173,6 +4182,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_76f58af7c518" xml:space="preserve">
     <value>The one client becomes the other version. Only what differs is downloaded and it needs no more room, but the version it was is gone.</value>
   </data>
+  <data name="Text_76f6e6b572fa" xml:space="preserve">
+    <value>This LocalExile runs Path of Exile {0}.</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>Commands go through the game client (scripts/dev/client_control.py): start the game and enter an area first.</value>
   </data>
@@ -4562,6 +4574,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_82dab4842651" xml:space="preserve">
     <value>LocalExile v0.4.2-beta, which this Waypoint is known to work with. You can move to the newest changes later from Versions.</value>
+  </data>
+  <data name="Text_82e66db99fbb" xml:space="preserve">
+    <value>Use another client…</value>
   </data>
   <data name="Text_8300d2d40c93" xml:space="preserve">
     <value>Done: {0} ({1:0} s).</value>
@@ -5308,6 +5323,9 @@ Dependencies: {3}
   </data>
   <data name="Text_97bc1cb9f0ad" xml:space="preserve">
     <value>Bring your characters to Latest?</value>
+  </data>
+  <data name="Text_98050cf2b66c" xml:space="preserve">
+    <value>Waypoint cannot prepare a client from Steam for a source copy yet.</value>
   </data>
   <data name="Text_9814c443a469" xml:space="preserve">
     <value>Exit stops this checkout’s services before closing Waypoint. If the game is open, you can cancel or leave everything running.</value>
@@ -6258,6 +6276,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b19d8f2b7795" xml:space="preserve">
     <value>Original module icons</value>
   </data>
+  <data name="Text_b2366092d10e" xml:space="preserve">
+    <value>The game clients of this LocalExile folder: which version it uses, and the way to another</value>
+  </data>
   <data xml:space="preserve" name="Text_b239a87356cd">
     <value>{0} checkouts match upstream HEAD. Choose one below, or Browse elsewhere.</value>
   </data>
@@ -7135,6 +7156,9 @@ Client: {2}</value>
   </data>
   <data name="Text_cba975052fbd" xml:space="preserve">
     <value>Save league settings before applying module choices.</value>
+  </data>
+  <data name="Text_cbd264e8d074" xml:space="preserve">
+    <value>A {0} client is on this PC: {1}</value>
   </data>
   <data name="Text_cbd8e345bf34" xml:space="preserve">
     <value>Close the game and stop your current LocalExile first.</value>
@@ -8195,6 +8219,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_eb24997abb6c">
     <value>Select a LocalExile checkout in Settings.</value>
+  </data>
+  <data name="Text_eb2725480fc1" xml:space="preserve">
+    <value>does not fit this LocalExile</value>
   </data>
   <data xml:space="preserve" name="Text_eb3ab0ad976b">
     <value>No branches or PRs match. Clear or change your search, or use a PR number below.</value>

@@ -19,6 +19,10 @@ namespace Waypoint;
 /// QR code (<see cref="SteamSignInWindow"/>) or, from there, by its own password prompt. With a client already there, how
 /// to move is asked each time (update the one client where it is, or keep both) unless Settings names one. Nothing here
 /// runs while the game or a server runs, and LocalExile's own setup prepares a client that just came in.</para>
+/// <para>It opens from the sidebar's folder list, for a release and for a source copy, in every mode. A client that is
+/// no version its LocalExile runs says so on its line, and when a client that fits is on this PC, "Use another
+/// client…" hands over to the move that comes before a Play (<see cref="ClientUpdate"/>). A source copy gets no Steam
+/// download: Waypoint's adapter prepares only a standalone client for it.</para>
 /// </summary>
 sealed class ClientVersionsWindow : FormWindow
 {
@@ -58,7 +62,13 @@ sealed class ClientVersionsWindow : FormWindow
     readonly TextBlock _note = new() { Margin = new Thickness(12, 0, 0, 0), Visibility = Visibility.Collapsed, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
     /// <summary>The Steam account a download uses, once there is one.</summary>
     readonly TextBlock _steam = new() { Margin = new Thickness(0, 0, 10, 0), VerticalAlignment = VerticalAlignment.Center };
-    readonly Button _use, _copy, _delete, _open, _download, _forget, _stopButton, _close;
+    readonly Button _use, _move, _copy, _delete, _open, _download, _forget, _stopButton, _close;
+    /// <summary>The folder in use is a source copy: no Steam download and no copy of a linked client, which are a release's.</summary>
+    readonly bool _source = !Repo.IsInstall;
+    /// <summary>The versions the folder's LocalExile runs, oldest first; empty when nothing says.</summary>
+    IReadOnlyList<string> _runs = [];
+    /// <summary>For a client in use that is no version its LocalExile runs: the move to one found on this PC, when there is one.</summary>
+    ClientUpdate.Plan? _plan;
     /// <summary>The copy the folder in use can have in place of a link to a game folder outside LocalExile (<see cref="OwnClient.Check"/>).</summary>
     OwnClient.Plan? _linked;
     IReadOnlyList<ListedBuild>? _builds;
@@ -83,6 +93,10 @@ sealed class ClientVersionsWindow : FormWindow
     /// <summary>The user asked for a copy in place of the folder's linked client: the Play page makes it, with its own
     /// question and progress, once this window is closed.</summary>
     public bool CopyRequested { get; private set; }
+
+    /// <summary>The user asked for another client in place of one this LocalExile does not run: what opened this window
+    /// carries the move out once it is closed, with the question and the steps a Play would have.</summary>
+    public bool MoveRequested { get; private set; }
 
     static ClientVersionsWindow()
     {
@@ -140,11 +154,12 @@ sealed class ClientVersionsWindow : FormWindow
 
         // Beside the list: only the buttons the chosen line has a use for.
         _use = Action(L.Text("Use this version"), () => _ = UseAsync());
+        _move = Action(L.Text("Use another client…"), () => { MoveRequested = true; Close(); });
         _copy = Action(L.Text("Make a copy…"), () => { CopyRequested = true; Close(); });
         _delete = Action(L.Text("Delete this copy…"), () => _ = DeleteAsync());
         _open = Action(L.Text("Open folder"), OpenFolder);
         var buttons = new StackPanel { Width = 170 };
-        foreach (var button in new[] { _use, _copy, _delete, _open })
+        foreach (var button in new[] { _use, _move, _copy, _delete, _open })
         {
             button.Visibility = Visibility.Collapsed;
             buttons.Children.Add(button);
@@ -221,7 +236,7 @@ sealed class ClientVersionsWindow : FormWindow
     {
         string? chosen = Selected?.Client;
         var paths = FolderList.Paths(_shared.Settings, _folder);
-        var (layout, current, unfinished, builds, rows, started, linked, tooOld) = await Task.Run(() =>
+        var (layout, current, unfinished, builds, rows, started, linked, tooOld, runs, plan) = await Task.Run(() =>
         {
             // In the background, with its user looking: a launcher that failed to answer earlier is asked once more.
             var listed = LocalExileBuilds.Of(_folder, again: true);
@@ -256,11 +271,16 @@ sealed class ClientVersionsWindow : FormWindow
                     or System.ComponentModel.Win32Exception or System.Security.SecurityException or AggregateException) { }
             }
             string next = Path.Combine(_folder, ClientVersions.NextFolder);
+            // A client that is no version this LocalExile runs: a quick look for one that is, as before a Play.
+            var mine = found.FirstOrDefault(r => r.Here && r.InUse);
+            IReadOnlyList<string> versions = [.. ClientLocator.Supported(_folder).Reverse()];
+            var move = mine is not null && !Fits(mine, listed, versions) ? ClientUpdate.Check(_folder) : null;
             return (ClientVersions.Layout(_folder), FolderList.ClientOf(_folder), ClientVersions.UnfinishedBuild(_folder), listed, found,
-                Directory.Exists(next) ? ClientVersions.SizeOf(next) : 0, OwnClient.Check(_folder), LocalExileBuilds.TooOld(_folder));
+                Directory.Exists(next) ? ClientVersions.SizeOf(next) : 0, _source ? null : OwnClient.Check(_folder), LocalExileBuilds.TooOld(_folder), versions, move);
         });
         _started = started;
         _linked = linked;
+        (_runs, _plan) = (runs, plan);
         (_layout, _current, _unfinished, _unfinishedHash, _builds) = (layout, current, unfinished?.Version, unfinished?.ExecutableSha256, builds);
         _currentBuild = rows.FirstOrDefault(r => r.Here && r.InUse)?.Build;
         // A copy set aside half-way is not that build whole: the build stays on offer.
@@ -281,7 +301,8 @@ sealed class ClientVersionsWindow : FormWindow
         _list.SelectedItem = lines.FirstOrDefault(item => ((Row)item.Tag).Client == chosen) ?? lines.FirstOrDefault(item => ((Row)item.Tag).Here);
 
         // Beside the download button: only why it is off, or what it will go on from.
-        string note = !DepotTool.Supported ? L.Text("The Steam download works on 64-bit Windows only for now.")
+        string note = _source ? L.Text("Waypoint cannot prepare a client from Steam for a source copy yet.")
+            : !DepotTool.Supported ? L.Text("The Steam download works on 64-bit Windows only for now.")
             // No list is a LocalExile from before it had one, or one that did not answer just now: not the same thing.
             : builds is null ? (tooOld ? L.Text("This LocalExile lists no versions to download. LocalExile v0.5.0-beta and later do.")
                 : L.Text("Waypoint could not read the versions this LocalExile runs. Open this window again."))
@@ -291,6 +312,18 @@ sealed class ClientVersionsWindow : FormWindow
         _note.Visibility = note.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
         Enable();
     }
+
+    /// <summary>Whether a client in use is a version its folder's LocalExile runs: one of the builds it lists, or, for a
+    /// LocalExile with no list, a version it names. A client half-way to another version says that instead, and one
+    /// nothing can be said about counts as fitting: LocalExile's own check has the last word.</summary>
+    static bool Fits(Row row, IReadOnlyList<ListedBuild>? builds, IReadOnlyList<string> runs) =>
+        row.HalfWayTo is not null || (builds is not null ? row.Build is not null : row.Version is null || runs.Count == 0 || runs.Contains(row.Version));
+
+    /// <summary>The client the folder in use takes is no version its LocalExile runs.</summary>
+    bool Unfit(Row? row) => row is { Here: true, InUse: true } && !Fits(row, _builds, _runs);
+
+    /// <summary>The versions this LocalExile runs, as a line says them: "3.29.3c, 3.29.3d".</summary>
+    string Runs => string.Join(", ", _runs);
 
     /// <summary>A line of the list that is no client: the heading of the other folders, or the word that this one has none.</summary>
     static ListBoxItem Heading(string text, FontWeight weight, double top)
@@ -308,6 +341,7 @@ sealed class ClientVersionsWindow : FormWindow
         if (!row.Here) parts.Add((row.Folder.Title, false));
         if (row.Kept is { } kept) parts.Add((L.Text("kept, {0:0.#} GB", kept.Bytes / 1e9), false));
         if (row.Unfinished is { } unfinished) parts.Add((L.Text("half-way to {0}", Version(unfinished)), row.Here));
+        if (Unfit(row)) parts.Add((L.Text("does not fit this LocalExile"), true));
         if (row.LinkTarget is not null) parts.Add((row.Shared ? L.Text("shares another LocalExile folder's client") : L.Text("linked to a game folder"), false));
         // Two kept copies that read the same are told apart by their folders' names.
         if (row is { Here: true, Kept: { } twin } && here.Any(o => o != row && o.Kept is not null && o.Version == row.Version
@@ -402,9 +436,14 @@ sealed class ClientVersionsWindow : FormWindow
         if (row.Kept is not null)
             return _unfinished is not null ? L.Text("The game client in use is half-way to another version. Finish that switch first.")
                 : _layout == ClientLayout.Link ? LinkReason() : "";
+        // What stops it from being played comes before what is only worth knowing about it.
+        if (Unfit(row))
+            return (_runs.Count > 0 ? L.Text("This LocalExile runs Path of Exile {0}.", Runs) : ClientExtractionFailure.Refused)
+                + (_plan is { Kind: ClientUpdate.Kind.Replace, Found: { } found } ? " " + L.Text("A {0} client is on this PC: {1}", _plan.Need, found) : "");
         if (row.LinkTarget is { } target)
             return row.Shared ? L.Text("This folder shares the game client of another LocalExile folder: what changes there changes here.")
-                : OwnClient.Notice(target);
+                // LocalExile's warning is its release launcher's: a source copy links on its developer's own word.
+                : _source ? "" : OwnClient.Notice(target);
         return row.HalfWayTo is not null ? L.Text("This client is incomplete and cannot be used.") : "";
     }
 
@@ -427,22 +466,28 @@ sealed class ClientVersionsWindow : FormWindow
         _use.Visibility = kept || resume || finish ? Visibility.Visible : Visibility.Collapsed;
         _use.IsEnabled = free && canUse;
         _use.Content = resume ? L.Text("Finish the switch") : half ? L.Text("Finish this copy") : L.Text("Use this version");
-        _copy.Visibility = row is { Here: true, InUse: true } && _linked is not null ? Visibility.Visible : Visibility.Collapsed;
+        // A client this LocalExile does not run is not worth a copy: the way on is one that fits, when this PC has it.
+        bool unfit = Unfit(row);
+        bool canMove = unfit && _plan is { Kind: ClientUpdate.Kind.Replace, Found: not null };
+        _move.Visibility = canMove ? Visibility.Visible : Visibility.Collapsed;
+        _move.IsEnabled = free;
+        _copy.Visibility = row is { Here: true, InUse: true } && _linked is not null && !unfit ? Visibility.Visible : Visibility.Collapsed;
         _copy.IsEnabled = free;
         _delete.Visibility = row is { Here: true, Kept: not null } ? Visibility.Visible : Visibility.Collapsed;
         _delete.IsEnabled = free;
         _open.Visibility = row is not null ? Visibility.Visible : Visibility.Collapsed;
         _detail.Text = Detail(row);
         _detail.Visibility = _detail.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
-        bool canDownload = !link && DepotTool.Supported && _offered.Count > 0;
+        bool canDownload = !link && !_source && DepotTool.Supported && _offered.Count > 0;
         _download.IsEnabled = free && canDownload;
-        _download.ToolTip = canDownload ? null : link ? LinkReason() : _note.Text.Length > 0 ? _note.Text : null;
+        _download.ToolTip = canDownload ? null : link && !_source ? LinkReason() : _note.Text.Length > 0 ? _note.Text : null;
         _steam.Text = Account is { } account ? L.Text("Steam: signed in as {0}", account) : "";
         _steam.Visibility = _forget.Visibility = Account is null ? Visibility.Collapsed : Visibility.Visible;
         _forget.IsEnabled = free;
         _blocked.Visibility = !_busy && Running ? Visibility.Visible : Visibility.Collapsed;
         Lead(_ready && !_busy ? _close
             : _use.Visibility == Visibility.Visible && canUse ? _use
+            : canMove ? _move
             : _copy.Visibility == Visibility.Visible ? _copy
             : canDownload ? _download : null);
     }
@@ -450,7 +495,7 @@ sealed class ClientVersionsWindow : FormWindow
     /// <summary>The one button that is the likely next step: it guides in place of a sentence.</summary>
     void Lead(Button? lead)
     {
-        foreach (var button in new[] { _use, _copy, _download, _close })
+        foreach (var button in new[] { _use, _move, _copy, _download, _close })
         {
             if (button == lead) button.SetResourceReference(StyleProperty, "Primary");
             else button.ClearValue(StyleProperty);

@@ -103,14 +103,18 @@ static class Scripts
     {
         string checkout = Environment.CurrentDirectory;
         string? hncFailure = null;
+        int refused = 0;
         void Line(string line)
         {
             if (ClientExtractionFailure.IsHncFailure(line))
                 Interlocked.CompareExchange(ref hncFailure, line, null);
+            if (ClientExtractionFailure.IsBuildRefusal(line)) Interlocked.Exchange(ref refused, 1);
             output(line);
         }
         int code = await RunAsync(Repo.LiveEntry, request.Arguments(), Line, request.Variables());
         if (code != 0 && hncFailure is { } failure) output(ClientExtractionFailure.Describe(checkout, failure));
+        // LocalExile's refusal ends in a stack trace: the last line says it in plain words.
+        if (code != 0 && refused != 0) output(ClientExtractionFailure.Refused);
         return code;
     }
 

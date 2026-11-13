@@ -108,8 +108,13 @@
                     <TextBlock x:Name="CurrentTitle" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource Shell.SidebarStrong}"
                                TextTrimming="CharacterEllipsis" />
                     <TextBlock x:Name="CurrentPath" FontSize="11" Opacity="0.72" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
-                    <!-- The version of the folder's game client, once it is read. -->
-                    <TextBlock x:Name="CurrentClient" FontSize="11" Opacity="0.72" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" Visibility="Collapsed" />
+                    <!-- The version of the folder's game client, once it is read; with a warning sign when the folder's
+                         LocalExile does not run that version. -->
+                    <DockPanel x:Name="CurrentClientLine" Margin="0,1,0,0" Visibility="Collapsed">
+                        <md:PackIcon x:Name="CurrentClientAlert" DockPanel.Dock="Left" Kind="AlertOutline" Width="12" Height="12" Margin="0,0,4,0"
+                                     VerticalAlignment="Center" Foreground="{DynamicResource Shell.Warning}" Visibility="Collapsed" />
+                        <TextBlock x:Name="CurrentClient" FontSize="11" Opacity="0.72" TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
                 </StackPanel>
             </DockPanel>
         </ToggleButton>
@@ -147,7 +152,7 @@
                                         </Border>
                                         <StackPanel>
                                             <TextBlock FontSize="13" TextTrimming="CharacterEllipsis">
-                                                <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  " /><Run Text="{Binding Client, Mode=OneWay}" Foreground="{DynamicResource Shell.TextSecondary}" />
+                                                <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  " /><Run Text="{Binding Client, Mode=OneWay}" Foreground="{Binding ClientBrush, Mode=OneWay}" />
                                             </TextBlock>
                                             <TextBlock Text="{Binding ShortPath}" FontSize="11.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"
                                                        Foreground="{DynamicResource Shell.TextSecondary}" />
@@ -158,6 +163,15 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Border Height="1" Margin="6,6,6,6" Background="{DynamicResource Shell.Border}" />
+                    <!-- The clients of the folder in use (ClientVersionsWindow): here in every mode, for a release and a source copy. -->
+                    <Button Style="{StaticResource FolderRow}" Click="GameClientClicked"
+                            ToolTip="{l:Loc 'The game clients of this LocalExile folder: which version it uses, and the way to another'}">
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="GamepadVariantOutline" Width="18" Height="18" Margin="0,0,12,0" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource Shell.TextSecondary}" />
+                            <TextBlock Text="{l:Loc 'Game client…'}" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <Button Style="{StaticResource FolderRow}" Click="AddClicked"
                             ToolTip="{l:Loc 'Choose a LocalExile folder that is already on this PC: a release, or a copy of its source. Waypoint opens it and keeps it in this list.'}">
                         <StackPanel Orientation="Horizontal">

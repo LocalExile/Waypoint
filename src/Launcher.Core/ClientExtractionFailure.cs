@@ -8,6 +8,23 @@ public static class ClientExtractionFailure
     public static bool IsHncFailure(string? message) =>
         message?.Contains("HNC mask not found", StringComparison.OrdinalIgnoreCase) == true;
 
+    /// <summary>LocalExile's own refusal of a game client that is no build it runs: the sentence of its allowed-builds
+    /// check (<c>ClientBuilds.Require</c>, which <c>live.ps1</c>'s data extraction and the Auth tools go through), and
+    /// those of a release's launcher (<c>ClientInstall.FindExecutable</c>, <c>ClientFiles.Problem</c>). The words are
+    /// LocalExile's, so a change of them there is a change here. PowerShell wraps <c>live.ps1</c>'s error at the width of
+    /// its console, so the sentence arrives in pieces: the exception's name and either end of the sentence each count.</summary>
+    public static bool IsBuildRefusal(string? message) =>
+        message is not null && BuildRefusals.Any(words => message.Contains(words, StringComparison.OrdinalIgnoreCase));
+
+    static readonly string[] BuildRefusals =
+    [
+        "UnknownClientBuildException", "is not a Path of Exile executable", "refuses any other build",
+        "other versions do not work", "is a Steam install of another build", "mixes two builds",
+    ];
+
+    /// <summary>What a refused client is, in plain words; the view that says it adds where its user changes the client.</summary>
+    public static string Refused => L.Text("This folder's game client is not a version this LocalExile runs.");
+
     public static string RecoveryHint => L.Text("Client setup needs attention. Run setup guide below to recheck and refresh it, then try Play again.");
 
     public static string Describe(string checkout, string failure)

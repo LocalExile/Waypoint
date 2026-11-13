@@ -1261,6 +1261,9 @@
   <data name="Text_2331c395597e" xml:space="preserve">
     <value>退出前无法验证服务状态。</value>
   </data>
+  <data name="Text_236e3338110d" xml:space="preserve">
+    <value>{0}：不匹配</value>
+  </data>
   <data name="Text_2379bac67a0d" xml:space="preserve">
     <value>{0}（{1:0.#} GB）将被永久删除。正在使用的版本不受影响。</value>
   </data>
@@ -2539,6 +2542,9 @@
   <data name="Text_46aeaf289dba" xml:space="preserve">
     <value>力量符文</value>
   </data>
+  <data name="Text_46bcf5c54ea6" xml:space="preserve">
+    <value>此文件夹中的游戏客户端不是这个 LocalExile 支持的版本。</value>
+  </data>
   <data name="Text_46cac231d89b" xml:space="preserve">
     <value>金色之门</value>
   </data>
@@ -3248,6 +3254,9 @@
   </data>
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>联赛卡片的关联存在循环。</value>
+  </data>
+  <data name="Text_5aadedac23ef" xml:space="preserve">
+    <value>要更换它，请在文件夹列表中选择“游戏客户端”。</value>
   </data>
   <data name="Text_5ae573789edf" xml:space="preserve">
     <value>重新设置…</value>
@@ -4173,6 +4182,9 @@
   <data name="Text_76f58af7c518" xml:space="preserve">
     <value>现有的这一个客户端变为另一个版本。只下载有差异的部分，不需要额外空间，但原来的版本不再保留。</value>
   </data>
+  <data name="Text_76f6e6b572fa" xml:space="preserve">
+    <value>这个 LocalExile 支持 Path of Exile {0}。</value>
+  </data>
   <data name="Text_76f82c7438fc" xml:space="preserve">
     <value>命令通过游戏客户端发送（scripts/dev/client_control.py）：请先启动游戏并进入一个区域。</value>
   </data>
@@ -4562,6 +4574,9 @@
   </data>
   <data name="Text_82dab4842651" xml:space="preserve">
     <value>LocalExile v0.4.2-beta，已知可与此 Waypoint 正常配合。之后可以在“版本”部分改用最新更改。</value>
+  </data>
+  <data name="Text_82e66db99fbb" xml:space="preserve">
+    <value>使用其他客户端…</value>
   </data>
   <data name="Text_8300d2d40c93" xml:space="preserve">
     <value>完成：{0}（{1:0} 秒）。</value>
@@ -5308,6 +5323,9 @@
   </data>
   <data name="Text_97bc1cb9f0ad" xml:space="preserve">
     <value>把你的角色迁移到最新版？</value>
+  </data>
+  <data name="Text_98050cf2b66c" xml:space="preserve">
+    <value>Waypoint 目前还无法为源代码副本准备来自 Steam 的客户端。</value>
   </data>
   <data name="Text_9814c443a469" xml:space="preserve">
     <value>退出时会先停止此源码副本的服务，再关闭 Waypoint。如果游戏处于打开状态，你可以取消，或让一切保持运行。</value>
@@ -6258,6 +6276,9 @@
   <data name="Text_b19d8f2b7795" xml:space="preserve">
     <value>原始模块图标</value>
   </data>
+  <data name="Text_b2366092d10e" xml:space="preserve">
+    <value>此 LocalExile 文件夹的游戏客户端：正在使用哪个版本，以及如何换成另一个</value>
+  </data>
   <data name="Text_b239a87356cd" xml:space="preserve">
     <value>{0} 个源码副本与上游 HEAD 一致。请在下方选择一个，或“浏览”其他位置。</value>
   </data>
@@ -7135,6 +7156,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cba975052fbd" xml:space="preserve">
     <value>请先保存赛季设置，再应用模块选择。</value>
+  </data>
+  <data name="Text_cbd264e8d074" xml:space="preserve">
+    <value>此电脑上有 {0} 客户端：{1}</value>
   </data>
   <data name="Text_cbd8e345bf34" xml:space="preserve">
     <value>请先关闭游戏并停止当前的 LocalExile。</value>
@@ -8195,6 +8219,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eb24997abb6c" xml:space="preserve">
     <value>请在“设置”中选择 LocalExile 源码副本。</value>
+  </data>
+  <data name="Text_eb2725480fc1" xml:space="preserve">
+    <value>与此 LocalExile 不匹配</value>
   </data>
   <data name="Text_eb3ab0ad976b" xml:space="preserve">
     <value>没有匹配的分支或 PR。请清除或更改搜索，或使用下方的 PR 编号。</value>

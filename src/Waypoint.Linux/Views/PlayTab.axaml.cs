@@ -145,6 +145,7 @@ partial class PlayTab : UserControl
             _failed = code is not (null or 0);
             if (_failed) _note = _control.ClientSetupFailed
                 ? () => ClientExtractionFailure.RecoveryHint
+                : _control.ClientRefused ? () => ClientExtractionFailure.Refused
                 : () => L.Text("The game didn't start.");
         }
         finally

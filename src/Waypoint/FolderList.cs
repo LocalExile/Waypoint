@@ -9,10 +9,14 @@ enum FolderKind { Release, Source, Missing }
 /// branch, or a folder that is not there (moved, renamed, a drive not connected).</summary>
 /// <param name="Client">The version of the game client in the folder ("3.29.3d"), when it was asked for and the client is
 /// a build its LocalExile or Waypoint knows; null otherwise, and for a folder with no client.</param>
-sealed record KnownFolder(string Path, FolderKind Kind, string? Detail, bool Current, string? Client = null)
+/// <param name="ClientFits">That client is a version the folder's LocalExile runs (<see cref="FolderList.ClientFits"/>).</param>
+sealed record KnownFolder(string Path, FolderKind Kind, string? Detail, bool Current, string? Client = null, bool ClientFits = true)
 {
     /// <summary>The client's version as the list says it: "Path of Exile 3.29.3d".</summary>
     public string? ClientText => FolderList.ClientText(Client);
+
+    /// <summary>The same, with the word that it does not fit when its LocalExile runs other versions.</summary>
+    public string? ClientLine => FolderList.ClientLine(Client, ClientFits);
 
     /// <summary>What the list calls it: "Release 0.3.0-beta", "Source, main", or the folder's own name while it is missing.</summary>
     public string Title => Kind switch
@@ -101,14 +105,25 @@ static class FolderList
 
     public static string? ClientText(string? version) => version is null ? null : L.Text("Path of Exile {0}", version);
 
+    public static string? ClientLine(string? version, bool fits) =>
+        ClientText(version) is not { } text ? null : fits ? text : L.Text("{0}: does not fit", text);
+
+    /// <summary>Whether a client of this version fits the folder's LocalExile: one of the versions it runs. A client whose
+    /// version is not known, and a LocalExile that does not say what it runs, count as fitting: LocalExile's own check
+    /// has the last word. Reads the folder's list (<see cref="ClientLocator.Supported"/>): never on the UI thread.</summary>
+    public static bool ClientFits(string path, string? version) =>
+        version is null || ClientLocator.Supported(path) is not { Count: > 0 } runs || runs.Contains(version);
+
     /// <summary>What <paramref name="path"/> is now; with <paramref name="client"/>, also which version its game client is
     /// (<see cref="ClientOf"/>, off the UI thread).</summary>
     public static KnownFolder Read(string path, bool current, bool client = false)
     {
         try
         {
-            if (LocalExileReleases.IsInstall(path)) return new(path, FolderKind.Release, LocalExileReleases.Installed(path)?.ToString(), current, client ? ClientOf(path) : null);
-            if (Repo.IsRoot(path)) return new(path, FolderKind.Source, Repo.BranchIn(path), current, client ? ClientOf(path) : null);
+            string? version = client ? ClientOf(path) : null;
+            bool fits = !client || ClientFits(path, version);
+            if (LocalExileReleases.IsInstall(path)) return new(path, FolderKind.Release, LocalExileReleases.Installed(path)?.ToString(), current, version, fits);
+            if (Repo.IsRoot(path)) return new(path, FolderKind.Source, Repo.BranchIn(path), current, version, fits);
         }
         catch (Exception e) when (e is ArgumentException or NotSupportedException or IOException or UnauthorizedAccessException) { }
         return new(path, FolderKind.Missing, null, current);
