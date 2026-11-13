@@ -3583,6 +3583,9 @@
   <data name="Text_63c5b77101f2" xml:space="preserve">
     <value>法术</value>
   </data>
+  <data name="Text_63f3c699c200" xml:space="preserve">
+    <value>珠宝插槽</value>
+  </data>
   <data name="Text_640d9ff82c7d" xml:space="preserve">
     <value>镰刀</value>
   </data>
@@ -3815,6 +3818,9 @@
   </data>
   <data name="Text_6a1ec725867a" xml:space="preserve">
     <value>添加到物品</value>
+  </data>
+  <data name="Text_6a278e6e3793" xml:space="preserve">
+    <value>小型天赋给予</value>
   </data>
   <data name="Text_6a3fe8876b56" xml:space="preserve">
     <value>构建</value>
@@ -6843,6 +6849,9 @@
   <data name="Text_c1879f2b1599" xml:space="preserve">
     <value>此客户端不完整，无法使用。</value>
   </data>
+  <data name="Text_c1949802a579" xml:space="preserve">
+    <value>附魔</value>
+  </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>返回我的模组</value>
   </data>
@@ -8564,6 +8573,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f28b9ca197d4" xml:space="preserve">
     <value>神殿</value>
+  </data>
+  <data name="Text_f2b23cdca8d1" xml:space="preserve">
+    <value>附魔</value>
   </data>
   <data name="Text_f2b4f43625b6" xml:space="preserve">
     <value>追求更强的文字对比度，并可能调整按钮填充色。</value>

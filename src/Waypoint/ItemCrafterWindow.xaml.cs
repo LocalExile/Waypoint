@@ -273,22 +273,23 @@ public partial class ItemCrafterWindow : FormWindow
         SetBase(row.Base);
     }
 
-    /// <summary>A new base: its implicits replace the old ones; explicit modifiers it can have stay.</summary>
+    /// <summary>A new base: its enchantments and implicits replace the old ones; explicit modifiers it can have stay.</summary>
     void SetBase(CraftBase b)
     {
         if (_catalog is null) return;
-        var kept = _item.Mods.Where(m => m.Section != "implicit" && b.Pools.Keys.Any(k => _catalog.Pool(b, k).Any(p => p.Id == m.Id))).ToList();
+        // What the new base can have, with the theme a new item of it starts with.
+        var start = _catalog.NewMods(b);
+        var kept = _item.Mods.Where(m => m.Section == "explicit" && b.Pools.Keys.Any(k => _catalog.Pool(b, k, start).Any(p => p.Id == m.Id))).ToList();
         _base = b;
         _item.Base = b.Id;
-        _item.Mods = [.. b.Implicits.Select(_catalog.Mods.GetValueOrDefault).OfType<CraftMod>().Select(m => NewMod(m, "implicit")), .. kept];
+        _item.Mods = [.. start, .. kept];
         if (!b.Quality) _item.Quality = 0;
         if (b.Sockets == 0) _item.Sockets = null;
         ShowItem();
         ShowModKinds();
     }
 
-    static CraftedMod NewMod(CraftMod mod, string section) =>
-        new() { Id = mod.Id, Section = section, Values = [.. mod.Stats.Select(s => Math.Max(s.Min, s.Max))] };
+    CraftedMod NewMod(CraftMod mod, string section) => CrafterCatalog.NewMod(_base, mod, section);
 
     // --- The modifiers to add ---
 
@@ -297,6 +298,9 @@ public partial class ItemCrafterWindow : FormWindow
     {
         public override string ToString() => Label;
     }
+
+    /// <summary>The kind that lists the base's own enchantments: not one of its pools.</summary>
+    const string BaseEnchants = "enchants";
 
     void ShowModKinds()
     {
@@ -311,6 +315,8 @@ public partial class ItemCrafterWindow : FormWindow
         foreach (string influence in Influences)
             if (_base?.Pools.ContainsKey(influence) == true)
                 kinds.Add(new(L.Text("{0} modifiers", StateName(influence)), influence, "explicit", _ => true));
+        // What a new item of the base has in its enchant list (a cluster jewel's passives), to put one back.
+        if (_base?.Enchants.Count > 0) kinds.Add(new(L.Text("Enchantments"), BaseEnchants, "enchant", _ => true));
         kinds.Add(new(L.Text("Corruption implicits"), "corrupted", "implicit", _ => true));
         kinds.Add(new(L.Text("Eldritch implicits"), "eldritch", "implicit", _ => true));
         kinds.Add(new(L.Text("Any modifier (no rules)"), "", "explicit", _ => true));
@@ -335,7 +341,8 @@ public partial class ItemCrafterWindow : FormWindow
         int level = _item.ItemLevel;
         IEnumerable<(CraftMod Mod, int Pool)> mods = kind.Pool.Length == 0
             ? _catalog.Mods.Values.Select(m => (m, -1))
-            : _base.Pools.TryGetValue(kind.Pool, out int pool) ? _catalog.Pools[pool].Where(kind.Filter).Select(m => (m, pool)) : [];
+            : kind.Pool == BaseEnchants ? _base.Enchants.Select(e => _catalog.Mods.GetValueOrDefault(e.Id)).OfType<CraftMod>().Select(m => (m, -1))
+            : _catalog.PoolId(_base, kind.Pool, _item.Mods) is var pool && _catalog.Pools.TryGetValue(pool, out var listed) ? listed.Where(kind.Filter).Select(m => (m, pool)) : [];
         var rows = new List<ModRow>();
         foreach (var group in mods.GroupBy(p => p.Mod.Group))
         {
@@ -345,7 +352,8 @@ public partial class ItemCrafterWindow : FormWindow
                 : tiers.Where(p => AnyLevel.IsChecked == true || p.Mod.Level <= level);
             foreach (var (mod, poolId) in shown)
             {
-                var lines = _catalog.Lines(mod);
+                // One of the base's enchantments reads with the values it is added with.
+                var lines = kind.Pool == BaseEnchants ? _catalog.Lines(mod, NewMod(mod, kind.Section).Values) : _catalog.Lines(mod);
                 string text = lines.Count > 0 ? string.Join("\n", lines) : $"{mod.Id} ({string.Join(", ", mod.Stats.Select(s => s.Id))})";
                 if (search.Length > 0 && !text.Contains(search, StringComparison.OrdinalIgnoreCase) && !mod.Id.Contains(search, StringComparison.OrdinalIgnoreCase)
                     && !mod.Name.Contains(search, StringComparison.OrdinalIgnoreCase) && !mod.Tags.Any(t => t.Contains(search, StringComparison.OrdinalIgnoreCase)))
@@ -590,7 +598,7 @@ public partial class ItemCrafterWindow : FormWindow
         _ => 0,
     };
 
-    string KindOf(CraftMod mod, CraftedMod m) => mod.Generation switch
+    string KindOf(CraftMod mod, CraftedMod m) => m.Section == "enchant" ? L.Text("Enchantment") : mod.Generation switch
     {
         1 => mod.Domain == 9 ? L.Text("Crafted prefix") : L.Text("Prefix"),
         2 => mod.Domain == 9 ? L.Text("Crafted suffix") : L.Text("Suffix"),
@@ -685,8 +693,27 @@ public partial class ItemCrafterWindow : FormWindow
             DockPanel.SetDock(tierBox, Dock.Left);
             head.Children.Add(tierBox);
         }
+        // A cluster jewel's socket enchantment is one mod per socket count: choosing a count changes the mod.
+        if (_base?.Cluster is { Sockets.Count: > 1 } sized && sized.Sockets.Any(s => s.Mod == mod.Id))
+        {
+            var socketBox = new ComboBox { Margin = new Thickness(0, 0, 8, 0), MinWidth = 48, VerticalAlignment = VerticalAlignment.Center, FontSize = 12, ToolTip = L.Text("Jewel sockets") };
+            System.Windows.Automation.AutomationProperties.SetName(socketBox, L.Text("Jewel sockets"));
+            foreach (var (count, id) in sized.Sockets)
+                if (catalog.Mods.GetValueOrDefault(id) is { } socket) socketBox.Items.Add(new ComboBoxItem { Content = count.ToString(), Tag = socket });
+            socketBox.SelectedIndex = socketBox.Items.Cast<ComboBoxItem>().ToList().FindIndex(i => ((CraftMod)i.Tag).Id == mod.Id);
+            socketBox.SelectionChanged += (_, _) =>
+            {
+                if (socketBox.SelectedItem is ComboBoxItem { Tag: CraftMod chosen } && chosen.Id != m.Id)
+                {
+                    _item.Mods[_item.Mods.IndexOf(m)] = new CraftedMod { Id = chosen.Id, Section = m.Section, Values = [.. chosen.Stats.Select(s => Math.Max(s.Min, s.Max))] };
+                    ShowItem();
+                }
+            };
+            DockPanel.SetDock(socketBox, Dock.Left);
+            head.Children.Add(socketBox);
+        }
         var text = new TextBlock { TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, FontWeight = FontWeights.SemiBold };
-        void ShowText() => text.Text = ModLine(mod, m.Values);
+        void ShowText() => text.Text = ModLine(m, mod);
         ShowText();
         head.Children.Add(text);
 
@@ -698,7 +725,31 @@ public partial class ItemCrafterWindow : FormWindow
             var stat = mod.Stats[i];
             int index = i;
             while (m.Values.Count <= index) m.Values.Add(stat.Max);
-            int min = Math.Min(stat.Min, stat.Max), max = Math.Max(stat.Min, stat.Max);
+            var (min, max) = CrafterCatalog.Range(_base, m, mod, index);
+            // A cluster jewel's theme is a value that names one: chosen by its name, not typed. It decides which
+            // notables the jewel can have, so the whole item is shown again.
+            if (_base?.Cluster is { } themed && themed.Passives == mod.Id && stat.Id == CrafterCatalog.ThemeStat && themed.Themes.Count > 0)
+            {
+                var themeRow = new DockPanel { Margin = new Thickness(0, 2, 6, 2) };
+                var themeLabel = new TextBlock { Text = L.Text("Small passives grant"), Width = 190, FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, TextWrapping = TextWrapping.NoWrap };
+                themeLabel.SetResourceReference(TextBlock.ForegroundProperty, "Shell.TextSecondary");
+                DockPanel.SetDock(themeLabel, Dock.Left);
+                themeRow.Children.Add(themeLabel);
+                var themeBox = new ComboBox { FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+                System.Windows.Automation.AutomationProperties.SetName(themeBox, L.Text("Small passives grant"));
+                foreach (var theme in themed.Themes)
+                    themeBox.Items.Add(new ComboBoxItem { Content = theme.Name, Tag = theme, ToolTip = string.Join("\n", catalog.ThemeLines(theme)) });
+                themeBox.SelectedIndex = themed.Themes.ToList().FindIndex(t => t.Value == m.Values[index]);
+                themeBox.SelectionChanged += (_, _) =>
+                {
+                    if (_updating || themeBox.SelectedItem is not ComboBoxItem { Tag: CraftTheme chosen } || chosen.Value == m.Values[index]) return;
+                    m.Values[index] = chosen.Value;
+                    ShowItem();
+                };
+                themeRow.Children.Add(themeBox);
+                sliders.Children.Add(themeRow);
+                continue;
+            }
             var row = new DockPanel { Margin = new Thickness(0, 2, 6, 0) };
             var label = new TextBlock { Text = stat.Id.Replace('_', ' '), Width = 190, FontSize = 11, TextTrimming = TextTrimming.CharacterEllipsis, TextWrapping = TextWrapping.NoWrap, ToolTip = stat.Id };
             label.SetResourceReference(TextBlock.ForegroundProperty, "Shell.TextSecondary");
@@ -752,17 +803,18 @@ public partial class ItemCrafterWindow : FormWindow
     int PoolOf(CraftMod mod, string section)
     {
         if (_base is null || _catalog is null) return -1;
-        foreach (var (key, id) in _base.Pools)
-            if ((section == "implicit") == (key is "corrupted" or "eldritch") && _catalog.Pools.TryGetValue(id, out var pool) && pool.Any(p => p.Id == mod.Id))
+        foreach (string key in _base.Pools.Keys)
+            if ((section == "implicit") == (key is "corrupted" or "eldritch") && _catalog.PoolId(_base, key, _item.Mods) is var id
+                && _catalog.Pools.TryGetValue(id, out var pool) && pool.Any(p => p.Id == mod.Id))
                 return id;
         return -1;
     }
 
-    /// <summary>A mod with its values as one line of text, or its Id and values when the game has no words for it.</summary>
-    string ModLine(CraftMod mod, IReadOnlyList<int> values)
+    /// <summary>A mod of the item with its values as text, or its Id and values when the game has no words for it.</summary>
+    string ModLine(CraftedMod m, CraftMod mod)
     {
-        var lines = _catalog!.Lines(mod, values);
-        return lines.Count > 0 ? string.Join("\n", lines) : $"{mod.Id}: {string.Join(", ", values)}";
+        var lines = _catalog!.Lines(_base, m, mod);
+        return lines.Count > 0 ? string.Join("\n", lines) : $"{mod.Id}: {string.Join(", ", m.Values)}";
     }
 
     // --- The preview ---
@@ -855,14 +907,24 @@ public partial class ItemCrafterWindow : FormWindow
             else if (_item.Sockets is null) Line(L.Text("Sockets: as a new item gets them"), size: 11.5);
         }
 
-        var implicits = _item.Mods.Where(m => m.Section != "explicit").ToList();
+        // As the game lists them: enchantments, implicits, then the rest.
+        var enchants = _item.Mods.Where(m => m.Section == "enchant").ToList();
+        var implicits = _item.Mods.Where(m => m.Section is not ("explicit" or "enchant")).ToList();
         var explicits = _item.Mods.Where(m => m.Section == "explicit").ToList();
         void Mods(IEnumerable<CraftedMod> list)
         {
             foreach (var m in list)
                 if (_catalog.Mods.GetValueOrDefault(m.Id) is { } mod)
-                    foreach (string line in ModLine(mod, m.Values).Split('\n'))
+                    foreach (string line in ModLine(m, mod).Split('\n'))
                         Line(line, GameColour(mod.Domain == 9 ? "crafted" : "mod"));
+        }
+        if (enchants.Count > 0)
+        {
+            Separator();
+            // A cluster jewel's theme reads after its passive count and its sockets, as on the game's item.
+            var lines = enchants.Where(m => _catalog.Mods.ContainsKey(m.Id)).SelectMany(m => ModLine(m, _catalog.Mods[m.Id]).Split('\n')).ToList();
+            foreach (string line in lines.OrderBy(l => l.StartsWith("Added Small Passive Skills grant:", StringComparison.Ordinal)))
+                Line(line, GameColour("mod"));
         }
         if (implicits.Count > 0) { Separator(); Mods(implicits); }
         if (explicits.Count > 0) { Separator(); Mods(explicits); }

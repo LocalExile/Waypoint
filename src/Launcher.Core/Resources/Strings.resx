@@ -3583,6 +3583,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   <data name="Text_63c5b77101f2" xml:space="preserve">
     <value>Spell</value>
   </data>
+  <data name="Text_63f3c699c200" xml:space="preserve">
+    <value>Jewel sockets</value>
+  </data>
   <data name="Text_640d9ff82c7d" xml:space="preserve">
     <value>Sickle</value>
   </data>
@@ -3815,6 +3818,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6a1ec725867a" xml:space="preserve">
     <value>Add to the item</value>
+  </data>
+  <data name="Text_6a278e6e3793" xml:space="preserve">
+    <value>Small passives grant</value>
   </data>
   <data xml:space="preserve" name="Text_6a3fe8876b56">
     <value>Builds</value>
@@ -6843,6 +6849,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c1879f2b1599" xml:space="preserve">
     <value>This client is incomplete and cannot be used.</value>
   </data>
+  <data name="Text_c1949802a579" xml:space="preserve">
+    <value>Enchantments</value>
+  </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>Back to My Mods</value>
   </data>
@@ -8564,6 +8573,9 @@ The client must be a version this LocalExile runs. Or choose Game client in the 
   </data>
   <data name="Text_f28b9ca197d4" xml:space="preserve">
     <value>Shrine</value>
+  </data>
+  <data name="Text_f2b23cdca8d1" xml:space="preserve">
+    <value>Enchantment</value>
   </data>
   <data xml:space="preserve" name="Text_f2b4f43625b6">
     <value>Targets stronger text contrast and may adjust button fills.</value>

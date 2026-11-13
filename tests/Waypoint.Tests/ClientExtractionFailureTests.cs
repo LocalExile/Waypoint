@@ -34,10 +34,12 @@ public sealed class ClientExtractionFailureTests : IDisposable
         File.WriteAllText(Path.Combine(folder, "scripts", "dev", "extract-data.ps1"), "Write-Output 'Node is missing'\nexit 1\n");
         var error = await Assert.ThrowsAsync<IOException>(() => SetupSequence.ExtractAsync(folder, _ => { }, CancellationToken.None));
         Assert.Equal("Node is missing", error.Message);
-        // The release and its 3.29.3.5 hotfix are both the 3.29.3c build.
-        Assert.Equal(2, ClientLocator.ExecutableHashesFor("3.29.3c").Length);
+        // The release and its 3.29.3.5 hotfix are both the 3.29.3c build. Waypoint's own rows come first and only they are
+        // looked at: a hash a LocalExile's list named in another test stays learned for the whole run, and follows them.
+        Assert.Equal(["cc8aa38345be2a837575215d2ce142ebecf7b007345843265b335ebb8ac5964c", "01a22facf36886b39bca74793c0d8c7295b1495f1625b4ebc7b23c2de32a70cf"],
+            ClientLocator.ExecutableHashesFor("3.29.3c")[..2]);
         Assert.Equal(ClientLocator.KnownExecutable, ClientLocator.ExecutableHashesFor(ClientLocator.Build)[0]);
-        Assert.Single(ClientLocator.ExecutableHashesFor("3.29.3b"));
+        Assert.Equal("78a0e227189c263658a7f65a02f086428b859bfc114ae8e7ce8aab721ebd48d5", ClientLocator.ExecutableHashesFor("3.29.3b")[0]);
         Assert.Empty(ClientLocator.ExecutableHashesFor("future build"));
     }
 

@@ -1415,16 +1415,22 @@ taskbar, with Minimize and Maximize, not kept in front of Waypoint's. It makes a
 write and gives it to the character in game.
 
 - **Base** (left): the item classes as icons (Material Design's, no game artwork), a search and the bases with their
-  class, drop level and attribute requirements. Choosing one puts its implicits on the item; explicit modifiers the new
-  base can have stay.
+  class, drop level and attribute requirements. Choosing one puts its implicits on the item, and the enchantments a new
+  item of that base has: a cluster jewel's "Adds N Passive Skills", which also holds its theme (what its small passives
+  grant), and its jewel sockets. Without them it adds no passive. Explicit modifiers the new base can have stay.
 - **Add modifiers** (left): one kind at a time: prefixes, suffixes, the bench's crafted modifiers, what each influence
-  on the item adds, corruption and Eldritch implicits, or any modifier without rules. Each shows its tier (T1 the best),
+  on the item adds, the base's enchantments (to put one back), corruption and Eldritch implicits, or any modifier
+  without rules. Each shows its tier (T1 the best),
   its range as the game words it, its affix name and the item level it needs; **Best tier only** keeps the best tier for
   the item level of each group, **Above item level** also lists those that need more. Double-click, Enter or **+** adds one.
 - The item (middle): rarity, item level, quality, sockets as `/sockets` takes them (shown as coloured, linked circles;
   empty for what a new item gets), the states and influences, a rare's name from the game's two word lists (or random),
   and the modifiers. Each modifier has its kind, a tier list to change tier, its line with the current values, a slider
-  and a box per value (any whole number is accepted), and up, down and remove. The prefix and suffix count for the rarity
+  and a box per value (any whole number is accepted), and up, down and remove. A base's enchantment has the range the
+  base gives it: 8 to 12 passives on a Large Cluster Jewel. On a cluster jewel, **Small passives grant** is a list of
+  the size's themes by name (the game's own value is a number), and the socket enchantment has a list of its socket
+  counts. The theme decides the jewel's affixes: Prefixes and Suffixes then list that theme's notables ("1 Added
+  Passive Skill is …") with the modifiers every theme has. The prefix and suffix count for the rarity
   shows above them, and two modifiers of one group are marked; neither is refused.
 - **Preview** (right): the item as text in the game's rarity and modifier colours (readable on every scheme), with its
   name, item level, requirements, sockets, implicits, modifiers and states.
@@ -1441,8 +1447,10 @@ write and gives it to the character in game.
   Each line is matched to the modifier the game words that way: the Mods.dat Ids PoB writes for an item crafted in it,
   and the game's tier ranges and affix names (Ctrl+Alt+C, a header per modifier) come first, then the base's own pools;
   the values are the ones that give the line's numbers (outside the tier's range only when no tier gives them).
-  Enchantments and lines no modifier words are left out. Uniques are refused: the crafter makes normal, magic and rare
-  items. `ItemImport.cs`, `ItemImportWindow`.
+  The base's own enchantments go on as on a new item, each with what the item's lines say: a cluster jewel's passive
+  count ("Adds 10 Passive Skills"), its socket count and its theme ("Added Small Passive Skills grant: …"), whose
+  notables are then found among that theme's affixes. Other enchantments and lines no modifier words are left out. Uniques are refused: the
+  crafter makes normal, magic and rare items. `ItemImport.cs`, `ItemImportWindow`.
 - **Give item** gives the item to the character in game, into the main inventory, through the Waypoint Tools mod
   (LocalExile-Mods' `waypoint-tools`, `WaypointToolsMod.cs`), the same on a source copy and a release; it needs no other
   mod and no Frida. The mod counts as loaded when its `data/waypoint-tools/loaded.json` names a Gateway process that still
@@ -1466,7 +1474,13 @@ write and gives it to the character in game.
 
 The data is the Gateway's own (`GameServer.Gateway crafter`, read once per Gateway build): the bases, the modifiers each
 can have (the server's own rolling rules), their stat descriptions in English (the checkout's
-`data/stat-descriptions.txt`) and the name words. `CrafterCatalog.cs` reads it and words the modifiers.
+`data/stat-descriptions.txt`) and the name words. `CrafterCatalog.cs` reads it and words the modifiers. A base's
+enchantments are its `enchants` there, sent to `/item_give` in the `enchant` list; a cluster jewel base also has
+`cluster`: the mod that holds the theme and the passive count, the mod for each socket count, and each theme with the
+value that names it, what a small passive grants and the affix pool it opens (the server's
+`Agents/docs/dev/item-crafter.md`, "Cluster jewels"). The game words a theme from its value alone, so Waypoint words it
+from the theme's stats. A Gateway that does not list these yet shows a cluster jewel without enchantments; a server
+with cluster jewel themes still gives such a jewel a random theme and count, an older one a jewel that adds no passive.
 
 A Gateway built before the hook does not know `crafter` and would start for real, so Waypoint first reads the Gateway's
 assembly (`GameServer.Gateway.dll`, beside a release's `app\GameServer.Gateway.exe`) without running it, and goes on only
