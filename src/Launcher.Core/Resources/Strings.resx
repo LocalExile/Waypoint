@@ -126,6 +126,9 @@
   <data xml:space="preserve" name="Text_030d3f415374">
     <value>What backups include</value>
   </data>
+  <data name="Text_032ef1a0c2a1" xml:space="preserve">
+    <value>Client/Game.exe: a copy of PathOfExile.exe (Steam: PathOfExileSteam.exe)</value>
+  </data>
   <data name="Text_03341d673f63" xml:space="preserve">
     <value>{0}: no variant is defined for this league family; this option is unavailable.</value>
   </data>
@@ -299,6 +302,9 @@
   </data>
   <data xml:space="preserve" name="Text_08de788b0ede">
     <value>Hovered controls</value>
+  </data>
+  <data name="Text_08f0236c1886" xml:space="preserve">
+    <value>Choose your Path of Exile {0} folder: a standalone install (PathOfExile.exe and Content.ggpk) or a Steam install (PathOfExileSteam.exe and Bundles2).</value>
   </data>
   <data name="Text_090416e6e2e6" xml:space="preserve">
     <value>Records each area's walk map with Frida</value>
@@ -704,6 +710,9 @@
   </data>
   <data name="Text_1379508dcb5b" xml:space="preserve">
     <value>Switch puzzle</value>
+  </data>
+  <data name="Text_13d3097d7c23" xml:space="preserve">
+    <value>The link is in use now.</value>
   </data>
   <data name="Text_13d6ff07b8a5" xml:space="preserve">
     <value>Repository</value>
@@ -1132,6 +1141,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_2007994f658d" xml:space="preserve">
     <value>Possible: {0}</value>
   </data>
+  <data name="Text_203e4382d068" xml:space="preserve">
+    <value>LocalExile cannot use this folder. Choose a standalone or a Steam install.</value>
+  </data>
   <data name="Text_207565e87c76" xml:space="preserve">
     <value>Accounts refreshed.</value>
   </data>
@@ -1203,6 +1215,9 @@ Close the game and anything else using that folder, then try again.</value>
   </data>
   <data name="Text_21f1037412e4" xml:space="preserve">
     <value>What is happening</value>
+  </data>
+  <data name="Text_2216ae5bf9d3" xml:space="preserve">
+    <value>Link: the folder in use runs the game from this client's folder. Nothing is copied. LocalExile changes files there, and a Path of Exile update there can break this LocalExile.</value>
   </data>
   <data xml:space="preserve" name="Text_223e64b8fc5b">
     <value>Automatic lookup runs on first use. You can also search again here.</value>
@@ -1384,6 +1399,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_262be24adfee" xml:space="preserve">
     <value>Area level</value>
   </data>
+  <data name="Text_2633323fff0e" xml:space="preserve">
+    <value>Client needs Content.ggpk (standalone) or Bundles2\_.index.bin (Steam)</value>
+  </data>
   <data name="Text_2637af936de3" xml:space="preserve">
     <value>Only the published Waypoint.exe updates itself</value>
   </data>
@@ -1507,6 +1525,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_291d2a97565f" xml:space="preserve">
     <value>Rare</value>
+  </data>
+  <data name="Text_292979c1afe7" xml:space="preserve">
+    <value>Waypoint makes a copy of this client for the folder in use: {0:0.#} GB.</value>
   </data>
   <data xml:space="preserve" name="Text_292a37482041">
     <value>BUILT COMPONENTS · DEBUG</value>
@@ -1637,6 +1658,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2bed223c0514" xml:space="preserve">
     <value>the download holds an unsafe path, {0}; nothing was installed</value>
   </data>
+  <data name="Text_2bf0f02086ac" xml:space="preserve">
+    <value>If you have no such folder, tick the box below. Then choose Game client in the folder list to download the game from Steam.</value>
+  </data>
   <data name="Text_2bf6b86144e2" xml:space="preserve">
     <value>Close the game and stop services to create this league. Your draft is kept.</value>
   </data>
@@ -1688,6 +1712,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2db432a7964b" xml:space="preserve">
     <value>Get {0}</value>
   </data>
+  <data name="Text_2dc9323270b1" xml:space="preserve">
+    <value>This client:</value>
+  </data>
   <data xml:space="preserve" name="Text_2dcb950944f5">
     <value>Runtime status has not been confirmed.</value>
   </data>
@@ -1735,6 +1762,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2eed71190382" xml:space="preserve">
     <value>Full copy</value>
+  </data>
+  <data name="Text_2ef470a0b2dd" xml:space="preserve">
+    <value>The game files in this folder do not match its version, so preparing it will probably fail. Let Steam finish updating the game, or choose another folder.</value>
   </data>
   <data name="Text_2efd6c79d96d" xml:space="preserve">
     <value>Install Waypoint Tools?</value>
@@ -1786,9 +1816,6 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2fd09340d317" xml:space="preserve">
     <value>Switch for every copy?</value>
-  </data>
-  <data name="Text_2fe123735877" xml:space="preserve">
-    <value>Standalone 3.29.3c executable at Client/Game.exe</value>
   </data>
   <data name="Text_2fe83d132e3d" xml:space="preserve">
     <value>Mod</value>
@@ -2034,6 +2061,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_36ff2cadeff0" xml:space="preserve">
     <value>League flag</value>
   </data>
+  <data name="Text_371fe39ac4d0" xml:space="preserve">
+    <value>The folder in use:</value>
+  </data>
   <data xml:space="preserve" name="Text_375e15d846ce">
     <value>Waypoint mint</value>
   </data>
@@ -2111,9 +2141,6 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_39921a740bf2">
     <value>Switch</value>
-  </data>
-  <data name="Text_39a30e6ba869" xml:space="preserve">
-    <value>Prepare the existing client copy using LocalExile's Auth and Patch tools. Existing login keys are retained. A verified supported PathOfExile.exe can refresh a stale Game.exe and its patched copy; previous executables are backed up first. Linked clients are never changed.</value>
   </data>
   <data name="Text_39b962416666" xml:space="preserve">
     <value>The Steam download did not finish.</value>
@@ -2217,6 +2244,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_3bf95cac512b">
     <value>{0} mods · {1}
 {2}</value>
+  </data>
+  <data name="Text_3bff23baae1b" xml:space="preserve">
+    <value>Choose a folder with a Path of Exile client</value>
   </data>
   <data xml:space="preserve" name="Text_3c1e7be1b5a0">
     <value>Password (at least 4 characters; not saved by the launcher)</value>
@@ -2493,6 +2523,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_45989de49fb7">
     <value>Details</value>
+  </data>
+  <data name="Text_459947fc382d" xml:space="preserve">
+    <value>The linked game client (only read):</value>
   </data>
   <data name="Text_45afac004fa5" xml:space="preserve">
     <value>Global mods</value>
@@ -2779,6 +2812,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4cc500db62ed" xml:space="preserve">
     <value>threads</value>
   </data>
+  <data name="Text_4ccbd3505c23" xml:space="preserve">
+    <value>Copy: the folder in use gets its own copy, {0:0.#} GB.</value>
+  </data>
   <data xml:space="preserve" name="Text_4cda809eee92">
     <value>Building selected revision</value>
   </data>
@@ -2811,6 +2847,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4d95f1b334f2" xml:space="preserve">
     <value>Stashed changes restored.</value>
+  </data>
+  <data name="Text_4d9febc90c6b" xml:space="preserve">
+    <value>The link you use now is removed. The folder it leads to is not changed.</value>
   </data>
   <data name="Text_4da10f1fbb17" xml:space="preserve">
     <value>Set up</value>
@@ -3079,9 +3118,6 @@ This checkout has modified tracked files.</value>
   <data name="Text_553decbc612d" xml:space="preserve">
     <value>Update LocalExile to {0}?</value>
   </data>
-  <data name="Text_5559b6621735" xml:space="preserve">
-    <value>{0} has no Content.ggpk and PathOfExile.exe, so it is not a standalone client.</value>
-  </data>
   <data name="Text_555bbeab2a7c" xml:space="preserve">
     <value>The backups folder {0} can't be used ({1}), so backups go to {2} for now.</value>
   </data>
@@ -3239,9 +3275,6 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5a2a9ccda1eb" xml:space="preserve">
     <value>The older version could not be chosen (git exit {0}).</value>
-  </data>
-  <data name="Text_5a3f8a56fafe" xml:space="preserve">
-    <value>Steam and Epic installs have no Content.ggpk and do not work. Choose a standalone install.</value>
   </data>
   <data name="Text_5a56864947f6" xml:space="preserve">
     <value>No leagues</value>
@@ -3840,9 +3873,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_6c6d375befb8" xml:space="preserve">
     <value>Some of your folders or tools can't be used</value>
   </data>
-  <data name="Text_6caadd32b7a9" xml:space="preserve">
-    <value>standalone client layout (Content.ggpk)</value>
-  </data>
   <data name="Text_6cc01aa057db" xml:space="preserve">
     <value>Stop offering these characters?</value>
   </data>
@@ -3992,6 +4022,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_70b4554c1108" xml:space="preserve">
     <value>Your old characters stay in {0} until you delete that folder.</value>
+  </data>
+  <data name="Text_70b7c134bfbe" xml:space="preserve">
+    <value>game files in Client\ (Content.ggpk, or Steam's Bundles2)</value>
   </data>
   <data name="Text_70dbcfcec0c8" xml:space="preserve">
     <value>Uninstall {0}</value>
@@ -4233,6 +4266,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_7839ccd6957a">
     <value>Using your selected checkout. Change location or search again at any time.</value>
   </data>
+  <data name="Text_786eabf5e92e" xml:space="preserve">
+    <value>Only the copied client's gateway list is updated.</value>
+  </data>
   <data name="Text_78794383b01e" xml:space="preserve">
     <value>Python could not make its environment in {0}.</value>
   </data>
@@ -4353,6 +4389,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7b47361aad19" xml:space="preserve">
     <value>Base</value>
   </data>
+  <data name="Text_7b76625dcf1e" xml:space="preserve">
+    <value>{0} is copied.</value>
+  </data>
   <data name="Text_7ba0dfac7b4a" xml:space="preserve">
     <value>Waiting for the Steam sign-in …</value>
   </data>
@@ -4367,9 +4406,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7c0189e54acf" xml:space="preserve">
     <value>Open the setup guide</value>
-  </data>
-  <data name="Text_7c530d863d6f" xml:space="preserve">
-    <value>To change this client, choose its folder in the sidebar.</value>
   </data>
   <data name="Text_7c5cd03233bd" xml:space="preserve">
     <value>{0}: choose from {1} to {2}</value>
@@ -4632,6 +4668,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_842e70aacb24" xml:space="preserve">
     <value>Unsaved settings</value>
   </data>
+  <data name="Text_8451b0247817" xml:space="preserve">
+    <value>You need a Path of Exile client that LocalExile runs: your own standalone or Steam install, or one downloaded from Steam after this guide.</value>
+  </data>
   <data name="Text_848e96567d6b" xml:space="preserve">
     <value>Power</value>
   </data>
@@ -4749,6 +4788,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_885a693a2ff9" xml:space="preserve">
     <value>LocalExile server checkout (the folder with GameServer.slnx)</value>
   </data>
+  <data name="Text_885b0b158226" xml:space="preserve">
+    <value>This LocalExile runs only a standalone client. A client from Steam needs a newer LocalExile.</value>
+  </data>
   <data name="Text_88625091f50d" xml:space="preserve">
     <value>The game data could not be extracted (exit {0}).</value>
   </data>
@@ -4782,6 +4824,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_88e65a6c7315" xml:space="preserve">
     <value>Save or discard the current draft before changing league visibility.</value>
   </data>
+  <data name="Text_88ebcf1f69a8" xml:space="preserve">
+    <value>Prepare the existing client copy using LocalExile's Auth and Patch tools. Existing login keys are retained. A verified supported PathOfExile.exe (Steam: PathOfExileSteam.exe) can refresh a stale Game.exe and its patched copy; previous executables are backed up first. Linked clients are never changed.</value>
+  </data>
   <data name="Text_88fccfb10a8d" xml:space="preserve">
     <value>Running {0} …</value>
   </data>
@@ -4811,9 +4856,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8994df2299a4" xml:space="preserve">
     <value>Frida is optional; Python is needed for its game tools.</value>
-  </data>
-  <data xml:space="preserve" name="Text_89d00e7dc413">
-    <value>Standalone Content.ggpk is required; Steam layout is unsupported</value>
   </data>
   <data name="Text_89d29dccbe1f" xml:space="preserve">
     <value>Adds a Simple | Advanced switch to the sidebar. On a release install, Advanced adds the status strip, performance and server timings; the other sections need a source checkout.</value>
@@ -4955,9 +4997,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>gen 2</value>
-  </data>
-  <data name="Text_8de52cb427b1" xml:space="preserve">
-    <value>Choose a folder with PathOfExile.exe and Content.ggpk: a standalone Path of Exile {0} install. Steam and Epic installs do not work here.</value>
   </data>
   <data name="Text_8e18a81993ce" xml:space="preserve">
     <value>client not running</value>
@@ -5324,9 +5363,6 @@ Dependencies: {3}
   <data name="Text_97bc1cb9f0ad" xml:space="preserve">
     <value>Bring your characters to Latest?</value>
   </data>
-  <data name="Text_98050cf2b66c" xml:space="preserve">
-    <value>Waypoint cannot prepare a client from Steam for a source copy yet.</value>
-  </data>
   <data name="Text_9814c443a469" xml:space="preserve">
     <value>Exit stops this checkout’s services before closing Waypoint. If the game is open, you can cancel or leave everything running.</value>
   </data>
@@ -5511,6 +5547,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9c5499b7d628" xml:space="preserve">
     <value>The update failed: {0}</value>
   </data>
+  <data name="Text_9c5cd544a12c" xml:space="preserve">
+    <value>LocalExile cannot use this install</value>
+  </data>
   <data name="Text_9c618d925c1c" xml:space="preserve">
     <value>Patch server: the client's update check stays local</value>
   </data>
@@ -5630,6 +5669,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9f59b95311b3" xml:space="preserve">
     <value>Waypoint is closing. Wait for it to finish, then open it again.</value>
+  </data>
+  <data name="Text_9f6424513235" xml:space="preserve">
+    <value>The client you use now is kept, not deleted.</value>
   </data>
   <data name="Text_9f872ed43d00" xml:space="preserve">
     <value>Fit</value>
@@ -5913,6 +5955,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a6927c2b27f1" xml:space="preserve">
     <value>Keep this version?</value>
   </data>
+  <data name="Text_a6a32dbc5618" xml:space="preserve">
+    <value>Link</value>
+  </data>
   <data name="Text_a6b4705c6883" xml:space="preserve">
     <value>Change…</value>
   </data>
@@ -5987,6 +6032,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a89b896cdcfb" xml:space="preserve">
     <value>Lines containing this text (case ignored)</value>
+  </data>
+  <data name="Text_a8c6b33d9bb9" xml:space="preserve">
+    <value>Use this client</value>
   </data>
   <data xml:space="preserve" name="Text_a8e176f580cf">
     <value>Check the account name and password requirements above.</value>
@@ -6351,6 +6399,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_b3b29e2c5678">
     <value>Color-vision profiles override accent and status colors, including custom choices. Windows High Contrast takes priority over all palettes.</value>
   </data>
+  <data name="Text_b3b5b3e4ac49" xml:space="preserve">
+    <value>{0} is in use now. The link was removed. The folder it led to was not changed.</value>
+  </data>
   <data xml:space="preserve" name="Text_b3f384f14d32">
     <value>Copy the complete client into its Client folder first. Preparation creates missing local keys and a prepared executable, then selects the local gateway in that copy. Close the game and stop services before making setup changes.</value>
   </data>
@@ -6398,9 +6449,6 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_b5c120b316c2" xml:space="preserve">
     <value>Saved</value>
-  </data>
-  <data name="Text_b607b1bd57e8" xml:space="preserve">
-    <value>robocopy your 3.29.3c client to Client, then copy PathOfExile.exe to Game.exe</value>
   </data>
   <data name="Text_b61789ae5217" xml:space="preserve">
     <value>Keep at least one playable league card available for new characters.</value>
@@ -6669,6 +6717,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_bd37103a446e" xml:space="preserve">
     <value>Redirected settings paths are not supported.</value>
   </data>
+  <data name="Text_bd44702b0d22" xml:space="preserve">
+    <value>Link: the folder in use runs the game from this client's folder. Nothing is copied, and what changes there changes here.</value>
+  </data>
   <data name="Text_bd72c01ccb05" xml:space="preserve">
     <value>Your saves could not be read. Nothing was changed.</value>
   </data>
@@ -6785,6 +6836,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c176bcfe0c3f" xml:space="preserve">
     <value>LocalExile has no release to download yet.</value>
+  </data>
+  <data name="Text_c183cf81d864" xml:space="preserve">
+    <value>Choose your Path of Exile folder</value>
   </data>
   <data name="Text_c1879f2b1599" xml:space="preserve">
     <value>This client is incomplete and cannot be used.</value>
@@ -6979,22 +7033,11 @@ Last reported Gateway event. Open Gateway output for details.</value>
   <data xml:space="preserve" name="Text_c7a882f64135">
     <value>Could not load source choices: </value>
   </data>
-  <data name="Text_c7b0c42e9e6d" xml:space="preserve">
-    <value>Copy the complete standalone PoE 3.29.3c installation to:
-{0}
-
-1. In File Explorer, open the supported client folder containing Content.ggpk and PathOfExile.exe (or Game.exe).
-2. Press Ctrl+A, then Ctrl+C to copy; do not move your normal installation.
-3. Open the selected checkout in another File Explorer window. Create its Client folder if missing, open it, then press Ctrl+V.
-4. Wait for the copy to finish. Return to Setup and click Prepare local client.
-
-Steam layout and a newer official client are unsupported. The launcher does not download the game.</value>
-  </data>
-  <data name="Text_c7b81e4f8801" xml:space="preserve">
-    <value>Choose your Path of Exile folder (the one with Content.ggpk)</value>
-  </data>
   <data name="Text_c7c78e5406ce" xml:space="preserve">
     <value>Use separate game settings…</value>
+  </data>
+  <data name="Text_c7e19845a7df" xml:space="preserve">
+    <value>This client is from Steam, and this LocalExile is too old to run it. Update LocalExile first, or choose a standalone client.</value>
   </data>
   <data xml:space="preserve" name="Text_c7ece59b9c12">
     <value>Create local account</value>
@@ -7460,6 +7503,9 @@ Client: {2}</value>
   <data name="Text_d668ffd510be" xml:space="preserve">
     <value>RARE NAME</value>
   </data>
+  <data name="Text_d6726ce10111" xml:space="preserve">
+    <value>The link could not be made. The client in use was not changed.</value>
+  </data>
   <data xml:space="preserve" name="Text_d6807b3f9a54">
     <value>Use color</value>
   </data>
@@ -7640,6 +7686,9 @@ Dependencies: {2}
   <data name="Text_db3370a43178" xml:space="preserve">
     <value>Install mod</value>
   </data>
+  <data name="Text_db4567524637" xml:space="preserve">
+    <value>Use this client?</value>
+  </data>
   <data name="Text_db4cea7c5a2c" xml:space="preserve">
     <value>Path of Exile, patched for the local servers</value>
   </data>
@@ -7802,6 +7851,9 @@ Dependencies: {2}
   <data name="Text_e0283282bcfd" xml:space="preserve">
     <value>Enter a description of 1–2000 characters.</value>
   </data>
+  <data name="Text_e07516dda33d" xml:space="preserve">
+    <value>Client from Steam</value>
+  </data>
   <data name="Text_e0a8b24caf7e" xml:space="preserve">
     <value>Warlord</value>
   </data>
@@ -7822,6 +7874,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_e0eba74683f6">
     <value>RestoreBackup completed.</value>
+  </data>
+  <data name="Text_e0f52bc19754" xml:space="preserve">
+    <value>Client\ has neither Content.ggpk (standalone) nor Bundles2\_.index.bin (Steam)</value>
   </data>
   <data xml:space="preserve" name="Text_e10d850954a8">
     <value>Rose</value>
@@ -7953,9 +8008,6 @@ Dependencies: {2}
   <data name="Text_e3ba7472396e" xml:space="preserve">
     <value>{0} holds the rules of a game mode. Turned on here, they apply to every character in this league from the next server start, without that mode's own skills, vendors and quest rewards, and the game still shows the league as it is. Untick it to go back.</value>
   </data>
-  <data name="Text_e3c0265ee81c" xml:space="preserve">
-    <value>Use this version</value>
-  </data>
   <data name="Text_e3e6dafb5393" xml:space="preserve">
     <value>The versions of the game this LocalExile holds: get one from Steam, keep several, switch between them</value>
   </data>
@@ -8037,9 +8089,6 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_e6617c8f941d">
     <value>BuildMods completed.</value>
   </data>
-  <data name="Text_e684c2284663" xml:space="preserve">
-    <value>Steam installs have no Content.ggpk</value>
-  </data>
   <data name="Text_e6acd5da3a93" xml:space="preserve">
     <value>Shown as a mode of: {0}</value>
   </data>
@@ -8079,11 +8128,17 @@ Dependencies: {2}
   <data name="Text_e7cf3ef4f17c" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="Text_e7f11fb3f882" xml:space="preserve">
+    <value>The link is in use now. The client it replaced is kept.</value>
+  </data>
   <data xml:space="preserve" name="Text_e802a1d6a8c0">
     <value>One checkout matches upstream HEAD. You can use it below or Browse elsewhere.</value>
   </data>
   <data name="Text_e806a291cfc3" xml:space="preserve">
     <value>Testing</value>
+  </data>
+  <data name="Text_e813bed21649" xml:space="preserve">
+    <value>Choose a client outside this LocalExile folder.</value>
   </data>
   <data name="Text_e8353f44f2c9" xml:space="preserve">
     <value>shares another LocalExile folder's client</value>
@@ -8151,9 +8206,6 @@ Dependencies: {2}
   <data name="Text_e9c6f4ddf770" xml:space="preserve">
     <value>Guardian portals</value>
   </data>
-  <data name="Text_e9cdda970b82" xml:space="preserve">
-    <value>This client belongs to a source copy of LocalExile, which looks after its own client.</value>
-  </data>
   <data xml:space="preserve" name="Text_e9d7f3ec4aa7">
     <value>Select a backup to restore or delete it.</value>
   </data>
@@ -8183,6 +8235,9 @@ Dependencies: {2}
   </data>
   <data name="Text_ea4c3e2839b0" xml:space="preserve">
     <value>Your characters came with you, so log in as usual. Mods you added yourself did not: they are still in your old folder.</value>
+  </data>
+  <data name="Text_ea53dc034b7f" xml:space="preserve">
+    <value>Use this client…</value>
   </data>
   <data xml:space="preserve" name="Text_ea6467743294">
     <value>Building services</value>
@@ -8291,6 +8346,9 @@ Dependencies: {2}
   </data>
   <data name="Text_ed4afa1606a0" xml:space="preserve">
     <value>Settings must be a JSON object.</value>
+  </data>
+  <data name="Text_ed5e680f9f31" xml:space="preserve">
+    <value>Browse for a client…</value>
   </data>
   <data name="Text_ed5eb9a37e2d" xml:space="preserve">
     <value>now</value>
@@ -8460,6 +8518,17 @@ Dependencies: {2}
   <data name="Text_f2042b0b650a" xml:space="preserve">
     <value>Opens the setup guide, which gets LocalExile ready in a folder you choose</value>
   </data>
+  <data name="Text_f237dfaaffc4" xml:space="preserve">
+    <value>Copy your complete Path of Exile folder to:
+{0}
+
+1. In File Explorer, open the game folder. A standalone install has Content.ggpk and PathOfExile.exe; a Steam install has Bundles2 and PathOfExileSteam.exe.
+2. Press Ctrl+A, then Ctrl+C to copy; do not move your normal installation.
+3. Open the selected checkout in another File Explorer window. Create its Client folder if missing, open it, then press Ctrl+V.
+4. Wait for the copy to finish. Return to Setup and click Prepare local client.
+
+The client must be a version this LocalExile runs. Or choose Game client in the folder list to download one from Steam.</value>
+  </data>
   <data name="Text_f24116ae1425" xml:space="preserve">
     <value>Welcome to Waypoint</value>
   </data>
@@ -8516,6 +8585,9 @@ Dependencies: {2}
   </data>
   <data name="Text_f30bd0b67351" xml:space="preserve">
     <value>Python with frida (walk maps, console)</value>
+  </data>
+  <data name="Text_f312a057c65e" xml:space="preserve">
+    <value>{0} has no Path of Exile client that LocalExile can use.</value>
   </data>
   <data name="Text_f34ba9fc922c" xml:space="preserve">
     <value>Random name</value>
@@ -8710,6 +8782,9 @@ Mods at backup: </value>
   <data name="Text_f91058b1dfbd" xml:space="preserve">
     <value>Setup guide</value>
   </data>
+  <data name="Text_f91e879068bc" xml:space="preserve">
+    <value>robocopy your game client to Client, then copy PathOfExile.exe (Steam: PathOfExileSteam.exe) to Game.exe</value>
+  </data>
   <data name="Text_f938c3286fd7" xml:space="preserve">
     <value>Clean up</value>
   </data>
@@ -8736,9 +8811,6 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_f9d2f04d4584">
     <value>Starting, rebuilding or restarting; inspect Gateway output for errors</value>
-  </data>
-  <data name="Text_f9e5bd641897" xml:space="preserve">
-    <value>You need a Path of Exile client that LocalExile runs: your own standalone copy, or for a release one downloaded from Steam after this guide.</value>
   </data>
   <data name="Text_f9ebd5052336" xml:space="preserve">
     <value>not the 3.29.3c build</value>
@@ -8784,6 +8856,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fac63f370862" xml:space="preserve">
     <value>{0} has no game settings.</value>
+  </data>
+  <data name="Text_face90b8531b" xml:space="preserve">
+    <value>A link is not possible here: this client is not prepared for the folder in use.</value>
   </data>
   <data name="Text_fad198a3ed81" xml:space="preserve">
     <value>Open Waypoint's data folder</value>
@@ -8922,9 +8997,6 @@ Mods at backup: </value>
   </data>
   <data name="Text_fea4f8f76fc1" xml:space="preserve">
     <value>Fortress</value>
-  </data>
-  <data name="Text_fea8224e17a4" xml:space="preserve">
-    <value>Steam or Epic layout: it cannot be used</value>
   </data>
   <data name="Text_fece8604a2c2" xml:space="preserve">
     <value>Game settings</value>

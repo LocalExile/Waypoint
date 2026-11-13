@@ -66,13 +66,17 @@ def atlas_sprite(atlas, key):
 def extract(root, cache):
     import PIL
     from PIL import Image
-    archive = root / "Client/Content.ggpk"
+    # A client from Steam has no archive: its files are loose, LocalExile's extractor takes the client folder, and the
+    # index of its bundles stands for it.
+    archive = stamp = root / "Client/Content.ggpk"
+    if not archive.is_file():
+        archive, stamp = root / "Client", root / "Client/Bundles2/_.index.bin"
     source_file = root / "src/GameServer.Core/Accounts/LeagueCatalog.cs"
     source = source_file.read_bytes()
     if len(source) > 1024 * 1024:
         raise ValueError("Banner contract is too large.")
     selector = wire_selector(source.decode("utf-8-sig"))
-    before = signature(archive)
+    before = signature(stamp)
     source_hash = hashlib.sha256(source).hexdigest()
     helper_hash = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     key = hashlib.sha256(json.dumps([str(root), before, source_hash, helper_hash, PIL.__version__]).encode()).hexdigest()
@@ -124,7 +128,7 @@ def extract(root, cache):
                 image.convert("RGBA").crop(bounds).save(staging / (kind + ".png"))
             provenance["sprites"][kind] = {"key": chosen, "texture": texture, "bounds": bounds}
             provenance["hashes"][kind] = hashlib.sha256((staging / (kind + ".png")).read_bytes()).hexdigest()
-        if before != signature(archive) or source_file.read_bytes() != source:
+        if before != signature(stamp) or source_file.read_bytes() != source:
             raise ValueError("Client assets or banner contract changed while reading.")
         destination.mkdir(exist_ok=True)
         for kind in ("normal", "hardcore"):

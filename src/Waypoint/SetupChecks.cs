@@ -15,8 +15,10 @@ static class SetupChecks
 #else
             OnPath("dotnet") ? new(true, ".NET SDK") : new(false, L.Text(".NET SDK not found (dotnet)"), "https://dotnet.microsoft.com/download"),
 #endif
-            File("Client/Game.exe", L.Text("client copied into Client\\ (step 3)"), L.Text("robocopy your 3.29.3c client to Client, then copy PathOfExile.exe to Game.exe")),
-            File("Client/Content.ggpk", L.Text("standalone client layout (Content.ggpk)"), L.Text("Steam installs have no Content.ggpk")),
+            File("Client/Game.exe", L.Text("client copied into Client\\ (step 3)"), L.Text("robocopy your game client to Client, then copy PathOfExile.exe (Steam: PathOfExileSteam.exe) to Game.exe")),
+            // live.ps1's own test: the standalone archive, or a Steam install's index.
+            System.IO.File.Exists("Client/Content.ggpk") || System.IO.File.Exists("Client/Bundles2/_.index.bin") ? new(true, L.Text("game files in Client\\ (Content.ggpk, or Steam's Bundles2)"))
+                : new(false, L.Text("Client\\ has neither Content.ggpk (standalone) nor Bundles2\\_.index.bin (Steam)")),
             File("data/login-keys.json", L.Text("login keys (step 4)"), "dotnet run --project src/GameServer.Auth -- keygen Client/Game.exe"),
             File("Client/Game.patched.exe", L.Text("patched client (step 5)"), "dotnet run --project src/GameServer.Auth -- patch Client/Game.exe Client/Game.patched.exe"),
             System.IO.File.Exists("data/gateway_list.original.txt") ? new(true, L.Text("gateway list points at the local login server (step 6)"))

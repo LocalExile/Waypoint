@@ -47,6 +47,10 @@ public static class ClientVersions
     public const string Marker = ".waypoint-switching";
     /// <summary>In <see cref="NextFolder"/> once the copy it starts from is whole.</summary>
     const string Seeded = ".waypoint-seeded";
+    /// <summary>Beside <c>Client</c> while a client that is on this PC is copied in (<see cref="CopyInAsync"/>).</summary>
+    public const string CopiedFolder = ".waypoint-copied-client";
+    /// <summary>In <see cref="CopiedFolder"/>: the folder the copy is of, so that a copy of another one starts over.</summary>
+    const string CopyOf = ".waypoint-copy-of";
     /// <summary>Room left over on the drive, beyond what a switch is known to need.</summary>
     public const long Margin = 4_000_000_000;
 
@@ -177,17 +181,23 @@ public static class ClientVersions
     }
 
     /// <summary>Puts a client that was set aside back in use, and the one in use in its place in <c>Clients\</c>: two renames,
-    /// the first undone when the second fails. Nothing is downloaded or copied.</summary>
-    public static void Use(string folder, string name)
+    /// the first undone when the second fails. Nothing is downloaded or copied. With <paramref name="overLink"/> (the Game
+    /// client window in Advanced mode) a <c>Client</c> that is a link gives way too: only the link goes, once the kept
+    /// client is in its place, and the folder it led to is never touched.</summary>
+    public static void Use(string folder, string name, bool overLink = false)
     {
         string client = Client(folder), kept = Path.Combine(folder, KeptFolder, name);
         if (!Directory.Exists(kept)) throw new IOException(L.Text("{0} is no longer there.", kept));
+        CheckoutIgnores.Ensure(folder);
         var layout = Layout(folder);
-        if (layout == ClientLayout.Link) throw new IOException(L.Text("This folder's game client is a link to another folder. Make a copy of it first."));
-        if (Unfinished(folder) is not null) throw new IOException(L.Text("The game client in use is half-way to another version. Finish that switch first."));
+        bool link = layout == ClientLayout.Link;
+        if (link && !overLink) throw new IOException(L.Text("This folder's game client is a link to another folder. Make a copy of it first."));
+        // The mark of a client that is half-way is in the folder a link leads to: that folder's to finish, not this one's.
+        if (!link && Unfinished(folder) is not null) throw new IOException(L.Text("The game client in use is half-way to another version. Finish that switch first."));
         if (MarkIn(kept) is not null) throw new IOException(L.Text("That copy was set aside half-way to another version, so it is not whole and cannot be used."));
         string? aside = null;
-        if (Directory.Exists(client))
+        if (link) aside = SetLinkAside(folder);
+        else if (Directory.Exists(client))
         {
             aside = FreeName(folder, ClientLocator.BuildOf(client));
             Directory.Move(client, aside);
@@ -198,6 +208,118 @@ public static class ClientVersions
             if (aside is not null) Directory.Move(aside, client);
             throw;
         }
+        if (link && aside is not null) RemoveLink(aside);
+    }
+
+    /// <summary>A <c>Client</c> that is a link, renamed out of the way (<see cref="OwnClient.OldLink"/>) so that it can be put
+    /// back as it was: a rename moves the link, never what it leads to.</summary>
+    static string SetLinkAside(string folder)
+    {
+        string aside = Path.Combine(folder, OwnClient.OldLink);
+        if (ClientSettings.IsLink(aside)) RemoveLink(aside);
+        Directory.Move(Client(folder), aside);
+        return aside;
+    }
+
+    /// <summary>Removes a link and nothing it leads to.</summary>
+    static void RemoveLink(string link)
+    {
+        if (!ClientSettings.IsLink(link)) return;
+        if (OperatingSystem.IsWindows()) Directory.Delete(link); else File.Delete(link); // a Unix link is a file
+    }
+
+    /// <summary>
+    /// Puts a link to another client folder in the place of the client in use. A client that is a copy is set aside in
+    /// <c>Clients\</c> first, and a link is only renamed out of the way; either comes back if the new link cannot be
+    /// made. Nothing is deleted but a link that was replaced, and <see cref="Use"/> undoes the rest. Only from the Game
+    /// client window in Advanced mode, on its user's word. <paramref name="link"/> makes the link once <c>Client</c> is
+    /// out of the way (Waypoint's own for a shared client, or LocalExile's own link mode) and throws when it cannot.
+    /// </summary>
+    public static async Task LinkAsync(string folder, Func<Task> link)
+    {
+        string client = Client(folder);
+        bool linked = Layout(folder) == ClientLayout.Link;
+        if (!linked && Unfinished(folder) is not null) throw new IOException(L.Text("The game client in use is half-way to another version. Finish that switch first."));
+        CheckoutIgnores.Ensure(folder);
+        string? aside = SetAside(folder, linked);
+        try
+        {
+            await link();
+            if (!ClientSettings.IsLink(client)) throw new IOException(L.Text("The link could not be made. The client in use was not changed."));
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidOperationException or System.ComponentModel.Win32Exception or OperationCanceledException)
+        {
+            // Whatever a failed try left in Client's place is no client: what was set aside goes back.
+            if (aside is not null)
+            {
+                if (ClientSettings.IsLink(client)) RemoveLink(client);
+                if (!Directory.Exists(client)) Directory.Move(aside, client);
+            }
+            throw;
+        }
+        if (linked && aside is not null) RemoveLink(aside);
+    }
+
+    /// <summary>Takes what is in <c>Client</c>'s place out of the way, so that it can be put back: a link is renamed
+    /// (<see cref="SetLinkAside"/>), a client goes to <c>Clients\</c> under its version, an empty folder is removed. Where
+    /// it went, or null when there was nothing to keep.</summary>
+    static string? SetAside(string folder, bool linked)
+    {
+        string client = Client(folder);
+        if (linked) return SetLinkAside(folder);
+        if (!Directory.Exists(client)) return null;
+        if (!Directory.EnumerateFileSystemEntries(client).Any())
+        {
+            Directory.Delete(client);
+            return null;
+        }
+        string aside = FreeName(folder, ClientLocator.BuildOf(client));
+        Directory.Move(client, aside);
+        return aside;
+    }
+
+    /// <summary>What a copy of <paramref name="source"/> into the folder takes (<see cref="CopyInAsync"/>): its plan, with
+    /// what an earlier try of the same copy already made counted as done.</summary>
+    public static ClientCopyPlan CopyInPlan(string folder, string source) => ClientCopy.Plan(source, folder, Path.Combine(folder, CopiedFolder));
+
+    /// <summary>
+    /// Brings a copy of a client that is on this PC (another LocalExile folder's, in use or kept) into the folder's
+    /// <c>Client</c>. The copy is made beside it (<see cref="CopiedFolder"/>), with the copy the setup guide uses, so the
+    /// client in use goes on working meanwhile, a stop leaves what was copied, and the same copy goes on from it. Only a
+    /// whole copy is swapped in: a client that was in use is then kept in <c>Clients\</c>, and a link loses only the link.
+    /// The folder copied from is only read. Its patched executable comes along only with the keys it was patched for
+    /// (<see cref="ClientCopy.Plan"/>); the folder's own setup must run afterwards, which prepares the new client.
+    /// </summary>
+    public static async Task CopyInAsync(string folder, string source, Action<ClientCopyProgress>? progress, CancellationToken stop)
+    {
+        string client = Client(folder), side = Path.Combine(folder, CopiedFolder), of = Path.Combine(side, CopyOf);
+        bool linked = Layout(folder) == ClientLayout.Link;
+        if (!linked && Unfinished(folder) is not null) throw new IOException(L.Text("The game client in use is half-way to another version. Finish that switch first."));
+        CheckoutIgnores.Ensure(folder);
+        source = Path.TrimEndingDirectorySeparator(Path.GetFullPath(source));
+        // What an earlier copy of another client left is of no use to this one.
+        if (Directory.Exists(side) && (!File.Exists(of) || !string.Equals(File.ReadAllText(of).Trim(), source, StringComparison.OrdinalIgnoreCase)))
+            ClientLocator.DeleteTree(side);
+        Directory.CreateDirectory(side);
+        await File.WriteAllTextAsync(of, source, stop);
+        await ClientCopy.RunAsync(CopyInPlan(folder, source), progress, stop);
+        stop.ThrowIfCancellationRequested();
+        // Waypoint's own marks are not part of a client.
+        foreach (string name in new[] { CopyOf, Seeded, Marker, OwnClient.Complete })
+            if (File.Exists(Path.Combine(side, name))) File.Delete(Path.Combine(side, name));
+        // LocalExile's own game settings are named by the client's config.json: they go with the folder. A linked
+        // client's are the folder's it leads to.
+        string settings = Path.Combine(client, "config.json");
+        if (!linked && File.Exists(settings) && !File.Exists(Path.Combine(side, "config.json"))) File.Copy(settings, Path.Combine(side, "config.json"));
+
+        string? aside = SetAside(folder, linked);
+        try { Directory.Move(side, client); }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            if (aside is not null) Directory.Move(aside, client);
+            throw;
+        }
+        if (linked && aside is not null) RemoveLink(aside);
     }
 
     /// <summary>Deletes a client that was set aside: renamed first, which fails as a whole while anything holds one of its
@@ -279,6 +401,7 @@ public static class ClientVersions
         try
         {
             if (!Directory.Exists(kept)) return new(SteamOutcome.Failed, L.Text("{0} is no longer there.", kept));
+            CheckoutIgnores.Ensure(folder);
             if (new DirectoryInfo(kept).LinkTarget is not null || FilesOf(kept) != ClientLayout.Steam)
                 return new(SteamOutcome.Failed, L.Text("That copy is not a client from Steam, so Steam cannot finish it."));
             var fetched = await SteamDownload.FetchAsync(tool, build, account, kept,
@@ -320,6 +443,8 @@ public static class ClientVersions
             progress?.Invoke(new("download", (p.Depot - 1 + p.Percent / 100) / p.Depots, L.Text("Part {0} of {1}: {2:0.0}% · {3}", p.Depot, p.Depots, p.Percent, p.File)));
         try
         {
+            // A source copy: git leaves alone what is made beside Client from here on.
+            CheckoutIgnores.Ensure(folder);
             if (layout == ClientLayout.Steam && way == SwitchWay.UpdateInPlace)
             {
                 if (Directory.Exists(next)) ClientLocator.DeleteTree(next);

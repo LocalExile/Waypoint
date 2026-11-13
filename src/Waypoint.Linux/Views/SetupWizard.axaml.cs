@@ -587,7 +587,7 @@ public partial class SetupWizard : Window
     /// <summary>The client build to set up for: the folder's own; for a new one the current build when a client of it was
     /// found, and only when none was, an older build a found client has (its last LocalExile is set up, <see cref="OlderToSetUp"/>).</summary>
     string NeededClient => FolderNeeds ?? ClientLocator.Current.FirstOrDefault(version => _clients.Any(c => c.Usable && c.Build == version))
-        ?? _clients.Where(c => c.Usable && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build;
+        ?? _clients.Where(c => c.Usable && !c.FromSteam && c.Build is { } b && ClientLocator.LastVersionFor(b) is not null).Select(c => c.Build!).FirstOrDefault() ?? ClientLocator.Build;
 
     /// <summary>Whether the LocalExile being set up runs a client of this version. A folder that has a LocalExile says so
     /// itself (<see cref="ClientLocator.Supported"/>); one that has none yet gets the newest, which runs every current version.</summary>
@@ -596,7 +596,7 @@ public partial class SetupWizard : Window
 
     /// <summary>With a client of an older build chosen: that build, whose last LocalExile is set up instead of the newest. For a
     /// new folder, and for a source copy that needs a newer client than any found (<see cref="CanGoBackFor"/>).</summary>
-    string? OlderToSetUp => NoClient.IsChecked != true && ClientList.SelectedItem is FoundClient { Build: { } build }
+    string? OlderToSetUp => NoClient.IsChecked != true && ClientList.SelectedItem is FoundClient { Build: { } build, FromSteam: false }
         && ClientLocator.LastVersionFor(build) is not null && (FolderNeeds is null || CanGoBackFor(build)) ? build : null;
 
     /// <summary>A source copy whose LocalExile needs a newer client than any found can move to the last LocalExile made for the
@@ -605,13 +605,20 @@ public partial class SetupWizard : Window
         && RepositoryDiscovery.IsLocalExile(folder) && ClientLocator.IsOlder(build, needs) && ClientLocator.LastVersionFor(build) is not null
         && !_clients.Any(c => c.Usable && c.Build is { } found && Runs(found));
 
-    /// <summary>A client of a known build other than the one needed cannot be used: it would fail at the login. One of a build
-    /// Waypoint does not know is the player's call (<see cref="ClientWarning"/>).</summary>
-    bool Fits(FoundClient client) => client.Build is not { } build || Runs(build) || CanGoBackFor(build);
+    /// <summary>Whether the LocalExile being set up runs a client that came from Steam (its game files loose in Bundles2).
+    /// A folder that has a LocalExile says so itself (<see cref="ClientLocator.RunsSteamFiles"/>); one that has none yet
+    /// gets the newest, which runs Steam's files of every current version. The last LocalExile made for an older client
+    /// runs none.</summary>
+    bool RunsSteam(string? build) => FolderNeeds is not null && ChosenCheckout() is { } folder ? ClientLocator.RunsSteamFiles(folder)
+        : build is null || ClientLocator.IsCurrent(build);
 
-    static bool HasClient(string? checkout) =>
-        checkout is not null && (ClientLocator.Classify(Path.Combine(checkout, "Client")) is ClientKind.Ready or ClientKind.Standalone
-            || ClientVersions.Layout(checkout) == ClientLayout.Steam);
+    /// <summary>A client of a known build other than the one needed cannot be used: it would fail at the login. Nor can a
+    /// client from Steam with a LocalExile that runs only a standalone one. One of a build Waypoint does not know is the
+    /// player's call (<see cref="ClientWarning"/>).</summary>
+    bool Fits(FoundClient client) => client.FromSteam ? RunsSteam(client.Build) && (client.Build is not { } steam || Runs(steam))
+        : client.Build is not { } build || Runs(build) || CanGoBackFor(build);
+
+    static bool HasClient(string? checkout) => checkout is not null && ClientLocator.IsClient(Path.Combine(checkout, "Client"));
 
     async void SearchClientsClicked(object? sender, RoutedEventArgs e) => await FindClientsAsync();
 
@@ -651,7 +658,7 @@ public partial class SetupWizard : Window
                 : L.Text("No usable client was found. Searched {0}.", string.Join(", ", result.Searched));
             string warning = ClientList.SelectedItem is FoundClient chosen ? ClientWarning(chosen) : "";
             ClientNote.Text = usable == 0
-                    ? L.Text("Choose a folder with PathOfExile.exe and Content.ggpk: a standalone Path of Exile {0} install. Steam and Epic installs do not work here.", NeededClient)
+                    ? L.Text("Choose your Path of Exile {0} folder: a standalone install (PathOfExile.exe and Content.ggpk) or a Steam install (PathOfExileSteam.exe and Bundles2).", NeededClient)
                         + " " + L.Text("Waypoint cannot download the game for this LocalExile.")
                 : warning.Length > 0 ? warning
                 : result.Limited ? L.Text("The search stopped at its time limit; Browse if your client is not listed.") : "";
@@ -675,17 +682,17 @@ public partial class SetupWizard : Window
 
     void BrowseClient(object? sender, RoutedEventArgs e)
     {
-        if (Ui.PickFolder(this, L.Text("Choose your Path of Exile folder (the one with Content.ggpk)")) is not { } folder) return;
+        if (Ui.PickFolder(this, L.Text("Choose your Path of Exile folder")) is not { } folder) return;
         var client = ClientLocator.Describe(folder);
         if (client is null)
         {
-            ClientStatus.Text = L.Text("{0} has no Content.ggpk and PathOfExile.exe, so it is not a standalone client.", folder);
+            ClientStatus.Text = L.Text("{0} has no Path of Exile client that LocalExile can use.", folder);
             return;
         }
         var existing = _clients.FirstOrDefault(c => c.Folder.Equals(client.Folder, StringComparison.Ordinal));
         if (existing is null) _clients.Insert(0, existing = client);
         if (client.Usable) ClientList.SelectedItem = existing;
-        else ClientNote.Text = L.Text("Steam and Epic installs have no Content.ggpk and do not work. Choose a standalone install.");
+        else ClientNote.Text = L.Text("LocalExile cannot use this folder. Choose a standalone or a Steam install.");
     }
 
     async void ClientSelected(object? sender, SelectionChangedEventArgs e)
@@ -723,6 +730,8 @@ public partial class SetupWizard : Window
     /// because a build Waypoint does not know may be one a newer server supports.</summary>
     string ClientWarning(FoundClient client)
     {
+        if (client.FromSteam && !RunsSteam(client.Build))
+            return L.Text("This client is from Steam, and this LocalExile is too old to run it. Update LocalExile first, or choose a standalone client.");
         if (client.Build is { } build && !Fits(client))
             return ClientLocator.IsOlder(build, NeededClient)
                 ? L.Text("This is the {0} client, and this LocalExile needs {1}. Choose a {1} client instead: let the official Path of Exile launcher update a copy of this one, or download it.", build, NeededClient)
@@ -734,6 +743,10 @@ public partial class SetupWizard : Window
                 ? L.Text("Only a {0} client was found, so Waypoint sets up {1}, the last LocalExile made for it.", chosen, last.Release)
                 : L.Text("Only a {0} client was found, so this copy moves to the last LocalExile made for it.", chosen)) + " " + ClientUpdate.OlderNoteFor(chosen);
         if (client.KnownBuild == false && client.Build is null) return L.Text("Waypoint does not know this as a version LocalExile runs, so preparing it will probably fail. You can still try, but check the version first: the copy is large.");
+        // LocalExile knows a Steam install's game files by their index, and refuses files that are another build's than the
+        // executable's (a game update that did not finish). The player's call, as above: LocalExile has the last word.
+        if (client.FromSteam && FolderNeeds is not null && ChosenCheckout() is { } listed && !ClientLocator.SteamFilesFit(LocalExileBuilds.Of(listed), client.Build, client.SteamIndexSha256))
+            return L.Text("The game files in this folder do not match its version, so preparing it will probably fail. Let Steam finish updating the game, or choose another folder.");
         if (Sharing || Linking) return "";
         var plan = ChosenCheckout() is { } checkout ? ClientCopy.Plan(client.Folder, checkout) : null;
         return plan is not null && ClientCopy.FreeSpace(plan.Target) is { } free && free < plan.Remaining

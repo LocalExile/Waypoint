@@ -14,7 +14,8 @@ namespace Launcher.Core;
 /// <item>a stop or a failure leaves the release as it was, and the next try goes on from what was copied.</item>
 /// </list>
 /// A link to another LocalExile's client (the <c>Client</c> of a checkout or a release) is shared with it and is left alone,
-/// by the rule LocalExile's own warning uses.
+/// by the rule LocalExile's own warning uses. Its user can still ask for a copy in its place, from the Game client window
+/// in Advanced mode (<c>shared</c>), for a release and for a source copy alike: the same copy, made the same way.
 /// </summary>
 public static class OwnClient
 {
@@ -27,7 +28,8 @@ public static class OwnClient
 
     /// <param name="Source">The folder the link leads to: only read.</param>
     /// <param name="Free">Free bytes on the release's drive; null when it cannot be told.</param>
-    public sealed record Plan(string Folder, string Source, ClientCopyPlan Copy, long? Free)
+    /// <param name="Shared">The link leads to another LocalExile folder's <c>Client</c>, not to a game folder of the user's.</param>
+    public sealed record Plan(string Folder, string Source, ClientCopyPlan Copy, long? Free, bool Shared = false)
     {
         public bool HasSpace => Free is not { } free || free >= Copy.Remaining + ClientCopy.Margin;
         /// <summary>What an earlier try already copied.</summary>
@@ -49,19 +51,21 @@ public static class OwnClient
     public sealed record Result(Outcome Outcome, Plan? Plan = null, string? Reason = null);
 
     /// <summary>The copy this folder needs; null when its client is a folder of its own, a link to another LocalExile's client,
-    /// or a link that leads to no client Waypoint can copy (the setup guide's to replace).</summary>
-    public static Plan? Check(string folder)
+    /// or a link that leads to no client Waypoint can copy (the setup guide's to replace). With <paramref name="shared"/>,
+    /// a link to another LocalExile's client has a copy too: nothing needs it, but its user may want it.</summary>
+    public static Plan? Check(string folder, bool shared = false)
     {
         try
         {
             string client = Path.Combine(folder, "Client");
             if (!ClientSettings.IsLink(client)) return null;
             string source = Path.TrimEndingDirectorySeparator(Path.GetFullPath(ClientLocator.RealPath(client)));
-            if (ClientLocator.Classify(source) is not (ClientKind.Ready or ClientKind.Standalone) || InLocalExile(source)) return null;
+            bool theirs = InLocalExile(source);
+            if (!ClientLocator.IsClient(source) || theirs && !shared) return null;
             // A release set up inside the game's own folder would be copied into itself.
             if (Path.GetFullPath(folder).StartsWith(source + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) return null;
             var copy = ClientCopy.Plan(source, folder, Path.Combine(folder, NewFolder), keepPatched: true);
-            return new(Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder)), source, copy, ClientCopy.FreeSpace(copy.Target));
+            return new(Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder)), source, copy, ClientCopy.FreeSpace(copy.Target), theirs);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or System.Security.SecurityException) { return null; }
     }
@@ -106,7 +110,7 @@ public static class OwnClient
                 + (plan.Copied >= 100_000_000 ? " " + L.Text("The copy goes on from the {0:0.#} GB made earlier.", plan.Copied / 1e9) : "")
             : L.Text("The drive is too full for the copy: it needs {0:0.#} GB, and {1:0.#} GB is free. Free some space and try again; until then nothing changes.",
                 (plan.Copy.Remaining + ClientCopy.Margin) / 1e9, (plan.Free ?? 0) / 1e9);
-        string details = L.Text("Your Path of Exile folder (only read):") + "\n  " + plan.Source + "\n"
+        string details = (plan.Shared ? L.Text("The linked game client (only read):") : L.Text("Your Path of Exile folder (only read):")) + "\n  " + plan.Source + "\n"
             + L.Text("The copy ({0:0.#} GB):", plan.Copy.Total / 1e9) + "\n  " + Path.Combine(plan.Folder, "Client");
         return (message, details);
     }
@@ -144,7 +148,8 @@ public static class OwnClient
     public static string DoneText(Plan plan)
     {
         string text = L.Text("LocalExile now runs from {0}, and no longer uses {1}.", Path.Combine(plan.Folder, "Client"), plan.Source);
-        var left = Leftovers(plan.Source);
+        // Another LocalExile's client keeps what that LocalExile made in it.
+        string[] left = plan.Shared ? [] : Leftovers(plan.Source);
         return left.Length == 0 ? text
             : text + "\n\n" + L.Text("LocalExile left these files in your Path of Exile folder. Your normal game does not need them, and you can delete them: {0}", string.Join(", ", left));
     }
@@ -158,7 +163,7 @@ public static class OwnClient
     /// (<see cref="Finish"/>), then the question, then the move while <paramref name="exclusive"/> holds the folder (false:
     /// something else holds it). Whatever comes of it, the release still has a client that works.</summary>
     public static async Task<Result> MakeCopyAsync(string folder, Func<Plan, bool> ask, Action<ClientCopyProgress>? progress,
-        Func<Func<Task>, Task<bool>> exclusive, CancellationToken stop)
+        Func<Func<Task>, Task<bool>> exclusive, CancellationToken stop, bool shared = false)
     {
         var plan = await Task.Run(() =>
         {
@@ -168,14 +173,14 @@ public static class OwnClient
                 Discard(folder);
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
-            return Check(folder);
+            return Check(folder, shared);
         });
         if (plan is null || !ask(plan)) return new(Outcome.None, plan);
         Exception? failure = null;
         bool stopped = false;
         bool ran = await exclusive(async () =>
         {
-            try { await Task.Run(() => MoveAsync(folder, progress, stop), CancellationToken.None); }
+            try { await Task.Run(() => MoveAsync(folder, progress, stop, shared), CancellationToken.None); }
             catch (OperationCanceledException) { stopped = true; }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException) { failure = e; }
         });
@@ -186,9 +191,10 @@ public static class OwnClient
 
     /// <summary>Copies the client the folder's link leads to into <see cref="NewFolder"/>, checks the copy against that folder as
     /// it is now, and only then lets it take the link's place. Throws with the release as it was.</summary>
-    public static async Task MoveAsync(string folder, Action<ClientCopyProgress>? progress, CancellationToken stop)
+    public static async Task MoveAsync(string folder, Action<ClientCopyProgress>? progress, CancellationToken stop, bool shared = false)
     {
-        var plan = Check(folder) ?? throw new IOException(L.Text("This folder's game client is no longer a link, so there is nothing to copy."));
+        var plan = Check(folder, shared) ?? throw new IOException(L.Text("This folder's game client is no longer a link, so there is nothing to copy."));
+        CheckoutIgnores.Ensure(folder);
         // What an earlier try copied counts only while it is still what the folder holds: the official launcher may have
         // updated the game in between.
         bool stale = false;
@@ -198,7 +204,7 @@ public static class OwnClient
                 File.Delete(file.Target);
                 stale = true;
             }
-        if (stale) plan = Check(folder) ?? throw new IOException(L.Text("This folder's game client is no longer a link, so there is nothing to copy."));
+        if (stale) plan = Check(folder, shared) ?? throw new IOException(L.Text("This folder's game client is no longer a link, so there is nothing to copy."));
         await ClientCopy.RunAsync(plan.Copy, progress, stop);
         stop.ThrowIfCancellationRequested();
         var now = ClientCopy.Plan(plan.Source, folder, plan.Copy.Target, keepPatched: true);
