@@ -55,10 +55,6 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
         Directory.CreateDirectory(temp);
         info.Environment["TMPDIR"] = temp;
 #endif
-        // A Gateway asked for its commands or values loads the mods too, and the Waypoint Tools mod up to 1.0.2 then names
-        // this process as the one that has it loaded: what the file said is kept, for the Gateway that runs the game.
-        string root = Environment.CurrentDirectory;
-        string? announced = WaypointToolsMod.Announced(root);
         using var process = Process.Start(info)!;
         try
         {
@@ -69,12 +65,7 @@ sealed class CommandCatalog(IReadOnlyList<ChatCommand> commands, DateTime built 
         }
         finally
         {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5)); } catch (TimeoutException) { }
-            }
-            WaypointToolsMod.KeepLoaded(root, announced, process.Id);
+            if (!process.HasExited) process.Kill(entireProcessTree: true);
         }
     }
 

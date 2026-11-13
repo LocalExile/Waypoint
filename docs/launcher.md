@@ -1447,10 +1447,10 @@ write and gives it to the character in game.
   (LocalExile-Mods' `waypoint-tools`, `WaypointToolsMod.cs`), the same on a source copy and a release; it needs no other
   mod and no Frida. The mod counts as loaded when its `data/waypoint-tools/loaded.json` names a Gateway process that still
   runs and lists `item_give`. A Gateway Waypoint asks a question (its commands, when Waypoint starts) loads the mods
-  too, and the mod up to 1.0.2 then wrote that short-lived process into the file, over the Gateway that runs the game:
-  a Waypoint started while the game ran found the mod "not loaded". Waypoint now puts the file back after its question
-  when that happened (`WaypointToolsMod.KeepLoaded`, from `CommandCatalog.AskGateway`); the mod from 1.0.3 leaves the
-  file alone itself. Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
+  too, and the mod up to 1.0.2 then writes that short-lived process into the file, over the Gateway that runs the game:
+  a Waypoint started while the game runs finds the mod "not loaded" until that Gateway loads the mod again (the game
+  started again, or the mod reloaded). The mod from 1.0.3 leaves the file to the Gateway that runs the game;
+  the file is the mod's, and Waypoint only reads it. Waypoint writes `data/waypoint-tools/requests/<id>.json` (as `.tmp`, then renamed) with the
   item and no character, and the mod gives it to the one character in game on that connection's next tick, then answers
   in `replies/<id>.json`, which Waypoint reads and deletes; the answer shows in the status line. Nothing goes over the
   network and nothing limits the item's length. An answer not there in 35 seconds (the mod waits 30 for a character in
