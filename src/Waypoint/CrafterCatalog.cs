@@ -16,10 +16,28 @@ sealed record CraftMod(string Id, string Name, int Generation, int Domain, int L
     public string Group => $"{Generation}/{string.Join(',', Families)}/{string.Join(',', Stats.Select(s => s.Id))}";
 }
 
+/// <summary>A mod a new item of a base has in its enchant list (the catalog's "enchants"): a value per stat, and the
+/// range the base gives each value. A cluster jewel's passives come from these.</summary>
+sealed record CraftEnchant(string Id, IReadOnlyList<int> Values, IReadOnlyList<(int Min, int Max)> Ranges);
+
+/// <summary>What a cluster jewel's small passives are: one of its base's "themes".</summary>
+/// <param name="Value">What the first value of the passives mod is for this theme.</param>
+/// <param name="Stats">What a small passive grants (each stat's Min and Max are its one value).</param>
+/// <param name="Pool">The affix pool of a jewel with this theme: its notables are in it.</param>
+sealed record CraftTheme(int Value, string Name, string Tag, IReadOnlyList<CraftStat> Stats, int Pool);
+
+/// <summary>What a cluster jewel base's enchantments can be changed to (the catalog's "cluster").</summary>
+/// <param name="Passives">The mod whose values are the theme and the passive count.</param>
+/// <param name="Sockets">The mod for each jewel socket count; none on a small jewel.</param>
+sealed record CraftCluster(int Size, string Passives, int Min, int Max, IReadOnlyList<(int Count, string Mod)> Sockets,
+    IReadOnlyList<CraftTheme> Themes);
+
 /// <param name="Pools">"pool" (prefixes and suffixes), "crafted", "corrupted", "eldritch", and "shaper" … "warlord" (what
 /// an influence adds).</param>
+/// <param name="Enchants">Empty for most bases, and for every base of a Gateway that does not list them yet.</param>
 sealed record CraftBase(string Id, string Name, string Class, int Width, int Height, int DropLevel, IReadOnlyList<int> Requirements,
-    int Sockets, bool Quality, IReadOnlyList<string> Implicits, IReadOnlyDictionary<string, int> Pools);
+    int Sockets, bool Quality, IReadOnlyList<string> Implicits, IReadOnlyDictionary<string, int> Pools, IReadOnlyList<CraftEnchant> Enchants,
+    CraftCluster? Cluster = null);
 
 sealed record DescriptionVariant(IReadOnlyList<string> When, string Text, IReadOnlyList<(string Name, int Stat)> Handlers);
 
@@ -140,7 +158,9 @@ sealed class CrafterCatalog
                         foreach (var i in influence.EnumerateObject()) pools[i.Name] = i.Value.GetInt32();
                     bases.Add(new CraftBase(Str(e, "id"), Str(e, "name"), Str(e, "class"), Int(e, "width"), Int(e, "height"),
                         Int(e, "dropLevel"), [.. e.GetProperty("requirements").EnumerateArray().Select(r => r.GetInt32())], Int(e, "sockets"),
-                        e.GetProperty("quality").GetBoolean(), [.. e.GetProperty("implicits").EnumerateArray().Select(m => m.GetString()!)], pools));
+                        e.GetProperty("quality").GetBoolean(), [.. e.GetProperty("implicits").EnumerateArray().Select(m => m.GetString()!)], pools,
+                        e.TryGetProperty("enchants", out var enchants) ? [.. enchants.EnumerateArray().Select(Enchant)] : [],
+                        e.TryGetProperty("cluster", out var cluster) ? Cluster(cluster) : null));
                     break;
                 case "desc":
                     var description = new StatDescription([.. e.GetProperty("stats").EnumerateArray().Select(s => s.GetString()!)],
@@ -158,13 +178,83 @@ sealed class CrafterCatalog
         return new(classes, bases, mods, resolved, descriptions, words);
     }
 
+    /// <summary>One of a base's "enchants": {"id", "values", "ranges": [[min, max] …]}.</summary>
+    static CraftEnchant Enchant(JsonElement e) => new(Str(e, "id"),
+        [.. e.GetProperty("values").EnumerateArray().Select(v => v.GetInt32())],
+        e.TryGetProperty("ranges", out var ranges) ? [.. ranges.EnumerateArray().Select(r => (r[0].GetInt32(), r[1].GetInt32()))] : []);
+
+    /// <summary>A base's "cluster": {"size", "passives": {"mod", "min", "max"}, "sockets": [{"count", "mod"}],
+    /// "themes": [{"value", "name", "tag", "stats": [{"id", "value"}], "pool"}]}.</summary>
+    static CraftCluster Cluster(JsonElement e)
+    {
+        var passives = e.GetProperty("passives");
+        return new(Int(e, "size"), Str(passives, "mod"), Int(passives, "min"), Int(passives, "max"),
+            [.. e.GetProperty("sockets").EnumerateArray().Select(s => (Int(s, "count"), Str(s, "mod")))],
+            [.. e.GetProperty("themes").EnumerateArray().Select(t => new CraftTheme(Int(t, "value"), Str(t, "name"), Str(t, "tag"),
+                [.. t.GetProperty("stats").EnumerateArray().Select(s => new CraftStat(Str(s, "id"), Int(s, "value"), Int(s, "value")))], Int(t, "pool")))]);
+    }
+
     static string Str(JsonElement e, string name) => e.GetProperty(name).GetString() ?? "";
     static int Int(JsonElement e, string name) => e.GetProperty(name).GetInt32();
 
-    public IReadOnlyList<CraftMod> Pool(CraftBase b, string key) =>
-        b.Pools.TryGetValue(key, out int id) && Pools.TryGetValue(id, out var pool) ? pool : [];
+    /// <summary>A base's pool, for an item with these mods: a cluster jewel's affixes ("pool") are its theme's, where its
+    /// notables are; without a theme, and for every other pool, the base's own.</summary>
+    public IReadOnlyList<CraftMod> Pool(CraftBase b, string key, IEnumerable<CraftedMod>? mods = null) =>
+        Pools.TryGetValue(PoolId(b, key, mods), out var pool) ? pool : [];
+
+    /// <summary>The id of that pool, or -1 when the base has none of the kind.</summary>
+    public int PoolId(CraftBase b, string key, IEnumerable<CraftedMod>? mods = null) =>
+        key == "pool" && mods is not null && Theme(b, mods) is { } theme ? theme.Pool : b.Pools.GetValueOrDefault(key, -1);
+
+    /// <summary>The stat of a cluster jewel's passives mod whose value is the theme.</summary>
+    public const string ThemeStat = "local_jewel_expansion_passive_node_index";
+
+    /// <summary>Which of the passives mod's values is the theme, or -1 (not a cluster jewel, or a Gateway without it).</summary>
+    public int ThemeIndex(CraftBase b) =>
+        b.Cluster is { } cluster && Mods.GetValueOrDefault(cluster.Passives) is { } mod ? mod.Stats.ToList().FindIndex(s => s.Id == ThemeStat) : -1;
+
+    /// <summary>The theme a cluster jewel's mods name, or null: no cluster jewel, or a value that is no theme of its size.</summary>
+    public CraftTheme? Theme(CraftBase b, IEnumerable<CraftedMod> mods)
+    {
+        int at = ThemeIndex(b);
+        return at >= 0 && mods.FirstOrDefault(m => m.Id == b.Cluster!.Passives) is { } passives && at < passives.Values.Count
+            ? b.Cluster!.Themes.FirstOrDefault(t => t.Value == passives.Values[at]) : null;
+    }
+
+    /// <summary>The lines the game shows for a theme, which it words from the theme's value alone: "Added Small Passive
+    /// Skills grant: 12% increased Fire Damage", one for each thing a small passive grants.</summary>
+    public IReadOnlyList<string> ThemeLines(CraftTheme theme) =>
+        [.. ModText.Lines(new CraftMod("", "", 0, 0, 0, [], [], theme.Stats), Description, null).Where(l => l.Length > 0).Select(l => "Added Small Passive Skills grant: " + l)];
+
+    /// <summary>The lines of a mod on an item of the base, with its values. A cluster jewel's passives mod also reads
+    /// with its theme's lines.</summary>
+    public IReadOnlyList<string> Lines(CraftBase? b, CraftedMod m, CraftMod mod) =>
+        b?.Cluster?.Passives == mod.Id && Theme(b, [m]) is { } theme ? [.. Lines(mod, m.Values), .. ThemeLines(theme)] : Lines(mod, m.Values);
 
     public StatDescription? Description(string stat) => _descriptions.GetValueOrDefault(stat);
+
+    /// <summary>The mods a new item of the base has: its enchantments with the base's values (a cluster jewel adds no
+    /// passive without them), then its implicits at their best.</summary>
+    public List<CraftedMod> NewMods(CraftBase b) =>
+        [.. b.Enchants.Where(e => Mods.ContainsKey(e.Id)).Select(e => new CraftedMod { Id = e.Id, Section = "enchant", Values = [.. e.Values] }),
+         .. b.Implicits.Select(Mods.GetValueOrDefault).OfType<CraftMod>().Select(m => NewMod(b, m, "implicit"))];
+
+    /// <summary>A mod as it is added to an item of the base: an enchantment of the base with the base's values, any other
+    /// at the top of its range.</summary>
+    public static CraftedMod NewMod(CraftBase? b, CraftMod mod, string section) =>
+        section == "enchant" && b?.Enchants.FirstOrDefault(e => e.Id == mod.Id) is { } enchant
+            ? new() { Id = mod.Id, Section = section, Values = [.. enchant.Values] }
+            : new() { Id = mod.Id, Section = section, Values = [.. mod.Stats.Select(s => Math.Max(s.Min, s.Max))] };
+
+    /// <summary>The range of one value of a mod on an item of the base: the base's for one of its enchantments (the game's
+    /// data gives a cluster jewel's passive count no range of its own), else the mod's.</summary>
+    public static (int Min, int Max) Range(CraftBase? b, CraftedMod m, CraftMod mod, int index)
+    {
+        if (m.Section == "enchant" && b?.Enchants.FirstOrDefault(e => e.Id == m.Id) is { } enchant && index < enchant.Ranges.Count)
+            return enchant.Ranges[index];
+        var stat = mod.Stats[index];
+        return (Math.Min(stat.Min, stat.Max), Math.Max(stat.Min, stat.Max));
+    }
 
     /// <summary>The mod's tier among the pool's mods of its group: 1 the highest level.</summary>
     public int Tier(int pool, CraftMod mod)
@@ -233,6 +323,9 @@ static class ModText
         var variant = d.Variants.FirstOrDefault(v => Matches(v, ranges.Select(r => r.Max).ToList()))
             ?? d.Variants.FirstOrDefault(v => Matches(v, ranges.Select(r => r.Min).ToList()));
         if (variant is null) return null;
+        // The game words this value as the passive of that number (a cluster jewel's "Added Small Passive Skills grant: …"),
+        // which the catalog does not hold: no line, rather than the bare number.
+        if (variant.Handlers.Any(h => h.Name == "tree_expansion_jewel_passive")) return null;
         int next = 0;
         // A line break in a description is written "\n", as in the client's file.
         return Placeholder.Replace(variant.Text.Replace("\\n", "\n"), m =>

@@ -108,6 +108,98 @@ public class CrafterCatalogTests
         Assert.Equal(ImportStatus.Skipped, read.Lines.Single(l => l.Text.StartsWith('(')).Status);
     }
 
+    // A cluster jewel as the Gateway's crafter mode prints it: no implicit, the enchantments a tool starts with, and what
+    // they can be changed to. A theme opens its own pool, where its notables are.
+    const string ClusterLines = """
+        {"type":"class","id":"Jewel","name":"Jewels"}
+        {"type":"pool","id":0,"mods":["AfflictionJewelSmallPassivesGrantLife_","AfflictionJewelSmallPassivesGrantLife2_"]}
+        {"type":"pool","id":1,"mods":["AfflictionJewelSmallPassivesGrantLife_","AfflictionJewelSmallPassivesGrantLife2_","AfflictionNotablePrismaticHeart__"]}
+        {"type":"pool","id":2,"mods":["AfflictionJewelSmallPassivesGrantLife_","AfflictionJewelSmallPassivesGrantLife2_"]}
+        {"type":"mod","id":"JewelExpansionPassiveNodes","name":"","generation":3,"domain":21,"level":1,"families":[3829],"tags":[],"stats":[{"id":"local_jewel_expansion_passive_node_index","min":0,"max":0},{"id":"local_jewel_expansion_passive_node_count","min":0,"max":0}]}
+        {"type":"mod","id":"JewelExpansionJewelNodesLarge1","name":"of Potential","generation":3,"domain":21,"level":1,"families":[3830],"tags":[],"stats":[{"id":"local_jewel_expansion_jewels_count","min":1,"max":1}]}
+        {"type":"mod","id":"JewelExpansionJewelNodesLarge2___","name":"of Possibility","generation":3,"domain":21,"level":1,"families":[3830],"tags":[],"stats":[{"id":"local_jewel_expansion_jewels_count","min":2,"max":2}]}
+        {"type":"mod","id":"AfflictionJewelSmallPassivesGrantLife_","name":"Hale","generation":1,"domain":21,"level":1,"families":[4150],"tags":["life"],"stats":[{"id":"local_affliction_jewel_small_nodes_grant_maximum_life","min":2,"max":3}]}
+        {"type":"mod","id":"AfflictionJewelSmallPassivesGrantLife2_","name":"Healthy","generation":1,"domain":21,"level":1,"families":[4150],"tags":["life"],"stats":[{"id":"local_affliction_jewel_small_nodes_grant_maximum_life","min":4,"max":7}]}
+        {"type":"mod","id":"AfflictionNotablePrismaticHeart__","name":"Notable","generation":1,"domain":21,"level":1,"families":[4200],"tags":[],"stats":[{"id":"local_affliction_notable_prismatic_heart","min":1,"max":1}]}
+        {"type":"base","id":"Metadata/Items/Jewels/JewelPassiveTreeExpansionLarge","name":"Large Cluster Jewel","class":"Jewel","width":1,"height":1,"dropLevel":1,"requirements":[0,0,0],"sockets":0,"quality":false,"implicits":[],"pool":0,"influence":{},"crafted":0,"corrupted":0,"eldritch":0,"enchants":[{"id":"JewelExpansionPassiveNodes","values":[1,8],"ranges":[[1,17],[8,12]]},{"id":"JewelExpansionJewelNodesLarge2___","values":[2],"ranges":[[2,2]]},{"id":"NotInTheCatalog","values":[1],"ranges":[[1,1]]}],"cluster":{"size":2,"passives":{"mod":"JewelExpansionPassiveNodes","min":8,"max":12},"sockets":[{"count":1,"mod":"JewelExpansionJewelNodesLarge1"},{"count":2,"mod":"JewelExpansionJewelNodesLarge2___"}],"themes":[{"value":1,"name":"Axe and Sword Damage","tag":"affliction_axe_and_sword_damage","stats":[{"id":"axe_damage_+%","value":12},{"id":"sword_damage_+%","value":12}],"pool":2},{"value":13,"name":"Fire Damage","tag":"affliction_fire_damage","stats":[{"id":"fire_damage_+%","value":12}],"pool":1}]}}
+        {"type":"desc","stats":["local_jewel_expansion_passive_node_index"],"variants":[{"when":["#"],"text":"{0}","handlers":[["tree_expansion_jewel_passive",1]]}]}
+        {"type":"desc","stats":["local_jewel_expansion_passive_node_count"],"variants":[{"when":["1"],"text":"Adds 1 Passive Skill","handlers":[]},{"when":["#"],"text":"Adds {0} Passive Skills","handlers":[]}]}
+        {"type":"desc","stats":["local_jewel_expansion_jewels_count"],"variants":[{"when":["1"],"text":"1 Added Passive Skill is a Jewel Socket","handlers":[]},{"when":["2|#"],"text":"{0} Added Passive Skills are Jewel Sockets","handlers":[]}]}
+        {"type":"desc","stats":["local_affliction_jewel_small_nodes_grant_maximum_life"],"variants":[{"when":["#"],"text":"Added Small Passive Skills also grant: {0:+d} to Maximum Life","handlers":[]}]}
+        {"type":"desc","stats":["local_affliction_notable_prismatic_heart"],"variants":[{"when":["#"],"text":"1 Added Passive Skill is Prismatic Heart","handlers":[]}]}
+        {"type":"desc","stats":["fire_damage_+%"],"variants":[{"when":["1|#"],"text":"{0}% increased Fire Damage","handlers":[]}]}
+        {"type":"desc","stats":["axe_damage_+%"],"variants":[{"when":["1|#"],"text":"Axe Attacks deal {0}% increased Damage","handlers":[]}]}
+        {"type":"desc","stats":["sword_damage_+%"],"variants":[{"when":["1|#"],"text":"Sword Attacks deal {0}% increased Damage","handlers":[]}]}
+        """;
+
+    [Fact]
+    public void A_cluster_jewel_starts_with_its_enchantments_and_its_theme_opens_its_notables()
+    {
+        var catalog = CrafterCatalog.Parse(ClusterLines);
+        var large = Assert.Single(catalog.Bases);
+        var cluster = large.Cluster!;
+        Assert.Equal(("JewelExpansionPassiveNodes", 8, 12, 2), (cluster.Passives, cluster.Min, cluster.Max, cluster.Themes.Count));
+        Assert.Equal([(1, "JewelExpansionJewelNodesLarge1"), (2, "JewelExpansionJewelNodesLarge2___")], cluster.Sockets);
+
+        // No implicit and no pool names them: the base does, with the values of the jewel a tool starts with.
+        var mods = catalog.NewMods(large);
+        Assert.Equal([("JewelExpansionPassiveNodes", "enchant"), ("JewelExpansionJewelNodesLarge2___", "enchant")], mods.Select(m => (m.Id, m.Section)));
+        Assert.Equal([[1, 8], [2]], mods.Select(m => m.Values));
+        var passives = catalog.Mods[mods[0].Id];
+        // The passive count has no range in the game's data: the base's is used.
+        Assert.Equal(((1, 17), (8, 12)), (CrafterCatalog.Range(large, mods[0], passives, 0), CrafterCatalog.Range(large, mods[0], passives, 1)));
+
+        // The mod's first value names the theme, which the game words as what the small passives grant; alone, the mod
+        // has no line for it rather than a bare number.
+        Assert.Equal(["Adds 8 Passive Skills"], catalog.Lines(passives, mods[0].Values));
+        Assert.Equal("Axe and Sword Damage", catalog.Theme(large, mods)!.Name);
+        Assert.Equal(["Adds 8 Passive Skills", "Added Small Passive Skills grant: Axe Attacks deal 12% increased Damage",
+            "Added Small Passive Skills grant: Sword Attacks deal 12% increased Damage"], catalog.Lines(large, mods[0], passives));
+        // A theme opens its own affixes: Fire Damage has a notable the first theme and a jewel without one do not.
+        Assert.DoesNotContain(catalog.Pool(large, "pool", mods), m => m.Id == "AfflictionNotablePrismaticHeart__");
+        mods[0].Values[catalog.ThemeIndex(large)] = 13;
+        Assert.Equal(("Fire Damage", 1), (catalog.Theme(large, mods)!.Name, catalog.PoolId(large, "pool", mods)));
+        Assert.Contains(catalog.Pool(large, "pool", mods), m => m.Id == "AfflictionNotablePrismaticHeart__");
+        Assert.DoesNotContain(catalog.Pool(large, "pool"), m => m.Id == "AfflictionNotablePrismaticHeart__");
+        mods[0].Values[0] = 99;
+        Assert.Null(catalog.Theme(large, mods));
+        Assert.Equal(0, catalog.PoolId(large, "pool", mods));
+        mods[0].Values[0] = 13;
+        // What /item_give is sent names each in the enchant list.
+        string spec = new CraftedItem { Base = large.Id, Rarity = "normal", Mods = mods }.Spec();
+        Assert.Contains("""{"id":"JewelExpansionPassiveNodes","section":"enchant","values":[13,8]}""", spec);
+        Assert.Equal(2, System.Text.RegularExpressions.Regex.Matches(spec, "\"section\":\"enchant\"").Count);
+
+        // An item copied from the game: its count, its sockets and its theme are read from its enchantment lines, and its
+        // notable is found among the theme's affixes.
+        var read = ItemImport.Read("""
+            Item Class: Jewels
+            Rarity: Rare
+            Armageddon Joy
+            Large Cluster Jewel
+            --------
+            Item Level: 84
+            --------
+            Adds 10 Passive Skills (enchant)
+            1 Added Passive Skill is a Jewel Socket (enchant)
+            Added Small Passive Skills grant: 12% increased Fire Damage (enchant)
+            Allocates something the crafter has no enchantment for (enchant)
+            --------
+            Added Small Passive Skills also grant: +7 to Maximum Life
+            1 Added Passive Skill is Prismatic Heart
+            """, catalog);
+        Assert.Equal([("JewelExpansionPassiveNodes", "enchant"), ("JewelExpansionJewelNodesLarge1", "enchant"),
+            ("AfflictionJewelSmallPassivesGrantLife2_", "explicit"), ("AfflictionNotablePrismaticHeart__", "explicit")], read.Item.Mods.Select(m => (m.Id, m.Section)));
+        Assert.Equal([[13, 10], [1], [7], [1]], read.Item.Mods.Select(m => m.Values));
+        Assert.Equal(["Allocates something the crafter has no enchantment for (enchant)"], read.Unmatched.Select(l => l.Text.Trim()));
+
+        // A Gateway that does not list them yet: the base has none, as before.
+        var ring = CrafterCatalog.Parse(Lines).Bases.Single();
+        Assert.Empty(ring.Enchants);
+        Assert.Null(ring.Cluster);
+        Assert.Empty(CrafterCatalog.Parse(Lines).NewMods(ring));
+    }
+
     [Fact]
     public void A_line_break_in_a_description_makes_two_lines()
     {

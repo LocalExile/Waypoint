@@ -214,8 +214,49 @@ static class ItemImport
             if (implicitCount < 0) throw new ImportException(NoItem);
         }
 
+        // The base's own enchantments (a cluster jewel's passives come from them) go on as a new item has them, each with
+        // the values of the item's line it words ("Adds 10 Passive Skills"). Other enchantments stay left out.
+        var enchants = catalog.NewMods(b).Where(m => m.Section == "enchant").ToList();
+        var enchantLines = lines.Where(l => l.Enchant).ToList();
+        ModLine? Reads(string text) => enchantLines.FirstOrDefault(l => string.Equals(l.Text.Trim(), text, StringComparison.OrdinalIgnoreCase));
+        foreach (var enchant in enchants)
+            if (catalog.Mods.GetValueOrDefault(enchant.Id) is { } mod && Worded(catalog, b, enchant, mod, enchantLines) is var (line, values))
+            {
+                enchant.Values = values;
+                enchantLines.Remove(line);
+                Note(line.Number, ImportStatus.Mod, Describe(mod, false));
+            }
+        if (b.Cluster is { } cluster)
+        {
+            // Its theme is the one whose lines the item has ("Added Small Passive Skills grant: 12% increased Fire Damage").
+            if (catalog.ThemeIndex(b) is var themeAt and >= 0 && enchants.FirstOrDefault(e => e.Id == cluster.Passives) is { } passives && themeAt < passives.Values.Count)
+                foreach (var theme in cluster.Themes)
+                {
+                    var found = catalog.ThemeLines(theme).Select(Reads).ToList();
+                    if (found.Count == 0 || found.Any(l => l is null)) continue;
+                    passives.Values[themeAt] = theme.Value;
+                    foreach (var l in found.OfType<ModLine>())
+                    {
+                        enchantLines.Remove(l);
+                        Note(l.Number, ImportStatus.Mod, theme.Name);
+                    }
+                    break;
+                }
+            // Its jewel sockets are one mod per count: the one the item's line words takes the new jewel's place.
+            int socket = enchants.FindIndex(e => cluster.Sockets.Any(s => s.Mod == e.Id));
+            foreach (var (_, id) in cluster.Sockets)
+                if (socket >= 0 && enchants[socket].Id != id && catalog.Mods.GetValueOrDefault(id) is { } other
+                    && other.Stats.Select(s => Math.Max(s.Min, s.Max)).ToList() is var top
+                    && catalog.Lines(other, top).Where(l => l.Length > 0).ToList() is [{ } worded] && Reads(worded) is { } l)
+                {
+                    enchants[socket] = new CraftedMod { Id = id, Section = "enchant", Values = top };
+                    enchantLines.Remove(l);
+                    Note(l.Number, ImportStatus.Mod, Describe(other, false));
+                }
+        }
+
         var mods = new List<CraftedMod>();
-        var pools = b.Pools.ToDictionary(p => p.Key, p => catalog.Pool(b, p.Key).Select(m => m.Id).ToHashSet(StringComparer.Ordinal));
+        var pools = b.Pools.ToDictionary(p => p.Key, p => catalog.Pool(b, p.Key, enchants).Select(m => m.Id).ToHashSet(StringComparer.Ordinal));
         HashSet<string> Pool(string key) => pools.GetValueOrDefault(key) ?? [];
         var baseImplicits = b.Implicits.ToHashSet(StringComparer.Ordinal);
         // The game's header names the affix and whether it is a prefix or a suffix.
@@ -223,10 +264,12 @@ static class ItemImport
             (line.Affix is { Length: > 0 } affix && !string.Equals(affix, mod.Name, StringComparison.OrdinalIgnoreCase) ? 20 : 0)
             + (line.Kind is { } kind && ((kind.Contains("Prefix", StringComparison.Ordinal) && !mod.Prefix) || (kind.Contains("Suffix", StringComparison.Ordinal) && !mod.Suffix)) ? 20 : 0);
 
-        Match(catalog, [.. lines.Where(l => l.Implicit)], "implicit", mods, Note, (mod, line) =>
+        // An enchantment line the base's own enchantments took is done; the others are told they are left out.
+        bool Left(ModLine l) => !l.Enchant || enchantLines.Contains(l);
+        Match(catalog, [.. lines.Where(l => l.Implicit && Left(l))], "implicit", mods, Note, (mod, line) =>
             (baseImplicits.Contains(mod.Id) ? 1 : Pool("corrupted").Contains(mod.Id) ? 2 : Pool("eldritch").Contains(mod.Id) ? 3
             : mod.Generation is 3 or 5 or 28 or 29 ? 4 : 5) + Hint(mod, line));
-        Match(catalog, [.. lines.Where(l => !l.Implicit)], "explicit", mods, Note, (mod, line) =>
+        Match(catalog, [.. lines.Where(l => !l.Implicit && Left(l))], "explicit", mods, Note, (mod, line) =>
             (ids.ContainsKey(mod.Id) ? 0
             : line.Crafted && Pool("crafted").Contains(mod.Id) ? 1
             : Pool("pool").Contains(mod.Id) ? 2
@@ -248,7 +291,7 @@ static class ItemImport
         // A mod only an influence brings makes the item that influence's.
         foreach (var m in mods.Where(m => m.Section == "explicit" && !Pool("pool").Contains(m.Id)))
             if (Influences.FirstOrDefault(i => Pool(i).Contains(m.Id)) is { } influence && !item.States.Contains(influence)) item.States.Add(influence);
-        item.Mods = mods;
+        item.Mods = [.. enchants, .. mods];
 
         // Without an item level the item gets one every modifier fits.
         int needed = mods.Select(m => catalog.Mods.GetValueOrDefault(m.Id)?.Level ?? 1).DefaultIfEmpty(1).Max();
@@ -261,6 +304,26 @@ static class ItemImport
         var report = Enumerable.Range(0, source.Length).Where(i => Line(i).Length > 0)
             .Select(i => new ImportLine(i, source[i].TrimEnd(), notes[i].Status, notes[i].Note ?? "")).ToList();
         return new ImportedItem(item, name.Length > 0 ? name : baseLine, report);
+    }
+
+    /// <summary>The line that words one of the base's enchantments, with the values that give its numbers: the ones a new
+    /// item has, or one of them anywhere in the range the base gives it. Null when no line does.</summary>
+    static (ModLine Line, List<int> Values)? Worded(CrafterCatalog catalog, CraftBase b, CraftedMod enchant, CraftMod mod, List<ModLine> lines)
+    {
+        var tries = new List<List<int>> { enchant.Values };
+        for (int s = 0; s < enchant.Values.Count && s < mod.Stats.Count; s++)
+        {
+            var (min, max) = CrafterCatalog.Range(b, enchant, mod, s);
+            for (int v = min; v <= max && max - min <= 100; v++)
+                if (v != enchant.Values[s]) tries.Add([.. enchant.Values.Select((old, i) => i == s ? v : old)]);
+        }
+        foreach (var values in tries)
+        {
+            if (catalog.Lines(mod, values).Where(l => l.Length > 0).ToList() is not [var text]) continue;
+            var shape = ShapeOf(text);
+            if (lines.FirstOrDefault(l => Same(shape, l.Shape) && shape.Numbers.SequenceEqual(l.Shape.Numbers)) is { } line) return (line, values);
+        }
+        return null;
     }
 
     static string NoItem => L.Text("This is not an item: copy one with Ctrl+C in Path of Building or in the game.");

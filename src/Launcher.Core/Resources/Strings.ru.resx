@@ -3583,6 +3583,9 @@
   <data name="Text_63c5b77101f2" xml:space="preserve">
     <value>Заклинание</value>
   </data>
+  <data name="Text_63f3c699c200" xml:space="preserve">
+    <value>Гнёзда для самоцветов</value>
+  </data>
   <data name="Text_640d9ff82c7d" xml:space="preserve">
     <value>Серп</value>
   </data>
@@ -3815,6 +3818,9 @@
   </data>
   <data name="Text_6a1ec725867a" xml:space="preserve">
     <value>Добавить на предмет</value>
+  </data>
+  <data name="Text_6a278e6e3793" xml:space="preserve">
+    <value>Малые умения даруют</value>
   </data>
   <data xml:space="preserve" name="Text_6a3fe8876b56">
     <value>Сборки</value>
@@ -6843,6 +6849,9 @@
   <data name="Text_c1879f2b1599" xml:space="preserve">
     <value>Этот клиент неполный, использовать его нельзя.</value>
   </data>
+  <data name="Text_c1949802a579" xml:space="preserve">
+    <value>Зачарования</value>
+  </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>Назад к моим модам</value>
   </data>
@@ -8564,6 +8573,9 @@
   </data>
   <data name="Text_f28b9ca197d4" xml:space="preserve">
     <value>Святилище</value>
+  </data>
+  <data name="Text_f2b23cdca8d1" xml:space="preserve">
+    <value>Зачарование</value>
   </data>
   <data xml:space="preserve" name="Text_f2b4f43625b6">
     <value>Усиливает контрастность текста; при необходимости меняет фон кнопок.</value>
