@@ -563,6 +563,13 @@ to a user.
 - Only one `live.ps1` runs at a time; the buttons wait while one does (the status strip says so). The launcher runs it with Windows PowerShell and
   turns off MSBuild's reused nodes for it, the fix the server's troubleshooting table names for a script that never
   returns. It takes the script's end from the process's exit, not from the end of its output.
+- Waypoint started from a PowerShell 7 shell (a terminal, an editor's) inherits that shell's `PSModulePath`, which names
+  PowerShell 7's own module folders first. Windows PowerShell, which `live.ps1` and the adapter run under, then cannot load
+  its built-in modules, and a script stops at a command as plain as `Get-FileHash` ("is not recognized"). PowerShell 7 takes
+  its own folders out when it starts Windows PowerShell itself, but not for a program in between, so Waypoint does the same
+  for its own process at its start (`Platform.UseWindowsPowerShellModules`): PowerShell 7's user folder, its shared folder
+  and the `Modules` folder beside a `pwsh` go; every other entry stays, and so everything Waypoint starts gets a path
+  Windows PowerShell can use.
 - The **Setup** list checks the server's one-time steps (**Guided setup** opens the Setup section): the client copy, the keys, the patched client, the gateway
   list, the extracted data, Node and ooz, whether the checkout has the launcher hooks, whether the game settings are separate
   from the normal game's, the network mode in the settings file this client really uses (Predictive is preferred; Lockstep or
