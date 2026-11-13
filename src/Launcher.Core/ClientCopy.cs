@@ -13,7 +13,8 @@ public sealed record ClientCopyProgress(string File, long Done, long Total);
 /// Copies a client into a checkout's <c>Client</c> folder, never touching the source. It can stop at any moment and go on
 /// later: a file is written as <c>name.partial</c> and takes its real name only when complete, so a file with its real name is
 /// always whole. (That is also why it is never compared with the source: Content.ggpk changes once the client is prepared.)
-/// Content.ggpk goes last, so a checkout that has it has all of the client. A client already prepared can instead be shared
+/// The file a layout is known by goes last (Content.ggpk, or a Steam install's Bundles2\_.index.bin), so a checkout that
+/// has it has all of the client. A client already prepared can instead be shared
 /// through a link, which saves the copy: only that kind, because preparing a client changes it, and only with the keys it
 /// was patched for.
 /// </summary>
@@ -21,7 +22,7 @@ public static class ClientCopy
 {
     const int BufferSize = 4 * 1024 * 1024;
     /// <summary>Room left over on the drive, so a copy does not end with a full disk.</summary>
-    internal const long Margin = 2_000_000_000;
+    public const long Margin = 2_000_000_000;
 
     /// <summary>A patched client only works with the keys it was patched for: they come with it when the checkout has none
     /// yet, and otherwise it stays behind and the client is patched again. <paramref name="target"/> is another folder than
@@ -44,7 +45,10 @@ public static class ClientCopy
             if (!withKeys && !keepPatched && relative.Equals("Game.patched.exe", StringComparison.OrdinalIgnoreCase)) continue;
             files.Add(new(file.FullName, Path.Combine(target, relative), file.Length));
         }
-        files = files.OrderBy(f => Path.GetFileName(f.Target).Equals("Content.ggpk", StringComparison.OrdinalIgnoreCase)).ToList();
+        string index = Path.Combine("Bundles2", "_.index.bin");
+        bool Last(ClientCopyFile file) => Path.GetRelativePath(target, file.Target) is var relative
+            && (relative.Equals("Content.ggpk", StringComparison.OrdinalIgnoreCase) || relative.Equals(index, StringComparison.OrdinalIgnoreCase));
+        files = files.OrderBy(Last).ToList();
         long total = files.Sum(f => f.Length), remaining = 0;
         foreach (var file in files)
         {
@@ -82,7 +86,7 @@ public static class ClientCopy
     static void RemoveDeadLink(string target)
     {
         if (new DirectoryInfo(target).LinkTarget is null) return;
-        if (ClientLocator.Classify(target) is ClientKind.Ready or ClientKind.Standalone)
+        if (ClientLocator.IsClient(target))
             throw new IOException(L.Text("Client must be a separate physical copy in this checkout, not a link to another folder."));
         if (OperatingSystem.IsWindows()) Directory.Delete(target); else File.Delete(target); // a Unix link is a file
     }
@@ -117,8 +121,8 @@ public static class ClientCopy
     }
 
     /// <summary>Links the checkout's <c>Client</c> to a prepared client, with the keys from <paramref name="keys"/>
-    /// (<see cref="SharedKeys"/>). A folder with anything in it stays: that may be a copy stopped halfway.</summary>
-    public static async Task ShareAsync(string client, string checkout, string keys, Action<string> output, CancellationToken stop)
+    /// (<see cref="SharedKeys"/>; null brings none). A folder with anything in it stays: that may be a copy stopped halfway.</summary>
+    public static async Task ShareAsync(string client, string checkout, string? keys, Action<string> output, CancellationToken stop)
     {
         string target = Path.Combine(checkout, "Client");
         RemoveDeadLink(target);
@@ -134,7 +138,7 @@ public static class ClientCopy
             if (code != 0) throw new IOException(L.Text("Windows could not make the link at {0}. Copy the client instead.", target));
         }
         else Directory.CreateSymbolicLink(target, ClientLocator.RealPath(client));
-        BringKeys(keys, checkout);
+        if (keys is not null) BringKeys(keys, checkout);
     }
 
     /// <summary>What belongs with a prepared client, for a checkout that lacks it.</summary>

@@ -106,6 +106,7 @@ $ClientExecutableHash = ''
 function Set-Stage($stage, $detail) { }
 function dotnet {
     $global:LASTEXITCODE = 0
+    if ($args[1] -eq 'gateway') { $script:gatewayTarget = $args[2] }
     if ($args[1] -eq 'keygen') { Set-Content -LiteralPath (At 'data/login-keys.json') -Value 'new fixture keys' }
     if ($args[1] -eq 'patch') {
         $script:patchCalls++
@@ -172,6 +173,33 @@ try {
     Check ((Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $ClientExecutableHash -and
         (Test-Path -LiteralPath (At 'Client/Game.patched.exe'))) 'fresh setup copies the original and creates its prepared executable'
     Check (-not (Test-Path -LiteralPath (At 'data/client-preparation-backups'))) 'fresh setup does not create unnecessary executable backups'
+    Check ($script:gatewayTarget -eq (At 'Client/Content.ggpk')) 'a standalone client''s login list is selected in its archive'
+
+    # A client from Steam has no Content.ggpk: its game files are loose, its executable is PathOfExileSteam.exe, and the
+    # checkout's own live.ps1 says whether its LocalExile runs one.
+    $script:root = Join-Path $preparationFixture 'steam'
+    New-Item -ItemType Directory -Path (At 'Client/Bundles2'), (At 'data'), (At 'scripts/dev') | Out-Null
+    [IO.File]::WriteAllText((At 'Client/PathOfExile_x64Steam.exe'), 'small launcher')
+    [IO.File]::WriteAllText((At 'Client/PathOfExileSteam.exe'), 'steam verified executable')
+    [IO.File]::WriteAllText((At 'Client/Bundles2/_.index.bin'), 'index fixture')
+    [IO.File]::WriteAllText((At 'Client/gateway_list.txt'), 'login list fixture')
+    [IO.File]::WriteAllText((At 'data/login-keys.json'), 'existing steam fixture keys')
+    [IO.File]::WriteAllText((At 'scripts/dev/live.ps1'), 'param([switch]$ClientOnly) # an older LocalExile: Content.ggpk only')
+    $ClientExecutableHash = (Get-FileHash -LiteralPath (At 'Client/PathOfExileSteam.exe')).Hash
+    Check ((Get-ClientLayout) -eq 'Steam' -and -not (Test-SteamLayoutAccepted)) 'a client from Steam is told from a standalone one'
+    $refused = $null
+    try { Prepare-Client $stopped 6>$null } catch { $refused = $_.Exception.Message }
+    Check ($refused -like 'This LocalExile runs only a standalone client*' -and -not (Test-Path -LiteralPath (At 'Client/Game.exe'))) 'a LocalExile that runs no client from Steam leaves one unprepared'
+    [IO.File]::WriteAllText((At 'scripts/dev/live.ps1'), "param([switch]`$ClientOnly)`nNeed ((Test-Path 'Client\Content.ggpk') -or (Test-Path 'Client\Bundles2\_.index.bin')) 'neither'")
+    Check (Test-SteamLayoutAccepted) 'the checkout''s own live.ps1 says that it runs a client from Steam'
+    $script:gatewayTarget = $null
+    Prepare-Client $stopped 6>$null
+    Check ((Get-FileHash -LiteralPath (At 'Client/Game.exe')).Hash -eq $ClientExecutableHash -and
+        (Test-Path -LiteralPath (At 'Client/Game.patched.exe'))) 'a client from Steam gets Game.exe from PathOfExileSteam.exe and its prepared executable'
+    Check ($script:gatewayTarget -eq (At 'Client')) 'a client from Steam has its login list selected in the client folder'
+    Check ([IO.File]::ReadAllText((At 'data/login-keys.json')) -eq 'existing steam fixture keys' -and
+        [IO.File]::ReadAllText((At 'Client/Bundles2/_.index.bin')) -eq 'index fixture' -and
+        -not (Test-Path -LiteralPath (At 'Client/Content.ggpk'))) 'preparing a client from Steam keeps the keys and makes no archive'
 } finally {
     # The root is the GUID-named fixture created above; refuse redirected entries before recursive cleanup.
     Assert-Physical $preparationFixture

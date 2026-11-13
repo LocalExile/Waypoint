@@ -311,6 +311,185 @@ public class OwnClientTests : IDisposable
         Assert.True(File.Exists(Path.Combine(Retail, "Game.patched.exe")));
     }
 
+    [Fact]
+    public async Task In_Advanced_mode_a_link_to_another_LocalExiles_client_has_a_copy_too()
+    {
+        string theirs = Path.Combine(_top, "Other", "Client");
+        MakeClient(theirs);
+        File.WriteAllText(Path.Combine(_top, "Other", "GameServer.slnx"), "");
+        Junction(Client, theirs);
+        Assert.Null(OwnClient.Check(Folder));
+        var plan = OwnClient.Check(Folder, shared: true)!;
+        Assert.True(plan.Shared);
+        Assert.Contains("The linked game client (only read):", OwnClient.Text(plan).Details);
+        // What that LocalExile made in its client is its own: nothing there is named as left over.
+        Assert.DoesNotContain("Game.patched.exe", OwnClient.DoneText(plan));
+
+        var before = Snapshot(theirs);
+        await OwnClient.MoveAsync(Folder, null, default, shared: true);
+        Assert.False(IsLink(Client));
+        Assert.Equal(before, Snapshot(theirs));
+        Assert.Equal("patched for this folder's keys", File.ReadAllText(Path.Combine(Client, "Game.patched.exe")));
+        Assert.False(Directory.Exists(Copy));
+    }
+
+    [Fact]
+    public async Task A_copy_gives_way_to_a_link_and_comes_back_and_nothing_is_deleted()
+    {
+        MakeClient(Client);
+        File.WriteAllText(Path.Combine(Client, "mine.txt"), "this folder's own client");
+
+        // A link that is not made, or is refused, leaves the client in use where it was.
+        await Assert.ThrowsAsync<IOException>(() => ClientVersions.LinkAsync(Folder, () => Task.CompletedTask));
+        await Assert.ThrowsAsync<IOException>(() => ClientVersions.LinkAsync(Folder, () => throw new IOException("refused")));
+        Assert.True(File.Exists(Path.Combine(Client, "mine.txt")));
+        Assert.Empty(ClientVersions.Kept(Folder));
+
+        var before = Snapshot(Retail);
+        await ClientVersions.LinkAsync(Folder, () =>
+        {
+            Junction(Client, Retail);
+            return Task.CompletedTask;
+        });
+        Assert.True(IsLink(Client));
+        var kept = Assert.Single(ClientVersions.Kept(Folder));
+        Assert.True(File.Exists(Path.Combine(kept.Folder, "mine.txt")));
+        // A kept client takes a link's place only where that was asked for.
+        Assert.Throws<IOException>(() => ClientVersions.Use(Folder, kept.Name));
+        Assert.True(IsLink(Client));
+
+        ClientVersions.Use(Folder, kept.Name, overLink: true);
+        Assert.False(IsLink(Client));
+        Assert.True(File.Exists(Path.Combine(Client, "mine.txt")));
+        Assert.Equal(before, Snapshot(Retail));
+        Assert.False(Directory.Exists(Aside));
+        Assert.Empty(ClientVersions.Kept(Folder));
+    }
+
+    [Fact]
+    public async Task A_client_of_another_folder_is_copied_in_and_the_one_in_use_is_kept()
+    {
+        MakeClient(Client);
+        File.WriteAllText(Path.Combine(Client, "mine.txt"), "this folder's own client");
+        File.WriteAllText(Path.Combine(Client, "config.json"), """{"own":1}""");
+        string theirs = Path.Combine(_top, "Other", "Client"), side = Path.Combine(Folder, ClientVersions.CopiedFolder);
+        MakeClient(theirs);
+        File.WriteAllText(Path.Combine(theirs, "theirs.txt"), "the other folder's client");
+        var before = Snapshot(theirs);
+        var plan = ClientVersions.CopyInPlan(Folder, theirs);
+        Assert.Equal(plan.Total, plan.Remaining);
+
+        // A stop leaves the client in use as it was, and what was copied for the next try.
+        using (var stop = new CancellationTokenSource())
+        {
+            stop.Cancel();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => ClientVersions.CopyInAsync(Folder, theirs, null, stop.Token));
+        }
+        Assert.True(File.Exists(Path.Combine(Client, "mine.txt")));
+        // What a copy of another client left is not mixed into this one.
+        File.WriteAllText(Path.Combine(side, "stray.txt"), "of an earlier copy");
+        File.WriteAllText(Path.Combine(side, ".waypoint-copy-of"), Retail);
+
+        await ClientVersions.CopyInAsync(Folder, theirs, null, default);
+        Assert.Equal("the other folder's client", File.ReadAllText(Path.Combine(Client, "theirs.txt")));
+        Assert.False(File.Exists(Path.Combine(Client, "mine.txt")));
+        Assert.False(File.Exists(Path.Combine(Client, "stray.txt")));
+        // This folder has keys of its own, so the other folder's patched executable stayed behind: setup patches one for these.
+        Assert.False(File.Exists(Path.Combine(Client, "Game.patched.exe")));
+        // LocalExile's own game settings go with the folder, and none of Waypoint's marks stays in the client.
+        Assert.Equal("""{"own":1}""", File.ReadAllText(Path.Combine(Client, "config.json")));
+        Assert.DoesNotContain(Directory.EnumerateFiles(Client), file => Path.GetFileName(file).StartsWith(".waypoint", StringComparison.Ordinal));
+        var kept = Assert.Single(ClientVersions.Kept(Folder));
+        Assert.True(File.Exists(Path.Combine(kept.Folder, "mine.txt")));
+        Assert.Equal(before, Snapshot(theirs));
+        Assert.False(Directory.Exists(side));
+    }
+
+    [Fact]
+    public async Task A_link_and_a_copy_take_a_links_place_and_only_the_link_goes()
+    {
+        Junction(Client, Retail);
+        var retail = Snapshot(Retail);
+        string theirs = Path.Combine(_top, "Other", "Client");
+        MakeClient(theirs);
+        File.WriteAllText(Path.Combine(theirs, "theirs.txt"), "the other folder's client");
+
+        // A link that cannot be made puts the first one back.
+        await Assert.ThrowsAsync<IOException>(() => ClientVersions.LinkAsync(Folder, () => Task.CompletedTask));
+        Assert.True(File.Exists(Path.Combine(Client, "Content.ggpk")) && !File.Exists(Path.Combine(Client, "theirs.txt")));
+        await ClientVersions.LinkAsync(Folder, () =>
+        {
+            Junction(Client, theirs);
+            return Task.CompletedTask;
+        });
+        Assert.True(IsLink(Client) && File.Exists(Path.Combine(Client, "theirs.txt")));
+        Assert.False(Directory.Exists(Aside));
+        Assert.Empty(ClientVersions.Kept(Folder));
+        Assert.Equal(retail, Snapshot(Retail));
+
+        var before = Snapshot(theirs);
+        await ClientVersions.CopyInAsync(Folder, Retail, null, default);
+        Assert.False(IsLink(Client));
+        Assert.True(File.Exists(Path.Combine(Client, "Content.ggpk")) && !File.Exists(Path.Combine(Client, "theirs.txt")));
+        Assert.Empty(ClientVersions.Kept(Folder));
+        Assert.Equal(before, Snapshot(theirs));
+        Assert.Equal(retail, Snapshot(Retail));
+    }
+
+    [Fact]
+    public void Waypoints_own_folders_are_named_once_in_a_checkouts_own_exclude_file()
+    {
+        // A release has no git: nothing is written.
+        Assert.False(CheckoutIgnores.Ensure(Folder));
+        Assert.False(Directory.Exists(Path.Combine(Folder, ".git")));
+
+        string checkout = Path.Combine(_top, "checkout"), exclude = Path.Combine(checkout, ".git", "info", "exclude");
+        Directory.CreateDirectory(Path.GetDirectoryName(exclude)!);
+        File.WriteAllText(exclude, "# what this clone ignores\n*.mine\n");
+        Assert.True(CheckoutIgnores.Ensure(checkout));
+        Assert.True(CheckoutIgnores.Ensure(checkout));
+        string[] lines = File.ReadAllLines(exclude);
+        Assert.Contains("*.mine", lines);
+        foreach (string pattern in CheckoutIgnores.Patterns) Assert.Single(lines, line => line == pattern);
+
+        // A worktree's .git is a file that names its own folder, and that folder names the repository the file is in.
+        string worktree = Path.Combine(_top, "worktree"), own = Path.Combine(checkout, ".git", "worktrees", "w");
+        Directory.CreateDirectory(worktree);
+        Directory.CreateDirectory(own);
+        File.WriteAllText(Path.Combine(own, "commondir"), "../..\n");
+        File.WriteAllText(Path.Combine(worktree, ".git"), "gitdir: " + own.Replace('\\', '/') + "\n");
+        File.Delete(exclude);
+        Assert.True(CheckoutIgnores.Ensure(worktree));
+        Assert.Contains("/Clients/", File.ReadAllLines(exclude));
+    }
+
+    [Fact]
+    public void Git_leaves_alone_what_Waypoint_keeps_beside_Client()
+    {
+        string checkout = Path.Combine(_top, "repository");
+        Directory.CreateDirectory(checkout);
+        Assert.Equal("", Git(checkout, "init", "-q"));
+        foreach (string folder in new[] { Path.Combine(ClientVersions.KeptFolder, "3.29.3d"), ClientVersions.NextFolder, ClientVersions.CopiedFolder, ClientLocator.RemovedClientFolder, OwnClient.NewFolder })
+        {
+            Directory.CreateDirectory(Path.Combine(checkout, folder));
+            File.WriteAllText(Path.Combine(checkout, folder, "steam_api64.dll"), "not git's");
+        }
+        File.WriteAllText(Path.Combine(checkout, "notes.txt"), "the developer's own");
+        Assert.True(CheckoutIgnores.Ensure(checkout));
+        // What a switch of the checkout would stash: the developer's file, and nothing of Waypoint's.
+        Assert.Equal("?? notes.txt", Git(checkout, "status", "--porcelain", "--untracked-files=all"));
+    }
+
+    static string Git(string folder, params string[] arguments)
+    {
+        var start = new ProcessStartInfo("git") { WorkingDirectory = folder, UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+        foreach (string argument in arguments) start.ArgumentList.Add(argument);
+        using var process = Process.Start(start)!;
+        string output = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+        return output.Trim();
+    }
+
     static async Task<bool> Hold(Func<Task> work)
     {
         await work();

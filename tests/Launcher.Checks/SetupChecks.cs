@@ -77,7 +77,24 @@ static class SetupChecks
         string steam = Client(root, "steam", ("PathOfExileSteam.exe", 10), ("Bundles2/_.index.bin", 10));
         string empty = Client(root, "empty", ("readme.txt", 10));
         check(ClientLocator.Classify(standalone) == ClientKind.Standalone && ClientLocator.Classify(ready) == ClientKind.Ready, "a standalone client and a prepared one are told apart");
-        check(ClientLocator.Classify(steam) == ClientKind.Unsupported && ClientLocator.Describe(steam) is { Usable: false }, "a Steam layout is found, and reported as unusable");
+        // LocalExile's own test of a Steam install: the index of its loose game files, and the executable under one of its names.
+        string steamReady = Client(root, "steam-ready", ("PathOfExileSteam.exe", 10), ("Game.exe", 10), ("Game.patched.exe", 10), ("Bundles2/_.index.bin", 10));
+        string epic = Client(root, "epic", ("PathOfExileEGS.exe", 10), ("Bundles2/a.bundle.bin", 10));
+        string half = Client(root, "steam-no-index", ("PathOfExileSteam.exe", 10), ("Bundles2/a.bundle.bin", 10));
+        check(ClientLocator.Classify(steam) == ClientKind.Steam && ClientLocator.Describe(steam) is { Usable: true, FromSteam: true, SteamIndexSha256.Length: 64, Bytes: 20 },
+            "a client from Steam is one LocalExile can use, found with the index its game files are known by");
+        check(ClientLocator.Classify(steamReady) == ClientKind.Ready && ClientLocator.Describe(steamReady) is { FromSteam: true } && ClientLocator.IsClient(steamReady),
+            "a prepared client from Steam is a prepared client");
+        check(ClientLocator.Classify(epic) == ClientKind.Unsupported && ClientLocator.Describe(epic) is { Usable: false, FromSteam: false } && !ClientLocator.IsClient(epic)
+            && ClientLocator.Classify(half) == ClientKind.Unsupported, "an Epic layout, and a Steam one without its index, are found and reported as unusable");
+        check(ClientLocator.Describe(standalone) is { FromSteam: false, SteamIndexSha256: null } && ClientLocator.Executable(steam) == Path.Combine(steam, "PathOfExileSteam.exe"),
+            "a standalone client has no index, and a Steam install's executable is PathOfExileSteam.exe");
+        string index = ClientLocator.SteamIndexOf(steam)!;
+        ListedBuild[] list = [new("3.29.3c", "release", new string('a', 64)), new("3.29.3d", "release", new string('b', 64), index)];
+        check(ClientLocator.SteamFilesFit(list, "3.29.3d", index) && ClientLocator.SteamFilesFit(list, null, index), "a LocalExile runs the Steam files its list names by their index");
+        check(!ClientLocator.SteamFilesFit(list, "3.29.3c", index) && !ClientLocator.SteamFilesFit(list, "3.29.3d", new string('c', 64))
+            && !ClientLocator.SteamFilesFit(null, "3.29.3d", index) && !ClientLocator.SteamFilesFit(list, "3.29.3d", null),
+            "Steam files of another build, a LocalExile with no list, and a standalone client do not");
         check(ClientLocator.Classify(empty) is null && ClientLocator.Describe(empty) is null, "a folder without a client is not one");
         check(ClientLocator.IsKnownBuild(standalone) == false && ClientLocator.IsKnownBuild(empty) is null, "an executable of another size is not the build LocalExile needs");
     }
@@ -91,6 +108,15 @@ static class SetupChecks
 
         var plan = ClientCopy.Plan(source, checkout);
         check(Path.GetFileName(plan.Files[^1].Target) == "Content.ggpk", "Content.ggpk goes last, so having it means having the whole client");
+        // A client from Steam is known by the index of its loose files: that file goes last instead.
+        string steam = Client(root, "steam-source", ("Bundles2/_.index.bin", 100), ("PathOfExileSteam.exe", 2000), ("Bundles2/a.bundle.bin", 3000), ("gateway_list.txt", 50), ("zz/last.bin", 10));
+        string steamCheckout = Path.Combine(root, "steam-copy-checkout");
+        var steamPlan = ClientCopy.Plan(steam, steamCheckout);
+        check(Path.GetRelativePath(Path.Combine(steamCheckout, "Client"), steamPlan.Files[^1].Target) == Path.Combine("Bundles2", "_.index.bin"),
+            "a Steam client's index goes last, so having it means having the whole client");
+        await ClientCopy.RunAsync(steamPlan, null, CancellationToken.None);
+        check(ClientLocator.Classify(Path.Combine(steamCheckout, "Client")) == ClientKind.Steam && ClientVersions.Layout(steamCheckout) == ClientLayout.Steam
+            && File.Exists(Path.Combine(steamCheckout, "Client", "gateway_list.txt")), "the whole Steam client arrives, its loose login list included");
         check(plan.Files.All(f => !f.Source.Contains("logs")), "the client's own logs are not copied");
         check(plan.Remaining == plan.Total && plan.Total == 6_005_000, "the plan counts what is left to copy");
 

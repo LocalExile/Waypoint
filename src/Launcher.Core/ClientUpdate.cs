@@ -40,11 +40,12 @@ public static class ClientUpdate
     public static Func<IEnumerable<string?>> KnownFolders { get; set; } = () => [];
 
     /// <summary>A quick look for a client of a build (a few seconds at most): the player's LocalExile folders and the usual places
-    /// first. A plain client goes before one another LocalExile prepared, whose patched executable trusts that folder's keys.
-    /// Its folder, or null.</summary>
+    /// first. A plain client goes before one another LocalExile prepared, whose patched executable trusts that folder's keys,
+    /// and a standalone one before one from Steam, which only a LocalExile from v0.5.0-beta on runs (<see cref="Check"/>
+    /// passes over one its folder cannot run). Its folder, or null.</summary>
     public static Func<string, CancellationToken, string?> FindClient { get; set; } = (build, stop) =>
         ClientLocator.Find(KnownFolders().OfType<string>().Where(f => f.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase), stop, TimeSpan.FromSeconds(2))
-            .Clients.Where(c => c.Usable && c.Build == build).OrderBy(c => c.Kind == ClientKind.Ready ? 1 : 0).FirstOrDefault()?.Folder;
+            .Clients.Where(c => c.Usable && c.Build == build).OrderBy(c => c.Kind == ClientKind.Ready ? 1 : 0).ThenBy(c => c.FromSteam ? 1 : 0).FirstOrDefault()?.Folder;
 
     /// <summary>What the folder needs before the game starts; null when its client fits (or is not one Waypoint knows). With
     /// <paramref name="lookForNewer"/>, a folder whose LocalExile is older than current LocalExile but fits its client is also
@@ -52,7 +53,10 @@ public static class ClientUpdate
     /// <paramref name="find"/> stands for <see cref="FindClient"/>.</summary>
     public static Plan? Check(string folder, bool lookForNewer = false, CancellationToken stop = default, Func<string, CancellationToken, string?>? find = null)
     {
-        find ??= FindClient;
+        var look = find ?? FindClient;
+        // A client from Steam is one to move to only for a LocalExile that runs its files.
+        find = (version, cancel) => look(version, cancel) is { } at
+            && (ClientLocator.SteamIndexOf(at) is not { } index || ClientLocator.SteamFilesFit(LocalExileBuilds.Of(folder), version, index)) ? at : null;
         // Every version this folder's LocalExile runs, newest first: a client of any of them fits.
         var supported = ClientLocator.Supported(folder);
         if (supported.Count == 0) return null;
@@ -107,7 +111,11 @@ public static class ClientUpdate
         bool exists = Directory.Exists(client);
         bool link = exists && new DirectoryInfo(client).Attributes.HasFlag(FileAttributes.ReparsePoint);
         double gigabytes = 0;
-        try { if (exists) gigabytes = new FileInfo(Path.Combine(client, "Content.ggpk")).Length / 1e9; }
+        try
+        {
+            string archive = Path.Combine(client, "Content.ggpk");
+            if (exists) gigabytes = (File.Exists(archive) ? new FileInfo(archive).Length : ClientVersions.SizeOf(Path.Combine(client, "Bundles2"))) / 1e9;
+        }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
         return new(kind, folder, have, need, link, link ? ClientLocator.RealPath(client) : client, gigabytes, found, older);
     }

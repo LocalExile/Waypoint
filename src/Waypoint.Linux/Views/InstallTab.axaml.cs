@@ -526,6 +526,7 @@ partial class InstallTab : UserControl
         _row?.Show(SetupState.Failed, reason ?? "");
         _note = ClientExtractionFailure.IsHncFailure(failure ?? result?.Error)
             ? () => ClientExtractionFailure.RecoveryHint
+            : ClientExtractionFailure.IsBuildRefusal(failure ?? result?.Error) ? () => ClientExtractionFailure.Refused
             : () => L.Text("The game didn't start.") + (reason is null ? "" : "\n" + reason);
     }
 

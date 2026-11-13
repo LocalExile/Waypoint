@@ -68,7 +68,9 @@
                 <DockPanel Background="{DynamicResource Shell.Panel}">
                     <DockPanel DockPanel.Dock="Top" Margin="10,6,6,0">
                         <Button DockPanel.Dock="Right" Content="{l:Loc 'Clear'}" Click="ClearOutput" Height="24" Padding="10,0" Margin="0" />
-                        <TextBlock x:Name="RunState" Text="{l:Loc 'Ready.'}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        <!-- Two lines at most: a sentence that says where to go on (a refused game client) is read whole. -->
+                        <TextBlock x:Name="RunState" Text="{l:Loc 'Ready.'}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap" MaxHeight="38" Margin="0,0,8,0" />
                     </DockPanel>
                     <TextBox x:Name="Output" IsReadOnly="True" FontFamily="{StaticResource Mono}" FontSize="12" Margin="8,2,8,6"
                              BorderThickness="0" md:TextFieldAssist.DecorationVisibility="Hidden" Background="Transparent"

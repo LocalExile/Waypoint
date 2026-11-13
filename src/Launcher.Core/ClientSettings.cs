@@ -78,7 +78,7 @@ public static class ClientSettings
 
     /// <summary>A setup with a whole client that has no settings of its own, and has not been offered them.</summary>
     public static bool ShouldOffer(string client, bool offered, string? documents = null) =>
-        !offered && File.Exists(Path.Combine(client, "Content.ggpk")) && Read(client, documents).Kind != ClientSettingsKind.Separate;
+        !offered && ClientVersions.FilesOf(client) != ClientLayout.None && Read(client, documents).Kind != ClientSettingsKind.Separate;
 
     /// <summary>The network mode in a settings file; null when it names none or cannot be read.</summary>
     public static string? NetworkMode(string configFile)

@@ -69,6 +69,29 @@ public class ClientUpdateTests : IDisposable
     }
 
     [Fact]
+    public void A_client_from_Steam_is_one_to_move_to_only_for_a_LocalExile_that_runs_its_files()
+    {
+        Release("3.29.3c", "3.29.3b");
+        string steam = Path.Combine(_top, "steam");
+        Directory.CreateDirectory(Path.Combine(steam, "Bundles2"));
+        File.WriteAllText(Path.Combine(steam, "Bundles2", "_.index.bin"), "the index of its loose game files");
+        File.WriteAllText(Path.Combine(steam, "PathOfExileSteam.exe"), "the game");
+        _found["3.29.3c"] = steam;
+        // A release that only names its version lists no builds, so it runs no Steam files: the client found is passed over.
+        Assert.Equal(ClientUpdate.Kind.UseOlder, ClientUpdate.Check(Folder)!.Kind);
+        try
+        {
+            LocalExileBuilds.Override = _ => [new("3.29.3c", "release", new string('a', 64), ClientLocator.SteamIndexOf(steam))];
+            var plan = ClientUpdate.Check(Folder)!;
+            Assert.Equal((ClientUpdate.Kind.Replace, steam), (plan.Kind, plan.Found));
+            // Steam files of another build than the list names are not that LocalExile's either.
+            LocalExileBuilds.Override = _ => [new("3.29.3c", "release", new string('a', 64), new string('b', 64))];
+            Assert.Equal(ClientUpdate.Kind.UseOlder, ClientUpdate.Check(Folder)!.Kind);
+        }
+        finally { LocalExileBuilds.Override = null; }
+    }
+
+    [Fact]
     public void A_fitting_client_starts_as_usual()
     {
         Release("3.29.3c", "3.29.3c");

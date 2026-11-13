@@ -40,7 +40,7 @@
                     <TextBlock Text="{l:Loc '3.  Copies the client and prepares it'}" Margin="0,0,0,14" />
                     <TextBlock Text="{l:Loc 'You can stop at any point: what is finished stays finished, and the guide continues from there next time. Setup never changes your own Path of Exile install.'}"
                                Style="{StaticResource Caption}" />
-                    <TextBlock Text="{l:Loc 'You need a Path of Exile client that LocalExile runs: your own standalone copy, or for a release one downloaded from Steam after this guide.'}"
+                    <TextBlock Text="{l:Loc 'You need a Path of Exile client that LocalExile runs: your own standalone or Steam install, or one downloaded from Steam after this guide.'}"
                                Style="{StaticResource Caption}" Margin="0,8,0,0" />
                 </StackPanel>
 

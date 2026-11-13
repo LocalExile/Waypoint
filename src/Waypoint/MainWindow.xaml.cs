@@ -165,6 +165,10 @@ public partial class MainWindow : Window
         // Another version of the game came into the folder: the sidebar's box says which.
         InstallView.ClientChanged += Folders.ShowCurrent;
         Control.ClientGuideRequested += Setup.OpenSetupGuide;
+        // The Game client window opens from the sidebar's folder list, the same place in every mode. A release's Play page
+        // owns it, with the copy and the move that go on from it; Advanced mode's list leaves that page out, so it is shown.
+        Folders.GameClientRequested += OpenGameClient;
+        InstallView.ShowRequested += () => ShowSection(InstallView);
         InstallView.OlderReleaseRequested += Setup.SetUpRelease;
         InstallView.Updated += () =>
         {
@@ -228,6 +232,8 @@ public partial class MainWindow : Window
         {
             _ = Control.RefreshSetup();
             InstallView.InstallChanged();
+            // The guide may have brought another game client: the sidebar's box says which.
+            Folders.ShowCurrent();
         };
         SettingsView.CheckUpdatesRequested += () => _ = CheckForUpdates(manual: true);
         SettingsView.DeveloperModeChanged += ShowMode;
@@ -334,6 +340,23 @@ public partial class MainWindow : Window
             Sections.SelectedItem = null;
             Show(section);
         }
+    }
+
+    /// <summary>The sidebar's "Game client…": the clients of the folder in use. A source copy's move to another client is
+    /// Control's, the one that comes before its Play; a release's is its Play page's.</summary>
+    void OpenGameClient()
+    {
+        if (Repo.IsInstall)
+        {
+            InstallView.OpenClientVersions();
+            return;
+        }
+        var window = new ClientVersionsWindow(this, _shared);
+        window.ShowDialog();
+        if (window.Changed) Folders.ShowCurrent();
+        if (!window.MoveRequested) return;
+        ShowSection(Control);
+        _ = Control.MoveClientAsync();
     }
 
     void OpenLogsSection(object sender, RoutedEventArgs e) => ShowSection(LogsView);

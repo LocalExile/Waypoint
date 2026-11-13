@@ -8,7 +8,7 @@ public sealed record LeagueArtwork(string Normal, string Hardcore)
 {
     public static async Task<LeagueArtwork?> LoadAsync(string root, CancellationToken cancellation = default)
     {
-        if (!File.Exists(Path.Combine(root, "Client/Content.ggpk"))) return null;
+        if (ClientVersions.FilesOf(Path.Combine(root, "Client")) == ClientLayout.None) return null;
         var start = new ProcessStartInfo(Platform.Python) { WorkingDirectory = root, CreateNoWindow = true, UseShellExecute = false,
             RedirectStandardOutput = true, RedirectStandardError = true };
         foreach (var argument in new[] { Path.Combine(Path.GetDirectoryName(BridgeScripts.Extract())!, "LeagueArt.py"), root,

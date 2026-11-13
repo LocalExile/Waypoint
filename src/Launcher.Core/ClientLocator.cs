@@ -5,22 +5,28 @@ using Microsoft.Win32;
 
 namespace Launcher.Core;
 
-/// <summary>Ready: already patched by a LocalExile checkout. Standalone: a client to copy. Unsupported: a Steam or Epic
-/// layout, which has no Content.ggpk and cannot be used, found only to say so.</summary>
-public enum ClientKind { Ready, Standalone, Unsupported }
+/// <summary>Ready: already patched by a LocalExile, in either layout. Standalone: a client to copy, with its game files in
+/// Content.ggpk. Steam: a client to copy that came from Steam, with its game files loose in Bundles2. Unsupported: a folder
+/// of the game LocalExile runs nothing from (an Epic install, a Steam one without its index), found only to say so.</summary>
+public enum ClientKind { Ready, Standalone, Steam, Unsupported }
 
 /// <param name="KnownBuild">Whether its executable is the build LocalExile needs (<see cref="ClientLocator.Build"/>); null
 /// when it has none to check.</param>
 /// <param name="Build">The build's name when it is one Waypoint knows (<see cref="ClientLocator.BuildOf"/>).</param>
-public sealed record FoundClient(string Folder, ClientKind Kind, long Bytes, bool? KnownBuild, string? Build = null)
+/// <param name="SteamIndexSha256">For a client whose game files are Steam's loose ones, prepared or not: the SHA-256 of
+/// its <c>Bundles2/_.index.bin</c>, by which LocalExile knows whose build they are. Null for a standalone client.</param>
+public sealed record FoundClient(string Folder, ClientKind Kind, long Bytes, bool? KnownBuild, string? Build = null, string? SteamIndexSha256 = null)
 {
     public string Summary => L.Text(Kind switch
     {
         ClientKind.Ready => "Already prepared for LocalExile",
         ClientKind.Standalone => "Standalone client",
-        _ => "Steam or Epic layout: it cannot be used",
+        ClientKind.Steam => "Client from Steam",
+        _ => "LocalExile cannot use this install",
     }) + (Bytes > 0 ? $" · {Bytes / 1e9:0.#} GB" : "") + (Build is not null ? " · " + Build : KnownBuild == false ? " · " + L.Text("not a version LocalExile runs") : "");
     public bool Usable => Kind != ClientKind.Unsupported;
+    /// <summary>Its game files are Steam's loose ones, whether a LocalExile prepared it or not.</summary>
+    public bool FromSteam => SteamIndexSha256 is not null;
 }
 
 /// <param name="Searched">Where it looked, for the report when nothing is found.</param>
@@ -97,19 +103,53 @@ public static class ClientLocator
         ".git", ".vs", ".venv", "node_modules", "bin", "obj", "Bundles2", "logs"
     };
 
-    /// <summary>What a folder is; null when it holds no client.</summary>
+    /// <summary>What a folder is; null when it holds no client. The two layouts are told apart as LocalExile does
+    /// (<c>ClientFiles.Resolve</c>): a Content.ggpk first, else Steam's loose files, known by <c>Bundles2/_.index.bin</c>,
+    /// with the executable under one of the names LocalExile looks for (<c>ClientInstall.FindExecutable</c>).</summary>
     public static ClientKind? Classify(string folder)
     {
         bool File(string name) => System.IO.File.Exists(Path.Combine(folder, name));
-        if (File("Content.ggpk") && (File("PathOfExile.exe") || File("Game.exe")))
+        bool game = File("PathOfExile.exe") || File("Game.exe");
+        if (File("Content.ggpk") && game)
             return File("Game.patched.exe") ? ClientKind.Ready : ClientKind.Standalone;
+        if (File(Path.Combine("Bundles2", "_.index.bin")) && (game || File("PathOfExileSteam.exe")))
+            return File("Game.patched.exe") ? ClientKind.Ready : ClientKind.Steam;
         return Directory.Exists(Path.Combine(folder, "Bundles2")) && (File("PathOfExileSteam.exe") || File("PathOfExile.exe") || File("PathOfExile_x64Steam.exe") || File("PathOfExileEGS.exe"))
             ? ClientKind.Unsupported : null;
     }
 
-    /// <summary>The original executable of a client folder.</summary>
+    /// <summary>Whether a folder holds a client LocalExile can run from, in either layout, prepared or not.</summary>
+    public static bool IsClient(string folder) => Classify(folder) is ClientKind.Ready or ClientKind.Standalone or ClientKind.Steam;
+
+    /// <summary>The original executable of a client folder (a Steam install's is PathOfExileSteam.exe).</summary>
     public static string? Executable(string folder) =>
-        new[] { "PathOfExile.exe", "Game.exe" }.Select(n => Path.Combine(folder, n)).FirstOrDefault(File.Exists);
+        new[] { "PathOfExile.exe", "PathOfExileSteam.exe", "Game.exe" }.Select(n => Path.Combine(folder, n)).FirstOrDefault(File.Exists);
+
+    /// <summary>The SHA-256 of a client folder's <c>Bundles2/_.index.bin</c>: LocalExile knows a Steam install's game files
+    /// by it (<c>ClientFiles.Problem</c>). Null for a standalone client, a folder without the file, or one that cannot be
+    /// read. It reads some 20 MB: never on the UI thread.</summary>
+    public static string? SteamIndexOf(string folder)
+    {
+        try
+        {
+            if (File.Exists(Path.Combine(folder, "Content.ggpk"))) return null;
+            string index = Path.Combine(folder, "Bundles2", "_.index.bin");
+            if (!File.Exists(index)) return null;
+            using var stream = new FileStream(index, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            return Convert.ToHexStringLower(SHA256.HashData(stream));
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { return null; }
+    }
+
+    /// <summary>Whether a LocalExile that lists these builds runs this client's Steam files: by LocalExile's own rule
+    /// (<c>ClientInstall.FindExecutable</c>) the index must be the one listed for the client's version. A LocalExile with no
+    /// list, or none that names an index, runs no Steam install.</summary>
+    public static bool SteamFilesFit(IEnumerable<ListedBuild>? builds, string? version, string? steamIndexSha256) =>
+        steamIndexSha256 is not null && builds is not null
+        && builds.Any(b => b.SteamIndexSha256 == steamIndexSha256 && (version is null || b.Version == version));
+
+    /// <summary>Whether a LocalExile folder runs a Steam install at all: its list names the index of at least one.</summary>
+    public static bool RunsSteamFiles(string folder) => LocalExileBuilds.Of(folder) is { } builds && builds.Any(b => b.SteamIndexSha256 is not null);
 
     /// <summary>Whether a client's executable is the <see cref="Build"/> build; null when there is none, or it cannot be read.</summary>
     public static bool? IsKnownBuild(string folder) => Identify(folder) is { } build ? IsCurrent(build) : null;
@@ -280,6 +320,7 @@ public static class ClientLocator
         string client = Path.Combine(folder, "Client"), old = Path.Combine(folder, RemovedClientFolder);
         FinishRemoval(folder);
         if (!Directory.Exists(client)) return;
+        CheckoutIgnores.Ensure(folder);
         string settings = Path.Combine(client, "config.json"), saved = SavedSettings(folder);
         if (File.Exists(settings) && !File.Exists(saved))
         {
@@ -333,12 +374,14 @@ public static class ClientLocator
     public static FoundClient? Describe(string folder)
     {
         if (Classify(folder) is not { } kind) return null;
+        bool archive = File.Exists(Path.Combine(folder, "Content.ggpk"));
         long bytes = 0;
-        try { bytes = new FileInfo(Path.Combine(folder, "Content.ggpk")).Length; }
+        try { if (archive) bytes = new FileInfo(Path.Combine(folder, "Content.ggpk")).Length; }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
-        if (!File.Exists(Path.Combine(folder, "Content.ggpk"))) bytes = 0;
+        // A Steam install's game files are loose: the folder's own size, which is what a copy of it takes.
+        if (!archive && kind != ClientKind.Unsupported) bytes = ClientVersions.SizeOf(folder);
         return new(Path.TrimEndingDirectorySeparator(Path.GetFullPath(folder)), kind, bytes, kind == ClientKind.Unsupported ? null : IsKnownBuild(folder),
-            kind == ClientKind.Unsupported ? null : BuildOf(folder));
+            kind == ClientKind.Unsupported ? null : BuildOf(folder), kind == ClientKind.Unsupported ? null : SteamIndexOf(folder));
     }
 
     /// <summary>The usual places first (other checkouts' clients, what the installers recorded, the default folders), then a

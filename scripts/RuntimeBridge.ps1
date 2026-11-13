@@ -79,6 +79,8 @@ function Import-RuntimeProfile {
             [Environment]::SetEnvironmentVariable($key, $expression.Value, 'Process')
         }
     }
+    # Game_GGPK: LocalExile stopped reading it when its servers stopped opening the client's files; a profile from before
+    # may still name the old default. The client's files are found in Client, in either layout (Get-ClientLayout).
     foreach ($entry in @{
         Game_BIND='127.0.0.1'; Game_LOGIN_PORT='20493'; Game_GATEWAY_PORT='6112'; Game_AUTH_CONTROL_PORT='20495';
         Game_PATCH_TCP_PORT='12995'; Game_PATCH_URL='http://127.0.0.1:8080/'; Game_CLIENT_EXE='Client/Game.exe'; Game_GGPK='Client/Content.ggpk'
@@ -276,7 +278,7 @@ function Get-Snapshot {
         @{ Name='Launch adapter'; Ready=((Test-Path -LiteralPath (At 'scripts/dev/live.ps1')) -and ((Get-Content -LiteralPath (At 'scripts/dev/live.ps1') -Raw) -match '\$ClientOnly')); Detail='scripts/dev/live.ps1 must support -ClientOnly and -Only' },
         @{ Name='Original client'; Ready=(Test-Path -LiteralPath (At 'Client/Game.exe')); Detail=(Get-ClientDetail) },
         @{ Name='Prepared client'; Ready=(Test-Path -LiteralPath $gamePath); Detail='Follow Agents/GettingStarted.md steps 4-5 to prepare Game.patched.exe' },
-        @{ Name='Client archive'; Ready=(Test-Path -LiteralPath (At 'Client/Content.ggpk')); Detail='Standalone Content.ggpk is required; Steam layout is unsupported' },
+        @{ Name='Client archive'; Ready=((Get-ClientLayout) -eq 'Standalone' -or ((Get-ClientLayout) -eq 'Steam' -and (Test-SteamLayoutAccepted))); Detail=(Get-ArchiveDetail) },
         @{ Name='Login keys'; Ready=(Test-Path -LiteralPath (At 'data/login-keys.json')); Detail='data/login-keys.json must match the prepared client; never regenerate existing keys casually' },
         @{ Name='Python'; Ready=(Test-Python); Detail='Python 3.9+ is required for data extraction' },
         @{ Name='Node.js'; Ready=([bool](Get-Command node -ErrorAction SilentlyContinue)); Detail='Node.js is required for bundle decompression' },
@@ -801,9 +803,26 @@ function Start-FreshSaves($snapshot) {
     Assert-Physical $history
     if (Test-Path -LiteralPath $history) { Remove-Item -LiteralPath $history }
 }
+# How Client holds the game's files, told apart as LocalExile does (its ClientFiles.Resolve): a Content.ggpk first, else the
+# loose files of a Steam install, known by Bundles2/_.index.bin. '' when it holds neither.
+function Get-ClientLayout {
+    if (Test-Path -LiteralPath (At 'Client/Content.ggpk') -PathType Leaf) { return 'Standalone' }
+    if (Test-Path -LiteralPath (At 'Client/Bundles2/_.index.bin') -PathType Leaf) { return 'Steam' }
+    return ''
+}
+# Whether this checkout's LocalExile runs a Steam install: its own live.ps1 says so, by accepting Bundles2\_.index.bin in
+# place of Content.ggpk. An older checkout refuses such a client at every start.
+function Test-SteamLayoutAccepted {
+    $live = At 'scripts/dev/live.ps1'
+    return (Test-Path -LiteralPath $live -PathType Leaf) -and ((Get-Content -LiteralPath $live -Raw) -match 'Bundles2\\_\.index\.bin')
+}
+function Get-ArchiveDetail {
+    if ((Get-ClientLayout) -eq 'Steam' -and -not (Test-SteamLayoutAccepted)) { return 'This LocalExile runs only a standalone client. A client from Steam needs a newer LocalExile.' }
+    return 'Client needs Content.ggpk (standalone) or Bundles2\_.index.bin (Steam)'
+}
 function Get-ClientDetail {
     $client = Get-Item -LiteralPath (At 'Client') -Force -ErrorAction SilentlyContinue
-    if (-not $client -or -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return 'Standalone 3.29.3c executable at Client/Game.exe' }
+    if (-not $client -or -not ($client.Attributes -band [IO.FileAttributes]::ReparsePoint)) { return 'Client/Game.exe: a copy of PathOfExile.exe (Steam: PathOfExileSteam.exe)' }
     $target = @($client.Target)[0]
     if (Test-Path -LiteralPath (At 'Client/Game.exe')) { return "Linked to $target" }
     return "Client links to $target, which has no client. Run the setup guide to replace the link."
@@ -820,8 +839,10 @@ function Prepare-Client($snapshot) {
         Write-Host "Client is a link to $target and is already prepared: nothing to do."
         return
     }
-    Require (Test-Path -LiteralPath (At 'Client/Content.ggpk')) 'Copy the complete standalone 3.29.3c client into Client first.'
-    foreach ($relative in @('Client/Content.ggpk','Client/Game.exe','Client/PathOfExile.exe','Client/Game.patched.exe','data','data/login-keys.json')) {
+    $layout = Get-ClientLayout
+    Require $layout 'Copy the complete game client into Client first.'
+    Require ($layout -ne 'Steam' -or (Test-SteamLayoutAccepted)) (Get-ArchiveDetail)
+    foreach ($relative in @('Client/Content.ggpk','Client/Bundles2','Client/Bundles2/_.index.bin','Client/gateway_list.txt','Client/Game.exe','Client/PathOfExile.exe','Client/PathOfExileSteam.exe','Client/Game.patched.exe','data','data/login-keys.json')) {
         $item = Get-Item -LiteralPath (At $relative) -ErrorAction SilentlyContinue
         Require (-not $item -or -not ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) "Preparation refuses redirected files or folders: $relative"
     }
@@ -829,18 +850,25 @@ function Prepare-Client($snapshot) {
     $patched = Test-Path -LiteralPath (At 'Client/Game.patched.exe')
     Require ($keys -or -not $patched) 'A prepared executable exists without keys. Preserve it and recover its matching keys, or prepare a new client copy.'
     $game = At 'Client/Game.exe'
-    $original = At 'Client/PathOfExile.exe'
     $prepared = At 'Client/Game.patched.exe'
     $gameHash = if (Test-Path -LiteralPath $game) { (Get-FileHash -LiteralPath $game -Algorithm SHA256).Hash } else { '' }
-    $originalHash = if (Test-Path -LiteralPath $original) { (Get-FileHash -LiteralPath $original -Algorithm SHA256).Hash } else { '' }
     # Only a fingerprint from ClientLocator for this checkout's declared build authorizes a repair: one for each executable
     # GGG shipped under the build's name (a hotfix keeps the name), comma-separated.
     # Small launchers, future builds and a different checkout's build cannot replace an existing executable, and a
     # Game.exe that is one of the build's own executables is valid as it is: the build's other one does not replace it.
     $clientHashes = @($ClientExecutableHash -split ',' | Where-Object { $_ })
+    # The game's own executable, in LocalExile's order (its ClientInstall): PathOfExile.exe, or a Steam install's
+    # PathOfExileSteam.exe, which is the same file. PathOfExile.exe can be the small launcher, so one that is the build's
+    # goes first; without one, the first that is there, as before.
+    $originals = @(@('PathOfExile.exe','PathOfExileSteam.exe') | Where-Object { Test-Path -LiteralPath (At "Client/$_") -PathType Leaf } |
+        ForEach-Object { @{ Name=$_; Hash=(Get-FileHash -LiteralPath (At "Client/$_") -Algorithm SHA256).Hash } })
+    $chosen = @(@($originals | Where-Object { $clientHashes -contains $_.Hash }) + $originals) | Select-Object -First 1
+    $originalName = if ($chosen) { $chosen.Name } elseif ($layout -eq 'Steam') { 'PathOfExileSteam.exe' } else { 'PathOfExile.exe' }
+    $original = At "Client/$originalName"
+    $originalHash = if ($chosen) { $chosen.Hash } else { '' }
     $refresh = $originalHash -and $clientHashes -contains $originalHash -and $gameHash -and $clientHashes -notcontains $gameHash
     Write-Host "Client/Game.exe SHA-256: $gameHash"
-    Write-Host "Client/PathOfExile.exe SHA-256: $originalHash"
+    Write-Host "Client/$originalName SHA-256: $originalHash"
     Set-Stage 'Building preparation tools' 'Auth and Patch'
     foreach ($name in @('Auth','Patch')) {
         & dotnet build (At "src/GameServer.$name") --nologo -v minimal
@@ -851,7 +879,7 @@ function Prepare-Client($snapshot) {
     $stagedGame = $null; $stagedPatch = $null
     try {
         if (-not $gameHash) {
-            Require (Test-Path -LiteralPath $original) 'Client/PathOfExile.exe or Client/Game.exe is required.'
+            Require (Test-Path -LiteralPath $original) 'Client/PathOfExile.exe (Steam: PathOfExileSteam.exe) or Client/Game.exe is required.'
             Copy-Item -LiteralPath $original -Destination $game
             $gameHash = (Get-FileHash -LiteralPath $game -Algorithm SHA256).Hash
         }
@@ -864,7 +892,7 @@ function Prepare-Client($snapshot) {
         }
         if (-not $keys) {
             & dotnet $auth keygen $inputGame
-            Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is standalone 3.29.3c.'
+            Require ($LASTEXITCODE -eq 0) 'Key generation failed. Check that the original executable is a version this LocalExile runs.'
         }
         $knownGame = $refresh -or ($gameHash -and $clientHashes -contains $gameHash)
         $stalePatch = $patched -and $knownGame -and (
@@ -898,8 +926,11 @@ function Prepare-Client($snapshot) {
             if ($temp -and (Test-Path -LiteralPath $temp)) { Remove-Item -LiteralPath $temp -Force }
         }
     }
-    Set-Stage 'Selecting local gateway' 'Only the copied client archive is updated.'
-    & dotnet (At 'src/GameServer.Patch/bin/Debug/net10.0/GameServer.Patch.dll') gateway (At 'Client/Content.ggpk') --login '127.0.0.1:20493'
+    # The login list is in the GGPK, or a Steam install's loose Client/gateway_list.txt: LocalExile's own tool finds it in
+    # the client folder (its live.ps1 gives it the folder). A standalone client still gets its archive named, which every
+    # LocalExile takes.
+    Set-Stage 'Selecting local gateway' $(if ($layout -eq 'Steam') { 'Only the copied client''s gateway list is updated.' } else { 'Only the copied client archive is updated.' })
+    & dotnet (At 'src/GameServer.Patch/bin/Debug/net10.0/GameServer.Patch.dll') gateway $(if ($layout -eq 'Steam') { At 'Client' } else { At 'Client/Content.ggpk' }) --login '127.0.0.1:20493'
     Require ($LASTEXITCODE -eq 0) 'Local gateway setup failed. Close all clients and inspect the operation log.'
 }
 function Register-Account($snapshot) {

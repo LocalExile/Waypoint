@@ -31,6 +31,47 @@ public static class Platform
     public static string VenvPython(string root) => OperatingSystem.IsWindows()
         ? Path.Combine(root, ".venv", "Scripts", "python.exe") : Path.Combine(root, ".venv", "bin", "python");
 
+    /// <summary>
+    /// Gives everything Waypoint starts the module path Windows PowerShell expects. Started from a PowerShell 7 shell
+    /// (a terminal, an editor's), Waypoint inherits that shell's <c>PSModulePath</c>, which names PowerShell 7's own module
+    /// folders first; Windows PowerShell, which the adapter and live.ps1 run under, then finds PowerShell 7's version of
+    /// its built-in modules, cannot load it, and a command as plain as Get-FileHash "is not recognized". PowerShell 7
+    /// takes its own folders out when it starts Windows PowerShell itself; it cannot for a program in between, so
+    /// Waypoint does the same for its own process, once, at its start. Nothing else is changed, and a PowerShell 7 that
+    /// Waypoint starts adds its folders again by itself.
+    /// </summary>
+    public static void UseWindowsPowerShellModules()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        string? inherited = Environment.GetEnvironmentVariable("PSModulePath");
+        string? cleaned = WithoutPowerShell7(inherited, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell", "Modules"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PowerShell", "Modules"));
+        if (cleaned != inherited) Environment.SetEnvironmentVariable("PSModulePath", cleaned);
+    }
+
+    /// <summary>A module path without the three folders PowerShell 7 adds for itself: its user folder, its shared folder,
+    /// and the <c>Modules</c> folder of a PowerShell 7 install, known by the <c>pwsh</c> beside it wherever that install is.
+    /// Every other entry stays, in its order (a product's own module folder may be named PowerShell too). Null when
+    /// nothing is left: Windows PowerShell then builds its own.</summary>
+    public static string? WithoutPowerShell7(string? modulePath, string userModules, string sharedModules)
+    {
+        if (string.IsNullOrEmpty(modulePath)) return modulePath;
+        static string Clean(string folder) => Path.TrimEndingDirectorySeparator(folder.Trim().Trim('"'));
+        bool Same(string a, string b) => string.Equals(Clean(a), Clean(b), StringComparison.OrdinalIgnoreCase);
+        bool Home(string entry)
+        {
+            try
+            {
+                return Path.GetFileName(Clean(entry)).Equals("Modules", StringComparison.OrdinalIgnoreCase) && Path.GetDirectoryName(Clean(entry)) is { Length: > 0 } above
+                    && (File.Exists(Path.Combine(above, "pwsh.exe")) || File.Exists(Path.Combine(above, "pwsh.dll")));
+            }
+            catch (ArgumentException) { return false; }
+        }
+        string[] entries = modulePath.Split(';', StringSplitOptions.RemoveEmptyEntries);
+        var kept = entries.Where(entry => !Same(entry, userModules) && !Same(entry, sharedModules) && !Home(entry)).ToArray();
+        return kept.Length == entries.Length ? modulePath : kept.Length == 0 ? null : string.Join(';', kept);
+    }
+
     /// <summary>A file on PATH; null when there is none.</summary>
     public static string? OnPath(string file)
     {

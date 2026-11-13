@@ -26,6 +26,8 @@ public partial class App : Application
         base.OnStartup(e);
         // The first start's questions are windows too; closing one must not end the application.
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        // Before anything is started: a PowerShell 7 shell's module path would break the scripts Windows PowerShell runs.
+        Platform.UseWindowsPowerShellModules();
         Settings = Settings.Load();
         // The folder the settings name before anything else writes one: the guide saves its own.
         string? saved = Settings.ServerPath;
