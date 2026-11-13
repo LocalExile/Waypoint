@@ -159,7 +159,8 @@ sealed class ClientVersionsWindow : FormWindow
         DockPanel.SetDock(_download, Dock.Left);
         get.Children.Add(_download);
         // Beside the download: the other way to a client that is not in the list.
-        _browse = new Button { Content = L.Text("Browse for a client…"), Margin = new Thickness(8, 0, 0, 0) };
+        // No margin of its own: the button style's margin spaces the two and keeps them on one line.
+        _browse = new Button { Content = L.Text("Browse for a client…") };
         _browse.Click += (_, _) => _ = BrowseAsync();
         DockPanel.SetDock(_browse, Dock.Left);
         get.Children.Add(_browse);
