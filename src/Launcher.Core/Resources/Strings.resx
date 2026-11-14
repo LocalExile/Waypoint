@@ -2461,6 +2461,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_431027eb3edb" xml:space="preserve">
     <value>Open Waypoint</value>
   </data>
+  <data name="Text_4322f210b141" xml:space="preserve">
+    <value>Port {0} is used by another program (PID {1}). {2} needs this port.</value>
+  </data>
   <data name="Text_433e00b3f109" xml:space="preserve">
     <value>Clears the view; the file is not changed</value>
   </data>
@@ -2562,9 +2565,6 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_46538b55589e" xml:space="preserve">
     <value>Level up</value>
-  </data>
-  <data xml:space="preserve" name="Text_4660c28f96b5">
-    <value>Port {0} is occupied by another process (PID {1}); {2} is not owned by this checkout.</value>
   </data>
   <data name="Text_468422a52e4d" xml:space="preserve">
     <value>LocalExile names no Steam download for this version.</value>
@@ -2763,6 +2763,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4b3207d58add" xml:space="preserve">
     <value>Waypoint downloads {0:0} MB, checks it, and puts it over this install. Your characters, keys and game client are kept, and your saves are copied first when Automatic backups is on. The next Play may extract game data again.</value>
+  </data>
+  <data name="Text_4b6c92ba89e3" xml:space="preserve">
+    <value>Port {0} is used by {1} (PID {2}). {3} needs this port.</value>
   </data>
   <data name="Text_4b72b1793476" xml:space="preserve">
     <value>{0} already has files in it, so Waypoint will not replace it with a link.</value>

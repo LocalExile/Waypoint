@@ -428,7 +428,7 @@ sealed class ModBrowser(Shared shared)
     /// <summary>Turns an installed mod on or off: its line in the server's mod-state.txt, at once (no backup, no client).</summary>
     public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), () =>
     {
-        if (shared.Workspace.Latest is { Conflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.Conflicts));
+        if (shared.Workspace.Latest is { EditConflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.EditConflicts));
         if (shared.Workspace.Latest?.ModEnvironment is not { Supported: true } environment) throw new InvalidOperationException(L.Text("This revision does not have a supported mod host."));
         ModCatalog.WriteChoice(environment.Folder, mod.Id, enabled);
         return Task.CompletedTask;

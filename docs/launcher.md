@@ -1069,7 +1069,9 @@ the server's `mod-state.txt` (no backup, no client), which a stopped Gateway rea
 applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
 Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs
 also show the notice because they have no source to verify. The checkbox represents the saved choice, not proof of a live
-load. A switch holds the workspace lock and is refused while another operation holds it. **Update** and
+load. A switch holds the workspace lock and is refused while another operation holds it. A program that is no LocalExile
+server holding one of the servers' ports (Steam's helper on 8080, say) does not block mod changes, nor Modules, Leagues
+or Accounts: it blocks only a start, and the message names it. **Update** and
 **Update all** appear when a repository has a newer version. The ⋮ menu holds the rarer tools: Install from folder…,
 Build all mods, Check live status (Python with Frida), Gateway log, the operation log, and the backup choice.
 

@@ -52,7 +52,8 @@ public sealed class L : INotifyPropertyChanged
         (@"\A(.+) \| hot reload watcher PID (\d+)\z", "{0} | hot reload watcher PID {1}"),
         (@"\A(.+) · Checked (.+)\z", "{0} · Checked {1}"),
         (@"\AMultiple (Patch|Gateway|Auth) processes belong to this checkout\.\z", "Multiple {0} processes belong to this checkout."),
-        (@"\APort (\d+) is occupied by another process \(PID (\d+)\); (Patch|Gateway|Auth) is not owned by this checkout\.\z", "Port {0} is occupied by another process (PID {1}); {2} is not owned by this checkout."),
+        (@"\APort (\d+) is used by another program \(PID (\d+)\)\. (Patch|Gateway|Auth) needs this port\.\z", "Port {0} is used by another program (PID {1}). {2} needs this port."),
+        (@"\APort (\d+) is used by (.+) \(PID (\d+)\)\. (Patch|Gateway|Auth) needs this port\.\z", "Port {0} is used by {1} (PID {2}). {3} needs this port."),
         (@"\AAnother server or watcher is running \(PID (\d+)\)\. Stop it from its own installation before launching here\.\z", "Another server or watcher is running (PID {0}). Stop it from its own installation before launching here.")
     ];
     public static string Describe(string source)

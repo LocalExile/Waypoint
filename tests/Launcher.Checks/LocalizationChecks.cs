@@ -57,6 +57,9 @@ static class LocalizationChecks
                 check(L.Text(technical) == technical, $"{tag}: unknown repository, command, path and diagnostic text is preserved verbatim");
                 check(L.Describe("Needs: Play") == string.Format(L.Current.Culture, Translated("Needs: {0}"), "Play") && L.Describe("Local runtime uses C:\\Play\\saves.db").EndsWith(@"C:\Play\saves.db"),
                     $"{tag}: captured mod IDs and paths are never translated even when they match an interface label");
+                check(L.Describe("Port 8080 is used by steamwebhelper.exe (PID 29304). Patch needs this port.") == string.Format(L.Current.Culture, Translated("Port {0} is used by {1} (PID {2}). {3} needs this port."), "8080", "steamwebhelper.exe", "29304", "Patch")
+                    && L.Describe("Port 8080 is used by another program (PID 29304). Patch needs this port.") == string.Format(L.Current.Culture, Translated("Port {0} is used by another program (PID {1}). {2} needs this port."), "8080", "29304", "Patch"),
+                    $"{tag}: a port conflict is translated around the program's name, PID and server, which stay as they are");
                 var step = SetupGuidance.Describe(new("Original client", false, "Ready"), @"C:\Language check\LocalExile");
                 check(step.Name == "Original client" && step.Action == "ClientFolder" && step.DisplayName == Translated("Original client") && step.Instructions.Contains(Path.Combine(@"C:\Language check\LocalExile", "Client")),
                     $"{tag} setup guidance preserves action routing and the physical copy destination");

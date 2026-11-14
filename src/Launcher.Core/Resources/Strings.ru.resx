@@ -2461,6 +2461,9 @@
   <data name="Text_431027eb3edb" xml:space="preserve">
     <value>Открыть Waypoint</value>
   </data>
+  <data name="Text_4322f210b141" xml:space="preserve">
+    <value>Порт {0} занят другой программой (PID {1}). Этот порт нужен {2}.</value>
+  </data>
   <data name="Text_433e00b3f109" xml:space="preserve">
     <value>Очищает окно; файл не меняется</value>
   </data>
@@ -2562,9 +2565,6 @@
   </data>
   <data name="Text_46538b55589e" xml:space="preserve">
     <value>Новый уровень</value>
-  </data>
-  <data xml:space="preserve" name="Text_4660c28f96b5">
-    <value>Порт {0} занят другим процессом (PID {1}); {2} не принадлежит этой установке.</value>
   </data>
   <data name="Text_468422a52e4d" xml:space="preserve">
     <value>LocalExile не указывает загрузку из Steam для этой версии.</value>
@@ -2763,6 +2763,9 @@
   </data>
   <data name="Text_4b3207d58add" xml:space="preserve">
     <value>Waypoint скачает {0:0} МБ, проверит их и установит поверх текущей версии. Персонажи, ключи и клиент игры сохранятся, а если включено автоматическое резервное копирование, сначала будет сделана копия сохранений. При следующем запуске данные игры могут извлекаться заново.</value>
+  </data>
+  <data name="Text_4b6c92ba89e3" xml:space="preserve">
+    <value>Порт {0} занят программой {1} (PID {2}). Этот порт нужен {3}.</value>
   </data>
   <data name="Text_4b72b1793476" xml:space="preserve">
     <value>В {0} уже есть файлы, поэтому Waypoint не будет заменять эту папку ссылкой.</value>

@@ -122,7 +122,7 @@ partial class AccountsTab : UserControl
     void ShowAccess()
     {
         var state = _shared.Workspace.Latest;
-        bool stopped = state is { HasServers: false, GameRunning: false, Conflicts.Length: 0, AccountWriteBlockedReason.Length: 0 };
+        bool stopped = state is { HasServers: false, GameRunning: false, EditConflicts.Length: 0, AccountWriteBlockedReason.Length: 0 };
         bool available = stopped && !_shared.IsLiveRunning;
         foreach (var button in AccountActions.Children.OfType<Button>())
             button.IsEnabled = button == CreateButton ? available && _inventory?.CanRegister == true : available && _inventory?.Writable == true && Selected is not null;

@@ -212,6 +212,11 @@ try
     Check(healthy.ServersReady && healthy.SafeToLaunch, "all owned listeners and setup allow Play");
     Check(!(healthy with { Services = healthy.Services.Select(s => s.Name == "Gateway" ? s with { Status = "Starting" } : s).ToArray() }).ServersReady, "running process without readiness is not treated as ready");
     Check(!(healthy with { Conflicts = ["foreign listener"] }).SafeToLaunch, "foreign listener blocks Play");
+    const string steamPort = "Port 8080 is used by steamwebhelper.exe (PID 29304). Patch needs this port.";
+    Check(healthy with { Conflicts = [steamPort], PortsInUse = [steamPort] } is { SafeToLaunch: false, EditConflicts.Length: 0 },
+        "a program that is no LocalExile server on a server port blocks Play, but not a change of mods, modules, leagues or accounts");
+    Check((healthy with { Conflicts = [steamPort, "foreign listener"], PortsInUse = [steamPort] }).EditConflicts.SequenceEqual(["foreign listener"])
+        && (healthy with { Conflicts = ["foreign listener"] }).EditConflicts.Length == 1, "every other conflict still blocks file changes, and an older adapter's snapshot blocks as before");
     string commit = new string('b', 40);
     string report = DiagnosticReport.Create(healthy with { SourceCommit = commit, BuildCommit = "Auth=1.0.0+" + commit }, "test", string.Join('\n', Enumerable.Range(0, 300).Select(n => "OP_" + n)),
         "failed", "Game", sensitive, ["KnownPlayer"]);

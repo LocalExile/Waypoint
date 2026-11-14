@@ -1,6 +1,8 @@
 # Offline account operations. RuntimeBridge owns the global writer lock and runtime/profile inventory.
 function Assert-AccountsStopped($snapshot) {
-    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    # A port held by a program that is no LocalExile server (PortsInUse) blocks a start, not this change of files.
+    $blocking = @($snapshot.Conflicts | Where-Object { $_ -notin @($snapshot.PortsInUse) })
+    Require (-not $blocking.Count) ($blocking -join "`n")
     Require (-not @($snapshot.Services | Where-Object { $_.ProcessId -or $_.WatchProcessId }).Count) 'Close the game and stop LocalExile services before changing player accounts.'
     Require (-not @($script:listeners | Where-Object LocalPort -eq 7000).Count) 'Stop the local account service before changing player accounts.'
     $writers = @($script:processes | Where-Object {

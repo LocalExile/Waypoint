@@ -221,9 +221,25 @@ function Descends-From($process, $ancestor) {
 function Owned-WatchedGateway($process, $watcher) {
     return $process -and (Same-Path $process.ExecutablePath (At 'src\GameServer.Gateway\bin\Debug\net10.0\GameServer.Gateway.exe')) -and (Descends-From $process $watcher)
 }
+# A LocalExile server or watcher, of this checkout or any other: what live.ps1 stops by name.
+function Test-ServerProcess($process) {
+    if ($process.Name -notin @('dotnet.exe','cmd.exe','GameServer.Gateway.exe','GameServer.Auth.exe','GameServer.Patch.exe')) { return $false }
+    return $process.CommandLine -match 'GameServer\.(Gateway|Auth|Patch)(\.dll|\.exe|[\\\s"]|$)' -and $process.CommandLine -notmatch '\s(build|test)\s|GameServer\.(Gateway|Auth|Patch)\.Tests'
+}
+# A server's port held by a process this checkout does not own: the message names the program. OtherProgram is a program
+# that is no LocalExile server (Steam's helper on 8080, say): it blocks a start, but not a change of mods, modules, leagues
+# or accounts, since it holds none of their files. A process Waypoint cannot name is never one.
+function Get-PortConflict([int]$port, [string]$name, [int]$owner) {
+    $holder = $script:byId[$owner]
+    $named = $holder -and $holder.Name
+    $message = if ($named) { "Port $port is used by $($holder.Name) (PID $owner). $name needs this port." }
+               else { "Port $port is used by another program (PID $owner). $name needs this port." }
+    return [pscustomobject]@{ Message=$message; OtherProgram=($named -and -not (Test-ServerProcess $holder)) }
+}
 function Get-Snapshot {
     Get-Inventory
     $conflicts = [Collections.Generic.List[string]]::new()
+    $portsInUse = [Collections.Generic.List[string]]::new()
     $services = @()
     $watchers = @($script:processes | Where-Object { Owned-Watcher $_ })
     if ($watchers.Count -gt 1) { $conflicts.Add('Multiple Gateway watchers belong to this checkout.') }
@@ -242,7 +258,9 @@ function Get-Snapshot {
             if (-not $onPort.Count) { $ready = $false }
             foreach ($connection in $onPort) {
                 if (-not $process -or $connection.OwningProcess -ne $process.ProcessId) {
-                    $conflicts.Add("Port $port is occupied by another process (PID $($connection.OwningProcess)); $name is not owned by this checkout.")
+                    $held = Get-PortConflict $port $name ([int]$connection.OwningProcess)
+                    $conflicts.Add($held.Message)
+                    if ($held.OtherProgram) { $portsInUse.Add($held.Message) }
                     $ready = $false
                 }
             }
@@ -257,8 +275,7 @@ function Get-Snapshot {
     # Upstream live.ps1 stops processes by name before launch, even before they hold a port.
     # Block foreign server/watch processes as well as foreign listeners so upstream cannot kill them.
     foreach ($p in $script:processes) {
-        if ($p.Name -notin @('dotnet.exe','cmd.exe','GameServer.Gateway.exe','GameServer.Auth.exe','GameServer.Patch.exe')) { continue }
-        if ($p.CommandLine -notmatch 'GameServer\.(Gateway|Auth|Patch)(\.dll|\.exe|[\\\s"]|$)' -or $p.CommandLine -match '\s(build|test)\s|GameServer\.(Gateway|Auth|Patch)\.Tests') { continue }
+        if (-not (Test-ServerProcess $p)) { continue }
         $ownedProcess = $false
         foreach ($s in $services) {
             if ($p.ProcessId -eq $s.ProcessId) { $ownedProcess = $true }
@@ -309,10 +326,10 @@ function Get-Snapshot {
         } catch { $sourceLabel = '' }
     }
     $accountBlock = ''
-    try { Assert-AccountsStopped ([pscustomobject]@{ Conflicts=$conflicts.ToArray(); Services=$services }) }
+    try { Assert-AccountsStopped ([pscustomobject]@{ Conflicts=$conflicts.ToArray(); PortsInUse=$portsInUse.ToArray(); Services=$services }) }
     catch { $accountBlock = $_.Exception.Message }
     @{ Root=$script:root; Profile=$script:profile; SaveDatabase=$script:savePath; AuthDatabase=$script:authPath; EarlierSaveDatabase=$script:earlierSavePath; SourceCommit=$commit; SourceBranch=$branch; AccountWriteBlockedReason=$accountBlock;
-       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); ModEnvironment=(Get-ModEnvironment $services); Capture=(Get-CaptureSnapshot $services); Content=(Get-ContentEnvironment) }
+       SourceLabel=$sourceLabel; BuildCommit=($builds -join '; '); Requirements=@($requirements); Services=@($services); Conflicts=@($conflicts.ToArray()); PortsInUse=@($portsInUse.ToArray()); ModEnvironment=(Get-ModEnvironment $services); Capture=(Get-CaptureSnapshot $services); Content=(Get-ContentEnvironment) }
 }
 function Get-SourceSelectionPath {
     $sha = [Security.Cryptography.SHA256]::Create()
