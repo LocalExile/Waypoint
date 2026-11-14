@@ -19,7 +19,9 @@ function Save-ContentFile($snapshot) {
     # A release older than 0.2.0-beta does not read these files (Get-ContentEnvironment); what a newer one takes is checked
     # below, by what the environment allows.
     Require (-not (Test-LegacyReleaseMods)) 'This release is older than module and league editing. Update LocalExile to edit them.'
-    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    # A port held by a program that is no LocalExile server (PortsInUse) blocks a start, not this change of files.
+    $blocking = @($snapshot.Conflicts | Where-Object { $_ -notin @($snapshot.PortsInUse) })
+    Require (-not $blocking.Count) ($blocking -join "`n")
     $environment = Get-ContentEnvironment
     $staged = Get-StagedModPath $ModStaged -File
     Require ((Get-Item -LiteralPath $staged).Length -le 262144) 'Settings exceed 256 KB.'

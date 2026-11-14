@@ -2461,6 +2461,9 @@
   <data name="Text_431027eb3edb" xml:space="preserve">
     <value>打开 Waypoint</value>
   </data>
+  <data name="Text_4322f210b141" xml:space="preserve">
+    <value>端口 {0} 已被另一个程序（PID {1}）占用。{2} 需要此端口。</value>
+  </data>
   <data name="Text_433e00b3f109" xml:space="preserve">
     <value>清空视图；文件不会被更改</value>
   </data>
@@ -2562,9 +2565,6 @@
   </data>
   <data name="Text_46538b55589e" xml:space="preserve">
     <value>升级</value>
-  </data>
-  <data name="Text_4660c28f96b5" xml:space="preserve">
-    <value>端口 {0} 已被另一个进程（PID {1}）占用；{2} 不属于此源码副本。</value>
   </data>
   <data name="Text_468422a52e4d" xml:space="preserve">
     <value>LocalExile 没有为此版本提供 Steam 下载信息。</value>
@@ -2763,6 +2763,9 @@
   </data>
   <data name="Text_4b3207d58add" xml:space="preserve">
     <value>Waypoint 会下载 {0:0} MB，校验后覆盖到当前安装上。你的角色、密钥和游戏客户端都会保留；如果开启了“自动备份”，还会先复制你的存档。下次“开始游戏”时可能会重新提取游戏数据。</value>
+  </data>
+  <data name="Text_4b6c92ba89e3" xml:space="preserve">
+    <value>端口 {0} 已被 {1}（PID {2}）占用。{3} 需要此端口。</value>
   </data>
   <data name="Text_4b72b1793476" xml:space="preserve">
     <value>{0} 中已有文件，因此 Waypoint 不会将其替换为链接。</value>

@@ -125,7 +125,7 @@ public partial class ModsTab : UserControl
 
     /// <summary>Whether a mod operation can start: a checkout with a mod host, no live session, no conflicts. Several can
     /// start; they wait their turn on the checkout.</summary>
-    bool CanUse => State is { ModEnvironment.Supported: true, Conflicts.Length: 0 } && !_busy && !Repo.LegacyReleaseMods;
+    bool CanUse => State is { ModEnvironment.Supported: true, EditConflicts.Length: 0 } && !_busy && !Repo.LegacyReleaseMods;
 
     void Filter()
     {

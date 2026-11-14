@@ -46,6 +46,12 @@ Clean
 $script:snapshot.Conflicts = @('another game client is running')
 Check (Rejected { Assert-AccountsStopped $script:snapshot }) 'ownership conflicts fail closed'
 Clean
+$steam = 'Port 8080 is used by steamwebhelper.exe (PID 29304). Patch needs this port.'
+$script:snapshot = [pscustomobject]@{ Conflicts=@($steam); PortsInUse=@($steam); Services=@() }
+Check (-not (Rejected { Assert-AccountsStopped $script:snapshot })) 'a program that is no LocalExile server on a server port does not block account changes'
+$script:snapshot.Conflicts = @($steam, 'another game client is running')
+Check (Rejected { Assert-AccountsStopped $script:snapshot }) 'any other conflict beside it still blocks'
+Clean
 $script:calls = [Collections.Generic.List[string]]::new()
 function Backup-Saves($state) { $script:calls.Add('backup') }
 function Get-Snapshot { $script:calls.Add('recheck'); return $script:snapshot }

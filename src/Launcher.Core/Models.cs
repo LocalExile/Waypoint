@@ -10,13 +10,16 @@ public sealed record ServiceStatus(string Name, string Status, int ProcessId, st
 }
 public sealed record RuntimeSnapshot(string Root, string Profile, string SaveDatabase, string SourceCommit,
     string SourceBranch, string BuildCommit, Requirement[] Requirements, ServiceStatus[] Services, string[] Conflicts, string SourceLabel = "", ModEnvironment? ModEnvironment = null, string AccountWriteBlockedReason = "", CaptureSnapshot? Capture = null,
-    ContentEnvironment? Content = null, string AuthDatabase = "", string EarlierSaveDatabase = "")
+    ContentEnvironment? Content = null, string AuthDatabase = "", string EarlierSaveDatabase = "", string[]? PortsInUse = null)
 {
     public bool SetupReady => Requirements.All(r => r.Ready);
     public bool ServersReady => Services.Where(s => s.Name != "Game").All(s => s.Status == "Ready");
     public bool HasServers => Services.Any(s => s.Name != "Game" && s.IsRunning);
     public bool GameRunning => Services.Any(s => s.Name == "Game" && s.ProcessId != 0);
     public bool SafeToLaunch => SetupReady && Conflicts.Length == 0;
+    /// <summary>The conflicts that block a change of mods, modules, leagues or accounts: all but a port held by a program
+    /// that is no LocalExile server (<see cref="PortsInUse"/>), which blocks only a start.</summary>
+    public string[] EditConflicts => [.. Conflicts.Where(c => PortsInUse?.Contains(c) != true)];
 }
 
 public sealed record BridgeResult(bool Ok, string Message, RuntimeSnapshot? Snapshot, string? FailedStage = null, AccountInventory? AccountData = null,

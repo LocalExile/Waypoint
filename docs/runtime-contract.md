@@ -129,6 +129,9 @@ Accept a server as owned only when:
 
 Do not adopt unrelated absolute build folders, identical relative DLL paths in another checkout, shared terminal
 sessions or orphaned relative commands. Conflicting listeners block start/play; failed inventory queries fail closed.
+A conflict names the program holding the port. When that program is no LocalExile server or watcher (Steam's helper on
+8080, say), the snapshot also lists it in `PortsInUse`: it still blocks start/play, but not a change of mods, modules,
+leagues or accounts, since it holds none of their files. A listener whose process Waypoint cannot name blocks everything.
 This is a compatibility/ownership guard, not an isolation boundary against malicious same-user code forging command lines.
 
 Gateway may instead be a verified `dotnet watch run --project src\GameServer.Gateway --non-interactive --` root,

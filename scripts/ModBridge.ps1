@@ -349,7 +349,9 @@ function Invoke-ModOperation($snapshot) {
     if ($Action -in @('InstallMod','SaveModSettings','UninstallMod')) {
         Require (-not (Test-LegacyReleaseMods)) 'This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.'
     }
-    Require (-not $snapshot.Conflicts.Count) ($snapshot.Conflicts -join "`n")
+    # A port held by a program that is no LocalExile server (PortsInUse) blocks a start, not this change of files.
+    $blocking = @($snapshot.Conflicts | Where-Object { $_ -notin @($snapshot.PortsInUse) })
+    Require (-not $blocking.Count) ($blocking -join "`n")
     $environment = Get-ModEnvironment $snapshot.Services
     Require $environment.Supported 'This LocalExile revision has no supported mod host.'
     $gateway = $snapshot.Services | Where-Object Name -eq 'Gateway'

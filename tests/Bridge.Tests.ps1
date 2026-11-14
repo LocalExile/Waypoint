@@ -61,6 +61,18 @@ Check ((Server-Command 'Auth' $false) -eq 'dotnet src\GameServer.Auth\bin\Debug\
 Check ((Server-Command 'Gateway' $true) -eq 'dotnet watch run --project src\GameServer.Gateway --non-interactive --') 'watched startup uses the verified upstream command'
 Check ((Server-Command 'Gateway' $false) -eq 'dotnet src\GameServer.Gateway\bin\Debug\net10.0\GameServer.Gateway.dll') 'disabled/older hot reload uses the normal Gateway DLL'
 
+# A port held by a process this checkout does not own: named, and only a program that is no LocalExile server lets files change.
+$script:byId[29304] = [pscustomobject]@{ ProcessId=29304; Name='steamwebhelper.exe'; CommandLine='"C:\Program Files (x86)\Steam\bin\cef\cef.win7x64\steamwebhelper.exe" -lang=en_US' }
+$script:byId[29305] = [pscustomobject]@{ ProcessId=29305; Name='dotnet.exe'; CommandLine='dotnet C:\Other\src\GameServer.Patch\bin\Debug\net10.0\GameServer.Patch.dll' }
+$script:byId[29306] = [pscustomobject]@{ ProcessId=29306; Name='GameServer.Patch.exe'; CommandLine='"C:\Release\app\GameServer.Patch.exe"' }
+$steam = Get-PortConflict 8080 'Patch' 29304
+Check ($steam.Message -eq 'Port 8080 is used by steamwebhelper.exe (PID 29304). Patch needs this port.' -and $steam.OtherProgram) 'another program on a server port is named and blocks only a start'
+$otherCheckout = Get-PortConflict 8080 'Patch' 29305
+Check ($otherCheckout.Message -eq 'Port 8080 is used by dotnet.exe (PID 29305). Patch needs this port.' -and -not $otherCheckout.OtherProgram) 'another checkout''s server on the port blocks file changes too'
+Check (-not (Get-PortConflict 12995 'Patch' 29306).OtherProgram) 'a release''s server on the port blocks file changes too'
+$unknown = Get-PortConflict 8080 'Patch' 29399
+Check ($unknown.Message -eq 'Port 8080 is used by another program (PID 29399). Patch needs this port.' -and -not $unknown.OtherProgram) 'a holder Waypoint cannot name blocks everything'
+
 # A Client folder that is a link. Test-Sdk stands in for dotnet: nothing here may reach a build.
 $linkFixture = Join-Path ([IO.Path]::GetTempPath()) ('Launcher-client-link-' + [guid]::NewGuid().ToString('N'))
 $sharedClient = Join-Path $linkFixture 'shared'
