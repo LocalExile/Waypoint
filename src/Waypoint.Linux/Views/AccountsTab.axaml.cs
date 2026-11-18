@@ -32,7 +32,16 @@ partial class AccountsTab : UserControl
             StopHost.IsEnabled = up;
         });
         shared.Workspace.Changed += () => Dispatcher.UIThread.Post(ShowAccess);
-        shared.LiveRunning += running => Dispatcher.UIThread.Post(ShowAccess);
+        shared.Monitor.Exited += (service, _) =>
+        {
+            if (service.Kind != ServiceKind.Recorder)
+                Dispatcher.UIThread.Post(async () => await shared.Workspace.RefreshAfterRuntimeStopAsync());
+        };
+        shared.LiveRunning += running => Dispatcher.UIThread.Post(async () =>
+        {
+            ShowAccess();
+            if (!running) await shared.Workspace.RefreshAfterRuntimeStopAsync();
+        });
         L.Current.PropertyChanged += (_, _) =>
         {
             ShowTexts();
