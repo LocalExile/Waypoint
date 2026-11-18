@@ -1088,8 +1088,10 @@ starts every update): downloads run side by side, and the checkout operations wa
 one at a time. Installs, uninstalls and builds waiting together run as one operation of their kind: one save backup, and the builds
 in parallel. A failed one opens the operation log.
 
-Clicking a row opens the mod's page: its README (Overview, drawn as GitHub-flavoured Markdown with Markdig; images
-show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its shared settings editor
+Mod names, descriptions and settings labels use the selected interface language when a translation exists. Search
+matches both the manifest text and its translation. Clicking a row opens the mod's page: its README (Overview,
+drawn as GitHub-flavoured Markdown with Markdig; images show their alt text, HTML is left out, relative links open
+the mod's folder on GitHub), its shared settings editor
 (all declared types below; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
 and a running Gateway reloads the mod), and its releases (Versions, each installable). The page scrolls as one, its heading
 and tabs with it; the back button stays above it, and the settings' Save bar below it on the Settings tab. Right-clicking a

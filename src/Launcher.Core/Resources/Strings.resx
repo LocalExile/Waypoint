@@ -135,6 +135,9 @@
   <data name="Text_035485f7a61d" xml:space="preserve">
     <value>Pinned:</value>
   </data>
+  <data name="Text_035932cad9ff" xml:space="preserve">
+    <value>Common currency preset</value>
+  </data>
   <data xml:space="preserve" name="Text_0397d2f08fb2">
     <value>Built files and confirmed runtime status are separate. LocalExile watches mod files independently of Gateway code hot reload. Building or reloading resets the mod’s in-memory state and can reload dependents. Disabling a dependency can unload other mods. Changes affect every character on this Gateway.</value>
   </data>
@@ -663,6 +666,9 @@
   <data name="Text_11d3f9b625c9" xml:space="preserve">
     <value>Ready to capture newly loaded areas.</value>
   </data>
+  <data name="Text_11d4bf8985f6" xml:space="preserve">
+    <value>Worn pets collect selected currency with per-character filters and an immediate pause switch.</value>
+  </data>
   <data name="Text_11e940a84add" xml:space="preserve">
     <value>Closes the game; the servers keep running</value>
   </data>
@@ -794,6 +800,9 @@
   </data>
   <data name="Text_15cf2239e4e8" xml:space="preserve">
     <value>Set up LocalExile</value>
+  </data>
+  <data name="Text_15d99b7ac4b9" xml:space="preserve">
+    <value>An optional native 20-slot extra backpack for every character class.</value>
   </data>
   <data name="Text_15e11dada9d7" xml:space="preserve">
     <value>{0} is not a mod id Waypoint can use</value>
@@ -2082,6 +2091,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_380c1a7758d9" xml:space="preserve">
     <value>Friendship</value>
   </data>
+  <data name="Text_381e879da6e3" xml:space="preserve">
+    <value>Only the 20 currencies listed in the README; explicit rules override it.</value>
+  </data>
   <data name="Text_381f5c69d6b1" xml:space="preserve">
     <value>Could not open Waypoint</value>
   </data>
@@ -2289,6 +2301,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Switch completed.</value>
+  </data>
+  <data name="Text_3d27f72b9265" xml:space="preserve">
+    <value>Pet movement speed</value>
   </data>
   <data name="Text_3d31dc6f3ec1" xml:space="preserve">
     <value>This name is unused by your current leagues.</value>
@@ -3181,6 +3196,9 @@ This checkout has modified tracked files.</value>
   <data xml:space="preserve" name="Text_56e170d33d20">
     <value>Red–green friendly</value>
   </data>
+  <data name="Text_57104c57fbe0" xml:space="preserve">
+    <value>cells</value>
+  </data>
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>release {0} has no {1} with its .sha256</value>
   </data>
@@ -3327,6 +3345,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_5c412a262086">
     <value>Game</value>
   </data>
+  <data name="Text_5c41787dc15a" xml:space="preserve">
+    <value>Character profiles</value>
+  </data>
   <data name="Text_5c4824060366" xml:space="preserve">
     <value>You can delete the folder yourself: {0}</value>
   </data>
@@ -3368,6 +3389,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5de68a8da4e2" xml:space="preserve">
     <value>Not signed in to Steam.</value>
+  </data>
+  <data name="Text_5e1858ba70e7" xml:space="preserve">
+    <value>Item overrides</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>Mod choices apply across all leagues. Saved choices do not confirm live load status.</value>
@@ -3600,6 +3624,9 @@ Search limits reached; other checkouts may exist. Browse to any location.</value
   </data>
   <data name="Text_6425c4d51b31" xml:space="preserve">
     <value>· not made here</value>
+  </data>
+  <data name="Text_642963da89e7" xml:space="preserve">
+    <value>Pickup radius</value>
   </data>
   <data name="Text_6443a33bc8c7" xml:space="preserve">
     <value>It also deletes the {0:0.#} GB already downloaded.</value>
@@ -4146,6 +4173,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>Crafting and trade</value>
   </data>
+  <data name="Text_748f3ab24141" xml:space="preserve">
+    <value>Pet Loot</value>
+  </data>
   <data xml:space="preserve" name="Text_74a883a037bc">
     <value>Settings</value>
   </data>
@@ -4334,6 +4364,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7a5198f98ec2" xml:space="preserve">
     <value>This LocalExile folder already has a game client, so nothing needs copying.</value>
+  </data>
+  <data name="Text_7a530e69bd36" xml:space="preserve">
+    <value>Stackable divination cards</value>
   </data>
   <data name="Text_7a72f4199ba7" xml:space="preserve">
     <value>Loading areas …</value>
@@ -5336,6 +5369,9 @@ Dependencies: {3}
   <data name="Text_96cedcf686b0" xml:space="preserve">
     <value>Characters on selected account</value>
   </data>
+  <data name="Text_96deeebf9888" xml:space="preserve">
+    <value>Pickup enabled</value>
+  </data>
   <data xml:space="preserve" name="Text_9701a68fede6">
     <value>Search branches and pull requests</value>
   </data>
@@ -5537,6 +5573,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9bf4d9a05005" xml:space="preserve">
     <value>{0}: {1} modifiers. {2} lines are left out (red): the crafter has no modifier worded so.</value>
+  </data>
+  <data name="Text_9c0a55369f3f" xml:space="preserve">
+    <value>All stackable currency</value>
   </data>
   <data name="Text_9c0f7a91cfa6" xml:space="preserve">
     <value>game settings are shared with your normal game</value>
@@ -6360,6 +6399,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b28731b86735" xml:space="preserve">
     <value>More mod actions</value>
   </data>
+  <data name="Text_b2879dfbe9a4" xml:space="preserve">
+    <value>Multiplier for following, collecting and returning; 1 is normal speed, 2 is double speed.</value>
+  </data>
   <data name="Text_b291f6978e5e" xml:space="preserve">
     <value>Default sockets; e.g. RRGB a 4-link, RR GB two pairs</value>
   </data>
@@ -6561,6 +6603,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_b85f5fabf97d" xml:space="preserve">
     <value>Tree</value>
   </data>
+  <data name="Text_b8612a2b9663" xml:space="preserve">
+    <value>Exact item name or metadata id: 0 blocks, 1-65535 is the minimum ground stack.</value>
+  </data>
   <data name="Text_b86414f34662" xml:space="preserve">
     <value>Rare pack anchor</value>
   </data>
@@ -6632,6 +6677,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_ba89783a339f" xml:space="preserve">
     <value>Select an account</value>
+  </data>
+  <data name="Text_ba9068ab94ec" xml:space="preserve">
+    <value>Extra Backpack</value>
   </data>
   <data name="Text_baaddf70fb5d" xml:space="preserve">
     <value>Type</value>
@@ -6830,6 +6878,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_c0fa1dcd67a3" xml:space="preserve">
     <value>What is finished stays finished, and a partial copy is kept. Continue picks up from here, now or another day.</value>
+  </data>
+  <data name="Text_c11b0d3fa16e" xml:space="preserve">
+    <value>Pet gold pickup</value>
   </data>
   <data name="Text_c11c363d0402" xml:space="preserve">
     <value>the release would overwrite {0}, which holds your own data; nothing was changed</value>
@@ -7149,6 +7200,9 @@ Last reported Gateway event. Open Gateway output for details.</value>
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Unavailable</value>
+  </data>
+  <data name="Text_ca3ab32507c1" xml:space="preserve">
+    <value>Default for characters without a saved profile.</value>
   </data>
   <data xml:space="preserve" name="Text_ca4e5268289a">
     <value>{0} backups for {1}</value>
@@ -8811,6 +8865,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_f95b3eb4bed4" xml:space="preserve">
     <value>Generate map</value>
+  </data>
+  <data name="Text_f97f4364e0c1" xml:space="preserve">
+    <value>Stackable map fragments</value>
   </data>
   <data name="Text_f9a56c85fda5" xml:space="preserve">
     <value>Game status</value>

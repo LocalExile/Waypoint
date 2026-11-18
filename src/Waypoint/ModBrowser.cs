@@ -34,7 +34,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     /// <summary>A project without a release installs as source, built later with the .NET 10 SDK.</summary>
     public bool NeedsBuild => Release is null && Listing.IsProject;
 
-    public string Title => Listing.Name;
+    public string Title => L.Text(Listing.Name);
     public string Byline => L.Text("by {0}", Listing.Author.Length > 0 ? Listing.Author : Source.Owner);
     public string VersionText => Offer switch
     {
@@ -52,7 +52,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public bool IsUpdate => Offer == ModOffer.Update;
     public string Origin => Release is not null ? L.Text("Release {0}", Release.Tag)
         : Listing.IsProject ? L.Text("No release: installs the source") : L.Text("Scripts: no build needed");
-    public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description}";
+    public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description} {Title} {Description}";
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Listing.Id);
     /// <summary>The installed mod's own icon.png, else the repository's.</summary>
@@ -60,7 +60,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public ModIconImage? IconImage => ModsText.IconImage(IconFile);
     /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
     public bool ShowSymbol => IconImage is null;
-    public string Description => Listing.Description;
+    public string Description => L.Text(Listing.Description);
     public bool HasDescription => Description.Length > 0;
     public string Metadata => Author;
     /// <summary>The LocalExile versions it declares; the list shows these, not the mod's own version.</summary>
@@ -195,7 +195,7 @@ static class ModSorting
 /// <summary>A row of My Mods: an installed mod, and what a repository offers of it (for Update and its latest version).</summary>
 sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
 {
-    public string Title => Entry.Name.Length > 0 ? Entry.Name : Offer?.Title ?? Entry.Id;
+    public string Title => Entry.Name.Length > 0 ? L.Text(Entry.Name) : Offer?.Title ?? Entry.Id;
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Entry.Id);
     /// <summary>The installed mod's own icon.png, else its repository's.</summary>
@@ -203,7 +203,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public ModIconImage? IconImage => ModsText.IconImage(IconFile);
     /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
     public bool ShowSymbol => IconImage is null;
-    public string Description => Entry.Description.Length > 0 ? Entry.Description : Offer?.Listing.Description ?? "";
+    public string Description => Entry.Description.Length > 0 ? L.Text(Entry.Description) : Offer?.Description ?? "";
     public bool HasDescription => Description.Length > 0;
     public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
     /// <summary>The LocalExile versions its installed mod.json declares, else what its repository's listing does.</summary>

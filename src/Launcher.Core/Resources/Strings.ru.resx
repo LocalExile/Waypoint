@@ -135,6 +135,9 @@
   <data name="Text_035485f7a61d" xml:space="preserve">
     <value>Закреплённые:</value>
   </data>
+  <data name="Text_035932cad9ff" xml:space="preserve">
+    <value>Набор обычных валют</value>
+  </data>
   <data xml:space="preserve" name="Text_0397d2f08fb2">
     <value>Собранные файлы и подтверждённое состояние запущенных модов отображаются отдельно. LocalExile отслеживает файлы модов независимо от горячей перезагрузки кода Gateway. Сборка или перезагрузка сбрасывает состояние мода в памяти и может перезагрузить зависимые моды. Отключение зависимости может выгрузить другие моды. Изменения затрагивают всех персонажей на этом Gateway.</value>
   </data>
@@ -663,6 +666,9 @@
   <data name="Text_11d3f9b625c9" xml:space="preserve">
     <value>Готово к записи новых загружаемых областей.</value>
   </data>
+  <data name="Text_11d4bf8985f6" xml:space="preserve">
+    <value>Призванные питомцы собирают выбранную валюту. Фильтры настраиваются для каждого персонажа, сбор можно сразу приостановить.</value>
+  </data>
   <data name="Text_11e940a84add" xml:space="preserve">
     <value>Закрывает игру; серверы продолжают работать</value>
   </data>
@@ -794,6 +800,9 @@
   </data>
   <data name="Text_15cf2239e4e8" xml:space="preserve">
     <value>Настройка LocalExile</value>
+  </data>
+  <data name="Text_15d99b7ac4b9" xml:space="preserve">
+    <value>Дополнительный встроенный рюкзак на 20 ячеек для любого класса персонажа.</value>
   </data>
   <data name="Text_15e11dada9d7" xml:space="preserve">
     <value>{0} — не тот идентификатор мода, который Waypoint может использовать</value>
@@ -2082,6 +2091,9 @@
   <data name="Text_380c1a7758d9" xml:space="preserve">
     <value>Дружба</value>
   </data>
+  <data name="Text_381e879da6e3" xml:space="preserve">
+    <value>Только 20 видов валюты из README. Правила для отдельных предметов имеют приоритет.</value>
+  </data>
   <data name="Text_381f5c69d6b1" xml:space="preserve">
     <value>Не удалось открыть Waypoint</value>
   </data>
@@ -2289,6 +2301,9 @@
   </data>
   <data xml:space="preserve" name="Text_3d246cebf3ac">
     <value>Переключение завершено.</value>
+  </data>
+  <data name="Text_3d27f72b9265" xml:space="preserve">
+    <value>Скорость передвижения питомца</value>
   </data>
   <data name="Text_3d31dc6f3ec1" xml:space="preserve">
     <value>Это имя не используется существующими лигами.</value>
@@ -3181,6 +3196,9 @@
   <data xml:space="preserve" name="Text_56e170d33d20">
     <value>Красный–зелёный</value>
   </data>
+  <data name="Text_57104c57fbe0" xml:space="preserve">
+    <value>клетки</value>
+  </data>
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>в выпуске {0} нет {1} с файлом .sha256</value>
   </data>
@@ -3327,6 +3345,9 @@
   <data xml:space="preserve" name="Text_5c412a262086">
     <value>Игра</value>
   </data>
+  <data name="Text_5c41787dc15a" xml:space="preserve">
+    <value>Профили персонажей</value>
+  </data>
   <data name="Text_5c4824060366" xml:space="preserve">
     <value>Вы можете удалить папку сами: {0}</value>
   </data>
@@ -3368,6 +3389,9 @@
   </data>
   <data name="Text_5de68a8da4e2" xml:space="preserve">
     <value>Вход в Steam не выполнен.</value>
+  </data>
+  <data name="Text_5e1858ba70e7" xml:space="preserve">
+    <value>Правила для отдельных предметов</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>Выбор модов действует во всех лигах. Сохранённый выбор не подтверждает их загрузку на сервере.</value>
@@ -3600,6 +3624,9 @@
   </data>
   <data name="Text_6425c4d51b31" xml:space="preserve">
     <value>· создан не здесь</value>
+  </data>
+  <data name="Text_642963da89e7" xml:space="preserve">
+    <value>Радиус сбора</value>
   </data>
   <data name="Text_6443a33bc8c7" xml:space="preserve">
     <value>Также будут удалены уже загруженные {0:0.#} ГБ.</value>
@@ -4146,6 +4173,9 @@
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>Ремесло и торговля</value>
   </data>
+  <data name="Text_748f3ab24141" xml:space="preserve">
+    <value>Сбор добычи питомцем</value>
+  </data>
   <data xml:space="preserve" name="Text_74a883a037bc">
     <value>Настройки</value>
   </data>
@@ -4334,6 +4364,9 @@
   </data>
   <data name="Text_7a5198f98ec2" xml:space="preserve">
     <value>В этой папке LocalExile уже есть игровой клиент, копировать ничего не нужно.</value>
+  </data>
+  <data name="Text_7a530e69bd36" xml:space="preserve">
+    <value>Складываемые гадальные карты</value>
   </data>
   <data name="Text_7a72f4199ba7" xml:space="preserve">
     <value>Загрузка областей …</value>
@@ -5336,6 +5369,9 @@
   <data name="Text_96cedcf686b0" xml:space="preserve">
     <value>Персонажи выбранного аккаунта</value>
   </data>
+  <data name="Text_96deeebf9888" xml:space="preserve">
+    <value>Сбор включён</value>
+  </data>
   <data xml:space="preserve" name="Text_9701a68fede6">
     <value>Поиск веток и запросов на слияние</value>
   </data>
@@ -5537,6 +5573,9 @@
   </data>
   <data name="Text_9bf4d9a05005" xml:space="preserve">
     <value>{0}: свойств: {1}. Пропущено строк: {2} (красные): у конструктора нет свойства с таким текстом.</value>
+  </data>
+  <data name="Text_9c0a55369f3f" xml:space="preserve">
+    <value>Вся складываемая валюта</value>
   </data>
   <data name="Text_9c0f7a91cfa6" xml:space="preserve">
     <value>настройки игры общие с вашей обычной игрой</value>
@@ -6360,6 +6399,9 @@
   <data name="Text_b28731b86735" xml:space="preserve">
     <value>Другие действия с модом</value>
   </data>
+  <data name="Text_b2879dfbe9a4" xml:space="preserve">
+    <value>Множитель скорости следования, сбора и возвращения. 1 — обычная скорость, 2 — двойная.</value>
+  </data>
   <data name="Text_b291f6978e5e" xml:space="preserve">
     <value>Гнёзда по умолчанию; например RRGB — 4 связанных, RR GB — две пары</value>
   </data>
@@ -6561,6 +6603,9 @@
   <data name="Text_b85f5fabf97d" xml:space="preserve">
     <value>Дерево</value>
   </data>
+  <data name="Text_b8612a2b9663" xml:space="preserve">
+    <value>Точное имя предмета или ID метаданных. 0 запрещает сбор, 1–65535 задаёт минимальный размер стопки на земле.</value>
+  </data>
   <data name="Text_b86414f34662" xml:space="preserve">
     <value>Точка редкой группы</value>
   </data>
@@ -6632,6 +6677,9 @@
   </data>
   <data name="Text_ba89783a339f" xml:space="preserve">
     <value>Выберите аккаунт</value>
+  </data>
+  <data name="Text_ba9068ab94ec" xml:space="preserve">
+    <value>Дополнительный рюкзак</value>
   </data>
   <data name="Text_baaddf70fb5d" xml:space="preserve">
     <value>Тип</value>
@@ -6830,6 +6878,9 @@
   </data>
   <data name="Text_c0fa1dcd67a3" xml:space="preserve">
     <value>Готовое останется готовым, а незавершённая копия сохранена. «Продолжить» начнёт с этого места — сейчас или в другой день.</value>
+  </data>
+  <data name="Text_c11b0d3fa16e" xml:space="preserve">
+    <value>Сбор золота питомцем</value>
   </data>
   <data name="Text_c11c363d0402" xml:space="preserve">
     <value>выпуск перезаписал бы {0}, где хранятся ваши данные; ничего не изменено</value>
@@ -7149,6 +7200,9 @@
   </data>
   <data xml:space="preserve" name="Text_ca1844969742">
     <value>Недоступно</value>
+  </data>
+  <data name="Text_ca3ab32507c1" xml:space="preserve">
+    <value>По умолчанию для персонажей без сохранённого профиля.</value>
   </data>
   <data xml:space="preserve" name="Text_ca4e5268289a">
     <value>Резервных копий: {0} · {1}</value>
@@ -8811,6 +8865,9 @@
   </data>
   <data name="Text_f95b3eb4bed4" xml:space="preserve">
     <value>Создать карту</value>
+  </data>
+  <data name="Text_f97f4364e0c1" xml:space="preserve">
+    <value>Складываемые фрагменты карт</value>
   </data>
   <data name="Text_f9a56c85fda5" xml:space="preserve">
     <value>Состояние игры</value>

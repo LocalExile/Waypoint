@@ -573,7 +573,7 @@ partial class ModsTab : UserControl
         PageTitle.Text = title;
         string author = entry?.Author is { Length: > 0 } a ? a : item?.Author ?? "";
         PageByline.Text = author.Length > 0 ? L.Text("by {0}", author) : "";
-        PageDescription.Text = entry?.Description is { Length: > 0 } d ? d : item?.Listing.Description ?? "";
+        PageDescription.Text = entry?.Description is { Length: > 0 } d ? L.Text(d) : item?.Description ?? "";
         PageTags.ItemsSource = ModsText.Tags(item, entry);
         PageStats.Text = ModsText.Stats(item, entry);
         PageEnabled.IsVisible = entry is not null;

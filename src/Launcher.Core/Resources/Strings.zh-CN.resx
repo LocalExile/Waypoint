@@ -135,6 +135,9 @@
   <data name="Text_035485f7a61d" xml:space="preserve">
     <value>已固定：</value>
   </data>
+  <data name="Text_035932cad9ff" xml:space="preserve">
+    <value>常用通货预设</value>
+  </data>
   <data name="Text_0397d2f08fb2" xml:space="preserve">
     <value>已构建的文件与已确认的运行状态分开显示。LocalExile 监视模组文件，与 Gateway 代码热重载相互独立。构建或重新加载会重置模组的内存状态，并可能重新加载依赖它的模组。禁用某个依赖项可能会卸载其他模组。更改会影响此 Gateway 上的所有角色。</value>
   </data>
@@ -663,6 +666,9 @@
   <data name="Text_11d3f9b625c9" xml:space="preserve">
     <value>已准备好采集新加载的区域。</value>
   </data>
+  <data name="Text_11d4bf8985f6" xml:space="preserve">
+    <value>装备的宠物会拾取所选通货，可按角色设置过滤规则，并可随时暂停。</value>
+  </data>
   <data name="Text_11e940a84add" xml:space="preserve">
     <value>关闭游戏；服务器保持运行</value>
   </data>
@@ -794,6 +800,9 @@
   </data>
   <data name="Text_15cf2239e4e8" xml:space="preserve">
     <value>安装 LocalExile</value>
+  </data>
+  <data name="Text_15d99b7ac4b9" xml:space="preserve">
+    <value>所有职业均可启用的原生 20 格扩展背包。</value>
   </data>
   <data name="Text_15e11dada9d7" xml:space="preserve">
     <value>{0} 不是 Waypoint 能使用的模组 ID</value>
@@ -2082,6 +2091,9 @@
   <data name="Text_380c1a7758d9" xml:space="preserve">
     <value>友谊</value>
   </data>
+  <data name="Text_381e879da6e3" xml:space="preserve">
+    <value>仅包含 README 列出的 20 种通货。单项规则优先。</value>
+  </data>
   <data name="Text_381f5c69d6b1" xml:space="preserve">
     <value>无法打开 Waypoint</value>
   </data>
@@ -2289,6 +2301,9 @@
   </data>
   <data name="Text_3d246cebf3ac" xml:space="preserve">
     <value>切换完成。</value>
+  </data>
+  <data name="Text_3d27f72b9265" xml:space="preserve">
+    <value>宠物移动速度</value>
   </data>
   <data name="Text_3d31dc6f3ec1" xml:space="preserve">
     <value>当前赛季尚未使用此名称。</value>
@@ -3181,6 +3196,9 @@
   <data name="Text_56e170d33d20" xml:space="preserve">
     <value>红绿色盲友好</value>
   </data>
+  <data name="Text_57104c57fbe0" xml:space="preserve">
+    <value>格</value>
+  </data>
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>发行版 {0} 中没有附带 .sha256 的 {1}</value>
   </data>
@@ -3327,6 +3345,9 @@
   <data name="Text_5c412a262086" xml:space="preserve">
     <value>游戏</value>
   </data>
+  <data name="Text_5c41787dc15a" xml:space="preserve">
+    <value>角色配置</value>
+  </data>
   <data name="Text_5c4824060366" xml:space="preserve">
     <value>你可以自己删除该文件夹：{0}</value>
   </data>
@@ -3368,6 +3389,9 @@
   </data>
   <data name="Text_5de68a8da4e2" xml:space="preserve">
     <value>未登录 Steam。</value>
+  </data>
+  <data name="Text_5e1858ba70e7" xml:space="preserve">
+    <value>物品单项规则</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>模组选择适用于所有赛季。已保存的选项不代表实际加载状态。</value>
@@ -3600,6 +3624,9 @@
   </data>
   <data name="Text_6425c4d51b31" xml:space="preserve">
     <value>· 非在此创建</value>
+  </data>
+  <data name="Text_642963da89e7" xml:space="preserve">
+    <value>拾取半径</value>
   </data>
   <data name="Text_6443a33bc8c7" xml:space="preserve">
     <value>同时会删除已下载的 {0:0.#} GB。</value>
@@ -4146,6 +4173,9 @@
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>工艺与交易</value>
   </data>
+  <data name="Text_748f3ab24141" xml:space="preserve">
+    <value>宠物拾取</value>
+  </data>
   <data name="Text_74a883a037bc" xml:space="preserve">
     <value>设置</value>
   </data>
@@ -4334,6 +4364,9 @@
   </data>
   <data name="Text_7a5198f98ec2" xml:space="preserve">
     <value>此 LocalExile 文件夹中已有游戏客户端，无需复制。</value>
+  </data>
+  <data name="Text_7a530e69bd36" xml:space="preserve">
+    <value>可堆叠命运卡</value>
   </data>
   <data name="Text_7a72f4199ba7" xml:space="preserve">
     <value>正在加载区域 …</value>
@@ -5336,6 +5369,9 @@
   <data name="Text_96cedcf686b0" xml:space="preserve">
     <value>所选账号的角色</value>
   </data>
+  <data name="Text_96deeebf9888" xml:space="preserve">
+    <value>启用拾取</value>
+  </data>
   <data name="Text_9701a68fede6" xml:space="preserve">
     <value>搜索分支和拉取请求</value>
   </data>
@@ -5537,6 +5573,9 @@
   </data>
   <data name="Text_9bf4d9a05005" xml:space="preserve">
     <value>{0}：{1} 个词缀。有 {2} 行被忽略（红色）：物品制作器中没有这样措辞的词缀。</value>
+  </data>
+  <data name="Text_9c0a55369f3f" xml:space="preserve">
+    <value>所有可堆叠通货</value>
   </data>
   <data name="Text_9c0f7a91cfa6" xml:space="preserve">
     <value>游戏设置与你平常的游戏共用</value>
@@ -6360,6 +6399,9 @@
   <data name="Text_b28731b86735" xml:space="preserve">
     <value>更多模组操作</value>
   </data>
+  <data name="Text_b2879dfbe9a4" xml:space="preserve">
+    <value>跟随、拾取和返回时的移速倍率。1 为正常速度，2 为双倍速度。</value>
+  </data>
   <data name="Text_b291f6978e5e" xml:space="preserve">
     <value>默认插槽；例如 RRGB 为 4 连，RR GB 为两组 2 连</value>
   </data>
@@ -6561,6 +6603,9 @@
   <data name="Text_b85f5fabf97d" xml:space="preserve">
     <value>树木</value>
   </data>
+  <data name="Text_b8612a2b9663" xml:space="preserve">
+    <value>使用物品全名或元数据 ID。0 表示不拾取，1–65535 表示最低地面堆叠数量。</value>
+  </data>
   <data name="Text_b86414f34662" xml:space="preserve">
     <value>稀有怪物群锚点</value>
   </data>
@@ -6632,6 +6677,9 @@
   </data>
   <data name="Text_ba89783a339f" xml:space="preserve">
     <value>选择账号</value>
+  </data>
+  <data name="Text_ba9068ab94ec" xml:space="preserve">
+    <value>额外背包</value>
   </data>
   <data name="Text_baaddf70fb5d" xml:space="preserve">
     <value>类型</value>
@@ -6830,6 +6878,9 @@
   </data>
   <data name="Text_c0fa1dcd67a3" xml:space="preserve">
     <value>已完成的部分会保留，已复制的部分也会保留。点击“继续”即可从此处接着进行，现在或改天都可以。</value>
+  </data>
+  <data name="Text_c11b0d3fa16e" xml:space="preserve">
+    <value>宠物拾取金币</value>
   </data>
   <data name="Text_c11c363d0402" xml:space="preserve">
     <value>发行版会覆盖存有你自己数据的 {0}；未做任何更改</value>
@@ -7149,6 +7200,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ca1844969742" xml:space="preserve">
     <value>不可用</value>
+  </data>
+  <data name="Text_ca3ab32507c1" xml:space="preserve">
+    <value>供尚无保存配置的角色使用。</value>
   </data>
   <data name="Text_ca4e5268289a" xml:space="preserve">
     <value>{1} 的 {0} 个备份</value>
@@ -8811,6 +8865,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f95b3eb4bed4" xml:space="preserve">
     <value>生成地图</value>
+  </data>
+  <data name="Text_f97f4364e0c1" xml:space="preserve">
+    <value>可堆叠地图碎片</value>
   </data>
   <data name="Text_f9a56c85fda5" xml:space="preserve">
     <value>游戏状态</value>

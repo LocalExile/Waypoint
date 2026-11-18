@@ -17,6 +17,9 @@ public class SettingsFormTests : IDisposable
           "name":{"type":"text","default":"abc","pattern":"[a-z]+","maxLength":8},
           "weights":{"type":"list","default":[1],"item":{"type":"number","min":0,"max":5},"maxItems":3},
           "bonuses":{"type":"map","default":{"a":1},"options":["a","b"],"value":{"type":"integer","min":0}},
+          "profiles":{"type":"map","default":{},"value":{"type":"group","settings":{
+            "enabled":{"type":"bool","default":true},"speed":{"type":"number","default":2,"min":0.25,"max":10}
+          }}},
           "advanced":{"type":"group","advanced":true,"when":{"enabled":true},"settings":{
             "delay":{"type":"number","default":2,"format":"duration","min":0},
             "nested":{"type":"group","settings":{"active":{"type":"bool","default":false}}}
@@ -118,6 +121,26 @@ public class SettingsFormTests : IDisposable
                 slider.Value = 80;
                 Assert.Equal(0.8, editor.Values()["rate"]!.GetValue<double>());
                 Assert.True(editor.Dirty);
+            }
+            catch (Exception e) { failure = e; }
+        });
+        thread.SetApartmentState(ApartmentState.STA); thread.Start(); thread.Join();
+        Assert.Null(failure);
+    }
+    [Fact]
+    public void Editor_saves_profile_fields_once_and_preserves_undeclared_fields()
+    {
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var form = Load("""{"profiles":{"Player":{"Enabled":false,"Speed":3,"future":42}}}""");
+                var profile = Assert.IsType<JsonObject>(new SettingsEditor(form).Values()["profiles"]!["Player"]);
+                Assert.Equal(3, profile.Count);
+                Assert.False(profile["enabled"]!.GetValue<bool>());
+                Assert.Equal(3, profile["speed"]!.GetValue<double>());
+                Assert.Equal(42, profile["future"]!.GetValue<int>());
             }
             catch (Exception e) { failure = e; }
         });
