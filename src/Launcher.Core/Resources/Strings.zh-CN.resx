@@ -2118,6 +2118,9 @@
   <data name="Text_38d7db28699e" xml:space="preserve">
     <value>陷阱通道</value>
   </data>
+  <data name="Text_38e4650ae2c3" xml:space="preserve">
+    <value>此存档格式支持在此浏览。请在 LocalExile 中管理账号。</value>
+  </data>
   <data name="Text_3907fa7f8072" xml:space="preserve">
     <value>外观</value>
   </data>

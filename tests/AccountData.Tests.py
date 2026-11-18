@@ -91,6 +91,43 @@ class AccountDataTests(unittest.TestCase):
         self.assertFalse(data.run(path, self.root, {"Action": "List"})["Exists"])
         self.assertFalse(path.exists())
 
+    def test_relational_listing_uses_active_saves_and_keeps_both_databases_read_only(self):
+        auth = self.root / "auth.db"
+        characters = self.root / "characters.db"
+        with connect(auth) as db:
+            db.execute("CREATE TABLE accounts(id TEXT PRIMARY KEY,name TEXT,account TEXT)")
+            db.execute("INSERT INTO accounts VALUES(?,?,?)", (self.account, "Alpha", json.dumps({
+                "Id": self.account, "Name": "Alpha", "PasswordHash": "private-verifier",
+            })))
+        with connect(characters) as db:
+            db.executescript("""
+                CREATE TABLE account_characters(id TEXT PRIMARY KEY, account_id TEXT, name TEXT, class INTEGER,
+                    level INTEGER, league TEXT, created_utc TEXT, last_played_utc TEXT);
+                CREATE TABLE character_saves(id INTEGER PRIMARY KEY, name TEXT COLLATE NOCASE, deleted_utc TEXT);
+                CREATE TABLE character_ascendancies(save INTEGER PRIMARY KEY, family TEXT, ascendancy TEXT);
+                CREATE TABLE stash_saves(id INTEGER PRIMARY KEY, account TEXT);
+                CREATE TABLE stash_tab_headers(stash INTEGER, tab INTEGER, PRIMARY KEY(stash,tab));
+                INSERT INTO character_saves VALUES (1,'newhero','deleted'), (2,'newhero',NULL);
+                INSERT INTO character_ascendancies VALUES (1,'Normal','OldWitch'), (2,'Normal','Witch3');
+                INSERT INTO stash_saves VALUES (1,'Alpha (Allflame)'), (2,'AlphaOther');
+                INSERT INTO stash_tab_headers VALUES (1,0), (1,1), (2,0);
+            """)
+            db.execute("INSERT INTO account_characters VALUES(?,?,?,?,?,?,?,?)",
+                       (self.char, self.account, "NewHero", 3, 77, "Allflame", "2026-01-01", "2026-02-01"))
+        before = (auth.read_bytes(), characters.read_bytes())
+        view = data.run(characters, self.root, {"Action": "List"}, auth)
+        self.assertFalse(view["Writable"])
+        self.assertFalse(view["CanRegister"])
+        account, = view["Accounts"]
+        self.assertEqual(account["StashTabs"], 2)
+        char, = account["Characters"]
+        self.assertEqual((char["Name"], char["Ascendancy"], char["Level"], char["HasProgress"]),
+                         ("NewHero", "Elementalist", 77, True))
+        self.assertNotIn("private-verifier", json.dumps(view))
+        with self.assertRaisesRegex(data.AccountError, "Account changes are disabled"):
+            data.run(characters, self.root, {"Action": "Rename"}, auth)
+        self.assertEqual(before, (auth.read_bytes(), characters.read_bytes()))
+
     def test_ascendancy_fallback_and_phrecia(self):
         with connect(self.path) as db:
             value = json.loads(db.execute("SELECT save FROM characters").fetchone()[0])

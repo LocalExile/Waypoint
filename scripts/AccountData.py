@@ -2,7 +2,8 @@
 
 Storage contract: LocalExile main 89b7aa908213ac8eb9b5ac5aa7ae54c14189c3e9 (one saves.db), and from the database split on
 (LocalExile/LocalExile#758) characters.db with the accounts in auth.db, which this helper attaches as `auth` the way the
-servers do. A change across both files commits in each file on its own: RuntimeBridge backs both up first.
+servers do. The relational characters database is supported for browsing. A change across both files commits in
+each file on its own: RuntimeBridge backs both up first.
 This helper never initializes schemas, runs emulator code, or manages processes/backups.
 RuntimeBridge supplies ownership checks, writer serialization and the backup policy.
 """
@@ -232,9 +233,54 @@ def catalog(accounts, writable, root, can_register=False):
                                "Ascendancy": asc, "League": data.get("League", ""), "LastPlayedUtc": data.get("LastPlayedUtc", ""),
                                "HasProgress": ch["save"] is not None})
         result.append({"Id": a["id"], "Name": a["name"], "CreatedUtc": a["data"].get("CreatedUtc", ""),
-                       "Revision": a["revision"], "Characters": characters, "StashTabs": len(a["tabs"])})
+                       "Revision": a["revision"], "Characters": characters, "StashTabs": a.get("tab_count", len(a["tabs"]))})
     return {"Exists": True, "Writable": writable, "CanRegister": can_register, "Notice": "" if writable else
             "This storage layout can be browsed, but account changes are disabled because its schema or import state is unfamiliar.", "Accounts": result}
+
+
+def relational_catalog(db, root):
+    """Read the current layout without using the retained pre-migration character and stash rows."""
+    accounts = []
+    for row in db.execute("SELECT id,name,account FROM auth.accounts ORDER BY name COLLATE NOCASE,id LIMIT 2001"):
+        entry = record(row["account"])
+        require(entry.get("Id") == row["id"] and entry.get("Name") == row["name"], "Account identity columns and JSON disagree.")
+        accounts.append({"id": identity(row["id"]), "name": row["name"], "data": entry,
+                         "characters": [], "tabs": [], "tab_count": 0, "revision": ""})
+    require(len(accounts) <= 2000, "Too many accounts for this version of the account manager.")
+    owners = {a["id"]: a for a in accounts}
+    by_name = {fold(a["name"]): a for a in accounts}
+    require(len(owners) == len(accounts) and len(by_name) == len(accounts), "Account identities or names are not unique.")
+    characters = db.execute("""
+        SELECT c.id, c.account_id, c.name, c.class, c.level, c.league, c.last_played_utc,
+               s.id AS active_save, a.family, a.ascendancy
+        FROM main.account_characters c
+        LEFT JOIN main.character_saves s ON s.name=c.name AND s.deleted_utc IS NULL
+        LEFT JOIN main.character_ascendancies a ON a.save=s.id
+        ORDER BY c.created_utc,c.id LIMIT 48001
+    """).fetchall()
+    require(len(characters) <= 48000, "Too many characters for this version of the account manager.")
+    for row in characters:
+        identity(row["id"])
+        require(row["account_id"] in owners, "A character points to an account that is missing.")
+        selection = {"Id": row["ascendancy"], "Family": row["family"]}
+        owners[row["account_id"]]["characters"].append({
+            "id": row["id"], "name": row["name"], "save": row["active_save"],
+            "data": {"Class": row["class"], "Level": row["level"], "League": row["league"], "LastPlayedUtc": row["last_played_utc"]},
+            "progress": {"MainAscendancy": {"Selection": selection}},
+        })
+    for key, count in db.execute("""
+        SELECT s.account, COUNT(*) FROM main.stash_saves s
+        JOIN main.stash_tab_headers t ON t.stash=s.id GROUP BY s.id
+    """):
+        plain = key[6:] if fold(key).startswith("guild:") else key
+        candidates = {plain, plain.split(" (", 1)[0]} if plain.endswith(")") else {plain}
+        matches = [by_name[fold(n)] for n in candidates if fold(n) in by_name]
+        require(len(matches) <= 1, "A stash key has ambiguous account ownership.")
+        if matches:
+            matches[0]["tab_count"] += count
+    result = catalog(accounts, False, root)
+    result["Notice"] = "This save format supports browsing here. Use LocalExile to manage accounts."
+    return result
 
 
 def credentials(password):
@@ -361,6 +407,11 @@ def run(path, root, request, auth=None):
         db.execute("PRAGMA foreign_keys=ON")
         db.execute("BEGIN" if action == "List" else "BEGIN IMMEDIATE")
         try:
+            if split(db) and db.execute("SELECT 1 FROM main.sqlite_master WHERE type='table' AND name='character_saves'").fetchone():
+                require(action == "List", "Account changes are disabled for this unfamiliar storage layout or pending account import.")
+                result = relational_catalog(db, root)
+                db.execute("COMMIT")
+                return result
             accounts, writable = snapshot(db)
             if action != "List":
                 require(writable, "Account changes are disabled for this unfamiliar storage layout or pending account import.")

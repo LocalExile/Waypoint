@@ -44,6 +44,8 @@ loading code. Old builds launched after a newer app cannot be forced to particip
 `QueryAccounts` returns an optional typed `AccountData` inventory and never initializes/migrates storage. Browsing uses
 one read-only SQLite snapshot; it exposes names, IDs, character summaries and opaque revision tokens, never credential
 verifiers. A snapshot's `AccountWriteBlockedReason` explains runtime blockers, including the account service.
+For the relational save layout, browsing uses `auth.accounts`, current character and ascendancy rows, and stash tab headers.
+The relational layout is read-only in the offline account helper.
 
 `ManageAccount` accepts a reviewed `AccountDataRequest` on UTF-8 stdin. Its required `ExpectedDatabase` must match
 the selected profile's resolved database before backup or mutation; desktop registration requests carry the same
