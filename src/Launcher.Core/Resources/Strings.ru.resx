@@ -2118,6 +2118,9 @@
   <data name="Text_38d7db28699e" xml:space="preserve">
     <value>Коридор ловушек</value>
   </data>
+  <data name="Text_38e4650ae2c3" xml:space="preserve">
+    <value>Здесь можно просматривать сохранения этого формата. Управляйте аккаунтами в LocalExile.</value>
+  </data>
   <data xml:space="preserve" name="Text_3907fa7f8072">
     <value>Оформление</value>
   </data>

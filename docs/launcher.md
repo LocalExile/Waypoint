@@ -1530,6 +1530,7 @@ A Gateway built before the mode would start for real, so Waypoint first asks `co
 The list is read from the checkout's save database (`auth.db` and `characters.db` from LocalExile's database split on, or an
 old `saves.db` until the servers migrate it) through the adapter, with nothing running or built: every account with
 its characters, nothing secret. Showing the section reads it; **Reload accounts** reads it again.
+The relational save layout supports browsing accounts, characters, ascendancies and stash counts in this section.
 
 **Register** and **Create** are the dev protocol's `register`, `login` and `create_character` (the server's GettingStarted
 step 8), so they work beside running servers. The character is created in Standard; the game's own creation screen offers

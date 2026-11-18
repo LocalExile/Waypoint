@@ -2118,6 +2118,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_38d7db28699e" xml:space="preserve">
     <value>Trap gauntlet</value>
   </data>
+  <data name="Text_38e4650ae2c3" xml:space="preserve">
+    <value>This save format supports browsing here. Use LocalExile to manage accounts.</value>
+  </data>
   <data xml:space="preserve" name="Text_3907fa7f8072">
     <value>Appearance</value>
   </data>
