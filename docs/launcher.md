@@ -1335,6 +1335,8 @@ Mods, modules and leagues use the same editor on Windows and Linux. Each setting
 left and its control in a column on the right; in a card under 520 pixels wide the control moves under the text.
 
 - On/off switches; text with length and pattern checks; single and multiple choices, including typed game-value sources.
+- Text fields declared with the `password` format are masked. The local settings file and configuration history
+  store the value as plain text.
 - Numbers with exact-value boxes and sliders when bounded; percentages and multipliers are displayed in their declared units,
   and durations are edited in seconds. Step sizes and integer restrictions are checked before saving.
 - Ranges have separate minimum and maximum controls; low cannot exceed high.
@@ -1348,7 +1350,10 @@ Unreadable existing user files block editing instead of being silently replaced.
 Modules and Leagues ask before discarding a draft when switching selection or refreshing. Saving checks the reviewed file's
 hash, so another tool's changes require a refresh. Changes use the shared workspace lock and the normal optional save backup.
 Previous configuration files are copied to Waypoint's `config-history/<id>/` before replacement, separately from save backups.
-Reset to defaults asks first. Mod values use `data/mods/`, module values `data/modules/`, and league values `data/leagues/`.
+Reset to defaults asks first. Mod values use `data/mods/` unless the installed mod declares a `userSettingsFile` and has its own `<id>.json` beside its
+`mod.json`; Waypoint edits that file and preserves it across updates. Module values use `data/modules/` and league values
+use `data/leagues/`. For GlobalChat’s channel maps, use **Add entry** or **Remove** to edit routes. Choose a route type
+to show the applicable server address and port or Discord channel ID.
 
 ### Backups
 

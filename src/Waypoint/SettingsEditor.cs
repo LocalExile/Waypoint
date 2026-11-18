@@ -144,6 +144,19 @@ sealed class SettingsEditor : StackPanel
                 // A list of labels needs the width: it stays under the description, with no control column.
                 foreach (var (_, box) in boxes) { text.Children.Add(box); CheckChanged(box, Change); }
                 read = () => new JsonArray(boxes.Where(b => b.Box.IsChecked == true).Select(b => b.Value.DeepClone()).ToArray()); break;
+            case "text" when setting.Format == "password":
+#if WINDOWS
+                var password = new PasswordBox { Password = ModSettingsForm.Show(value), MaxLength = setting.MaxLength ?? 0 };
+                password.PasswordChanged += (_, _) => Change();
+                read = () => JsonValue.Create(password.Password);
+#else
+                var password = new TextBox { Text = ModSettingsForm.Show(value), PasswordChar = '●', MaxLength = setting.MaxLength ?? 0 };
+                password.TextChanged += (_, _) => Change();
+                read = () => JsonValue.Create(password.Text ?? "");
+#endif
+                A11y.SetName(password, setting.Title);
+                control.Children.Add(password);
+                break;
             default:
                 var entry = new TextBox { Text = ModSettingsForm.Show(value) };
                 A11y.SetName(entry, setting.Title);
@@ -255,7 +268,14 @@ sealed class SettingsEditor : StackPanel
                     keys.SelectedItem = keys.Items.OfType<ComboBoxItem>().FirstOrDefault(i => (string?)i.Tag == key);
                     row.Children.Add(keys); keys.SelectionChanged += (_, _) => Change(); readKey = () => (keys.SelectedItem as ComboBoxItem)?.Tag as string ?? "";
                 }
-                else { var keyBox = new TextBox { Text = key }; row.Children.Add(keyBox); keyBox.TextChanged += (_, _) => Change(); readKey = () => keyBox.Text ?? ""; }
+                else
+                {
+                    var keyBox = new TextBox { Text = key };
+                    A11y.SetName(keyBox, L.Text("Key"));
+                    row.Children.Add(keyBox);
+                    keyBox.TextChanged += (_, _) => Change();
+                    readKey = () => keyBox.Text?.Trim() ?? "";
+                }
             }
             var read = Field(row, item, current);
             var remove = Button(L.Text("Remove"), () => { rows.Children.Remove(row); entries.RemoveAll(e => e.Row == row); Change(); });

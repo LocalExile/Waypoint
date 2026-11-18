@@ -285,9 +285,10 @@ BuildMod or live.ps1 builds it; refused on release installs). Under the mutex an
 dropped. UninstallMod moves `Mods/Binaries/<id>` (and `Mods/Source/<id>` in a checkout) the same way, drops the
 registry entry and the mod's line of `mod-state.txt`. A batch passes `-ModIds a;b` (all checked first, one backup):
 InstallMod adds `-ModStageds` and `-ModTargets` in the same order, and BuildMod's `-ModProjects a;b` builds several in one
-parallel MSBuild run over a temporary traversal project. SaveModSettings atomically writes `data/mods/<id>.json` from
-validated values. Core reads `settings.json` and the user file itself; script mods are fingerprinted by their scripts'
-hashes. The one checkout write outside the adapter is the on/off switch: Core replaces `mod-state.txt` atomically
+parallel MSBuild run over a temporary traversal project. SaveModSettings atomically writes the mod's user settings from
+validated values. When the installed manifest declares `userSettingsFile` as `<id>.json` and that file exists beside the
+manifest, Core reads it and the adapter writes it there. Waypoint preserves the file during binary updates. Otherwise,
+Core and the adapter use `data/mods/<id>.json`. Script mods are fingerprinted by their scripts' hashes. The one checkout write outside the adapter is the on/off switch: Core replaces `mod-state.txt` atomically
 (`ModCatalog.WriteChoice`) while holding Shared's workspace lock, so a switch is instant; EnableMod and DisableMod remain
 for other callers. A running server with no verified source hook gets a restart notice in both interfaces; releases are
 unknown because they have no source. Saved choices are not proof of a runtime load.

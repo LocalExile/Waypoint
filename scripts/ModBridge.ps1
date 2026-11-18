@@ -226,6 +226,20 @@ function Get-StagedModPath([string]$path, [switch]$File) {
     else { Require (Test-Path -LiteralPath $full -PathType Container) 'The prepared mod folder is missing.' }
     return $full
 }
+function Get-InstalledModSettings([string]$folder, [string]$id) {
+    if ($id -cin @('mod','settings')) { return }
+    $name = $id + '.json'
+    $path = Join-Path $folder $name
+    $manifest = Join-Path $folder 'mod.json'
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or -not (Test-Path -LiteralPath $manifest -PathType Leaf)) { return }
+    Assert-Physical $manifest
+    Require ((Get-Item -LiteralPath $manifest).Length -le 262144) 'Mod manifest exceeds its size limit.'
+    $declaration = [IO.File]::ReadAllText($manifest) | ConvertFrom-Json
+    if ($declaration.PSObject.Properties['userSettingsFile'] -and $declaration.userSettingsFile -ceq $name) {
+        Assert-Physical $path
+        return $path
+    }
+}
 function Move-ModAside([string]$folder, [string]$target) {
     # Never deleted: the previous copy of a mod moves to Mods/.replaced/, where the Gateway does not look.
     if (-not (Test-Path -LiteralPath $folder)) { return }
@@ -235,6 +249,7 @@ function Move-ModAside([string]$folder, [string]$target) {
     New-Item -ItemType Directory -Path (Split-Path $aside) -Force | Out-Null
     Move-Item -LiteralPath $folder -Destination $aside
     Write-Host "The previous Mods/$target/$ModId is kept at $aside."
+    return $aside
 }
 function Install-StagedMod($snapshot) {
     # -ModIds, -ModStageds and -ModTargets (';'-separated, in the same order) install several with one backup; every one is
@@ -266,10 +281,17 @@ function Install-StagedMod($snapshot) {
         Assert-Physical $root
         New-Item -ItemType Directory -Path $root -Force | Out-Null
         $destination = Join-Path $root $mod.Id
-        Move-ModAside $destination $mod.Target
+        $settingsName = $mod.Id + '.json'
+        $installedSettings = Join-Path $destination $settingsName
+        $keepSettings = $mod.Target -eq 'Binaries' -and [bool](Get-InstalledModSettings $destination $mod.Id)
+        $aside = Move-ModAside $destination $mod.Target
         # A release replaces a source install of the same mod, which live.ps1 would otherwise build over it.
-        if ($mod.Target -eq 'Binaries' -and -not $script:isRelease) { Move-ModAside (At "Mods/Source/$($mod.Id)") 'Source' }
+        if ($mod.Target -eq 'Binaries' -and -not $script:isRelease) { $null = Move-ModAside (At "Mods/Source/$($mod.Id)") 'Source' }
         Copy-Item -LiteralPath $mod.Staged -Destination $destination -Recurse
+        if ($keepSettings) {
+            Assert-Physical $installedSettings
+            Copy-Item -LiteralPath (Join-Path $aside $settingsName) -Destination $installedSettings -Force
+        }
         Remove-Item -LiteralPath $mod.Staged -Recurse -Force
         Write-Host "Installed $($mod.Id) into Mods/$($mod.Target)."
     }
@@ -285,7 +307,8 @@ function Save-ModSettings($snapshot) {
     Require ($parsed -is [Management.Automation.PSCustomObject]) 'Mod settings must be a JSON object.'
     Backup-Saves $snapshot
     Set-Stage 'Saving mod settings' $ModId
-    $folder = At 'data/mods'
+    $installed = Join-Path (Get-ModFolder) $ModId
+    $folder = if (Get-InstalledModSettings $installed $ModId) { $installed } else { At 'data/mods' }
     Assert-Physical $folder
     New-Item -ItemType Directory -Path $folder -Force | Out-Null
     $path = Join-Path $folder "$ModId.json"
@@ -322,8 +345,8 @@ function Uninstall-Mod($snapshot) {
     Set-Stage $(if ($mods.Count -eq 1) { 'Uninstalling mod' } else { 'Uninstalling mods' }) (($ids -join ', ') + ' to Mods/.replaced')
     foreach ($mod in $mods) {
         $script:ModId = $mod.Id
-        if ($mod.HasSource) { Move-ModAside $mod.Source 'Source' }
-        Move-ModAside $mod.Binary 'Binaries'
+        if ($mod.HasSource) { $null = Move-ModAside $mod.Source 'Source' }
+        $null = Move-ModAside $mod.Binary 'Binaries'
     }
     if (-not $script:isRelease) { Write-ManagedMods @(Read-ManagedMods | Where-Object { $_.Id -cnotin $ids }) }
     $state = Join-Path (Get-ModFolder) 'mod-state.txt'

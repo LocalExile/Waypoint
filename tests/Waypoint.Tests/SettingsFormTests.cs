@@ -34,6 +34,40 @@ public class SettingsFormTests : IDisposable
         }
         return ModSettingsForm.Load("example", Path.Combine(_root, "settings.json"), _root, "modules");
     }
+    [Fact]
+    public void Installed_mod_values_take_precedence_and_map_keys_can_be_validated()
+    {
+        string installed = Path.Combine(_root, "Mods", "Binaries", "globalchat");
+        Directory.CreateDirectory(installed);
+        File.WriteAllText(Path.Combine(installed, "mod.json"), """{"userSettingsFile":"globalchat.json"}""");
+        string schema = Path.Combine(installed, "settings.json");
+        File.WriteAllText(schema, """
+            {"settings":{"token":{"type":"text","format":"password","default":""},
+              "channels":{"type":"map","default":{},"pattern":"[1-9][0-9]*",
+              "value":{"type":"group","settings":{"type":{"type":"choice","default":"blank","options":["blank","server"]}}}}}}
+            """);
+        string legacy = Path.Combine(_root, ModSettingsForm.UserFile("globalchat"));
+        Directory.CreateDirectory(Path.GetDirectoryName(legacy)!);
+        File.WriteAllText(legacy, """{"channels":{"2":{"type":"server"}}}""");
+        File.WriteAllText(Path.Combine(installed, "globalchat.json"), """{"token":"sample-value","channels":{"5":{"type":"server"}}}""");
+        var form = ModSettingsForm.Load("globalchat", schema, _root);
+        var token = form.Settings.Single(s => s.Name == "token");
+        Assert.Equal("password", token.Format);
+        Assert.Equal("sample-value", form.Current(token)!.GetValue<string>());
+        var editedValues = form.Settings.ToDictionary(s => s.Name, form.Current);
+        Assert.Equal("sample-value", form.Values(editedValues)["token"]!.GetValue<string>());
+        editedValues["token"] = JsonValue.Create("");
+        Assert.False(form.Values(editedValues).ContainsKey("token"));
+        var channels = form.Settings.Single(s => s.Name == "channels");
+        var edited = Assert.IsType<JsonObject>(form.Current(channels));
+        Assert.True(edited.Remove("5"));
+        edited["10"] = JsonNode.Parse("""{"type":"blank"}""");
+        Assert.Single(edited);
+        Assert.Null(ModSettingsForm.Validate(channels, edited));
+        edited["foo"] = new JsonObject();
+        Assert.NotNull(ModSettingsForm.Validate(channels, edited));
+    }
+
     [Theory]
     [InlineData("enabled", "true", "1")]
     [InlineData("rate", "0.7", "0.75")]

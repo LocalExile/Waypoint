@@ -54,6 +54,20 @@ public sealed class ModSettingsForm
         var settings = Parse(declarations);
         var user = new JsonObject();
         string userPath = Path.Combine(root, UserFile(id, kind));
+        if (kind == "mods" && id is not ("mod" or "settings"))
+        {
+            string folder = Path.GetDirectoryName(declarationsPath)!;
+            string name = id + ".json";
+            string manifest = Path.Combine(folder, "mod.json");
+            string besideMod = Path.Combine(folder, name);
+            if (File.Exists(besideMod) && File.Exists(manifest))
+            {
+                if (!ModCatalog.Physical(manifest) || new FileInfo(manifest).Length > 256 * 1024)
+                    throw new IOException(L.Text("The existing settings cannot be safely read. Nothing was changed."));
+                if (JsonNode.Parse(File.ReadAllText(manifest), NodeOptions, Jsonc)?["userSettingsFile"] is JsonValue marker
+                    && marker.TryGetValue(out string? configured) && configured == name) userPath = besideMod;
+            }
+        }
         string userHash = GameSystems.Hash(userPath);
         if (File.Exists(userPath))
         {
@@ -94,11 +108,13 @@ public sealed class ModSettingsForm
                     : (o!.DeepClone(), Show(o!))).ToList()
                 : [];
             string type = Text("type");
+            string format = Text("format");
             if (!ModSetting.EditableTypes.Contains(type)) throw new InvalidDataException(L.Text("Unsupported setting type: {0}", type));
             if (d["when"] is not (null or JsonObject) || d["advanced"] is { } advanced && advanced.GetValueKind() is not (JsonValueKind.True or JsonValueKind.False)
                 || d["options"] is not null && (d["options"] is not JsonArray { Count: > 0 } || options.Count == 0 || d["source"] is not null)
                 || type is "choice" or "choices" && options.Count == 0 && Text("source").Length == 0
-                || Text("format") is not ("" or "percent" or "duration" or "multiplier")
+                || format is not ("" or "percent" or "duration" or "multiplier" or "password")
+                || format == "password" && type != "text"
                 || Text("applies") is not ("" or "now" or "nextArea" or "restart")
                 || Text("of") is not ("" or "integer" or "number") || Text("of").Length > 0 && type != "range") throw Invalid();
             if (Text("pattern").Length > 0)
@@ -107,7 +123,7 @@ public sealed class ModSettingsForm
             var children = type == "group" && d["settings"] is JsonObject group ? ParseSettings(group, depth + 1) : null;
             ModSetting? Nested(string key) => d[key] is JsonObject child ? ParseSettings(new JsonObject { [key] = child.DeepClone() }, depth + 1, needsDefault: false)[0] : null;
             JsonNode? defaults = children is null ? d["default"]?.DeepClone() : new JsonObject(children.Select(c => KeyValuePair.Create(c.Name, c.Default?.DeepClone())));
-            result.Add(new(name, type, defaults, Text("label"), Text("description"), Text("unit"), Text("format"),
+            result.Add(new(name, type, defaults, Text("label"), Text("description"), Text("unit"), format,
                 Number("min"), Number("max"), options, Text("source"), Whole("minItems"), Whole("maxItems"), Whole("minLength"), Whole("maxLength"),
                 Text("applies") is { Length: > 0 } applies ? applies : "now", d["advanced"] is JsonValue a && a.TryGetValue(out bool adv) && adv,
                 Number("step"), Text("pattern"), Text("of") == "integer", type == "list" ? Nested("item") : null,
@@ -211,6 +227,12 @@ public sealed class ModSettingsForm
         bool Allowed(JsonNode? n) => setting.Options.Count > 0 ? setting.Options.Any(o => Equal(o.Value, n))
             : setting.Source.Length > 0 && n?.GetValueKind() == JsonValueKind.String && n.GetValue<string>().Length > 0;
         bool Count(int n) => !(n < setting.MinItems || n > setting.MaxItems);
+        bool MatchesPattern(string text)
+        {
+            try { return setting.Pattern.Length == 0 || System.Text.RegularExpressions.Regex.IsMatch(text, @"\A(?:" + setting.Pattern + @")\z",
+                System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromMilliseconds(100)); }
+            catch (Exception e) when (e is ArgumentException or System.Text.RegularExpressions.RegexMatchTimeoutException) { return false; }
+        }
         switch (setting.Type)
         {
             case "bool": return kind is JsonValueKind.True or JsonValueKind.False ? null : Invalid();
@@ -224,13 +246,12 @@ public sealed class ModSettingsForm
                 if (kind != JsonValueKind.String) return Invalid();
                 string text = value.GetValue<string>();
                 if (text.Length < setting.MinLength || text.Length > setting.MaxLength) return Invalid();
-                try { return setting.Pattern.Length == 0 || System.Text.RegularExpressions.Regex.IsMatch(text, "\\A(?:" + setting.Pattern + ")\\z",
-                    System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromMilliseconds(100)) ? null : Invalid(); }
-                catch (Exception e) when (e is ArgumentException or System.Text.RegularExpressions.RegexMatchTimeoutException) { return Invalid(); }
+                return MatchesPattern(text) ? null : Invalid();
             case "list": return value is JsonArray list && Count(list.Count) && setting.Item is { } item
                 && list.All(n => Validate(item, n) is null) ? null : Invalid();
             case "map": return value is JsonObject map && setting.Value is { } entry
-                && map.All(p => (setting.Options.Count == 0 && setting.Source.Length == 0 || Allowed(JsonValue.Create(p.Key)))
+                && Count(map.Count) && map.All(p => MatchesPattern(p.Key)
+                    && (setting.Options.Count == 0 && setting.Source.Length == 0 || Allowed(JsonValue.Create(p.Key)))
                     && Validate(entry, p.Value) is null) ? null : Invalid();
             case "group": return value is JsonObject group && setting.Children is { } children
                 && children.All(c => group.FirstOrDefault(p => p.Key.Equals(c.Name, StringComparison.OrdinalIgnoreCase)).Value is not { } child

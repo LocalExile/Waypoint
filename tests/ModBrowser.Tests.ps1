@@ -75,11 +75,21 @@ try {
     [IO.File]::WriteAllText($settings, '[]')
     Refused { Operation 'SaveModSettings' 'alpha' $settings } 'non-object settings are refused'
     Check ([IO.File]::ReadAllText((At 'data/mods/alpha.json')).Contains('ownerValue')) 'refused settings preserve the previous values'
+    $manifest = Get-Content -Raw -LiteralPath (At 'Mods/Binaries/alpha/mod.json') | ConvertFrom-Json
+    $manifest | Add-Member -NotePropertyName userSettingsFile -NotePropertyValue alpha.json
+    $manifest | ConvertTo-Json | Set-Content -LiteralPath (At 'Mods/Binaries/alpha/mod.json')
+    [IO.File]::WriteAllText((At 'Mods/Binaries/alpha/alpha.json'), '{"quantity":3}')
+    [IO.File]::WriteAllText($settings, '{"quantity":4}')
+    Operation 'SaveModSettings' 'alpha' $settings
+    Check ((Get-Content -LiteralPath (At 'Mods/Binaries/alpha/alpha.json') -Raw | ConvertFrom-Json).quantity -eq 4) 'save updates the installed mod settings'
+    Check ((Get-Content -LiteralPath (At 'data/mods/alpha.json') -Raw | ConvertFrom-Json).quantity -eq 2) 'save leaves fallback settings intact'
     New-Item -ItemType Directory -Force (At 'Mods/Source/alpha') | Out-Null
     Set-Content -LiteralPath (At 'Mods/Source/alpha/owner.cs') 'owner source'
     Operation 'InstallMod' 'alpha' (Stage 'alpha' '2') 'Binaries'
     Check ((Get-Content -LiteralPath (At 'Mods/Binaries/alpha/mod.json') -Raw | ConvertFrom-Json).version -eq '2') 'update installs the new version'
     Check (-not (Test-Path -LiteralPath (At 'Mods/Source/alpha'))) 'binary update retires the source that could overwrite it'
+    Check ((Get-Content -LiteralPath (At 'Mods/Binaries/alpha/alpha.json') -Raw | ConvertFrom-Json).quantity -eq 4) 'upgrade preserves installed mod settings'
+
     Check (@(Get-ChildItem -LiteralPath (At 'Mods/.replaced') -Recurse -Filter owner.cs).Count -eq 1) 'retired source remains recoverable'
     Check (@(Get-ChildItem -LiteralPath (At 'Mods/.replaced') -Recurse -Filter alpha.dll | Where-Object { [IO.File]::ReadAllText($_.FullName) -eq 'inert fixture 1' }).Count -eq 1) 'previous binary remains recoverable'
     Check ([IO.File]::ReadAllText((At 'Mods/Binaries/mod-state.txt')).Contains('alpha off')) 'update preserves disabled choices'
