@@ -207,7 +207,11 @@ public sealed class ModSettingsForm
         double Num(JsonNode n) => double.Parse(n.ToJsonString(), CultureInfo.InvariantCulture);
         bool Numeric(JsonNode? n, bool whole = false) => n?.GetValueKind() == JsonValueKind.Number && Num(n) is var d && double.IsFinite(d)
             && (!whole || d == Math.Floor(d)) && !(d < setting.Min || d > setting.Max)
-            && (setting.Step is not { } step || Math.Abs((d - (setting.Min ?? 0)) / step - Math.Round((d - (setting.Min ?? 0)) / step)) <= 1e-9);
+            && (setting.Step is not { } step || OnStep(d, setting.Min ?? 0, step));
+        // The tolerance follows the rounding error, which grows with the values against the step (300000.03 / 0.01 is
+        // 30000003.000000004), and stays below half a step: the server's ModSettings.Limits.
+        static bool OnStep(double d, double min, double step) => (d - min) / step is var steps
+            && Math.Abs(steps - Math.Round(steps)) <= Math.Min(0.25, Math.Max(1e-9, 8e-15 * (Math.Abs(d) + Math.Abs(min)) / step));
         bool Allowed(JsonNode? n) => setting.Options.Count > 0 ? setting.Options.Any(o => Equal(o.Value, n))
             : setting.Source.Length > 0 && n?.GetValueKind() == JsonValueKind.String && n.GetValue<string>().Length > 0;
         bool Count(int n) => !(n < setting.MinItems || n > setting.MaxItems);
