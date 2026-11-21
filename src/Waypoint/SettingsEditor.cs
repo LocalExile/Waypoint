@@ -213,7 +213,11 @@ sealed class SettingsEditor : StackPanel
                 double step = setting.Step ?? (setting.Type == "integer" ? 1 : 0);
                 double n = local.Value / scale;
                 if (step > 0) n = min + Math.Round((n - min) / step) * step;
-                updating = true; text.Text = (Math.Clamp(n, min, max) * scale).ToString("G", CultureInfo.InvariantCulture); updating = false;
+                // A step's multiple carries binary noise (35 * 0.01 is 0.35000000000000003): show it with the decimals of the
+                // step and the minimum it counts from (0.05 + 0.1 steps keeps two).
+                double shown = Math.Clamp(n, min, max) * scale;
+                if (step > 0) shown = Math.Round(shown, Math.Max(Decimals(step * scale), Decimals(min * scale)));
+                updating = true; text.Text = shown.ToString("G", CultureInfo.InvariantCulture); updating = false;
                 Change();
             };
             line.Children.Add(slider);
@@ -234,6 +238,13 @@ sealed class SettingsEditor : StackPanel
             if (error is not null) throw new InvalidDataException(error);
             return parsed;
         };
+    }
+    /// <summary>The decimals a step shows (0.01: 2; 100 * 0.01: 0), at most 15.</summary>
+    static int Decimals(double step)
+    {
+        for (int decimals = 0; decimals < 15; decimals++)
+            if (Math.Abs(step - Math.Round(step, decimals)) <= 1e-12 * Math.Max(1, Math.Abs(step))) return decimals;
+        return 15;
     }
     Func<JsonNode?> Collection(StackPanel panel, ModSetting setting, JsonNode? value)
     {

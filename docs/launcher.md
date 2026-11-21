@@ -1338,7 +1338,8 @@ left and its control in a column on the right; in a card under 520 pixels wide t
 
 - On/off switches; text with length and pattern checks; single and multiple choices, including typed game-value sources.
 - Numbers with exact-value boxes and sliders when bounded; percentages and multipliers are displayed in their declared units,
-  and durations are edited in seconds. Step sizes and integer restrictions are checked before saving.
+  and durations are edited in seconds. Step sizes and integer restrictions are checked before saving; a slider moves in
+  the declared step and shows its value with the step's decimals.
 - Ranges have separate minimum and maximum controls; low cannot exceed high.
 - Lists and maps have expandable, typed rows with Add and Remove. Map keys must be non-empty and unique; declared key
   options and value types are checked. Groups can contain further controls, lists, maps and groups.
