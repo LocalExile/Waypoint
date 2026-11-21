@@ -4122,6 +4122,9 @@
   <data name="Text_71988c4d8e08" xml:space="preserve">
     <value>文字</value>
   </data>
+  <data name="Text_71b7818c7a45" xml:space="preserve">
+    <value>实验性：基于 NeverSink 8.20.2（适用于 3.29 客户端的最后一版过滤器），部分 FilterBlade 选项尚未提供。</value>
+  </data>
   <data name="Text_71c4cf22a93b" xml:space="preserve">
     <value>跳过数据检查</value>
   </data>
@@ -8511,9 +8514,6 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ec42c86a9adb" xml:space="preserve">
     <value>魔法怪物群锚点</value>
-  </data>
-  <data name="Text_ec783f29097c" xml:space="preserve">
-    <value>实验性：过滤器固定为适用于 3.29 客户端的 NeverSink 8.20.2，部分 FilterBlade 选项尚未提供。</value>
   </data>
   <data name="Text_ec7ec1f4944b" xml:space="preserve">
     <value>账号名需由 3 到 32 个字母、数字、_ 或 - 组成。</value>

@@ -443,7 +443,7 @@ public sealed class FilterEditorServer : IDisposable
         ["Conditions"] = L.Text("Conditions"),
         ["Saved"] = L.Text("Saved"),
         ["Experimental"] = L.Text("Experimental"),
-        ["Experimental: the filter stays NeverSink's 8.20.2 for the 3.29 client, and some of FilterBlade's options are not here yet."] = L.Text("Experimental: the filter stays NeverSink's 8.20.2 for the 3.29 client, and some of FilterBlade's options are not here yet."),
+        ["Experimental: built from NeverSink's 8.20.2, the last filter for the 3.29 client, and some of FilterBlade's options are not here yet."] = L.Text("Experimental: built from NeverSink's 8.20.2, the last filter for the 3.29 client, and some of FilterBlade's options are not here yet."),
         ["A mod's loot filter part was left out: {0}"] = L.Text("A mod's loot filter part was left out: {0}"),
         ["Put in this tier by a mod"] = L.Text("Put in this tier by a mod"),
         ["Play alert sounds"] = L.Text("Play alert sounds"),

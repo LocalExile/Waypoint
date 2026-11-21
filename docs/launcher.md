@@ -1530,7 +1530,10 @@ A Gateway built before the mode would start for real, so Waypoint first asks `co
 **Open loot filter editor** opens the player's browser on a page Waypoint serves itself, on Windows and Linux alike. It
 makes a loot filter from NeverSink's the way FilterBlade does, for the 3.29 client LocalExile serves. It is experimental:
 its card, "Loot filter (experimental)", shows only in Advanced mode (a source copy, or a release with Developer Mode and
-Advanced chosen), and the filter stays NeverSink's 8.20.2 with no further item updates.
+Advanced chosen). NeverSink's 8.20.2 is the starting point, not a dependency: LocalExile runs a fixed 3.29 client and
+later NeverSink releases follow the live game, so none is taken after it. From here the base filter changes only for a
+client build LocalExile allows, a mod's `loot-filter.json`, or our own re-tiering. Importing filters made for the live
+game is out of scope: they name items, classes and conditions the 3.29 client does not have.
 
 - What it is built from: NeverSink's filter 8.20.2 (the last before 3.30, whose filters name items 3.29 does not have)
   and FilterBlade's option file of the same league, the file that lays out FilterBlade's Customize screen

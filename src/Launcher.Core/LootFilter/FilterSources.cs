@@ -9,10 +9,10 @@ public sealed record FilterSource(string Repository, string Commit, string Path,
 }
 
 /// <summary>
-/// The base filter and the option file, pinned to the last releases made for 3.29, the game LocalExile serves: NeverSink's
-/// filter 8.20.2 (NeverSinkDev/NeverSink-Filter, MIT; 8.21 is for 3.30 and names items 3.29 does not have) and FilterBlade's
-/// option file as of the same league (NeverSinkDev/FilterBlade-Public-Assets, MIT). A newer pin needs every name it uses
-/// checked against the client's tables first.
+/// The base filter and the option file: the last releases made for 3.29, the game LocalExile serves, taken once as the
+/// starting point (NeverSink's filter 8.20.2, NeverSinkDev/NeverSink-Filter, MIT; 8.21 is for 3.30 and names items 3.29
+/// does not have; FilterBlade's option file as of the same league, NeverSinkDev/FilterBlade-Public-Assets, MIT). Later
+/// releases follow the live game and are not taken; a change to the base filter is checked against the client's tables.
 /// </summary>
 public static class FilterSources
 {

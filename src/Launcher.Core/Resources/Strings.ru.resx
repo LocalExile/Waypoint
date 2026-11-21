@@ -4122,6 +4122,9 @@
   <data name="Text_71988c4d8e08" xml:space="preserve">
     <value>Текст</value>
   </data>
+  <data name="Text_71b7818c7a45" xml:space="preserve">
+    <value>Экспериментально: собран из NeverSink 8.20.2, последнего фильтра для клиента 3.29, и некоторых настроек FilterBlade здесь пока нет.</value>
+  </data>
   <data name="Text_71c4cf22a93b" xml:space="preserve">
     <value>Без проверки данных</value>
   </data>
@@ -8511,9 +8514,6 @@
   </data>
   <data name="Text_ec42c86a9adb" xml:space="preserve">
     <value>Точка магической группы</value>
-  </data>
-  <data name="Text_ec783f29097c" xml:space="preserve">
-    <value>Экспериментально: фильтр остаётся версией NeverSink 8.20.2 для клиента 3.29, и некоторых настроек FilterBlade здесь пока нет.</value>
   </data>
   <data name="Text_ec7ec1f4944b" xml:space="preserve">
     <value>Имя учётной записи: от 3 до 32 латинских букв, цифр, _ или -.</value>

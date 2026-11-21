@@ -158,7 +158,7 @@ async function load(strictness) {
   custom.rules ??= {};
   [...document.querySelectorAll("[data-t]"), ...simPanel.querySelectorAll("[data-t]")].forEach(n => n.textContent = t(n.dataset.t));
   document.getElementById("title").textContent = t("Loot filter");
-  document.getElementById("experimental").title = t("Experimental: the filter stays NeverSink's 8.20.2 for the 3.29 client, and some of FilterBlade's options are not here yet.");
+  document.getElementById("experimental").title = t("Experimental: built from NeverSink's 8.20.2, the last filter for the 3.29 client, and some of FilterBlade's options are not here yet.");
   document.getElementById("modProblems").replaceChildren(...(model.modProblems ?? []).map(p =>
     el("div", { className: "text-Warning", textContent: t("A mod's loot filter part was left out: {0}", p) })));
   document.title = t("Loot filter");

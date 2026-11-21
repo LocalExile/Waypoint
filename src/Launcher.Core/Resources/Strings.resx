@@ -4122,6 +4122,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_71988c4d8e08" xml:space="preserve">
     <value>Text</value>
   </data>
+  <data name="Text_71b7818c7a45" xml:space="preserve">
+    <value>Experimental: built from NeverSink's 8.20.2, the last filter for the 3.29 client, and some of FilterBlade's options are not here yet.</value>
+  </data>
   <data name="Text_71c4cf22a93b" xml:space="preserve">
     <value>Skip data check</value>
   </data>
@@ -8511,9 +8514,6 @@ Dependencies: {2}
   </data>
   <data name="Text_ec42c86a9adb" xml:space="preserve">
     <value>Magic pack anchor</value>
-  </data>
-  <data name="Text_ec783f29097c" xml:space="preserve">
-    <value>Experimental: the filter stays NeverSink's 8.20.2 for the 3.29 client, and some of FilterBlade's options are not here yet.</value>
   </data>
   <data name="Text_ec7ec1f4944b" xml:space="preserve">
     <value>The account name needs 3 to 32 letters, digits, _ or -.</value>
