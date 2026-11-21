@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loot filter</title>
+<style>
+:root {
+  --bg: #f4f5f7; --panel: #ffffff; --text: #1d2125; --muted: #5d6670; --line: #d8dce1; --accent: #2f6fdb; --danger: #c0392b;
+  --chip: #eef1f5; --changed: #b7791f;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #15181c; --panel: #1e2227; --text: #e4e7eb; --muted: #9aa3ad; --line: #333a42; --accent: #6ea1ff; --danger: #ff7b6b;
+    --chip: #2a3037; --changed: #f0b04a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, "Segoe UI", sans-serif; }
+header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line); padding: 10px 16px;
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+header h1 { font-size: 17px; margin: 0 8px 0 0; }
+header label { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+input, select, button { font: inherit; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; }
+button { cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+#status { color: var(--muted); flex-basis: 100%; min-height: 1.4em; }
+#status.error { color: var(--danger); }
+nav { display: flex; gap: 4px; padding: 8px 16px 0; flex-wrap: wrap; }
+nav button { border-radius: 4px 4px 0 0; border-bottom: none; }
+nav button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+main { padding: 0 16px 40px; }
+details.section { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; margin: 8px 0; }
+details.section > summary { padding: 8px 12px; font-weight: 600; cursor: pointer; }
+details.section > .content { padding: 0 12px 10px; }
+details.section details.section { background: var(--bg); }
+.text-Title { font-weight: 600; margin: 12px 0 4px; }
+.text-Description, .text-Warning, .note { color: var(--muted); margin: 4px 0; }
+.text-Warning { color: var(--changed); }
+.rule { border-top: 1px solid var(--line); padding: 8px 0; display: grid; grid-template-columns: minmax(180px, 260px) 1fr; gap: 6px 14px; }
+.rule .head { display: flex; flex-direction: column; gap: 6px; }
+.rule .title { font-weight: 600; }
+.rule .title .badge { color: var(--changed); font-weight: 400; font-size: 12px; margin-left: 6px; }
+.buttons { display: flex; gap: 4px; }
+.buttons button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.preview { display: inline-block; padding: 2px 8px; border: 2px solid transparent; font-family: "Fontin SmallCaps", Georgia, serif;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview.hidden { opacity: .45; font-size: 12px !important; }
+.preview.disabled { opacity: .3; text-decoration: line-through; }
+.style { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.style label { display: flex; align-items: center; gap: 4px; color: var(--muted); }
+.style input[type=color] { width: 32px; height: 24px; padding: 0; }
+.style input[type=range] { width: 70px; }
+.style input[type=number] { width: 64px; }
+.items { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.chip { background: var(--chip); border-radius: 4px; padding: 1px 2px 1px 6px; display: inline-flex; align-items: center; gap: 2px; }
+.chip select, .chip button { border: none; background: transparent; padding: 0 2px; font-size: 12px; color: var(--muted); }
+.chip select { width: 22px; }
+.chip.mod { outline: 1px dashed var(--changed); }
+.experimental { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--changed); border: 1px solid var(--changed);
+  border-radius: 3px; padding: 0 5px; cursor: help; }
+#modProblems { padding: 0 16px; }
+.add { display: flex; gap: 4px; margin-top: 4px; }
+#searchbar { flex-basis: 100%; display: flex; gap: 10px; align-items: center; }
+#search { flex: 1; font-size: 16px; padding: 6px 10px; }
+#searchInfo { color: var(--muted); white-space: nowrap; }
+.group { margin: 14px 0 0; font-weight: 600; color: var(--muted); }
+mark { background: #ffd84d66; color: inherit; border-radius: 2px; }
+.lookup { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; margin: 8px 0; }
+.lookup-row { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; padding: 3px 0; }
+.lookup-row .dark { background: #1d1c17; padding: 3px 6px; border-radius: 4px; }
+#sim { margin: 8px 0 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding-top: 10px; }
+#importPanel { margin: 8px 16px 0; }
+#importText { width: 100%; font: 12px/1.35 ui-monospace, monospace; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 6px; }
+.import-bar { display: flex; gap: 8px; margin: 6px 0; }
+.chain { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
+.play { padding: 0 6px; }
+.drop-meta .play { background: #ffffff1a; border-color: #ffffff40; color: #e8e0c4; font-size: 10px; }
+.sim-bar { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 0 12px 8px; }
+.sim-bar label { display: flex; gap: 4px; align-items: center; color: var(--muted); }
+.sim-bar input[type=number] { width: 60px; }
+#ground { min-height: 200px; margin: 0 12px 6px; border-radius: 6px; padding: 16px 12px 12px; display: flex; flex-wrap: wrap;
+  align-items: flex-end; justify-content: center; gap: 6px 10px;
+  background: radial-gradient(ellipse at 50% 60%, #3b3a32 0%, #24231e 55%, #121210 100%); }
+#sim .note { padding: 0 12px 10px; }
+.drop { display: flex; flex-direction: column; align-items: center; animation: fall .25s ease-out; max-width: 100%; }
+@keyframes fall { from { transform: translateY(-14px); opacity: 0; } }
+.beam { width: 6px; height: 80px; border-radius: 3px; background: linear-gradient(to top, var(--beam), transparent); box-shadow: 0 0 10px var(--beam); }
+.beam.temp { height: 40px; opacity: .6; box-shadow: none; }
+.beam.none { background: none; box-shadow: none; }
+.drop-label { font-family: "Fontin SmallCaps", Georgia, serif; border: 2px solid transparent; border-radius: 0; padding: 1px 6px;
+  white-space: nowrap; cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.drop-label.hidden { opacity: .35; text-decoration: line-through; }
+.drop-meta { display: flex; gap: 6px; align-items: center; font-size: 11px; color: #d8d0b4; min-height: 15px; margin-top: 2px; }
+.icon { display: inline-block; width: 12px; height: 12px; background: var(--icon); }
+@media (max-width: 700px) { .rule { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Loot filter</h1><span id="experimental" class="experimental" data-t="Experimental"></span>
+  <label><span data-t="Filter name"></span> <input id="name" size="16"></label>
+  <label><span data-t="Strictness"></span> <select id="strictness"></select></label>
+  <label id="tempBeamsLabel"><input id="tempBeams" type="checkbox"> <span data-t="Temporary beams only"></span></label>
+  <button id="importOpen" data-t="Import item"></button>
+  <button id="write" class="primary" data-t="Write filter"></button>
+  <div id="searchbar"><input id="search" type="search" autocomplete="off" spellcheck="false"><span id="searchInfo"></span></div>
+  <div id="status"></div>
+</header>
+<section id="importPanel" class="lookup" hidden>
+  <div class="note" data-t="Paste an item copied in game with Ctrl+C (Ctrl+Alt+C adds the mod names), or press Ctrl+V anywhere on this page."></div>
+  <textarea id="importText" rows="5" spellcheck="false"></textarea>
+  <div class="import-bar"><button id="importFind" class="primary" data-t="Find its rule"></button><button id="importClose" data-t="Close"></button></div>
+  <div id="importResult"></div>
+</section>
+<section id="sim" hidden>
+  <div class="sim-bar">
+    <span id="presets"></span>
+    <label><span data-t="Area level"></span> <input id="area" type="number" min="1" max="100" value="83"></label>
+    <label><span data-t="Items"></span> <input id="count" type="number" min="1" max="100" value="20"></label>
+    <label><input id="simSound" type="checkbox" checked> <span data-t="Play alert sounds"></span></label>
+    <label><input id="simHidden" type="checkbox"> <span data-t="Show hidden"></span></label>
+  </div>
+  <div id="ground"></div>
+  <div class="note" id="simNote"></div>
+</section>
+<nav id="chapters"></nav>
+<div id="modProblems"></div>
+<main id="main"></main>
+<script>
+"use strict";
+let lastSim = null, simSeq = 0;
+const PREVIEW = -1, simPanel = document.getElementById("sim"), sim = id => simPanel.querySelector("#" + id);
+simPanel.remove();
+simPanel.hidden = false;
+const api = (path, options) => fetch(path, options).then(async r => {
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(body.error || r.statusText);
+  return body;
+});
+let model, custom, texts = {}, chapterIndex = 0, saveTimer;
+const t = (key, ...args) => (texts[key] || key).replace(/\{(\d)\}/g, (_, i) => args[i]);
+const el = (tag, props = {}, ...children) => {
+  const node = Object.assign(document.createElement(tag), props);
+  for (const child of children.flat()) if (child != null) node.append(child);
+  return node;
+};
+const status = (text, error) => { const s = document.getElementById("status"); s.textContent = text; s.className = error ? "error" : ""; };
+
+const COLORS = ["Red", "Green", "Blue", "Brown", "White", "Yellow", "Cyan", "Grey", "Orange", "Pink", "Purple"];
+const SHAPES = ["Circle", "Diamond", "Hexagon", "Square", "Star", "Triangle", "Cross", "Moon", "Raindrop", "Kite", "Pentagon", "UpsideDownHouse"];
+const NUMERIC = ["ItemLevel", "StackSize", "AreaLevel", "DropLevel", "Quality", "MapTier", "GemLevel", "Sockets", "LinkedSockets",
+  "BaseDefencePercentile", "EnchantmentPassiveNum", "Height", "Width", "BaseArmour", "BaseEvasion", "BaseEnergyShield", "CorruptedMods"];
+
+async function load(strictness) {
+  status("…");
+  model = await api("api/model" + (strictness ? "?strictness=" + encodeURIComponent(strictness) : ""));
+  texts = model.texts;
+  custom = model.customization;
+  custom.rules ??= {};
+  [...document.querySelectorAll("[data-t]"), ...simPanel.querySelectorAll("[data-t]")].forEach(n => n.textContent = t(n.dataset.t));
+  document.getElementById("title").textContent = t("Loot filter");
+  document.getElementById("experimental").title = t("Experimental: the filter stays NeverSink's 8.20.2 for the 3.29 client, and some of FilterBlade's options are not here yet.");
+  document.getElementById("modProblems").replaceChildren(...(model.modProblems ?? []).map(p =>
+    el("div", { className: "text-Warning", textContent: t("A mod's loot filter part was left out: {0}", p) })));
+  document.title = t("Loot filter");
+  document.getElementById("search").placeholder = t("Search rules and items: a name, a tier, a class (press / to come back here)");
+  document.getElementById("tempBeams").checked = !!custom.temporaryBeams;
+  document.getElementById("tempBeamsLabel").title = t("A beam that stays keeps a quiet looping sound near the item until it is picked up. A temporary beam shows only as the item drops, without the loop.");
+  sim("simNote").textContent = t("Each item is a plain drop: no mods, influence or sockets. Click a label to open the rule that decides it.");
+  document.getElementById("importText").placeholder = "Item Class: Stackable Currency\nRarity: Currency\nDivine Orb\n--------\nStack Size: 1/20";
+  loadSounds();
+  sim("presets").replaceChildren(...PRESETS.map(([id, label]) => el("button", { textContent: t(label), onclick: () => simulate(id) })));
+  document.getElementById("name").value = custom.name;
+  const select = document.getElementById("strictness");
+  select.replaceChildren(...model.strictness.map(s => el("option", { value: s, textContent: s, selected: s === custom.strictness })));
+  rules = [];
+  collect(model.chapters);
+  render();
+  status("");
+}
+
+// Every rule, for moving items between tiers and for item suggestions.
+let rules = [];
+function collect(nodes, section, chapter) {
+  for (const node of nodes) {
+    if (node.kind === "rule") { node.section = section; node.chapter = chapter; rules.push(node); }
+    if (node.children) collect(node.children, node.kind === "section" ? node : section, node.kind === "chapter" ? node : chapter);
+  }
+}
+
+// What the rule is now: the base filter's state with the player's changes over it.
+const change = id => custom.rules[id] ??= { lines: {} };
+function current(rule) {
+  const c = custom.rules[rule.id];
+  const lines = Object.fromEntries(rule.lines);
+  if (c?.lines) for (const [k, v] of Object.entries(c.lines)) { if (v === null) delete lines[k]; else lines[k] = v; }
+  return { action: c?.visibility ?? rule.action, lines, items: c?.items ?? rule.items };
+}
+const baseLine = (rule, keyword) => rule.lines.find(l => l[0] === keyword)?.[1];
+function setLine(rule, keyword, value) {
+  const c = change(rule.id);
+  c.lines ??= {};
+  if ((value ?? undefined) === baseLine(rule, keyword)) delete c.lines[keyword]; else c.lines[keyword] = value;
+  changed(rule);
+}
+function setItems(rule, items) {
+  const c = change(rule.id);
+  if (JSON.stringify(items) === JSON.stringify(rule.items)) delete c.items; else c.items = items;
+}
+function changed(rule) {
+  const c = custom.rules[rule.id];
+  if (c && !c.visibility && !c.items && !Object.keys(c.lines ?? {}).length) delete custom.rules[rule.id];
+  save();
+  rerender(rule);
+}
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => flush().catch(() => {}), 300);
+}
+async function flush() {
+  clearTimeout(saveTimer);
+  try { await api("api/customization", { method: "PUT", body: JSON.stringify(custom) }); status(t("Saved")); }
+  catch (e) { status(e.message, true); throw e; }
+  if (lastSim) simulate(lastSim.preset, lastSim.seed, false);
+  if (lookupQuery) lookupItems(lookupQuery, true);
+}
+
+function render() {
+  const nav = document.getElementById("chapters");
+  nav.replaceChildren(...model.chapters.map((c, i) => el("button", {
+    textContent: c.title, className: i === chapterIndex ? "active" : "", onclick: () => { chapterIndex = i; render(); },
+  })), el("button", { textContent: t("Drop preview"), className: chapterIndex === PREVIEW ? "active" : "", onclick: () => { chapterIndex = PREVIEW; render(); } }));
+  const raw = document.getElementById("search").value.trim();
+  const query = raw.toLowerCase().startsWith("rule:") ? "rule:" + raw.slice(5) : raw.toLowerCase();
+  terms = query && !query.startsWith("rule:") ? query.split(/\s+/) : [];
+  document.getElementById("searchInfo").textContent = "";
+  const main = document.getElementById("main");
+  main.replaceChildren(...(query ? searchResults(query) : chapterIndex === PREVIEW ? [simPanel] : nodes(model.chapters[chapterIndex].children)));
+}
+
+// Search: every word must appear in the rule's title, section, chapter, description or items. "rule:<id>" opens one rule.
+let terms = [], lookupQuery = "", lookupSeq = 0, lookupTimer, catalog;
+const haystack = r => [r.title, r.id, r.section?.title, r.chapter?.title, r.description, ...(current(r).items ?? [])].join("\n").toLowerCase();
+function searchResults(query) {
+  const hits = query.startsWith("rule:") ? rules.filter(r => r.id === query.slice(5)) : rules.filter(r => { const h = haystack(r); return terms.every(w => h.includes(w)); });
+  document.getElementById("searchInfo").textContent = t("{0} rules", hits.length);
+  const out = [el("div", { id: "lookup" })];
+  let group;
+  for (const r of hits.slice(0, 150)) {
+    const title = [r.chapter?.title, r.section?.title].filter(Boolean).join(" › ");
+    if (title !== group) out.push(el("div", { className: "group", textContent: group = title }));
+    out.push(ruleView(r));
+  }
+  clearTimeout(lookupTimer);
+  lookupQuery = query.startsWith("rule:") ? "" : query;
+  if (lookupQuery) lookupTimer = setTimeout(() => lookupItems(lookupQuery), 200);
+  return out;
+}
+
+// The items whose names match the search, each as a plain drop through the filter as it is now, with the rule that decides it.
+async function lookupItems(query, quiet) {
+  const seq = ++lookupSeq;
+  catalog ??= await api("api/items");
+  // Exact names first, then names that start with the search, then the classes players look up most; shorter names first.
+  const classRank = c => /Currency/.test(c) ? 0 : /Divination|Fragments|Scarab|Maps/.test(c) ? 1 : 2;
+  const score = ([n, c]) => { const l = n.toLowerCase(); return [l === query ? 0 : 1, l.startsWith(query) ? 0 : 1, classRank(c), n.length]; };
+  const order = (a, b) => { const x = score(a), y = score(b); return x.findIndex((v, i) => v !== y[i]) === -1 ? 0 : x.find((v, i) => v !== y[i]) - y.find((v, i) => v !== x[i]); };
+  const names = catalog.filter(([n]) => n.toLowerCase().includes(query)).sort(order).slice(0, 8).map(([n]) => n);
+  const box = document.getElementById("lookup");
+  if (!names.length) { box?.replaceChildren(); return; }
+  const area = Number(sim("area").value) || 83;
+  const { drops } = await api("api/simulate", { method: "POST", body: JSON.stringify({ items: names, areaLevel: area }) });
+  if (seq !== lookupSeq || !box?.isConnected) return;
+  box.className = "lookup";
+  box.replaceChildren(el("div", { className: "note", textContent: t("Where these items go, as a plain drop at area level {0}", area) }),
+    ...drops.map(d => el("div", { className: "lookup-row" }, el("span", { className: "dark" }, dropLabel(d)), decidedBy(d))));
+}
+
+function decidedBy(d) {
+  if (d.rule) return el("button", { textContent: (d.visibility === "Hide" ? t("Hide") : t("Show")) + ": " + d.ruleTitle, onclick: () => openRule(d.rule) });
+  return el("span", { className: "note", textContent: d.block ? (d.visibility === "Hide" ? t("Hide") : t("Show")) + ": " + t("Decided by a rule the editor does not show: {0}", d.block) : t("No rule matches it; the game shows it plainly.") });
+}
+
+function openRule(id) {
+  const search = document.getElementById("search");
+  search.value = "rule:" + id;
+  render();
+  window.scrollTo({ top: document.getElementById("main").offsetTop - 120, behavior: "smooth" });
+}
+
+function mark(text) {
+  if (!terms.length) return text;
+  const pattern = new RegExp("(" + terms.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "gi");
+  return text.split(pattern).map((part, i) => i % 2 ? el("mark", { textContent: part }) : part);
+}
+
+// The drop preview: a sample of drops run through the filter as it is now, drawn as the game would, best guess.
+const PRESETS = [["currency", "Currency"], ["valuable", "Valuable currency"], ["uniques", "Uniques"], ["cards", "Divination cards"], ["mixed", "Map drop mix"]];
+const BEAMS = { Red: "#ff3b30", Green: "#34c759", Blue: "#3d7bff", Brown: "#b5651d", White: "#ffffff", Yellow: "#ffd60a", Cyan: "#32ade6",
+  Grey: "#9a9a9a", Orange: "#ff9500", Pink: "#ff6fb5", Purple: "#b45cf0" };
+const SHAPES_CSS = { Circle: "circle(50%)", Diamond: "polygon(50% 0,100% 50%,50% 100%,0 50%)", Hexagon: "polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)",
+  Square: "inset(8%)", Star: "polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)", Triangle: "polygon(50% 0,100% 100%,0 100%)",
+  Cross: "polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)", Moon: "polygon(40% 0,75% 10%,45% 30%,40% 50%,45% 70%,75% 90%,40% 100%,10% 75%,0 50%,10% 25%)",
+  Raindrop: "polygon(50% 0,85% 55%,70% 92%,30% 92%,15% 55%)", Kite: "polygon(50% 0,100% 40%,50% 100%,0 40%)", Pentagon: "polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%)",
+  UpsideDownHouse: "polygon(0 0,100% 0,100% 60%,50% 100%,0 60%)" };
+const SOUND_IDS = [...Array.from({ length: 16 }, (_, i) => String(i + 1)), "ShAlchemy", "ShBlessed", "ShChaos", "ShDivine", "ShExalted", "ShFusing", "ShGeneral", "ShMirror", "ShRegal", "ShVaal"];
+
+function defaultText(d) {
+  const [r, g, b] = d.rarity === "Unique" ? [175, 96, 37] : d.rarity === "Rare" ? [255, 255, 119] : d.rarity === "Magic" ? [136, 136, 255]
+    : /Currency/.test(d.class) ? [170, 158, 130] : d.class === "Divination Cards" ? [14, 186, 255] : /Gems/.test(d.class) ? [27, 162, 155] : [200, 200, 200];
+  return { r, g, b, a: 255 };
+}
+
+function dropLabel(d, onclick) {
+  const a = d.actions, size = Number(a.SetFontSize ?? 32);
+  return el("button", {
+    className: "drop-label" + (d.visibility === "Hide" ? " hidden" : ""), textContent: (d.stack > 1 ? d.stack + "x " : "") + d.name,
+    title: [d.ruleTitle ?? d.block ?? "", a.PlayAlertSound ? t("Sound {0}", a.PlayAlertSound) : ""].filter(Boolean).join("\n"),
+    onclick: onclick ?? (() => d.rule && openRule(d.rule)),
+    style: `font-size:${Math.round(size * 0.5)}px;color:${css(rgba(a.SetTextColor) ?? defaultText(d))};`
+      + `background:${css(rgba(a.SetBackgroundColor) ?? { r: 0, g: 0, b: 0, a: 240 })};border-color:${css(rgba(a.SetBorderColor))}`,
+  });
+}
+
+function dropView(d) {
+  const [beamColor, temp] = (d.actions.PlayEffect ?? "").split(/\s+/);
+  const [iconSize, iconColor, iconShape] = (d.actions.MinimapIcon ?? "").split(/\s+/);
+  const [sound, volume] = (d.actions.PlayAlertSound ?? "").split(/\s+/);
+  const px = [16, 13, 10][Number(iconSize)] ?? 12;
+  return el("div", { className: "drop" },
+    el("div", { className: "beam" + (!beamColor ? " none" : temp === "Temp" ? " temp" : ""), style: beamColor ? `--beam:${BEAMS[beamColor] ?? "#fff"}` : "",
+      title: beamColor ? beamColor + (temp === "Temp" ? ", " + t("Temporary") : "") : "" }),
+    dropLabel(d),
+    el("div", { className: "drop-meta" },
+      iconColor ? el("span", { className: "icon", title: d.actions.MinimapIcon,
+        style: `--icon:${BEAMS[iconColor] ?? "#fff"};width:${px}px;height:${px}px;clip-path:${SHAPES_CSS[iconShape] ?? SHAPES_CSS.Circle}` }) : null,
+      sound ? el("span", {}, el("button", { className: "play", textContent: "\u25B6\uFE0E", title: t("Play sound"), onclick: () => playSound(sound, volume) }),
+        " " + t("Sound {0}", sound) + (volume ? ` (${volume})` : "")) : null,
+      d.actions.CustomAlertSound ? el("button", { className: "play", textContent: "\u25B6\uFE0E " + customFile(d.actions.CustomAlertSound),
+        onclick: () => playCustom(d.actions.CustomAlertSound) }) : null));
+}
+
+async function simulate(preset, seed = Math.floor(Math.random() * 1e9), animate = true) {
+  lastSim = { preset, seed };
+  const seq = ++simSeq;
+  const body = { preset, seed, count: Number(sim("count").value) || 20, areaLevel: Number(sim("area").value) || 83 };
+  let drops;
+  try { ({ drops } = await api("api/simulate", { method: "POST", body: JSON.stringify(body) })); } catch (e) { status(e.message, true); return; }
+  if (seq !== simSeq) return;
+  const showHidden = sim("simHidden").checked;
+  const shown = drops.filter(d => showHidden || d.visibility !== "Hide");
+  const ground = sim("ground");
+  ground.replaceChildren();
+  const hidden = drops.length - drops.filter(d => d.visibility !== "Hide").length;
+  const info = hidden ? el("div", { className: "note", style: "flex-basis:100%;text-align:center;color:#a9a28a", textContent: t("{0} hidden", hidden) }) : null;
+  if (!animate) { ground.append(...shown.map(dropView), ...(info ? [info] : [])); return; }
+  for (const [i, d] of shown.entries()) {
+    setTimeout(() => {
+      if (seq !== simSeq) return;
+      ground.append(dropView(d));
+      if (d.visibility !== "Hide" && sim("simSound").checked) {
+        if (d.actions.CustomAlertSound) playCustom(d.actions.CustomAlertSound);
+        else if (d.actions.PlayAlertSound) playSound(...d.actions.PlayAlertSound.split(/\s+/));
+      }
+      if (i === shown.length - 1 && info) ground.append(info);
+    }, i * 110);
+  }
+  if (!shown.length && info) ground.append(info);
+}
+
+// The game's alert sounds, decoded by Waypoint from the client's ItemFilter.bank. PlayAlertSound's volume is 0 to 300.
+let sounds = [], soundError = "";
+async function loadSounds() {
+  try { const r = await api("api/sounds"); sounds = r.ids; soundError = r.error ?? ""; } catch (e) { soundError = e.message; }
+  if (soundError) sim("simNote").textContent += " " + t("Alert sounds are not available: {0}", soundError);
+}
+function play(url, volume) {
+  const audio = new Audio(url);
+  audio.volume = Math.max(0, Math.min(1, (Number(volume) || 300) / 300));
+  audio.play().catch(() => {});
+}
+function playSound(id, volume) { if (sounds.includes(id)) play("sound/" + encodeURIComponent(id), volume); }
+const customFile = value => (/^\s*"([^"]*)"/.exec(value) ?? /^\s*(\S+)/.exec(value) ?? [])[1] ?? "";
+function playCustom(value) { play("custom-sound?file=" + encodeURIComponent(customFile(value)), /(\d+)\s*$/.exec(value)?.[1]); }
+
+// Import: an item copied in game, run through the filter as it is now.
+async function importItem(text) {
+  const panel = document.getElementById("importPanel"), result = document.getElementById("importResult");
+  panel.hidden = false;
+  if (text != null) document.getElementById("importText").value = text;
+  text = document.getElementById("importText").value;
+  if (!text.trim()) return;
+  try {
+    const r = await api("api/identify", { method: "POST", body: JSON.stringify({ text, areaLevel: Number(sim("area").value) || 83 }) });
+    const d = r.drop;
+    result.replaceChildren(...[
+      el("div", { className: "lookup-row" }, el("span", { className: "dark" }, dropLabel(d)), decidedBy(d),
+        d.actions.PlayAlertSound ? el("button", { className: "play", textContent: "\u25B6\uFE0E " + t("Sound {0}", d.actions.PlayAlertSound),
+          onclick: () => playSound(...d.actions.PlayAlertSound.split(/\s+/)) }) : null),
+      el("div", { className: "note", textContent: (d.title ? d.title + ", " : "") + d.name + ": " + r.facts.join(" · ") }),
+      ...r.notes.map(n => el("div", { className: "text-Warning", textContent: n })),
+      r.chain.length > 1 ? el("div", { className: "note" }, t("Rules it passes, in order:"),
+        el("ol", { className: "chain" }, ...r.chain.map(c => el("li", {},
+          c.rule ? el("button", { textContent: c.title, onclick: () => openRule(c.rule) }) : c.block,
+          " " + (c.continue ? t("continues") : c.action))))) : null].filter(Boolean));
+    if (d.rule) openRule(d.rule);
+  } catch (e) { result.replaceChildren(el("div", { className: "text-Warning", textContent: e.message })); }
+}
+
+function nodes(list) {
+  const out = [], unsupported = [];
+  for (const node of list) {
+    if (node.kind === "section") out.push(el("details", { className: "section", ontoggle: e => fill(e.target, node) },
+      el("summary", { textContent: node.title }), el("div", { className: "content" })));
+    else if (node.kind === "rule") out.push(ruleView(node));
+    else if (node.kind === "unsupported") unsupported.push(node.name);
+    else if (node.text) out.push(el("div", { className: "text-" + node.kind, textContent: node.text, title: node.details ?? "" }));
+  }
+  if (unsupported.length) out.push(el("div", { className: "note", textContent: t("Not editable here yet: {0}", [...new Set(unsupported)].join(", ")) }));
+  return out;
+}
+
+// Sections fill when first opened: the whole filter at once is thousands of controls.
+function fill(details, node) {
+  const content = details.querySelector(":scope > .content");
+  if (details.open && !content.childElementCount) content.replaceChildren(...nodes(node.children));
+}
+
+const views = new Map();
+function rerender(rule) {
+  const old = views.get(rule.id);
+  if (old?.isConnected) old.replaceWith(ruleView(rule));
+}
+
+function ruleView(rule) {
+  const now = current(rule);
+  const isChanged = !!custom.rules[rule.id];
+  const view = el("div", { className: "rule" },
+    el("div", { className: "head" },
+      el("div", { className: "title" }, mark(rule.title), isChanged ? el("span", { className: "badge", textContent: t("Changed") }) : null),
+      preview(rule, now),
+      el("div", { className: "buttons" },
+        ...[["S", "Show"], ["H", "Hide"], ["D", "Disable"]].filter(([k]) => rule.buttons.includes(k)).map(([, action]) =>
+          el("button", { textContent: t(action), className: now.action === action ? "on" : "", onclick: () => {
+            const c = change(rule.id);
+            if (action === rule.action) delete c.visibility; else c.visibility = action;
+            changed(rule);
+          } })),
+        isChanged ? el("button", { textContent: t("Reset"), onclick: () => { delete custom.rules[rule.id]; changed(rule); } }) : null)),
+    el("div", {}, styleEditor(rule, now), conditions(rule, now), rule.items ? itemsEditor(rule, now) : null,
+      rule.description ? el("div", { className: "note", textContent: rule.description }) : null));
+  views.set(rule.id, view);
+  return view;
+}
+
+const rgba = value => {
+  const parts = (value ?? "").trim().split(/\s+/).map(Number);
+  if (parts.length < 3 || parts.slice(0, 4).some(isNaN)) return null;
+  const [r, g, b, a = 255] = parts;
+  return { r, g, b, a };
+};
+const css = c => c ? `rgba(${c.r},${c.g},${c.b},${c.a / 255})` : "transparent";
+function preview(rule, now) {
+  const size = Number(now.lines.SetFontSize ?? 32);
+  const sample = now.items?.[0] ?? rule.title;
+  return el("span", {
+    className: "preview" + (now.action === "Hide" ? " hidden" : now.action === "Disable" ? " disabled" : ""),
+    textContent: sample, title: sample,
+    style: `font-size:${Math.round(size * 0.45)}px;color:${css(rgba(now.lines.SetTextColor) ?? { r: 200, g: 200, b: 200, a: 255 })};`
+      + `background:${css(rgba(now.lines.SetBackgroundColor) ?? { r: 0, g: 0, b: 0, a: 240 })};border-color:${css(rgba(now.lines.SetBorderColor))}`,
+  });
+}
+
+const hex = c => "#" + [c.r, c.g, c.b].map(v => v.toString(16).padStart(2, "0")).join("");
+function colorInput(rule, now, keyword, label) {
+  const c = rgba(now.lines[keyword]);
+  const set = (color, alpha) => {
+    const n = parseInt(color.slice(1), 16);
+    setLine(rule, keyword, `${n >> 16} ${(n >> 8) & 255} ${n & 255} ${alpha}`);
+  };
+  const picker = el("input", { type: "color", value: c ? hex(c) : "#000000" });
+  const alpha = el("input", { type: "range", min: 0, max: 255, value: c?.a ?? 255, title: "alpha" });
+  picker.onchange = () => set(picker.value, alpha.value);
+  alpha.onchange = () => set(picker.value, alpha.value);
+  return el("label", {}, t(label), picker, alpha,
+    c ? el("button", { textContent: "×", title: t("None"), onclick: () => setLine(rule, keyword, null) }) : null);
+}
+
+// A list of options, each a value or [value, label]; with `none`, a first empty option with that label.
+function choice(options, value, onchange, none = t("None")) {
+  const select = el("select", { onchange: () => onchange(select.value) },
+    none ? el("option", { value: "", textContent: none }) : null,
+    ...options.map(o => Array.isArray(o) ? el("option", { value: o[0], textContent: o[1] }) : el("option", { value: o, textContent: o })));
+  select.value = value ?? "";
+  return select;
+}
+
+function styleEditor(rule, now) {
+  const size = el("input", { type: "number", min: 18, max: 45, value: now.lines.SetFontSize ?? "" });
+  size.onchange = () => setLine(rule, "SetFontSize", size.value ? String(Math.min(45, Math.max(18, size.value))) : null);
+
+  const [soundId, volume = "300"] = (now.lines.PlayAlertSound ?? "").split(/\s+/);
+  const vol = el("input", { type: "range", min: 0, max: 300, value: volume, title: t("Volume") });
+  const sound = choice(SOUND_IDS, soundId, v => { setLine(rule, "PlayAlertSound", v ? `${v} ${vol.value}` : null); if (v) playSound(v, vol.value); });
+  vol.onchange = () => sound.value && setLine(rule, "PlayAlertSound", `${sound.value} ${vol.value}`);
+
+  const [iconSize, iconColor, iconShape] = (now.lines.MinimapIcon ?? "").split(/\s+/);
+  const icon = () => setLine(rule, "MinimapIcon", iconColorSel.value ? `${iconSizeSel.value || 1} ${iconColorSel.value} ${iconShapeSel.value || "Circle"}` : null);
+  const iconSizeSel = choice(["0", "1", "2"], iconSize, icon, false);
+  const iconColorSel = choice(COLORS, iconColor, icon);
+  const iconShapeSel = choice(SHAPES, iconShape, icon, false);
+
+  const [beamColor, temp] = (now.lines.PlayEffect ?? "").split(/\s+/);
+  const tempBox = el("input", { type: "checkbox", checked: temp === "Temp" });
+  const beam = choice(COLORS, beamColor, v => setLine(rule, "PlayEffect", v ? v + (tempBox.checked ? " Temp" : "") : null));
+  tempBox.onchange = () => beam.value && setLine(rule, "PlayEffect", beam.value + (tempBox.checked ? " Temp" : ""));
+
+  return el("div", { className: "style" },
+    el("label", {}, t("Font size"), size),
+    colorInput(rule, now, "SetTextColor", "Text"),
+    colorInput(rule, now, "SetBorderColor", "Border"),
+    colorInput(rule, now, "SetBackgroundColor", "Background"),
+    el("label", {}, t("Sound"), sound, vol,
+      el("button", { className: "play", textContent: "\u25B6\uFE0E", title: t("Play sound"), onclick: () => sound.value && playSound(sound.value, vol.value) })),
+    el("label", {}, t("Minimap icon"), iconSizeSel, iconColorSel, iconShapeSel),
+    el("label", {}, t("Beam"), beam, tempBox, t("Temporary")));
+}
+
+// The conditions FilterBlade lets the player change on this rule ("ItemLevel", "StackSize?" …); numbers only for now.
+function conditions(rule, now) {
+  const editable = rule.controls.map(c => c.replace(/\?$/, "")).filter(c => NUMERIC.includes(c));
+  if (!editable.length) return null;
+  return el("div", { className: "style" }, el("span", { className: "note", textContent: t("Conditions") }),
+    ...editable.map(keyword => {
+      const [, op = ">=", number = ""] = /^\s*(<=|>=|==|=|<|>)?\s*(\d*)/.exec(now.lines[keyword] ?? "") ?? [];
+      const opSel = choice([">=", "<=", "==", ">", "<"], op, () => update(), false);
+      const value = el("input", { type: "number", min: 0, value: number, placeholder: t("Any") });
+      const update = () => setLine(rule, keyword, value.value === "" ? null : `${opSel.value} ${value.value}`);
+      value.onchange = update;
+      return el("label", {}, keyword, opSel, value);
+    }));
+}
+
+function itemsEditor(rule, now) {
+  const siblings = rules.filter(r => r !== rule && r.tierList === rule.tierList && r.tierStat === rule.tierStat && r.section === rule.section);
+  const move = (item, target) => {
+    setItems(rule, now.items.filter(i => i !== item));
+    if (target) {
+      const other = rules.find(r => r.id === target);
+      const theirs = current(other).items ?? [];
+      if (!theirs.includes(item)) setItems(other, [...theirs, item]);
+      changed(other);
+    }
+    changed(rule);
+  };
+  const list = "items-" + rule.tierList.replace(/\W/g, "");
+  if (!document.getElementById(list)) {
+    const known = new Set(rules.filter(r => r.tierList === rule.tierList).flatMap(r => [...(r.items ?? []), ...(current(r).items ?? [])]));
+    document.body.append(el("datalist", { id: list }, ...[...known].sort().map(v => el("option", { value: v }))));
+  }
+  const input = el("input", { size: 24, placeholder: t("Add item") });
+  input.setAttribute("list", list);
+  const add = () => {
+    const v = input.value.trim();
+    if (v && !now.items.includes(v)) { setItems(rule, [...now.items, v]); changed(rule); }
+  };
+  return el("div", {},
+    el("div", { className: "items" }, ...now.items.map(item => el("span", (rule.modItems ?? []).includes(item)
+        ? { className: "chip mod", title: t("Put in this tier by a mod") } : { className: "chip" }, item,
+      siblings.length ? choice(siblings.map(s => [s.id, s.title]), "", v => v && move(item, v), t("Move to")) : null,
+      el("button", { textContent: "×", title: t("Remove"), onclick: () => move(item, null) })))),
+    el("div", { className: "add" }, input, el("button", { textContent: "+", onclick: add })));
+}
+
+let searchTimer;
+document.getElementById("search").oninput = () => { clearTimeout(searchTimer); searchTimer = setTimeout(render, 120); };
+document.getElementById("search").onkeydown = e => { if (e.key === "Escape") { e.target.value = ""; render(); } };
+document.addEventListener("keydown", e => {
+  const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName ?? "");
+  if ((e.key === "/" && !typing) || (e.key.toLowerCase() === "k" && (e.ctrlKey || e.metaKey))) {
+    e.preventDefault();
+    const search = document.getElementById("search");
+    search.focus();
+    search.select();
+  }
+});
+document.getElementById("importOpen").onclick = () => { document.getElementById("importPanel").hidden = false; document.getElementById("importText").focus(); };
+document.getElementById("importClose").onclick = () => { document.getElementById("importPanel").hidden = true; };
+document.getElementById("importFind").onclick = () => importItem();
+document.getElementById("importText").onpaste = () => setTimeout(() => importItem(), 0);
+document.addEventListener("paste", e => {
+  const text = e.clipboardData?.getData("text") ?? "";
+  if (/INPUT|TEXTAREA/.test(document.activeElement?.tagName ?? "") || !/^\s*Item Class:/i.test(text)) return;
+  e.preventDefault();
+  importItem(text);
+});
+document.getElementById("tempBeams").onchange = e => { custom.temporaryBeams = e.target.checked; save(); };
+sim("simHidden").onchange = () => lastSim && simulate(lastSim.preset, lastSim.seed, false);
+document.getElementById("strictness").onchange = async e => { custom.strictness = e.target.value; await flush(); await load(e.target.value); };
+document.getElementById("name").onchange = e => { custom.name = e.target.value; save(); };
+document.getElementById("write").onclick = async () => {
+  try {
+    await flush();
+    const result = await api("api/write", { method: "POST" });
+    status(t("Written to {0}", result.file) + " " + t("Choose it in the item filter list of the game options; if it is already chosen, reload it there.")
+      + (result.skipped.length ? " " + t("Not in this filter version: {0}", result.skipped.join(", ")) : ""));
+  } catch (e) { status(e.message, true); }
+};
+load().catch(e => status(e.message === "Failed to fetch" ? t("Waypoint closed this editor. Open it again from Tools.") : e.message, true));
+</script>
+</body>
+</html>

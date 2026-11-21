@@ -49,6 +49,20 @@
                         </StackPanel>
                     </DockPanel>
                 </Border>
+                <Border x:Name="LootFilterCard" Visibility="Collapsed" Width="340" Margin="0,0,14,14" Padding="18,16" CornerRadius="8" BorderThickness="1"
+                        Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Style="{StaticResource Shell.PrimaryButton}" Click="OpenLootFilter"
+                                Content="{l:Loc 'Open loot filter editor'}" Margin="0,12,0,0" />
+                        <md:PackIcon DockPanel.Dock="Left" Kind="FilterOutline" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                     Foreground="{DynamicResource Shell.Accent}" />
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc 'Loot filter (experimental)'}" FontSize="15" FontWeight="SemiBold" />
+                            <TextBlock Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Text="{l:Loc 'Make your own loot filter, much like FilterBlade. Opens in your browser and writes the filter where the game finds it.'}" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
                 <!-- Simple mode's list has neither Console nor Logs: they open from here. Advanced mode lists both. -->
                 <Border x:Name="ConsoleCard" Visibility="Collapsed" Width="340" Margin="0,0,14,14" Padding="18,16" CornerRadius="8" BorderThickness="1"
                         Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">

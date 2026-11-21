@@ -1,9 +1,13 @@
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Waypoint;
 
-/// <summary>Tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout.</summary>
+/// <summary>Tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout; the loot
+/// filter editor in the browser.</summary>
 public partial class ToolsTab : UserControl
 {
     Shared _shared = null!;
@@ -26,11 +30,24 @@ public partial class ToolsTab : UserControl
         // `crafter` mode (CrafterCatalog.HasCrafter), and gives items through the Waypoint Tools mod there.
     }
 
-    /// <summary>The two cards that lead to Console and Logs, for the mode whose list has neither.</summary>
-    internal void ShowMode(bool simple) =>
+    /// <summary>The two cards that lead to Console and Logs, for the mode whose list has neither; the loot filter editor,
+    /// experimental, only in Advanced mode.</summary>
+    internal void ShowMode(bool simple)
+    {
         ConsoleCard.Visibility = LogsCard.Visibility = simple ? Visibility.Visible : Visibility.Collapsed;
+        LootFilterCard.Visibility = simple ? Visibility.Collapsed : Visibility.Visible;
+    }
 
     void OpenConsole(object sender, RoutedEventArgs e) => ConsoleRequested?.Invoke();
+
+    void OpenLootFilter(object sender, RoutedEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo(LootFilterEditor.Url(_shared.Settings.ServerPath)) { UseShellExecute = true })?.Dispose(); }
+        catch (Exception ex) when (ex is HttpListenerException or Win32Exception or IOException)
+        {
+            Dialog.Tell(Window.GetWindow(this), DialogKind.Warning, L.Text("Loot filter"), ex.Message);
+        }
+    }
 
     void OpenLogs(object sender, RoutedEventArgs e) => LogsRequested?.Invoke();
 

@@ -18,6 +18,20 @@ license. They are separate works: none of them changes Waypoint's license, and W
   that carries the program has that source attached beside `Waypoint.exe`, as `DepotDownloader-3.4.0-source.zip`.
 - DepotDownloader is built on SteamKit2 (LGPL-2.1), protobuf-net and QRCoder, whose notices are in its own repository.
 
+## NeverSink's filter and FilterBlade's option file
+
+The loot filter editor ([docs/launcher.md](docs/launcher.md), "Tools: the loot filter") downloads these when the player
+first opens it. Waypoint does not carry them.
+
+- [NeverSink's filter](https://github.com/NeverSinkDev/NeverSink-Filter) 8.20.2 by NeverSink, MIT
+  (<https://github.com/NeverSinkDev/NeverSink-Filter/blob/master/LICENSE>). The filter the player writes is a copy of it
+  with their changes.
+- [FilterBlade-Public-Assets](https://github.com/NeverSinkDev/FilterBlade-Public-Assets), `FbPoe1Configs/CustomizerDefault.options`
+  and `FbPoe1Configs/BaseTypes.csv`, MIT (<https://github.com/NeverSinkDev/FilterBlade-Public-Assets/blob/master/LICENSE>).
+- [vgmstream](https://github.com/vgmstream/vgmstream) r2117 (`vgmstream-win64.zip` or `vgmstream-linux.zip`), ISC-style
+  licence (its `COPYING`). The editor runs it to decode the alert sounds of the player's own client into WAV files in
+  Waypoint's data; the sounds are the client's and are never published.
+
 ## OpenDyslexic
 
 The reading font Waypoint offers, under the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt).

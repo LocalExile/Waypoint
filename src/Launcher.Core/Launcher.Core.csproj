@@ -7,6 +7,7 @@
     <None Include="../../scripts/*.py" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
     <EmbeddedResource Include="../../scripts/*.ps1;../../scripts/*.py" Exclude="../../scripts/New-Icon.ps1" LogicalName="Bridge/%(Filename)%(Extension)" />
     <EmbeddedResource Include="MapSpawnCatalog.cs" LogicalName="Bridge/MapSpawnCatalog.cs" />
+    <EmbeddedResource Include="LootFilter/editor.html" LogicalName="LootFilter/editor.html" />
     <EmbeddedResource Include="../../scripts/map-viewer/MapViewer.cs;../../scripts/map-viewer/MapViewer.csproj" LogicalName="Bridge/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
