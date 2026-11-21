@@ -138,7 +138,10 @@ Gateway may instead be a verified `dotnet watch run --project src\GameServer.Gat
 with the same dedicated cmd and absolute checkout log destinations. Its app executable must have the exact Debug
 path and a live, timestamp-ordered ancestry to that root. Watch ownership persists during child restart/build gaps;
 such a service is Starting, not Stopped. Foreign matching server/watcher processes also block launch, even when they
-do not hold a port, because upstream launch scripts may otherwise terminate them by name.
+do not hold a port, because upstream launch scripts may otherwise terminate them by name. One whose server or client
+paths all lie in another checkout (a worktree under this checkout's `.claude/worktrees` counts as another) and that
+holds none of this checkout's ports blocks only a start and a change of accounts: it is listed in `PortsInUse`, like
+another program on a port, but account changes still refuse every LocalExile login, Gateway or account-service process.
 
 Graceful shutdown runs `ConsoleSignal.ps1`, which rechecks PID, parent and creation timestamp. It attaches only to
 the verified dedicated console. Every console peer must be the cmd, signal helper or a verified descendant of that

@@ -72,6 +72,8 @@ Check ($otherCheckout.Message -eq 'Port 8080 is used by dotnet.exe (PID 29305). 
 Check (-not (Get-PortConflict 12995 'Patch' 29306).OtherProgram) 'a release''s server on the port blocks file changes too'
 $unknown = Get-PortConflict 8080 'Patch' 29399
 Check ($unknown.Message -eq 'Port 8080 is used by another program (PID 29399). Patch needs this port.' -and -not $unknown.OtherProgram) 'a holder Waypoint cannot name blocks everything'
+Check ((Test-OtherCheckout $script:byId[29305]) -and (Test-OtherCheckout ([pscustomobject]@{ CommandLine="dotnet `"$(At '.claude\worktrees\other\src\GameServer.Auth\bin\Debug\net10.0\GameServer.Auth.dll')`" serve" }))) 'another checkout''s server, nested worktrees included, holding no port here blocks only a start'
+Check (-not (Test-OtherCheckout ([pscustomobject]@{ CommandLine="dotnet `"$(At $relative)`"" })) -and -not (Test-OtherCheckout ([pscustomobject]@{ CommandLine="dotnet $relative" }))) 'a server of this checkout, or one naming no checkout, blocks file changes'
 
 # A Client folder that is a link. Test-Sdk stands in for dotnet: nothing here may reach a build.
 $linkFixture = Join-Path ([IO.Path]::GetTempPath()) ('Launcher-client-link-' + [guid]::NewGuid().ToString('N'))

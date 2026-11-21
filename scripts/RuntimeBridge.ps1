@@ -236,6 +236,27 @@ function Get-PortConflict([int]$port, [string]$name, [int]$owner) {
                else { "Port $port is used by another program (PID $owner). $name needs this port." }
     return [pscustomobject]@{ Message=$message; OtherProgram=($named -and -not (Test-ServerProcess $holder)) }
 }
+# A LocalExile process of another checkout or installation: every server or client path its executable or command line
+# names is outside this checkout (a worktree nested in its .claude/worktrees is another checkout, as live.ps1 counts it),
+# and it names at least one. It blocks a start here (an older live.ps1 stopped servers by
+# name), but not a change of this checkout's mods, modules or leagues, whose files it does not hold. Accounts keep their
+# own stricter check (Assert-AccountsStopped). A process that names no such path, or one inside this checkout, is not one.
+function Test-OtherCheckout($process) {
+    $root = [IO.Path]::GetFullPath($script:root).TrimEnd('\', '/')
+    # Linux has no native argument splitter (LinuxBridge.ps1 splits on whitespace too).
+    $arguments = if ($IsLinux) { @(-split "$($process.CommandLine)") } else { @(Split-Arguments "$($process.CommandLine)") }
+    $paths = @(@($process.ExecutablePath) + $arguments | Where-Object {
+        $_ -and [IO.Path]::IsPathRooted($_) -and $_ -match 'GameServer\.(Gateway|Auth|Patch)|Game\.patched\.exe|PathOfExile' })
+    if (-not $paths.Count) { return $false }
+    $separator = [IO.Path]::DirectorySeparatorChar
+    $nested = [IO.Path]::Combine($root, '.claude', 'worktrees') + $separator
+    foreach ($path in $paths) {
+        $full = try { [IO.Path]::GetFullPath($path).TrimEnd('\', '/') } catch { return $false }
+        if ($full.StartsWith($nested, [StringComparison]::OrdinalIgnoreCase)) { continue }
+        if ($full -ieq $root -or $full.StartsWith($root + $separator, [StringComparison]::OrdinalIgnoreCase)) { return $false }
+    }
+    $true
+}
 function Get-Snapshot {
     Get-Inventory
     $conflicts = [Collections.Generic.List[string]]::new()
@@ -282,12 +303,21 @@ function Get-Snapshot {
             if ($s.ProcessId -and $script:byId[$s.ProcessId].ParentProcessId -eq $p.ProcessId) { $ownedProcess = $true }
         }
         foreach ($w in $watchers) { if ((Descends-From $p $w) -or $p.ProcessId -eq $w.ParentProcessId) { $ownedProcess = $true } }
-        if (-not $ownedProcess) { $conflicts.Add("Another server or watcher is running (PID $($p.ProcessId)). Stop it from its own installation before launching here.") }
+        if (-not $ownedProcess) {
+            $message = "Another server or watcher is running (PID $($p.ProcessId)). Stop it from its own installation before launching here."
+            $conflicts.Add($message)
+            if (Test-OtherCheckout $p) { $portsInUse.Add($message) }
+        }
     }
     $gamePath = At 'Client/Game.patched.exe'
     $games = @($script:processes | Where-Object { $_.Name -ieq 'Game.patched.exe' -or $_.Name -like 'PathOfExile*.exe' -or $_.Name -ieq 'Game.exe' })
     $ownedGame = @($games | Where-Object { Same-Path $_.ExecutablePath $gamePath })
-    if ($games.Count -gt $ownedGame.Count -or $ownedGame.Count -gt 1) { $conflicts.Add('Another game client is running. Close it before launching or restarting services.') }
+    if ($games.Count -gt $ownedGame.Count -or $ownedGame.Count -gt 1) {
+        $message = 'Another game client is running. Close it before launching or restarting services.'
+        $conflicts.Add($message)
+        $others = @($games | Where-Object { -not (Same-Path $_.ExecutablePath $gamePath) })
+        if ($ownedGame.Count -le 1 -and -not @($others | Where-Object { -not (Test-OtherCheckout $_) }).Count) { $portsInUse.Add($message) }
+    }
     $game = $ownedGame | Select-Object -First 1
     $services += New-Service 'Game' $(if ($game) { 'Running' } else { 'Stopped' }) $game $(if ($game) { 'Prepared client for this checkout' } else { 'Launches only through live.ps1 -ClientOnly' }) @()
     $requirements = @(
