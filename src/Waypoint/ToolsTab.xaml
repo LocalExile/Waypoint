@@ -49,6 +49,20 @@
                         </StackPanel>
                     </DockPanel>
                 </Border>
+                <Border Width="340" Margin="0,0,14,14" Padding="18,16" CornerRadius="8" BorderThickness="1"
+                        Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Style="{StaticResource Shell.PrimaryButton}" Click="OpenLootFilters"
+                                Content="{l:Loc 'Open loot filter fixer'}" Margin="0,12,0,0" />
+                        <md:PackIcon DockPanel.Dock="Left" Kind="FilterCogOutline" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                     Foreground="{DynamicResource Shell.Accent}" />
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc 'Loot filter fixer'}" FontSize="15" FontWeight="SemiBold" />
+                            <TextBlock Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Text="{l:Loc 'Make a FilterBlade or NeverSink filter for a newer patch load in this client: the item names and rules it does not have are taken out.'}" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
                 <!-- Simple mode's list has neither Console nor Logs: they open from here. Advanced mode lists both. -->
                 <Border x:Name="ConsoleCard" Visibility="Collapsed" Width="340" Margin="0,0,14,14" Padding="18,16" CornerRadius="8" BorderThickness="1"
                         Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}">

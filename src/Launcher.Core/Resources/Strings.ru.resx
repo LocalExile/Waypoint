@@ -1631,6 +1631,9 @@
   <data name="Text_2b28514da699" xml:space="preserve">
     <value>Настройка остановлена</value>
   </data>
+  <data name="Text_2b305b762d04" xml:space="preserve">
+    <value>Сохраняется в (игра читает фильтры предметов только из этой папки)</value>
+  </data>
   <data name="Text_2b4048cd80c1" xml:space="preserve">
     <value>По запросу ничего не найдено.</value>
   </data>
@@ -1855,6 +1858,9 @@
   </data>
   <data name="Text_30b596760dc1" xml:space="preserve">
     <value>Frida установлена, но не загружается. Проверьте вывод установки и попробуйте снова.</value>
+  </data>
+  <data name="Text_30b783c80464" xml:space="preserve">
+    <value>Другой файл…</value>
   </data>
   <data xml:space="preserve" name="Text_30cc92d87a1e">
     <value>Монохромная</value>
@@ -2878,6 +2884,9 @@
   <data name="Text_4de3fe11186f" xml:space="preserve">
     <value>У каждой записи должен быть уникальный непустой ключ.</value>
   </data>
+  <data name="Text_4dee4b292a78" xml:space="preserve">
+    <value>Преобразование…</value>
+  </data>
   <data xml:space="preserve" name="Text_4df1cf29668a">
     <value>Запуск завершён.</value>
   </data>
@@ -3362,6 +3371,9 @@
   </data>
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Учётные записи, персонажи и прогресс этой установки. Сохранения и выбор модов восстанавливаются отдельно.</value>
+  </data>
+  <data name="Text_5cd425f518c2" xml:space="preserve">
+    <value>Преобразовать</value>
   </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>После --repo укажите одну папку.</value>
@@ -4698,6 +4710,9 @@
   <data name="Text_8451b0247817" xml:space="preserve">
     <value>Нужен клиент Path of Exile, с которым работает LocalExile: ваша автономная установка или установка Steam, либо клиент, загруженный из Steam после этого мастера.</value>
   </data>
+  <data name="Text_848d2e860480" xml:space="preserve">
+    <value>В игре: Настройки (Options) &gt; Игра (Game) &gt; Фильтр предметов (Item Filter), затем выберите {0}.</value>
+  </data>
   <data name="Text_848e96567d6b" xml:space="preserve">
     <value>Мощь</value>
   </data>
@@ -4763,6 +4778,9 @@
   </data>
   <data name="Text_865fa5f68659" xml:space="preserve">
     <value>Настройки не предоставлены для Waypoint</value>
+  </data>
+  <data name="Text_866956901fd1" xml:space="preserve">
+    <value>Все файлы</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>Сохранённых предметов пока нет. Соберите предмет и нажмите «Сохранить».</value>
@@ -5009,6 +5027,9 @@
   </data>
   <data xml:space="preserve" name="Text_8d9f188ce712">
     <value>Руководство по настройке</value>
+  </data>
+  <data name="Text_8d9f2edc0216" xml:space="preserve">
+    <value>В этой папке LocalExile нет таблиц клиента ({0}).</value>
   </data>
   <data xml:space="preserve" name="Text_8da29ab6e244">
     <value>Подготовленный клиент этой установки</value>
@@ -5646,6 +5667,9 @@
   <data name="Text_9dc3902589e5" xml:space="preserve">
     <value>Настройки сохранены. У каждой настройки указано, когда она применяется.</value>
   </data>
+  <data name="Text_9dd3dffd54c4" xml:space="preserve">
+    <value>Выберите фильтр предметов</value>
+  </data>
   <data name="Text_9dee1c0ed39e" xml:space="preserve">
     <value>Атлас</value>
   </data>
@@ -5784,6 +5808,9 @@
   <data name="Text_a209514cda81" xml:space="preserve">
     <value>Удалить эту копию…</value>
   </data>
+  <data name="Text_a2353e4c88c0" xml:space="preserve">
+    <value>Убрано названий предметов, которых нет в клиенте: {0}.</value>
+  </data>
   <data name="Text_a25890814951" xml:space="preserve">
     <value>Остановить службы перед выходом</value>
   </data>
@@ -5894,6 +5921,9 @@
   </data>
   <data name="Text_a4cb3139c1c6" xml:space="preserve">
     <value>Серверы или игра работают. Они будут остановлены перед переключением: работающий Gateway начал бы пересборку посреди процесса.</value>
+  </data>
+  <data name="Text_a4cfa83de3e7" xml:space="preserve">
+    <value>Позволяет загрузить в этом клиенте фильтр предметов, написанный для более нового патча, например фильтры FilterBlade и NeverSink для 3.30. Убираются только названия предметов и правила, которых нет в клиенте; стили, звуки и ваши изменения в FilterBlade остаются.</value>
   </data>
   <data name="Text_a4e4bc881019" xml:space="preserve">
     <value>Удаление…</value>
@@ -6059,6 +6089,9 @@
   </data>
   <data xml:space="preserve" name="Text_a86bfd7816e2">
     <value>Скрипт LocalExile live.ps1</value>
+  </data>
+  <data name="Text_a8968379f4c6" xml:space="preserve">
+    <value>Выберите Documents\My Games\Path of Exile</value>
   </data>
   <data name="Text_a89b896cdcfb" xml:space="preserve">
     <value>Строки с этим текстом (без учёта регистра)</value>
@@ -6417,6 +6450,9 @@
   <data name="Text_b3557e6a6fbe" xml:space="preserve">
     <value>Ваши персонажи перенесены. Входите как обычно.</value>
   </data>
+  <data name="Text_b36a3e685746" xml:space="preserve">
+    <value>Исправление фильтров предметов</value>
+  </data>
   <data name="Text_b370dc0062ea" xml:space="preserve">
     <value>live.ps1: собирает и запускает серверы, затем игру (закрывает запущенную)</value>
   </data>
@@ -6446,6 +6482,9 @@
   </data>
   <data xml:space="preserve" name="Text_b460af7eddc8">
     <value>Загрузите список для выбранного репозитория.</value>
+  </data>
+  <data name="Text_b466fc661498" xml:space="preserve">
+    <value>Игра читает фильтры только из самой папки Path of Exile, поэтому они сохраняются в {0}.</value>
   </data>
   <data xml:space="preserve" name="Text_b46871152667">
     <value>Нужен перезапуск</value>
@@ -6792,6 +6831,9 @@
   <data xml:space="preserve" name="Text_bed8374efd88">
     <value>Gateway работает без отслеживания изменений. Остановите серверы, чтобы изменить режим запуска.</value>
   </data>
+  <data name="Text_bef0f6f28c5f" xml:space="preserve">
+    <value>Фильтры предметов</value>
+  </data>
   <data name="Text_bef228d2176d" xml:space="preserve">
     <value>Скопировать игровой клиент</value>
   </data>
@@ -7019,6 +7061,9 @@
   </data>
   <data name="Text_c66feb5eb8f2" xml:space="preserve">
     <value>Выше</value>
+  </data>
+  <data name="Text_c697f2739b24" xml:space="preserve">
+    <value>Фильтры предметов не найдены. Скачайте фильтр с FilterBlade или синхронизируйте его со своей учётной записью, затем выберите его через «Другой файл…».</value>
   </data>
   <data name="Text_c69883335d5b" xml:space="preserve">
     <value>Серверы остановлены</value>
@@ -7458,6 +7503,9 @@
   <data name="Text_d36be6494248" xml:space="preserve">
     <value>в очереди</value>
   </data>
+  <data name="Text_d39d7f4a76a5" xml:space="preserve">
+    <value>Открыть исправление фильтров</value>
+  </data>
   <data name="Text_d3b65b039981" xml:space="preserve">
     <value>{0} ещё не собран: запустите серверы хотя бы раз (live.ps1 соберёт его)</value>
   </data>
@@ -7634,6 +7682,9 @@
   </data>
   <data name="Text_d848702976bf" xml:space="preserve">
     <value>Оставить текущий LocalExile как есть. У каждой копии свой прогресс.</value>
+  </data>
+  <data name="Text_d851298f9e1d" xml:space="preserve">
+    <value>Сохранено: {0}.</value>
   </data>
   <data name="Text_d869e1c9fe5a" xml:space="preserve">
     <value>Выход отменён. Закройте игру перед остановкой служб.</value>
@@ -8656,6 +8707,9 @@
     <value>
 Моды при копировании: </value>
   </data>
+  <data name="Text_f47841a5ae1b" xml:space="preserve">
+    <value>Загрузка фильтра FilterBlade или NeverSink для более нового патча в этом клиенте: названия предметов и правила, которых в нём нет, убираются.</value>
+  </data>
   <data name="Text_f4a54a4c8d08" xml:space="preserve">
     <value>Завершить эту копию</value>
   </data>
@@ -9039,6 +9093,9 @@
   </data>
   <data name="Text_fe73b3e30e31" xml:space="preserve">
     <value>Добыча и снаряжение</value>
+  </data>
+  <data name="Text_fe910550348a" xml:space="preserve">
+    <value>Отключено правил: {0}. Они касаются только предметов или условий, которых нет в клиенте.</value>
   </data>
   <data name="Text_fea4f8f76fc1" xml:space="preserve">
     <value>Крепость</value>

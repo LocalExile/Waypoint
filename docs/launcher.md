@@ -487,7 +487,7 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters, searchable; registering an account; creating a character; creating, duplicating, renaming, setting a password and deleting with everything stopped | the list and those changes are the adapter's (`QueryAccounts`, `Register`, `ManageAccount`, `AccountData.py`; [account-management.md](account-management.md)); Register and Create go through the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `register`, `create_character`; Waypoint builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
-| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter`, and items given through the Waypoint Tools mod; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout |
+| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout, the loot filter fixer | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter`, and items given through the Waypoint Tools mod; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout; the checkout's `sql/updates/client` tables for the loot filter fixer |
 | Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
 ### No longer reached
@@ -1527,6 +1527,29 @@ client's own layout builder for the day's seed, the areas the official server pi
 When the server's seed is fixed (`Game_LAB_SEED`), its layout is the same on every day, and the window says so.
 A Gateway built before the mode would start for real, so Waypoint first asks `commands` and goes on only if
 `/lab_layout` takes a date, which came with the mode. Windows only, like the map viewer.
+
+### Tools: the loot filter fixer
+
+FilterBlade and NeverSink build their filters for the newest patch only (3.30), and the LocalExile client refuses such a
+filter: it names items, an item class (Viscera) and modifiers the client doesn't have, and uses a condition it doesn't
+know (`Fated`). **Open loot filter fixer** opens a window of its own (one at a time) that makes a copy the client loads.
+
+- **Filter**: the filters in the game's filter folder, its `OnlineFilters` (filters synced to the account, shown with their
+  name and patch) and the player's `Downloads`, newest first; **Other file…** adds any file.
+- **Saves to**: the folder the game lists filters from, `Documents\My Games\Path of Exile` (OneDrive's Documents when
+  Windows moved it there: the one the game wrote settings in). **Change…** picks another; a folder inside it, such as
+  LocalExile's own settings folder or `OnlineFilters`, is taken as `Path of Exile` itself, because the game reads no
+  subfolder. **Open folder** shows it in Explorer.
+- **Convert** writes `<name> - LocalExile.filter` there (the synced filter's name, else the file's), over the copy of an
+  earlier conversion, and says what it took out. It removes the `BaseType`, `Class`, `HasExplicitMod` and `HasImplicitMod`
+  values the client lacks (the whole name with `==`, otherwise as part of a name, as the game matches), and comments out a
+  block whose list ends up empty or that uses a condition the 3.29.3 client doesn't know. An unknown cosmetic action loses
+  only its line. Everything else is kept.
+
+The client's names come from the checkout's client tables as SQL, `sql/updates/client/*_BaseItemTypes.sql`,
+`*_ItemClasses.sql` and `*_Mods.sql` (the Name column), which a release carries as a source copy does; the conditions
+are the ones the 3.29.3 `Game.exe` holds. Nothing is downloaded, and the player's filters are only read. Windows only.
+Code: `Launcher.Core/LootFilters.cs`, `LootFilterWindow`.
 
 ### Accounts
 

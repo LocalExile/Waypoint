@@ -3,13 +3,14 @@ using System.Windows.Controls;
 
 namespace Waypoint;
 
-/// <summary>Tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout.</summary>
+/// <summary>Tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout, the loot filter fixer.</summary>
 public partial class ToolsTab : UserControl
 {
     Shared _shared = null!;
     ItemCrafterWindow? _crafter;
     MapViewerWindow? _mapViewer;
     LabLayoutWindow? _labLayout;
+    LootFilterWindow? _lootFilters;
 
     /// <summary>Simple mode's way to the Console and Logs sections, which its list leaves out.</summary>
     internal event Action? ConsoleRequested, LogsRequested;
@@ -62,6 +63,27 @@ public partial class ToolsTab : UserControl
         else _crafter.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         _crafter.Closed += (_, _) => _crafter = null;
         _crafter.Show();
+    }
+
+    /// <summary>The loot filter fixer's window, or the one already open brought forward.</summary>
+    void OpenLootFilters(object sender, RoutedEventArgs e)
+    {
+        if (_lootFilters is { IsLoaded: true })
+        {
+            if (_lootFilters.WindowState == WindowState.Minimized) _lootFilters.WindowState = WindowState.Normal;
+            _lootFilters.Activate();
+            return;
+        }
+        _lootFilters = new LootFilterWindow();
+        if (Window.GetWindow(this) is { WindowState: WindowState.Normal, IsVisible: true } main)
+        {
+            _lootFilters.WindowStartupLocation = WindowStartupLocation.Manual;
+            _lootFilters.Left = main.Left + (main.ActualWidth - _lootFilters.Width) / 2;
+            _lootFilters.Top = main.Top + (main.ActualHeight - _lootFilters.Height) / 2;
+        }
+        else _lootFilters.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        _lootFilters.Closed += (_, _) => _lootFilters = null;
+        _lootFilters.Show();
     }
 
     /// <summary>The lab layout's window, or the one already open brought forward.</summary>
