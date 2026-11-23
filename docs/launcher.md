@@ -487,7 +487,7 @@ A link to a section Simple mode's list lacks (a log, from a failure) shows that 
 | Logs | every server's `logs\live-*.log` with its `.err`, the walk-map recorder, the dev host, the client's `Client\logs\Client.txt`, the launcher's own lines, and "All errors" from all of them | follows each file twice a second; a file `live.ps1` recreates starts over; a large file from its last 512 KB |
 | Accounts | the accounts and their characters, searchable; registering an account; creating a character; creating, duplicating, renaming, setting a password and deleting with everything stopped | the list and those changes are the adapter's (`QueryAccounts`, `Register`, `ManageAccount`, `AccountData.py`; [account-management.md](account-management.md)); Register and Create go through the server's dev account service (`GameServer.Host`, its `Agents/docs/dev-server.md`): `register`, `create_character`; Waypoint builds and starts it when needed |
 | Console | the Gateway's chat commands for the character in game, with suggestions, usages, pinned lines and history | the server's client control bridge (`scripts/dev/client_control.py --stdio`); the lists come from the built Gateway (`GameServer.Gateway commands` and `values`) |
-| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter`, and items given through the Waypoint Tools mod; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout |
+| Tools | tools for the game itself, each in its own window: the map viewer, the item crafter, the lab layout; the loot filter editor in the browser | the server's item crafter hook (its `Agents/docs/dev/item-crafter.md`): `GameServer.Gateway crafter`, and items given through the Waypoint Tools mod; the Gateway's `labyrinth <yyyy-mm-dd>` mode for the lab layout; nothing from the server for the loot filter |
 | Settings | the appearance, the language, what closing the window does, updates, the checkout and its local launch profile (Advanced mode only) | saved as chosen; `Settings.cs` |
 
 ### No longer reached
@@ -1527,6 +1527,92 @@ client's own layout builder for the day's seed, the areas the official server pi
 When the server's seed is fixed (`Game_LAB_SEED`), its layout is the same on every day, and the window says so.
 A Gateway built before the mode would start for real, so Waypoint first asks `commands` and goes on only if
 `/lab_layout` takes a date, which came with the mode. Windows only, like the map viewer.
+
+### Tools: the loot filter
+
+**Open loot filter editor** opens the player's browser on a page Waypoint serves itself, on Windows and Linux alike. It
+makes a loot filter from NeverSink's the way FilterBlade does, for the 3.29 client LocalExile serves. It is experimental:
+its card, "Loot filter (experimental)", shows only in Advanced mode (a source copy, or a release with Developer Mode and
+Advanced chosen). NeverSink's 8.20.2 is the starting point, not a dependency: LocalExile runs a fixed 3.29 client and
+later NeverSink releases follow the live game, so none is taken after it. From here the base filter changes only for a
+client build LocalExile allows, a mod's `loot-filter.json`, or our own re-tiering. Importing filters made for the live
+game is out of scope: they name items, classes and conditions the 3.29 client does not have.
+
+- What it is built from: NeverSink's filter 8.20.2 (the last before 3.30, whose filters name items 3.29 does not have)
+  and FilterBlade's option file of the same league, the file that lays out FilterBlade's Customize screen
+  (`NeverSinkDev/FilterBlade-Public-Assets`, `FbPoe1Configs/CustomizerDefault.options`, with `BaseTypes.csv` from the same
+  commit for the drop preview's item classes and sizes). Both are MIT. They are
+  downloaded on first use from the commits `FilterSources` pins, checked against their SHA-256, and kept in
+  `%LOCALAPPDATA%\Waypoint\loot-filter`. FilterBlade's site itself is not open source; only its option files are used.
+- The page: the option file's chapters as tabs and its sections, opened one at a time. Each rule has a preview of the
+  label, Show, Hide and Disable (those the option file offers for it), font size, text, border and background colours
+  with their opacity, alert sound and volume, minimap icon, beam, the number conditions the option file offers
+  (ItemLevel, StackSize, AreaLevel …), and for a tier list its items: each can be moved to another tier of the section
+  or removed, and items can be added from the names the filter already uses. The strictness picks NeverSink's base
+  file; the changes apply to any of them.
+- The search (`/` or Ctrl+K) finds rules whose title, section, chapter, description or items hold every word typed, and
+  for item names it also shows where each item goes: a plain drop of it run through the filter as it is now, with the
+  rule that decides it (one click opens that rule).
+- **Drop preview**, a tab after the chapters, drops a sample through the filter as it is now and draws the labels,
+  beams and minimap icons, and plays the alert sounds: currency, valuable currency (NeverSink's top four currency
+  tiers), uniques, divination cards, or a map drop mix, at an area level. The sample comes from NeverSink's own tier
+  lists, not the player's, and is redrawn after each change. Items are plain drops (no mods, influence or sockets).
+- **Import item** takes an item copied in game (Ctrl+C over it; Ctrl+Alt+C adds the mod names; or Ctrl+V anywhere on
+  the page), runs it through the filter as it is now, and opens the rule that shows or hides it, with every rule it
+  passed on the way (Continue rules first). It reads the class, rarity, name and base type, item level, stack size,
+  quality, sockets and links, map tier, gem level, influences, the prefix and suffix names, and states such as
+  Corrupted, Mirrored, Unidentified, Fractured or Synthesised; the base type's drop level, size and defences come from
+  `BaseTypes.csv`. Enchantment names and cluster jewel passives are not read.
+- The alert sounds are the client's own: `PlayAlertSound` 1 to 16 and the named ones (ShDivine …) are FMOD samples in
+  `Client/FMOD/Desktop/ItemFilter.bank` (FSB5 Vorbis without its setup headers, which no browser plays). The editor
+  decodes them once per bank with vgmstream, downloaded from a pinned release and checked by SHA-256, into
+  `loot-filter/sounds/<hash of the bank>`, and serves them as WAV. Every sound control has a play button, and choosing a
+  sound plays it. A `CustomAlertSound` plays its file from the game's filter folder. A standalone client keeps the bank
+  inside `Content.ggpk`, which the editor does not read, so it has no sounds there. The same bank holds the beam
+  sounds: `ItemFilter_1` to `_9` as the beam appears and `Loop_1` to `_9` while it stays.
+- **Temporary beams only** makes every beam `Temp`. A beam that stays also keeps the client's `ItemFilterEffect/LoopSG`
+  sound (3D, 45 units) playing near the item until it is picked up; a temporary one has no loop.
+- Only the changes are kept (`customization.json` in that folder), by FilterBlade's rule names, and saved as they are
+  made. **Write filter** writes `LocalExile - <name>.filter` into the folder the game reads filters from: Documents\My
+  Games\Path of Exile on Windows, which retail and Steam share, so the name says it is LocalExile's; the Wine prefix's
+  on Linux. The game lists a new filter without a restart (the server's login sends the account name). A tier list
+  emptied by the player disables its rule, since a rule without its list would match every item.
+- **Mods** take part through a `loot-filter.json` beside their `mod.json` (`ModFilters`), read for every mod the
+  checkout has on (`Mods/Binaries`, `mod-state.txt`). `items` names base types the mod drops or makes worth more, each
+  with the NeverSink tier it belongs in (`"tier": "currency;t2divine"`, the rule's `$type` and `$tier` tags); a base the
+  catalog does not have also gives its `class` (and `width`, `height`, `dropLevel`). The items go into their tier before
+  the player's changes, out of the other tiers of the same type, so the player sees them (dashed) and moves them like
+  NeverSink's; one the player's own lists leave out of every tier of its type goes back to the mod's. `rules` are whole
+  rules (`id`, `title`, `description`, `lines` as in a .filter file) written at the top of the filter between
+  `# >>> <mod> (LocalExile mod, from its loot-filter.json) >>>` and `# <<< <mod> <<<`, and shown in the editor's Mods
+  chapter, where the player restyles or turns each off like any rule. A mod that writes its rule into .filter files
+  itself between `# >>> <mod> … >>>` and `# <<< <mod> <<<` (Exciting Items does) keeps it: Write carries such blocks over
+  to the top of the new file. A file the editor cannot use is named on the page and left out. For example, Exciting
+  Items as a `loot-filter.json`:
+
+  ```json
+  {
+    "rules": [
+      { "id": "exciting", "title": "Exciting items", "description": "Drops the mod changed: they have the synthesised look.",
+        "lines": [ "Show", "    SynthesisedItem True", "    SetFontSize 45", "    SetTextColor 255 255 255 255",
+                   "    SetBorderColor 255 215 0 255", "    SetBackgroundColor 110 0 150 255", "    PlayAlertSound 6 300",
+                   "    PlayEffect Yellow", "    MinimapIcon 0 Yellow Star" ] }
+    ]
+  }
+  ```
+
+  and a mod that adds a currency: `{ "items": [ { "baseType": "Orb of Example", "class": "Stackable Currency", "tier":
+  "currency;t3annul" } ] }`.
+- A rule runs to the next Show, Hide or Minimal, as the game reads it: blank and comment lines inside a rule that is on
+  stay part of it (`FilterDocument`), so a rule from another filter or a mod keeps all its conditions.
+- Not offered yet: FilterBlade's own new rules and tiers (Conditional, ElementAdder_Tier), BaseTypeMatrix,
+  the stacked-currency threshold editor, conditions other than numbers, economy-based tiering, and styles other than
+  NeverSink's default. The page lists, per section, what it leaves out.
+
+`FilterEditorServer` serves it on `localhost` with a random token in the path, so no other page can reach it; `FilterDocument`
+reads and writes .filter files (an unchanged rule is written back byte for byte), `OptionFile` the option language
+(functions expanded where called, visible in their section; Searches by name), and `FilterCustomization` applies the
+changes. Moving to a newer NeverSink release needs its names checked against the 3.29 client's tables first.
 
 ### Accounts
 
