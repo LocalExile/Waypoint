@@ -12,6 +12,12 @@ sealed class Shared : IDisposable
     public ClientBridge Bridge { get; } = new();
     public Workspace Workspace { get; }
 
+    StateBridge? _state;
+    /// <summary>The client-state bridge, started with the first run that opens the game and kept for as long as Waypoint
+    /// runs: it follows the client, so a Play that closes one client and opens another must not end it. It is part of the
+    /// game, not of one live.ps1 run.</summary>
+    public void EnsureStateBridge(Action<string> output) => _state ??= StateBridge.Start(output);
+
     int _running;
     /// <summary>A live.ps1 run or a git switch started or ended (true while it runs). Raised on the caller's thread.</summary>
     public event Action<bool>? LiveRunning;
@@ -156,5 +162,6 @@ sealed class Shared : IDisposable
         Metrics.Dispose();
         Logs.Dispose();
         Bridge.Dispose();
+        _state?.Dispose();
     }
 }

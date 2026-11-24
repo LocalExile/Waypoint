@@ -1841,6 +1841,9 @@
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>Задать пароль…</value>
   </data>
+  <data name="Text_2f2b34e21b93" xml:space="preserve">
+    <value>Мост состояния</value>
+  </data>
   <data name="Text_2f35055d7f7e" xml:space="preserve">
     <value>Приветствие</value>
   </data>
@@ -3530,6 +3533,9 @@
   </data>
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Учётные записи, персонажи и прогресс этой установки. Сохранения и выбор модов восстанавливаются отдельно.</value>
+  </data>
+  <data name="Text_5cc7b185ea83" xml:space="preserve">
+    <value>Не удалось запустить мост состояния: {0}</value>
   </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>После --repo укажите одну папку.</value>
@@ -5324,6 +5330,9 @@
   </data>
   <data name="Text_8f496f16c1af" xml:space="preserve">
     <value>Показанные строки в буфер обмена</value>
+  </data>
+  <data name="Text_8f7270978fad" xml:space="preserve">
+    <value>Не удалось запустить мост состояния.</value>
   </data>
   <data name="Text_8fa0453793e2" xml:space="preserve">
     <value>Выберите простой путь: пробелы допустимы, а &amp; | &lt; &gt; ^ % ! и кавычки — нет.</value>

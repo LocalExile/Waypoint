@@ -547,6 +547,16 @@ to a user.
   is plain `live.ps1`: it builds, restarts the servers and starts the client, asking first if a client is running,
   because `live.ps1` closes it. A checkout whose `live.ps1` refuses `-ClientOnly -Walkmaps` (older than that hook) gets
   the full run while Walk maps is on and no recorder runs. Its tooltip says which one Play does.
+- **The state bridge** is not a switch: it is part of the game, so it runs whenever the client Waypoint starts does.
+  `scripts/StateBridge.py` attaches with Frida (the same setup as Walk maps) and feeds the client the documents the
+  checkout publishes on its client-state channels (`data/clients/state/<channel>.json`, the Gateway's `ClientState`
+  hand-over). The first channel is `affliction-rewards`: the Simulacrum wave's reward tiles, one per reward type with
+  its own bar and the number of rewards it has paid. The client can only draw those tiles from a vector its own code
+  installs, so the bridge installs it on the game's main thread; it also hands the tile update the integer a changed
+  count represents, because the client's own tween prints that value's float bits for a frame (a flicker). A channel
+  with no handler in `scripts/StateBridge.js` is logged and ignored, so a newer checkout's channels do not break it.
+  Frida that cannot be set up, or a checkout that publishes nothing, only costs those widgets: the game still starts.
+  The helper ends with the client.
 - **Start servers** is `live.ps1 -NoClient`, **Stop servers** `live.ps1 -Stop -NoClient`: the servers and the walk-map
   recorder, the client staying (it drops to the login screen).
 - The client row's **Start** is `live.ps1 -ClientOnly`, with the unreachable proxy the control bridge also sets for it. It

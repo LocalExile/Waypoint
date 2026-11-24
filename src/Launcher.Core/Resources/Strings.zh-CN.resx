@@ -1841,6 +1841,9 @@
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>设置密码…</value>
   </data>
+  <data name="Text_2f2b34e21b93" xml:space="preserve">
+    <value>状态桥接</value>
+  </data>
   <data name="Text_2f35055d7f7e" xml:space="preserve">
     <value>问候</value>
   </data>
@@ -3530,6 +3533,9 @@
   </data>
   <data name="Text_5cc72d6218d1" xml:space="preserve">
     <value>此源码副本的账号、角色和已保存的进度。存档恢复和模组选择是各自独立的操作。</value>
+  </data>
+  <data name="Text_5cc7b185ea83" xml:space="preserve">
+    <value>状态桥接无法启动：{0}</value>
   </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>请在 --repo 后指定一个文件夹。</value>
@@ -5324,6 +5330,9 @@
   </data>
   <data name="Text_8f496f16c1af" xml:space="preserve">
     <value>将显示的行复制到剪贴板</value>
+  </data>
+  <data name="Text_8f7270978fad" xml:space="preserve">
+    <value>状态桥接无法启动。</value>
   </data>
   <data name="Text_8fa0453793e2" xml:space="preserve">
     <value>请选择简单的路径：可以包含空格，但不能包含 &amp; | &lt; &gt; ^ % ! 或引号。</value>

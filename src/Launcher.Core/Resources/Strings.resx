@@ -1841,6 +1841,9 @@ Change location above to choose somewhere else.</value>
   <data name="Text_2f1395cf5579" xml:space="preserve">
     <value>Set password…</value>
   </data>
+  <data name="Text_2f2b34e21b93" xml:space="preserve">
+    <value>State bridge</value>
+  </data>
   <data name="Text_2f35055d7f7e" xml:space="preserve">
     <value>Greeting</value>
   </data>
@@ -3530,6 +3533,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions.</value>
+  </data>
+  <data name="Text_5cc7b185ea83" xml:space="preserve">
+    <value>The state bridge could not start: {0}</value>
   </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>Supply one folder after --repo.</value>
@@ -5324,6 +5330,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_8f496f16c1af" xml:space="preserve">
     <value>The shown lines to the clipboard</value>
+  </data>
+  <data name="Text_8f7270978fad" xml:space="preserve">
+    <value>The state bridge could not start.</value>
   </data>
   <data name="Text_8fa0453793e2" xml:space="preserve">
     <value>Choose a plain path: spaces are fine, but not &amp; | &lt; &gt; ^ % ! or quotes.</value>

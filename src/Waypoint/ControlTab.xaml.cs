@@ -161,6 +161,9 @@ public partial class ControlTab : UserControl
 
     void ShowServices(IReadOnlyList<ServiceSample> samples)
     {
+        // The bridge is part of the game: a client already running when Waypoint opens gets it too, not only one it starts.
+        if (samples.Any(s => s.Service == Service.Client && s.Running))
+            _shared.EnsureStateBridge(line => Dispatcher.BeginInvoke(() => Append(line)));
         foreach (var row in _rows)
             row.Update(samples.FirstOrDefault(s => s.Service == row.Service) ?? new(row.Service, null, false, 0, 0, 0, 0, TimeSpan.Zero), _live);
         // The old release is asked about with the game closed and nothing holding the folder.
@@ -242,12 +245,19 @@ public partial class ControlTab : UserControl
     {
         if (!await ClientFits(request)) return null;
         if (!fridaReady && request.Arguments().Contains("-Walkmaps") && !await PrepareWalkmaps()) return null;
+        // The state bridge is part of the game, not a choice: it runs whenever the client does. Frida that cannot be
+        // set up only costs the widgets it feeds, so it never stops the run.
+        bool withClient = request.Mode is LiveMode.All or LiveMode.Client;
+        if (withClient && !fridaReady) await PrepareStateBridge();
         if (!await PortsFree(request)) return null;
         if (!await BackUp(request)) return null;
         Append($"> {request.Describe()}");
         Say(() => L.Text("Running {0} …", request.Describe()));
         var started = Stopwatch.StartNew();
         int clientSetupFailure = 0, clientRefused = 0;
+        // The bridge outlives this run: Play closes one client and opens another, and the bridge follows. Its output
+        // arrives on a thread-pool thread (the helper's stdout), so it goes to the UI thread as live.ps1's own does.
+        if (withClient) _shared.EnsureStateBridge(line => Dispatcher.BeginInvoke(() => Append(line)));
         int? code = await run(request, line =>
         {
             if (ClientExtractionFailure.IsHncFailure(line)) Interlocked.Exchange(ref clientSetupFailure, 1);
@@ -367,6 +377,8 @@ public partial class ControlTab : UserControl
 
     Task<bool> PrepareWalkmaps() => FridaSetup.EnsureAsync(_shared, Window.GetWindow(this), L.Text("Walk maps"), Append);
 
+    Task<bool> PrepareStateBridge() => FridaSetup.EnsureAsync(_shared, Window.GetWindow(this), L.Text("State bridge"), Append);
+
     async void Play(object sender, RoutedEventArgs e)
     {
         if (Repo.IsInstall) InstallPlayRequested?.Invoke();
@@ -386,6 +398,7 @@ public partial class ControlTab : UserControl
     {
         ClientSetupFailed = false;
         if (Walkmaps.IsChecked == true && !await PrepareWalkmaps()) return null;
+        await PrepareStateBridge();
         if (PlaysOnlyTheGame(_shared.Monitor.Latest, Walkmaps.IsChecked == true, Repo.ClientOnlyTakesWalkmaps()))
         {
             // The servers stay as they are: only the game (again) against them.
