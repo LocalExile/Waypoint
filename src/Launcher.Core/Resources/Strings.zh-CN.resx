@@ -99,6 +99,9 @@
   <data name="Text_02262050828b" xml:space="preserve">
     <value>仅替换此安装的存档；源码、客户端和密钥保持不变。</value>
   </data>
+  <data name="Text_022ac3a4efa5" xml:space="preserve">
+    <value>NativeMods 已在代理模式下启用，但 Client/version.dll 未激活。</value>
+  </data>
   <data name="Text_024dc204d7ba" xml:space="preserve">
     <value>区域</value>
   </data>
@@ -201,6 +204,9 @@
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>当前源码构建版本</value>
   </data>
+  <data name="Text_0574c9597cf8" xml:space="preserve">
+    <value>所选的 NativeMods 安装包缺少代理模式所需的 version.dll。</value>
+  </data>
   <data name="Text_057c2971fa56" xml:space="preserve">
     <value>无法读取本地分支。请检查所选的 Git 源码副本。 </value>
   </data>
@@ -218,6 +224,9 @@
   </data>
   <data name="Text_05d3ec58206c" xml:space="preserve">
     <value>键盘焦点</value>
+  </data>
+  <data name="Text_05f86a5b51cc" xml:space="preserve">
+    <value>未安装（默认关闭） · {0}</value>
   </data>
   <data name="Text_0601b77efc9d" xml:space="preserve">
     <value>无法联系正在运行的 Waypoint。请正常关闭它后重试。两个实例须使用相同的 Windows 权限级别。</value>
@@ -261,6 +270,9 @@
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}：不是整数</value>
   </data>
+  <data name="Text_070443b8a624" xml:space="preserve">
+    <value>Dat 补丁</value>
+  </data>
   <data name="Text_070d63bf412e" xml:space="preserve">
     <value>另一个 Waypoint 构建已经打开。请先正常关闭那个窗口，再打开此构建。现有的操作和服务未被停止。</value>
   </data>
@@ -281,6 +293,9 @@
   </data>
   <data name="Text_07c99f3f9c05" xml:space="preserve">
     <value>编译失败</value>
+  </data>
+  <data name="Text_07cf85522374" xml:space="preserve">
+    <value>NativeMods 不支持客户端版本 {0}（支持版本：3.29.3c、3.29.3d）。</value>
   </data>
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>使用你当前 LocalExile 的游戏客户端，不占用额外空间。</value>
@@ -414,6 +429,9 @@
   <data name="Text_0baa876a211d" xml:space="preserve">
     <value>制作过程中，物品会显示在这里。</value>
   </data>
+  <data name="Text_0bc28157dc37" xml:space="preserve">
+    <value>NativeMods</value>
+  </data>
   <data name="Text_0bcd66e677f4" xml:space="preserve">
     <value>图层</value>
   </data>
@@ -437,6 +455,9 @@
   </data>
   <data name="Text_0c26cc1e71ab" xml:space="preserve">
     <value>监视进程正在运行；正在等待其 Gateway 子进程。如果持续如此，请打开 Gateway 输出。</value>
+  </data>
+  <data name="Text_0c27aab64dad" xml:space="preserve">
+    <value>缺少托管运行时文件：Client/nativemods-host/{0}。</value>
   </data>
   <data name="Text_0c2d719569e0" xml:space="preserve">
     <value>构建并安装</value>
@@ -587,6 +608,9 @@
   </data>
   <data name="Text_0f17c1790f9b" xml:space="preserve">
     <value>游戏或服务仍在运行。Waypoint 将保持打开。未尝试强制终止。</value>
+  </data>
+  <data name="Text_0f238ae77600" xml:space="preserve">
+    <value>默认关闭。为 PoE 3.29.3c/3.29.3d 加载客户端 NativeMods 覆盖层与插件，且不会修改原版 Game.exe 或游戏资源包。</value>
   </data>
   <data name="Text_0f2a0b21016e" xml:space="preserve">
     <value>{0} 未安装</value>
@@ -1084,6 +1108,9 @@
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>游戏设置已独立（{0}）</value>
   </data>
+  <data name="Text_1cbce48d29aa" xml:space="preserve">
+    <value>设置中当前关闭了 NativeMods。您仍可立即安装此模组，稍后再到设置中启用 NativeMods。</value>
+  </data>
   <data name="Text_1cbd771e134f" xml:space="preserve">
     <value>此文件夹是“最新版”：来自源代码的 LocalExile 最新改动。切换到发布版可继续使用简易模式；若要运行此副本并选择分支和拉取请求，请使用高级模式。</value>
   </data>
@@ -1258,6 +1285,9 @@
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile 已构建完成。有了游戏客户端后，可通过此向导添加：安装 → 运行安装向导。</value>
   </data>
+  <data name="Text_21ddea0a8a93" xml:space="preserve">
+    <value>允许 {0} 使用 RawAccess 吗？</value>
+  </data>
   <data name="Text_21ea97893c68" xml:space="preserve">
     <value>此源码副本的 Gateway 尚无物品制作器：请更新 LocalExile，然后开始游戏或启动一次服务器以完成构建。</value>
   </data>
@@ -1335,6 +1365,9 @@
   </data>
   <data name="Text_237ce534dbd1" xml:space="preserve">
     <value>联赛无效或重复。</value>
+  </data>
+  <data name="Text_239be899f024" xml:space="preserve">
+    <value>导入表补丁（.nmimp）</value>
   </data>
   <data name="Text_23a7fbf942ec" xml:space="preserve">
     <value>该更新未成功，因此你仍在使用之前的版本。</value>
@@ -1510,6 +1543,9 @@
   <data name="Text_2743551363a4" xml:space="preserve">
     <value>怪物群</value>
   </data>
+  <data name="Text_2743e9f31032" xml:space="preserve">
+    <value>发行版 {0} 不包含 win-x64 zip 压缩包。</value>
+  </data>
   <data name="Text_275dbda9dedb" xml:space="preserve">
     <value>日落</value>
   </data>
@@ -1585,6 +1621,9 @@
   </data>
   <data name="Text_291d2a97565f" xml:space="preserve">
     <value>稀有</value>
+  </data>
+  <data name="Text_29246aacda23" xml:space="preserve">
+    <value>NativeMods 已启用（{0}）。</value>
   </data>
   <data name="Text_292979c1afe7" xml:space="preserve">
     <value>Waypoint 会为正在使用的文件夹复制此客户端：{0:0.#} GB。</value>
@@ -1675,6 +1714,9 @@
   </data>
   <data name="Text_2ad580eaee79" xml:space="preserve">
     <value>恢复模组选择</value>
+  </data>
+  <data name="Text_2ae29d348107" xml:space="preserve">
+    <value>卸载并归档客户端模组</value>
   </data>
   <data name="Text_2ae8aced0bae" xml:space="preserve">
     <value>地标</value>
@@ -1771,6 +1813,9 @@
   </data>
   <data name="Text_2d895f09eb26" xml:space="preserve">
     <value>无发布版本：安装源码</value>
+  </data>
+  <data name="Text_2daf6f600120" xml:space="preserve">
+    <value>卸载 NativeMods</value>
   </data>
   <data name="Text_2dafe4f58ab0" xml:space="preserve">
     <value> · 已跟踪的文件有修改</value>
@@ -1927,6 +1972,9 @@
   </data>
   <data name="Text_314b16a3d271" xml:space="preserve">
     <value>客户端消息</value>
+  </data>
+  <data name="Text_315af7add787" xml:space="preserve">
+    <value>NativeMods 已禁用。游戏将在不加载扩展器的情况下启动。</value>
   </data>
   <data name="Text_316e8e8cbc2d" xml:space="preserve">
     <value>选择一个备份，以查看其源码和模组历史。</value>
@@ -2322,11 +2370,17 @@
   <data name="Text_3b7ffa42c6e0" xml:space="preserve">
     <value>同样适用于托盘菜单中的“退出 Waypoint”。</value>
   </data>
+  <data name="Text_3b81418e4f26" xml:space="preserve">
+    <value>启用前请先安装 NativeMods 扩展器。</value>
+  </data>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>制作任意物品：基础类型、稀有度、词缀及其数值、插槽和势力。保存后可以随时回来继续编辑，并可发放给游戏中的角色。</value>
   </data>
   <data name="Text_3baed9f4ed86" xml:space="preserve">
     <value>电极阻断器</value>
+  </data>
+  <data name="Text_3bb0e864a933" xml:space="preserve">
+    <value>无法在链接的 Client 文件夹中修改 NativeMods。</value>
   </data>
   <data name="Text_3bc85df158e7" xml:space="preserve">
     <value>，另有 {0} 个</value>
@@ -2436,6 +2490,9 @@
   </data>
   <data name="Text_3e56f666f5c7" xml:space="preserve">
     <value>游戏文件夹在复制过程中发生了变化，因此未使用该副本。</value>
+  </data>
+  <data name="Text_3e84d6ada160" xml:space="preserve">
+    <value>未安装 · {0}</value>
   </data>
   <data name="Text_3e8cf9c948a6" xml:space="preserve">
     <value>没有做任何更改。点击“开始游戏”重试。</value>
@@ -2643,6 +2700,9 @@
   </data>
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>下载失败（git 退出代码 {0}）。请检查网络连接后重试。</value>
+  </data>
+  <data name="Text_455bc2044506" xml:space="preserve">
+    <value>启用 NativeMods 客户端扩展器（可选）</value>
   </data>
   <data name="Text_457f300c3c08" xml:space="preserve">
     <value>击杀怪物时，按设定概率额外掉落指定通货。</value>
@@ -3049,6 +3109,9 @@
   <data name="Text_4ec6dbda5bb3" xml:space="preserve">
     <value>LocalExile 已更新。</value>
   </data>
+  <data name="Text_4ed167c6db1b" xml:space="preserve">
+    <value>检测到独立版 Content.ggpk 客户端：自动重建 .merged-cache 需要 Steam 的 Bundles2/ 或已解包的 Client/Data/*.datc64 数据表。</value>
+  </data>
   <data name="Text_4ed2e771f1b1" xml:space="preserve">
     <value>正在启动区域采集</value>
   </data>
@@ -3072,6 +3135,9 @@
   </data>
   <data name="Text_4f4bcbb48773" xml:space="preserve">
     <value>当前源码</value>
+  </data>
+  <data name="Text_4f9e568c5d0e" xml:space="preserve">
+    <value>需要 NativeMods 客户端扩展器。请在设置中启用。</value>
   </data>
   <data name="Text_4feda881a8e2" xml:space="preserve">
     <value>桥接程序已停止：{0}</value>
@@ -3135,6 +3201,9 @@
   </data>
   <data name="Text_515ed25002b7" xml:space="preserve">
     <value>迁移到 Path of Exile {0}？</value>
+  </data>
+  <data name="Text_516a56472b5d" xml:space="preserve">
+    <value>客户端模组安装因验证失败被阻止。</value>
   </data>
   <data name="Text_5174093cf95b" xml:space="preserve">
     <value>保留旧版本；它不会更新。</value>
@@ -3237,6 +3306,9 @@
   </data>
   <data name="Text_54377045445b" xml:space="preserve">
     <value>正在构建准备工具</value>
+  </data>
+  <data name="Text_543cdb0127f4" xml:space="preserve">
+    <value>安装 NativeMods</value>
   </data>
   <data name="Text_544b891ecca8" xml:space="preserve">
     <value>无法使用该文件夹</value>
@@ -3361,6 +3433,9 @@
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>不做任何更改。如果此客户端与你平时玩的游戏共用设置，你需要自行在游戏中将“连线模式”设为“预测模式”（Networking Mode → Predictive）。</value>
   </data>
+  <data name="Text_574197840671" xml:space="preserve">
+    <value>激活代理模式前无法还原 Game.patched.exe：{0}</value>
+  </data>
   <data name="Text_5774139d115b" xml:space="preserve">
     <value>副官</value>
   </data>
@@ -3372,6 +3447,9 @@
   </data>
   <data name="Text_57fd7a0cf33f" xml:space="preserve">
     <value>已选</value>
+  </data>
+  <data name="Text_5816cb604280" xml:space="preserve">
+    <value>需要 NativeMods</value>
   </data>
   <data name="Text_581dec3ed74b" xml:space="preserve">
     <value>最新提交</value>
@@ -3392,6 +3470,9 @@
     <value>只删除 {0:g} 的这份备份吗？
 
 当前存档不受影响。此备份将无法再用于恢复。</value>
+  </data>
+  <data name="Text_588025366d03" xml:space="preserve">
+    <value>已激活 v{0}（{1}） · {2} · {3} 个客户端模组</value>
   </data>
   <data name="Text_589877b1a7f3" xml:space="preserve">
     <value>上次检查运行状态：</value>
@@ -3456,6 +3537,9 @@
   <data name="Text_5a2a9ccda1eb" xml:space="preserve">
     <value>无法选择旧版本（git 退出代码 {0}）。</value>
   </data>
+  <data name="Text_5a2f4e27bf22" xml:space="preserve">
+    <value>NativeMods 压缩包包含不安全的路径：{0}。</value>
+  </data>
   <data name="Text_5a56864947f6" xml:space="preserve">
     <value>无联盟</value>
   </data>
@@ -3507,6 +3591,9 @@
   <data name="Text_5c1a1026eda3" xml:space="preserve">
     <value>一切就绪。在 Waypoint 中点击“开始游戏”即可启动服务器和游戏。LocalExile 使用自己的游戏设置，因此你平时的流放之路会保留原有设置。</value>
   </data>
+  <data name="Text_5c326651cfc4" xml:space="preserve">
+    <value>NativeMods 设置已保存。</value>
+  </data>
   <data name="Text_5c412a262086" xml:space="preserve">
     <value>游戏</value>
   </data>
@@ -3540,6 +3627,9 @@
   <data name="Text_5cc72d6218d1" xml:space="preserve">
     <value>此源码副本的账号、角色和已保存的进度。存档恢复和模组选择是各自独立的操作。</value>
   </data>
+  <data name="Text_5cce07b9819d" xml:space="preserve">
+    <value>未找到用于构建 Mods/Client/.merged-cache/ 的原始 Client/Bundles2 或 Client/Data 数据表。</value>
+  </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>请在 --repo 后指定一个文件夹。</value>
   </data>
@@ -3572,6 +3662,9 @@
   </data>
   <data name="Text_5efc124c61fa" xml:space="preserve">
     <value>基座</value>
+  </data>
+  <data name="Text_5f0830a4ed6c" xml:space="preserve">
+    <value>发行版安装在启动时会检查 Game.patched.exe 的文件大小并覆盖 .nmimp 导入表补丁。发行版安装请使用代理（version.dll）模式。</value>
   </data>
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>此仓库没有列出模组。</value>
@@ -3948,6 +4041,9 @@
   <data name="Text_676796f86246" xml:space="preserve">
     <value>可用空间不足：客户端在此驱动器上还需要 {0:0.#} GB，而可用空间只有 {1:0.#} GB。</value>
   </data>
+  <data name="Text_677ef2f865ee" xml:space="preserve">
+    <value>客户端 {0}</value>
+  </data>
   <data name="Text_6795da662608" xml:space="preserve">
     <value>恢复你的游戏设置</value>
   </data>
@@ -3995,6 +4091,9 @@
   </data>
   <data name="Text_688ed737c588" xml:space="preserve">
     <value>正在启动服务</value>
+  </data>
+  <data name="Text_689dda5ad7d3" xml:space="preserve">
+    <value>发行版 {0} 缺少 {1} 的 SHA-256 校验值；未安装任何内容。</value>
   </data>
   <data name="Text_68a30385dbf5" xml:space="preserve">
     <value>每种配色方案都支持“浅色”“深色”和“跟随系统”。</value>
@@ -4227,6 +4326,9 @@
   <data name="Text_7034e1d32ac5" xml:space="preserve">
     <value>创建 LocalExile 账号</value>
   </data>
+  <data name="Text_703d7ca16cde" xml:space="preserve">
+    <value>Game.patched.exe 检查失败：{0}</value>
+  </data>
   <data name="Text_7041902da299" xml:space="preserve">
     <value>设置采集</value>
   </data>
@@ -4344,6 +4446,9 @@
   <data name="Text_736ecab62973" xml:space="preserve">
     <value>金钥匙</value>
   </data>
+  <data name="Text_737e5bdfa710" xml:space="preserve">
+    <value>已安装的模组包含 datPatches，但自动构建 .merged-cache 需要 Steam 的 Bundles2/ 或已解包的 Client/Data/*.datc64 数据表。</value>
+  </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>只要有 LocalExile 登录、Gateway 或账号服务进程在运行，账号就只能查看、不能更改。请停止这些服务并关闭游戏，然后刷新。未做任何更改。</value>
   </data>
@@ -4403,6 +4508,9 @@
   </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>全部</value>
+  </data>
+  <data name="Text_7564fc0c0253" xml:space="preserve">
+    <value>导入 dist 文件夹…</value>
   </data>
   <data name="Text_758f487fe8e9" xml:space="preserve">
     <value>背包</value>
@@ -4487,6 +4595,9 @@
   </data>
   <data name="Text_77a53d9641e6" xml:space="preserve">
     <value>从列表中移除</value>
+  </data>
+  <data name="Text_77c0896ef9ee" xml:space="preserve">
+    <value>底层访问</value>
   </data>
   <data name="Text_77dc2a655f8e" xml:space="preserve">
     <value>花朵</value>
@@ -4602,6 +4713,9 @@
   <data name="Text_7ad35008821d" xml:space="preserve">
     <value>添加已有的文件夹…</value>
   </data>
+  <data name="Text_7ad6ac9abffb" xml:space="preserve">
+    <value>Waypoint 无法读取文件 {0}。</value>
+  </data>
   <data name="Text_7af959bccf93" xml:space="preserve">
     <value>获取 SDK</value>
   </data>
@@ -4649,6 +4763,9 @@
   </data>
   <data name="Text_7bacc99e13ee" xml:space="preserve">
     <value>只找到了 {0} 客户端，因此此副本会切换到为它制作的最后一个 LocalExile。</value>
+  </data>
+  <data name="Text_7bc04f6ccf5c" xml:space="preserve">
+    <value>正在验证 NativeMods 安装包…</value>
   </data>
   <data name="Text_7bc17e5802cf" xml:space="preserve">
     <value>此文件夹不存在：它可能已被移动或重命名，或者所在的驱动器未连接。未做任何更改。</value>
@@ -4700,6 +4817,9 @@
   </data>
   <data name="Text_7d0a4fb5a543" xml:space="preserve">
     <value>已链接到 {0}</value>
+  </data>
+  <data name="Text_7d20ef9b50c7" xml:space="preserve">
+    <value>正在下载 NativeMods {0}（{1:P0}）…</value>
   </data>
   <data name="Text_7d2f06d53231" xml:space="preserve">
     <value>重新检查所需组件并刷新此安装的设置，包括客户端准备。请先关闭游戏并停止服务器。</value>
@@ -4809,6 +4929,9 @@
   <data name="Text_808fc010f815" xml:space="preserve">
     <value>{0}：{1}（备份时）</value>
   </data>
+  <data name="Text_80932a87ef60" xml:space="preserve">
+    <value>此文件夹的 Client 是指向其他文件夹的链接；NativeMods 需要本地 Client 副本。</value>
+  </data>
   <data name="Text_809765cacb05" xml:space="preserve">
     <value>此联赛需要该模组。在该模组未安装或已停用时，LocalExile 不会加载此联赛。取消勾选即可将其从列表中移除。</value>
   </data>
@@ -4833,6 +4956,9 @@
   <data name="Text_81571a390103" xml:space="preserve">
     <value>出入口</value>
   </data>
+  <data name="Text_81594954af1a" xml:space="preserve">
+    <value>缺少 Client/version.dll。请重新安装 NativeMods 扩展器。</value>
+  </data>
   <data name="Text_815c157dc783" xml:space="preserve">
     <value>正在将角色复制到此 LocalExile；此处已有的内容会另行存放。</value>
   </data>
@@ -4850,6 +4976,9 @@
   </data>
   <data name="Text_821acaae8b95" xml:space="preserve">
     <value>原地更新：不需要额外空间，但 {0} 会从这台电脑上移除。</value>
+  </data>
+  <data name="Text_821d57b85c7a" xml:space="preserve">
+    <value>NativeMods 安装包缺少 {0}。</value>
   </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>此联赛的父联赛链缺失或存在循环。请先恢复其定义再编辑。</value>
@@ -4983,6 +5112,9 @@
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>删除已保存的物品</value>
   </data>
+  <data name="Text_85b724593964" xml:space="preserve">
+    <value>这将删除 LocalExile.ClientHost.dll、version.dll 和 Client/nativemods-host/，并在应用了导入表补丁时还原 Game.patched.exe。原版 Game.exe 永远不会被修改。</value>
+  </data>
   <data name="Text_86166dd1d685" xml:space="preserve">
     <value>带上我的角色…</value>
   </data>
@@ -4995,8 +5127,14 @@
   <data name="Text_8624ca0fcb3c" xml:space="preserve">
     <value>画笔</value>
   </data>
+  <data name="Text_8647a57480fa" xml:space="preserve">
+    <value>无法将 NativeMods 安装到链接的 Client 文件夹中。请先复制一份游戏客户端。</value>
+  </data>
   <data name="Text_865fa5f68659" xml:space="preserve">
     <value>未向 Waypoint 提供设置</value>
+  </data>
+  <data name="Text_86979c6115c9" xml:space="preserve">
+    <value>卸载 NativeMods 扩展器吗？</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>还没有已保存的物品。制作一个物品并按“保存”。</value>
@@ -5030,6 +5168,9 @@
   </data>
   <data name="Text_87bb59ba2f92" xml:space="preserve">
     <value>工作区</value>
+  </data>
+  <data name="Text_87dcccf60678" xml:space="preserve">
+    <value>此模组请求直接内存/钩子访问权限（RawAccess）：{0}</value>
   </data>
   <data name="Text_87df6810fe11" xml:space="preserve">
     <value>时间窗口内的总耗时除以调用次数</value>
@@ -5130,6 +5271,9 @@
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>双击命令可将其填入输入行。</value>
   </data>
+  <data name="Text_8a0ae6445e3d" xml:space="preserve">
+    <value>已安装 v{0}（需要注意） · {1}</value>
+  </data>
   <data name="Text_8a12ed1c823b" xml:space="preserve">
     <value>这个副本不是来自 Steam 的客户端，因此 Steam 无法完成它。</value>
   </data>
@@ -5226,6 +5370,9 @@
   <data name="Text_8c9e70a32535" xml:space="preserve">
     <value>打开迷宫布局</value>
   </data>
+  <data name="Text_8d035d711720" xml:space="preserve">
+    <value>已为 {0} 部署 NativeMods 客户端文件。</value>
+  </data>
   <data name="Text_8d099abe78af" xml:space="preserve">
     <value>关闭窗口时</value>
   </data>
@@ -5256,8 +5403,14 @@
   <data name="Text_8d616d350961" xml:space="preserve">
     <value>15 分钟</value>
   </data>
+  <data name="Text_8d675c5b178f" xml:space="preserve">
+    <value>设置中已启用 NativeMods，但尚未安装扩展器。请在设置中安装扩展器或关闭 NativeMods。</value>
+  </data>
   <data name="Text_8d968910c8ff" xml:space="preserve">
     <value>正在从 Steam 下载。{0}</value>
+  </data>
+  <data name="Text_8d97f135f47e" xml:space="preserve">
+    <value>已安装 NativeMods 扩展器 {0}（{1}）。</value>
   </data>
   <data name="Text_8d99a834e478" xml:space="preserve">
     <value>进行更改时，游戏和所有 LocalExile 服务必须保持停止，直到操作完成。</value>
@@ -5280,6 +5433,9 @@
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>第 2 代</value>
   </data>
+  <data name="Text_8e020bd1ba01" xml:space="preserve">
+    <value>解压后的 NativeMods 安装包超过 512 MB 大小限制。</value>
+  </data>
   <data name="Text_8e18a81993ce" xml:space="preserve">
     <value>客户端未运行</value>
   </data>
@@ -5291,6 +5447,9 @@
   </data>
   <data name="Text_8e3cda3b4f8b" xml:space="preserve">
     <value>本地 HEAD 不可用</value>
+  </data>
+  <data name="Text_8e40b9dad0af" xml:space="preserve">
+    <value>选择 NativeMods 的 dist/win-x64 文件夹</value>
   </data>
   <data name="Text_8e5407e6fdc9" xml:space="preserve">
     <value>重命名配置文件</value>
@@ -5597,6 +5756,9 @@
   <data name="Text_96696ebb5f8d" xml:space="preserve">
     <value>复制内容</value>
   </data>
+  <data name="Text_966a990b0178" xml:space="preserve">
+    <value>NativeMods 压缩包中的文件数量超过 {0} 个。</value>
+  </data>
   <data name="Text_966e3d979990" xml:space="preserve">
     <value>请输入 3–48 个英文字母、数字、空格、下划线或连字符，并以字母开头。</value>
   </data>
@@ -5756,6 +5918,9 @@
   <data name="Text_9a05eeed8b20" xml:space="preserve">
     <value>“发放物品”通过 Waypoint Tools 模组完成，但没有正在运行的游戏加载了它。请开始游戏，如果它已关闭，请在“模组”中开启它，用角色进入一个区域，然后再次发放物品。</value>
   </data>
+  <data name="Text_9a1bb325a41c" xml:space="preserve">
+    <value>无法在链接的 Client 文件夹下运行 NativeMods。请复制游戏客户端或在设置中关闭 NativeMods。</value>
+  </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>已删除 {0} 个已保存的物品</value>
   </data>
@@ -5802,8 +5967,14 @@
   <data name="Text_9b1120c28631" xml:space="preserve">
     <value>日志文件夹</value>
   </data>
+  <data name="Text_9b252a463c86" xml:space="preserve">
+    <value>{0} 仍在运行。请先等待其完成。</value>
+  </data>
   <data name="Text_9b41ba20b8a3" xml:space="preserve">
     <value>未加载</value>
+  </data>
+  <data name="Text_9b5894c9b425" xml:space="preserve">
+    <value>正在安装 NativeMods {0}…</value>
   </data>
   <data name="Text_9b6f051b7ea9" xml:space="preserve">
     <value>存在时使用此源码副本的本地运行时包装脚本</value>
@@ -5906,6 +6077,9 @@
   </data>
   <data name="Text_9d4fdb63fa4f" xml:space="preserve">
     <value>每次启动时查找较新的 Waypoint 发行版（适用于发行版构建）</value>
+  </data>
+  <data name="Text_9d53cfcd6786" xml:space="preserve">
+    <value>NativeMods 压缩包超过 256 MB 大小限制。</value>
   </data>
   <data name="Text_9d64ce84e2c3" xml:space="preserve">
     <value>移除 {0}？</value>
@@ -6066,6 +6240,9 @@
   <data name="Text_a266fe9c4d1d" xml:space="preserve">
     <value>内存</value>
   </data>
+  <data name="Text_a291bca1429a" xml:space="preserve">
+    <value>有 {0} 个已启用的模组包含 NativeMods 客户端组件，但设置中当前关闭了 NativeMods。</value>
+  </data>
   <data name="Text_a2b0e1cca90c" xml:space="preserve">
     <value>重新加载此已启用的模组及依赖它的模组。</value>
   </data>
@@ -6108,6 +6285,9 @@
   <data name="Text_a388bd2d373c" xml:space="preserve">
     <value>未提交的更改</value>
   </data>
+  <data name="Text_a390769fcc7b" xml:space="preserve">
+    <value>可逆地修补 Client/Game.patched.exe 的导入表（仅限源码检出安装）。</value>
+  </data>
   <data name="Text_a390f2eec6ba" xml:space="preserve">
     <value>{0} 现已完整，并保留在此文件夹中。</value>
   </data>
@@ -6119,6 +6299,9 @@
   </data>
   <data name="Text_a3ac0b8d4d94" xml:space="preserve">
     <value>1.  将 LocalExile 获取到你选择的文件夹中，或找到你已有的副本</value>
+  </data>
+  <data name="Text_a3ae04c50419" xml:space="preserve">
+    <value>NativeMods 运行时文件不完整。请在设置中重新安装或验证 NativeMods。</value>
   </data>
   <data name="Text_a3b50c476732" xml:space="preserve">
     <value>状态</value>
@@ -6204,6 +6387,9 @@
   <data name="Text_a540e34f130b" xml:space="preserve">
     <value>区域：{0}（{1}）</value>
   </data>
+  <data name="Text_a547e176cef7" xml:space="preserve">
+    <value>{0} 的 SHA-256 校验不匹配；未安装任何内容。</value>
+  </data>
   <data name="Text_a549da446e61" xml:space="preserve">
     <value>创建联赛</value>
   </data>
@@ -6257,6 +6443,9 @@
   </data>
   <data name="Text_a656107e99c7" xml:space="preserve">
     <value>统计</value>
+  </data>
+  <data name="Text_a65627b726a7" xml:space="preserve">
+    <value>NativeMods 已在导入表补丁模式下启用，但 Game.patched.exe 尚未应用 .nmimp 补丁。</value>
   </data>
   <data name="Text_a65a4357e343" xml:space="preserve">
     <value>更改工作区后请重新加载账号。</value>
@@ -6335,6 +6524,9 @@
   </data>
   <data name="Text_a80983dbe5df" xml:space="preserve">
     <value>需要 Gateway 正在运行、一个已启用且已构建的模组，以及位于可游玩区域的客户端（Python + Frida）。</value>
+  </data>
+  <data name="Text_a811f76565cd" xml:space="preserve">
+    <value>更改 NativeMods 扩展器前请先关闭 Path of Exile。</value>
   </data>
   <data name="Text_a81c1cd77e8e" xml:space="preserve">
     <value>此文件夹与另一个 LocalExile 文件夹共用游戏客户端：那边的更改也会影响这里。</value>
@@ -6452,6 +6644,9 @@
   </data>
   <data name="Text_abb39b8adf1f" xml:space="preserve">
     <value>诊断报告</value>
+  </data>
+  <data name="Text_abd5f06f5144" xml:space="preserve">
+    <value>从 GitHub 安装 / 更新</value>
   </data>
   <data name="Text_abe6ba498754" xml:space="preserve">
     <value>3.  查找你的游戏客户端，或让你手动指定</value>
@@ -6573,6 +6768,9 @@
   <data name="Text_af0303342a01" xml:space="preserve">
     <value>打开页面</value>
   </data>
+  <data name="Text_af077f654c73" xml:space="preserve">
+    <value>Waypoint 无法读取文件夹 {0}。</value>
+  </data>
   <data name="Text_af20391b2b63" xml:space="preserve">
     <value>游戏正在运行：“开始游戏”会将其关闭并重新启动；服务器保持运行。</value>
   </data>
@@ -6596,6 +6794,9 @@
   </data>
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>联盟</value>
+  </data>
+  <data name="Text_b006f64653aa" xml:space="preserve">
+    <value>导入本地 zip…</value>
   </data>
   <data name="Text_b0091e7175aa" xml:space="preserve">
     <value>订单所需金币的倍率。</value>
@@ -6846,6 +7047,9 @@
   <data name="Text_b6b099ac3763" xml:space="preserve">
     <value>色觉</value>
   </data>
+  <data name="Text_b6b72a90ff22" xml:space="preserve">
+    <value>NativeMods 压缩包中没有任何文件。</value>
+  </data>
   <data name="Text_b6cd626295f1" xml:space="preserve">
     <value>{0} 物品</value>
   </data>
@@ -6860,6 +7064,9 @@
   </data>
   <data name="Text_b764cdc0eab7" xml:space="preserve">
     <value>未知</value>
+  </data>
+  <data name="Text_b76ada2a3c0c" xml:space="preserve">
+    <value>正在检查 GitHub 上最新的 NativeMods 发行版…</value>
   </data>
   <data name="Text_b77636c1849a" xml:space="preserve">
     <value>构建 LocalExile</value>
@@ -6876,11 +7083,17 @@
   <data name="Text_b7ba5c1d1a1a" xml:space="preserve">
     <value>▶  开始游戏</value>
   </data>
+  <data name="Text_b7c39b73e0aa" xml:space="preserve">
+    <value>NativeMods（客户端扩展器）</value>
+  </data>
   <data name="Text_b7cd0acd1470" xml:space="preserve">
     <value>保持文字对比度</value>
   </data>
   <data name="Text_b7d1e0571f80" xml:space="preserve">
     <value>工作区检查失败。请在“设置”中解决问题，然后刷新。</value>
+  </data>
+  <data name="Text_b7dd58f44241" xml:space="preserve">
+    <value>更新 NativeMods</value>
   </data>
   <data name="Text_b7ef99f143b7" xml:space="preserve">
     <value>玩法模块 · {0}</value>
@@ -7002,11 +7215,17 @@
   <data name="Text_baaf468928e9" xml:space="preserve">
     <value>检查服务器端口</value>
   </data>
+  <data name="Text_baafd15a862d" xml:space="preserve">
+    <value>安装 NativeMods 模组 {0} 吗？</value>
+  </data>
   <data name="Text_bac82328e0cd" xml:space="preserve">
     <value>此联赛和模式未定义这一模块组合。未知组合已被阻止。</value>
   </data>
   <data name="Text_bad2b893e5a4" xml:space="preserve">
     <value>赛季</value>
+  </data>
+  <data name="Text_bad5657579d9" xml:space="preserve">
+    <value>无法对 Game.patched.exe 应用 .nmimp 补丁：{0}</value>
   </data>
   <data name="Text_bae1e8710ff4" xml:space="preserve">
     <value>请保持必需的玩法模块组启用。这些模块未声明可以单独禁用。</value>
@@ -7022,6 +7241,9 @@
   </data>
   <data name="Text_bb213b706609" xml:space="preserve">
     <value>目前没有联赛使用此模块。</value>
+  </data>
+  <data name="Text_bb3193b6ee6e" xml:space="preserve">
+    <value>正在下载 NativeMods {0}…</value>
   </data>
   <data name="Text_bb5e603fa102" xml:space="preserve">
     <value>接下来请选择模块并确认赛季配置。</value>
@@ -7251,6 +7473,9 @@
   <data name="Text_c1ebc7817870" xml:space="preserve">
     <value>需要注意</value>
   </data>
+  <data name="Text_c1ee908756b7" xml:space="preserve">
+    <value>禁用 NativeMods 时无法还原 Game.patched.exe：{0}</value>
+  </data>
   <data name="Text_c201813d895d" xml:space="preserve">
     <value>正在使用：你平常的 Path of Exile 设置（{0}）。选择或创建一个文件夹，让 LocalExile 使用自己的设置。</value>
   </data>
@@ -7347,6 +7572,9 @@
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>下次记住此选择</value>
   </data>
+  <data name="Text_c5240cc93783" xml:space="preserve">
+    <value>NativeMods 启动前检查失败。</value>
+  </data>
   <data name="Text_c533559f1887" xml:space="preserve">
     <value>{0} 只允许其列出的模块和模组，{1} 不在其中。</value>
   </data>
@@ -7401,6 +7629,9 @@
   <data name="Text_c6d5a902b1fb" xml:space="preserve">
     <value>移除仓库</value>
   </data>
+  <data name="Text_c6df5e815a88" xml:space="preserve">
+    <value>选择 NativeMods 发行版压缩包（.zip）</value>
+  </data>
   <data name="Text_c6edad1de780" xml:space="preserve">
     <value>无法最小化到托盘：</value>
   </data>
@@ -7413,6 +7644,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_c70b1b11d134" xml:space="preserve">
     <value>工艺（工艺台）</value>
+  </data>
+  <data name="Text_c71204b67565" xml:space="preserve">
+    <value>缺少 Client/Game.patched.exe。请先准备游戏客户端。</value>
   </data>
   <data name="Text_c71631b07e40" xml:space="preserve">
     <value>原地更新</value>
@@ -7477,6 +7711,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c83931177471" xml:space="preserve">
     <value>这不是物品：请在 Path of Building 或游戏中用 Ctrl+C 复制一件物品。</value>
   </data>
+  <data name="Text_c852137f5878" xml:space="preserve">
+    <value>在 GitHub 上未找到 NativeMods 发行版（{0}）。</value>
+  </data>
   <data name="Text_c86ca7b723e9" xml:space="preserve">
     <value>在所有联赛中运行的模组。取消勾选即可将其从列表中移除。</value>
   </data>
@@ -7506,6 +7743,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_c8d3fc567bbc" xml:space="preserve">
     <value>守卫</value>
+  </data>
+  <data name="Text_c8d67f255915" xml:space="preserve">
+    <value>仅卸载扩展器</value>
   </data>
   <data name="Text_c8d6b52dde33" xml:space="preserve">
     <value>T{0} · 等级 {1}</value>
@@ -7683,6 +7923,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cd4b01b8b2e8" xml:space="preserve">
     <value>已导入 {0}，含 {1} 个词缀。“保存”可将其保留在列表中。</value>
   </data>
+  <data name="Text_cd6e8b455ec6" xml:space="preserve">
+    <value>客户端版本未知</value>
+  </data>
   <data name="Text_cd77503a4522" xml:space="preserve">
     <value>命令已复制到剪贴板，但它有 {0} 个字符，而游戏聊天框最多只能输入 {1} 个。请改用“发放物品”。</value>
   </data>
@@ -7724,6 +7967,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cf051d46df67" xml:space="preserve">
     <value>游戏数据尚未提取（第 7 步）</value>
+  </data>
+  <data name="Text_cf3b204a9fd5" xml:space="preserve">
+    <value>Client/nativemods-host/addresses/ 中缺少地址库文件。</value>
   </data>
   <data name="Text_cf47dcf7cadf" xml:space="preserve">
     <value>此版本管理的内容</value>
@@ -7866,6 +8112,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d40afb35e5e4" xml:space="preserve">
     <value>属于此联赛自身的模块组。停用前会先询问。</value>
   </data>
+  <data name="Text_d40fa4bb924b" xml:space="preserve">
+    <value>切换到代理模式前还原 Game.patched.exe 失败：{0}</value>
+  </data>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>所选模式：{0}</value>
   </data>
@@ -7932,6 +8181,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>无耗时数据：{0}</value>
   </data>
+  <data name="Text_d5f5e6f16bf5" xml:space="preserve">
+    <value>此模组请求 RawAccess 权限，需要明确确认。</value>
+  </data>
   <data name="Text_d60a318dd8a0" xml:space="preserve">
     <value>交换</value>
   </data>
@@ -7949,6 +8201,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d68761cc1eb2" xml:space="preserve">
     <value>文字大小</value>
+  </data>
+  <data name="Text_d69500c2c95e" xml:space="preserve">
+    <value>更新 NativeMods 缓存</value>
   </data>
   <data name="Text_d6961e5e450e" xml:space="preserve">
     <value>全部已安装。</value>
@@ -8036,6 +8291,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d848702976bf" xml:space="preserve">
     <value>保留你当前的 LocalExile 不变。每个副本各自保留进度。</value>
+  </data>
+  <data name="Text_d848a5144b5a" xml:space="preserve">
+    <value>安装 NativeMods 客户端组件</value>
   </data>
   <data name="Text_d869e1c9fe5a" xml:space="preserve">
     <value>已取消退出。请在停止服务前关闭游戏。</value>
@@ -8301,6 +8559,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e020e3c67bd0" xml:space="preserve">
     <value>发布版</value>
   </data>
+  <data name="Text_e0235d76ddbf" xml:space="preserve">
+    <value>代理（version.dll）</value>
+  </data>
   <data name="Text_e0283282bcfd" xml:space="preserve">
     <value>请输入 1–2000 个字符的描述。</value>
   </data>
@@ -8440,6 +8701,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e30ce05d3185" xml:space="preserve">
     <value>更多界面颜色</value>
   </data>
+  <data name="Text_e32dc1087901" xml:space="preserve">
+    <value>包含 NativeMods 客户端组件。请在设置中启用 NativeMods 以获得完整的客户端功能。</value>
+  </data>
   <data name="Text_e33cc52f3308" xml:space="preserve">
     <value>击杀经验</value>
   </data>
@@ -8551,6 +8815,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e64a3e6ff925" xml:space="preserve">
     <value>区域布局采集</value>
   </data>
+  <data name="Text_e64aad043581" xml:space="preserve">
+    <value>NativeMods 下载文件超过 256 MB 大小限制。</value>
+  </data>
   <data name="Text_e66094b9faf9" xml:space="preserve">
     <value>你还没有发布版</value>
   </data>
@@ -8661,6 +8928,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e984e8f6d556" xml:space="preserve">
     <value>此赛季拥有独立的角色和仓库，不会迁移至 Standard。</value>
+  </data>
+  <data name="Text_e9942a60b429" xml:space="preserve">
+    <value>发行版安装不支持导入表补丁（.nmimp）模式，因为 LocalExile.exe 会检查 Game.patched.exe 的文件大小并将其重置。请改用代理（version.dll）模式。</value>
   </data>
   <data name="Text_e9988a42ca34" xml:space="preserve">
     <value>Waypoint 找不到自身的可执行文件。</value>
@@ -8866,6 +9136,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ee9b6f783cc6" xml:space="preserve">
     <value>监视进程正在运行，但 Gateway 没有运行中的子进程。请打开 Gateway 输出查看构建错误。</value>
   </data>
+  <data name="Text_eea2745e2867" xml:space="preserve">
+    <value>验证</value>
+  </data>
   <data name="Text_eeaf3fc78d1a" xml:space="preserve">
     <value>请等待当前操作完成后再更改这些选项。</value>
   </data>
@@ -9060,6 +9333,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f2d1dab08310" xml:space="preserve">
     <value>NPC</value>
   </data>
+  <data name="Text_f2efb785f377" xml:space="preserve">
+    <value>此模组通过覆盖层替换 {0} 个原版游戏路径。</value>
+  </data>
   <data name="Text_f2faba4b22de" xml:space="preserve">
     <value>模组、模块和赛季</value>
   </data>
@@ -9077,6 +9353,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f34ba9fc922c" xml:space="preserve">
     <value>随机名称</value>
+  </data>
+  <data name="Text_f359f6903ef7" xml:space="preserve">
+    <value>发行版安装不支持导入表补丁（.nmimp）模式，因为 LocalExile.exe 会检查 Game.patched.exe 的文件大小并将其重置。请切换到代理（version.dll）模式。</value>
   </data>
   <data name="Text_f38938ee1db3" xml:space="preserve">
     <value>更改影响使用此模块的所有赛季。</value>
@@ -9114,6 +9393,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f4bfa9a07c59" xml:space="preserve">
     <value>此操作会使用 npm ci 在 Tools/ooz 中安装源码副本锁定版本的 Node 依赖项。不会全局安装任何软件。必须先安装 Node.js。</value>
+  </data>
+  <data name="Text_f4cad1a9af76" xml:space="preserve">
+    <value>发行版安装不支持导入表补丁（.nmimp）模式，因为 LocalExile.exe 会检查 Game.patched.exe 的文件大小并将其重置。请在设置中切换到代理（version.dll）模式。</value>
   </data>
   <data name="Text_f4ccae29e1bb" xml:space="preserve">
     <value>运行中</value>
@@ -9213,6 +9495,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f73bbf129e06" xml:space="preserve">
     <value>“开始游戏”、模组和账号。Waypoint 会让 LocalExile 保持最新。</value>
+  </data>
+  <data name="Text_f74d052b89ff" xml:space="preserve">
+    <value>NativeMods 安装包缺少必需的运行时文件 {0}。</value>
   </data>
   <data name="Text_f75fb17e58b6" xml:space="preserve">
     <value>选择模组文件夹（包含其 mod.json）</value>
@@ -9400,6 +9685,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_fb62fe2ae6b2" xml:space="preserve">
     <value>{0}：{1}</value>
   </data>
+  <data name="Text_fb6975e1d958" xml:space="preserve">
+    <value>已安装 v{0}（已禁用） · {1}</value>
+  </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>再次检查</value>
   </data>
@@ -9432,6 +9720,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fc5e4f92ee14" xml:space="preserve">
     <value>面向开发者：直接使用此文件夹，而不是副本。LocalExile 会修改那里的文件，而且该文件夹中的流放之路一旦更新，就可能导致这个 LocalExile 无法运行。</value>
+  </data>
+  <data name="Text_fc81f966d0f6" xml:space="preserve">
+    <value>NativeMods 扩展器已彻底卸载。</value>
   </data>
   <data name="Text_fca91d59bc5a" xml:space="preserve">
     <value>选择你的源码副本以开始。</value>

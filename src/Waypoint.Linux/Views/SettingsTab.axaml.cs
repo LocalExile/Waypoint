@@ -3,6 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using Launcher.Core.NativeMods;
+using LocalExile.Client.Waypoint;
 
 namespace Waypoint;
 
@@ -36,8 +39,10 @@ partial class SettingsTab : UserControl
         }
         L.Current.PropertyChanged += (_, _) => Show();
         L.Current.PropertyChanged += (_, _) => ShowPaths();
+        L.Current.PropertyChanged += (_, _) => _ = RefreshNativeModsAsync();
         Show();
         ShowPaths();
+        _ = RefreshNativeModsAsync();
     }
 
     void Show()
@@ -62,6 +67,12 @@ partial class SettingsTab : UserControl
         ToolTip.SetTip(KeepUpToDate, Repo.IsInstall ? L.Text("When Waypoint starts, look for a newer LocalExile release and offer to install it.")
             : L.Text("Play gets the newest LocalExile at most once a day, after backing up your saves. A copy with your own changes is left alone."));
         CheckoutGroup.IsVisible = Editions.Advanced(S) && !Repo.IsInstall;
+        var nm = S.NativeModsFor();
+        NativeModsEnabled.IsChecked = nm.Enabled;
+        bool useImport = !Repo.IsInstall && NativeModsExtender.ParseMode(nm.Mode) == ExtenderInstallMode.ImportTable;
+        NativeModsProxyMode.IsChecked = !useImport;
+        NativeModsImportMode.IsChecked = useImport;
+        NativeModsImportMode.IsEnabled = !Repo.IsInstall;
         _loading = false;
     }
 
@@ -92,6 +103,17 @@ partial class SettingsTab : UserControl
         ToolTip.SetTip(ChangeButton, L.Text("Pick another LocalExile server checkout; Waypoint starts again on it"));
         OpenDataButton.Content = L.Text("Open Waypoint's data folder");
         ToolTip.SetTip(OpenDataButton, L.Text("Operation logs and save backups"));
+        NativeModsHeading.Text = L.Text("NativeMods (Client Extender)");
+        NativeModsEnabled.Content = L.Text("Enable NativeMods client extender (opt-in)");
+        NativeModsNote.Text = L.Text("Off by default. Loads client-side NativeMods overlays and plugins for PoE 3.29.3c/3.29.3d without modifying stock Game.exe or game archives.");
+        NativeModsProxyMode.Content = L.Text("Proxy (version.dll)");
+        NativeModsImportMode.Content = L.Text("Import patch (.nmimp)");
+        ToolTip.SetTip(NativeModsImportMode, L.Text("Patches Client/Game.patched.exe import table reversibly (source checkouts only)."));
+        NativeModsGitHubButton.Content = L.Text("Install / Update from GitHub");
+        NativeModsZipButton.Content = L.Text("Import local zip…");
+        NativeModsFolderButton.Content = L.Text("Import dist folder…");
+        NativeModsVerifyButton.Content = L.Text("Verify");
+        NativeModsUninstallButton.Content = L.Text("Uninstall");
     }
 
     void ShowServicesHelp() => ServicesHelp.Text = L.Text(S.StopServicesOnExit
@@ -283,5 +305,211 @@ partial class SettingsTab : UserControl
         PathRows.Children.Add(detail);
 
         async Task Describe() => detail.Text = await PathChoices.DescribeToolAsync(S, tool!);
+    }
+
+    // ---- NativeMods client extender (opt-in, OFF by default) ----
+
+    bool _nativeModsBusy;
+
+    async Task RefreshNativeModsAsync()
+    {
+        if (_shared is null) return;
+        var pref = S.NativeModsFor();
+        var mode = Repo.IsInstall ? ExtenderInstallMode.ProxyVersionDll : NativeModsExtender.ParseMode(pref.Mode);
+        var health = await Task.Run(() => NativeModsExtender.GetHealthAsync(Environment.CurrentDirectory, pref.Enabled, Repo.IsInstall, mode));
+        ApplyNativeModsHealth(health);
+    }
+
+    void ApplyNativeModsHealth(NativeModsHealth health)
+    {
+        var (summary, brushKey, details) = NativeModsLaunch.DescribeHealth(health);
+        NativeModsStatus.Text = summary;
+        NativeModsStatus.Foreground = App.Brush(brushKey);
+        NativeModsDetails.Text = details;
+        NativeModsDetails.IsVisible = details.Length > 0;
+        SetNativeModsButtonsEnabled(!_nativeModsBusy, health.IsInstalled);
+    }
+
+    void SetNativeModsButtonsEnabled(bool enabled, bool isInstalled)
+    {
+        NativeModsEnabled.IsEnabled = enabled;
+        NativeModsProxyMode.IsEnabled = enabled;
+        NativeModsImportMode.IsEnabled = enabled && !Repo.IsInstall;
+        NativeModsGitHubButton.IsEnabled = enabled;
+        NativeModsZipButton.IsEnabled = enabled;
+        NativeModsFolderButton.IsEnabled = enabled;
+        NativeModsVerifyButton.IsEnabled = enabled;
+        NativeModsUninstallButton.IsEnabled = enabled && isInstalled;
+    }
+
+    async void NativeModsPreferenceChanged(object? sender, RoutedEventArgs e)
+    {
+        if (_loading || _shared is null || _nativeModsBusy) return;
+        if (sender is RadioButton { IsChecked: false }) return;
+        if (NativeModsLaunch.CannotMutateNow(_shared) is { } blocked)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Info, L.Text("NativeMods (Client Extender)"), blocked);
+            Show();
+            return;
+        }
+        bool enabled = NativeModsEnabled.IsChecked == true;
+        var mode = !Repo.IsInstall && NativeModsImportMode.IsChecked == true
+            ? ExtenderInstallMode.ImportTable
+            : ExtenderInstallMode.ProxyVersionDll;
+        _nativeModsBusy = true;
+        SetNativeModsButtonsEnabled(false, true);
+        try
+        {
+            var result = await NativeModsLaunch.ApplyPreferenceAsync(_shared, enabled, mode);
+            if (result is not null)
+            {
+                if (!result.Succeeded) Dialog.Tell(ViewTools.Owner(this), DialogKind.Warning, L.Text("NativeMods (Client Extender)"), result.Message);
+                ApplyNativeModsHealth(result.Health);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Warning, L.Text("NativeMods (Client Extender)"), ex.Message);
+        }
+        finally
+        {
+            _nativeModsBusy = false;
+            Show();
+            await RefreshNativeModsAsync();
+        }
+    }
+
+    async void InstallNativeModsGitHub(object? sender, RoutedEventArgs e)
+    {
+        if (_shared is null || _nativeModsBusy) return;
+        if (NativeModsLaunch.CannotMutateNow(_shared) is { } blocked)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Info, L.Text("NativeMods (Client Extender)"), blocked);
+            return;
+        }
+        _nativeModsBusy = true;
+        SetNativeModsButtonsEnabled(false, false);
+        try
+        {
+            var result = await NativeModsLaunch.InstallFromGitHubAsync(_shared, text => Dispatcher.UIThread.Post(() => NativeModsStatus.Text = text));
+            if (result is not null)
+            {
+                Dialog.Tell(ViewTools.Owner(this), result.Succeeded ? DialogKind.Info : DialogKind.Warning, L.Text("NativeMods (Client Extender)"), result.Message);
+                ApplyNativeModsHealth(result.Health);
+            }
+        }
+        catch (Exception ex) when (ex is System.Net.Http.HttpRequestException or IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or System.Text.Json.JsonException or TaskCanceledException)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Warning, L.Text("NativeMods (Client Extender)"), ex.Message);
+        }
+        finally
+        {
+            _nativeModsBusy = false;
+            await RefreshNativeModsAsync();
+        }
+    }
+
+    async void ImportNativeModsZip(object? sender, RoutedEventArgs e)
+    {
+        if (_shared is null || _nativeModsBusy || Ui.Owner(this) is not { } owner) return;
+        if (NativeModsLaunch.CannotMutateNow(_shared) is { } blocked)
+        {
+            Dialog.Tell(owner, DialogKind.Info, L.Text("NativeMods (Client Extender)"), blocked);
+            return;
+        }
+        try
+        {
+            var files = await owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = L.Text("Choose a NativeMods release archive (.zip)"),
+                FileTypeFilter = [new FilePickerFileType("Zip") { Patterns = ["*.zip"] }],
+            });
+            if (files.FirstOrDefault()?.TryGetLocalPath() is { } zipPath)
+                await RunLocalNativeModsInstallAsync(zipPath, isZip: true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or NotSupportedException or IOException or UnauthorizedAccessException)
+        {
+            Dialog.Tell(owner, DialogKind.Warning, L.Text("NativeMods (Client Extender)"), ex.Message);
+        }
+    }
+
+    async void ImportNativeModsFolder(object? sender, RoutedEventArgs e)
+    {
+        if (_shared is null || _nativeModsBusy || Ui.Owner(this) is not { } owner) return;
+        if (NativeModsLaunch.CannotMutateNow(_shared) is { } blocked)
+        {
+            Dialog.Tell(owner, DialogKind.Info, L.Text("NativeMods (Client Extender)"), blocked);
+            return;
+        }
+        if (Ui.PickFolder(owner, L.Text("Choose a NativeMods dist/win-x64 folder")) is { } folder)
+            await RunLocalNativeModsInstallAsync(folder, isZip: false);
+    }
+
+    async Task RunLocalNativeModsInstallAsync(string path, bool isZip)
+    {
+        _nativeModsBusy = true;
+        SetNativeModsButtonsEnabled(false, false);
+        try
+        {
+            var result = await NativeModsLaunch.InstallFromLocalAsync(_shared, path, isZip, text => Dispatcher.UIThread.Post(() => NativeModsStatus.Text = text));
+            if (result is not null)
+            {
+                Dialog.Tell(ViewTools.Owner(this), result.Succeeded ? DialogKind.Info : DialogKind.Warning, L.Text("NativeMods (Client Extender)"), result.Message);
+                ApplyNativeModsHealth(result.Health);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Warning, L.Text("NativeMods (Client Extender)"), ex.Message);
+        }
+        finally
+        {
+            _nativeModsBusy = false;
+            await RefreshNativeModsAsync();
+        }
+    }
+
+    async void VerifyNativeMods(object? sender, RoutedEventArgs e)
+    {
+        if (_shared is null || _nativeModsBusy) return;
+        await RefreshNativeModsAsync();
+    }
+
+    async void UninstallNativeMods(object? sender, RoutedEventArgs e)
+    {
+        if (_shared is null || _nativeModsBusy) return;
+        if (NativeModsLaunch.CannotMutateNow(_shared) is { } blocked)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Info, L.Text("NativeMods (Client Extender)"), blocked);
+            return;
+        }
+        int answer = Dialog.Show(ViewTools.Owner(this), DialogKind.Warning,
+            L.Text("Uninstall NativeMods extender?"),
+            L.Text("This removes LocalExile.ClientHost.dll, version.dll, and Client/nativemods-host/, and restores Game.patched.exe if import-patched. Stock Game.exe is never touched."),
+            null,
+            [L.Text("Uninstall extender only"), L.Text("Uninstall and archive client mods"), L.Text("Cancel")],
+            defaultButton: 2);
+        if (answer is not (0 or 1)) return;
+        _nativeModsBusy = true;
+        SetNativeModsButtonsEnabled(false, true);
+        try
+        {
+            var result = await NativeModsLaunch.UninstallAsync(_shared, removeClientMods: answer == 1);
+            if (result is not null)
+            {
+                Dialog.Tell(ViewTools.Owner(this), result.Succeeded ? DialogKind.Info : DialogKind.Warning, L.Text("NativeMods (Client Extender)"), result.Message);
+                ApplyNativeModsHealth(result.Health);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+        {
+            Dialog.Tell(ViewTools.Owner(this), DialogKind.Warning, L.Text("NativeMods (Client Extender)"), ex.Message);
+        }
+        finally
+        {
+            _nativeModsBusy = false;
+            Show();
+            await RefreshNativeModsAsync();
+        }
     }
 }

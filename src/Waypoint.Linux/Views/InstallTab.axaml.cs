@@ -423,12 +423,35 @@ partial class InstallTab : UserControl
         string? failure = null;
         try
         {
+            IReadOnlyDictionary<string, string?>? launchEnv = null;
+            if (withClient)
+            {
+                var plan = await NativeModsLaunch.PrepareAsync(Folder, _shared.Settings, isReleaseInstall: true, line =>
+                {
+                    _shared.Logs.Write(line);
+                    Dispatcher.UIThread.Post(() => Write(line));
+                });
+                if (!plan.Ok)
+                {
+                    failure = plan.Error ?? L.Text("NativeMods preflight check failed.");
+                    _shared.Logs.Write($"NativeMods preflight failed: {failure}", Severity.Error);
+                    _working = false;
+                    _clock.Stop();
+                    _stage = null;
+                    _current = _total = null;
+                    _headline = null;
+                    Finished(null, failure);
+                    Show();
+                    return null;
+                }
+                launchEnv = plan.Environment;
+            }
             // Queued: the events come from the tool's threads.
             var run = LocalExileTool.RunAsync(Folder, arguments, item => Dispatcher.UIThread.Post(() => Event(item, ready)), line => Dispatcher.UIThread.Post(() =>
             {
                 _shared.Logs.Write($"LocalExile: {line}");
                 Write(line);
-            }));
+            }), environment: launchEnv);
             await _shared.RunExclusiveAsync("LocalExile.exe", () => Task.WhenAny(ready.Task, run));
             result = await run;
         }

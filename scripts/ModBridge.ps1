@@ -314,15 +314,18 @@ function Uninstall-Mod($snapshot) {
         Assert-ModId $id
         $binary = Join-Path (Get-ModFolder) $id
         $source = At "Mods/Source/$id"
+        $client = At "Mods/Client/$id"
         $hasSource = (-not $script:isRelease) -and (Test-Path -LiteralPath $source)
-        Require ((Test-Path -LiteralPath $binary) -or $hasSource) "No mod $id is installed."
-        [pscustomobject]@{ Id = $id; Binary = $binary; Source = $source; HasSource = $hasSource }
+        $hasClient = Test-Path -LiteralPath $client
+        Require ((Test-Path -LiteralPath $binary) -or $hasSource -or $hasClient) "No mod $id is installed."
+        [pscustomobject]@{ Id = $id; Binary = $binary; Source = $source; Client = $client; HasSource = $hasSource; HasClient = $hasClient }
     })
     Backup-Saves $snapshot
     Set-Stage $(if ($mods.Count -eq 1) { 'Uninstalling mod' } else { 'Uninstalling mods' }) (($ids -join ', ') + ' to Mods/.replaced')
     foreach ($mod in $mods) {
         $script:ModId = $mod.Id
         if ($mod.HasSource) { Move-ModAside $mod.Source 'Source' }
+        if ($mod.HasClient) { Move-ModAside $mod.Client 'Client' }
         Move-ModAside $mod.Binary 'Binaries'
     }
     if (-not $script:isRelease) { Write-ManagedMods @(Read-ManagedMods | Where-Object { $_.Id -cnotin $ids }) }

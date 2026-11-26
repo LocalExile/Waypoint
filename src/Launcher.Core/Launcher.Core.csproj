@@ -8,8 +8,10 @@
     <EmbeddedResource Include="../../scripts/*.ps1;../../scripts/*.py" Exclude="../../scripts/New-Icon.ps1" LogicalName="Bridge/%(Filename)%(Extension)" />
     <EmbeddedResource Include="MapSpawnCatalog.cs" LogicalName="Bridge/MapSpawnCatalog.cs" />
     <EmbeddedResource Include="../../scripts/map-viewer/MapViewer.cs;../../scripts/map-viewer/MapViewer.csproj" LogicalName="Bridge/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="NativeMods/Schemas/poe-3.29-dat-schema.json" LogicalName="LocalExile.Client.AssetPipeline.Schemas.poe-3.29-dat-schema.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.40.0" />
+    <PackageReference Include="OozSharp" Version="3.1.0" />
   </ItemGroup>
 </Project>

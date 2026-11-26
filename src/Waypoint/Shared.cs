@@ -69,8 +69,20 @@ sealed class Shared : IDisposable
         {
             Logs.Write($"> {request.Describe()}", Severity.Info);
             void Line(string line) { Logs.Write(line); output(line); }
+            IReadOnlyDictionary<string, string?>? extraEnv = null;
+            if (request.LaunchesClient)
+            {
+                var plan = await NativeModsLaunch.PrepareAsync(Environment.CurrentDirectory, Settings, Repo.IsInstall, Line);
+                if (!plan.Ok)
+                {
+                    Logs.Write($"NativeMods preflight failed: {plan.Error}", Severity.Error);
+                    if (!string.IsNullOrWhiteSpace(plan.Error)) output(plan.Error);
+                    return -1;
+                }
+                extraEnv = plan.Environment;
+            }
             var clock = System.Diagnostics.Stopwatch.StartNew();
-            int code = await Scripts.RunAsync(request, Line);
+            int code = await Scripts.RunAsync(request, Line, extraEnv);
             Logs.Write($"live.ps1 exited with {code} after {SessionLog.Seconds(clock.Elapsed)}", code == 0 ? Severity.Info : Severity.Error);
             return code;
         }

@@ -21,3 +21,8 @@ license. They are separate works: none of them changes Waypoint's license, and W
 ## OpenDyslexic
 
 The reading font Waypoint offers, under the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt).
+
+## OozSharp
+
+- **What:** [OozSharp](https://github.com/Shiqan/OozSharp) 3.1.0, pure-managed Kraken/Mermaid decompressor used to read stock `.datc64` tables from `Client/Bundles2/` when building `Mods/Client/.merged-cache/` for NativeMods `datPatches`.
+- **License:** MIT License (Copyright (c) 2020-2026 Shiqan).

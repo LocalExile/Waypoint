@@ -376,3 +376,24 @@ until Apply; Cancel restores the prior appearance. The embedded OpenDyslexic fon
 `ModuleIcons` is a launcher-only map of checkout and module ID to a stable library key. Missing or unknown choices use
 the module's default icon. These preferences are never forwarded to the runtime adapter or stored in LocalExile files;
 changing an icon performs no checkout operation and does not reload gameplay code or settings.
+
+## Opt-in NativeMods client extender & dual-side mods
+
+`NativeMods` preferences live in Waypoint's own `settings.json`, scoped by LocalExile folder, and default to **off**
+(`Enabled: false`, `Mode: ProxyVersionDll`). Stock `Client/Game.exe`, `Client/Content.ggpk` and `Client/Bundles2/` are never
+modified. Extender installation, enable/disable, verification and removal run under `Shared.RunExclusiveAsync`, refuse while
+the game client is running, and refuse linked `Client` folders.
+
+- On **source checkouts**, `CheckoutIgnores.Ensure` excludes `/Mods/Client/` in `.git/info/exclude` without touching tracked
+  files. Both `ProxyVersionDll` and reversible `.nmimp` `ImportTable` modes are supported.
+- On **release installs**, `LocalExile.exe` enforces `Game.patched.exe` file length equality against `Game.exe`; Waypoint
+  therefore restricts release installs to `ProxyVersionDll`.
+- Toggling NativeMods off deactivates on-disk entry points (`Client/version.dll` parked as `version.dll.disabled`; `.nmimp`
+  reversibly unpatched to exact original bytes) and strips `NATIVEMODS_*` and `version=n,b` from child launch environments.
+- Dual-side mods declaring `nativeClient` in `mod.json` are validated before install (`.ui` linter, closed `Stats`/`ItemClasses`
+  rejection, SHA-256 verification, cross-mod conflict check, explicit `rawAccess` opt-in confirmation). Server files install
+  through `ModBridge.ps1 InstallMod` into `Mods/Binaries/<id>/`; client payloads deploy atomically into `Mods/Client/<id>/`
+  with `.nativemods-ledger.json` and `.client-mod-state.json`; `Mods/Client/.merged-cache/` + `content-row-map.json` rebuild
+  atomically from enabled `datPatches` mods on install, enable/disable and uninstall (requiring Steam `Bundles2/` or extracted
+  `Client/Data/*.datc64`; standalone `Content.ggpk` surfaces a non-fatal diagnostic). `ModBridge.ps1 UninstallMod` moves any
+  `Mods/Client/<id>/` directory into `Mods/.replaced/<stamp>/Client/<id>` alongside the server folder.

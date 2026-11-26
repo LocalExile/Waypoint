@@ -1585,6 +1585,31 @@ account changed since the list was read ([account-management.md](account-managem
 adapter does not know can be browsed but not changed.
 When a monitored server or the client stops, Waypoint checks the current workspace again before enabling account edits.
 
+### NativeMods (Client Extender)
+
+**Settings → NativeMods (Client Extender)** manages the optional, opt-in NativeMods client script extender for Path of Exile
+**3.29.3c** and **3.29.3d**. It is **off by default** for every LocalExile folder and never modifies stock `Client/Game.exe`,
+`Client/Content.ggpk` or `Client/Bundles2/`.
+
+- **Install & update:** **Install / Update from GitHub** downloads the latest `win-x64` bundle from
+  `mrnamwen/LocalExile-NativeMods`, checks its SHA-256, and deploys `Client/LocalExile.ClientHost.dll` and
+  `Client/nativemods-host/` (plus `addresses/`). **Import local zip…** and **Import dist folder…** accept a local release zip
+  or `dist/win-x64/` folder. A linked `Client` folder is refused.
+- **Modes & opt-in toggle:** **Proxy (`version.dll`)** (recommended) works on Windows, Linux/Proton (Waypoint appends
+  `version=n,b` to `WINEDLLOVERRIDES`), release installs and source checkouts. **Import patch (`.nmimp`)** reversibly adds a
+  single PE32+ import entry to `Client/Game.patched.exe` on source checkouts (disabled on release installs because
+  `LocalExile.exe` validates `Game.patched.exe` length on startup). Turning the opt-in toggle **off** parks
+  `Client/version.dll` as `version.dll.disabled` or unpatches `.nmimp` back to exact original bytes so launches stay vanilla.
+- **Dual-side mods:** Mods whose `mod.json` declares `nativeClient` show a **NativeMods** / **Requires NativeMods** badge
+  (with a warning icon when the extender is off). Before install, Waypoint lints `.ui` layouts, validates `.datpatch.json`
+  tables (rejecting closed 3.29 `Stats`/`ItemClasses` appends), checks cross-mod conflicts, and prompts for explicit
+  confirmation whenever `rawAccess` or stock path `replaces` are requested. Server files install into `Mods/Binaries/<id>/`,
+  client payloads into `Mods/Client/<id>/` (excluded from git via `.git/info/exclude`), and `Mods/Client/.merged-cache/` +
+  `content-row-map.json` rebuild deterministically on install, enable/disable and uninstall.
+- **Launch environment:** When opted in, Waypoint passes `NATIVEMODS_HOST_DIR`, `NATIVEMODS_ADDRESSES_DIR`,
+  `NATIVEMODS_MODS_DIR`, `NATIVEMODS_LOG_PATH` (converted to `Z:\...` on Linux/Proton) and `WINEDLLOVERRIDES=version=n,b`
+  (in proxy mode) to `live.ps1` and `LocalExile.exe --json`. When opted out, those variables are stripped.
+
 ## Code
 
 | File | Role |
