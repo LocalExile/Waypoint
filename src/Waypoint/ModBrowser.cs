@@ -713,9 +713,9 @@ sealed class ModBrowser(Shared shared)
                 new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))), restart);
         }
 
-        // Dual-side NativeMods package: validate .ui layouts, datPatches, closed tables, SHA-256, and cross-mod conflicts.
+        // Dual-side NativeMods package: validate .ui layouts, datPatches, closed tables, SHA-256, encoding, and cross-mod conflicts.
         var audit = NativeModsClientStore.AuditPackage(staged.Folder, root, allowRawAccess: false, allowConflicts: false);
-        bool hasBlockingErrors = audit.Validation.Errors.Any(d => !string.Equals(d.Code, "ENC001", StringComparison.Ordinal));
+        bool hasBlockingErrors = audit.Validation.Errors.Any();
         if (hasBlockingErrors || audit.Conflicts.Count > 0)
         {
             End(job);
@@ -745,7 +745,7 @@ sealed class ModBrowser(Shared shared)
 
             // Deploy client half into Mods/Client/<id>/ and rebuild Mods/Client/.merged-cache/ under the workspace lock.
             ClientModDeployResult? clientDeploy = null;
-            await shared.RunExclusiveAsync(L.Text("Install NativeMods client payload"), () =>
+            bool ran = await shared.RunExclusiveAsync(L.Text("Install NativeMods client payload"), () =>
             {
                 clientDeploy = NativeModsClientStore.DeployClientHalf(
                     staged.Folder, root, enableOverride: null, allowRawAccess: audit.RawAccessRequested, allowConflicts: false);
@@ -756,10 +756,13 @@ sealed class ModBrowser(Shared shared)
                 return Task.CompletedTask;
             });
 
-            if (clientDeploy is { Succeeded: false })
+            if (!ran || clientDeploy is not { Succeeded: true })
             {
-                shared.Logs.Write($"[nativemods] client deploy failed for {staged.Id}: {clientDeploy.Message}", Severity.Error);
-                return await Finish(job, new BridgeResult(false, clientDeploy.Message, serverResult.Snapshot, L.Text("Install NativeMods client payload")));
+                string reason = !ran
+                    ? L.Text("Something else is using LocalExile. Try again when it is done.")
+                    : clientDeploy!.Message;
+                shared.Logs.Write($"[nativemods] client deploy failed for {staged.Id}: {reason}", Severity.Error);
+                return await Finish(job, new BridgeResult(false, reason, serverResult.Snapshot, L.Text("Install NativeMods client payload")));
             }
 
             return Installed(await Finish(job, serverResult), restartToApply: true);

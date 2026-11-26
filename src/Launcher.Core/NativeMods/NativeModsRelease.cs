@@ -277,9 +277,13 @@ public static partial class NativeModsReleases
 
         string addrInBundle = Path.Combine(bundleDir, WaypointExtenderManager.AddressLibraryFolderName);
         string addrInHost = Path.Combine(hostDir, WaypointExtenderManager.AddressLibraryFolderName);
-        string? resolvedAddresses = Directory.Exists(addrInBundle) && !string.Equals(bundleDir, hostDir, StringComparison.OrdinalIgnoreCase)
-            ? addrInBundle
-            : Directory.Exists(addrInHost) ? null : null; // Already inside hostDir when flat; copied automatically with hostDir.
+        bool separateHostDir = !string.Equals(bundleDir, hostDir, StringComparison.OrdinalIgnoreCase);
+        bool hasAddrInHost = File.Exists(Path.Combine(addrInHost, "3.29.3d.json"));
+        bool hasAddrInBundle = separateHostDir && File.Exists(Path.Combine(addrInBundle, "3.29.3d.json"));
+        if (!hasAddrInHost && !hasAddrInBundle)
+            throw new InvalidDataException(L.Text("The NativeMods bundle is missing {0}.", $"{WaypointExtenderManager.AddressLibraryFolderName}/3.29.3d.json"));
+
+        string? resolvedAddresses = hasAddrInBundle && !hasAddrInHost ? addrInBundle : null;
 
         string resolvedVersion = ReadBundleVersion(bundleDir) ?? version;
         return new StagedExtenderBundle(resolvedVersion, shimPath, hostDir, resolvedProxy, resolvedAddresses, stagingWorkDir);

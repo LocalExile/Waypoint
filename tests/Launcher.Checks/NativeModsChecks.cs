@@ -77,6 +77,19 @@ static class NativeModsChecks
             "NativeMods local zip stages and validates required native/runtime files");
         NativeModsReleases.Discard(stagedFromZip);
 
+        // Missing addresses/3.29.3d.json must be rejected
+        string missingAddrDir = Path.Combine(nmRoot, "dist-no-addr");
+        Directory.CreateDirectory(missingAddrDir);
+        File.WriteAllText(Path.Combine(missingAddrDir, "LocalExile.ClientHost.dll"), "shim");
+        File.WriteAllText(Path.Combine(missingAddrDir, "hostfxr.dll"), "hostfxr");
+        File.WriteAllText(Path.Combine(missingAddrDir, "coreclr.dll"), "coreclr");
+        File.WriteAllText(Path.Combine(missingAddrDir, "LocalExile.Client.Host.dll"), "host");
+        File.WriteAllText(Path.Combine(missingAddrDir, "LocalExile.Client.Host.runtimeconfig.json"), "{}");
+        bool missingAddrRejected = false;
+        try { NativeModsReleases.StageLocalDirectory(missingAddrDir); }
+        catch (InvalidDataException) { missingAddrRejected = true; }
+        check(missingAddrRejected, "NativeMods bundle staging rejects bundles missing addresses/3.29.3d.json");
+
         // 3. Launch environment builder (Windows & Linux/Proton, opt-in & opt-out)
         var optOutLinux = NativeModsExtender.BuildLaunchEnvironment("/games/LocalExile", optedIn: false, ExtenderInstallMode.ProxyVersionDll, isLinux: true, "d3d11=n;version=n,b");
         check(optOutLinux["NATIVEMODS_HOST_DIR"] is null && optOutLinux["NATIVEMODS_MODS_DIR"] is null && optOutLinux["WINEDLLOVERRIDES"] == "d3d11=n",

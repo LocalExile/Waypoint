@@ -345,14 +345,20 @@ public partial class InstallTab : UserControl
             IReadOnlyDictionary<string, string?>? launchEnv = null;
             if (withClient)
             {
-                var plan = await NativeModsLaunch.PrepareAsync(Folder, _shared.Settings, isReleaseInstall: true, line =>
+                NativeModsLaunchPlan? plan = null;
+                bool prepared = await _shared.RunExclusiveAsync(L.Text("NativeMods"), async () =>
                 {
-                    _shared.Logs.Write(line);
-                    Dispatcher.BeginInvoke(() => Write(line));
+                    plan = await NativeModsLaunch.PrepareAsync(Folder, _shared.Settings, isReleaseInstall: true, line =>
+                    {
+                        _shared.Logs.Write(line);
+                        Dispatcher.BeginInvoke(() => Write(line));
+                    });
                 });
-                if (!plan.Ok)
+                if (!prepared || plan is not { Ok: true })
                 {
-                    failure = plan.Error ?? L.Text("NativeMods preflight check failed.");
+                    failure = !prepared
+                        ? L.Text("Something else is using LocalExile. Try again when it is done.")
+                        : plan?.Error ?? L.Text("NativeMods preflight check failed.");
                     _shared.Logs.Write($"NativeMods preflight failed: {failure}", Severity.Error);
                     _working = false;
                     _clock.Stop();
