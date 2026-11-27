@@ -1541,10 +1541,11 @@ know (`Fated`). **Open loot filter fixer** opens a window of its own (one at a t
   LocalExile's own settings folder or `OnlineFilters`, is taken as `Path of Exile` itself, because the game reads no
   subfolder. **Open folder** shows it in Explorer.
 - **Convert** writes `<name> - LocalExile.filter` there (the synced filter's name, else the file's), over the copy of an
-  earlier conversion, and says what it took out. It removes the `BaseType`, `Class`, `HasExplicitMod` and `HasImplicitMod`
-  values the client lacks (the whole name with `==`, otherwise as part of a name, as the game matches), and comments out a
-  block whose list ends up empty or that uses a condition the 3.29.3 client doesn't know. An unknown cosmetic action loses
-  only its line. Everything else is kept.
+  earlier conversion, and says what it took out. It removes the `BaseType`, `Class` and `HasExplicitMod` values the
+  client lacks (the whole name with `==`, otherwise as part of a name, as the game matches; `HasImplicitMod` is a
+  True/False condition and stays), and comments out a block whose list ends up empty or that uses a condition the 3.29.3
+  client doesn't know. A block runs to the next `Show`, `Hide` or `Minimal`, blank lines and comments inside it
+  included. An unknown cosmetic action loses only its line. Everything else is kept.
 
 The client's names come from the checkout's client tables as SQL, `sql/updates/client/*_BaseItemTypes.sql`,
 `*_ItemClasses.sql` and `*_Mods.sql` (the Name column), which a release carries as a source copy does; the conditions

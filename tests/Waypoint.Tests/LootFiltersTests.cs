@@ -51,6 +51,31 @@ public class LootFiltersTests
         Assert.Equal(1, r.RemovedLines);
     }
 
+    [Fact]
+    public void HasImplicitMod_is_a_true_or_false_condition_and_stays()
+    {
+        var r = Convert("Show", "\tHasImplicitMod True", "\tSetFontSize 45", "", "Hide", "\tHasImplicitMod False");
+
+        Assert.Equal(0, r.DisabledBlocks);
+        Assert.Contains("\tHasImplicitMod True", r.Lines);
+        Assert.Contains("\tHasImplicitMod False", r.Lines);
+    }
+
+    [Fact]
+    public void A_blank_line_or_comment_inside_a_block_does_not_end_it()
+    {
+        var r = Convert(
+            "Show", "\tRarity Rare", "", "\tFated True", "",
+            "#------- next section", "",
+            "Show", "\tBaseType == \"Ring\"", "# note", "\tBaseType == \"Mycelium Core\"", "\tSetFontSize 40");
+
+        Assert.Equal(1, r.DisabledByCondition["Fated"]);
+        Assert.Contains("#\tFated True", r.Lines);
+        Assert.Contains("#------- next section", r.Lines);   // the heading after a block stays as it was
+        Assert.Contains("#\tBaseType == \"Mycelium Core\"", r.Lines);
+        Assert.Equal(1, r.DisabledEmptyLists);
+    }
+
     [Theory]
     [InlineData(@"C:\Users\p\Documents\My Games\Path of Exile\LocalExile", @"C:\Users\p\Documents\My Games\Path of Exile")]
     [InlineData(@"C:\Users\p\Documents\My Games\Path of Exile\OnlineFilters\", @"C:\Users\p\Documents\My Games\Path of Exile")]

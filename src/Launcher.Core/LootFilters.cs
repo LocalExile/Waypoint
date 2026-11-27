@@ -169,8 +169,14 @@ public static class LootFilters
             if (!BlockStarts.Contains(Keyword(lines[i]))) { output.Add(lines[i++]); continue; }
 
             blocks++;
+            // A block runs to the next Show/Hide/Minimal: a blank line or a comment inside it doesn't end it. The blank and
+            // comment lines after its last rule line (the next section's heading) stay outside, as they were.
             var block = new List<string> { lines[i++] };
-            while (i < lines.Count && lines[i].Trim().Length > 0 && !BlockStarts.Contains(Keyword(lines[i]))) block.Add(lines[i++]);
+            while (i < lines.Count && !BlockStarts.Contains(Keyword(lines[i]))) block.Add(lines[i++]);
+            int last = block.Count;
+            while (last > 1 && Keyword(block[last - 1]).Length == 0) last--;
+            var after = block.GetRange(last, block.Count - last);
+            block.RemoveRange(last, block.Count - last);
 
             var kept = new List<string> { block[0] };
             string? unknownCondition = null;
@@ -194,7 +200,8 @@ public static class LootFilters
                 {
                     "BaseType" => LootFilterValueKind.BaseType,
                     "Class" => LootFilterValueKind.Class,
-                    "HasExplicitMod" or "HasImplicitMod" => LootFilterValueKind.Mod,
+                    // HasImplicitMod is a True/False condition; only HasExplicitMod lists modifier names.
+                    "HasExplicitMod" => LootFilterValueKind.Mod,
                     _ => null,
                 };
                 if (kind is null) { kept.Add(line); continue; }
@@ -238,6 +245,7 @@ public static class LootFilters
                 output.AddRange(block.Select(l => "#" + l));
             }
             else output.AddRange(kept);
+            output.AddRange(after);
         }
         return new LootFilterConversion(output, onlineName, blocks, removedNames, removedLines, removed.Take(12).ToArray(), byCondition, emptyLists);
     }
