@@ -1,0 +1,239 @@
+{"type":"base","id":"Metadata/Items/Amulets/Amulet3","name":"琥珀护身符"}
+{"type":"base","id":"Metadata/Items/Amulets/Amulet4","name":"翠玉护身符"}
+{"type":"base","id":"Metadata/Items/Amulets/Amulet5","name":"海玉护身符"}
+{"type":"base","id":"Metadata/Items/Amulets/Amulet7","name":"黑曜护身符"}
+{"type":"base","id":"Metadata/Items/Amulets/AmuletRoyale1","name":"黑曜护身符"}
+{"type":"base","id":"Metadata/Items/Belts/Belt3","name":"皮革腰带"}
+{"type":"base","id":"Metadata/Items/Belts/Belt4","name":"重革腰带"}
+{"type":"base","id":"Metadata/Items/Belts/BeltRoyale1","name":"皮革腰带"}
+{"type":"base","id":"Metadata/Items/Belts/BeltRoyale2","name":"重革腰带"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelAbyssCaster","name":"催眠之眼珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelAbyssMelee","name":"杀戮之眼珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelAbyssRanged","name":"搜寻之眼珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelAbyssSummoner","name":"凄惨之眼珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelDex","name":"翠绿珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelInt","name":"钴蓝珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelPassiveTreeExpansionLarge","name":"巨型星团珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelPassiveTreeExpansionMedium","name":"中型星团珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelPassiveTreeExpansionSmall","name":"小型星团珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelPrismatic","name":"棱彩珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelStr","name":"赤红珠宝"}
+{"type":"base","id":"Metadata/Items/Jewels/JewelTimeless","name":"永恒珠宝"}
+{"type":"base","id":"Metadata/Items/Rings/Ring1","name":"锻铁戒指"}
+{"type":"base","id":"Metadata/Items/Rings/Ring12","name":"双玉戒指"}
+{"type":"base","id":"Metadata/Items/Rings/Ring13","name":"双玉戒指"}
+{"type":"base","id":"Metadata/Items/Rings/Ring14","name":"双玉戒指"}
+{"type":"base","id":"Metadata/Items/Rings/Ring2","name":"珊瑚戒指"}
+{"type":"base","id":"Metadata/Items/Rings/Ring4","name":"黄金戒指"}
+{"type":"base","id":"Metadata/Items/Rings/Ring8","name":"三相戒指"}
+{"type":"base","id":"Metadata/Items/Rings/RingRoyale2","name":"三相戒指"}
+{"type":"base","id":"Metadata/Items/Weapons/TwoHandWeapons/Bows/Bow1","name":"粗制弓"}
+{"type":"base","id":"Metadata/Items/Weapons/TwoHandWeapons/Bows/Bow1Royale","name":"粗制弓"}
+{"type":"class","id":"AbyssJewel","name":"深渊珠宝"}
+{"type":"class","id":"Amulet","name":"项链"}
+{"type":"class","id":"Belt","name":"腰带"}
+{"type":"class","id":"Body Armour","name":"胸甲"}
+{"type":"class","id":"Boots","name":"鞋"}
+{"type":"class","id":"Bow","name":"弓"}
+{"type":"class","id":"Claw","name":"爪"}
+{"type":"class","id":"Dagger","name":"匕首"}
+{"type":"class","id":"DeepwaterChart","name":"深海图"}
+{"type":"class","id":"FishingRod","name":"钓竿"}
+{"type":"class","id":"Gloves","name":"手套"}
+{"type":"class","id":"HeistBlueprint","name":"蓝图"}
+{"type":"class","id":"Helmet","name":"头盔"}
+{"type":"class","id":"HybridFlask","name":"复合药剂"}
+{"type":"class","id":"Jewel","name":"珠宝"}
+{"type":"class","id":"LifeFlask","name":"生命药剂"}
+{"type":"class","id":"ManaFlask","name":"魔力药剂"}
+{"type":"class","id":"Map","name":"地图"}
+{"type":"class","id":"MapKey","name":"地图"}
+{"type":"class","id":"One Hand Axe","name":"单手斧"}
+{"type":"class","id":"One Hand Mace","name":"单手锤"}
+{"type":"class","id":"One Hand Sword","name":"单手剑"}
+{"type":"class","id":"Quiver","name":"箭袋"}
+{"type":"class","id":"Ring","name":"戒指"}
+{"type":"class","id":"Rune Dagger","name":"符文匕首"}
+{"type":"class","id":"Sceptre","name":"权杖"}
+{"type":"class","id":"Shield","name":"盾牌"}
+{"type":"class","id":"Staff","name":"长杖"}
+{"type":"class","id":"Thrusting One Hand Sword","name":"细剑"}
+{"type":"class","id":"Two Hand Axe","name":"双手斧"}
+{"type":"class","id":"Two Hand Mace","name":"双手锤"}
+{"type":"class","id":"Two Hand Sword","name":"双手剑"}
+{"type":"class","id":"UtilityFlask","name":"功能药剂"}
+{"type":"class","id":"Wand","name":"法杖"}
+{"type":"class","id":"Warstaff","name":"战杖"}
+{"type":"desc","stats":["accuracy_rating_+%"],"variants":[{"when":["1|#"],"text":"全域命中值提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"全域命中值降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["action_speed_-%"],"variants":[{"when":["1|#"],"text":"行动速度降低 {0}%","handlers":[]},{"when":["#|-1"],"text":"行动速度提高 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["additional_all_attributes"],"variants":[{"when":["#"],"text":"所有属性 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["additional_block_%"],"variants":[{"when":["#"],"text":"攻击伤害格挡率 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["additional_dexterity"],"variants":[{"when":["#"],"text":"敏捷 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["additional_intelligence"],"variants":[{"when":["#"],"text":"智慧 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["additional_maximum_all_resistances_%"],"variants":[{"when":["#"],"text":"所有抗性上限 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["additional_strength"],"variants":[{"when":["#"],"text":"力量 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["anger_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"愤怒的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"愤怒的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["attack_critical_strike_chance_+%"],"variants":[{"when":["1|#"],"text":"攻击暴击率提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"攻击暴击率降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["attack_damage_+%"],"variants":[{"when":["1|#"],"text":"攻击伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"攻击伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["attack_minimum_added_chaos_damage","attack_maximum_added_chaos_damage"],"variants":[{"when":["#","#"],"text":"攻击附加 {0} 至 {1} 点混沌伤害","handlers":[]}]}
+{"type":"desc","stats":["attack_minimum_added_cold_damage","attack_maximum_added_cold_damage"],"variants":[{"when":["#","#"],"text":"攻击附加 {0} 至 {1} 点冰霜伤害","handlers":[]}]}
+{"type":"desc","stats":["attack_minimum_added_fire_damage","attack_maximum_added_fire_damage"],"variants":[{"when":["#","#"],"text":"攻击附加 {0} 至 {1} 点火焰伤害","handlers":[]}]}
+{"type":"desc","stats":["attack_minimum_added_lightning_damage","attack_maximum_added_lightning_damage"],"variants":[{"when":["#","#"],"text":"攻击附加 {0} 至 {1} 点闪电伤害","handlers":[]}]}
+{"type":"desc","stats":["attack_minimum_added_physical_damage","attack_maximum_added_physical_damage"],"variants":[{"when":["#","#"],"text":"攻击附加 {0} 至 {1} 点物理伤害","handlers":[]}]}
+{"type":"desc","stats":["attack_speed_+%"],"variants":[{"when":["1|#"],"text":"攻击速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"攻击速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["avoid_all_elemental_status_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免元素异常状态","handlers":[]}]}
+{"type":"desc","stats":["base_all_ailment_duration_+%"],"variants":[{"when":["1|#"],"text":"敌人身上的异常状态持续时间提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"敌人身上的异常状态持续时间降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_avoid_bleed_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免流血","handlers":[]}]}
+{"type":"desc","stats":["base_avoid_freeze_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免冰冻","handlers":[]}]}
+{"type":"desc","stats":["base_avoid_ignite_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免点燃","handlers":[]}]}
+{"type":"desc","stats":["base_avoid_poison_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免中毒","handlers":[]}]}
+{"type":"desc","stats":["base_avoid_shock_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免感电","handlers":[]}]}
+{"type":"desc","stats":["base_avoid_stun_%"],"variants":[{"when":["1|#"],"text":"有 {0}% 几率避免眩晕","handlers":[]}]}
+{"type":"desc","stats":["base_cast_speed_+%"],"variants":[{"when":["1|#"],"text":"施法速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"施法速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_chance_to_freeze_%","always_freeze"],"variants":[{"when":["#","1|#"],"text":"击中必定冰冻敌人","handlers":[]},{"when":["100|#","0"],"text":"必定造成冰冻","handlers":[]},{"when":["1|99","0"],"text":"有 {0}% 几率造成冰冻","handlers":[["canonical_stat",1]]}]}
+{"type":"desc","stats":["base_chance_to_ignite_%"],"variants":[{"when":["1|99"],"text":"有 {0}% 几率造成点燃","handlers":[]},{"when":["100|#"],"text":"必定造成点燃","handlers":[]}]}
+{"type":"desc","stats":["base_chance_to_shock_%"],"variants":[{"when":["1|99"],"text":"有 {0}% 几率造成感电","handlers":[]},{"when":["100|#"],"text":"必定造成感电","handlers":[]}]}
+{"type":"desc","stats":["base_chaos_damage_resistance_%"],"variants":[{"when":["#"],"text":"混沌抗性 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_cold_damage_resistance_%"],"variants":[{"when":["#"],"text":"冰霜抗性 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_cooldown_speed_+%"],"variants":[{"when":["1|#"],"text":"冷却回复速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"冷却回复速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_critical_strike_multiplier_+"],"variants":[{"when":["#"],"text":"全域暴击伤害加成 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_evasion_rating"],"variants":[{"when":["#"],"text":"闪避值 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["base_fire_damage_resistance_%"],"variants":[{"when":["#"],"text":"火焰抗性 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_life_regeneration_rate_per_minute"],"variants":[{"when":["#"],"text":"每秒再生 {0} 点生命","handlers":[["per_minute_to_per_second",1]]}]}
+{"type":"desc","stats":["base_lightning_damage_resistance_%"],"variants":[{"when":["#"],"text":"闪电抗性 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_mana_cost_efficiency_+%"],"variants":[{"when":["1|#"],"text":"魔力消耗效率提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"魔力消耗效率降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_mana_reservation_efficiency_+%"],"variants":[{"when":["1|#"],"text":"技能的魔力保留效能提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"技能的魔力保留效能降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_maximum_chaos_damage_resistance_%"],"variants":[{"when":["#"],"text":"混沌抗性上限 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_maximum_cold_damage_resistance_%"],"variants":[{"when":["#"],"text":"冰霜抗性上限 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_maximum_energy_shield"],"variants":[{"when":["#"],"text":"最大能量护盾 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["base_maximum_fire_damage_resistance_%"],"variants":[{"when":["#"],"text":"火焰抗性上限 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_maximum_life"],"variants":[{"when":["#"],"text":"最大生命 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["base_maximum_lightning_damage_resistance_%"],"variants":[{"when":["#"],"text":"闪电抗性上限 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_maximum_mana"],"variants":[{"when":["#"],"text":"最大魔力 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["base_movement_velocity_+%"],"variants":[{"when":["1|#"],"text":"移动速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"移动速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_physical_damage_%_to_convert_to_chaos"],"variants":[{"when":["1|#"],"text":"{0}% 的物理伤害转换为混沌伤害","handlers":[]}]}
+{"type":"desc","stats":["base_physical_damage_%_to_convert_to_cold"],"variants":[{"when":["#"],"text":"{0}% 的物理伤害转换为冰霜伤害","handlers":[]}]}
+{"type":"desc","stats":["base_physical_damage_%_to_convert_to_fire"],"variants":[{"when":["#"],"text":"{0}% 的物理伤害转换为火焰伤害","handlers":[]}]}
+{"type":"desc","stats":["base_physical_damage_%_to_convert_to_lightning"],"variants":[{"when":["#"],"text":"{0}% 的物理伤害转换为闪电伤害","handlers":[]}]}
+{"type":"desc","stats":["base_physical_damage_reduction_rating"],"variants":[{"when":["#"],"text":"护甲 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["base_projectile_speed_+%"],"variants":[{"when":["1|#"],"text":"投射物速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"投射物速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_reduce_enemy_cold_resistance_%"],"variants":[{"when":["1|#"],"text":"伤害穿透 {0}% 冰霜抗性","handlers":[]},{"when":["#|-1"],"text":"你的击中将目标的冰霜抗性视为比实际值高 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_reduce_enemy_fire_resistance_%"],"variants":[{"when":["1|#"],"text":"伤害穿透 {0}% 火焰抗性","handlers":[]},{"when":["#|-1"],"text":"你的击中将目标的火焰抗性视为比实际值高 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_reduce_enemy_lightning_resistance_%"],"variants":[{"when":["1|#"],"text":"伤害穿透 {0}% 闪电抗性","handlers":[]},{"when":["#|-1"],"text":"你的击中将目标的闪电抗性视为比实际值高 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_resist_all_elements_%"],"variants":[{"when":["#"],"text":"所有元素抗性 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_skill_area_of_effect_+%"],"variants":[{"when":["1|#"],"text":"范围效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"范围效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_spell_block_%"],"variants":[{"when":["#"],"text":"有 {0}% 几率格挡法术伤害","handlers":[]}]}
+{"type":"desc","stats":["base_spell_critical_strike_multiplier_+"],"variants":[{"when":["#"],"text":"法术伤害的暴击伤害加成 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_spell_suppression_chance_%"],"variants":[{"when":["#"],"text":"法术伤害压制率 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["base_stun_duration_+%"],"variants":[{"when":["1|#"],"text":"敌人身上的眩晕持续时间提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"敌人身上的眩晕持续时间降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_stun_recovery_+%"],"variants":[{"when":["1|#"],"text":"眩晕和格挡回复提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"眩晕和格挡回复降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["base_stun_threshold_reduction_+%"],"variants":[{"when":["1|#"],"text":"敌人的眩晕阈值降低 {0}%","handlers":[]},{"when":["#|-1"],"text":"敌人的眩晕阈值提高 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["blind_effect_+%"],"variants":[{"when":["1|#"],"text":"致盲效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"致盲效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["chaos_damage_+%"],"variants":[{"when":["1|#"],"text":"混沌伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"混沌伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["chaos_dot_multiplier_+"],"variants":[{"when":["#"],"text":"混沌持续伤害加成 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["cold_damage_+%"],"variants":[{"when":["1|#"],"text":"冰霜伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"冰霜伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["cold_dot_multiplier_+"],"variants":[{"when":["#"],"text":"冰霜持续伤害加成 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["cold_exposure_on_hit_magnitude"],"variants":[{"when":["#|-10"],"text":"击中时施加冰霜曝露，使目标的冰霜抗性变动 {0}%","handlers":[]}]}
+{"type":"desc","stats":["critical_strike_chance_+%"],"variants":[{"when":["1|#"],"text":"全域暴击率提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"全域暴击率降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["curse_effect_+%"],"variants":[{"when":["1|#"],"text":"你施加的诅咒效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"你施加的诅咒效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["damage_+%_per_endurance_charge"],"variants":[{"when":["1|#"],"text":"每个耐力球使伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"每个耐力球使伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["damage_+%_per_frenzy_charge"],"variants":[{"when":["1|#"],"text":"每个狂怒球使伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"每个狂怒球使伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["damage_+%_per_power_charge"],"variants":[{"when":["1|#"],"text":"每个暴击球使伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"每个暴击球使伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["delirium_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"恶意的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"恶意的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["determination_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"坚定的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"坚定的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["discipline_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"纪律的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"纪律的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["elemental_damage_+%"],"variants":[{"when":["1|#"],"text":"元素伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"元素伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["elemental_damage_with_attack_skills_+%"],"variants":[{"when":["1|#"],"text":"攻击技能的元素伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"攻击技能的元素伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["empowered_attack_damage_+%"],"variants":[{"when":["1|#"],"text":"竭力攻击伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"竭力攻击伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["energy_shield_recharge_rate_+%"],"variants":[{"when":["1|#"],"text":"能量护盾充能速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"能量护盾充能速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["energy_shield_recovery_rate_+%"],"variants":[{"when":["1|#"],"text":"能量护盾回复速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"能量护盾回复速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["evasion_rating_+%"],"variants":[{"when":["1|#"],"text":"闪避值提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"闪避值降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["faster_bleed_%"],"variants":[{"when":["#"],"text":"你施加的流血伤害生效速度加快 {0}%","handlers":[]}]}
+{"type":"desc","stats":["faster_burn_%"],"variants":[{"when":["#"],"text":"你施加的点燃伤害生效速度加快 {0}%","handlers":[]}]}
+{"type":"desc","stats":["faster_poison_%"],"variants":[{"when":["#"],"text":"你施加的中毒伤害生效速度加快 {0}%","handlers":[]}]}
+{"type":"desc","stats":["fire_damage_+%"],"variants":[{"when":["1|#"],"text":"火焰伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"火焰伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["fire_dot_multiplier_+"],"variants":[{"when":["#"],"text":"火焰持续伤害加成 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["fire_exposure_on_hit_magnitude"],"variants":[{"when":["#|-10"],"text":"击中时施加火焰曝露，使目标的火焰抗性变动 {0}%","handlers":[]}]}
+{"type":"desc","stats":["flask_effect_+%"],"variants":[{"when":["1|#"],"text":"你受到的药剂效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"你受到的药剂效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["gain_x_rage_on_attack_hit"],"variants":[{"when":["#"],"text":"攻击击中时获得 {0} 点怒火","handlers":[]}]}
+{"type":"desc","stats":["grace_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"优雅的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"优雅的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["hatred_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"憎恨的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"憎恨的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["herald_of_agony_buff_effect_+%"],"variants":[{"when":["1|#"],"text":"苦痛之捷的增益效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"苦痛之捷的增益效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["herald_of_ash_buff_effect_+%"],"variants":[{"when":["1|#"],"text":"灰烬之捷的增益效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"灰烬之捷的增益效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["herald_of_ice_buff_effect_+%"],"variants":[{"when":["1|#"],"text":"寒冰之捷的增益效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"寒冰之捷的增益效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["herald_of_light_buff_effect_+%"],"variants":[{"when":["1|#"],"text":"纯净之捷的增益效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"纯净之捷的增益效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["herald_of_thunder_buff_effect_+%"],"variants":[{"when":["1|#"],"text":"闪电之捷的增益效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"闪电之捷的增益效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["hits_ignore_enemy_monster_physical_damage_reduction_%_chance"],"variants":[{"when":["1|99"],"text":"击中有 {0}% 几率无视敌人的物理伤害减免","handlers":[]},{"when":["100|#"],"text":"击中无视敌人的物理伤害减免","handlers":[]}]}
+{"type":"desc","stats":["life_recovery_rate_+%"],"variants":[{"when":["1|#"],"text":"生命回复速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"生命回复速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["life_regeneration_rate_+%"],"variants":[{"when":["1|#"],"text":"生命再生速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"生命再生速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["lightning_damage_+%"],"variants":[{"when":["1|#"],"text":"闪电伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"闪电伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["lightning_exposure_on_hit_magnitude"],"variants":[{"when":["#|-10"],"text":"击中时施加闪电曝露，使目标的闪电抗性变动 {0}%","handlers":[]}]}
+{"type":"desc","stats":["local_accuracy_rating"],"variants":[{"when":["#"],"text":"命中值 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["local_armour_and_energy_shield_+%"],"variants":[{"when":["1|#"],"text":"护甲和能量护盾提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"护甲和能量护盾降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_armour_and_evasion_+%"],"variants":[{"when":["1|#"],"text":"护甲和闪避值提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"护甲和闪避值降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_armour_and_evasion_and_energy_shield_+%"],"variants":[{"when":["1|#"],"text":"护甲、闪避值和能量护盾提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"护甲、闪避值和能量护盾降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_attack_speed_+%"],"variants":[{"when":["1|#"],"text":"攻击速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"攻击速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_base_evasion_rating"],"variants":[{"when":["#"],"text":"闪避值 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["local_base_physical_damage_reduction_rating"],"variants":[{"when":["#"],"text":"护甲 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["local_critical_strike_chance_+%"],"variants":[{"when":["1|#"],"text":"暴击率提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"暴击率降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_energy_shield"],"variants":[{"when":["#"],"text":"最大能量护盾 {0:+d}","handlers":[]}]}
+{"type":"desc","stats":["local_energy_shield_+%"],"variants":[{"when":["1|#"],"text":"能量护盾提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"能量护盾降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_evasion_and_energy_shield_+%"],"variants":[{"when":["1|#"],"text":"闪避值和能量护盾提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"闪避值和能量护盾降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_evasion_rating_+%"],"variants":[{"when":["1|#"],"text":"闪避值提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"闪避值降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_flask_amount_to_recover_+%"],"variants":[{"when":["1|#"],"text":"药剂回复量提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"药剂回复量降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_flask_duration_+%_final"],"variants":[{"when":["1|#"],"text":"药剂持续时间总增 {0}%","handlers":[]},{"when":["#|-1"],"text":"药剂持续时间总降 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_flask_recovery_speed_+%"],"variants":[{"when":["1|#"],"text":"药剂回复速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"药剂回复速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_life_gain_per_target"],"variants":[{"when":["1|#"],"text":"每击中一个敌人获得 {0} 点生命","handlers":[]},{"when":["#|-1"],"text":"每击中一个敌人失去 {0} 点生命","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_minimum_added_chaos_damage","local_maximum_added_chaos_damage"],"variants":[{"when":["#","#"],"text":"附加 {0} 至 {1} 点混沌伤害","handlers":[]}]}
+{"type":"desc","stats":["local_minimum_added_cold_damage","local_maximum_added_cold_damage"],"variants":[{"when":["#","#"],"text":"附加 {0} 至 {1} 点冰霜伤害","handlers":[]}]}
+{"type":"desc","stats":["local_minimum_added_fire_damage","local_maximum_added_fire_damage"],"variants":[{"when":["#","#"],"text":"附加 {0} 至 {1} 点火焰伤害","handlers":[]}]}
+{"type":"desc","stats":["local_minimum_added_lightning_damage","local_maximum_added_lightning_damage"],"variants":[{"when":["#","#"],"text":"附加 {0} 至 {1} 点闪电伤害","handlers":[]}]}
+{"type":"desc","stats":["local_minimum_added_physical_damage","local_maximum_added_physical_damage"],"variants":[{"when":["#","#"],"text":"附加 {0} 至 {1} 点物理伤害","handlers":[]}]}
+{"type":"desc","stats":["local_physical_damage_+%","local_weapon_no_physical_damage"],"variants":[{"when":["#","1|#"],"text":"没有物理伤害","handlers":[]},{"when":["#","#|-1"],"text":"没有物理伤害","handlers":[]},{"when":["#|-100","#"],"text":"没有物理伤害","handlers":[]},{"when":["1|#","0"],"text":"物理伤害提高 {0}%","handlers":[]},{"when":["-99|-1","0"],"text":"物理伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["local_physical_damage_reduction_rating_+%"],"variants":[{"when":["1|#"],"text":"护甲提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"护甲降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["mana_recovery_rate_+%"],"variants":[{"when":["1|#"],"text":"魔力回复速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"魔力回复速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["mana_regeneration_rate_+%"],"variants":[{"when":["1|#"],"text":"魔力再生速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"魔力再生速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["map_monsters_life_+%"],"variants":[{"when":["1|#"],"text":"怪物生命总增 {0}%","handlers":[]},{"when":["#|-1"],"text":"怪物生命总降 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["mark_skills_curse_effect_+%"],"variants":[{"when":["1|#"],"text":"你施加的印记效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"你施加的印记效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["maximum_energy_shield_+%"],"variants":[{"when":["1|#"],"text":"最大能量护盾提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"最大能量护盾降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["maximum_life_+%"],"variants":[{"when":["1|#"],"text":"最大生命提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"最大生命降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["mine_laying_speed_+%"],"variants":[{"when":["1|#"],"text":"地雷投掷速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"地雷投掷速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["minion_damage_+%"],"variants":[{"when":["1|#"],"text":"召唤物伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"召唤物伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["minion_maximum_life_+%"],"variants":[{"when":["1|#"],"text":"召唤物最大生命提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"召唤物最大生命降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["minion_movement_speed_+%"],"variants":[{"when":["1|#"],"text":"召唤物移动速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"召唤物移动速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["monster_base_block_%"],"variants":[{"when":["#"],"text":"有 {0}% 几率格挡攻击伤害","handlers":[]}]}
+{"type":"desc","stats":["non_curse_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"你技能施加的非诅咒光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"你技能施加的非诅咒光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["non_damaging_ailment_effect_+%"],"variants":[{"when":["1|#"],"text":"非伤害型异常状态效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"非伤害型异常状态效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["offering_spells_effect_+%"],"variants":[{"when":["1|#"],"text":"你的奉献效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"你的奉献效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["physical_damage_%_to_add_as_chaos"],"variants":[{"when":["1|#"],"text":"获得等同于物理伤害 {0}% 的额外混沌伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_%_to_add_as_cold"],"variants":[{"when":["1|#"],"text":"获得等同于物理伤害 {0}% 的额外冰霜伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_%_to_add_as_fire"],"variants":[{"when":["1|#"],"text":"获得等同于物理伤害 {0}% 的额外火焰伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_%_to_add_as_lightning"],"variants":[{"when":["1|#"],"text":"获得等同于物理伤害 {0}% 的额外闪电伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_+%"],"variants":[{"when":["1|#"],"text":"全域物理伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"全域物理伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["physical_damage_reduction_rating_+%"],"variants":[{"when":["1|#"],"text":"护甲提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"护甲降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["physical_damage_taken_%_as_chaos"],"variants":[{"when":["#"],"text":"受到击中时，{0}% 的物理伤害视为混沌伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_taken_%_as_cold"],"variants":[{"when":["#"],"text":"受到击中时，{0}% 的物理伤害视为冰霜伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_taken_%_as_fire"],"variants":[{"when":["1|#"],"text":"受到击中时，{0}% 的物理伤害视为火焰伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_damage_taken_%_as_lightning"],"variants":[{"when":["#"],"text":"受到击中时，{0}% 的物理伤害视为闪电伤害","handlers":[]}]}
+{"type":"desc","stats":["physical_dot_multiplier_+"],"variants":[{"when":["#"],"text":"物理持续伤害加成 {0:+d}%","handlers":[]}]}
+{"type":"desc","stats":["pride_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"尊严的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"尊严的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["projectile_base_number_of_targets_to_pierce"],"variants":[{"when":["1"],"text":"投射物额外穿透一个目标","handlers":[]},{"when":["2|#"],"text":"投射物额外穿透 {0} 个目标","handlers":[]}]}
+{"type":"desc","stats":["purity_of_elements_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"元素净化的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"元素净化的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["reduce_enemy_elemental_resistance_%"],"variants":[{"when":["1|#"],"text":"伤害穿透 {0}% 元素抗性","handlers":[]}]}
+{"type":"desc","stats":["sigil_target_search_range_+%"],"variants":[{"when":["1|#"],"text":"烙印附着范围提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"烙印附着范围降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["skill_effect_duration_+%"],"variants":[{"when":["1|#"],"text":"技能效果持续时间提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"技能效果持续时间降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["spell_critical_strike_chance_+%"],"variants":[{"when":["1|#"],"text":"法术暴击率提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"法术暴击率降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["spell_damage_+%"],"variants":[{"when":["1|#"],"text":"法术伤害提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"法术伤害降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["spell_minimum_added_chaos_damage","spell_maximum_added_chaos_damage"],"variants":[{"when":["#","#"],"text":"法术附加 {0} 至 {1} 点混沌伤害","handlers":[]}]}
+{"type":"desc","stats":["spell_minimum_added_cold_damage","spell_maximum_added_cold_damage"],"variants":[{"when":["#","#"],"text":"法术附加 {0} 至 {1} 点冰霜伤害","handlers":[]}]}
+{"type":"desc","stats":["spell_minimum_added_fire_damage","spell_maximum_added_fire_damage"],"variants":[{"when":["#","#"],"text":"法术附加 {0} 至 {1} 点火焰伤害","handlers":[]}]}
+{"type":"desc","stats":["spell_minimum_added_lightning_damage","spell_maximum_added_lightning_damage"],"variants":[{"when":["#","#"],"text":"法术附加 {0} 至 {1} 点闪电伤害","handlers":[]}]}
+{"type":"desc","stats":["spell_minimum_added_physical_damage","spell_maximum_added_physical_damage"],"variants":[{"when":["#","#"],"text":"法术附加 {0} 至 {1} 点物理伤害","handlers":[]}]}
+{"type":"desc","stats":["stun_threshold_+%"],"variants":[{"when":["1|#"],"text":"眩晕阈值提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"眩晕阈值降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["summon_totem_cast_speed_+%"],"variants":[{"when":["1|#"],"text":"图腾放置速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"图腾放置速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["trap_throwing_speed_+%"],"variants":[{"when":["1|#"],"text":"陷阱投掷速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"陷阱投掷速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["travel_skill_cooldown_speed_+%"],"variants":[{"when":["1|#"],"text":"位移技能的冷却回复速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"位移技能的冷却回复速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["warcry_buff_effect_+%"],"variants":[{"when":["1|#"],"text":"战吼增益效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"战吼增益效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["warcry_speed_+%"],"variants":[{"when":["1|#"],"text":"战吼速度提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"战吼速度降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["wrath_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"雷霆的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"雷霆的光环效果降低 {0}%","handlers":[["negate",1]]}]}
+{"type":"desc","stats":["zealotry_aura_effect_+%"],"variants":[{"when":["1|#"],"text":"狂热的光环效果提高 {0}%","handlers":[]},{"when":["#|-1"],"text":"狂热的光环效果降低 {0}%","handlers":[["negate",1]]}]}

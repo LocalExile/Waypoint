@@ -1511,7 +1511,8 @@ Advanced mode), the **Diagnostic report** button on an operation's failure dialo
 
 ### Tools: the item crafter
 
-The interface follows the selected language. With the [local Chinese item catalog](localization.md#importing-simplified-chinese-item-data),
+The interface follows the selected language. Simplified Chinese includes built-in translations for item classes, selected
+bases and common modifier descriptions. With the [local Chinese item catalog](localization.md#importing-simplified-chinese-item-data),
 Simplified Chinese also displays and searches the client's item names, modifiers, and item previews. The item the Gateway
 receives uses the same IDs and values in any language.
 

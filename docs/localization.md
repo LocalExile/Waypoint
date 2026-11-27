@@ -69,11 +69,15 @@ separates Chinese from Latin letters, digits and placeholders, and punctuation i
 
 ## Importing Simplified Chinese item data
 
-On Windows, the item crafter's controls follow **Settings → Language**. To also display the game's item classes, bases,
-currency, modifier names and descriptions, cluster themes and rare names in Simplified Chinese, generate the local
-display catalog from your client. It uses the client's Simplified Chinese stat descriptions where available and converts
-Traditional Chinese tables to simplified characters. A client patch with Simplified Chinese tables can supply those
-instead. Waypoint reads no client archives itself and ships no client strings or tables with its binaries.
+The item crafter follows **Settings → Language** on Windows and Linux. In Simplified Chinese, the launcher includes
+translations for the item classes, selected bases and common modifier descriptions. The bundled catalog lives in
+`src/Waypoint/Resources/crafter.zh-CN.jsonl` and is embedded in both builds. It uses the Gateway's item and stat IDs and
+contains translations maintained by Waypoint.
+
+For wider coverage, including modifier names, cluster themes and rare names, generate a local display catalog from your
+client. It uses the client's Simplified Chinese stat descriptions where available and converts Traditional Chinese tables
+to simplified characters. A client patch with Simplified Chinese tables can supply those instead. Waypoint reads no
+client archives itself.
 
 Use a LocalExile checkout with its [GgDump prerequisites](https://github.com/LocalExile/LocalExile/blob/main/Agents/docs/re/tooling.md#3-ggpk-file-dump-scriptsreggdump)
 installed. Use the schema for your client version. From the LocalExile checkout root, set `$client` to your game directory
@@ -99,9 +103,9 @@ python tools/import-crafter-zh-cn.py $export "$localExile/data/schema/schema.min
 ```
 
 If the extracted tables are under `data/simplified chinese`, use those paths for the five Traditional Chinese tables
-above and pass `--table-language 'simplified chinese'`. Reopen the item crafter with **简体中文** selected. Missing
-translations use the Gateway's English names and descriptions. Search accepts both languages. Crafting, saving and giving
-an item still use the Gateway's original IDs and numeric rolls. The clipboard importer reads the existing English PoE
+above and pass `--table-language 'simplified chinese'`. Reopen the item crafter with **简体中文** selected. Imported
+entries take precedence, followed by built-in translations and the Gateway's English text. Search accepts both languages.
+Crafting, saving and giving an item still use the Gateway's original IDs and numeric rolls. The clipboard importer reads the existing English PoE
 and Path of Building formats.
 
 ## Another language

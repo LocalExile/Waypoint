@@ -3,26 +3,37 @@ using System.Text.Json;
 
 namespace Waypoint;
 
-/// <summary>Display text from a player's client data. The Gateway catalog remains the source of crafting and import rules.</summary>
+/// <summary>Display-only translations for the Gateway's item catalog, with optional overrides imported from the player's client.</summary>
 sealed class CrafterLanguage(CrafterCatalog catalog)
 {
     readonly Dictionary<(string Kind, string Id), string> _names = [];
     readonly Dictionary<(int List, uint Key), string> _words = [];
     readonly Dictionary<string, StatDescription> _descriptions = new(StringComparer.Ordinal);
 
-    public static CrafterLanguage Load(CrafterCatalog catalog)
+    public static CrafterLanguage Load(CrafterCatalog catalog) =>
+        Load(catalog, L.Current.Language, SettingsStore.DataDirectory);
+
+    internal static CrafterLanguage Load(CrafterCatalog catalog, string language, string dataDirectory)
     {
-        string path = Path.Combine(SettingsStore.DataDirectory, "localization", $"crafter.{L.Current.Language}.jsonl");
+        string path = Path.Combine(dataDirectory, "localization", $"crafter.{language}.jsonl");
         try
         {
-            if (File.Exists(path)) return Parse(catalog, File.ReadLines(path));
+            if (File.Exists(path)) return Parse(catalog, File.ReadLines(path).Concat(BundledLines(language)));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException
             or KeyNotFoundException or FormatException or ArgumentException)
         {
             Trace.TraceWarning("Could not load item crafter translations from {0}: {1}", path, e.Message);
         }
-        return new(catalog);
+        return Parse(catalog, BundledLines(language));
+    }
+
+    static IEnumerable<string> BundledLines(string language)
+    {
+        using var stream = typeof(CrafterLanguage).Assembly.GetManifestResourceStream($"Localization/crafter.{language}.jsonl");
+        if (stream is null) yield break;
+        using var reader = new StreamReader(stream);
+        while (reader.ReadLine() is { } line) yield return line;
     }
 
     internal static CrafterLanguage Parse(CrafterCatalog catalog, IEnumerable<string> lines)
