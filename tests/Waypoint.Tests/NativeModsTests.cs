@@ -81,6 +81,9 @@ public class NativeModsTests : IDisposable
         var merged = NativeModsLaunch.MergeEnvironment(Scripts.ClientOnlyEnvironment, linuxOn)!;
         Assert.Equal("http://127.0.0.1:1", merged["HTTP_PROXY"]);
         Assert.Equal("dxgi=n;version=n,b", merged["WINEDLLOVERRIDES"]);
+
+        Assert.Equal(@"Z:\opt\LocalExile\Mods\Client", NativeModsExtender.ToWinePath("/opt/other/../LocalExile/./Mods/Client"));
+        Assert.Equal(@"Z:\", NativeModsExtender.ToWinePath("/"));
     }
 
     [Fact]

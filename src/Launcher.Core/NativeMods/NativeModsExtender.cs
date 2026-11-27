@@ -497,7 +497,7 @@ public static class NativeModsExtender
             return env;
         }
 
-        string fullRoot = Path.GetFullPath(root);
+        string fullRoot = isLinux && root.StartsWith('/') ? root : Path.GetFullPath(root);
         string FormatPath(string path) => isLinux ? ToWinePath(path) : path;
 
         string hostDir = WaypointExtenderManager.GetManagedHostDir(fullRoot);
@@ -525,8 +525,20 @@ public static class NativeModsExtender
         return env;
     }
 
-    public static string ToWinePath(string linuxPath) =>
-        "Z:" + Path.GetFullPath(linuxPath).Replace('/', '\\');
+    public static string ToWinePath(string linuxPath)
+    {
+        // On Windows Path.GetFullPath treats a leading '/' as drive-relative and prepends the current drive letter.
+        if (!OperatingSystem.IsWindows() || !linuxPath.StartsWith('/'))
+            return "Z:" + Path.GetFullPath(linuxPath).Replace('/', '\\');
+        var segments = new List<string>();
+        foreach (string part in linuxPath.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries))
+        {
+            if (part == ".") continue;
+            if (part == "..") { if (segments.Count > 0) segments.RemoveAt(segments.Count - 1); }
+            else segments.Add(part);
+        }
+        return @"Z:\" + string.Join('\\', segments);
+    }
 
     public static string AppendWineDllOverride(string? existing, string token)
     {
