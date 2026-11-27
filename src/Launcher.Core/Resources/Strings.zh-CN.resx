@@ -1697,6 +1697,9 @@
   <data name="Text_2b28514da699" xml:space="preserve">
     <value>安装已停止</value>
   </data>
+  <data name="Text_2b305b762d04" xml:space="preserve">
+    <value>保存到（游戏只从此文件夹读取物品过滤器）</value>
+  </data>
   <data name="Text_2b4048cd80c1" xml:space="preserve">
     <value>没有与搜索匹配的结果。</value>
   </data>
@@ -1930,6 +1933,9 @@
   </data>
   <data name="Text_30b596760dc1" xml:space="preserve">
     <value>Frida 已安装，但无法加载。请检查安装输出并重试。</value>
+  </data>
+  <data name="Text_30b783c80464" xml:space="preserve">
+    <value>其他文件…</value>
   </data>
   <data name="Text_30cc92d87a1e" xml:space="preserve">
     <value>单色</value>
@@ -3019,6 +3025,9 @@
   <data name="Text_4de3fe11186f" xml:space="preserve">
     <value>每个映射条目都需要一个非空且唯一的键。</value>
   </data>
+  <data name="Text_4dee4b292a78" xml:space="preserve">
+    <value>正在转换…</value>
+  </data>
   <data name="Text_4df1cf29668a" xml:space="preserve">
     <value>游戏已启动。</value>
   </data>
@@ -3551,6 +3560,9 @@
   </data>
   <data name="Text_5cc72d6218d1" xml:space="preserve">
     <value>此源码副本的账号、角色和已保存的进度。存档恢复和模组选择是各自独立的操作。</value>
+  </data>
+  <data name="Text_5cd425f518c2" xml:space="preserve">
+    <value>转换</value>
   </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>请在 --repo 后指定一个文件夹。</value>
@@ -4950,6 +4962,9 @@
   <data name="Text_8451b0247817" xml:space="preserve">
     <value>你需要一个 LocalExile 支持的流放之路客户端：你自己的独立安装或 Steam 安装，或者在本向导之后从 Steam 下载的客户端。</value>
   </data>
+  <data name="Text_848d2e860480" xml:space="preserve">
+    <value>在游戏中：选项 (Options) &gt; 游戏 (Game) &gt; 物品过滤器 (Item Filter)，然后选择 {0}。</value>
+  </data>
   <data name="Text_848e96567d6b" xml:space="preserve">
     <value>力量</value>
   </data>
@@ -5015,6 +5030,9 @@
   </data>
   <data name="Text_865fa5f68659" xml:space="preserve">
     <value>未向 Waypoint 提供设置</value>
+  </data>
+  <data name="Text_866956901fd1" xml:space="preserve">
+    <value>所有文件</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>还没有已保存的物品。制作一个物品并按“保存”。</value>
@@ -5285,6 +5303,9 @@
   </data>
   <data name="Text_8d9f188ce712" xml:space="preserve">
     <value>打开安装向导</value>
+  </data>
+  <data name="Text_8d9f2edc0216" xml:space="preserve">
+    <value>此 LocalExile 文件夹中没有客户端数据表（{0}）。</value>
   </data>
   <data name="Text_8da29ab6e244" xml:space="preserve">
     <value>此源码副本已准备的客户端</value>
@@ -5943,6 +5964,9 @@
   <data name="Text_9dc3902589e5" xml:space="preserve">
     <value>设置已保存。各项设置均标有生效时间。</value>
   </data>
+  <data name="Text_9dd3dffd54c4" xml:space="preserve">
+    <value>选择物品过滤器</value>
+  </data>
   <data name="Text_9dee1c0ed39e" xml:space="preserve">
     <value>异界地图</value>
   </data>
@@ -6081,6 +6105,9 @@
   <data name="Text_a209514cda81" xml:space="preserve">
     <value>删除此副本…</value>
   </data>
+  <data name="Text_a2353e4c88c0" xml:space="preserve">
+    <value>已移除 {0} 个此客户端没有的物品名称。</value>
+  </data>
   <data name="Text_a25890814951" xml:space="preserve">
     <value>退出前停止服务</value>
   </data>
@@ -6200,6 +6227,9 @@
   </data>
   <data name="Text_a4cf3a88ad7d" xml:space="preserve">
     <value>提供传送、生成物品和怪物、经验、任务标记、测试命中及协议探测等开发和测试指令。</value>
+  </data>
+  <data name="Text_a4cfa83de3e7" xml:space="preserve">
+    <value>让为更新补丁编写的物品过滤器（例如 FilterBlade 和 NeverSink 的 3.30 过滤器）能在此客户端中加载。只移除客户端没有的物品名称和规则；样式、音效和你在 FilterBlade 中的修改都会保留。</value>
   </data>
   <data name="Text_a4e4bc881019" xml:space="preserve">
     <value>正在卸载…</value>
@@ -6368,6 +6398,9 @@
   </data>
   <data name="Text_a86bfd7816e2" xml:space="preserve">
     <value>上游 live.ps1</value>
+  </data>
+  <data name="Text_a8968379f4c6" xml:space="preserve">
+    <value>选择 Documents\My Games\Path of Exile</value>
   </data>
   <data name="Text_a89b896cdcfb" xml:space="preserve">
     <value>包含此文本的行（不区分大小写）</value>
@@ -6759,6 +6792,9 @@
   <data name="Text_b3557e6a6fbe" xml:space="preserve">
     <value>你的角色已一同转移。请照常登录。</value>
   </data>
+  <data name="Text_b36a3e685746" xml:space="preserve">
+    <value>物品过滤器修复</value>
+  </data>
   <data name="Text_b370dc0062ea" xml:space="preserve">
     <value>live.ps1：构建并启动服务器，然后启动游戏（会关闭正在运行的游戏）</value>
   </data>
@@ -6788,6 +6824,9 @@
   </data>
   <data name="Text_b460af7eddc8" xml:space="preserve">
     <value>为所选源码副本加载列表。</value>
+  </data>
+  <data name="Text_b466fc661498" xml:space="preserve">
+    <value>游戏只从 Path of Exile 文件夹本身读取过滤器，因此会保存到 {0}。</value>
   </data>
   <data name="Text_b46871152667" xml:space="preserve">
     <value>需要重启</value>
@@ -7164,6 +7203,9 @@
   <data name="Text_bed8374efd88" xml:space="preserve">
     <value>Gateway 正在运行，但没有监视进程。请停止服务器以更改启动模式。</value>
   </data>
+  <data name="Text_bef0f6f28c5f" xml:space="preserve">
+    <value>物品过滤器</value>
+  </data>
   <data name="Text_bef228d2176d" xml:space="preserve">
     <value>复制游戏客户端</value>
   </data>
@@ -7409,6 +7451,9 @@
   </data>
   <data name="Text_c66feb5eb8f2" xml:space="preserve">
     <value>上移</value>
+  </data>
+  <data name="Text_c697f2739b24" xml:space="preserve">
+    <value>未找到物品过滤器。请从 FilterBlade 下载，或将其同步到你的账号，然后通过“其他文件…”选择它。</value>
   </data>
   <data name="Text_c69883335d5b" xml:space="preserve">
     <value>服务器已停止</value>
@@ -7878,6 +7923,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d36be6494248" xml:space="preserve">
     <value>排队</value>
   </data>
+  <data name="Text_d39d7f4a76a5" xml:space="preserve">
+    <value>打开物品过滤器修复</value>
+  </data>
   <data name="Text_d3b65b039981" xml:space="preserve">
     <value>{0} 尚未构建：请先启动一次服务器（live.ps1 会构建它）</value>
   </data>
@@ -8060,6 +8108,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d848702976bf" xml:space="preserve">
     <value>保留你当前的 LocalExile 不变。每个副本各自保留进度。</value>
+  </data>
+  <data name="Text_d851298f9e1d" xml:space="preserve">
+    <value>已保存 {0}。</value>
   </data>
   <data name="Text_d869e1c9fe5a" xml:space="preserve">
     <value>已取消退出。请在停止服务前关闭游戏。</value>
@@ -9127,6 +9178,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
     <value>
 备份时的模组：</value>
   </data>
+  <data name="Text_f47841a5ae1b" xml:space="preserve">
+    <value>让 FilterBlade 或 NeverSink 为更新补丁制作的过滤器在此客户端中加载：移除客户端没有的物品名称和规则。</value>
+  </data>
   <data name="Text_f4a54a4c8d08" xml:space="preserve">
     <value>完成此副本</value>
   </data>
@@ -9516,6 +9570,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fe73b3e30e31" xml:space="preserve">
     <value>掉落与装备</value>
+  </data>
+  <data name="Text_fe910550348a" xml:space="preserve">
+    <value>已关闭 {0} 条规则：它们只涉及此客户端没有的物品或条件。</value>
   </data>
   <data name="Text_fea4f8f76fc1" xml:space="preserve">
     <value>堡垒</value>
