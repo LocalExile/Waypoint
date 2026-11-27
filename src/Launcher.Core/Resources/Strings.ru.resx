@@ -4872,6 +4872,9 @@
   <data xml:space="preserve" name="Text_80d16534322e">
     <value>Мод собран.</value>
   </data>
+  <data name="Text_80ea14d93b28" xml:space="preserve">
+    <value>Путь указывает на файл.</value>
+  </data>
   <data name="Text_80fc40213320" xml:space="preserve">
     <value>Открытие</value>
   </data>
@@ -7775,6 +7778,9 @@
   </data>
   <data name="Text_cce1939cf981" xml:space="preserve">
     <value>СОСТОЯНИЯ И ВЛИЯНИЯ</value>
+  </data>
+  <data name="Text_ccf1fc04aa4b" xml:space="preserve">
+    <value>Нет доступа для записи в эту папку.</value>
   </data>
   <data name="Text_cd127b0387bb" xml:space="preserve">
     <value>Windows не удалось отобразить значок в области уведомлений.</value>

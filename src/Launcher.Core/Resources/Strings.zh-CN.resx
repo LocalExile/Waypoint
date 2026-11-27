@@ -4872,6 +4872,9 @@
   <data name="Text_80d16534322e" xml:space="preserve">
     <value>模组已构建。</value>
   </data>
+  <data name="Text_80ea14d93b28" xml:space="preserve">
+    <value>此路径指向一个文件。</value>
+  </data>
   <data name="Text_80fc40213320" xml:space="preserve">
     <value>探索</value>
   </data>
@@ -7775,6 +7778,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cce1939cf981" xml:space="preserve">
     <value>状态与势力</value>
+  </data>
+  <data name="Text_ccf1fc04aa4b" xml:space="preserve">
+    <value>没有权限写入此目录。</value>
   </data>
   <data name="Text_cd127b0387bb" xml:space="preserve">
     <value>Windows 无法显示通知区域图标。</value>

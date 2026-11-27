@@ -19,7 +19,15 @@ public static class Folders
             File.Delete(probe);
             return null;
         }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        catch (IOException) when (File.Exists(folder))
+        {
+            return L.Text("The path points to a file.");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return L.Text("Access to this folder was denied.");
+        }
+        catch (Exception e) when (e is IOException or ArgumentException or NotSupportedException)
         {
             return e.Message;
         }

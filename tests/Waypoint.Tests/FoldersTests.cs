@@ -54,6 +54,19 @@ public sealed class FoldersTests
     }
 
     [Fact]
+    public void A_file_in_place_of_a_folder_reports_a_translatable_reason()
+    {
+        string file = Path.GetTempFileName();
+        try
+        {
+            File.WriteAllText(file, "keep");
+            Assert.Equal(L.Text("The path points to a file."), Folders.Unusable(file));
+            Assert.Equal("keep", File.ReadAllText(file));
+        }
+        finally { File.Delete(file); }
+    }
+
+    [Fact]
     public void Chosen_tools_go_first_on_PATH_each_once_and_the_rest_keeps_its_order()
     {
         char s = Path.PathSeparator;
