@@ -1,6 +1,13 @@
+#if WINDOWS
 using MaterialDesignThemes.Wpf;
+#else
+using PackIconKind = Material.Icons.MaterialIconKind;
+#endif
 
 namespace Waypoint;
+
+readonly record struct MapMarkerKey(string Kind, int Index);
+sealed record MapMarker(MapMarkerKey Key, int X, int Y, string Label, PackIconKind Icon, string Brush, bool Framed = false);
 
 static class MapMarkers
 {

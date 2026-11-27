@@ -489,6 +489,9 @@
   <data name="Text_0cf0462b32ac" xml:space="preserve">
     <value>{0} 不是空的。请选择空文件夹或新文件夹。</value>
   </data>
+  <data name="Text_0d0717954ac3" xml:space="preserve">
+    <value>Steam 的游戏库</value>
+  </data>
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>重新获取拉取请求 #{0}：获取其最新提交，强制推送后同样适用</value>
   </data>
@@ -665,6 +668,9 @@
   </data>
   <data name="Text_10d911351fa4" xml:space="preserve">
     <value>航行</value>
+  </data>
+  <data name="Text_10dcdca58301" xml:space="preserve">
+    <value>颜色（#RRGGBB）</value>
   </data>
   <data name="Text_10dee8798467" xml:space="preserve">
     <value>正在构建…</value>
@@ -1176,6 +1182,9 @@
   </data>
   <data name="Text_1f562c8a9cec" xml:space="preserve">
     <value>{0} 不是 LocalExile 发行版。</value>
+  </data>
+  <data name="Text_1f56d71d6326" xml:space="preserve">
+    <value>-Walkmaps：在 Proton 下记录每个区域的行走地图。游戏会随记录器一起启动，LocalExile 第一次会用 g++ 构建该记录器。</value>
   </data>
   <data name="Text_1f6fa6f69d18" xml:space="preserve">
     <value>分钟</value>
@@ -1816,6 +1825,9 @@
   </data>
   <data name="Text_2deea4664d23" xml:space="preserve">
     <value>次要文本</value>
+  </data>
+  <data name="Text_2e0444630388" xml:space="preserve">
+    <value>跟随桌面：{0}</value>
   </data>
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>正在提取游戏数据</value>
@@ -4065,6 +4077,9 @@
   <data name="Text_695421b8f03a" xml:space="preserve">
     <value>LocalExile 会在 {0} 中使用自己的设置：以你平时设置的副本为起点，不含你的登录信息，并将连线模式设为预测模式。你平时游戏的文件不会更改。</value>
   </data>
+  <data name="Text_695c4698b105" xml:space="preserve">
+    <value>只有发布的 AppImage 能自行更新；请从发布页面下载</value>
+  </data>
   <data name="Text_6979ababfdcb" xml:space="preserve">
     <value>LocalExile 会在 {0} 中保存自己的图形设置、按键设置和已保存的登录信息，并以所需的连线模式启动。你平时游戏的设置只会被读取一次，作为初始设置。</value>
   </data>
@@ -4241,6 +4256,9 @@
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>异能固定词缀</value>
+  </data>
+  <data name="Text_6f1a81da4fbf" xml:space="preserve">
+    <value>Steam 下载仅支持 64 位 Windows 和 Linux。</value>
   </data>
   <data name="Text_6f1f1b23d3fd" xml:space="preserve">
     <value>在这里它只提供一种游戏模式的规则，不包含该模式自身的技能、商人和任务奖励。</value>
@@ -5090,6 +5108,9 @@
   </data>
   <data name="Text_87675db83a32" xml:space="preserve">
     <value>材料</value>
+  </data>
+  <data name="Text_8787fab8d301" xml:space="preserve">
+    <value>只有发布的 AppImage 能自行更新</value>
   </data>
   <data name="Text_8799981821ae" xml:space="preserve">
     <value>用于创建、复制或重命名的名称：</value>
@@ -7796,6 +7817,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cd4b01b8b2e8" xml:space="preserve">
     <value>已导入 {0}，含 {1} 个词缀。“保存”可将其保留在列表中。</value>
+  </data>
+  <data name="Text_cd55a9d95751" xml:space="preserve">
+    <value>{0} · {1}</value>
   </data>
   <data name="Text_cd77503a4522" xml:space="preserve">
     <value>命令已复制到剪贴板，但它有 {0} 个字符，而游戏聊天框最多只能输入 {1} 个。请改用“发放物品”。</value>

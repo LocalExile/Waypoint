@@ -62,7 +62,7 @@ public sealed class CheckoutDialog : Window
         _status.Text = L.Text("Checking upstream HEAD and searching common local folders… You can still Browse to choose a location.");
         try
         {
-            var roots = RepositoryDiscovery.DefaultRoots(AppContext.BaseDirectory, Environment.CurrentDirectory, _current ?? "");
+            var roots = RepositoryDiscovery.DefaultRoots(App.LaunchFolder, Environment.CurrentDirectory, _current ?? "");
             var result = await RepositoryLocator.FindAsync(roots, _cancel.Token);
             int matches = result.Repositories.Count(r => r.MatchesUpstream);
             _status.Text = matches > 1 ? L.Text("{0} checkouts match upstream HEAD. Choose one below, or Browse elsewhere.", matches)

@@ -1,0 +1,52 @@
+<l:FormWindow xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+              xmlns:l="clr-namespace:Waypoint"
+              x:Class="Waypoint.ItemImportWindow"
+              Title="{l:Loc 'Import item'}" Width="860" Height="720" MinWidth="560" MinHeight="460">
+  <!-- The Linux copy of src/Waypoint/ItemImportWindow.xaml, in Avalonia. -->
+  <DockPanel Margin="20,12,20,16">
+    <TextBlock DockPanel.Dock="Top" Foreground="{DynamicResource Shell.TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,8"
+               Text="{l:Loc 'Paste an item copied with Ctrl+C in Path of Building or in the game (Ctrl+Alt+C in the game also gives each modifier and its tier). Below, each line shows what it becomes; the red ones are left out. Click a line to find it in the text.'}" />
+
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0" HorizontalAlignment="Right">
+      <Button x:Name="AddButton" Classes="accent" Click="AddClicked" IsEnabled="False" AutomationProperties.Name="{l:Loc 'Add'}">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <icons:MaterialIcon Kind="Plus" VerticalAlignment="Center" />
+          <TextBlock Text="{l:Loc 'Add'}" />
+        </StackPanel>
+      </Button>
+      <Button x:Name="CancelButton" Content="{l:Loc 'Cancel'}" IsCancel="True" Click="CancelClicked" />
+    </StackPanel>
+    <DockPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+      <icons:MaterialIcon x:Name="SummaryIcon" DockPanel.Dock="Left" Kind="InformationOutline" Margin="0,0,8,0" VerticalAlignment="Top" />
+      <TextBlock x:Name="Summary" TextWrapping="Wrap" />
+    </DockPanel>
+
+    <Grid RowDefinitions="2*,Auto,3*">
+      <TextBox x:Name="Source" AcceptsReturn="True" TextWrapping="NoWrap" FontFamily="monospace" FontSize="12.5" MinHeight="120"
+               ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Top"
+               TextChanged="SourceChanged" Padding="8" PlaceholderText="{l:Loc 'The item as text'}" />
+      <TextBlock Grid.Row="1" Text="{l:Loc 'WHAT EACH LINE BECOMES'}" FontSize="11" FontWeight="SemiBold" Margin="0,12,0,4"
+                 Foreground="{DynamicResource Shell.TextSecondary}" />
+      <ListBox x:Name="Result" Grid.Row="2" MinHeight="120" SelectionChanged="ResultChosen"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="1" BorderBrush="{DynamicResource Shell.Border}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Background="{Binding Back}" CornerRadius="3" Padding="6,2">
+              <DockPanel>
+                <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Foreground="{Binding Brush}" Width="16" Height="16"
+                                    Margin="0,0,8,0" VerticalAlignment="Center" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Number}" Width="30" FontFamily="monospace" FontSize="11.5"
+                           Foreground="{DynamicResource Shell.TextSecondary}" VerticalAlignment="Center" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Note}" Foreground="{Binding Brush}" MaxWidth="340" FontSize="11.5"
+                           Margin="12,0,0,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" ToolTip.Tip="{Binding Note}" />
+                <TextBlock Text="{Binding Text}" FontFamily="monospace" FontSize="12" Opacity="{Binding Opacity}" TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap" VerticalAlignment="Center" ToolTip.Tip="{Binding Text}" />
+              </DockPanel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+  </DockPanel>
+</l:FormWindow>

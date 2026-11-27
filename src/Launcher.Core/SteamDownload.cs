@@ -8,7 +8,7 @@ namespace Launcher.Core;
 
 /// <summary>
 /// DepotDownloader (github.com/SteamRE/DepotDownloader, GPL-2.0), the one outside program the Steam download needs. A
-/// released Waypoint.exe carries its official release, unchanged (<see cref="Bundled"/>; tools/Get-DepotDownloader.ps1
+/// released Waypoint.exe (and the Linux AppImage) carries its official release for that system, unchanged (<see cref="Bundled"/>; tools/Get-DepotDownloader.ps1
 /// fetches it when Waypoint is built, and THIRD-PARTY-NOTICES.md has its licence and where its source is), so a user's
 /// Waypoint downloads no tool. The first time it is needed it is unpacked under Waypoint's own folder, held to the SHA-256
 /// written here, and it runs as a program of its own. It is self-contained, so nothing else is installed, and neither
@@ -18,14 +18,22 @@ public static class DepotTool
 {
     public const string Version = "3.4.0";
     public const string Page = "https://github.com/SteamRE/DepotDownloader";
-    const string WindowsUrl = "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_3.4.0/DepotDownloader-windows-x64.zip";
-    const string WindowsSha256 = "41c9e9f0df54b3ad02e67a11726756e5c73283bd7c2e1b04acfa5ae4c2ed3767";
-    /// <summary>The zip's size, for the progress before the server says.</summary>
-    public const long DownloadBytes = 33_474_005;
-    const string ExeName = "DepotDownloader.exe";
+    const string Downloads = "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_3.4.0/";
 
-    /// <summary>Only the build that was fetched, hashed and run: Windows on x64.</summary>
-    public static bool Supported => OperatingSystem.IsWindows() && RuntimeInformation.OSArchitecture == Architecture.X64;
+    /// <summary>The project's own release for one system: where it is, its SHA-256, its size (for the progress before the
+    /// server says) and the program in it.</summary>
+    public sealed record Release(string Url, string Sha256, long Bytes, string Program);
+
+    /// <summary>The release for Windows x64, which Waypoint.exe carries, or for Linux x64, which the AppImage carries.</summary>
+    public static Release For(bool linux) => linux
+        ? new(Downloads + "DepotDownloader-linux-x64.zip", "a999dec66b4850fc961bd50366696d23c2d0fad7b18790e6a5647b2f19097a53", 33_442_357, "DepotDownloader")
+        : new(Downloads + "DepotDownloader-windows-x64.zip", "41c9e9f0df54b3ad02e67a11726756e5c73283bd7c2e1b04acfa5ae4c2ed3767", 33_474_005, "DepotDownloader.exe");
+
+    /// <summary>The release for the system Waypoint runs on.</summary>
+    public static Release Current => For(OperatingSystem.IsLinux());
+
+    /// <summary>Only the builds that were fetched, hashed and run: Windows and Linux, on x64.</summary>
+    public static bool Supported => (OperatingSystem.IsWindows() || OperatingSystem.IsLinux()) && RuntimeInformation.OSArchitecture == Architecture.X64;
 
     /// <summary>The release's zip as Waypoint.exe carries it; null from a build made without it. Set by the app.</summary>
     public static Func<Stream?>? Bundled { get; set; }
@@ -42,7 +50,7 @@ public static class DepotTool
     /// <summary>One folder whatever the version: the tool keeps its remembered Steam sign-in by where it runs from, so a
     /// newer version in the same place still has it. <see cref="VersionFile"/> says which version is unpacked there.</summary>
     public static string Folder(string home) => Path.Combine(home, "tools", "DepotDownloader");
-    public static string Executable(string home) => Path.Combine(Folder(home), ExeName);
+    public static string Executable(string home) => Path.Combine(Folder(home), Current.Program);
     const string VersionFile = "waypoint-version.txt";
 
     public static bool Installed(string home)
@@ -56,7 +64,8 @@ public static class DepotTool
     /// only once it is whole: it is unpacked beside its place and renamed into it.</summary>
     public static async Task InstallAsync(string home, Func<HttpClient> http, Action<long, long>? progress, CancellationToken stop)
     {
-        if (!Supported) throw new IOException(L.Text("The Steam download works on 64-bit Windows only for now."));
+        if (!Supported) throw new IOException(L.Text("The Steam download works on 64-bit Windows and Linux only."));
+        var release = Current;
         if (Installed(home)) return;
         string folder = Folder(home), staging = folder + ".download", zip = Path.Combine(staging, "DepotDownloader.zip");
         if (Directory.Exists(staging)) Directory.Delete(staging, recursive: true);
@@ -73,9 +82,9 @@ public static class DepotTool
                 else
                 {
                     using var client = http();
-                    using var response = await GitHubDownload.GetAsync(client, WindowsUrl, stop);
+                    using var response = await GitHubDownload.GetAsync(client, release.Url, stop);
                     response.EnsureSuccessStatusCode();
-                    long total = response.Content.Headers.ContentLength ?? DownloadBytes, done = 0;
+                    long total = response.Content.Headers.ContentLength ?? release.Bytes, done = 0;
                     await using var from = await response.Content.ReadAsStreamAsync(stop);
                     await using var to = new FileStream(zip, FileMode.Create, FileAccess.Write, FileShare.None);
                     byte[] buffer = new byte[1 << 16];
@@ -89,7 +98,7 @@ public static class DepotTool
             }
             string hash;
             await using (var file = File.OpenRead(zip)) hash = Convert.ToHexStringLower(await SHA256.HashDataAsync(file, stop));
-            if (hash != WindowsSha256)
+            if (hash != release.Sha256)
                 throw new IOException(L.Text("This DepotDownloader is not the release Waypoint expects, so it was not used."));
             string unpacked = Path.Combine(staging, "tool");
             Directory.CreateDirectory(unpacked);
@@ -100,7 +109,11 @@ public static class DepotTool
                     if (entry.Name.Length == 0 || entry.FullName != entry.Name) continue;
                     entry.ExtractToFile(Path.Combine(unpacked, entry.Name), overwrite: true);
                 }
-            if (!File.Exists(Path.Combine(unpacked, ExeName))) throw new IOException(L.Text("This DepotDownloader is not the release Waypoint expects, so it was not used."));
+            string program = Path.Combine(unpacked, release.Program);
+            if (!File.Exists(program)) throw new IOException(L.Text("This DepotDownloader is not the release Waypoint expects, so it was not used."));
+            // A zip keeps no Unix mode: the program is made runnable by its user, and by no one else's hand.
+            if (!OperatingSystem.IsWindows())
+                File.SetUnixFileMode(program, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
             await File.WriteAllTextAsync(Path.Combine(unpacked, VersionFile), Version, stop);
             Directory.CreateDirectory(Path.GetDirectoryName(folder)!);
             if (Directory.Exists(folder)) Directory.Delete(folder, recursive: true);
@@ -159,7 +172,7 @@ public sealed record SteamProgress(int Depot, int Depots, double Percent, string
 /// <list type="bullet">
 /// <item>Steam's anonymous account cannot fetch the game, so a sign-in is needed once. It is the tool's own QR sign-in:
 /// Waypoint shows the code the tool prints and the user approves it in the Steam mobile app. Waypoint sees no password and
-/// no token. The tool keeps the sign-in (in the Windows user's isolated storage) and reports the account's name, which is
+/// no token. The tool keeps the sign-in (in the user's isolated storage: Windows', or ~/.local/share on Linux) and reports the account's name, which is
 /// all Waypoint keeps, to name that sign-in on later runs.</item>
 /// <item>A fetch into a folder that already holds a build downloads only what differs, and removes files the new build no
 /// longer has; one that was stopped goes on from what it has.</item>

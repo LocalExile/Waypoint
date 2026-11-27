@@ -35,6 +35,8 @@ partial class SettingsTab : UserControl
             LanguageChoices.Children.Add(choice);
         }
         L.Current.PropertyChanged += (_, _) => Show();
+        AppTheme.Changed += ShowAppearance;
+        Tray.Ready += () => Avalonia.Threading.Dispatcher.UIThread.Post(Show);
         L.Current.PropertyChanged += (_, _) => ShowPaths();
         Show();
         ShowPaths();
@@ -44,15 +46,25 @@ partial class SettingsTab : UserControl
     {
         _loading = true;
         ShowTexts();
+        ShowAppearance();
         foreach (RadioButton choice in LanguageChoices.Children) choice.IsChecked = (string)choice.Tag! == L.Current.Language;
         StopServices.IsChecked = S.StopServicesOnExit;
         LeaveServices.IsChecked = !S.StopServicesOnExit;
         ShowServicesHelp();
         AlwaysAsk.IsChecked = S.AlwaysAskOnClose;
+        TrayChoices.IsVisible = TrayWhileGame.IsVisible = Tray.Available;
+        KeepInTray.IsChecked = S.CloseToTray;
+        ExitApplication.IsChecked = !S.CloseToTray;
+        TrayWhileGame.IsChecked = S.TrayWhileGameRuns;
         CheckAtStart.IsChecked = S.CheckForUpdates;
         KeepUpToDate.IsChecked = S.KeepUpToDate;
         UseProfile.IsChecked = S.UseLocalProfile;
         DeveloperMode.IsChecked = S.Developer;
+        // Versions of the game come from Steam for a release (ClientVersionsWindow), where the tool for it runs.
+        ClientSwitchGroup.IsVisible = Repo.IsInstall && DepotTool.Supported;
+        SwitchKeepBoth.IsChecked = S.ClientSwitch == nameof(SwitchWay.KeepBoth);
+        SwitchInPlace.IsChecked = S.ClientSwitch == nameof(SwitchWay.UpdateInPlace);
+        SwitchAsk.IsChecked = SwitchKeepBoth.IsChecked != true && SwitchInPlace.IsChecked != true;
         // Developer Mode is a release's: there it unlocks the switch. A source copy is in Advanced mode whatever it says,
         // and nothing shown there writes the mode chosen on a release.
         DeveloperGroup.IsVisible = Repo.IsInstall;
@@ -64,6 +76,21 @@ partial class SettingsTab : UserControl
         CheckoutGroup.IsVisible = Editions.Advanced(S) && !Repo.IsInstall;
         _loading = false;
     }
+
+    void ShowAppearance()
+    {
+        var value = AppTheme.Current;
+        string scheme = value.Scheme == "custom" ? L.Text("Custom") : L.Text(ThemePalette.Schemes.First(s => s.Id == value.Scheme).Name);
+        AppearanceSummary.Text = L.Text("{0} · {1}", scheme, L.Text(value.Mode));
+    }
+
+    void ChangeAppearance(object? sender, RoutedEventArgs e) =>
+        new AppearanceDialog(ViewTools.Owner(this), AppTheme.Current, value =>
+        {
+            S.Appearance = ThemePalette.Normalize(value);
+            S.Save();
+            AppTheme.Apply(S.Appearance);
+        }).ShowDialog();
 
     void ShowTexts()
     {
@@ -120,6 +147,28 @@ partial class SettingsTab : UserControl
         if (_loading || _shared is null) return;
         S.AlwaysAskOnClose = AlwaysAsk.IsChecked == true;
         S.CloseBehaviorConfirmed = true;
+        S.Save();
+    }
+
+    void ClientSwitchChanged(object? sender, RoutedEventArgs e)
+    {
+        if (_loading || _shared is null || sender is not RadioButton { IsChecked: true }) return;
+        S.ClientSwitch = SwitchKeepBoth.IsChecked == true ? nameof(SwitchWay.KeepBoth) : SwitchInPlace.IsChecked == true ? nameof(SwitchWay.UpdateInPlace) : "";
+        S.Save();
+    }
+
+    void CloseChoiceChanged(object? sender, RoutedEventArgs e)
+    {
+        if (_loading || _shared is null || sender is not RadioButton { IsChecked: true }) return;
+        S.CloseToTray = sender == KeepInTray;
+        S.CloseBehaviorConfirmed = true;
+        S.Save();
+    }
+
+    void TrayChanged(object? sender, RoutedEventArgs e)
+    {
+        if (_loading || _shared is null) return;
+        S.TrayWhileGameRuns = TrayWhileGame.IsChecked == true;
         S.Save();
     }
 

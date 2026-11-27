@@ -164,6 +164,3 @@ public sealed class MapCanvas : FrameworkElement
         Highlight = tile.Path; TileSelected?.Invoke(tile.Path); Inspected?.Invoke($"{tile.Path} ({tile.X}, {tile.Y}) · {tile.Orientation} · {tile.Height}"); InvalidateVisual();
     }
 }
-
-readonly record struct MapMarkerKey(string Kind, int Index);
-sealed record MapMarker(MapMarkerKey Key, int X, int Y, string Label, PackIconKind Icon, string Brush, bool Framed = false);

@@ -29,6 +29,8 @@ sealed class App : Avalonia.Application
     {
         Settings = Settings.Load();
         _saved = Settings.ServerPath;
+        DepotTool.Bundled ??= () => typeof(App).Assembly.GetManifestResourceStream("Bundled/DepotDownloader.zip");
+        AppTheme.Apply(Settings.Appearance);
         // Waypoint's own log, from the first moment: the setup guide runs before there is a checkout.
         SessionLog.Open(SupportReport.LogFolder, $"Waypoint {Updates.Current} · {Environment.OSVersion} · .NET {Environment.Version}");
         // Path validation prepares warnings for the window in the selected language.
@@ -77,7 +79,7 @@ sealed class App : Avalonia.Application
     /// <summary>The folder picker until it gives a server checkout; null when the player cancels.</summary>
     internal static string? ChooseServer(Window owner)
     {
-        string start = Repo.Suggested(Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory));
+        string start = Repo.Suggested(Path.TrimEndingDirectorySeparator(LaunchFolder));
         while (true)
         {
             if (Ui.PickFolder(owner, L.Text("LocalExile server checkout (the folder with GameServer.slnx)"), start) is not { } folder) return null;
@@ -138,12 +140,17 @@ sealed class App : Avalonia.Application
 
     static void StartAgain()
     {
-        if (Environment.ProcessPath is not { } exe) return;
+        // From an AppImage the process runs inside the image, which is gone once it exits: the AppImage itself starts again.
+        if ((Updates.RunningExe ?? Environment.ProcessPath) is not { } exe) return;
         var start = new ProcessStartInfo(exe) { UseShellExecute = false };
         // Started as `dotnet Waypoint.dll`, the process is dotnet.
         if (Path.GetFileNameWithoutExtension(exe) == "dotnet") start.ArgumentList.Add(typeof(App).Assembly.Location);
         Process.Start(start)?.Dispose();
     }
+
+    /// <summary>The folder Waypoint was started from: the AppImage's, not the image it runs in, which is only mounted while it
+    /// runs; else the program's own.</summary>
+    internal static string LaunchFolder => Updates.RunningExe is { } image ? Path.GetDirectoryName(image)! : AppContext.BaseDirectory;
 
     /// <summary>A colour of the theme by its name, as on Windows.</summary>
     public static IBrush Brush(string name) => Instance.TryGetResource(name, null, out var value) && value is IBrush brush ? brush : Brushes.Gray;
@@ -177,9 +184,31 @@ static class Program
         // Until the folder exists its path reads as empty, and the settings would land in the working directory: a machine
         // with no ~/.local/share would never remember its checkout.
         _ = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.Create);
+        UserDotnet();
         if (args.Length > 0 && Directory.Exists(args[0])) Checkout = Path.GetFullPath(args[0]);
         if (args.Length >= 3 && args[1] == "--render") return Render(args[2], args.Length > 3 ? args[3] : null, args.Length > 4 ? int.Parse(args[4], System.Globalization.CultureInfo.InvariantCulture) : 3);
+        Tray.Ask();
         return AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().LogToTrace().StartWithClassicDesktopLifetime(args);
+    }
+
+    /// <summary>
+    /// Started from a desktop entry (the AppImage's menu entry, a file manager), Waypoint has no shell profile behind it: the
+    /// .NET SDK in ~/.dotnet and the tools `dotnet tool install --global` puts in ~/.dotnet/tools (PowerShell 7) are not on
+    /// PATH, and that pwsh cannot find its runtime without DOTNET_ROOT. Both are added for what Waypoint starts, after
+    /// everything PATH already has, and only when they are there; a DOTNET_ROOT that is set stays.
+    /// </summary>
+    static void UserDotnet()
+    {
+        string dotnet = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".dotnet");
+        // The runtime the tools were installed with: the user's own SDK only when no other dotnet is on PATH, so that a
+        // system-wide .NET stays the one they use.
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_ROOT")) && File.Exists(Path.Combine(dotnet, "dotnet"))
+            && Platform.OnPath("dotnet") is null)
+            Environment.SetEnvironmentVariable("DOTNET_ROOT", dotnet);
+        var path = (Environment.GetEnvironmentVariable("PATH") ?? "").Split(':', StringSplitOptions.RemoveEmptyEntries).ToList();
+        foreach (string folder in new[] { dotnet, Path.Combine(dotnet, "tools") })
+            if (Directory.Exists(folder) && !path.Contains(folder)) path.Add(folder);
+        Environment.SetEnvironmentVariable("PATH", string.Join(':', path));
     }
 
     /// <summary>The window, or one section by its type (`Waypoint &lt;checkout&gt; --render out.png PlayTab`), as a picture with no
@@ -211,7 +240,11 @@ static class Program
         var type = typeof(Program).Assembly.GetType("Waypoint." + parts[0], throwOnError: true)!;
         if (!typeof(Avalonia.Controls.Window).IsAssignableFrom(type))
             return new Avalonia.Controls.Window { Width = 970, Height = 700, Content = Attached(type, new Shared()) };
-        var window = (Avalonia.Controls.Window)Activator.CreateInstance(type)!;
+        // A window that takes its owner and the shared state (the Game client window, the item crafter) gets none and a new one.
+        var window = type.GetConstructor(Type.EmptyTypes) is not null ? (Avalonia.Controls.Window)Activator.CreateInstance(type)!
+            : (Avalonia.Controls.Window)type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).First()
+                .Invoke([.. type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).First().GetParameters()
+                    .Select(p => p.ParameterType == typeof(Shared) ? new Shared() : p.HasDefaultValue ? p.DefaultValue : null)]);
         if (window is SetupWizard guide && parts.Length > 1) guide.ShowPage(parts[1]);
         return window;
     }

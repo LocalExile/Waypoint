@@ -1,0 +1,125 @@
+<l:FormWindow xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+              xmlns:l="clr-namespace:Waypoint"
+              x:Class="Waypoint.MapViewerWindow"
+              Title="{l:Loc 'Map viewer'}" Width="1280" Height="800" MinWidth="900" MinHeight="560">
+  <!-- The Linux copy of src/Waypoint/MapViewerWindow.xaml, in Avalonia. -->
+  <l:FormWindow.Styles>
+    <Style Selector="Button.icon"><Setter Property="Background" Value="Transparent" /><Setter Property="Padding" Value="5" /></Style>
+    <Style Selector="TextBox.plain"><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Padding" Value="0" /><Setter Property="MinHeight" Value="0" /></Style>
+    <Style Selector="TextBox.plain:pointerover /template/ Border#PART_BorderElement, TextBox.plain:focus /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" />
+    </Style>
+  </l:FormWindow.Styles>
+  <Grid Margin="14" ColumnDefinitions="300,*">
+    <Grid Margin="0,0,12,0" RowDefinitions="Auto,Auto,Auto,Auto,*">
+      <StackPanel>
+        <DockPanel>
+          <ComboBox x:Name="AreaSort" DockPanel.Dock="Right" Width="110" SelectedIndex="0" SelectionChanged="AreaSortChanged" ToolTip.Tip="{l:Loc 'Sort areas'}">
+            <ComboBoxItem Content="ID" /><ComboBoxItem Content="{l:Loc 'Name'}" />
+          </ComboBox>
+          <icons:MaterialIcon DockPanel.Dock="Right" Kind="SortVariant" Width="18" Height="18" Margin="0,0,5,0" VerticalAlignment="Center"
+                              Foreground="{DynamicResource Shell.TextSecondary}" ToolTip.Tip="{l:Loc 'Sort areas'}" />
+          <TextBlock Text="{l:Loc 'Area'}" VerticalAlignment="Center" />
+        </DockPanel>
+        <AutoCompleteBox x:Name="Areas" Margin="0,3,0,8" MinimumPrefixLength="0" FilterMode="Custom" MaxDropDownHeight="420"
+                         ValueMemberBinding="{Binding Display}" SelectionChanged="AreaSelected" KeyDown="AreaKeyDown">
+          <AutoCompleteBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Display}" /></DataTemplate></AutoCompleteBox.ItemTemplate>
+        </AutoCompleteBox>
+      </StackPanel>
+      <StackPanel Grid.Row="1" x:Name="SeedInputs" Orientation="Horizontal">
+        <StackPanel Width="165" Margin="0,0,8,0">
+          <TextBlock Text="{l:Loc 'Seed'}" />
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Classes="icon" Click="RandomSeed" ToolTip.Tip="{l:Loc 'Random seed'}"><icons:MaterialIcon Kind="DiceMultiple" Width="19" Height="19" /></Button>
+            <TextBox x:Name="Seed" Text="1" KeyDown="GenerateKeyDown" />
+          </DockPanel>
+        </StackPanel>
+        <StackPanel Width="100" ToolTip.Tip="{l:Loc 'Area level can affect map generation. Leave blank to use the default level.'}">
+          <TextBlock Text="{l:Loc 'Area level'}" />
+          <TextBox x:Name="Level" KeyDown="GenerateKeyDown" />
+        </StackPanel>
+      </StackPanel>
+      <Button Grid.Row="2" x:Name="Generate" Content="{l:Loc 'Generate map'}" Classes="accent" Click="GenerateClicked" Margin="0,12,0,10" />
+      <TabControl Grid.Row="3" x:Name="Tabs" SelectionChanged="FilterChanged" Padding="0">
+        <TabItem Header="{l:Loc 'Tiles'}" FontSize="15" /><TabItem Header="{l:Loc 'Objects and exits'}" FontSize="15" />
+      </TabControl>
+      <Grid Grid.Row="4" RowDefinitions="Auto,*">
+        <TextBox x:Name="Filter" TextChanged="FilterChanged" Margin="0,8" />
+        <ListBox Grid.Row="1" x:Name="Entries" SelectionChanged="EntrySelected">
+          <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" /></DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+    </Grid>
+    <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
+      <DockPanel Margin="0,0,0,10">
+        <Button DockPanel.Dock="Right" Content="{l:Loc 'Fit'}" VerticalAlignment="Center" Click="FitClicked" />
+        <Button x:Name="BackMap" DockPanel.Dock="Right" Classes="icon" VerticalAlignment="Center" Margin="0,0,4,0" IsEnabled="False" Click="BackMapClicked" ToolTip.Tip="{l:Loc 'Previous map'}">
+          <icons:MaterialIcon Kind="ArrowLeft" Width="18" Height="18" />
+        </Button>
+        <Button x:Name="CopyMapDetails" DockPanel.Dock="Right" IsEnabled="False" Classes="icon" VerticalAlignment="Center" Margin="0,0,8,0" Click="CopyMapDetailsClicked" ToolTip.Tip="{l:Loc 'Copy map details'}">
+          <icons:MaterialIcon Kind="ContentCopy" Width="17" Height="17" />
+        </Button>
+        <Button x:Name="DisplayOptions" DockPanel.Dock="Right" Margin="0,0,8,0" VerticalAlignment="Center" Content="{l:Loc 'Display'}">
+          <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedRight">
+              <StackPanel Spacing="2">
+                <CheckBox x:Name="WalkLayer" Content="{l:Loc 'Walkability'}" IsCheckedChanged="LayersChanged" />
+                <CheckBox x:Name="GridLayer" Content="{l:Loc 'Grid'}" IsCheckedChanged="LayersChanged" />
+                <CheckBox x:Name="ObjectLayer" Content="{l:Loc 'Landmarks'}" IsCheckedChanged="LayersChanged" />
+                <CheckBox x:Name="LinksLayer" Content="{l:Loc 'Teleport links'}" IsCheckedChanged="LayersChanged" />
+                <Separator />
+                <CheckBox x:Name="MonsterLayer" Content="{l:Loc 'Monster packs'}" IsCheckedChanged="LayersChanged"
+                          ToolTip.Tip="{l:Loc 'Show room-authored pack anchors, not individual or scattered monster positions.'}" />
+                <CheckBox x:Name="EncounterLayer" Content="{l:Loc 'Encounters'}" IsCheckedChanged="LayersChanged"
+                          ToolTip.Tip="{l:Loc 'Show encounter objects and explicit anchors in the generated layout.'}" />
+                <Separator />
+                <CheckBox x:Name="InternalLayer" Content="{l:Loc 'Internal markers'}" IsCheckedChanged="LayersChanged"
+                          ToolTip.Tip="{l:Loc 'Include environment helpers, critters and unused exits.'}" />
+                <CheckBox x:Name="AllTiles" Content="{l:Loc 'Full tile catalog'}" IsCheckedChanged="LayersChanged"
+                          ToolTip.Tip="{l:Loc 'Include unused and blank tiles in the list.'}" />
+              </StackPanel>
+            </Flyout>
+          </Button.Flyout>
+        </Button>
+        <TextBlock x:Name="TitleText" FontSize="17" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+      </DockPanel>
+      <l:MapCanvas Grid.Row="1" x:Name="Map" />
+      <Border Grid.Row="1" x:Name="MarkerPanel" IsVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="12" Padding="12"
+              CornerRadius="4" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1">
+        <StackPanel>
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Classes="icon" Click="CloseMarkerClicked" ToolTip.Tip="{l:Loc 'Close'}"><icons:MaterialIcon Kind="Close" Width="17" Height="17" /></Button>
+            <Button x:Name="CopyMarkerId" DockPanel.Dock="Right" Classes="icon" Click="CopyMarkerIdClicked" ToolTip.Tip="{l:Loc 'Copy ID'}"><icons:MaterialIcon Kind="ContentCopy" Width="16" Height="16" /></Button>
+            <TextBox x:Name="MarkerHeading" Classes="plain" IsReadOnly="True" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" TextWrapping="Wrap" />
+          </DockPanel>
+          <TextBox x:Name="MarkerCoordinates" Classes="plain" IsReadOnly="True" Margin="0,4,0,0" />
+          <TextBox x:Name="MarkerDetails" Classes="plain" IsReadOnly="True" MaxHeight="220" Margin="0,8,0,0" TextWrapping="Wrap" />
+          <Button x:Name="OpenDestination" HorizontalAlignment="Left" Margin="0,10,0,0" Click="OpenDestinationClicked" IsVisible="False">
+            <StackPanel Orientation="Horizontal" Spacing="6"><icons:MaterialIcon Kind="ArrowRight" Width="17" Height="17" /><TextBlock Text="{l:Loc 'Open connected area'}" /></StackPanel>
+          </Button>
+        </StackPanel>
+      </Border>
+      <StackPanel Grid.Row="1" x:Name="Busy" IsVisible="False" IsHitTestVisible="False" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <ProgressBar IsIndeterminate="True" Width="160" />
+        <TextBlock x:Name="BusyText" Margin="0,10,0,0" HorizontalAlignment="Center" />
+      </StackPanel>
+      <StackPanel Grid.Row="2" Margin="0,8,0,0">
+        <WrapPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="CubeOutline" Width="16" Height="16" Foreground="{DynamicResource Shell.Accent}" /><TextBlock Text="{l:Loc 'Object'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="MapMarker" Width="16" Height="16" Foreground="{DynamicResource Shell.Warning}" /><TextBlock Text="{l:Loc 'Waypoint'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="BookOpenPageVariant" Width="16" Height="16" Foreground="{DynamicResource Shell.Accent}" /><TextBlock Text="{l:Loc 'Crafting unlock'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><Border Width="18" Height="18" CornerRadius="9" BorderThickness="1" BorderBrush="{DynamicResource Shell.Good}"><icons:MaterialIcon Kind="Account" Width="14" Height="14" Foreground="{DynamicResource Shell.Good}" /></Border><TextBlock Text="{l:Loc 'NPC'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="Skull" Width="16" Height="16" Foreground="{DynamicResource Shell.Error}" /><TextBlock Text="{l:Loc 'Boss'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="DoorOpen" Width="16" Height="16" Foreground="{DynamicResource Shell.Warning}" /><TextBlock Text="{l:Loc 'Entrance and exit'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="SwapHorizontal" Width="16" Height="16" Foreground="{DynamicResource Shell.Warning}" /><TextBlock Text="{l:Loc 'Area teleport'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel x:Name="MonsterLegend" IsVisible="False" Orientation="Horizontal" Margin="0,0,15,0"><icons:MaterialIcon Kind="AccountGroup" Width="16" Height="16" Foreground="{DynamicResource Shell.Accent}" /><TextBlock Text="{l:Loc 'Monster pack'}" Margin="4,0,0,0" /></StackPanel>
+          <StackPanel x:Name="EncounterLegend" IsVisible="False" Orientation="Horizontal"><icons:MaterialIcon Kind="DiamondOutline" Width="16" Height="16" Foreground="{DynamicResource Shell.Good}" /><TextBlock Text="{l:Loc 'Encounter'}" Margin="4,0,0,0" /></StackPanel>
+        </WrapPanel>
+        <TextBlock x:Name="ContentNotice" IsVisible="False" Margin="0,5,0,0" TextWrapping="Wrap" Foreground="{DynamicResource Shell.TextSecondary}" />
+        <TextBlock x:Name="SeedNotice" IsVisible="False" Foreground="{DynamicResource Shell.Warning}" Margin="0,5,0,0" TextWrapping="Wrap" />
+        <TextBlock x:Name="Status" Margin="0,5,0,0" TextWrapping="Wrap" />
+      </StackPanel>
+    </Grid>
+  </Grid>
+</l:FormWindow>

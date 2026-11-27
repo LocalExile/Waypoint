@@ -64,8 +64,17 @@ partial class InstallTab : UserControl
     OwnClient.Plan? _linked;
     /// <summary>The folder has no game client at all, in use or kept: the page says so.</summary>
     bool _noClient;
+    /// <summary>The folder's only clients are ones it set aside (<see cref="ClientVersions.Kept"/>): the Game client window
+    /// puts one back in use.</summary>
+    bool _keptOnly;
+    /// <summary>For a folder with no game client: the version Steam can deliver that its LocalExile runs (the newest,
+    /// <see cref="ClientVersions.FirstDownload"/>). Finish setup offers to download it. Null when there is none to offer.</summary>
+    ListedBuild? _offer;
     /// <summary>The game folder outside LocalExile the client is a link to, also one Waypoint cannot copy.</summary>
     string? _linkedTo;
+    /// <summary>LocalExile refused the folder's client in the last run as a build it does not run: the note says so, and
+    /// the Game client link shows under it.</summary>
+    bool _clientRefused;
 
     /// <summary>Which version of the game this release's client is, under the Play button beside LocalExile's own version.</summary>
     string? _clientVersion;
@@ -73,8 +82,16 @@ partial class InstallTab : UserControl
     async Task LookForOwnFolderAsync()
     {
         string folder = Folder;
-        (_linked, _clientVersion, _noClient, _linkedTo) = await Task.Run(() => (OwnClient.Check(folder), FolderList.ClientOf(folder),
-            ClientVersions.Layout(folder) == ClientLayout.None && ClientVersions.Kept(folder).Count == 0, OwnClient.LinkedOutside(folder)));
+        var read = await Task.Run(() =>
+        {
+            bool none = ClientVersions.Layout(folder) == ClientLayout.None;
+            // Asking LocalExile for its list can take a moment: only for a folder that has no client, and never on the UI thread.
+            return (OwnClient.Check(folder), FolderList.ClientOf(folder), none, none && ClientVersions.Kept(folder).Count != 0, none ? ClientVersions.FirstDownload(folder) : null,
+                OwnClient.LinkedOutside(folder));
+        });
+        // The user may have changed folder while this one was read: what was read is not said of another.
+        if (!FolderList.Same(folder, Folder)) return;
+        (_linked, _clientVersion, _noClient, _keptOnly, _offer, _linkedTo) = read;
         Show();
     }
     readonly ObservableCollection<StepRow> _steps = [];
@@ -91,6 +108,11 @@ partial class InstallTab : UserControl
     internal event Action? Updated;
     /// <summary>The window opens the logs.</summary>
     internal event Action? DetailsRequested;
+    /// <summary>The folder's game client changed (another version): the window reads the folder again.</summary>
+    internal event Action? ClientChanged;
+    /// <summary>Something asked for in the Game client window goes on here (a copy, a move to another client): the window
+    /// shows this page, which Advanced mode's list leaves out.</summary>
+    internal event Action? ShowRequested;
 
     public InstallTab() => InitializeComponent();
 
@@ -138,6 +160,7 @@ partial class InstallTab : UserControl
         _ = LookForOwnFolderAsync();
         _needsSetup = false;
         _failed = false;
+        _clientRefused = false;
         _note = note;
         Show();
     }
@@ -173,11 +196,14 @@ partial class InstallTab : UserControl
         if (_total is > 0 and { } total) Working.Value = 100d * (_current ?? 0) / total;
         string? note = _note?.Invoke() ?? (_linked is { } link ? OwnClient.Notice(link)
             : _linkedTo is { } target ? OwnClient.Notice(target)
-            : _noClient && !busy ? L.Text("No game client in this folder yet.")
+            : _noClient && !_keptOnly && !busy ? L.Text("No game client in this folder yet.")
             : _olderBuild is { } older ? ClientUpdate.OlderNoteFor(older) : null);
         Note.Text = note ?? "";
         Note.IsVisible = note is not null;
         DetailsLink.IsVisible = _failed && !busy;
+        // The Game client window opens from the sidebar's folder list, in every mode. Here its link shows only when the
+        // client is what stopped the last run.
+        ClientLink.IsVisible = _clientRefused && !busy;
         // A step that writes the client or the keys is not cut short.
         StopLink.IsVisible = !_stopping && !LocalExileReleases.MustFinish(_stage) && (_working || AnythingRunning || _copyStop is not null);
         StopLink.Content = _copyStop is not null ? L.Text("Stop the copy") : L.Text("Stop playing");
@@ -223,8 +249,78 @@ partial class InstallTab : UserControl
 
     void MainClicked(object? sender, RoutedEventArgs e)
     {
-        if (_needsSetup || !LocalExileReleases.IsSetUp(Folder)) { SetupRequested?.Invoke(); return; }
+        if (_needsSetup || !LocalExileReleases.IsSetUp(Folder))
+        {
+            // A folder with no game client: where it should come from is asked now, when it matters. Steam has the newest
+            // version this LocalExile runs; the setup guide takes a client that is already on this PC.
+            // A folder whose only clients are kept ones: the Game client window puts one back in use, by a rename.
+            if (_noClient && _keptOnly && DepotTool.Supported && !_working && !_checking && !AnythingRunning)
+            {
+                if (OpenClientVersions() && !LocalExileReleases.IsSetUp(Folder)) SetupRequested?.Invoke();
+                return;
+            }
+            if (_noClient && _offer is { } offer && !_working && !_checking && !AnythingRunning)
+            {
+                // The version is in the sentence, so that the buttons stay short enough to be read whole in any language.
+                int answer = Dialog.Show(Owner, DialogKind.Question, L.Text("Get the game client"),
+                    L.Text("No game client in this folder yet.") + " " + L.Text("Steam has {0}.", L.Text("Path of Exile {0}", offer.Version)), null,
+                    [L.Text("Download from Steam"), L.Text("Use a client on this PC"), L.Text("Cancel")], 2);
+                if (answer == 0)
+                {
+                    // With the client there, the guide has only the account left to ask for.
+                    if (OpenClientVersions(downloadNewest: true) && !LocalExileReleases.IsSetUp(Folder)) SetupRequested?.Invoke();
+                    return;
+                }
+                if (answer != 1) return;
+            }
+            SetupRequested?.Invoke();
+            return;
+        }
         _ = PlayAsync();
+    }
+
+    /// <summary>The game client's versions (<see cref="ClientVersionsWindow"/>). What it changed is read again here.</summary>
+    void ClientClicked(object? sender, RoutedEventArgs e) => OpenClientVersions();
+
+    /// <summary>The Game client window's "Use another client…" on a release: the check and the move that come before a
+    /// Play (<see cref="ClientFits"/>), then LocalExile's own setup of the client found, with nothing started after it.</summary>
+    async Task MoveClientAsync()
+    {
+        if (_working || _checking || _shared.IsLiveRunning || AnythingRunning) return;
+        _checking = true;
+        Show();
+        string[]? client;
+        try { client = await ClientFits(); }
+        finally { _checking = false; }
+        Show();
+        if (client is not { Length: > 0 }) return;
+        if (await RunToolAsync(["setup", "--no-update-check", .. client], false, () => L.Text("Copy the game client")) is not { Code: 0 }) return;
+        try { ClientUpdate.AfterNewClient(Folder, client[1]); }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { _shared.Logs.Write($"after the new client: {e.Message}", Severity.Warning); }
+        ClientChanged?.Invoke();
+        InstallChanged();
+    }
+
+    /// <summary>The Game client window. True when the folder's client changed there.</summary>
+    /// <param name="downloadNewest">From Finish setup, on the user's word: the window starts the download of the newest
+    /// version at once.</param>
+    internal bool OpenClientVersions(bool downloadNewest = false)
+    {
+        if (_working || _checking) return false;
+        var window = new ClientVersionsWindow(Owner, _shared, downloadNewest);
+        window.ShowDialog();
+        if (window.Changed)
+        {
+            ClientChanged?.Invoke();
+            InstallChanged();
+        }
+        // What goes on from there has its question and its progress on this page.
+        if (window.CopyRequested || window.MoveRequested) ShowRequested?.Invoke();
+        // "Make a copy…" on a linked client there is this page's own copy.
+        if (window.CopyRequested) OwnCopyClicked(this, new RoutedEventArgs());
+        // "Use another client…" on a client this LocalExile does not run.
+        else if (window.MoveRequested) _ = MoveClientAsync();
+        return window.Changed;
     }
 
     void RunSetupClicked(object? sender, RoutedEventArgs e)
@@ -408,6 +504,7 @@ partial class InstallTab : UserControl
         _working = true;
         _failed = false;
         _stopping = false;
+        _clientRefused = false;
         _note = null;
         _withClient = withClient;
         _headline = headline;
@@ -524,9 +621,10 @@ partial class InstallTab : UserControl
         _failed = true;
         string? reason = failure ?? result?.Error?.Split('\n')[0];
         _row?.Show(SetupState.Failed, reason ?? "");
+        _clientRefused = ClientExtractionFailure.IsBuildRefusal(failure ?? result?.Error);
         _note = ClientExtractionFailure.IsHncFailure(failure ?? result?.Error)
             ? () => ClientExtractionFailure.RecoveryHint
-            : ClientExtractionFailure.IsBuildRefusal(failure ?? result?.Error) ? () => ClientExtractionFailure.Refused
+            : _clientRefused ? () => ClientExtractionFailure.Refused
             : () => L.Text("The game didn't start.") + (reason is null ? "" : "\n" + reason);
     }
 

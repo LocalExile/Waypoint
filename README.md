@@ -54,20 +54,31 @@ where they are. Neither old file is changed.
 ## Linux
 
 Linux has its own executable and interface (`src/Waypoint.Linux`, Avalonia) over the same engine, and the Windows app is
-built as before. It needs the .NET 10 SDK, [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own
-PoE **3.29.3c** or **3.29.3d** client, standalone or from Steam. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
-Python 3.9+ and Node.js.
+built as before. Every release has it as one file, `Waypoint-x86_64.AppImage`, beside `Waypoint.exe`:
+
+1. Download `Waypoint-x86_64.AppImage` from the latest release on this repository's **Releases** page.
+2. Make it executable (`chmod +x Waypoint-x86_64.AppImage`, or the file manager's Properties) and start it.
+
+It needs [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own PoE **3.29.3c** or **3.29.3d**
+client, standalone or from Steam (Waypoint finds Steam's own libraries, the Flatpak's too), or one Waypoint downloads from
+Steam with your own account. A source checkout also needs the .NET 10 SDK, PowerShell 7
+(`dotnet tool install --global PowerShell`), Git, Python 3.9+ and Node.js. Like the exe, the AppImage looks for a newer release
+when it starts and replaces itself on **Update now**, checked against the release's SHA-256; its settings stay in
+`~/.local/share/Waypoint`. From source:
 
 ```bash
 dotnet run --project src/Waypoint.Linux
+tools/build-appimage.sh            # the AppImage, in out/linux/
 ```
 
 Game settings and the saved login are kept in `~/.local/share/LocalExile/wine-prefix`: every LocalExile of yours shares them, they
 stay when an install is deleted, and your normal Path of Exile does not use them.
 
 The ready-to-play route needs a release with a `-linux-x64` zip; LocalExile publishes one since v0.2.0-beta. For an older release
-without one, the setup guide sets up the source code instead. Not on Linux yet: walk maps, the client control bridge (the Console copies commands instead of sending
-them), the item crafter, the tray and the appearance editor.
+without one, the setup guide sets up the source code instead. Walk maps record under Proton where the checkout's `live.ps1` can
+(it builds its recorder with `g++`). Not on Linux yet: the client control bridge (the Console copies commands instead of sending
+them; it needs a Proton transport in LocalExile first), the Steam download's password sign-in (the QR code works), the text size
+and focus options of the appearance, and the single-instance guard.
 
 ## Simple and Advanced modes
 
@@ -136,6 +147,6 @@ dotnet publish src/Waypoint -o .
 A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
 how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
 
-Waypoint is under the [MIT license](LICENSE). What a released `Waypoint.exe` carries of others' work (DepotDownloader, GPL-2.0; OpenDyslexic, the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt)) is in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Waypoint is under the [MIT license](LICENSE). What a released `Waypoint.exe` or `Waypoint-x86_64.AppImage` carries of others' work (DepotDownloader, GPL-2.0; OpenDyslexic, the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt)) is in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 This project is not affiliated with or endorsed by Grinding Gear Games.

@@ -39,7 +39,7 @@ install is its own to say: its `live.ps1` accepts the index in place of `Content
 (`Test-SteamLayoutAccepted`), and for one that does not, the Setup section's **Client archive** line and the preparation
 say that this LocalExile runs only a standalone client.
 
-The Windows Tools section opens the map viewer when the selected source checkout has the terrain generator and extracted
+The Tools section opens the map viewer (on Windows and Linux) when the selected source checkout has the terrain generator and extracted
 game data. Waypoint carries its own read-only map helper, builds it against that checkout's existing generator libraries,
 and closes it with the viewer. No LocalExile map-service hook or source changes are needed. The helper and all build outputs
 stay in Waypoint's data folder; closing the viewer discards its private build.
@@ -73,11 +73,13 @@ The random seed button uses the server's normal instance seed range; manually en
 
 A release is a git tag `v<major>.<minor>.<patch>` pushed to GitHub. The release workflow
 (`.github/workflows/release.yml`) runs the tests, publishes `Waypoint.exe` with the tag's version
-(`-p:Version`), writes its SHA-256 to `Waypoint.exe.sha256`, and attaches both to a GitHub release of the tag
-with generated notes. Before publishing it runs `tools/Get-DepotDownloader.ps1 -Source`, so the exe carries the Steam
+(`-p:Version`), writes its SHA-256 to `Waypoint.exe.sha256`, builds the Linux `Waypoint-x86_64.AppImage` from the same tag
+with its `.sha256` ([Linux](#linux)), and attaches them to a GitHub release of the tag with generated notes; the Windows job
+publishes only once the AppImage's job has built it. Before publishing it runs `tools/Get-DepotDownloader.ps1 -Source`, so the exe carries the Steam
 download tool and the release also gets that tool's source zip ([The game client from Steam](#the-game-client-from-steam));
 a release fails when the tool cannot be fetched or its hash differs. A tag that is not `v1.2.3` fails the workflow. The CI workflow (`ci.yml`) builds and tests every
-push to `main` and every pull request, and runs the adapter's checks and the translation check.
+push to `main` and every pull request, and runs the adapter's checks and the translation check; its `linux-appimage` job builds
+`Waypoint.Linux.slnx` and the AppImage, starts it with no display on a throwaway folder, and keeps it with the run.
 
 ```powershell
 git tag v0.2.0
@@ -98,7 +100,8 @@ version shows a green card floating over the bottom of the window. **Update now*
    which keep running;
 5. the new Waypoint deletes the `.old` when it starts.
 
-Only the published single-file exe updates itself; under `dotnet run` the bar offers the release page only. A transferred
+Only the published single-file exe updates itself; under `dotnet run` the bar offers the release page only. On Linux the
+AppImage updates itself the same way ([Linux](#linux)). A transferred
 repository's old name keeps answering, so builds made before a transfer still find the releases.
 
 ## Release installs
@@ -281,6 +284,55 @@ Each field takes a typed path as well as **Browse…** (on Linux a picker may be
     Only `config.json`'s two names change on a switch, and the normal `production_Config.ini` is only read.
 - On Linux the game settings are the Wine prefix's (`GameSettings`): the row shows that folder, and another prefix is
   another set.
+
+## Linux
+
+`src/Waypoint.Linux` is Waypoint on Linux: its own executable and interface (Avalonia) over the same engine, whose files it
+links from `src/Waypoint` (a Linux path in one goes behind `#if WINDOWS`). Its views are copies of the Windows ones, with the same
+logic, and the sections and windows are the same: the Game client window and the Steam download, the item crafter and its
+import, the lab layout, the map viewer, the appearance editor, the update cards and the tray.
+
+- **The AppImage.** `tools/build-appimage.sh [version] [folder]` publishes Waypoint.Linux self-contained for `linux-x64`, with
+  DepotDownloader's Linux release embedded, adds `packaging/linux/` (the desktop entry and `AppRun`) and the emblem
+  (`branding/waypoint-192.png`), and packs `Waypoint-x86_64.AppImage` with its `.sha256`. appimagetool and the type 2 runtime
+  it packs are downloaded once into `tools/bundled/` and held to the SHA-256 in the script, as DepotDownloader is; appimagetool
+  runs extracted, so building needs no FUSE. The release workflow runs it for a tag, CI for every pull request.
+- **Its updates.** The release check is the exe's; the file is the AppImage (`LauncherFile.Running`): the one the AppImage
+  runtime names in `APPIMAGE`, and only while Waypoint runs from inside that image (`APPDIR`), so a Waypoint started by
+  another AppImage, or built from source, never takes that file for its own. **Update now** downloads the release's
+  AppImage beside it (`.new`), refuses one whose SHA-256 differs from the release's `.sha256`, makes it executable and
+  renames it over the running one (the mounted image goes on until it exits), then starts it and closes. A renamed
+  AppImage keeps its name. Starting again after a change of folder starts the AppImage, not the image's mount, which is
+  gone once Waypoint exits; the folder suggestions start from the AppImage's own folder.
+- **Its files.** Settings, saved items, the adapter and the Steam tool are in `~/.local/share/Waypoint`, outside the AppImage,
+  so an update keeps them; `WAYPOINT_HOME` moves them as on Windows. Game settings are the Wine prefix's
+  (`~/.local/share/LocalExile/wine-prefix`). Started from a desktop entry, Waypoint adds `~/.dotnet` and `~/.dotnet/tools` to
+  its PATH, after what it has, with `DOTNET_ROOT`, when they are there: the PowerShell 7 that `dotnet tool install` puts
+  there cannot start without them, and a desktop has no shell profile.
+- **Finding a client.** Besides the Wine prefixes and the home folder, the setup guide's search reads every Steam root
+  (`~/.steam/steam`, `~/.steam/root`, `~/.local/share/Steam`, the Flatpak's `~/.var/app/com.valvesoftware.Steam/…`) and the
+  libraries each one's `libraryfolders.vdf` names, in the folder the game's `appmanifest_238960.acf` names
+  (`ClientLocator.SteamClients`).
+- **The game client from Steam** works as on Windows ([The game client from Steam](#the-game-client-from-steam)), with the QR
+  sign-in only.
+- **Walk maps.** A checkout whose `live.ps1` records under Proton (it has `scripts/walkmaps/proton.py`: a small Frida Gum
+  recorder that `live.ps1 -Walkmaps` builds with `g++` and preloads into the client) shows **Walk maps** in Control and the
+  recorder's row; Linux capture must start with the client, so Play restarts a running one with `-ClientOnly -Walkmaps`. No
+  Frida package is installed for it. An older checkout keeps the option out of sight.
+- **The console.** The client control bridge (`scripts/dev/client_control.py`) attaches Frida to `Game.patched.exe` and
+  hooks its Windows modules, which Linux Frida cannot see in a process under Proton, so the Console copies a command for the
+  game's chat box instead of sending it, as on a release. Sending needs a Proton transport for the bridge in LocalExile first,
+  as walk maps have.
+- **The tray** is Avalonia's tray icon, a StatusNotifierItem, which only a desktop with a tray host shows (KDE, GNOME with its
+  AppIndicator extension). Waypoint asks the session bus for one (`org.kde.StatusNotifierWatcher`); without it the window
+  never hides, and the tray choices are left out of Settings and of the close question. Why the window went to the tray is a
+  desktop notification (`notify-send`).
+- **The look.** `AppTheme` puts the same palette as Windows (`ThemePalette.cs`, linked) into the `Shell.*` brushes, and System
+  follows the desktop's light or dark setting as it changes. The reading font is every Fluent control's
+  (`ContentControlThemeFontFamily`); OpenDyslexic is bundled. The text size and the stronger focus borders are Windows-only.
+- **No single-instance guard** yet: the Windows one (`AppInstance`) uses Windows' named pipes and accounts.
+- **Checking it with no display.** `Waypoint <folder> --render out.png [Section or Window[:page]] [seconds]` draws the window,
+  a section or a window of its own into a picture, which is how CI checks that the AppImage starts.
 
 ## Look
 
@@ -832,7 +884,7 @@ unqualified Unix path would land on that drive, while `Z:` is the root in every 
 
 The official launcher only ever gives the newest game, so once the game moves on, the versions LocalExile runs can no
 longer be had from it. Steam still serves them, and **Game client…** (in the sidebar's folder list; `ClientVersionsWindow`)
-gets one with the user's own Steam account, for a release and for a source copy. Windows on x64 only for now.
+gets one with the user's own Steam account, for a release and for a source copy. Windows and Linux, on x64.
 
 - **A source copy** has the same window, list and download. What came in is prepared by the adapter (`PrepareClient`, the
   setup guide's own step, which prepares either layout as the top of this file tells) where a release runs
@@ -931,20 +983,22 @@ gets one with the user's own Steam account, for a release and for a source copy.
 
 - **The tool.** Waypoint does not speak to Steam itself: it runs [DepotDownloader](https://github.com/SteamRE/DepotDownloader)
   (GPL-2.0), a program of its own (`DepotTool`, `SteamDownload` in `src/Launcher.Core/SteamDownload.cs`). A released
-  `Waypoint.exe` carries the tool's official release for Windows x64, unchanged, so that a user's Waypoint downloads no
-  tool: `tools/Get-DepotDownloader.ps1` fetches it when Waypoint is built and holds it to its SHA-256, the project embeds
-  the zip when it is there, and the release workflow runs the script and attaches the tool's source beside `Waypoint.exe`
+  `Waypoint.exe` carries the tool's official release for Windows x64, unchanged, and the AppImage its release for Linux x64
+  (`DepotTool.For`), so that a user's Waypoint downloads no tool: `tools/Get-DepotDownloader.ps1` (with `-Linux` for the
+  Linux one) fetches it when Waypoint is built and holds it to its SHA-256, the project embeds the zip when it is there, and
+  the release workflow runs the script and attaches the tool's source beside `Waypoint.exe` and the AppImage
   ([THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md)). The first time it is needed it is unpacked into
-  `%LOCALAPPDATA%\Waypoint\tools\DepotDownloader`, checked against the same SHA-256. A Waypoint built without the zip
+  `%LOCALAPPDATA%\Waypoint\tools\DepotDownloader` (`~/.local/share/Waypoint/tools/DepotDownloader` on Linux, where it is
+  then made executable), checked against the same SHA-256. A Waypoint built without the zip
   fetches that release then. Neither Steam nor SteamCMD has to be on the PC.
 - **The sign-in.** Steam's anonymous account cannot fetch the game, so the user signs in once, with an account that has
   Path of Exile in its library. There is no sign-in button in the window: a download signs in when it needs to. That is
   the tool's own QR sign-in: Waypoint draws the code the tool prints (`SteamSignInWindow`), the user scans it with the
   Steam mobile app and approves, and the picture follows when Steam changes the code. The tool gives up after about two
   minutes without an approval: the window then says so and offers **New code**. **Sign in with a password…** in that
-  window is for someone without the app: Waypoint asks only the account's name, and the tool asks for the password and
+  window (Windows only: Linux has no one way to open the tool's console window) is for someone without the app: Waypoint asks only the account's name, and the tool asks for the password and
   the Steam Guard code in a console window of its own, which stays open after a failure. Either way Waypoint sees no
-  password and no token: the tool keeps the sign-in (in the Windows user's isolated storage, by where the tool runs from,
+  password and no token: the tool keeps the sign-in (in the user's isolated storage, by where the tool runs from,
   which is why its folder has no version in its name), and Waypoint keeps the account's name (`Settings.SteamAccount`),
   which names that sign-in on later runs and is shown at the foot of the window once there is one, with **Forget the
   sign-in**, which drops the name.
@@ -1030,7 +1084,9 @@ controls and game-data reload offer **Install Frida** when their Python cannot l
 unstarted; Console keeps the unsent text. A queued mod build ends when preparation is declined or fails; only a busy
 workspace is retried, so **Not now** does not reopen the prompt. Installation uses the checkout's `.venv`, shows output in
 the requesting tool and Logs, and verifies that Frida loads before continuing. It shares the checkout lock with other operations and changes no global
-Python packages. Linux explains that its game-control integrations are unavailable and does not offer installation for them.
+Python packages. On Linux walk maps need no Frida package: `live.ps1 -Walkmaps` builds LocalExile's Proton recorder itself
+([Linux](#linux)). The console's commands and game status explain there that they are unavailable, and nothing is offered to
+install for them.
 
 ### Mods
 
@@ -1569,7 +1625,7 @@ client's own layout builder for the day's seed, the areas the official server pi
 (LabyrinthSecrets: `Hidden` is a Darkshrine, `Payload` the escort gauntlet). `LabyrinthDay.cs` reads it.
 When the server's seed is fixed (`Game_LAB_SEED`), its layout is the same on every day, and the window says so.
 A Gateway built before the mode would start for real, so Waypoint first asks `commands` and goes on only if
-`/lab_layout` takes a date, which came with the mode. Windows only, like the map viewer.
+`/lab_layout` takes a date, which came with the mode.
 
 ### Accounts
 
@@ -1621,9 +1677,12 @@ When a monitored server or the client stops, Waypoint checks the current workspa
 | `src/Launcher.Core/OwnClient.cs` | a release whose client is a link to the user's game folder: LocalExile's warning, and the copy on the user's word |
 | `src/Launcher.Core/SetupGuide.cs`, `ClientLocator.cs`, `ClientCopy.cs` | the guide's engine: tools that can be stopped, the prerequisites, the steps, finding a client, the resumable copy |
 | `src/Launcher.Core/SwitchToSource.cs` | moving from a release to a source copy: what the choices will do, the older version (`TestedCommit`), Frida, removing the release |
-| `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |
+| `Tray.cs` | the tray icon (Windows Forms' NotifyIcon; on Linux Avalonia's TrayIcon, `src/Waypoint.Linux/Tray.cs`) |
 | `branding\` | the emblem: `waypoint-master.png`, the reviewed source and how it was made (`waypoint-artwork.json`); `app.ico` of the exe, the window and the tray (16 to 256 px) and the 192 px image of the sidebar, both from `scripts\New-Icon.ps1` |
-| `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update strip |
+| `Updates.cs`, `MainWindow.xaml.cs`, `src/Launcher.Core/LauncherFile.cs` | the version, the release check, the self-update (the exe, or on Linux the AppImage it runs from); the update strip |
+| `MapViewerData.cs`, `MapPresentation.cs`, `MapCanvas.cs`, `MapViewerWindow` | the map viewer's data, markers and window |
+| `src/Waypoint.Linux/` | the Linux app ([Linux](#linux)): its views (copies of these, in Avalonia), `AppTheme.cs` (the palette into its brushes), `Tray.cs` |
+| `tools/build-appimage.sh`, `packaging/linux/` | the AppImage: the publish, the desktop entry and `AppRun`, appimagetool and its runtime held to their SHA-256 |
 | `InstallTab.xaml`, `LocalExileRelease.cs` (Launcher.Core) | a release install's home; its versions, download, safe extraction, saves copy and `--json` runner |
 
 Tests: `tests/Launcher.Checks` and `tests/*.Tests.ps1` run the core and the adapter on throwaway fixtures (mods, backups,

@@ -1,5 +1,9 @@
 using System.Globalization;
+#if WINDOWS
 using System.Windows.Media;
+#else
+using Avalonia.Media;
+#endif
 
 namespace Waypoint;
 

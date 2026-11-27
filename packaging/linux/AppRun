@@ -1,0 +1,5 @@
+#!/bin/sh
+# The AppImage's entry: Waypoint, from inside the mounted image. The AppImage runtime sets APPDIR (the image) and APPIMAGE
+# (the file), which the self-update reads (src/Launcher.Core/LauncherFile.cs).
+here="${APPDIR:-$(dirname "$(readlink -f "$0")")}"
+exec "$here/usr/bin/Waypoint" "$@"

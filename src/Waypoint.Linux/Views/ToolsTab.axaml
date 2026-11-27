@@ -1,20 +1,44 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:l="clr-namespace:Waypoint"
              x:Class="Waypoint.ToolsTab">
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel>
-      <TextBlock x:Name="Intro" Classes="note" Margin="0,0,0,14" MaxWidth="720" HorizontalAlignment="Left" />
       <WrapPanel>
+        <Border Classes="card" Width="340" Margin="0,0,14,14">
+          <DockPanel>
+            <Button x:Name="MapButton" Classes="accent" DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,12,0,0" Click="OpenMapViewer"
+                    Content="{l:Loc 'Open map viewer'}" ToolTip.ShowOnDisabled="True" />
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="MapOutline" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                Foreground="{DynamicResource Shell.Accent}" />
+            <StackPanel>
+              <TextBlock Text="{l:Loc 'Map viewer'}" FontSize="15" FontWeight="SemiBold" />
+              <TextBlock Classes="note" Margin="0,4,0,0" Text="{l:Loc 'Inspect generated maps, tiles, walkability and points of interest.'}" />
+            </StackPanel>
+          </DockPanel>
+        </Border>
         <!-- One card per tool. -->
         <Border Classes="card" Width="340" Margin="0,0,14,14">
           <DockPanel>
-            <Button x:Name="CrafterButton" Classes="accent" DockPanel.Dock="Bottom" HorizontalAlignment="Left" IsEnabled="False" Margin="0,12,0,0" />
+            <Button x:Name="CrafterButton" Classes="accent" DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,12,0,0" Click="OpenItemCrafter" />
             <icons:MaterialIcon DockPanel.Dock="Left" Kind="Anvil" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
                                 Foreground="{DynamicResource Shell.Accent}" />
             <StackPanel>
               <TextBlock x:Name="CrafterTitle" FontSize="15" FontWeight="SemiBold" />
               <TextBlock x:Name="CrafterText" Classes="note" Margin="0,4,0,0" />
-              <TextBlock x:Name="CrafterMissing" Classes="note" Margin="0,8,0,0" />
+            </StackPanel>
+          </DockPanel>
+        </Border>
+        <Border Classes="card" Width="340" Margin="0,0,14,14">
+          <DockPanel>
+            <Button Classes="accent" DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,12,0,0" Click="OpenLabLayout"
+                    Content="{l:Loc 'Open lab layout'}" />
+            <icons:MaterialIcon DockPanel.Dock="Left" Kind="Sitemap" Width="36" Height="36" Margin="0,0,14,0" VerticalAlignment="Top"
+                                Foreground="{DynamicResource Shell.Accent}" />
+            <StackPanel>
+              <TextBlock Text="{l:Loc 'Lab layout'}" FontSize="15" FontWeight="SemiBold" />
+              <TextBlock Classes="note" Margin="0,4,0,0"
+                         Text="{l:Loc 'The day\'s Labyrinth of every tier as a map: its rooms, the shortest way to Izaro, gauntlets, puzzles, Darkshrines, keys and doors.'}" />
             </StackPanel>
           </DockPanel>
         </Border>

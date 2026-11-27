@@ -52,5 +52,55 @@
       </Border>
       <Panel x:Name="SectionHost" Margin="22,0,22,14" />
     </DockPanel>
+    <!-- A newer release: cards floating over the bottom of the whole window, as on Windows (Updates.cs for Waypoint, whose
+         AppImage replaces itself, LocalExileReleases for a release install). -->
+    <StackPanel Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+    <Border x:Name="ExileUpdateBar" Margin="14,0,14,14" IsVisible="False" Background="{DynamicResource Shell.UpdateBack}" BorderBrush="{DynamicResource Shell.UpdateBorder}"
+            BorderThickness="1" CornerRadius="8" Padding="16,12" BoxShadow="0 3 18 0 #4C000000">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Button x:Name="ExileUpdateNow" Click="ExileUpdateClicked" Background="{DynamicResource Shell.UpdateAccent}" Foreground="White">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <icons:MaterialIcon Kind="Download" Width="16" Height="16" />
+              <TextBlock Text="{l:Loc 'Update now'}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Content="{l:Loc 'What\'s new'}" Click="ExilePageClicked" Foreground="{DynamicResource Shell.UpdateText}" />
+          <Button x:Name="ExileLater" Content="{l:Loc 'Later'}" Click="ExileLaterClicked" Foreground="{DynamicResource Shell.UpdateText}" />
+        </StackPanel>
+        <Grid DockPanel.Dock="Left" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+          <Ellipse Fill="{DynamicResource Shell.UpdateAccent}" />
+          <icons:MaterialIcon Kind="ArrowUpBold" Width="20" Height="20" Foreground="White" />
+        </Grid>
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="{l:Loc 'A new version of LocalExile is ready'}" FontSize="13.5" FontWeight="SemiBold" Foreground="{DynamicResource Shell.UpdateText}" />
+          <TextBlock x:Name="ExileUpdateText" TextWrapping="Wrap" Opacity="0.85" Margin="0,1,0,0" Foreground="{DynamicResource Shell.UpdateText}" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+    <Border x:Name="UpdateBar" Margin="14,0,14,14" IsVisible="False" Background="{DynamicResource Shell.UpdateBack}" BorderBrush="{DynamicResource Shell.UpdateBorder}"
+            BorderThickness="1" CornerRadius="8" Padding="16,12" BoxShadow="0 3 18 0 #4C000000">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Button x:Name="UpdateNow" Click="UpdateClicked" Background="{DynamicResource Shell.UpdateAccent}" Foreground="White">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <icons:MaterialIcon Kind="Download" Width="16" Height="16" />
+              <TextBlock Text="{l:Loc 'Update now'}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Content="{l:Loc 'What\'s new'}" Click="ReleasePageClicked" Foreground="{DynamicResource Shell.UpdateText}" />
+          <Button x:Name="UpdateLater" Content="{l:Loc 'Later'}" Click="LaterClicked" Foreground="{DynamicResource Shell.UpdateText}" />
+        </StackPanel>
+        <Grid DockPanel.Dock="Left" Width="34" Height="34" Margin="0,0,12,0" VerticalAlignment="Center">
+          <Ellipse Fill="{DynamicResource Shell.UpdateAccent}" />
+          <icons:MaterialIcon Kind="ArrowUpBold" Width="20" Height="20" Foreground="White" />
+        </Grid>
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="{l:Loc 'A new version of Waypoint is ready'}" FontSize="13.5" FontWeight="SemiBold" Foreground="{DynamicResource Shell.UpdateText}" />
+          <TextBlock x:Name="UpdateText" TextWrapping="Wrap" Opacity="0.85" Margin="0,1,0,0" Foreground="{DynamicResource Shell.UpdateText}" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+    </StackPanel>
   </Grid>
 </Window>

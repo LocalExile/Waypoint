@@ -1,7 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:Waypoint"
              x:Class="Waypoint.SettingsTab">
   <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel MaxWidth="820" HorizontalAlignment="Left" Spacing="12" Margin="0,0,14,0">
+      <Border Classes="card">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Content="{l:Loc 'Change appearance…'}" Click="ChangeAppearance" Margin="12,0,0,0" VerticalAlignment="Top" />
+          <StackPanel Spacing="4">
+            <TextBlock Text="{l:Loc 'Appearance'}" Classes="heading" />
+            <TextBlock x:Name="AppearanceSummary" FontWeight="SemiBold" />
+          </StackPanel>
+        </DockPanel>
+      </Border>
       <Border Classes="card">
         <StackPanel Spacing="6">
           <TextBlock x:Name="LanguageHeading" Classes="heading" />
@@ -14,12 +24,22 @@
       <Border Classes="card">
         <StackPanel Spacing="4">
           <TextBlock x:Name="WindowHeading" Classes="heading" />
+          <!-- The tray's choices, only where the desktop shows a tray (Tray.Available). -->
+          <StackPanel x:Name="TrayChoices" Spacing="4">
+            <TextBlock Text="{l:Loc 'When I close the window'}" FontWeight="SemiBold" Margin="0,2,0,2" />
+            <RadioButton x:Name="KeepInTray" GroupName="WindowClose" Content="{l:Loc 'Keep Waypoint running in the tray'}" IsCheckedChanged="CloseChoiceChanged" />
+            <TextBlock Text="{l:Loc 'Hide the window beside the clock. Waypoint, services and the game keep running.'}" Classes="note" Margin="27,0,0,4" />
+            <RadioButton x:Name="ExitApplication" GroupName="WindowClose" Content="{l:Loc 'Exit Waypoint'}" IsCheckedChanged="CloseChoiceChanged" />
+            <TextBlock Text="{l:Loc 'Close Waypoint completely.'}" Classes="note" Margin="27,0,0,4" />
+          </StackPanel>
           <TextBlock x:Name="ExitHeading" FontWeight="SemiBold" Margin="0,2,0,2" />
           <RadioButton x:Name="LeaveServices" GroupName="ServiceExit" IsCheckedChanged="ServicesChanged" />
           <RadioButton x:Name="StopServices" GroupName="ServiceExit" IsCheckedChanged="ServicesChanged" />
           <TextBlock x:Name="ServicesHelp" Classes="note" Margin="0,0,0,6" />
           <Border Height="1" Background="{DynamicResource Shell.Border}" Margin="0,2,0,6" />
           <CheckBox x:Name="AlwaysAsk" IsCheckedChanged="AlwaysAskChanged" />
+          <CheckBox x:Name="TrayWhileGame" Content="{l:Loc 'Tray while the game runs'}" IsCheckedChanged="TrayChanged"
+                    ToolTip.Tip="{l:Loc 'Hide Waypoint in the tray when the game starts, and bring it back when the game closes'}" />
         </StackPanel>
       </Border>
 
@@ -32,6 +52,20 @@
             <CheckBox x:Name="KeepUpToDate" IsCheckedChanged="KeepUpToDateChanged" />
           </StackPanel>
         </DockPanel>
+      </Border>
+
+      <!-- How a release moves to another version of the game from Steam (ClientVersionsWindow). -->
+      <Border x:Name="ClientSwitchGroup" Classes="card">
+        <StackPanel Spacing="4">
+          <TextBlock Text="{l:Loc 'Game client versions'}" Classes="heading" />
+          <TextBlock Text="{l:Loc 'When a LocalExile folder that has a game client gets another version from Steam:'}" TextWrapping="Wrap" Margin="0,0,0,2" />
+          <RadioButton x:Name="SwitchAsk" GroupName="ClientSwitch" Content="{l:Loc 'Ask each time'}" IsCheckedChanged="ClientSwitchChanged" />
+          <RadioButton x:Name="SwitchKeepBoth" GroupName="ClientSwitch" Content="{l:Loc 'Always keep both versions'}" IsCheckedChanged="ClientSwitchChanged"
+                       ToolTip.Tip="{l:Loc 'The client in use is set aside and the other version is made beside it. It needs the room of both, and going back is instant.'}" />
+          <RadioButton x:Name="SwitchInPlace" GroupName="ClientSwitch" Content="{l:Loc 'Always update the one client in place'}" IsCheckedChanged="ClientSwitchChanged"
+                       ToolTip.Tip="{l:Loc 'The one client becomes the other version. Only what differs is downloaded and it needs no more room, but the version it was is gone.'}" />
+          <TextBlock Text="{l:Loc 'A way the drive has no room for is asked about instead.'}" Classes="note" Margin="0,2,0,0" />
+        </StackPanel>
       </Border>
 
       <Border x:Name="DeveloperGroup" Classes="card">
