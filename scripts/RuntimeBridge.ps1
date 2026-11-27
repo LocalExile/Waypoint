@@ -148,10 +148,15 @@ function Get-ContentEnvironment {
     $leagues = if ($env:Game_LEAGUES_FOLDER) { Join-Relative $env:Game_LEAGUES_FOLDER } else { At 'Leagues' }
     $choices = if ($env:Game_LEAGUE_MODULES) { Join-Relative $env:Game_LEAGUE_MODULES } else { At 'data/league-modules.json' }
     $hook = At 'src/GameServer.Core/Accounts/LeagueCatalog.cs'
-    $canChoose = $false
+    $canChoose = $false; $leagueMods = $false
     if (Test-Path -LiteralPath $hook -PathType Leaf) {
         Assert-Physical $hook
-        if ((Get-Item -LiteralPath $hook).Length -lt 1048576) { $canChoose = [IO.File]::ReadAllText($hook).Contains('Game_LEAGUE_MODULES') }
+        if ((Get-Item -LiteralPath $hook).Length -lt 1048576) {
+            $catalog = [IO.File]::ReadAllText($hook)
+            $canChoose = $catalog.Contains('Game_LEAGUE_MODULES')
+            # A mod of the leagues that list it, and the leagues a mod brings (LocalExile's ModFolders, 2026-11-26).
+            $leagueMods = $catalog.Contains('ModFolders.On')
+        }
     }
     $settingsHook = At 'src/GameServer.Gateway/Modding/ModSettings.cs'
     $canEditSettings = (-not $script:isRelease) -and (Test-Path -LiteralPath $settingsHook -PathType Leaf)
@@ -168,8 +173,8 @@ function Get-ContentEnvironment {
     # compiler that builds them at each start, so a league made here loads like its own, and an update, which writes only
     # the files of its zip, leaves that league's folder alone. The leagues that came with the release are the release's
     # files, which an update writes over: those are not hidden or shown here (ShippedLeaguesFixed).
-    if ($script:isRelease) { $canChoose = $canEditSettings = $canCreate = -not (Test-LegacyReleaseMods) }
-    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=$canChoose; CanEditSettings=$canEditSettings; CanCreate=$canCreate; ShippedLeaguesFixed=[bool]$script:isRelease }
+    if ($script:isRelease) { $canChoose = $canEditSettings = $canCreate = -not (Test-LegacyReleaseMods); $leagueMods = Test-ReleaseAfter '0.6.0' }
+    return @{ Modules=[IO.Path]::GetFullPath($modules); Leagues=[IO.Path]::GetFullPath($leagues); Choices=[IO.Path]::GetFullPath($choices); CanChoose=$canChoose; CanEditSettings=$canEditSettings; CanCreate=$canCreate; ShippedLeaguesFixed=[bool]$script:isRelease; Mods=$(if ($leagueMods -and $env:Game_MODS -ne '0') { [IO.Path]::GetFullPath((Get-ModFolder)) } else { '' }) }
 }
 function Join-Relative([string]$path) { if ([IO.Path]::IsPathRooted($path)) { $path } else { At $path } }
 function Get-Inventory {
@@ -194,8 +199,10 @@ function Owned-Server($process, [string]$name) {
     if ($arguments[1] -ine $relative -and -not (Same-Path $arguments[1] (At $relative))) { return $false }
     $parent = $script:byId[[int]$process.ParentProcessId]
     if (-not $parent -or $parent.Name -ine 'cmd.exe' -or $parent.CreationDate -gt $process.CreationDate) { return $false }
-    $tail = 'dotnet ' + $relative + $(if ($name -eq 'Auth') { ' serve' }) + ' 1>"' + (At "logs\live-$($name.ToLower()).log") + '" 2>"' + (At "logs\live-$($name.ToLower()).err") + '"'
-    return $parent.CommandLine.TrimEnd() -imatch ('/c\s+' + [regex]::Escape($tail) + '$')
+    # live.ps1 names the DLL by its path under the checkout, or (LocalExile's launcher since 2026-10-31) by its full path
+    # (quoted when it holds a space) with the whole line in quotes: /c "dotnet <checkout>\src\...dll 1>"log" 2>"err"".
+    $tail = $(if ($name -eq 'Auth') { ' serve' }) + ' 1>"' + (At "logs\live-$($name.ToLower()).log") + '" 2>"' + (At "logs\live-$($name.ToLower()).err") + '"'
+    return $parent.CommandLine.TrimEnd() -imatch ('/c\s+("?)dotnet\s+("?)(' + [regex]::Escape($relative) + '|' + [regex]::Escape((At $relative)) + ')\2' + [regex]::Escape($tail) + '\1$')
 }
 function Split-Arguments([string]$line) { [NativeRuntime]::Arguments($line) }
 function Owned-Watcher($process) {

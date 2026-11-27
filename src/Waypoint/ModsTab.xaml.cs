@@ -102,7 +102,7 @@ public partial class ModsTab : UserControl
             notice = L.Text("Could not inspect mods: ") + ex.Message;
         }
         if (state is not null && supported && !state.ModEnvironment!.Enabled) notice = L.Text("Mods off in launch profile (Game_MODS=0)");
-        notice = string.Join("\n", new[] { ModsText.MayNotLoadNotice(), notice, ModsText.ChoicesNotice(state) }.Where(s => s.Length > 0));
+        notice = string.Join("\n", new[] { ModsText.MayNotLoadNotice(), notice, ModsText.ChoicesNotice(state), _browser.RestartNotice(state) }.Where(s => s.Length > 0));
         if (Repo.LegacyReleaseMods) notice = L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.");
         Notice.Text = notice;
         Notice.Visibility = notice.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -594,7 +594,7 @@ public partial class ModsTab : UserControl
         PageTitle.Text = title;
         string author = entry?.Author is { Length: > 0 } a ? a : item?.Author ?? "";
         PageByline.Text = author.Length > 0 ? L.Text("by {0}", author) : "";
-        PageDescription.Text = entry?.Description is { Length: > 0 } d ? d : item?.Listing.Description ?? "";
+        PageDescription.Text = L.Text(entry?.Description is { Length: > 0 } d ? d : item?.Description ?? string.Empty);
         PageTags.ItemsSource = ModsText.Tags(item, entry);
         PageStats.Text = ModsText.Stats(item, entry);
         PageEnabled.Visibility = entry is null ? Visibility.Collapsed : Visibility.Visible;

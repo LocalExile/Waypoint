@@ -25,6 +25,14 @@ $parent.CommandLine += ' '
 Check (Owned-Server $process 'Gateway') 'ShellExecute trailing command-line whitespace is accepted'
 $parent.CommandLine = $parent.CommandLine.Replace('C:\Checkout with spaces\LocalExile','C:\Other')
 Check (-not (Owned-Server $process 'Gateway')) 'same relative DLL in another checkout is foreign'
+# LocalExile's launcher since 2026-10-31: the DLL's full path, the whole line in quotes, two spaces after dotnet.
+$absolute = At $relative
+$parent.CommandLine = "`"C:\Windows\system32\cmd.exe`" /c `"dotnet `"$absolute`" 1>`"$log`" 2>`"$err`"`" "
+$process.CommandLine = "dotnet  `"$absolute`"  "
+Check (Owned-Server $process 'Gateway') 'a full DLL path under this checkout, in a quoted line, establishes ownership'
+$parent.CommandLine = $parent.CommandLine.Replace("/c `"dotnet", '/c dotnet')
+Check (-not (Owned-Server $process 'Gateway')) 'a line that ends in a quote it did not open is not accepted'
+$process.CommandLine = "dotnet $relative"
 $parent.CommandLine = "cmd.exe /c dotnet $relative 1>`"$log`" 2>`"$err`""
 $process.CommandLine = 'dotnet C:\Other\GameServer.Gateway.dll'
 Check (-not (Owned-Server $process 'Gateway')) 'another absolute build is foreign'

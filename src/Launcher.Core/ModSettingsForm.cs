@@ -55,10 +55,13 @@ public sealed class ModSettingsForm
         var user = new JsonObject();
         string userPath = Path.Combine(root, UserFile(id, kind));
         string userHash = GameSystems.Hash(userPath);
-        if (File.Exists(userPath))
+        // A module that became a mod keeps its values in data/modules/<Id>.json until LocalExile's first start moves them
+        // (its ModHost.MoveModuleSettings, which skips the move once data/mods/<id>.json exists): show and save those.
+        string readPath = kind != "mods" || File.Exists(userPath) ? userPath : OldModuleFile(root, id) ?? userPath;
+        if (File.Exists(readPath))
         {
-            if (!ModCatalog.Physical(userPath) || new FileInfo(userPath).Length > 256 * 1024) throw new IOException(L.Text("The existing settings cannot be safely read. Nothing was changed."));
-            user = JsonNode.Parse(File.ReadAllText(userPath), NodeOptions, Jsonc) as JsonObject
+            if (!ModCatalog.Physical(readPath) || new FileInfo(readPath).Length > 256 * 1024) throw new IOException(L.Text("The existing settings cannot be safely read. Nothing was changed."));
+            user = JsonNode.Parse(File.ReadAllText(readPath), NodeOptions, Jsonc) as JsonObject
                 ?? throw new InvalidDataException(L.Text("Settings must be a JSON object."));
         }
         if (JsonNode.Parse(declarations, NodeOptions, Jsonc)?["renamed"] is JsonObject renamed)
@@ -68,6 +71,15 @@ public sealed class ModSettingsForm
                 { if (!user.ContainsKey(target!)) user[target!] = previous.DeepClone(); user.Remove(old); }
         if (userHash != GameSystems.Hash(userPath)) throw new IOException(L.Text("Settings changed while reading. Refresh before editing."));
         return new(id, settings, user) { UserHash = userHash };
+    }
+
+    /// <summary>data/modules/&lt;name&gt;.json whose name is the mod's id in any case, as LocalExile matches it.</summary>
+    static string? OldModuleFile(string root, string id)
+    {
+        string folder = Path.Combine(root, "data", "modules");
+        return Directory.Exists(folder)
+            ? Directory.EnumerateFiles(folder, "*.json").FirstOrDefault(f => Path.GetFileNameWithoutExtension(f).Equals(id, StringComparison.OrdinalIgnoreCase))
+            : null;
     }
 
     internal static IReadOnlyList<ModSetting> Parse(string json)
@@ -160,18 +172,18 @@ public sealed class ModSettingsForm
             {
                 string text = (input as string ?? "").Trim().Replace(',', '.');
                 if (!double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double number) || !double.IsFinite(number))
-                { error = L.Text("{0}: not a number", setting.Title); return null; }
+                { error = L.Text("{0}: not a number", L.Text(setting.Title)); return null; }
                 if (setting.IsPercent) number /= 100;
-                if (setting.Type == "integer" && number != Math.Floor(number)) { error = L.Text("{0}: not a whole number", setting.Title); return null; }
+                if (setting.Type == "integer" && number != Math.Floor(number)) { error = L.Text("{0}: not a whole number", L.Text(setting.Title)); return null; }
                 if (number < setting.Min || number > setting.Max)
-                { error = L.Text("{0}: from {1} to {2}", setting.Title, Show(JsonValue.Create(setting.Min ?? double.MinValue), setting), Show(JsonValue.Create(setting.Max ?? double.MaxValue), setting)); return null; }
+                { error = L.Text("{0}: from {1} to {2}", L.Text(setting.Title), Show(JsonValue.Create(setting.Min ?? double.MinValue), setting), Show(JsonValue.Create(setting.Max ?? double.MaxValue), setting)); return null; }
                 return JsonValue.Create(number);
             }
             case "text":
             {
                 string text = input as string ?? "";
                 if (text.Length < (setting.MinLength ?? 0) || text.Length > (setting.MaxLength ?? int.MaxValue))
-                { error = L.Text("{0}: from {1} to {2} characters", setting.Title, setting.MinLength ?? 0, setting.MaxLength ?? int.MaxValue); return null; }
+                { error = L.Text("{0}: from {1} to {2} characters", L.Text(setting.Title), setting.MinLength ?? 0, setting.MaxLength ?? int.MaxValue); return null; }
                 return JsonValue.Create(text);
             }
             case "choice":
@@ -181,7 +193,7 @@ public sealed class ModSettingsForm
                 var option = setting.Options.FirstOrDefault(o => Show(o.Value) == text || o.Label == text);
                 if (option.Value is not null) return option.Value.DeepClone();
                 if (setting.Source.Length > 0 && text.Length > 0) return JsonValue.Create(text);
-                error = L.Text("{0}: choose one of its options", setting.Title);
+                error = L.Text("{0}: choose one of its options", L.Text(setting.Title));
                 return null;
             }
             case "choices":
@@ -190,18 +202,18 @@ public sealed class ModSettingsForm
                     .Select(t => (JsonNode)JsonValue.Create(t));
                 var list = new JsonArray(values.Select(v => v.DeepClone()).ToArray());
                 if (list.Count < (setting.MinItems ?? 0) || list.Count > (setting.MaxItems ?? int.MaxValue))
-                { error = L.Text("{0}: choose from {1} to {2}", setting.Title, setting.MinItems ?? 0, setting.MaxItems ?? list.Count); return null; }
+                { error = L.Text("{0}: choose from {1} to {2}", L.Text(setting.Title), setting.MinItems ?? 0, setting.MaxItems ?? list.Count); return null; }
                 return list;
             }
             default:
-                error = L.Text("{0}: edit this setting in the file", setting.Title);
+                error = L.Text("{0}: edit this setting in the file", L.Text(setting.Title));
                 return null;
         }
     }
 
     public static string? Validate(ModSetting setting, JsonNode? value)
     {
-        string? Invalid() => L.Text("{0}: the value does not match its declaration", setting.Title);
+        string? Invalid() => L.Text("{0}: the value does not match its declaration", L.Text(setting.Title));
         if (value is null) return Invalid();
         var kind = value.GetValueKind();
         double Num(JsonNode n) => double.Parse(n.ToJsonString(), CultureInfo.InvariantCulture);

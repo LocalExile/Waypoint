@@ -12,6 +12,9 @@ stages, tooltips and application-provided accessibility names. Technical identif
 commands and raw diagnostic/log output keep their original text. Native Windows dialogs and system window menus follow the
 Windows display language.
 
+The official mod catalog's titles, summaries and settings (including their descriptions, units and choices) use the same
+resources in Browse, My Mods and each mod's page. The saved setting names and choice values are the ones in the mod's schema.
+
 ## Implementation
 
 The languages are one list, `L.Languages` (`src/Launcher.Core/Localization.cs`): a BCP 47 tag and the language's own name.
@@ -62,6 +65,43 @@ Other technical terms are translated only where an accepted translation exists (
 提交, 拉取请求, 复刻, 贮藏; Microsoft's 热重载). Product names stay in English, and so do the names of LocalExile's server
 programs, Gateway, Auth, Patch and Dev host, as they appear in logs and process lists. In Chinese text, a half-width space
 separates Chinese from Latin letters, digits and placeholders, and punctuation is full-width.
+
+## Importing Simplified Chinese item data
+
+On Windows, the item crafter's controls follow **Settings → Language**. To also display the game's item classes, bases,
+currency, modifier names and descriptions, cluster themes and rare names in Simplified Chinese, generate the local
+display catalog from your client. It uses the client's Simplified Chinese stat descriptions where available and converts
+Traditional Chinese tables to simplified characters. A client patch with Simplified Chinese tables can supply those
+instead. Waypoint reads no client archives itself and ships no client strings or tables with its binaries.
+
+Use a LocalExile checkout with its [GgDump prerequisites](https://github.com/LocalExile/LocalExile/blob/main/Agents/docs/re/tooling.md#3-ggpk-file-dump-scriptsreggdump)
+installed. Use the schema for your client version. From the LocalExile checkout root, set `$client` to your game directory
+or `Content.ggpk`, and extract the following files to a local directory:
+
+```powershell
+$localExile = (Get-Location).Path
+$export = Join-Path $env:TEMP 'waypoint-crafter-data'
+New-Item -ItemType Directory -Force $export | Out-Null
+dotnet run --project scripts/re/ggdump -- $client $export `
+    'data/traditional chinese/baseitemtypes.datc64' 'data/traditional chinese/itemclasses.datc64' `
+    'data/traditional chinese/mods.datc64' 'data/traditional chinese/words.datc64' `
+    'data/traditional chinese/passiveskills.datc64' 'data/passiveskills.datc64' `
+    'metadata/statdescriptions/stat_descriptions.txt'
+```
+
+From the Waypoint checkout root, run the importer and use the folder shown under **Settings → Data folder** for
+`$waypointData`. The default is `%LOCALAPPDATA%\EmulatorWorkspaceLauncher`.
+
+```powershell
+python tools/import-crafter-zh-cn.py $export "$localExile/data/schema/schema.min.json" `
+    "$waypointData/localization/crafter.zh-CN.jsonl"
+```
+
+If the extracted tables are under `data/simplified chinese`, use those paths for the five Traditional Chinese tables
+above and pass `--table-language 'simplified chinese'`. Reopen the item crafter with **简体中文** selected. Missing
+translations use the Gateway's English names and descriptions. Search accepts both languages. Crafting, saving and giving
+an item still use the Gateway's original IDs and numeric rolls. The clipboard importer reads the existing English PoE
+and Path of Building formats.
 
 ## Another language
 

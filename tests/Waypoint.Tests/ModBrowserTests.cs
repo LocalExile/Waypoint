@@ -40,6 +40,58 @@ public class ModBrowserTests : IDisposable
     }
 
     [Fact]
+    public void A_leagues_mod_that_no_league_lists_is_not_a_failure_and_its_page_says_what_it_is()
+    {
+        var entry = Installed("Idols") with { Enabled = true, Listed = true, Leagues = ["Phrecia"] };
+        var unused = new InstalledRow(entry, Offer(entry)) { LoadError = "no league lists it (the leagues are read when the servers start)" };
+        Assert.False(unused.Failed);
+        Assert.Equal(RowAction.UpToDate, unused.Action);
+        Assert.Equal(L.Text("No league uses it"), unused.Problem);
+        Assert.Equal(L.Text("No league uses it"), new InstalledRow(entry with { Status = ModCatalog.Unused }, null).Problem);
+        var broken = new InstalledRow(entry, Offer(entry)) { LoadError = "InvalidOperationException: no" };
+        Assert.True(broken.Failed);
+        Assert.Equal(RowAction.Reinstall, broken.Action);
+        Assert.Empty(new InstalledRow(entry with { Enabled = false }, null) { LoadError = unused.LoadError }.Problem);
+
+        var tags = ModsText.Tags(null, entry);
+        Assert.Contains(L.Text("League content"), tags);
+        Assert.Contains(L.Text("Adds league {0}", "Phrecia"), tags);
+        Assert.DoesNotContain(L.Text("League content"), ModsText.Tags(null, Installed()));
+        // Before it is installed, the repository's index says it.
+        var offered = Offer(entry) with { Listing = Offer(entry).Listing with { Listed = true } };
+        Assert.Contains(L.Text("League content"), ModsText.Tags(offered, null));
+        Assert.True(ModRepository.ParseIndex("""{ "version": 1, "mods": [{ "id": "idols", "path": "mods/idols", "leagues": "listed" }, { "id": "zoom", "path": "mods/zoom", "leagues": "all" }] }""")
+            is [{ Listed: true }, { Listed: false }]);
+
+        var state = new RuntimeSnapshot(_root, "", "", "", "", "", [], [], [],
+            ModEnvironment: new(true, _root, true, "bossloot - not loaded, no league lists it (the leagues are read when the servers start)"));
+        Assert.Equal(L.Text("No league uses it"), ModsText.RuntimeStatus(state, "bossloot"));
+
+        // A change to such a mod is told while the Gateway that has not read it runs: not once it stopped or restarted.
+        var running = state with { Services = [new("Gateway", "Ready", 123, "2026-11-26T00:00:00Z", "", [], 0, 0, "")] };
+        string restart = L.Text("Restart the servers to apply the change to a league's mod.");
+        Assert.Empty(ModsText.GatewayRun(state));
+        string pending = ModsText.GatewayRun(running);
+        Assert.Equal(restart, ModsText.RestartNotice(ref pending, running));
+        Assert.Equal(restart, ModsText.RestartNotice(ref pending, running));
+        var restarted = running with { Services = [running.Services[0] with { ProcessId = 456, StartedUtc = "2026-11-26T00:05:00Z" }] };
+        Assert.Empty(ModsText.RestartNotice(ref pending, restarted));
+        Assert.Empty(pending);
+        pending = ModsText.GatewayRun(running);
+        Assert.Empty(ModsText.RestartNotice(ref pending, state));
+        Assert.Empty(ModsText.RestartNotice(ref pending, running));
+        // The staged folder of an install says it before the adapter takes it away.
+        string staged = Path.Combine(_root, "staged", "idols");
+        Directory.CreateDirectory(Path.Combine(staged, "sql"));
+        Assert.True(ModCatalog.RestartToApply(staged));
+        Directory.Delete(Path.Combine(staged, "sql"));
+        File.WriteAllText(Path.Combine(staged, "mod.json"), "{\"leagues\":\"listed\"}");
+        Assert.True(ModCatalog.RestartToApply(staged));
+        File.WriteAllText(Path.Combine(staged, "mod.json"), "{}");
+        Assert.False(ModCatalog.RestartToApply(staged));
+    }
+
+    [Fact]
     public void Global_choices_distinguish_unavailable_disabled_and_saved_enable_choices()
     {
         var entry = Installed("Boss Loot") with { Enabled = true, Status = "Not checked" };

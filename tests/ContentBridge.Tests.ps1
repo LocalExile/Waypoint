@@ -82,6 +82,27 @@ try {
     Refused { Save-ContentFile $snapshot } 'adapter rejects removal of core gameplay'
     $ModStaged=StageLeague '{"Standard":{"add":["../outside"],"remove":[]}}'
     Refused { Save-ContentFile $snapshot } 'adapter rejects escaping module paths'
+    # A mod of the leagues that list it is ticked by its id; the adapter reads the mods' folder as the servers do.
+    Check (-not (Get-ContentEnvironment).Mods) 'a server without listed mods has no mods read for its leagues'
+    Set-Content -LiteralPath (At 'src/GameServer.Core/Accounts/LeagueCatalog.cs') '// Game_LEAGUE_MODULES ModFolders.On'
+    $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example"],"remove":[]}}'
+    $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example","bots"],"remove":[]}}'
+    Refused { Save-ContentFile $snapshot } 'a mod that is not installed is not a new entry of a league'
+    New-Item -ItemType Directory -Force (At 'Mods/Binaries/bots') | Out-Null
+    Set-Content -LiteralPath (At 'Mods/Binaries/bots/mod.json') '{"leagues":"listed","depends":["Game"]}'
+    Refused { Save-ContentFile $snapshot } 'a request reviewed before a mod was installed is stale'
+    $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example","bots"],"remove":[]}}'
+    Save-ContentFile $snapshot
+    Check ((Get-Content -LiteralPath (At 'data/league-modules.json') -Raw | ConvertFrom-Json).Standard.add -contains 'bots') 'an installed mod of listed leagues is added to a league by its id'
+    $env:Game_MODS='0'
+    try {
+        Check (-not (Get-ContentEnvironment).Mods) 'with mods off the adapter reads no mod'
+        $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example","bots","other"],"remove":[]}}'
+        Refused { Save-ContentFile $snapshot } 'with mods off a mod is only an entry the league already has'
+    } finally { $env:Game_MODS=$null }
+    Remove-Item -LiteralPath (At 'Mods') -Recurse -Force
+    $ModStaged=StageLeague '{"Standard":{"add":["Optional/Example"],"remove":[]}}'
+    Save-ContentFile $snapshot
     New-Item -ItemType Directory -Force (At 'Leagues/Standard/Source'), (At 'Leagues/Void/Source') | Out-Null
     Set-Content -LiteralPath (At 'Leagues/Standard/Source/Fixture.cs') 'public sealed class Fixture : League { }'
     Set-Content -LiteralPath (At 'Leagues/Void/league.json') '{"name":"Void","creatable":false}'

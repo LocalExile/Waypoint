@@ -356,7 +356,7 @@ public sealed partial class GameSystemsTab : UserControl
         var settings = new StackPanel { Margin = new Thickness(16) };
         if (card?.IsFlag == true) AddFlagAppearance(settings, card);
         modePanel.Margin = new Thickness(0, 20, 0, 0); settings.Children.Add(modePanel);
-        if (File.Exists(league.SettingsFile)) OpenSettings(settings, Path.GetFileName(league.Folder), league.SettingsFile, "leagues");
+        if (league.Mod.Length == 0 && File.Exists(league.SettingsFile)) OpenSettings(settings, Path.GetFileName(league.Folder), league.SettingsFile, "leagues");
         var modeDisclosure = new Expander { Header = Type(L.Text("League settings"), 14, true), Content = settings, IsExpanded = _settingsExpanded };
         _leagueSettings = modeDisclosure;
 #if WINDOWS
@@ -378,6 +378,7 @@ public sealed partial class GameSystemsTab : UserControl
         details.Children.Add(SettingsEditor.Label(L.Text("Selected league definition: {0}", league.Name)));
         if (league.EntryOf.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("Shown as a mode of: {0}", league.EntryOf)));
         if (league.Parent.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("Parent league: {0}", league.Parent)));
+        if (league.Mod.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("From the mod: {0}", league.Mod)));
         _detail.Children.Add(new Expander { Header = L.Text("League details and compatibility"), Content = details, IsExpanded = false, Margin = new Thickness(0, 12, 0, 8) });
     }
     static string ModuleTitle(GameSystem module) => module.Name == module.Id
@@ -454,8 +455,12 @@ public sealed partial class GameSystemsTab : UserControl
             // A listed module that is not installed (a typo in a hand edit, a module taken away since). LocalExile skips it
             // and loads the league, so the league stays editable. The entry stays ticked until its user unticks it: a
             // missing installation never removes a saved module by itself.
-            string label = L.Text("{0} (not installed)", path);
-            string help = L.Text("This league lists a module that is not installed. LocalExile skips it. Untick it to take it off the list.");
+            string id = path.Split('/')[^1];
+            bool on = _catalog.ModOn(id), own = !on && league.Mods.Contains(id, StringComparer.OrdinalIgnoreCase);
+            string label = on ? path : own ? L.Text("{0} (mod not on)", path) : L.Text("{0} (not installed)", path);
+            string help = on ? L.Text("A mod that runs in every league. Untick it to take it off the list.")
+                : own ? L.Text("This league needs this mod. LocalExile does not load the league while the mod is not installed or is turned off. Untick it to take it off the list.")
+                : L.Text("This league lists a module that is not installed. LocalExile skips it. Untick it to take it off the list.");
             var box = Named(new CheckBox { Content = Type(label, 13, false), IsChecked = true, IsEnabled = editable, HorizontalAlignment = HorizontalAlignment.Stretch }, label);
             _checks[path] = box;
             var holder = Card(box, 10, "Shell.Background"); holder.Margin = new Thickness(0, 0, 0, 6);
@@ -508,9 +513,10 @@ public sealed partial class GameSystemsTab : UserControl
                 : _choicesDirty ? L.Text("Unsaved module choices — applies after a server restart.") + (apart.Length > 0 ? " " + apart : "") : L.Text("No unsaved changes.");
             if (_primary is not null) _primary.IsEnabled = !Busy && error is null && _catalog.Environment.CanChoose && _catalog.Configurable(league) && _choicesDirty && _editor?.Dirty != true;
             // A release's own leagues are its files, which an update writes over: only a league made here is hidden or shown.
-            bool shipped = _catalog.Environment.ShippedLeaguesFixed && !league.Custom;
-            if (_availabilityAction is not null) _availabilityAction.IsEnabled = !Busy && !shipped && _catalog.Environment.CanCreate && !league.Ended && _catalog.Rooted(league);
+            bool shipped = _catalog.Environment.ShippedLeaguesFixed && !league.Custom, ofMod = league.Mod.Length > 0;
+            if (_availabilityAction is not null) _availabilityAction.IsEnabled = !Busy && !shipped && !ofMod && _catalog.Environment.CanCreate && !league.Ended && _catalog.Rooted(league);
             if (_availabilityHint is not null) _availabilityHint.Text = !_catalog.Environment.CanCreate ? L.Text("League availability needs a newer source checkout.")
+                : ofMod ? L.Text("A league that a mod brings can't be hidden or shown here: an update of the mod would undo it.")
                 : shipped ? L.Text("A league that came with this release can't be hidden or shown here: an update of LocalExile would undo it.")
                 : L.Text("Availability changes apply at the next server start.");
         }

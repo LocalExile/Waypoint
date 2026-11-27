@@ -9,7 +9,7 @@ public class ModuleIconsTests
     {
         string[] ids = ["Game", "Vendors", "Atlas", "Harvest", "Delve", "Commands", "Bench", "Heist", "Cosmetics", "Tattoos",
             "UniqueBelts", "NpcDialogue", "Pantheon", "Social", "HideoutEditing", "Portals", "QuestObjects", "NessaDevelopmentTabs",
-            "PhreciaAscendancies", "PlayerBots", "Ruthless", "SurvivorsRewards", "SurvivorsRun", "SurvivorsSkills"];
+            "PhreciaAscendancies", "PlayerBots", "Ruthless", "survivors"];
         var icons = ids.Select(ModuleIcons.Default).ToArray();
         Assert.Equal(ids.Length, icons.Select(i => i.Key).Distinct().Count());
         Assert.Equal(new[] { "core", "vendors", "atlas", "harvest", "delve", "commands", "bench" }, icons.Take(7).Select(i => i.Key));

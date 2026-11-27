@@ -50,10 +50,12 @@ the selected profile's resolved database before backup or mutation; desktop regi
 binding. A profile/location change while a dialog is open requires another review. It shares the global runtime writer mutex,
 requires stopped/known runtime inventory, makes the configured automatic save backup and checks inventory again.
 `AccountBridge.ps1` invokes `AccountData.py` through a UTF-8 stdin pipe, without transcribing passwords. The helper
-checks known tables/fields/import state (a split layout opens characters.db with auth.db attached as `auth`, as the
-servers do, and knows both files' tables, `updates` included), starts an immediate transaction, rechecks the selected account revision,
+checks known tables/fields/import state across legacy single-file `saves.db`, split JSON `characters.db` + `auth.db`,
+and relational `characters.db` + `auth.db` (a split layout opens characters.db with auth.db attached as `auth`, as the
+servers do, and knows both files' tables, `updates` included; `LeagueData.py` reuses the same check for retained league
+names), starts an immediate transaction, rechecks the selected account revision,
 validates names/destinations and commits all related row changes together (across the two split files, each commits
-on its own: the backup before covers both). Unknown layouts are read-only or rejected.
+on its own: the backup before covers both). Unknown layouts or pending legacy migrations are read-only or rejected.
 Password/copy operations additionally recognize the selected checkout's verifier format. LocalExile source and DLLs
 remain independent of the distributable launcher. Registration retains the upstream temporary-service workflow and
 now follows the same backup and account runtime gates.
@@ -124,7 +126,9 @@ Accept a server as owned only when:
 
 - It is dotnet with exactly the expected Debug assembly argument (+ `serve` for Auth).
 - Its live parent is a dedicated cmd created no later than the server, with the exact upstream command and both
-  absolute per-checkout log destinations. Trailing Windows command-line whitespace is ignored.
+  absolute per-checkout log destinations. Trailing Windows command-line whitespace is ignored. The command names the
+  assembly by its path under the checkout or, as LocalExile's launcher does since 2026-10-31, by its full path, with the
+  whole line in quotes.
 - Its PID owns every required listening port before the status becomes Ready.
 
 Do not adopt unrelated absolute build folders, identical relative DLL paths in another checkout, shared terminal
@@ -327,7 +331,11 @@ check installed modules and dependencies and preserve the choices of other leagu
 server. Membership is a next-start choice, never a claim that the running server applied it.
 
 League changes now use an envelope with `league`, `choices` and `review`. `review` maps every relevant module manifest,
-league definition/list/settings/source file and custom marker to its SHA-256, plus the user override file. The inventory
+league definition/list/settings/source file and custom marker to its SHA-256, plus the user override file. With mods on
+(`ContentEnvironment.Mods`, the mods' folder; empty under `Game_MODS=0`) it also maps `mod-state.txt`, every mod's
+`mod.json` and the league files of every mod's `Leagues/` (`league/<mod id>:<path>`): which mods are on, which belong to
+leagues and which leagues they bring follows from those, read the same way by `GameSystems` and `LeagueData.py` (the
+mods' folder is the helper's eighth argument, `-` for none). The inventory
 must match exactly, including new/deleted files. `LeagueData.py` validates dependencies, cycles, required dedicated bundles,
 parent chains and a whole-composition witness from an existing same-family/mode profile. Only the selected league's
 override can change; other entries remain byte-value equivalent. Prior configuration is retained before atomic replacement.

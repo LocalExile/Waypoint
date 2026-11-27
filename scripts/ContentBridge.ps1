@@ -8,7 +8,7 @@ function Invoke-LeagueData($environment, $request, [string]$action, [string]$pha
     try {
         $env:PYTHONIOENCODING = 'utf-8'
         $history = Join-Path (Get-WaypointData) 'config-history'
-        $raw = ($request | ConvertTo-Json -Depth 30 -Compress) | & $python (Join-Path $PSScriptRoot 'LeagueData.py') $environment.Modules $environment.Leagues $environment.Choices $databases[0] $history $action $phase @($databases | Select-Object -Skip 1)
+        $raw = ($request | ConvertTo-Json -Depth 30 -Compress) | & $python (Join-Path $PSScriptRoot 'LeagueData.py') $environment.Modules $environment.Leagues $environment.Choices $databases[0] $history $action $phase $(if ($environment.Mods) { $environment.Mods } else { '-' }) @($databases | Select-Object -Skip 1)
         $code = $LASTEXITCODE
         try { $reply = ($raw -join "`n") | ConvertFrom-Json } catch { throw 'The league helper did not return a valid result. Nothing can be confirmed.' }
         Require ($code -eq 0 -and $reply.Ok) $(if ($reply.Message) { [string]$reply.Message } else { 'League validation failed.' })

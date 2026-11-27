@@ -46,7 +46,7 @@ public sealed partial class GameSystemsTab
         string detail;
         try
         {
-            var entries = state is null ? [] : ModCatalog.Read(state);
+            var entries = state is null ? [] : ModCatalog.Read(state).Where(e => !e.Listed).ToArray();
             _globalModsChoices!.Text = ModsText.GlobalChoices(state?.ModEnvironment, entries);
             detail = ModsText.GlobalChoices(state?.ModEnvironment, entries, compact: false);
             if (state?.ModEnvironment is { Supported: true, Enabled: true })

@@ -7,7 +7,9 @@ public sealed partial class GameSystems
     public bool LoadedDefinition(GameLeague league) => Rooted(league)
         && _definitionOrder.Contains(league.Folder, StringComparer.OrdinalIgnoreCase)
         && (Directory.Exists(Path.Combine(league.Folder, "Source")) || Directory.Exists(Path.Combine(league.Folder, "Binaries")))
-        && league.BaseSystems.Distinct(StringComparer.OrdinalIgnoreCase).Count() == league.BaseSystems.Length;
+        && !league.Twice
+        // A league does not load without a mod its league.json names and its list still holds.
+        && !league.Mods.Any(m => !_onMods.Contains(m) && league.Systems.Any(p => Id(p).Equals(m, StringComparison.OrdinalIgnoreCase)));
 
     public bool OfferedDefinition(GameLeague league) => LoadedDefinition(league) && league.Creatable && !league.Ended;
 

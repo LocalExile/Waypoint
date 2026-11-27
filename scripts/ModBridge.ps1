@@ -345,6 +345,13 @@ function Test-LegacyReleaseMods {
     # 0.2.0 itself: an alpha came before the beta.
     return $Matches[4] -and $Matches[4] -like 'alpha*'
 }
+# A release whose version is above this one (its prerelease part aside): what it ships came after that release.
+function Test-ReleaseAfter([string]$version) {
+    if (-not $script:isRelease) { return $false }
+    try { $own = [string](Get-Content -LiteralPath (At 'release.json') -Raw | ConvertFrom-Json).version } catch { return $false }
+    if ($own -notmatch '^[vV]?(\d+)\.(\d+)\.(\d+)') { return $false }
+    return [version]"$($Matches[1]).$($Matches[2]).$($Matches[3])" -gt [version]$version
+}
 function Invoke-ModOperation($snapshot) {
     if ($Action -in @('InstallMod','SaveModSettings','UninstallMod')) {
         Require (-not (Test-LegacyReleaseMods)) 'This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.'
@@ -374,10 +381,12 @@ function Invoke-ModOperation($snapshot) {
     if ($Action -eq 'UninstallMod') { Uninstall-Mod $snapshot; return }
     if ($Action -eq 'InstallMod') { Install-StagedMod $snapshot; return }
     if ($Action -in @('EnableMod','DisableMod','ReloadMod')) { $null = Get-ModBinaryFolder $ModId }
+    # Loaded; or a mod of the leagues that list it, which is on and loads once a league lists it.
+    $confirmed = '(?m)^' + [regex]::Escape($ModId) + '( .+ - (feature|league|script), [0-9]+ hook\(s\)$| - not loaded, no league lists it)'
     if ($Action -eq 'ReloadMod') {
         Backup-Saves $snapshot
         $report = Invoke-ModClientCommands @("/mod_reload $ModId", '/mod') $snapshot
-        Require ($report -match ('(?m)^' + [regex]::Escape($ModId) + ' .+ - (feature|league|script), [0-9]+ hook\(s\)$')) 'Gateway did not confirm this mod loaded. Its error is visible on Mods; a reload can reset dependent mods too.'
+        Require ($report -match $confirmed) 'Gateway did not confirm this mod loaded. Its error is visible on Mods; a reload can reset dependent mods too.'
         return
     }
     if ($Action -in @('EnableMod','DisableMod')) {
@@ -385,7 +394,7 @@ function Invoke-ModOperation($snapshot) {
             Backup-Saves $snapshot
             $verb = if ($Action -eq 'EnableMod') { 'enable' } else { 'disable' }
             $report = Invoke-ModClientCommands @("/mod_$verb $ModId", '/mod') $snapshot
-            if ($Action -eq 'EnableMod') { Require ($report -match ('(?m)^' + [regex]::Escape($ModId) + ' .+ - (feature|league|script), [0-9]+ hook\(s\)$')) 'The command was sent, but Gateway did not confirm this mod loaded. See Mods for the reason.' }
+            if ($Action -eq 'EnableMod') { Require ($report -match $confirmed) 'The command was sent, but Gateway did not confirm this mod loaded. See Mods for the reason.' }
             else { Require ($report -match ('(?m)^' + [regex]::Escape($ModId) + ' - not loaded, disabled$')) 'Gateway did not confirm this mod disabled. Check /mod before retrying.' }
         } else {
             Backup-Saves $snapshot

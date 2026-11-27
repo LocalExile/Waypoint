@@ -27,6 +27,9 @@
   <data name="Text_00d1a1e34df7" xml:space="preserve">
     <value>备份并切换</value>
   </data>
+  <data name="Text_00db0e746309" xml:space="preserve">
+    <value>Waypoint 工具</value>
+  </data>
   <data name="Text_00e2d1f0bf57" xml:space="preserve">
     <value>从新角色创建界面隐藏</value>
   </data>
@@ -62,6 +65,9 @@
   </data>
   <data name="Text_01b37566bb22" xml:space="preserve">
     <value>模块列表为只读。请更新 LocalExile 以编辑这些选项。</value>
+  </data>
+  <data name="Text_01baf92fb032" xml:space="preserve">
+    <value>物品过滤器目录</value>
   </data>
   <data name="Text_01bb939bdbc2" xml:space="preserve">
     <value>吞噬天地</value>
@@ -134,6 +140,9 @@
   </data>
   <data name="Text_035485f7a61d" xml:space="preserve">
     <value>已固定：</value>
+  </data>
+  <data name="Text_035932cad9ff" xml:space="preserve">
+    <value>常用通货预设</value>
   </data>
   <data name="Text_0397d2f08fb2" xml:space="preserve">
     <value>已构建的文件与已确认的运行状态分开显示。LocalExile 监视模组文件，与 Gateway 代码热重载相互独立。构建或重新加载会重置模组的内存状态，并可能重新加载依赖它的模组。禁用某个依赖项可能会卸载其他模组。更改会影响此 Gateway 上的所有角色。</value>
@@ -261,6 +270,9 @@
   <data name="Text_07607d609f9a" xml:space="preserve">
     <value>照明</value>
   </data>
+  <data name="Text_0762f1ab76ee" xml:space="preserve">
+    <value>固定参数列表。配装代码通过标准输入发送。</value>
+  </data>
   <data name="Text_07a72f39e37a" xml:space="preserve">
     <value>{0} 中没有 settings 对象</value>
   </data>
@@ -384,6 +396,9 @@
   <data name="Text_0b5f608070c6" xml:space="preserve">
     <value>智慧</value>
   </data>
+  <data name="Text_0b5fc6d202d4" xml:space="preserve">
+    <value>限符合装备部位的词缀</value>
+  </data>
   <data name="Text_0b6de39de685" xml:space="preserve">
     <value>正在启用全新存档</value>
   </data>
@@ -465,6 +480,9 @@
   <data name="Text_0cf0462b32ac" xml:space="preserve">
     <value>{0} 不是空的。请选择空文件夹或新文件夹。</value>
   </data>
+  <data name="Text_0d0717954ac3" xml:space="preserve">
+    <value>Steam 的游戏库</value>
+  </data>
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>重新获取拉取请求 #{0}：获取其最新提交，强制推送后同样适用</value>
   </data>
@@ -473,6 +491,9 @@
   </data>
   <data name="Text_0d422d261e8b" xml:space="preserve">
     <value>正在备份你的存档</value>
+  </data>
+  <data name="Text_0d4c144f7b55" xml:space="preserve">
+    <value>超过时限的报价不会成交，新报价到来前市场会显示无库存。</value>
   </data>
   <data name="Text_0d5f058ab4ff" xml:space="preserve">
     <value>其游戏设置和保存的登录信息会移到回收站，可以从中恢复。使用它的其他 LocalExile 副本将在没有这些设置的情况下启动。</value>
@@ -582,6 +603,9 @@
   <data name="Text_0f5a9c5ec33d" xml:space="preserve">
     <value>正在复制游戏客户端</value>
   </data>
+  <data name="Text_0f7ace096b27" xml:space="preserve">
+    <value>可获得这些词缀的物品</value>
+  </data>
   <data name="Text_0fa5ec4ebbe9" xml:space="preserve">
     <value>刷新本地状态（F5）</value>
   </data>
@@ -633,6 +657,9 @@
   <data name="Text_10d911351fa4" xml:space="preserve">
     <value>航行</value>
   </data>
+  <data name="Text_10dcdca58301" xml:space="preserve">
+    <value>颜色（#RRGGBB）</value>
+  </data>
   <data name="Text_10dee8798467" xml:space="preserve">
     <value>正在构建…</value>
   </data>
@@ -662,6 +689,9 @@
   </data>
   <data name="Text_11d3f9b625c9" xml:space="preserve">
     <value>已准备好采集新加载的区域。</value>
+  </data>
+  <data name="Text_11d4bf8985f6" xml:space="preserve">
+    <value>装备的宠物会拾取所选通货，可按角色设置过滤规则，并可随时暂停。</value>
   </data>
   <data name="Text_11e940a84add" xml:space="preserve">
     <value>关闭游戏；服务器保持运行</value>
@@ -732,6 +762,9 @@
   <data name="Text_140bedbf9c3f" xml:space="preserve">
     <value>无</value>
   </data>
+  <data name="Text_14126be5e433" xml:space="preserve">
+    <value>击杀经验提升至 5 倍，移动速度增加 50%，输入 /fast 查看跳关指令。</value>
+  </data>
   <data name="Text_1415df2f0832" xml:space="preserve">
     <value>Waypoint 在这里不会下载游戏。你需要自己拥有 LocalExile 支持的流放之路版本的独立版。</value>
   </data>
@@ -761,6 +794,9 @@
   </data>
   <data name="Text_14c1130db95a" xml:space="preserve">
     <value>已打开一个不支持单实例运行的旧版 Waypoint。请先正常关闭它，再打开此构建。未停止任何进程。</value>
+  </data>
+  <data name="Text_14d7c23a4bfa" xml:space="preserve">
+    <value>掉落物品获得一条源自传奇物品词缀的额外固定词缀。</value>
   </data>
   <data name="Text_1509f561f241" xml:space="preserve">
     <value>保存</value>
@@ -794,6 +830,9 @@
   </data>
   <data name="Text_15cf2239e4e8" xml:space="preserve">
     <value>安装 LocalExile</value>
+  </data>
+  <data name="Text_15d99b7ac4b9" xml:space="preserve">
+    <value>所有职业均可启用的原生 20 格扩展背包。</value>
   </data>
   <data name="Text_15e11dada9d7" xml:space="preserve">
     <value>{0} 不是 Waypoint 能使用的模组 ID</value>
@@ -963,8 +1002,14 @@
   <data name="Text_1ac6734160c8" xml:space="preserve">
     <value>恢复存档…</value>
   </data>
+  <data name="Text_1ad2cac1be2c" xml:space="preserve">
+    <value>报价服务器的 IP 或主机名。留空时由模组直接向 GGG 获取报价。</value>
+  </data>
   <data name="Text_1aee4597ab3b" xml:space="preserve">
     <value>创建账号…</value>
+  </data>
+  <data name="Text_1af867a6888d" xml:space="preserve">
+    <value>浮士德语音提示</value>
   </data>
   <data name="Text_1b12c338d9d5" xml:space="preserve">
     <value>物品标签</value>
@@ -1012,6 +1057,9 @@
   <data name="Text_1c05492dd6ed" xml:space="preserve">
     <value>加载列表以浏览分支和打开的 LocalExile PR。切换会沿用现有的客户端副本。</value>
   </data>
+  <data name="Text_1c102dcfd464" xml:space="preserve">
+    <value>物品数量</value>
+  </data>
   <data name="Text_1c2f5126ca58" xml:space="preserve">
     <value>地图查看器需要包含地形生成器和已提取游戏数据的源码副本。</value>
   </data>
@@ -1048,6 +1096,9 @@
   <data name="Text_1cceb5ebd12e" xml:space="preserve">
     <value>最短路线</value>
   </data>
+  <data name="Text_1d00daee5079" xml:space="preserve">
+    <value>挂单或成交时，浮士德会说一句话。</value>
+  </data>
   <data name="Text_1d0a51791fe2" xml:space="preserve">
     <value>正在回到之前的版本</value>
   </data>
@@ -1074,6 +1125,9 @@
   </data>
   <data name="Text_1ddc54772630" xml:space="preserve">
     <value> · 已找到已准备的客户端</value>
+  </data>
+  <data name="Text_1ddc894c4c46" xml:space="preserve">
+    <value>将浮士德的通货交易所变为实时市场，采用国际服赛季价格，支持买卖差价、市场深度和随时间成交的订单。</value>
   </data>
   <data name="Text_1e0a5a4fd5bf" xml:space="preserve">
     <value>为采集重启 Gateway</value>
@@ -1110,6 +1164,9 @@
   </data>
   <data name="Text_1f562c8a9cec" xml:space="preserve">
     <value>{0} 不是 LocalExile 发行版。</value>
+  </data>
+  <data name="Text_1f56d71d6326" xml:space="preserve">
+    <value>-Walkmaps：在 Proton 下记录每个区域的行走地图。游戏会随记录器一起启动，LocalExile 第一次会用 g++ 构建该记录器。</value>
   </data>
   <data name="Text_1f88699e6094" xml:space="preserve">
     <value>上一张地图</value>
@@ -1242,6 +1299,9 @@
   </data>
   <data name="Text_2288c47a9839" xml:space="preserve">
     <value>仅错误和警告</value>
+  </data>
+  <data name="Text_228bc9e95c56" xml:space="preserve">
+    <value>掉落物品可额外获得一条词缀。稀有装备最多 7 条，稀有珠宝 5 条，魔法装备 3 条，传奇装备可获一条稀有装备的前缀或后缀。该词缀所属的前缀或后缀组会全部破裂。</value>
   </data>
   <data name="Text_22a62a64de6a" xml:space="preserve">
     <value>兼容的已保存代码修改会在游戏中生效。出现编译错误时旧代码继续运行。不兼容的修改会重启 Gateway 并让你返回登录界面。静态数据以及 Auth/Patch 的更改可能需要重启。切换分支/PR 时总会先停止服务。</value>
@@ -1484,6 +1544,9 @@
   <data name="Text_2805fc43d2b5" xml:space="preserve">
     <value>炼金</value>
   </data>
+  <data name="Text_28086de87a08" xml:space="preserve">
+    <value>物品过滤器光柱</value>
+  </data>
   <data name="Text_2810e56a442d" xml:space="preserve">
     <value>部分旧文件仍留在原处</value>
   </data>
@@ -1513,6 +1576,9 @@
   </data>
   <data name="Text_28c9a44bcbb7" xml:space="preserve">
     <value>不做任何更改。如果此客户端与你平时玩的游戏共用设置，你需要自行在游戏中设置“连线模式”（Networking Mode）。</value>
+  </data>
+  <data name="Text_28f8132472d1" xml:space="preserve">
+    <value>请重启服务器，以应用对联盟模组的更改。</value>
   </data>
   <data name="Text_28fd171b0b6b" xml:space="preserve">
     <value>下次再询问</value>
@@ -1661,6 +1727,9 @@
   <data name="Text_2bd0d8ea4786" xml:space="preserve">
     <value>{0} 大于 1 MB</value>
   </data>
+  <data name="Text_2be17d673645" xml:space="preserve">
+    <value>额外破裂词缀</value>
+  </data>
   <data name="Text_2bed223c0514" xml:space="preserve">
     <value>下载内容包含不安全的路径 {0}；未安装任何内容</value>
   </data>
@@ -1709,6 +1778,9 @@
   <data name="Text_2d0b83afa9d2" xml:space="preserve">
     <value>此副本已关闭模组</value>
   </data>
+  <data name="Text_2d57859aa2b6" xml:space="preserve">
+    <value>触发概率（1/N）</value>
+  </data>
   <data name="Text_2d895f09eb26" xml:space="preserve">
     <value>无发布版本：安装源码</value>
   </data>
@@ -1729,6 +1801,9 @@
   </data>
   <data name="Text_2deea4664d23" xml:space="preserve">
     <value>次要文本</value>
+  </data>
+  <data name="Text_2e0444630388" xml:space="preserve">
+    <value>跟随桌面：{0}</value>
   </data>
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>正在提取游戏数据</value>
@@ -1950,6 +2025,9 @@
   <data name="Text_337fc4c61628" xml:space="preserve">
     <value>你的存档、账号和登录密钥都会保留。如需先备份，请打开下方的文件夹。</value>
   </data>
+  <data name="Text_3388fe67946f" xml:space="preserve">
+    <value>管理员安装的转换器路径。留空会关闭配装代码转换。</value>
+  </data>
   <data name="Text_338c29e24170" xml:space="preserve">
     <value>发行版不含可构建的源代码，因此不能在此使用。请改为将 LocalExile 下载到新的或空的文件夹中。你的发行版将保持不变。</value>
   </data>
@@ -1967,6 +2045,9 @@
   </data>
   <data name="Text_33b938b93ca9" xml:space="preserve">
     <value>打开指定的上游 PR</value>
+  </data>
+  <data name="Text_34259945fd9d" xml:space="preserve">
+    <value>每 N 次掉落平均出现一次一条传奇固定词缀。</value>
   </data>
   <data name="Text_343d7ede578c" xml:space="preserve">
     <value>没有符合搜索条件的图标。</value>
@@ -1989,6 +2070,9 @@
   <data name="Text_349999ba0325" xml:space="preserve">
     <value>不可选：已隐藏、已结束、未加载或无法通过有效模式关联到达。请先检查此定义，再启用显示。</value>
   </data>
+  <data name="Text_349db05440f5" xml:space="preserve">
+    <value>第 8 至 10 章可额外掉落 1 阶地图</value>
+  </data>
   <data name="Text_34a4bac9ef24" xml:space="preserve">
     <value>正在检查安装</value>
   </data>
@@ -1997,6 +2081,9 @@
   </data>
   <data name="Text_34b66838fe48" xml:space="preserve">
     <value>显示日志</value>
+  </data>
+  <data name="Text_34c11598292a" xml:space="preserve">
+    <value>使用配置好的外部 PoB 转换器预览和导入角色配装。</value>
   </data>
   <data name="Text_34c333049b37" xml:space="preserve">
     <value>下载内容大于 64 MB；未安装任何内容</value>
@@ -2079,6 +2166,12 @@
   <data name="Text_378a5666fe38" xml:space="preserve">
     <value>游戏模式的规则</value>
   </data>
+  <data name="Text_378c3757374c" xml:space="preserve">
+    <value>不限制装备类别</value>
+  </data>
+  <data name="Text_37a50d180bfc" xml:space="preserve">
+    <value>来自模组：{0}</value>
+  </data>
   <data name="Text_37a8eec1ce19" xml:space="preserve">
     <value>默认</value>
   </data>
@@ -2090,6 +2183,9 @@
   </data>
   <data name="Text_380c1a7758d9" xml:space="preserve">
     <value>友谊</value>
+  </data>
+  <data name="Text_381e879da6e3" xml:space="preserve">
+    <value>仅包含 README 列出的 20 种通货。单项规则优先。</value>
   </data>
   <data name="Text_381f5c69d6b1" xml:space="preserve">
     <value>无法打开 Waypoint</value>
@@ -2121,6 +2217,9 @@
   <data name="Text_38cca6bea010" xml:space="preserve">
     <value>已关闭</value>
   </data>
+  <data name="Text_38d54414f32e" xml:space="preserve">
+    <value>标准区价格</value>
+  </data>
   <data name="Text_38d69f252932" xml:space="preserve">
     <value>正在停用源码已删除的模组</value>
   </data>
@@ -2148,6 +2247,9 @@
   <data name="Text_396bc690d5bd" xml:space="preserve">
     <value>Frida 已就绪。</value>
   </data>
+  <data name="Text_396d95b10e6a" xml:space="preserve">
+    <value>每次击杀获得的经验倍率（/fast_xp）。</value>
+  </data>
   <data name="Text_39921a740bf2" xml:space="preserve">
     <value>切换</value>
   </data>
@@ -2159,6 +2261,9 @@
   </data>
   <data name="Text_3a0f7b919840" xml:space="preserve">
     <value>正在更改账号数据</value>
+  </data>
+  <data name="Text_3a1f907443a5" xml:space="preserve">
+    <value>物品稀有度</value>
   </data>
   <data name="Text_3a361f5a0e7f" xml:space="preserve">
     <value>工作区需要处理</value>
@@ -2180,6 +2285,9 @@
   </data>
   <data name="Text_3a6e351b6aa6" xml:space="preserve">
     <value>更新时间</value>
+  </data>
+  <data name="Text_3a7275307918" xml:space="preserve">
+    <value>传奇</value>
   </data>
   <data name="Text_3a824789af77" xml:space="preserve">
     <value> · 备份时的源码：</value>
@@ -2299,6 +2407,9 @@
   <data name="Text_3d246cebf3ac" xml:space="preserve">
     <value>切换完成。</value>
   </data>
+  <data name="Text_3d27f72b9265" xml:space="preserve">
+    <value>宠物移动速度</value>
+  </data>
   <data name="Text_3d31dc6f3ec1" xml:space="preserve">
     <value>当前赛季尚未使用此名称。</value>
   </data>
@@ -2380,6 +2491,9 @@
   <data name="Text_3fc597ad27c9" xml:space="preserve">
     <value>无法运行 git：{0}。请安装 Git，然后重新打开启动器。</value>
   </data>
+  <data name="Text_3fdfb19f38fb" xml:space="preserve">
+    <value>强化幅度</value>
+  </data>
   <data name="Text_3fe586513da2" xml:space="preserve">
     <value>正在构建 GameServer.Host …</value>
   </data>
@@ -2394,6 +2508,9 @@
   </data>
   <data name="Text_4033ce159a87" xml:space="preserve">
     <value>随机掉落</value>
+  </data>
+  <data name="Text_404314b1f4bd" xml:space="preserve">
+    <value>小时</value>
   </data>
   <data name="Text_40bb50da160c" xml:space="preserve">
     <value>下移</value>
@@ -2455,6 +2572,9 @@
   <data name="Text_42610696b9f9" xml:space="preserve">
     <value>可以浏览此存储结构，但由于无法识别其架构或导入状态，账号更改已禁用。</value>
   </data>
+  <data name="Text_426f91710cc2" xml:space="preserve">
+    <value>服务器端口</value>
+  </data>
   <data name="Text_42e1d2be26fc" xml:space="preserve">
     <value>服务器会实时保存角色的进度。</value>
   </data>
@@ -2512,6 +2632,9 @@
   <data name="Text_442aded87a55" xml:space="preserve">
     <value>性能</value>
   </data>
+  <data name="Text_44432f24683d" xml:space="preserve">
+    <value>调整浮士德相对国际服市场价的买卖偏移。热门物品约为 1%，最稀有的物品最高 10%。数值越低成本越低，0 表示按市场价成交。</value>
+  </data>
   <data name="Text_444df3307147" xml:space="preserve">
     <value>始终保留两个版本</value>
   </data>
@@ -2539,6 +2662,9 @@
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>下载失败（git 退出代码 {0}）。请检查网络连接后重试。</value>
   </data>
+  <data name="Text_457f300c3c08" xml:space="preserve">
+    <value>击杀怪物时，按设定概率额外掉落指定通货。</value>
+  </data>
   <data name="Text_45989de49fb7" xml:space="preserve">
     <value>详细信息</value>
   </data>
@@ -2550,6 +2676,9 @@
   </data>
   <data name="Text_45d498d7208d" xml:space="preserve">
     <value>正在停止服务器和游戏…</value>
+  </data>
+  <data name="Text_45dc8924548e" xml:space="preserve">
+    <value>繁体中文</value>
   </data>
   <data name="Text_45e596bb002f" xml:space="preserve">
     <value>· 默认</value>
@@ -2655,6 +2784,9 @@
   </data>
   <data name="Text_480d4be7d61f" xml:space="preserve">
     <value>盾牌</value>
+  </data>
+  <data name="Text_481ebcccf62c" xml:space="preserve">
+    <value>没有联盟使用它</value>
   </data>
   <data name="Text_4850b174b713" xml:space="preserve">
     <value>必需</value>
@@ -2764,6 +2896,9 @@
   <data name="Text_4aab6042a815" xml:space="preserve">
     <value>最新版是开发中的 LocalExile，因此可能不如发布版稳定。</value>
   </data>
+  <data name="Text_4ab433836e6d" xml:space="preserve">
+    <value>额外的移动速度（/fast_speed）。</value>
+  </data>
   <data name="Text_4ac0fe518f59" xml:space="preserve">
     <value>下次关闭窗口时，Waypoint 会询问如何处理。</value>
   </data>
@@ -2802,6 +2937,9 @@
   </data>
   <data name="Text_4beb40ac1b71" xml:space="preserve">
     <value>安装 Frida？</value>
+  </data>
+  <data name="Text_4bfaeeb9b0a1" xml:space="preserve">
+    <value>获得任一效果的物品会以忆境物品形式掉落，便于从地面和提示框辨认。</value>
   </data>
   <data name="Text_4c49a6974e46" xml:space="preserve">
     <value>切换到旧版本</value>
@@ -2850,6 +2988,9 @@
   </data>
   <data name="Text_4d2fc504a139" xml:space="preserve">
     <value> · 需要设置客户端</value>
+  </data>
+  <data name="Text_4d31041de4b7" xml:space="preserve">
+    <value>在异界地图中增加可配置的地图掉落，亦可在剧情后期启用。</value>
   </data>
   <data name="Text_4d628612e2b6" xml:space="preserve">
     <value>放弃此草稿中的模块选择并使用所选配置吗？</value>
@@ -2941,6 +3082,9 @@
   <data name="Text_4f0424e48178" xml:space="preserve">
     <value>已保存 {0}</value>
   </data>
+  <data name="Text_4f2210bd5b55" xml:space="preserve">
+    <value>强化词缀</value>
+  </data>
   <data name="Text_4f3a9bd00397" xml:space="preserve">
     <value>职业</value>
   </data>
@@ -2968,6 +3112,9 @@
   <data name="Text_5045659cf175" xml:space="preserve">
     <value>{0}（{1} 个错误）</value>
   </data>
+  <data name="Text_5056fbc21cff" xml:space="preserve">
+    <value>GM 指令</value>
+  </data>
   <data name="Text_506dc5a78bd1" xml:space="preserve">
     <value>所有文件都已在 {0} 中，但以下文件无法从 {1} 删除，你可以手动删除：</value>
   </data>
@@ -2979,6 +3126,9 @@
   </data>
   <data name="Text_509b359509d5" xml:space="preserve">
     <value>固定词缀</value>
+  </data>
+  <data name="Text_509c517ede79" xml:space="preserve">
+    <value>视野缩放</value>
   </data>
   <data name="Text_50dee90771a3" xml:space="preserve">
     <value>为 {0} 选择的程序 {1} 不存在，Waypoint 将自行查找 {0}。</value>
@@ -3018,6 +3168,12 @@
   </data>
   <data name="Text_51e7c752f8e6" xml:space="preserve">
     <value>正在验证所选的 SQLite 备份。</value>
+  </data>
+  <data name="Text_51ea320938f5" xml:space="preserve">
+    <value>掉落魔法、稀有和传奇装备的概率提升至 10 倍。</value>
+  </data>
+  <data name="Text_51ee31cba356" xml:space="preserve">
+    <value>在过滤器目录中的每个过滤器开头添加规则，使已标记物品始终显示并带光柱和音效。关闭后会移除新增规则。</value>
   </data>
   <data name="Text_521339c7dbbf" xml:space="preserve">
     <value>请等待当前构建或运行时操作完成后再关闭。</value>
@@ -3130,6 +3286,9 @@
   <data name="Text_55091c102c8f" xml:space="preserve">
     <value>无法备份存档。可在“备份”页面关闭自动备份。</value>
   </data>
+  <data name="Text_551a07ee7ed7" xml:space="preserve">
+    <value>魔法、稀有和传奇掉落有小概率获得额外的传奇固定词缀、比原数值高 10%–100% 的强化词缀，或额外一条词缀且同组前缀或后缀遭破裂。三种效果可同时出现在一件装备上。</value>
+  </data>
   <data name="Text_5528762a7c7d" xml:space="preserve">
     <value>无法使用 Waypoint 数据文件夹 {0}（{1}），暂时使用 {2}。</value>
   </data>
@@ -3144,6 +3303,9 @@
   </data>
   <data name="Text_557fe004f344" xml:space="preserve">
     <value>完成</value>
+  </data>
+  <data name="Text_55861acf426c" xml:space="preserve">
+    <value>/fast 及模组聊天提示所用的语言（/fast_lang）。</value>
   </data>
   <data name="Text_55863ec85560" xml:space="preserve">
     <value>正在链接游戏客户端</value>
@@ -3160,6 +3322,9 @@
   <data name="Text_55b612083b47" xml:space="preserve">
     <value>为 LocalExile 提供独立的设置和已保存的登录信息，让你平常的游戏保留自己的设置</value>
   </data>
+  <data name="Text_55c267382c47" xml:space="preserve">
+    <value>每次击杀的额外通货</value>
+  </data>
   <data name="Text_55cd62661ffd" xml:space="preserve">
     <value>Waypoint Tools 没有回应。游戏是否在运行，且有角色在区域中？</value>
   </data>
@@ -3168,6 +3333,9 @@
   </data>
   <data name="Text_55f68b111c40" xml:space="preserve">
     <value>为 LocalExile 提供独立的游戏设置，你平时的游戏保留自己的设置。</value>
+  </data>
+  <data name="Text_56115a76823f" xml:space="preserve">
+    <value>魔法怪物额外地图概率</value>
   </data>
   <data name="Text_5625e06b57d8" xml:space="preserve">
     <value>你的 Steam 账户名（登录 Steam 时使用的名称）：</value>
@@ -3199,6 +3367,12 @@
   <data name="Text_56e170d33d20" xml:space="preserve">
     <value>红绿色盲友好</value>
   </data>
+  <data name="Text_56ef8f20955f" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="Text_57104c57fbe0" xml:space="preserve">
+    <value>格</value>
+  </data>
   <data name="Text_5726606d5e2a" xml:space="preserve">
     <value>发行版 {0} 中没有附带 .sha256 的 {1}</value>
   </data>
@@ -3222,6 +3396,9 @@
   </data>
   <data name="Text_581dec3ed74b" xml:space="preserve">
     <value>最新提交</value>
+  </data>
+  <data name="Text_581e55ba5f97" xml:space="preserve">
+    <value>部位模式下，武器、箭袋和手套偏向进攻，胸甲和盾牌偏向防御，鞋子偏向速度和异常状态，头盔偏向防御及按球数、属性等计算的加成和光环，首饰偏向实用和特殊传奇效果。任何模式下，传奇珠宝词缀专供珠宝。</value>
   </data>
   <data name="Text_5821caa2408b" xml:space="preserve">
     <value>选择文件夹现在的位置</value>
@@ -3260,6 +3437,9 @@
   </data>
   <data name="Text_59546c79643c" xml:space="preserve">
     <value>关闭 {0}</value>
+  </data>
+  <data name="Text_5954d0c13f55" xml:space="preserve">
+    <value>移动速度</value>
   </data>
   <data name="Text_595d778513d6" xml:space="preserve">
     <value>Waypoint 仍使用此文件夹。安装向导的文件夹 {0} 已在侧边栏顶部的文件夹列表中：在那里选择它即可打开。</value>
@@ -3309,6 +3489,9 @@
   <data name="Text_5a7b893e6881" xml:space="preserve">
     <value>联赛卡片的关联存在循环。</value>
   </data>
+  <data name="Text_5a9ca4fbd7bb" xml:space="preserve">
+    <value>标记惊喜装备</value>
+  </data>
   <data name="Text_5aadedac23ef" xml:space="preserve">
     <value>要更换它，请在文件夹列表中选择“游戏客户端”。</value>
   </data>
@@ -3327,6 +3510,9 @@
   <data name="Text_5b5f557d2188" xml:space="preserve">
     <value>遭遇：{0} 个锚点</value>
   </data>
+  <data name="Text_5b6c1d727f8e" xml:space="preserve">
+    <value>三条固定词缀的概率（1/N）</value>
+  </data>
   <data name="Text_5b72b116c129" xml:space="preserve">
     <value>游戏时监视 Gateway 代码</value>
   </data>
@@ -3344,6 +3530,9 @@
   </data>
   <data name="Text_5c412a262086" xml:space="preserve">
     <value>游戏</value>
+  </data>
+  <data name="Text_5c41787dc15a" xml:space="preserve">
+    <value>角色配置</value>
   </data>
   <data name="Text_5c4824060366" xml:space="preserve">
     <value>你可以自己删除该文件夹：{0}</value>
@@ -3389,6 +3578,9 @@
   </data>
   <data name="Text_5de68a8da4e2" xml:space="preserve">
     <value>未登录 Steam。</value>
+  </data>
+  <data name="Text_5e1858ba70e7" xml:space="preserve">
+    <value>物品单项规则</value>
   </data>
   <data name="Text_5e72e95aaebe" xml:space="preserve">
     <value>模组选择适用于所有赛季。已保存的选项不代表实际加载状态。</value>
@@ -3544,6 +3736,9 @@
   <data name="Text_61d64d38cb24" xml:space="preserve">
     <value>在侧边栏添加“简易 | 高级”切换开关。高级模式包含服务器、分支和拉取请求、备份、性能、日志和控制台。</value>
   </data>
+  <data name="Text_61e2f124f25b" xml:space="preserve">
+    <value>聊天服务器的端口。</value>
+  </data>
   <data name="Text_61e9e054c8b6" xml:space="preserve">
     <value>已复制：{0}</value>
   </data>
@@ -3589,14 +3784,23 @@
   <data name="Text_6300ef800bb8" xml:space="preserve">
     <value>从不</value>
   </data>
+  <data name="Text_632b9f9cf723" xml:space="preserve">
+    <value>耐心订单</value>
+  </data>
   <data name="Text_6339e6c8c5a1" xml:space="preserve">
     <value>连线模式为同步模式</value>
   </data>
   <data name="Text_635484c1543e" xml:space="preserve">
     <value>重新加载游戏数据覆盖</value>
   </data>
+  <data name="Text_6380e057d849" xml:space="preserve">
+    <value>从物品当前没有的势力中随机选一个。按此底材和物品等级可出现的势力词缀会加入词缀池，供补满词缀和生成额外词缀使用。物品本身不会获得该势力。</value>
+  </data>
   <data name="Text_638e249f4a15" xml:space="preserve">
     <value>筛选</value>
+  </data>
+  <data name="Text_63a1fa7ec176" xml:space="preserve">
+    <value>最长报价时效</value>
   </data>
   <data name="Text_63abe4ec7c6c" xml:space="preserve">
     <value>上次游玩</value>
@@ -3624,6 +3828,9 @@
   </data>
   <data name="Text_6425c4d51b31" xml:space="preserve">
     <value>· 非在此创建</value>
+  </data>
+  <data name="Text_642963da89e7" xml:space="preserve">
+    <value>拾取半径</value>
   </data>
   <data name="Text_6443a33bc8c7" xml:space="preserve">
     <value>同时会删除已下载的 {0:0.#} GB。</value>
@@ -3690,6 +3897,9 @@
   <data name="Text_6599eee43908" xml:space="preserve">
     <value>独狼模式</value>
   </data>
+  <data name="Text_65adefc6be0b" xml:space="preserve">
+    <value>掉落惊喜装备时在聊天中列出触发的效果类别。</value>
+  </data>
   <data name="Text_65b8fd6a55b1" xml:space="preserve">
     <value>所有连接合计的每秒服务器耗时；等待（队列、门控、锁）按其等待时间计入</value>
   </data>
@@ -3737,6 +3947,9 @@
   </data>
   <data name="Text_6707ce0b6be2" xml:space="preserve">
     <value>该角色名称已被占用</value>
+  </data>
+  <data name="Text_6712fcd28cdc" xml:space="preserve">
+    <value>{0}（模组未启用）</value>
   </data>
   <data name="Text_67181a386da0" xml:space="preserve">
     <value>该文件夹是 LocalExile 发行版</value>
@@ -3795,6 +4008,9 @@
   <data name="Text_68342976d01d" xml:space="preserve">
     <value>请在上方粘贴物品文本。</value>
   </data>
+  <data name="Text_6853d7de9adb" xml:space="preserve">
+    <value>两条固定词缀的概率（1/N）</value>
+  </data>
   <data name="Text_686046d08c9f" xml:space="preserve">
     <value>监视进程正在构建/重启；请在 Gateway 输出中查看错误</value>
   </data>
@@ -3824,6 +4040,9 @@
   </data>
   <data name="Text_695421b8f03a" xml:space="preserve">
     <value>LocalExile 会在 {0} 中使用自己的设置：以你平时设置的副本为起点，不含你的登录信息，并将连线模式设为预测模式。你平时游戏的文件不会更改。</value>
+  </data>
+  <data name="Text_695c4698b105" xml:space="preserve">
+    <value>只有发布的 AppImage 能自行更新；请从发布页面下载</value>
   </data>
   <data name="Text_6979ababfdcb" xml:space="preserve">
     <value>LocalExile 会在 {0} 中保存自己的图形设置、按键设置和已保存的登录信息，并以所需的连线模式启动。你平时游戏的设置只会被读取一次，作为初始设置。</value>
@@ -3866,6 +4085,9 @@
   </data>
   <data name="Text_6aadac2f2b7a" xml:space="preserve">
     <value>回退</value>
+  </data>
+  <data name="Text_6ab1d7cb4788" xml:space="preserve">
+    <value>允许势力词缀</value>
   </data>
   <data name="Text_6ad2de2f965c" xml:space="preserve">
     <value>Frida 设置失败</value>
@@ -3995,6 +4217,9 @@
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>异能固定词缀</value>
+  </data>
+  <data name="Text_6f1a81da4fbf" xml:space="preserve">
+    <value>Steam 下载仅支持 64 位 Windows 和 Linux。</value>
   </data>
   <data name="Text_6f1f1b23d3fd" xml:space="preserve">
     <value>在这里它只提供一种游戏模式的规则，不包含该模式自身的技能、商人和任务奖励。</value>
@@ -4128,6 +4353,9 @@
   <data name="Text_72db542cccd0" xml:space="preserve">
     <value>此处的更改会立即保存。最小化按钮仍会最小化到任务栏。</value>
   </data>
+  <data name="Text_72e9a59f5a1d" xml:space="preserve">
+    <value>端口</value>
+  </data>
   <data name="Text_72f399f8decf" xml:space="preserve">
     <value>{0}（仅供抵达）</value>
   </data>
@@ -4173,6 +4401,9 @@
   <data name="Text_7449e55272e4" xml:space="preserve">
     <value>工艺与交易</value>
   </data>
+  <data name="Text_748f3ab24141" xml:space="preserve">
+    <value>宠物拾取</value>
+  </data>
   <data name="Text_74a883a037bc" xml:space="preserve">
     <value>设置</value>
   </data>
@@ -4190,6 +4421,9 @@
   </data>
   <data name="Text_74feac5eb8d9" xml:space="preserve">
     <value>前缀</value>
+  </data>
+  <data name="Text_7500bd238bc1" xml:space="preserve">
+    <value>掉落物品的一条固定或显性词缀可以超过原数值上限，数值乘以 1.1–2。范围包括额外的传奇固定词缀。</value>
   </data>
   <data name="Text_75081b593d15" xml:space="preserve">
     <value>已禁用</value>
@@ -4226,6 +4460,9 @@
   </data>
   <data name="Text_76624898cd35" xml:space="preserve">
     <value>{0} 已在列表中。</value>
+  </data>
+  <data name="Text_768b2e39ebba" xml:space="preserve">
+    <value>报价服务器端口。0 表示由模组直接向 GGG 获取报价。</value>
   </data>
   <data name="Text_76900f1bfd16" xml:space="preserve">
     <value>返回</value>
@@ -4362,8 +4599,14 @@
   <data name="Text_7a2cc9a9efb4" xml:space="preserve">
     <value>传送连接</value>
   </data>
+  <data name="Text_7a448e932cb5" xml:space="preserve">
+    <value>稀有怪物额外地图概率</value>
+  </data>
   <data name="Text_7a5198f98ec2" xml:space="preserve">
     <value>此 LocalExile 文件夹中已有游戏客户端，无需复制。</value>
+  </data>
+  <data name="Text_7a530e69bd36" xml:space="preserve">
+    <value>可堆叠命运卡</value>
   </data>
   <data name="Text_7a72f4199ba7" xml:space="preserve">
     <value>正在加载区域 …</value>
@@ -4439,6 +4682,9 @@
   </data>
   <data name="Text_7bc17e5802cf" xml:space="preserve">
     <value>此文件夹不存在：它可能已被移动或重命名，或者所在的驱动器未连接。未做任何更改。</value>
+  </data>
+  <data name="Text_7bcfeb454d6a" xml:space="preserve">
+    <value>其他赛季价格</value>
   </data>
   <data name="Text_7bf6ecedbcdb" xml:space="preserve">
     <value>迷宫布局</value>
@@ -4584,11 +4830,17 @@
   <data name="Text_8042721ff5f2" xml:space="preserve">
     <value>此发行版未声明与可下载模组兼容。请使用最新源码副本安装或更新模组。</value>
   </data>
+  <data name="Text_8080d0a3e03b" xml:space="preserve">
+    <value>留空时使用 Documents\My Games\Path of Exile\LocalExile。</value>
+  </data>
   <data name="Text_8084a51b3c64" xml:space="preserve">
     <value>力量</value>
   </data>
   <data name="Text_808fc010f815" xml:space="preserve">
     <value>{0}：{1}（备份时）</value>
+  </data>
+  <data name="Text_809765cacb05" xml:space="preserve">
+    <value>此联赛需要该模组。在该模组未安装或已停用时，LocalExile 不会加载此联赛。取消勾选即可将其从列表中移除。</value>
   </data>
   <data name="Text_80d16534322e" xml:space="preserve">
     <value>模组已构建。</value>
@@ -4791,6 +5043,9 @@
   <data name="Text_86d42618a090" xml:space="preserve">
     <value>或者返回并选择一个新的空文件夹：Waypoint 会安装为 {1} 制作的 LocalExile {0}。</value>
   </data>
+  <data name="Text_86f0260191b6" xml:space="preserve">
+    <value>每次击杀掉落魔法、稀有和传奇装备的概率倍率。</value>
+  </data>
   <data name="Text_8703b1f43ea7" xml:space="preserve">
     <value>无本地更改</value>
   </data>
@@ -4803,8 +5058,14 @@
   <data name="Text_87675db83a32" xml:space="preserve">
     <value>材料</value>
   </data>
+  <data name="Text_8787fab8d301" xml:space="preserve">
+    <value>只有发布的 AppImage 能自行更新</value>
+  </data>
   <data name="Text_8799981821ae" xml:space="preserve">
     <value>用于创建、复制或重命名的名称：</value>
+  </data>
+  <data name="Text_87a0a889ad35" xml:space="preserve">
+    <value>快速剧情</value>
   </data>
   <data name="Text_87bb59ba2f92" xml:space="preserve">
     <value>工作区</value>
@@ -4941,6 +5202,9 @@
   <data name="Text_8ad920a3b55b" xml:space="preserve">
     <value>塑界者</value>
   </data>
+  <data name="Text_8b10a3945dee" xml:space="preserve">
+    <value>联盟内容</value>
+  </data>
   <data name="Text_8b18eaba7be1" xml:space="preserve">
     <value>3.  复制客户端并进行准备</value>
   </data>
@@ -4965,6 +5229,9 @@
   <data name="Text_8b5ad58d76bc" xml:space="preserve">
     <value>你的角色会原样保留在 {0} 中。Waypoint 不会再提示把它们带到此发布版。</value>
   </data>
+  <data name="Text_8b78b90078b1" xml:space="preserve">
+    <value>可填写 Mods ID 或其开头，如 LevelRequirementOverride；用 stat: 匹配属性 ID 片段，如 stat:in_radius；用 class: 指定词缀仅适用于原类别的装备，如 class:UtilityFlask。默认排除与原物品绑定的效果，包括范围珠宝、天赋树、按索引授予的辅助技能、特定传奇效果，以及药剂、魔法符、地图和遗物的专属词缀。</value>
+  </data>
   <data name="Text_8b7df2ff57b5" xml:space="preserve">
     <value>部分自定义文字/背景组合的对比度较低。请调整颜色或重置此方案。</value>
   </data>
@@ -4977,6 +5244,12 @@
   <data name="Text_8bd4d2ac7e54" xml:space="preserve">
     <value>每秒 p95，最繁忙的操作</value>
   </data>
+  <data name="Text_8be89710b2f1" xml:space="preserve">
+    <value>服务器地址</value>
+  </data>
+  <data name="Text_8beffaf2c9f4" xml:space="preserve">
+    <value>禁止作为固定词缀的词缀</value>
+  </data>
   <data name="Text_8c1304fcac2d" xml:space="preserve">
     <value>尚无角色。请在游戏中登录并创建角色。</value>
   </data>
@@ -4985,6 +5258,9 @@
   </data>
   <data name="Text_8c44609d7c15" xml:space="preserve">
     <value>客户端已复制到 Client\（第 3 步）</value>
+  </data>
+  <data name="Text_8c59f41492c9" xml:space="preserve">
+    <value>额外地图掉落</value>
   </data>
   <data name="Text_8c9e70a32535" xml:space="preserve">
     <value>打开迷宫布局</value>
@@ -5061,6 +5337,9 @@
   <data name="Text_8e5407e6fdc9" xml:space="preserve">
     <value>重命名配置文件</value>
   </data>
+  <data name="Text_8e6a6cca7aae" xml:space="preserve">
+    <value>步长</value>
+  </data>
   <data name="Text_8e6f9abf3515" xml:space="preserve">
     <value>LocalExile</value>
   </data>
@@ -5076,11 +5355,17 @@
   <data name="Text_8eb3ea9bbde6" xml:space="preserve">
     <value>Auth</value>
   </data>
+  <data name="Text_8ec03b14103d" xml:space="preserve">
+    <value>惊喜装备</value>
+  </data>
   <data name="Text_8ec3f7b3561d" xml:space="preserve">
     <value>打开采集文件夹</value>
   </data>
   <data name="Text_8eebbaa1dbe0" xml:space="preserve">
     <value>工作文件：{0}</value>
+  </data>
+  <data name="Text_8ef02f983cd5" xml:space="preserve">
+    <value>无服务器时的历史数据</value>
   </data>
   <data name="Text_8ef7823ca89b" xml:space="preserve">
     <value>引导式安装</value>
@@ -5105,6 +5390,9 @@
   </data>
   <data name="Text_8fa9011c3472" xml:space="preserve">
     <value>你平常的设置</value>
+  </data>
+  <data name="Text_8fe8781e5cbe" xml:space="preserve">
+    <value>额外通货掉落</value>
   </data>
   <data name="Text_8ffde53885bf" xml:space="preserve">
     <value>构建模组需要 .NET 10 SDK。请先安装（“设置”列出了检出所需的组件），然后重试。</value>
@@ -5138,6 +5426,9 @@
   </data>
   <data name="Text_909523b40339" xml:space="preserve">
     <value>模组是为此副本安装的扩展。可在“模组”中启用、更新和配置。</value>
+  </data>
+  <data name="Text_90b3f0b436cc" xml:space="preserve">
+    <value>离线交易</value>
   </data>
   <data name="Text_90eb3b815e3e" xml:space="preserve">
     <value>{0} 是传奇物品：物品制作器只能制作普通、魔法和稀有物品。</value>
@@ -5378,6 +5669,9 @@
   <data name="Text_96cedcf686b0" xml:space="preserve">
     <value>所选账号的角色</value>
   </data>
+  <data name="Text_96deeebf9888" xml:space="preserve">
+    <value>启用拾取</value>
+  </data>
   <data name="Text_9701a68fede6" xml:space="preserve">
     <value>搜索分支和拉取请求</value>
   </data>
@@ -5579,6 +5873,9 @@
   </data>
   <data name="Text_9bf4d9a05005" xml:space="preserve">
     <value>{0}：{1} 个词缀。有 {2} 行被忽略（红色）：物品制作器中没有这样措辞的词缀。</value>
+  </data>
+  <data name="Text_9c0a55369f3f" xml:space="preserve">
+    <value>所有可堆叠通货</value>
   </data>
   <data name="Text_9c0f7a91cfa6" xml:space="preserve">
     <value>游戏设置与你平常的游戏共用</value>
@@ -5823,6 +6120,9 @@
   <data name="Text_a2ccd3ea028e" xml:space="preserve">
     <value>指向另一个文件夹的链接</value>
   </data>
+  <data name="Text_a2d6529c2a84" xml:space="preserve">
+    <value>一条固定词缀的概率（1/N）</value>
+  </data>
   <data name="Text_a2e20a335700" xml:space="preserve">
     <value>删除账号</value>
   </data>
@@ -5840,6 +6140,9 @@
   </data>
   <data name="Text_a330c2786496" xml:space="preserve">
     <value>仍然启动</value>
+  </data>
+  <data name="Text_a3337d964fce" xml:space="preserve">
+    <value>全服聊天</value>
   </data>
   <data name="Text_a34d444917a5" xml:space="preserve">
     <value>无法读取 {0}。请关闭游戏后重试。</value>
@@ -5921,6 +6224,9 @@
   </data>
   <data name="Text_a4cb3139c1c6" xml:space="preserve">
     <value>服务器或游戏正在运行。切换前会先将其停止：否则正在运行的 Gateway 会在切换进行到一半时重新构建。</value>
+  </data>
+  <data name="Text_a4cf3a88ad7d" xml:space="preserve">
+    <value>提供传送、生成物品和怪物、经验、任务标记、测试命中及协议探测等开发和测试指令。</value>
   </data>
   <data name="Text_a4cfa83de3e7" xml:space="preserve">
     <value>让为更新补丁编写的物品过滤器（例如 FilterBlade 和 NeverSink 的 3.30 过滤器）能在此客户端中加载。只移除客户端没有的物品名称和规则；样式、音效和你在 FilterBlade 中的修改都会保留。</value>
@@ -6024,6 +6330,9 @@
   <data name="Text_a6d635a3b2fa" xml:space="preserve">
     <value>已复制地图详情。</value>
   </data>
+  <data name="Text_a6da199a913d" xml:space="preserve">
+    <value>外部转换器参数</value>
+  </data>
   <data name="Text_a700e84e04df" xml:space="preserve">
     <value>备份已删除。</value>
   </data>
@@ -6102,6 +6411,9 @@
   <data name="Text_a8e176f580cf" xml:space="preserve">
     <value>请检查上方的账号名和密码要求。</value>
   </data>
+  <data name="Text_a8fb315652f2" xml:space="preserve">
+    <value>外部转换器程序</value>
+  </data>
   <data name="Text_a91d36846491" xml:space="preserve">
     <value>请在进入新区域前启动采集器。如果游戏已关闭，它最多等待 10 分钟。</value>
   </data>
@@ -6177,6 +6489,9 @@
   <data name="Text_ab4bdca6bf1a" xml:space="preserve">
     <value>重新加载账号以查看所选数据库。</value>
   </data>
+  <data name="Text_ab51004e9d71" xml:space="preserve">
+    <value>天</value>
+  </data>
   <data name="Text_ab6dbf6ccc6e" xml:space="preserve">
     <value>基于你平常的游戏设置新建，不含保存的登录信息。</value>
   </data>
@@ -6225,6 +6540,9 @@
   <data name="Text_ad050d3449ef" xml:space="preserve">
     <value>已跟踪文件有修改</value>
   </data>
+  <data name="Text_ad0d74f84ab0" xml:space="preserve">
+    <value>玩家未用 /zoom 自行设定时的相机距离。1 表示游戏原始视角。</value>
+  </data>
   <data name="Text_ad2479c9496b" xml:space="preserve">
     <value>更改可用性前必须关闭游戏并停止服务，更改将在下次启动服务器后生效。</value>
   </data>
@@ -6237,11 +6555,17 @@
   <data name="Text_ad5b8321811a" xml:space="preserve">
     <value>波次</value>
   </data>
+  <data name="Text_ad68902ed528" xml:space="preserve">
+    <value>普通怪物额外地图概率</value>
+  </data>
   <data name="Text_ad6e2a06e006" xml:space="preserve">
     <value>基础旗帜</value>
   </data>
   <data name="Text_ad909a80eb9a" xml:space="preserve">
     <value>没有打开的拉取请求。</value>
+  </data>
+  <data name="Text_ada7233c9a41" xml:space="preserve">
+    <value>每次 /zoom out 或 /zoom in 调整的幅度。</value>
   </data>
   <data name="Text_adb0547b2fad" xml:space="preserve">
     <value>重启完成。</value>
@@ -6327,6 +6651,9 @@
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>联盟</value>
   </data>
+  <data name="Text_b0091e7175aa" xml:space="preserve">
+    <value>订单所需金币的倍率。</value>
+  </data>
   <data name="Text_b00ef4aaae35" xml:space="preserve">
     <value>{0} 中的副本包含你自己对 LocalExile 代码的更改，因此其中的角色可能不适用于此发布版。</value>
   </data>
@@ -6341,6 +6668,9 @@
   </data>
   <data name="Text_b03f0885df1b" xml:space="preserve">
     <value>{0} 不在发行版的 LocalExile 文件夹内；未做任何更改</value>
+  </data>
+  <data name="Text_b0631061689f" xml:space="preserve">
+    <value>扩大正常游戏中的视野。相机离角色更远，输入 /zoom 可设置距离。</value>
   </data>
   <data name="Text_b064b4cd50cd" xml:space="preserve">
     <value>{0} 不存在，Waypoint 将自行查找。</value>
@@ -6368,6 +6698,9 @@
   </data>
   <data name="Text_b11ebb313cb0" xml:space="preserve">
     <value>需要重启 Gateway</value>
+  </data>
+  <data name="Text_b11fb1f593a8" xml:space="preserve">
+    <value>买卖差价</value>
   </data>
   <data name="Text_b14253a69f90" xml:space="preserve">
     <value>重新加载命令</value>
@@ -6414,6 +6747,9 @@
   <data name="Text_b28731b86735" xml:space="preserve">
     <value>更多模组操作</value>
   </data>
+  <data name="Text_b2879dfbe9a4" xml:space="preserve">
+    <value>跟随、拾取和返回时的移速倍率。1 为正常速度，2 为双倍速度。</value>
+  </data>
   <data name="Text_b291f6978e5e" xml:space="preserve">
     <value>默认插槽；例如 RRGB 为 4 连，RR GB 为两组 2 连</value>
   </data>
@@ -6422,6 +6758,9 @@
   </data>
   <data name="Text_b29deff122c6" xml:space="preserve">
     <value>切换分支和拉取请求需要带 git 的 LocalExile 副本。此文件夹是发行版。请打开一个 git 文件夹，或安装一个新副本。</value>
+  </data>
+  <data name="Text_b2a131191189" xml:space="preserve">
+    <value>耐心订单成交速度</value>
   </data>
   <data name="Text_b2ab0c098068" xml:space="preserve">
     <value>物品上已有同组的另一个词缀：游戏不会让两者同时出现。</value>
@@ -6437,6 +6776,9 @@
   </data>
   <data name="Text_b30dfedf1111" xml:space="preserve">
     <value>下一步：模块</value>
+  </data>
+  <data name="Text_b3186b1c4aae" xml:space="preserve">
+    <value>物品稀有度</value>
   </data>
   <data name="Text_b332c3492d5e" xml:space="preserve">
     <value>配置</value>
@@ -6495,6 +6837,9 @@
   <data name="Text_b4a5df23dc4d" xml:space="preserve">
     <value>清单无效</value>
   </data>
+  <data name="Text_b4ac6880ab69" xml:space="preserve">
+    <value>聊天服务器的 IP 地址或主机名。</value>
+  </data>
   <data name="Text_b4bb971e7efe" xml:space="preserve">
     <value>增加服务器、分支和拉取请求、备份、性能、日志和控制台。此后 Waypoint 不会再自行更新 LocalExile。</value>
   </data>
@@ -6512,6 +6857,9 @@
   </data>
   <data name="Text_b5022456bffb" xml:space="preserve">
     <value>滚动到每一条新行</value>
+  </data>
+  <data name="Text_b577118ab9ed" xml:space="preserve">
+    <value>限同类传奇装备的词缀</value>
   </data>
   <data name="Text_b588f80b6484" xml:space="preserve">
     <value>打开失败阶段的日志</value>
@@ -6618,8 +6966,14 @@
   <data name="Text_b84cad41b231" xml:space="preserve">
     <value>新建物品</value>
   </data>
+  <data name="Text_b85409369ff1" xml:space="preserve">
+    <value>当前赛季</value>
+  </data>
   <data name="Text_b85f5fabf97d" xml:space="preserve">
     <value>树木</value>
+  </data>
+  <data name="Text_b8612a2b9663" xml:space="preserve">
+    <value>使用物品全名或元数据 ID。0 表示不拾取，1–65535 表示最低地面堆叠数量。</value>
   </data>
   <data name="Text_b86414f34662" xml:space="preserve">
     <value>稀有怪物群锚点</value>
@@ -6663,8 +7017,14 @@
   <data name="Text_b9d5ec6bc16f" xml:space="preserve">
     <value>此客户端是指向 {0} 的链接，从该文件夹启动的其他任何程序都会使用相同的设置。</value>
   </data>
+  <data name="Text_b9dbb805fc1c" xml:space="preserve">
+    <value>{0} 不能与 {1} 同时运行。</value>
+  </data>
   <data name="Text_b9f4f560cff4" xml:space="preserve">
     <value>不在打开列表中的拉取请求：按编号从 GitHub 获取其 head</value>
+  </data>
+  <data name="Text_ba118bf7fc9c" xml:space="preserve">
+    <value>英语</value>
   </data>
   <data name="Text_ba183803c449" xml:space="preserve">
     <value>{0} 中的账号、角色和仓库会被复制到这里；那个文件夹只会被读取。此发布版自己的数据会先备份并另行保存。</value>
@@ -6692,6 +7052,9 @@
   </data>
   <data name="Text_ba89783a339f" xml:space="preserve">
     <value>选择账号</value>
+  </data>
+  <data name="Text_ba9068ab94ec" xml:space="preserve">
+    <value>额外背包</value>
   </data>
   <data name="Text_baaddf70fb5d" xml:space="preserve">
     <value>类型</value>
@@ -6741,6 +7104,9 @@
   <data name="Text_bbb7b7a9d1cb" xml:space="preserve">
     <value>正在启动游戏</value>
   </data>
+  <data name="Text_bbcfb23c6d2e" xml:space="preserve">
+    <value>传奇怪物额外地图概率</value>
+  </data>
   <data name="Text_bbdc5622633e" xml:space="preserve">
     <value>一切就绪。在 Waypoint 中点击“开始游戏”即可启动服务器和游戏。</value>
   </data>
@@ -6749,6 +7115,9 @@
   </data>
   <data name="Text_bbe963c645f0" xml:space="preserve">
     <value>巨龙</value>
+  </data>
+  <data name="Text_bbec126884b0" xml:space="preserve">
+    <value>可出现的词缀</value>
   </data>
   <data name="Text_bc01ae77f37c" xml:space="preserve">
     <value>完成安装</value>
@@ -6803,6 +7172,9 @@
   </data>
   <data name="Text_bd814d6ca441" xml:space="preserve">
     <value>“{0}”不是插槽颜色（R、G、B 或 W）</value>
+  </data>
+  <data name="Text_bda1ff0862ad" xml:space="preserve">
+    <value>可获得此效果的物品</value>
   </data>
   <data name="Text_bdb03ff604f8" xml:space="preserve">
     <value>残酷模式</value>
@@ -6900,6 +7272,9 @@
   <data name="Text_c0fa1dcd67a3" xml:space="preserve">
     <value>已完成的部分会保留，已复制的部分也会保留。点击“继续”即可从此处接着进行，现在或改天都可以。</value>
   </data>
+  <data name="Text_c11b0d3fa16e" xml:space="preserve">
+    <value>宠物拾取金币</value>
+  </data>
   <data name="Text_c11c363d0402" xml:space="preserve">
     <value>发行版会覆盖存有你自己数据的 {0}；未做任何更改</value>
   </data>
@@ -6923,6 +7298,9 @@
   </data>
   <data name="Text_c1949802a579" xml:space="preserve">
     <value>附魔</value>
+  </data>
+  <data name="Text_c19cd7719e80" xml:space="preserve">
+    <value>新增联盟 {0}</value>
   </data>
   <data name="Text_c1a0441de50c" xml:space="preserve">
     <value>返回我的模组</value>
@@ -6953,6 +7331,9 @@
   </data>
   <data name="Text_c285bfca43e4" xml:space="preserve">
     <value>{0} 已存在。</value>
+  </data>
+  <data name="Text_c288f032998a" xml:space="preserve">
+    <value>订单加快成交的程度。默认热门物品最长 5 分钟，最稀有物品最长 12 小时。</value>
   </data>
   <data name="Text_c29d9392b89a" xml:space="preserve">
     <value>一切就绪。在 Waypoint 中点击“开始游戏”即可启动游戏。使用你的账号登录：将账号名填入“电邮”（Email）字段。LocalExile 使用自己的游戏设置，因此你平时的流放之路会保留原有设置。</value>
@@ -7029,6 +7410,9 @@
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>下次记住此选择</value>
   </data>
+  <data name="Text_c533559f1887" xml:space="preserve">
+    <value>{0} 只允许其列出的模块和模组，{1} 不在其中。</value>
+  </data>
   <data name="Text_c53d2d6c95e3" xml:space="preserve">
     <value>点击查看你的其他 LocalExile 文件夹</value>
   </data>
@@ -7038,6 +7422,9 @@
   <data name="Text_c54387284052" xml:space="preserve">
     <value>回应的是 Microsoft Store 的 python 快捷方式，而不是 Python。请从 python.org 安装 Python 3.9 或更高版本，并勾选“Add python.exe to PATH”。</value>
   </data>
+  <data name="Text_c57f2ed47349" xml:space="preserve">
+    <value>使用 LocalExile 全服聊天服务器，与其他玩家在全服、交易和私聊频道交流。</value>
+  </data>
   <data name="Text_c58597b15074" xml:space="preserve">
     <value>3–32 个字母、数字、_ 或 -</value>
   </data>
@@ -7046,6 +7433,9 @@
   </data>
   <data name="Text_c5bb39f523b4" xml:space="preserve">
     <value>正在安装 Frida…</value>
+  </data>
+  <data name="Text_c614098d531e" xml:space="preserve">
+    <value>让 Waypoint 工具无需客户端控制桥也能与游戏交互，例如把制作的物品发给角色。</value>
   </data>
   <data name="Text_c630a782a9eb" xml:space="preserve">
     <value>重新安装</value>
@@ -7070,6 +7460,9 @@
   </data>
   <data name="Text_c6c20be1441a" xml:space="preserve">
     <value>服务器耗时</value>
+  </data>
+  <data name="Text_c6cafc353a87" xml:space="preserve">
+    <value>每条强化词缀在此范围内随机取值。</value>
   </data>
   <data name="Text_c6d5a902b1fb" xml:space="preserve">
     <value>移除仓库</value>
@@ -7114,6 +7507,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c75dcf9e038c" xml:space="preserve">
     <value>正在停止服务</value>
   </data>
+  <data name="Text_c79f31d26ff0" xml:space="preserve">
+    <value>未使用报价服务器时，保留最近多少小时的 GGG 汇总记录。每小时约 1 MB，每份仅读取一次。减少记录可节省存储、内存和时间，但覆盖的稀有物品也更少。</value>
+  </data>
   <data name="Text_c7a882f64135" xml:space="preserve">
     <value>无法加载源码选项：</value>
   </data>
@@ -7146,6 +7542,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_c83931177471" xml:space="preserve">
     <value>这不是物品：请在 Path of Building 或游戏中用 Ctrl+C 复制一件物品。</value>
+  </data>
+  <data name="Text_c86ca7b723e9" xml:space="preserve">
+    <value>在所有联赛中运行的模组。取消勾选即可将其从列表中移除。</value>
   </data>
   <data name="Text_c87d285421d0" xml:space="preserve">
     <value>无法选择经过测试的版本（git 退出代码 {0}）。</value>
@@ -7207,6 +7606,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_c9be7a297f8d" xml:space="preserve">
     <value>只有当发布版与“最新版”相同或更新时，角色才能回到发布版：较新的 LocalExile 可能保存旧发布版无法读取的内容。</value>
   </data>
+  <data name="Text_c9cc8d882338" xml:space="preserve">
+    <value>订单栏位</value>
+  </data>
   <data name="Text_c9cf9cba7b44" xml:space="preserve">
     <value>读取 LocalExile 和 origin 的分支，以及 LocalExile 中打开的拉取请求</value>
   </data>
@@ -7221,6 +7623,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ca1844969742" xml:space="preserve">
     <value>不可用</value>
+  </data>
+  <data name="Text_ca3ab32507c1" xml:space="preserve">
+    <value>供尚无保存配置的角色使用。</value>
   </data>
   <data name="Text_ca4e5268289a" xml:space="preserve">
     <value>{1} 的 {0} 个备份</value>
@@ -7293,6 +7698,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cbef8c5002e9" xml:space="preserve">
     <value>{0} | 热重载监视进程 PID {1}</value>
   </data>
+  <data name="Text_cc12712748a0" xml:space="preserve">
+    <value>像魔血这样的稀有传奇，其词缀也更难出现。关闭后所有词缀权重相同。</value>
+  </data>
   <data name="Text_cc2162d992f4" xml:space="preserve">
     <value>客户端在准备过程中发生了更改。请关闭其官方启动器后重试。</value>
   </data>
@@ -7335,8 +7743,14 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_cd27f46c485b" xml:space="preserve">
     <value>自定义颜色</value>
   </data>
+  <data name="Text_cd34c210a0f8" xml:space="preserve">
+    <value>PoB 配装导入</value>
+  </data>
   <data name="Text_cd4b01b8b2e8" xml:space="preserve">
     <value>已导入 {0}，含 {1} 个词缀。“保存”可将其保留在列表中。</value>
+  </data>
+  <data name="Text_cd55a9d95751" xml:space="preserve">
+    <value>{0} · {1}</value>
   </data>
   <data name="Text_cd77503a4522" xml:space="preserve">
     <value>命令已复制到剪贴板，但它有 {0} 个字符，而游戏聊天框最多只能输入 {1} 个。请改用“发放物品”。</value>
@@ -7400,6 +7814,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_cfc1d283500c" xml:space="preserve">
     <value>已保留，{0:0.#} GB</value>
+  </data>
+  <data name="Text_cfdbaf444ec1" xml:space="preserve">
+    <value>本地其他赛季（含专家模式）采用哪个国际服赛季的价格。</value>
   </data>
   <data name="Text_cff965236d80" xml:space="preserve">
     <value>LocalExile 文件夹：{0}，{1}</value>
@@ -7478,6 +7895,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d24c41ae530a" xml:space="preserve">
     <value>意外错误</value>
+  </data>
+  <data name="Text_d2501e49d43a" xml:space="preserve">
+    <value>单个玩家同时可挂出的订单数。</value>
   </data>
   <data name="Text_d28f5e178579" xml:space="preserve">
     <value>打开客户端文件夹</value>
@@ -7559,6 +7979,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d505316d6f5f" xml:space="preserve">
     <value>退出会完全关闭 Waypoint。无论哪种方式，服务器和游戏都会继续运行。</value>
+  </data>
+  <data name="Text_d560cfcd35da" xml:space="preserve">
+    <value>简体中文</value>
   </data>
   <data name="Text_d58f93b4a354" xml:space="preserve">
     <value>只有在游戏及其服务器都已关闭时才能更新 LocalExile。请关闭游戏，等待服务器停止，然后再次点击“立即更新”。</value>
@@ -7674,6 +8097,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d82d265d278c" xml:space="preserve">
     <value>安装或打开 LocalExile 的正式发布版。它有自己的角色；你在这里的角色会保留在此文件夹中。</value>
   </data>
+  <data name="Text_d8385b4d9377" xml:space="preserve">
+    <value>每次击杀掉落物品数量的倍率。</value>
+  </data>
   <data name="Text_d838ad216459" xml:space="preserve">
     <value>✓  游戏运行中</value>
   </data>
@@ -7730,6 +8156,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_da12ab901ff9" xml:space="preserve">
     <value>筛选</value>
+  </data>
+  <data name="Text_da38d9a4af9b" xml:space="preserve">
+    <value>玩家返回时可补算离线期间多少小时的订单成交。0 表示只使用当前一小时的价格。</value>
   </data>
   <data name="Text_da47f4a23bce" xml:space="preserve">
     <value>下载已结束，但客户端不完整。请再运行一次。</value>
@@ -7791,6 +8220,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_dbdf27e5db8d" xml:space="preserve">
     <value>正在安装</value>
   </data>
+  <data name="Text_dbf3bdcb1e94" xml:space="preserve">
+    <value>传奇固定词缀</value>
+  </data>
   <data name="Text_dc0a0a26052e" xml:space="preserve">
     <value>浏览其他位置…</value>
   </data>
@@ -7805,6 +8237,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_dc6c5ae4c245" xml:space="preserve">
     <value>删除 {0}？</value>
+  </data>
+  <data name="Text_dc6f1e6e5f8d" xml:space="preserve">
+    <value>稀有传奇的词缀更罕见</value>
   </data>
   <data name="Text_dc937b598926" xml:space="preserve">
     <value>无</value>
@@ -7898,6 +8333,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_df0663641d3e" xml:space="preserve">
     <value>阶梯</value>
+  </data>
+  <data name="Text_df35142c7fad" xml:space="preserve">
+    <value>浮士德每小时可成交的数量，按国际服该物品每小时成交量计算，分六次供应，每次至少一件。0 表示无限供应，订单即时成交。</value>
   </data>
   <data name="Text_df38f1891a79" xml:space="preserve">
     <value>创建账号前将备份现有的存档数据库。</value>
@@ -8056,6 +8494,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e2c3e1dc9225" xml:space="preserve">
     <value>Waypoint 自己的日志文件，在各次运行之间保留</value>
   </data>
+  <data name="Text_e2c82ab44aed" xml:space="preserve">
+    <value>实时通货市场</value>
+  </data>
   <data name="Text_e2d0a54968ea" xml:space="preserve">
     <value>删除</value>
   </data>
@@ -8073,6 +8514,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e30ce05d3185" xml:space="preserve">
     <value>更多界面颜色</value>
+  </data>
+  <data name="Text_e33cc52f3308" xml:space="preserve">
+    <value>击杀经验</value>
   </data>
   <data name="Text_e33d34991e45" xml:space="preserve">
     <value>在 dotnet watch 下运行：保存的 Gateway 代码修改会在几秒内生效，游戏无需退出；热重载无法应用的修改会使 Gateway 自动重启。Auth、Patch 或共享项目的修改需要“重启服务器”。</value>
@@ -8122,6 +8566,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop 和 dev host：游戏、行走地图记录器、服务器和账号服务</value>
   </data>
+  <data name="Text_e48be159b57c" xml:space="preserve">
+    <value>物品数量</value>
+  </data>
   <data name="Text_e4a1e89ee1db" xml:space="preserve">
     <value>前一天</value>
   </data>
@@ -8143,6 +8590,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e54674967f90" xml:space="preserve">
     <value>你的新副本位于 {0}。在 Waypoint 中点击“开始游戏”即可启动。</value>
   </data>
+  <data name="Text_e5839f96c2e3" xml:space="preserve">
+    <value>在聊天中通知</value>
+  </data>
   <data name="Text_e5997acfabd7" xml:space="preserve">
     <value>游戏正在运行：Waypoint 会在此等待，并在游戏关闭后返回。</value>
   </data>
@@ -8160,6 +8610,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e61ca9b03292" xml:space="preserve">
     <value>此发布版没有说明它是由哪个版本的 LocalExile 代码构建的，因此 Waypoint 无法判断你的角色是否适用于它。</value>
+  </data>
+  <data name="Text_e622e2f14f23" xml:space="preserve">
+    <value>金币手续费</value>
   </data>
   <data name="Text_e62daa01ba01" xml:space="preserve">
     <value>选择并检查一个工作区，以查看其备份。</value>
@@ -8248,6 +8701,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e889c27dc68e" xml:space="preserve">
     <value>刷新模组详情</value>
   </data>
+  <data name="Text_e8a8e34dd63a" xml:space="preserve">
+    <value>本地标准区采用哪个国际服赛季的价格。</value>
+  </data>
   <data name="Text_e8acb805db1e" xml:space="preserve">
     <value>下载内容中没有 {0} 的文件；未安装任何内容</value>
   </data>
@@ -8259,6 +8715,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e8def7f2e04e" xml:space="preserve">
     <value>浅色模式颜色</value>
+  </data>
+  <data name="Text_e8f760b43cd8" xml:space="preserve">
+    <value>订单成交价格随时间从买价往卖价推进的幅度。100% 可跨越全部差价，50% 最高到官方市场价，0 关闭此机制。</value>
   </data>
   <data name="Text_e913447f262a" xml:space="preserve">
     <value>专家模式</value>
@@ -8521,6 +8980,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_ef31cc33ab5a" xml:space="preserve">
     <value>游戏素材不可用 — 当前显示占位旗帜。</value>
   </data>
+  <data name="Text_ef6068ed2af5" xml:space="preserve">
+    <value>增加的小型天赋技能获得：{0}</value>
+  </data>
   <data name="Text_ef6691545d2c" xml:space="preserve">
     <value>标准</value>
   </data>
@@ -8599,6 +9061,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f18e2bb0aa10" xml:space="preserve">
     <value>使用独立的游戏设置</value>
   </data>
+  <data name="Text_f1959987d67e" xml:space="preserve">
+    <value>模组带来的联赛无法在这里隐藏或显示：更新该模组会撤销该更改。</value>
+  </data>
   <data name="Text_f1b7505afa5c" xml:space="preserve">
     <value>社交</value>
   </data>
@@ -8618,6 +9083,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
 4. 等待复制完成。返回“安装”，点击“准备客户端”。
 
 客户端必须是这个 LocalExile 支持的版本。也可以在文件夹列表中选择“游戏客户端”，从 Steam 下载。</value>
+  </data>
+  <data name="Text_f2390388f1b8" xml:space="preserve">
+    <value>请输入准确的通货名称或元数据 ID。例如，0.05 表示每次符合条件的击杀有 5% 概率额外掉落一件。</value>
   </data>
   <data name="Text_f24116ae1425" xml:space="preserve">
     <value>欢迎使用 Waypoint</value>
@@ -8690,6 +9158,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f3ec74792130" xml:space="preserve">
     <value>服务保持停止状态。即使构建失败，存档数据库也会保留。</value>
+  </data>
+  <data name="Text_f3f4a5f98e08" xml:space="preserve">
+    <value>每次击杀掉落的物品数量提升至 10 倍。</value>
   </data>
   <data name="Text_f3fca419194d" xml:space="preserve">
     <value>将此行固定为按钮（右键单击已固定的按钮可将其移除）</value>
@@ -8830,6 +9301,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f785c3ce1d58" xml:space="preserve">
     <value>毫秒</value>
   </data>
+  <data name="Text_f78774b83063" xml:space="preserve">
+    <value>市场成交份额</value>
+  </data>
   <data name="Text_f7a7e0898704" xml:space="preserve">
     <value>需要 umu-launcher，它会通过 Proton 运行发行版。有新发行版时，Waypoint 会通知你并为你安装。</value>
   </data>
@@ -8895,6 +9369,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f95b3eb4bed4" xml:space="preserve">
     <value>生成地图</value>
+  </data>
+  <data name="Text_f97f4364e0c1" xml:space="preserve">
+    <value>可堆叠地图碎片</value>
   </data>
   <data name="Text_f9a56c85fda5" xml:space="preserve">
     <value>游戏状态</value>

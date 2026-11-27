@@ -1,0 +1,346 @@
+<l:FormWindow xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+              xmlns:l="clr-namespace:Waypoint"
+              x:Class="Waypoint.ItemCrafterWindow"
+              Title="{l:Loc 'Item crafter'}" Width="1440" Height="840" MinWidth="1110" MinHeight="620">
+  <!-- The Linux copy of src/Waypoint/ItemCrafterWindow.xaml, in Avalonia. -->
+  <l:FormWindow.Styles>
+    <!-- A small round tag: a modifier's kind or tier. -->
+    <Style Selector="Border.tag">
+      <Setter Property="CornerRadius" Value="3" />
+      <Setter Property="Padding" Value="5,1" />
+      <Setter Property="Margin" Value="0,0,6,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Background" Value="{DynamicResource Shell.RowHover}" />
+    </Style>
+    <Style Selector="TextBlock.crafterHeading">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+      <Setter Property="Margin" Value="0,10,0,4" />
+      <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style Selector="TextBlock.secondary">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+    </Style>
+    <!-- A page of the left column, or a rarity: a tab with a line under the chosen one. -->
+    <Style Selector="RadioButton.tab">
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Padding" Value="12,6" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Name="Line" Background="Transparent" BorderThickness="0,0,0,2" BorderBrush="Transparent" Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontWeight="SemiBold" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="RadioButton.tab:checked">
+      <Setter Property="Foreground" Value="{DynamicResource Shell.Accent}" />
+    </Style>
+    <Style Selector="RadioButton.tab:checked /template/ Border#Line">
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Accent}" />
+    </Style>
+    <Style Selector="RadioButton.tab:pointerover /template/ Border#Line">
+      <Setter Property="Background" Value="{DynamicResource Shell.RowHover}" />
+    </Style>
+    <!-- A pill that is on or off: a state, an influence, an item class. -->
+    <Style Selector="ToggleButton.chip">
+      <Setter Property="Height" Value="26" />
+      <Setter Property="Padding" Value="11,0" />
+      <Setter Property="Margin" Value="0,0,6,6" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="CornerRadius" Value="13" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.Text}" />
+      <Setter Property="Background" Value="{DynamicResource Shell.Background}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+    </Style>
+    <Style Selector="ToggleButton.chip:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource Shell.RowHover}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Border}" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.Text}" />
+    </Style>
+    <Style Selector="ToggleButton.chip:checked /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource Shell.Primary}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Shell.Primary}" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.OnAccent}" />
+    </Style>
+    <Style Selector="ToggleButton.chip:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+    <Style Selector="Button.icon">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Padding" Value="5" />
+    </Style>
+    <!-- The delete button of a saved row shows on the row under the mouse and the selected ones. -->
+    <Style Selector="ListBoxItem Button.rowDelete">
+      <Setter Property="Opacity" Value="0" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover Button.rowDelete, ListBoxItem:selected Button.rowDelete">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+  </l:FormWindow.Styles>
+
+  <Grid RowDefinitions="*,Auto">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="27*" MinWidth="340" />
+      <ColumnDefinition Width="44*" MinWidth="440" />
+      <ColumnDefinition Width="29*" MinWidth="290" />
+    </Grid.ColumnDefinitions>
+
+    <!-- Left: the base, the modifiers to add, the saved items. -->
+    <Border Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,0,1,0">
+      <DockPanel Margin="14,10,14,10">
+        <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+          <RadioButton x:Name="BasesPage" Classes="tab" GroupName="CrafterPage" IsChecked="True" IsCheckedChanged="PageChanged" Content="{l:Loc 'Base'}" />
+          <RadioButton x:Name="ModsPage" Classes="tab" GroupName="CrafterPage" IsCheckedChanged="PageChanged" Content="{l:Loc 'Add modifiers'}" />
+          <RadioButton x:Name="SavedPage" Classes="tab" GroupName="CrafterPage" IsCheckedChanged="PageChanged" Content="{l:Loc 'Saved'}" />
+        </WrapPanel>
+
+        <Grid>
+          <!-- Bases: the classes as icons, a search, the list. -->
+          <DockPanel x:Name="BasesView">
+            <WrapPanel x:Name="ClassButtons" DockPanel.Dock="Top" Margin="0,0,0,6" />
+            <TextBox x:Name="BaseSearch" DockPanel.Dock="Top" Margin="0,0,0,6" PlaceholderText="{l:Loc 'Search bases'}" TextChanged="BaseSearchChanged">
+              <TextBox.InnerLeftContent><icons:MaterialIcon Kind="Magnify" Width="18" Height="18" Margin="8,0,0,0" /></TextBox.InnerLeftContent>
+            </TextBox>
+            <ListBox x:Name="BaseList" SelectionChanged="BaseChosen" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <DockPanel Margin="0,1">
+                    <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center"
+                                        Foreground="{DynamicResource Shell.Accent}" />
+                    <StackPanel>
+                      <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Text="{Binding Detail}" Classes="secondary" FontSize="11.5" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                  </DockPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </DockPanel>
+
+          <!-- Modifiers that can go on the base: one kind at a time, searched, best tiers first. -->
+          <DockPanel x:Name="ModsView" IsVisible="False">
+            <ComboBox x:Name="ModKind" DockPanel.Dock="Top" Margin="0,0,0,6" HorizontalAlignment="Stretch" SelectionChanged="ModFilterChanged"
+                      PlaceholderText="{l:Loc 'Kind'}" />
+            <TextBox x:Name="ModSearch" DockPanel.Dock="Top" Margin="0,0,0,4" PlaceholderText="{l:Loc 'Search modifiers'}" TextChanged="ModFilterChanged">
+              <TextBox.InnerLeftContent><icons:MaterialIcon Kind="Magnify" Width="18" Height="18" Margin="8,0,0,0" /></TextBox.InnerLeftContent>
+            </TextBox>
+            <WrapPanel DockPanel.Dock="Top" Margin="0,2,0,2">
+              <CheckBox x:Name="BestTiers" Content="{l:Loc 'Best tier only'}" IsChecked="True" IsCheckedChanged="ModFilterChanged" Margin="0,0,12,0" />
+              <CheckBox x:Name="AnyLevel" Content="{l:Loc 'Above item level'}" IsCheckedChanged="ModFilterChanged"
+                        ToolTip.Tip="{l:Loc 'Also list modifiers that need a higher item level than the item has'}" />
+            </WrapPanel>
+            <TextBlock x:Name="ModHint" DockPanel.Dock="Top" Classes="secondary" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,4" />
+            <ListBox x:Name="ModList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DoubleTapped="ModListDoubleClick" KeyDown="ModListKeyDown">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <DockPanel Margin="0,2" Opacity="{Binding Opacity}">
+                    <Button DockPanel.Dock="Right" Classes="icon" Width="28" Height="28" Click="AddModClicked" Tag="{Binding}"
+                            ToolTip.Tip="{l:Loc 'Add to the item'}" AutomationProperties.Name="{l:Loc 'Add to the item'}" VerticalAlignment="Center">
+                      <icons:MaterialIcon Kind="Plus" Width="18" Height="18" />
+                    </Button>
+                    <Border DockPanel.Dock="Left" Classes="tag" MinWidth="28" ToolTip.Tip="{Binding TierHint}">
+                      <TextBlock Text="{Binding TierText}" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center" TextWrapping="NoWrap" />
+                    </Border>
+                    <StackPanel>
+                      <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                      <TextBlock Text="{Binding Detail}" Classes="secondary" FontSize="11" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                  </DockPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </DockPanel>
+
+          <!-- Saved items. -->
+          <DockPanel x:Name="SavedView" IsVisible="False">
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+              <Button x:Name="DeleteButton" DockPanel.Dock="Right" Classes="icon" Click="DeleteItem" IsEnabled="False"
+                      ToolTip.Tip="{l:Loc 'Delete the selected items (Delete key); Ctrl or Shift selects several'}" ToolTip.ShowOnDisabled="True"
+                      AutomationProperties.Name="{l:Loc 'Delete'}">
+                <icons:MaterialIcon Kind="DeleteOutline" Width="20" Height="20" />
+              </Button>
+              <Button x:Name="DuplicateButton" DockPanel.Dock="Right" Classes="icon" Click="DuplicateItem" IsEnabled="False" Margin="0,0,2,0"
+                      ToolTip.Tip="{l:Loc 'Duplicate'}" ToolTip.ShowOnDisabled="True" AutomationProperties.Name="{l:Loc 'Duplicate'}">
+                <icons:MaterialIcon Kind="ContentCopy" Width="18" Height="18" />
+              </Button>
+              <WrapPanel ItemSpacing="6">
+                <Button Content="{l:Loc 'New item'}" Click="NewItem" />
+                <Button Content="{l:Loc 'Import item'}" Click="ImportItem"
+                        ToolTip.Tip="{l:Loc 'Paste an item copied with Ctrl+C in Path of Building or in the game (Ctrl+V here does the same)'}" />
+              </WrapPanel>
+            </DockPanel>
+            <TextBox x:Name="SavedSearch" DockPanel.Dock="Top" Margin="0,0,0,6" PlaceholderText="{l:Loc 'Search saved items'}" TextChanged="SavedSearchChanged">
+              <TextBox.InnerLeftContent><icons:MaterialIcon Kind="Magnify" Width="18" Height="18" Margin="8,0,0,0" /></TextBox.InnerLeftContent>
+            </TextBox>
+            <Grid>
+              <ListBox x:Name="SavedList" SelectionChanged="SavedChosen" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                       SelectionMode="Multiple" KeyDown="SavedListKeyDown">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <DockPanel Margin="0,2">
+                      <Button DockPanel.Dock="Right" Classes="icon rowDelete" Width="28" Height="28" VerticalAlignment="Center" Click="DeleteRowClicked" Tag="{Binding}"
+                              ToolTip.Tip="{l:Loc 'Delete this item'}" AutomationProperties.Name="{l:Loc 'Delete this item'}">
+                        <icons:MaterialIcon Kind="DeleteOutline" Width="18" Height="18" />
+                      </Button>
+                      <icons:MaterialIcon DockPanel.Dock="Left" Kind="{Binding Icon}" Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center"
+                                          Foreground="{Binding Brush}" />
+                      <StackPanel>
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{Binding Brush}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding Detail}" Classes="secondary" FontSize="11.5" TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                    </DockPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+              <TextBlock x:Name="SavedEmpty" Classes="secondary" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                         HorizontalAlignment="Center" MaxWidth="240" IsHitTestVisible="False"
+                         Text="{l:Loc 'No saved items yet. Make one and press Save.'}" />
+            </Grid>
+          </DockPanel>
+
+          <TextBlock x:Name="Loading" Classes="secondary" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                     HorizontalAlignment="Center" MaxWidth="260" Background="{DynamicResource Shell.Panel}" />
+        </Grid>
+      </DockPanel>
+    </Border>
+
+    <!-- Center: the item. -->
+    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel x:Name="Editor" Margin="20,12,20,16" IsEnabled="False">
+        <DockPanel>
+          <icons:MaterialIcon x:Name="BaseIcon" Kind="Anvil" Width="40" Height="40" Margin="0,0,12,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.Accent}" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock x:Name="BaseTitle" Text="{l:Loc 'Choose a base on the left'}" FontSize="18" FontWeight="SemiBold" />
+            <TextBlock x:Name="BaseSummary" Classes="secondary" />
+          </StackPanel>
+        </DockPanel>
+
+        <TextBlock Classes="crafterHeading" Text="{l:Loc 'RARITY'}" />
+        <WrapPanel x:Name="RarityButtons" />
+
+        <Grid Margin="0,4,0,0" ColumnDefinitions="*,16,*">
+          <StackPanel>
+            <TextBlock Classes="crafterHeading" Text="{l:Loc 'ITEM LEVEL'}" />
+            <DockPanel>
+              <TextBox x:Name="LevelBox" DockPanel.Dock="Right" Width="54" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Center" LostFocus="LevelTyped" KeyDown="NumberKeyDown" />
+              <Slider x:Name="LevelSlider" Minimum="1" Maximum="100" IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"
+                      ValueChanged="LevelChanged" />
+            </DockPanel>
+          </StackPanel>
+          <StackPanel Grid.Column="2" x:Name="QualityPanel">
+            <TextBlock Classes="crafterHeading" Text="{l:Loc 'QUALITY'}" />
+            <DockPanel>
+              <TextBox x:Name="QualityBox" DockPanel.Dock="Right" Width="54" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Center" LostFocus="QualityTyped" KeyDown="NumberKeyDown" />
+              <Slider x:Name="QualitySlider" Minimum="0" Maximum="30" IsSnapToTickEnabled="True" TickFrequency="1" VerticalAlignment="Center"
+                      ValueChanged="QualityChanged" />
+            </DockPanel>
+          </StackPanel>
+        </Grid>
+
+        <StackPanel x:Name="SocketPanel">
+          <TextBlock Classes="crafterHeading" Text="{l:Loc 'SOCKETS'}" />
+          <DockPanel>
+            <StackPanel x:Name="SocketPalette" DockPanel.Dock="Right" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center" />
+            <TextBox x:Name="SocketBox" PlaceholderText="{l:Loc 'Default sockets; e.g. RRGB a 4-link, RR GB two pairs'}" TextChanged="SocketsChanged"
+                     FontFamily="monospace" />
+          </DockPanel>
+          <TextBlock x:Name="SocketError" Foreground="{DynamicResource Shell.Error}" FontSize="11.5" IsVisible="False" Margin="0,2,0,0" />
+        </StackPanel>
+
+        <TextBlock Classes="crafterHeading" Text="{l:Loc 'STATES AND INFLUENCES'}" />
+        <WrapPanel x:Name="StateButtons" />
+
+        <StackPanel x:Name="NamePanel">
+          <TextBlock Classes="crafterHeading" Text="{l:Loc 'RARE NAME'}" />
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Classes="icon" Click="RandomName" ToolTip.Tip="{l:Loc 'Random name'}" AutomationProperties.Name="{l:Loc 'Random name'}" Margin="6,0,0,0">
+              <icons:MaterialIcon Kind="DiceMultiple" Width="20" Height="20" />
+            </Button>
+            <Grid ColumnDefinitions="*,10,*">
+              <ComboBox x:Name="NameFirst" HorizontalAlignment="Stretch" IsTextSearchEnabled="True" SelectionChanged="NameChanged" PlaceholderText="{l:Loc 'Random'}">
+                <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Text}" /></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
+              <ComboBox x:Name="NameSecond" Grid.Column="2" HorizontalAlignment="Stretch" IsTextSearchEnabled="True" SelectionChanged="NameChanged" PlaceholderText="{l:Loc 'Random'}">
+                <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Text}" /></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
+            </Grid>
+          </DockPanel>
+        </StackPanel>
+
+        <DockPanel Margin="0,14,0,0">
+          <Button DockPanel.Dock="Right" Click="ClearMods" Content="{l:Loc 'Remove all'}" />
+          <Button DockPanel.Dock="Right" Click="ShowModPicker" Content="{l:Loc 'Add modifiers'}" Margin="0,0,6,0" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Classes="crafterHeading" Text="{l:Loc 'MODIFIERS'}" Margin="0" />
+            <TextBlock x:Name="AffixCount" Classes="secondary" FontSize="11.5" Margin="0,2,0,0" TextWrapping="Wrap" />
+          </StackPanel>
+        </DockPanel>
+        <StackPanel x:Name="ModRows" Margin="0,8,0,0" />
+        <TextBlock x:Name="NoMods" Classes="secondary" Margin="0,6,0,0" TextWrapping="Wrap"
+                   Text="{l:Loc 'No modifiers. Add them from the Add modifiers page on the left; double-click or Enter adds the selected one.'}" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Right: how the item looks, and what to do with it. -->
+    <Border Grid.Column="2" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="1,0,0,0">
+      <DockPanel Margin="16,14,16,12">
+        <StackPanel DockPanel.Dock="Bottom">
+          <TextBox x:Name="LabelBox" PlaceholderText="{l:Loc 'Label in the saved list (optional)'}" Margin="0,0,0,8" TextChanged="LabelChanged" />
+          <WrapPanel ItemSpacing="6" LineSpacing="6">
+            <Button x:Name="SaveButton" Click="SaveItem" IsEnabled="False" ToolTip.Tip="{l:Loc 'Keep the item in the saved list to come back to it'}"
+                    AutomationProperties.Name="{l:Loc 'Save'}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <icons:MaterialIcon Kind="ContentSaveOutline" VerticalAlignment="Center" />
+                <TextBlock Text="{l:Loc 'Save'}" />
+              </StackPanel>
+            </Button>
+            <Button x:Name="GiveButton" Classes="accent" Click="GiveItem" IsEnabled="False" ToolTip.ShowOnDisabled="True"
+                    ToolTip.Tip="{l:Loc 'Put the item into the inventory of the character in game (the Waypoint Tools mod)'}"
+                    AutomationProperties.Name="{l:Loc 'Give item'}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <icons:MaterialIcon Kind="GiftOutline" VerticalAlignment="Center" />
+                <TextBlock Text="{l:Loc 'Give item'}" />
+              </StackPanel>
+            </Button>
+            <Button x:Name="CopyButton" Click="CopyCommand" IsEnabled="False" ToolTip.Tip="{l:Loc 'Copy the chat command that gives this item'}"
+                    AutomationProperties.Name="{l:Loc 'Copy the chat command that gives this item'}">
+              <icons:MaterialIcon Kind="ContentCopy" />
+            </Button>
+            <Button Click="ResetCrafter" AutomationProperties.Name="{l:Loc 'Reset'}"
+                    ToolTip.Tip="{l:Loc 'Start over with an empty item: no base, no modifiers, the searches and filters cleared. Saved items stay.'}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <icons:MaterialIcon Kind="Broom" VerticalAlignment="Center" />
+                <TextBlock Text="{l:Loc 'Reset'}" />
+              </StackPanel>
+            </Button>
+          </WrapPanel>
+        </StackPanel>
+        <TextBlock Classes="crafterHeading" DockPanel.Dock="Top" Text="{l:Loc 'PREVIEW'}" Margin="0,0,0,8" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,10">
+          <Border x:Name="PreviewCard" CornerRadius="6" BorderThickness="1" Background="{DynamicResource Shell.Background}" VerticalAlignment="Top">
+            <StackPanel>
+              <Border x:Name="PreviewHeader" CornerRadius="5,5,0,0" Padding="12,10">
+                <StackPanel x:Name="PreviewTitle" />
+              </Border>
+              <StackPanel x:Name="PreviewBody" Margin="14,8,14,12" />
+            </StackPanel>
+          </Border>
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+
+    <!-- What happened last. -->
+    <Border Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="{DynamicResource Shell.Border}" BorderThickness="0,1,0,0" Padding="14,6">
+      <DockPanel>
+        <icons:MaterialIcon x:Name="StatusIcon" Kind="InformationOutline" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{DynamicResource Shell.TextSecondary}" />
+        <TextBlock x:Name="StatusText" Classes="secondary" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
+      </DockPanel>
+    </Border>
+  </Grid>
+</l:FormWindow>

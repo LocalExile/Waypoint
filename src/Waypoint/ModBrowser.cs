@@ -34,7 +34,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     /// <summary>A project without a release installs as source, built later with the .NET 10 SDK.</summary>
     public bool NeedsBuild => Release is null && Listing.IsProject;
 
-    public string Title => Listing.Name;
+    public string Title => L.Text(Listing.Name);
     public string Byline => L.Text("by {0}", Listing.Author.Length > 0 ? Listing.Author : Source.Owner);
     public string VersionText => Offer switch
     {
@@ -52,7 +52,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public bool IsUpdate => Offer == ModOffer.Update;
     public string Origin => Release is not null ? L.Text("Release {0}", Release.Tag)
         : Listing.IsProject ? L.Text("No release: installs the source") : L.Text("Scripts: no build needed");
-    public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description}";
+    public string SearchText => $"{Listing.Id} {Listing.Name} {Listing.Author} {Listing.Description} {Title} {Description}";
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Listing.Id);
     /// <summary>The installed mod's own icon.png, else the repository's.</summary>
@@ -60,7 +60,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public ModIconImage? IconImage => ModsText.IconImage(IconFile);
     /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
     public bool ShowSymbol => IconImage is null;
-    public string Description => Listing.Description;
+    public string Description => L.Text(Listing.Description);
     public bool HasDescription => Description.Length > 0;
     public string Metadata => Author;
     /// <summary>The LocalExile versions it declares; the list shows these, not the mod's own version.</summary>
@@ -195,7 +195,7 @@ static class ModSorting
 /// <summary>A row of My Mods: an installed mod, and what a repository offers of it (for Update and its latest version).</summary>
 sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
 {
-    public string Title => Entry.Name.Length > 0 ? Entry.Name : Offer?.Title ?? Entry.Id;
+    public string Title => Entry.Name.Length > 0 ? L.Text(Entry.Name) : Offer?.Title ?? Entry.Id;
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Entry.Id);
     /// <summary>The installed mod's own icon.png, else its repository's.</summary>
@@ -203,7 +203,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public ModIconImage? IconImage => ModsText.IconImage(IconFile);
     /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
     public bool ShowSymbol => IconImage is null;
-    public string Description => Entry.Description.Length > 0 ? Entry.Description : Offer?.Listing.Description ?? "";
+    public string Description => Entry.Description.Length > 0 ? L.Text(Entry.Description) : Offer?.Description ?? "";
     public bool HasDescription => Description.Length > 0;
     public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
     /// <summary>The LocalExile versions its installed mod.json declares, else what its repository's listing does.</summary>
@@ -222,7 +222,9 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public string EnabledTip => L.Text("Saved enable choice for {0}; this does not confirm live load status.", Title);
     /// <summary>Why the running Gateway did not load this mod (its log), or "".</summary>
     public string LoadError { get; init; } = "";
-    public bool Failed => Entry.Enabled && LoadError.Length > 0;
+    /// <summary>A league's mod that no league lists: nothing is broken and nothing is to be installed again.</summary>
+    public bool Unused => Entry.Enabled && (LoadError.StartsWith(ModCatalog.NoLeagueReason, StringComparison.Ordinal) || Entry.Status == ModCatalog.Unused);
+    public bool Failed => Entry.Enabled && LoadError.Length > 0 && !Unused;
     /// <summary>The Action column: Update when a repository has a newer version; Reinstall when the Gateway could not load it
     /// and a repository has it; Build when the mod is not built; Not loaded when it failed with nothing to install; Up to date
     /// otherwise (a built source mod is built again from its right-click menu).</summary>
@@ -257,7 +259,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public string Author => Entry.Author.Length > 0 ? Entry.Author : Offer?.Author ?? "";
     /// <summary>Under the name: the installed version, and a problem when there is one.</summary>
     public string Subtitle => string.Join(" · ", new[] { Entry.Version, Entry.IsScript ? L.Text("Script mod") : "", Problem }.Where(t => t.Length > 0));
-    public string Problem => Failed ? L.Text("Failed to load: {0}", LoadError)
+    public string Problem => Unused ? L.Text("No league uses it") : Failed ? L.Text("Failed to load: {0}", LoadError)
         : Entry.Status is "Missing DLL" or "Not built" or "Dependency blocked" or "Mods disabled globally" || Entry.Status.StartsWith("Invalid", StringComparison.Ordinal)
         || (Entry.Enabled && Entry.Status == "Load failed") ? L.Text(Entry.Status) : "";
     public bool HasProblem => Problem.Length > 0;
@@ -431,6 +433,7 @@ sealed class ModBrowser(Shared shared)
         if (shared.Workspace.Latest is { EditConflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.EditConflicts));
         if (shared.Workspace.Latest?.ModEnvironment is not { Supported: true } environment) throw new InvalidOperationException(L.Text("This revision does not have a supported mod host."));
         ModCatalog.WriteChoice(environment.Folder, mod.Id, enabled);
+        NoteRestart(mod.RestartToApply);
         return Task.CompletedTask;
     });
 
@@ -440,7 +443,7 @@ sealed class ModBrowser(Shared shared)
         RequireModernMods();
         var job = Begin(mod.Id, L.Text("Uninstalling…"));
         if (job is null) return null;
-        try { return await Finish(job, await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(mod.Id), L.Text("Uninstalling…"))); }
+        try { return Installed(await Finish(job, await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(mod.Id), L.Text("Uninstalling…"))), mod.RestartToApply); }
         catch { End(job); throw; }
     }
 
@@ -453,6 +456,21 @@ sealed class ModBrowser(Shared shared)
         try { return await Finish(job, await QueuedAsync(job, "BuildMod", L.Text("Build mod"), new(mod.Id, mod.Project), L.Text("Building…"))); }
         catch { End(job); throw; }
     }
+
+    // The servers read a mod's leagues and world data, and which leagues list a mod, only when they start: the Gateway
+    // that has not read the change (ModsText.GatewayRun), until another one runs or none does.
+    string _restartFor = "";
+    void NoteRestart(bool needed)
+    {
+        if (needed && ModsText.GatewayRun(shared.Workspace.Latest) is { Length: > 0 } run) _restartFor = run;
+    }
+    BridgeResult? Installed(BridgeResult? result, bool restartToApply)
+    {
+        if (result?.Ok == true) NoteRestart(restartToApply);
+        return result;
+    }
+    /// <summary>Such a mod was installed, removed or switched while the servers ran: said until they stop.</summary>
+    public string RestartNotice(RuntimeSnapshot? state) => ModsText.RestartNotice(ref _restartFor, state);
 
     // ---- Jobs: what runs for each mod, shown on its button ----
 
@@ -602,8 +620,10 @@ sealed class ModBrowser(Shared shared)
                 : await ModRepository.DownloadSourceAsync(_http, item.Source, item.Listing, Progress, stop);
             try
             {
-                return await Finish(job, await QueuedAsync(job, "InstallMod", item.Offer == ModOffer.Update ? L.Text("Update mod") : L.Text("Install mod"),
-                    new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…")));
+                // Read before the adapter runs: it removes the staged folder once it is installed.
+                bool restart = ModCatalog.RestartToApply(staged.Folder);
+                return Installed(await Finish(job, await QueuedAsync(job, "InstallMod", item.Offer == ModOffer.Update ? L.Text("Update mod") : L.Text("Install mod"),
+                    new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))), restart);
             }
             finally { ModRepository.Discard(staged); }
         }
@@ -620,7 +640,8 @@ sealed class ModBrowser(Shared shared)
             if (staged.Target == "Source" && CannotInstallSource() is { } reason) throw new InvalidOperationException(reason);
             var job = Begin(staged.Id, L.Text("Installing…"));
             if (job is null) return null;
-            try { return await Finish(job, await QueuedAsync(job, "InstallMod", L.Text("Install mod"), new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))); }
+            bool restart = ModCatalog.RestartToApply(staged.Folder);
+            try { return Installed(await Finish(job, await QueuedAsync(job, "InstallMod", L.Text("Install mod"), new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))), restart); }
             catch { End(job); throw; }
         }
         finally { ModRepository.Discard(staged); }
@@ -746,7 +767,8 @@ static class ModsText
         var report = ModCatalog.ParseRuntimeReport(environment.RuntimeReport);
         if (!report.TryGetValue(id, out var observation)) return L.Text("Not checked");
         string status = observation.Status == "Loaded (last checked)" ? L.Text("Loaded (last checked)")
-            : observation.Status == "Disabled" ? L.Text("Not loaded (last checked)") : L.Text("Failed to load (last checked)");
+            : observation.Status == "Disabled" ? L.Text("Not loaded (last checked)")
+            : observation.Status == ModCatalog.Unused ? L.Text("No league uses it") : L.Text("Failed to load (last checked)");
         return DateTimeOffset.TryParse(environment.CheckedUtc, out var when) ? L.Text("{0} · {1:g}", status, when.ToLocalTime()) : status;
     }
     /// <summary>Choices are saved even on an older Gateway; do not imply its running mods changed.</summary>
@@ -754,6 +776,18 @@ static class ModsText
         state is { ModEnvironment.Supported: true } && state.Services.Any(s => s.Name == "Gateway" && s.IsRunning)
             && !ModCatalog.SupportsLiveChoices(state.Root)
             ? L.Text("Live mod switches could not be verified for this server. Choices are saved; restart Gateway to apply them.") : "";
+
+    /// <summary>The running Gateway, as one start of it: "" when none runs.</summary>
+    public static string GatewayRun(RuntimeSnapshot? state) =>
+        state?.Services.FirstOrDefault(s => s.Name == "Gateway") is { ProcessId: > 0 } gateway ? gateway.ProcessId + " " + gateway.StartedUtc : "";
+
+    /// <summary>What a change to a league's mod is told while the Gateway that has not read it (<paramref name="pendingFor"/>)
+    /// still runs; once it stopped or was restarted, nothing is pending.</summary>
+    public static string RestartNotice(ref string pendingFor, RuntimeSnapshot? state)
+    {
+        if (pendingFor.Length == 0 || pendingFor != GatewayRun(state)) { pendingFor = ""; return ""; }
+        return L.Text("Restart the servers to apply the change to a league's mod.");
+    }
 
     /// <summary>A mod page's labels: where it comes from, what it is.</summary>
     public static IReadOnlyList<string> Tags(BrowseItem? item, ModEntry? installed)
@@ -765,6 +799,8 @@ static class ModsText
         string kind = installed?.Kind ?? item?.Listing.Kind ?? "";
         if (kind.Length > 0 && kind != "?") tags.Add(L.Text(kind));
         if (item?.Listing.HasSettings == true || installed?.SettingsFile.Length > 0) tags.Add(L.Text("Settings"));
+        if (installed?.Listed ?? item?.Listing.Listed == true) tags.Add(L.Text("League content"));
+        foreach (string league in installed?.Leagues ?? []) tags.Add(L.Text("Adds league {0}", league));
         return tags;
     }
 

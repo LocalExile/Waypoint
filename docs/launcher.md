@@ -39,7 +39,7 @@ install is its own to say: its `live.ps1` accepts the index in place of `Content
 (`Test-SteamLayoutAccepted`), and for one that does not, the Setup section's **Client archive** line and the preparation
 say that this LocalExile runs only a standalone client.
 
-The Windows Tools section opens the map viewer when the selected source checkout has the terrain generator and extracted
+The Tools section opens the map viewer (on Windows and Linux) when the selected source checkout has the terrain generator and extracted
 game data. Waypoint carries its own read-only map helper, builds it against that checkout's existing generator libraries,
 and closes it with the viewer. No LocalExile map-service hook or source changes are needed. The helper and all build outputs
 stay in Waypoint's data folder; closing the viewer discards its private build.
@@ -73,11 +73,13 @@ The random seed button uses the server's normal instance seed range; manually en
 
 A release is a git tag `v<major>.<minor>.<patch>` pushed to GitHub. The release workflow
 (`.github/workflows/release.yml`) runs the tests, publishes `Waypoint.exe` with the tag's version
-(`-p:Version`), writes its SHA-256 to `Waypoint.exe.sha256`, and attaches both to a GitHub release of the tag
-with generated notes. Before publishing it runs `tools/Get-DepotDownloader.ps1 -Source`, so the exe carries the Steam
+(`-p:Version`), writes its SHA-256 to `Waypoint.exe.sha256`, builds the Linux `Waypoint-x86_64.AppImage` from the same tag
+with its `.sha256` ([Linux](#linux)), and attaches them to a GitHub release of the tag with generated notes; the Windows job
+publishes only once the AppImage's job has built it. Before publishing it runs `tools/Get-DepotDownloader.ps1 -Source`, so the exe carries the Steam
 download tool and the release also gets that tool's source zip ([The game client from Steam](#the-game-client-from-steam));
 a release fails when the tool cannot be fetched or its hash differs. A tag that is not `v1.2.3` fails the workflow. The CI workflow (`ci.yml`) builds and tests every
-push to `main` and every pull request, and runs the adapter's checks and the translation check.
+push to `main` and every pull request, and runs the adapter's checks and the translation check; its `linux-appimage` job builds
+`Waypoint.Linux.slnx` and the AppImage, starts it with no display on a throwaway folder, and keeps it with the run.
 
 ```powershell
 git tag v0.2.0
@@ -98,7 +100,8 @@ version shows a green card floating over the bottom of the window. **Update now*
    which keep running;
 5. the new Waypoint deletes the `.old` when it starts.
 
-Only the published single-file exe updates itself; under `dotnet run` the bar offers the release page only. A transferred
+Only the published single-file exe updates itself; under `dotnet run` the bar offers the release page only. On Linux the
+AppImage updates itself the same way ([Linux](#linux)). A transferred
 repository's old name keeps answering, so builds made before a transfer still find the releases.
 
 ## Release installs
@@ -281,6 +284,55 @@ Each field takes a typed path as well as **Browse…** (on Linux a picker may be
     Only `config.json`'s two names change on a switch, and the normal `production_Config.ini` is only read.
 - On Linux the game settings are the Wine prefix's (`GameSettings`): the row shows that folder, and another prefix is
   another set.
+
+## Linux
+
+`src/Waypoint.Linux` is Waypoint on Linux: its own executable and interface (Avalonia) over the same engine, whose files it
+links from `src/Waypoint` (a Linux path in one goes behind `#if WINDOWS`). Its views are copies of the Windows ones, with the same
+logic, and the sections and windows are the same: the Game client window and the Steam download, the item crafter and its
+import, the lab layout, the map viewer, the appearance editor, the update cards and the tray.
+
+- **The AppImage.** `tools/build-appimage.sh [version] [folder]` publishes Waypoint.Linux self-contained for `linux-x64`, with
+  DepotDownloader's Linux release embedded, adds `packaging/linux/` (the desktop entry and `AppRun`) and the emblem
+  (`branding/waypoint-192.png`), and packs `Waypoint-x86_64.AppImage` with its `.sha256`. appimagetool and the type 2 runtime
+  it packs are downloaded once into `tools/bundled/` and held to the SHA-256 in the script, as DepotDownloader is; appimagetool
+  runs extracted, so building needs no FUSE. The release workflow runs it for a tag, CI for every pull request.
+- **Its updates.** The release check is the exe's; the file is the AppImage (`LauncherFile.Running`): the one the AppImage
+  runtime names in `APPIMAGE`, and only while Waypoint runs from inside that image (`APPDIR`), so a Waypoint started by
+  another AppImage, or built from source, never takes that file for its own. **Update now** downloads the release's
+  AppImage beside it (`.new`), refuses one whose SHA-256 differs from the release's `.sha256`, makes it executable and
+  renames it over the running one (the mounted image goes on until it exits), then starts it and closes. A renamed
+  AppImage keeps its name. Starting again after a change of folder starts the AppImage, not the image's mount, which is
+  gone once Waypoint exits; the folder suggestions start from the AppImage's own folder.
+- **Its files.** Settings, saved items, the adapter and the Steam tool are in `~/.local/share/Waypoint`, outside the AppImage,
+  so an update keeps them; `WAYPOINT_HOME` moves them as on Windows. Game settings are the Wine prefix's
+  (`~/.local/share/LocalExile/wine-prefix`). Started from a desktop entry, Waypoint adds `~/.dotnet` and `~/.dotnet/tools` to
+  its PATH, after what it has, with `DOTNET_ROOT`, when they are there: the PowerShell 7 that `dotnet tool install` puts
+  there cannot start without them, and a desktop has no shell profile.
+- **Finding a client.** Besides the Wine prefixes and the home folder, the setup guide's search reads every Steam root
+  (`~/.steam/steam`, `~/.steam/root`, `~/.local/share/Steam`, the Flatpak's `~/.var/app/com.valvesoftware.Steam/…`) and the
+  libraries each one's `libraryfolders.vdf` names, in the folder the game's `appmanifest_238960.acf` names
+  (`ClientLocator.SteamClients`).
+- **The game client from Steam** works as on Windows ([The game client from Steam](#the-game-client-from-steam)), with the QR
+  sign-in only.
+- **Walk maps.** A checkout whose `live.ps1` records under Proton (it has `scripts/walkmaps/proton.py`: a small Frida Gum
+  recorder that `live.ps1 -Walkmaps` builds with `g++` and preloads into the client) shows **Walk maps** in Control and the
+  recorder's row; Linux capture must start with the client, so Play restarts a running one with `-ClientOnly -Walkmaps`. No
+  Frida package is installed for it. An older checkout keeps the option out of sight.
+- **The console.** The client control bridge (`scripts/dev/client_control.py`) attaches Frida to `Game.patched.exe` and
+  hooks its Windows modules, which Linux Frida cannot see in a process under Proton, so the Console copies a command for the
+  game's chat box instead of sending it, as on a release. Sending needs a Proton transport for the bridge in LocalExile first,
+  as walk maps have.
+- **The tray** is Avalonia's tray icon, a StatusNotifierItem, which only a desktop with a tray host shows (KDE, GNOME with its
+  AppIndicator extension). Waypoint asks the session bus for one (`org.kde.StatusNotifierWatcher`); without it the window
+  never hides, and the tray choices are left out of Settings and of the close question. Why the window went to the tray is a
+  desktop notification (`notify-send`).
+- **The look.** `AppTheme` puts the same palette as Windows (`ThemePalette.cs`, linked) into the `Shell.*` brushes, and System
+  follows the desktop's light or dark setting as it changes. The reading font is every Fluent control's
+  (`ContentControlThemeFontFamily`); OpenDyslexic is bundled. The text size and the stronger focus borders are Windows-only.
+- **No single-instance guard** yet: the Windows one (`AppInstance`) uses Windows' named pipes and accounts.
+- **Checking it with no display.** `Waypoint <folder> --render out.png [Section or Window[:page]] [seconds]` draws the window,
+  a section or a window of its own into a picture, which is how CI checks that the AppImage starts.
 
 ## Look
 
@@ -832,7 +884,7 @@ unqualified Unix path would land on that drive, while `Z:` is the root in every 
 
 The official launcher only ever gives the newest game, so once the game moves on, the versions LocalExile runs can no
 longer be had from it. Steam still serves them, and **Game client…** (in the sidebar's folder list; `ClientVersionsWindow`)
-gets one with the user's own Steam account, for a release and for a source copy. Windows on x64 only for now.
+gets one with the user's own Steam account, for a release and for a source copy. Windows and Linux, on x64.
 
 - **A source copy** has the same window, list and download. What came in is prepared by the adapter (`PrepareClient`, the
   setup guide's own step, which prepares either layout as the top of this file tells) where a release runs
@@ -931,20 +983,22 @@ gets one with the user's own Steam account, for a release and for a source copy.
 
 - **The tool.** Waypoint does not speak to Steam itself: it runs [DepotDownloader](https://github.com/SteamRE/DepotDownloader)
   (GPL-2.0), a program of its own (`DepotTool`, `SteamDownload` in `src/Launcher.Core/SteamDownload.cs`). A released
-  `Waypoint.exe` carries the tool's official release for Windows x64, unchanged, so that a user's Waypoint downloads no
-  tool: `tools/Get-DepotDownloader.ps1` fetches it when Waypoint is built and holds it to its SHA-256, the project embeds
-  the zip when it is there, and the release workflow runs the script and attaches the tool's source beside `Waypoint.exe`
+  `Waypoint.exe` carries the tool's official release for Windows x64, unchanged, and the AppImage its release for Linux x64
+  (`DepotTool.For`), so that a user's Waypoint downloads no tool: `tools/Get-DepotDownloader.ps1` (with `-Linux` for the
+  Linux one) fetches it when Waypoint is built and holds it to its SHA-256, the project embeds the zip when it is there, and
+  the release workflow runs the script and attaches the tool's source beside `Waypoint.exe` and the AppImage
   ([THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md)). The first time it is needed it is unpacked into
-  `%LOCALAPPDATA%\Waypoint\tools\DepotDownloader`, checked against the same SHA-256. A Waypoint built without the zip
+  `%LOCALAPPDATA%\Waypoint\tools\DepotDownloader` (`~/.local/share/Waypoint/tools/DepotDownloader` on Linux, where it is
+  then made executable), checked against the same SHA-256. A Waypoint built without the zip
   fetches that release then. Neither Steam nor SteamCMD has to be on the PC.
 - **The sign-in.** Steam's anonymous account cannot fetch the game, so the user signs in once, with an account that has
   Path of Exile in its library. There is no sign-in button in the window: a download signs in when it needs to. That is
   the tool's own QR sign-in: Waypoint draws the code the tool prints (`SteamSignInWindow`), the user scans it with the
   Steam mobile app and approves, and the picture follows when Steam changes the code. The tool gives up after about two
   minutes without an approval: the window then says so and offers **New code**. **Sign in with a password…** in that
-  window is for someone without the app: Waypoint asks only the account's name, and the tool asks for the password and
+  window (Windows only: Linux has no one way to open the tool's console window) is for someone without the app: Waypoint asks only the account's name, and the tool asks for the password and
   the Steam Guard code in a console window of its own, which stays open after a failure. Either way Waypoint sees no
-  password and no token: the tool keeps the sign-in (in the Windows user's isolated storage, by where the tool runs from,
+  password and no token: the tool keeps the sign-in (in the user's isolated storage, by where the tool runs from,
   which is why its folder has no version in its name), and Waypoint keeps the account's name (`Settings.SteamAccount`),
   which names that sign-in on later runs and is shown at the foot of the window once there is one, with **Forget the
   sign-in**, which drops the name.
@@ -1030,7 +1084,9 @@ controls and game-data reload offer **Install Frida** when their Python cannot l
 unstarted; Console keeps the unsent text. A queued mod build ends when preparation is declined or fails; only a busy
 workspace is retried, so **Not now** does not reopen the prompt. Installation uses the checkout's `.venv`, shows output in
 the requesting tool and Logs, and verifies that Frida loads before continuing. It shares the checkout lock with other operations and changes no global
-Python packages. Linux explains that its game-control integrations are unavailable and does not offer installation for them.
+Python packages. On Linux walk maps need no Frida package: `live.ps1 -Walkmaps` builds LocalExile's Proton recorder itself
+([Linux](#linux)). The console's commands and game status explain there that they are unavailable, and nothing is offered to
+install for them.
 
 ### Mods
 
@@ -1072,7 +1128,11 @@ the server's `mod-state.txt` (no backup, no client), which a stopped Gateway rea
 applies within a second (LocalExile since 2026-11-07; an older Gateway applies it at its next start). While Gateway runs,
 Windows and Linux show a restart notice when the checkout's source does not identify the live-choice hook; release installs
 also show the notice because they have no source to verify. The checkbox represents the saved choice, not proof of a live
-load. A switch holds the workspace lock and is refused while another operation holds it. A program that is no LocalExile
+load. A league's mod (`mod.json` `"leagues": "listed"`; LocalExile's mod guide, "Leagues") has the tag **League content** on its
+page, and **Adds league …** for each league in its `Leagues/` folder; Browse takes the tag from the index's `leagues`. One
+that no league lists is not a failure: its row says **No league uses it** and offers no Reinstall. The servers read a
+mod's leagues and world data, and which leagues list a mod, only when they start: after such a mod is installed, updated,
+uninstalled or switched while they run, the notice says to restart them, until they stop. A switch holds the workspace lock and is refused while another operation holds it. A program that is no LocalExile
 server holding one of the servers' ports (Steam's helper on 8080, say) does not block mod changes, nor Modules, Leagues
 or Accounts: it blocks only a start, and the message names it. **Update** and
 **Update all** appear when a repository has a newer version. The ⋮ menu holds the rarer tools: Install from folder…,
@@ -1091,8 +1151,10 @@ starts every update): downloads run side by side, and the checkout operations wa
 one at a time. Installs, uninstalls and builds waiting together run as one operation of their kind: one save backup, and the builds
 in parallel. A failed one opens the operation log.
 
-Clicking a row opens the mod's page: its README (Overview, drawn as GitHub-flavoured Markdown with Markdig; images
-show their alt text, HTML is left out, relative links open the mod's folder on GitHub), its shared settings editor
+Mod names, descriptions and settings labels use the selected interface language when a translation exists. Search
+matches both the manifest text and its translation. Clicking a row opens the mod's page: its README (Overview,
+drawn as GitHub-flavoured Markdown with Markdig; images show their alt text, HTML is left out, relative links open
+the mod's folder on GitHub), its shared settings editor
 (all declared types below; written to `data/mods/<id>.json`, which holds only what differs from the defaults,
 and a running Gateway reloads the mod), and its releases (Versions, each installable). The page scrolls as one, its heading
 and tabs with it; the back button stays above it, and the settings' Save bar below it on the Settings tab. Right-clicking a
@@ -1163,6 +1225,7 @@ unsupported gameplay settings.
 
 The **Global mods** summary stays above the league workspace while switching flags or modes. It lists the checkout's
 saved enabled mod names (up to three, with the full list in its tooltip), separately from the last-checked live load count.
+It holds the mods of every league; a league's mod is in the leagues' lists (below).
 Saved choices never imply a successful live load. An unavailable/not-checked report is identified explicitly; an existing
 report is always labelled **Last checked**, even if the server has since stopped or restarted. The summary never runs a
 live inspection itself. **Manage in Mods** opens Mods without changing league choices.
@@ -1220,8 +1283,8 @@ under **Unavailable modules**.
 **Which modules a league can have** follows LocalExile's own rules, in the interface (`GameSystems.ValidateComposition`)
 and again in the adapter (`LeagueData.py`, `validate_modules`). LocalExile says that a module has no knowledge of leagues
 and that any league can list it, so an installed module is a box to tick for every league that can be edited: a core
-module the league does not ship with (the Currency Exchange in an SSF or a Ruthless league), another league's module
-(the Phrecia ascendancies), and an add-on. What stays:
+module the league does not ship with (the Currency Exchange in an SSF or a Ruthless league), another league's mod (the
+Phrecia ascendancies), and an add-on. What stays:
 
 - **The game and dependencies.** `Core/Game` cannot be removed, and what a module needs has to be on, as LocalExile itself
   requires.
@@ -1234,7 +1297,7 @@ module the league does not ship with (the Currency Exchange in an SSF or a Ruthl
   apart: it gets the same warning and can be unticked. Only the game is **Required** and locked.
 - **A module made for an isolated league stays in isolated leagues** (`IsolatedModule`, `Isolated`). A league is isolated
   when its parents lead to Void, so nothing of it reaches Standard: Survivors is one, and so is every league made in
-  Waypoint. A module LocalExile ships only in such leagues (the three Survivors modules: a run starts by itself, refuses
+  Waypoint. A module or mod LocalExile ships only in such leagues (the survivors mod: a run starts by itself, refuses
   ordinary exits and hands out rewards) shows as **For isolated leagues only** in a league that leads to Standard.
 - **The rules of a game mode go with that mode** (`ModeOf`, `ModeFits`, `RulesOnly`). A module that LocalExile ships
   only in leagues of one `form` is that mode's rules: the Ruthless module, which the eight leagues of the form
@@ -1244,8 +1307,8 @@ module the league does not ship with (the Currency Exchange in an SSF or a Ruthl
   rest of the mode does not come with it: the mode's own versions of skills, vendors and quest rewards belong to the
   league's definition (`dataSet`), and the game shows the league by its `form`. So:
   - in a league of that mode it is the league's own bundle, as above;
-  - the leagues LocalExile ships in another mode (Standard, Allflame, Phrecia, Survivors and their Hardcore and SSF
-    versions) do not get it: they have their own versions in that mode. It shows under **Unavailable modules** as
+  - the leagues LocalExile ships in another mode (Standard, Allflame and their Hardcore and SSF versions, and the leagues
+    a mod brings, such as Phrecia and Survivors) do not get it: they have their own versions in that mode. It shows under **Unavailable modules** as
     **Rules of a game mode**, and its tooltip names the flags a new league can start from to have it (`ModeStarts`);
   - a league made in Waypoint can have it when the game base it was made on has that mode: one that starts from
     Standard, Allflame or Phrecia, not one that starts from Survivors, whose own base has no league of that mode. Once
@@ -1256,10 +1319,35 @@ module the league does not ship with (the Currency Exchange in an SSF or a Ruthl
     league's bundle: unticking it takes it back without a question;
   - one that is already on where it does not fit (a hand edit of `data/league-modules.json`) stays ticked until its
     user unticks it, and other changes still save. It cannot be turned on anew there.
-- **An add-on** is a module that no league LocalExile ships lists (`GameSystems.AddOn`: PlayerBots and
-  NessaDevelopmentTabs, at the time of writing), off until its user lists it in the league they want it in, which is how
-  LocalExile's own guide turns PlayerBots on (`{"Standard": {"add": ["PlayerBots"]}}` in `data/league-modules.json`).
+- **An add-on** is a module or league's mod that no league LocalExile ships lists (`GameSystems.AddOn`: the playerbots
+  and nessadevelopmenttabs mods, at the time of writing), off until its user lists it in the league they want it in, which
+  is how such a mod is turned on (`{"Standard": {"add": ["playerbots"]}}` in `data/league-modules.json`).
   Saving writes that same entry. An add-on is never part of a bundle, in a league made in Waypoint that lists it either.
+- **A league's mod** (an installed mod that is on and whose `mod.json` says `"leagues": "listed"`; LocalExile's mod
+  guide, "Leagues") is a row of the list like a module, with a **Mod** badge: ticked where a league lists it, in its
+  `league.json` (`"mods"`) or the user's choices, and ticked or unticked like a module. It is listed by its id, and an
+  entry that names it in another case or by the path it had as a module (`Custom/PlayerBots`) is that mod's row. It
+  follows the module rules: what it `depends` on is on, one that only isolated leagues list stays there, a league's own
+  asks first. A mod with a module's id is not shown: the module runs. The Modules section lists LocalExile's modules
+  only.
+- **A league that a mod brings** (its `Leagues/<Name>/` folder, read while the mod is on, after the checkout's own: the
+  first of a name stays) is a league like the others, and its details say which mod it is from. Its module choices are
+  edited and saved as any league's; it is not hidden or shown here and its settings are not edited here, because its
+  files are the mod's and an update of the mod replaces them. A league made from one keeps that league's mods that
+  stay ticked as its own (`league.json` `"mods"`). A league whose `league.json` names a mod that is not on, and still
+  lists it, is shown as not offered (LocalExile does not load it), with that mod's row as **{id} (mod not on)**. A mod's
+  league that cannot be read is left out, as LocalExile leaves it out; a new league is not named as an installed mod.
+  All of this needs a LocalExile that has listed mods (its catalog's `ModFolders.On`; a release above 0.6.0); with an
+  older one, or `Game_MODS=0`, Waypoint reads no mod here.
+- A league's mod may depend on a mod of every league that is on.
+- **What a module or mod declares** about the company it keeps (`conflicts` and `only` in its `module.json` or
+  `mod.json`, LocalExile's `ModFolders.Limits` and `Clash`) holds for the whole list: nothing beside one it conflicts with,
+  and beside one whose `only` names the ones it allows (the survivors mod: Cosmetics, Chat and Commands), nothing else but
+  the game. Ticking one that breaks it shows why under the list and does not save, as LocalExile would not load the league
+  (a new one) or would skip the change (the user's choices); a saved change that breaks one shows as LocalExile runs it,
+  the league's own list. Every module and every mod that is on declares them, a mod of every league too, but a mod with a
+  module's id. The keys are read as written, in lower case, and a `conflicts` or `only` that is not a list of ids declares
+  nothing, as LocalExile reads them.
 - **A listed module that is not installed** (a typo in a hand edit, a module taken away since) shows as
   **{path} (not installed)**, ticked. LocalExile skips it and loads the league, so the league stays editable; unticking
   the entry takes it off the list. It is never required, and a new one that is not installed is refused. Save, discard and validation feedback stay visible below the scrolling panel. Details, the card
@@ -1315,7 +1403,7 @@ files keep their existing behavior.
 
 Drafts review the complete relevant manifest/source inventory and user overrides. Adding, removing or changing a definition
 invalidates the draft; the backend checks again after backup. These checks enforce the declared structure, not every hidden
-assumption in arbitrary module code. LocalExile currently has no complete conflicts/supported-modes metadata contract.
+assumption in arbitrary module code. What a module or mod declares (`conflicts`, `only`) is read as LocalExile reads it.
 Waypoint adds two rules to LocalExile's, the modules of isolated leagues and the rules of a game mode, and two warnings,
 about a league's own bundle and about a mode's rules without the rest of the mode; a declaration from LocalExile or the
 modules of what belongs together would replace them. One thing no file says: two modules that both supply league rules
@@ -1352,6 +1440,9 @@ Modules and Leagues ask before discarding a draft when switching selection or re
 hash, so another tool's changes require a refresh. Changes use the shared workspace lock and the normal optional save backup.
 Previous configuration files are copied to Waypoint's `config-history/<id>/` before replacement, separately from save backups.
 Reset to defaults asks first. Mod values use `data/mods/`, module values `data/modules/`, and league values `data/leagues/`.
+A mod that was a module (such as `playerbots` or `idols`) shows its old `data/modules/<Id>.json` values until it has its
+own file, as LocalExile moves them when it next loads its mods; a save before that writes them to `data/mods/<id>.json`
+with the change.
 
 ### Backups
 
@@ -1414,6 +1505,10 @@ Advanced mode), the **Diagnostic report** button on an operation's failure dialo
   turned on are in the list.
 
 ### Tools: the item crafter
+
+The interface follows the selected language. With the [local Chinese item catalog](localization.md#importing-simplified-chinese-item-data),
+Simplified Chinese also displays and searches the client's item names, modifiers, and item previews. The item the Gateway
+receives uses the same IDs and values in any language.
 
 **Open item crafter** opens its window (one at a time; the button brings it forward): a window of its own in the
 taskbar, with Minimize and Maximize, not kept in front of Waypoint's. It makes any item the server can
@@ -1526,7 +1621,7 @@ client's own layout builder for the day's seed, the areas the official server pi
 (LabyrinthSecrets: `Hidden` is a Darkshrine, `Payload` the escort gauntlet). `LabyrinthDay.cs` reads it.
 When the server's seed is fixed (`Game_LAB_SEED`), its layout is the same on every day, and the window says so.
 A Gateway built before the mode would start for real, so Waypoint first asks `commands` and goes on only if
-`/lab_layout` takes a date, which came with the mode. Windows only, like the map viewer.
+`/lab_layout` takes a date, which came with the mode.
 
 ### Tools: the loot filter fixer
 
@@ -1568,6 +1663,7 @@ the other leagues. The dev host stays running afterwards (it shares the save dat
 they want the game and every server stopped, are reviewed in their dialog, are backed up first, and are refused when the
 account changed since the list was read ([account-management.md](account-management.md)). A database whose layout the
 adapter does not know can be browsed but not changed.
+When a monitored server or the client stops, Waypoint checks the current workspace again before enabling account edits.
 
 ## Code
 
@@ -1601,9 +1697,12 @@ adapter does not know can be browsed but not changed.
 | `src/Launcher.Core/OwnClient.cs` | a release whose client is a link to the user's game folder: LocalExile's warning, and the copy on the user's word |
 | `src/Launcher.Core/SetupGuide.cs`, `ClientLocator.cs`, `ClientCopy.cs` | the guide's engine: tools that can be stopped, the prerequisites, the steps, finding a client, the resumable copy |
 | `src/Launcher.Core/SwitchToSource.cs` | moving from a release to a source copy: what the choices will do, the older version (`TestedCommit`), Frida, removing the release |
-| `Tray.cs` | the tray icon (Windows Forms' NotifyIcon) |
+| `Tray.cs` | the tray icon (Windows Forms' NotifyIcon; on Linux Avalonia's TrayIcon, `src/Waypoint.Linux/Tray.cs`) |
 | `branding\` | the emblem: `waypoint-master.png`, the reviewed source and how it was made (`waypoint-artwork.json`); `app.ico` of the exe, the window and the tray (16 to 256 px) and the 192 px image of the sidebar, both from `scripts\New-Icon.ps1` |
-| `Updates.cs`, `MainWindow.xaml.cs` | the version, the release check, the self-update; the update strip |
+| `Updates.cs`, `MainWindow.xaml.cs`, `src/Launcher.Core/LauncherFile.cs` | the version, the release check, the self-update (the exe, or on Linux the AppImage it runs from); the update strip |
+| `MapViewerData.cs`, `MapPresentation.cs`, `MapCanvas.cs`, `MapViewerWindow` | the map viewer's data, markers and window |
+| `src/Waypoint.Linux/` | the Linux app ([Linux](#linux)): its views (copies of these, in Avalonia), `AppTheme.cs` (the palette into its brushes), `Tray.cs` |
+| `tools/build-appimage.sh`, `packaging/linux/` | the AppImage: the publish, the desktop entry and `AppRun`, appimagetool and its runtime held to their SHA-256 |
 | `InstallTab.xaml`, `LocalExileRelease.cs` (Launcher.Core) | a release install's home; its versions, download, safe extraction, saves copy and `--json` runner |
 
 Tests: `tests/Launcher.Checks` and `tests/*.Tests.ps1` run the core and the adapter on throwaway fixtures (mods, backups,

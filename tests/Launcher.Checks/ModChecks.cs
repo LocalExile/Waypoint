@@ -44,6 +44,22 @@ static class ModChecks
         check(ModCatalog.Read(stopped).Single(m => m.Id == "escape").Status == "Invalid manifest", "manifest DLL paths cannot escape the selected mod folder");
         Binary("wrong", "{\"id\":\"other\"}");
         check(ModCatalog.Read(stopped).Single(m => m.Id == "wrong").Status == "Invalid manifest", "binary manifest IDs must match their actual folder");
+        // A league's mod (mod.json "leagues": "listed"), and the leagues and world data any mod may bring.
+        Binary("listed", "{\"leagues\":\"listed\"}");
+        Directory.CreateDirectory(Path.Combine(folder, "listed", "Leagues", "Grove"));
+        File.WriteAllText(Path.Combine(folder, "listed", "Leagues", "Grove", "league.json"), "{}");
+        Directory.CreateDirectory(Path.Combine(folder, "listed", "Leagues", "NotALeague"));
+        Binary("data", "{}");
+        Directory.CreateDirectory(Path.Combine(folder, "data", "sql"));
+        Binary("badleagues", "{\"leagues\":\"some\"}");
+        var withLeagues = ModCatalog.Read(stopped).ToDictionary(m => m.Id);
+        check(withLeagues["listed"] is { Listed: true, RestartToApply: true } && withLeagues["listed"].Leagues.SequenceEqual(["Grove"])
+            && withLeagues["data"] is { Listed: false, RestartToApply: true, Leagues.Count: 0 } && withLeagues["alpha"] is { Listed: false, RestartToApply: false }
+            && withLeagues["badleagues"].Status == "Invalid manifest",
+            "a league's mod, the leagues a mod brings and what needs a server restart are read from its folder; another leagues value is invalid, as in the Gateway");
+        foreach (string id in new[] { "listed", "data", "badleagues" }) Directory.Delete(Path.Combine(folder, id), recursive: true);
+        check(ModCatalog.ParseRuntimeReport("idols - not loaded, no league lists it (the leagues are read when the servers start)")["idols"].Status == ModCatalog.Unused,
+            "a league's mod that no league lists is not a load failure");
         check(!ModCatalog.ValidId("../outside") && !ModCatalog.ValidId("hello\n/mod_disable alpha") && ModCatalog.ValidId("example.mod-1"), "only bounded single mod IDs can reach command arguments");
         var parsed = ModCatalog.ParseRuntimeReport("--- Mods in Mods/Binaries/ ---\nalpha preview build - feature, 3 hook(s)\nbeta - not loaded, needs missing (no such mod)\ngamma - not loaded, disabled\nchat: alpha 1 - feature, 99 hook(s)");
         check(parsed.Count == 3 && parsed["alpha"].Status == "Loaded (last checked)" && parsed["beta"].Status == "Load failed" && parsed["gamma"].Status == "Disabled",

@@ -17,6 +17,9 @@ public class SettingsFormTests : IDisposable
           "name":{"type":"text","default":"abc","pattern":"[a-z]+","maxLength":8},
           "weights":{"type":"list","default":[1],"item":{"type":"number","min":0,"max":5},"maxItems":3},
           "bonuses":{"type":"map","default":{"a":1},"options":["a","b"],"value":{"type":"integer","min":0}},
+          "profiles":{"type":"map","default":{},"value":{"type":"group","settings":{
+            "enabled":{"type":"bool","default":true},"speed":{"type":"number","default":2,"min":0.25,"max":10}
+          }}},
           "advanced":{"type":"group","advanced":true,"when":{"enabled":true},"settings":{
             "delay":{"type":"number","default":2,"format":"duration","min":0},
             "nested":{"type":"group","settings":{"active":{"type":"bool","default":false}}}
@@ -73,6 +76,23 @@ public class SettingsFormTests : IDisposable
         Assert.Throws<InvalidDataException>(() => Load("[]"));
     }
     [Fact]
+    public void A_mod_that_was_a_module_shows_the_module_values_until_it_has_its_own()
+    {
+        // LocalExile moves data/modules/<Id>.json to data/mods/<id>.json at its first start, unless the new file exists.
+        Load();
+        Directory.CreateDirectory(Path.Combine(_root, "data", "modules"));
+        File.WriteAllText(Path.Combine(_root, "data", "modules", "Example.json"), """{"count":7}""");
+        ModSettingsForm Mod() => ModSettingsForm.Load("example", Path.Combine(_root, "settings.json"), _root);
+        var form = Mod();
+        Assert.Equal(7, form.Current(form.Settings.Single(s => s.Name == "count"))!.GetValue<int>());
+        Assert.Equal("missing", form.UserHash);
+        Directory.CreateDirectory(Path.Combine(_root, "data", "mods"));
+        File.WriteAllText(Path.Combine(_root, "data", "mods", "example.json"), """{"count":4}""");
+        form = Mod();
+        Assert.Equal(4, form.Current(form.Settings.Single(s => s.Name == "count"))!.GetValue<int>());
+        Assert.NotEqual("missing", form.UserHash);
+    }
+    [Fact]
     public void Percent_input_round_trips_with_steps_and_kind_paths_are_distinct()
     {
         var setting = Load().Settings.Single(s => s.Name == "rate");
@@ -118,6 +138,26 @@ public class SettingsFormTests : IDisposable
                 slider.Value = 80;
                 Assert.Equal(0.8, editor.Values()["rate"]!.GetValue<double>());
                 Assert.True(editor.Dirty);
+            }
+            catch (Exception e) { failure = e; }
+        });
+        thread.SetApartmentState(ApartmentState.STA); thread.Start(); thread.Join();
+        Assert.Null(failure);
+    }
+    [Fact]
+    public void Editor_saves_profile_fields_once_and_preserves_undeclared_fields()
+    {
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                var form = Load("""{"profiles":{"Player":{"Enabled":false,"Speed":3,"future":42}}}""");
+                var profile = Assert.IsType<JsonObject>(new SettingsEditor(form).Values()["profiles"]!["Player"]);
+                Assert.Equal(3, profile.Count);
+                Assert.False(profile["enabled"]!.GetValue<bool>());
+                Assert.Equal(3, profile["speed"]!.GetValue<double>());
+                Assert.Equal(42, profile["future"]!.GetValue<int>());
             }
             catch (Exception e) { failure = e; }
         });

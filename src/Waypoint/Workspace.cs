@@ -13,6 +13,7 @@ sealed class Workspace(Shared shared)
     readonly RuntimeClient _client = new(BridgeScripts.Extract());
     readonly StringBuilder _operations = new();
     bool _inspecting;
+    bool _runtimeStoppedDuringInspection;
 
     /// <summary>The last successful inspection; null before the first one.</summary>
     public RuntimeSnapshot? Latest { get; private set; }
@@ -34,19 +35,36 @@ sealed class Workspace(Shared shared)
     /// <summary>An operation failed: its stage, why, and its log when it has one.</summary>
     public event Action<string, string, string?>? Failed;
 
+    // A monitor sample can see several services exit while an inspection is in progress. Recheck once at its end
+    // so the last exit is reflected even if the adapter had already taken its process snapshot.
+    public Task RefreshAfterRuntimeStopAsync()
+    {
+        if (shared.IsLiveRunning || Latest is not ({ HasServers: true } or { GameRunning: true }
+            or { AccountWriteBlockedReason.Length: > 0 } or { EditConflicts.Length: > 0 })) return Task.CompletedTask;
+        _runtimeStoppedDuringInspection = _inspecting;
+        return RefreshAsync();
+    }
+
     public async Task RefreshAsync()
     {
         if (_inspecting || shared.IsLiveRunning) return;
         _inspecting = true;
         try
         {
-            var result = await _client.RunAsync(shared.Settings.ForBridge, "Inspect");
-            Latest = result is { Ok: true, Snapshot: not null } ? result.Snapshot : Latest;
-            InspectError = result.Ok ? null : result.Message;
-        }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or System.ComponentModel.Win32Exception)
-        {
-            InspectError = e.Message;
+            do
+            {
+                _runtimeStoppedDuringInspection = false;
+                try
+                {
+                    var result = await _client.RunAsync(shared.Settings.ForBridge, "Inspect");
+                    Latest = result is { Ok: true, Snapshot: not null } ? result.Snapshot : Latest;
+                    InspectError = result.Ok ? null : result.Message;
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or System.ComponentModel.Win32Exception)
+                {
+                    InspectError = e.Message;
+                }
+            } while (_runtimeStoppedDuringInspection && !shared.IsLiveRunning);
         }
         finally { _inspecting = false; }
         Changed?.Invoke();

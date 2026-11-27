@@ -1,0 +1,69 @@
+<l:FormWindow xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+              xmlns:l="clr-namespace:Waypoint"
+              x:Class="Waypoint.LabLayoutWindow"
+              Title="{l:Loc 'Lab layout'}" Width="1280" Height="640" MinWidth="900" MinHeight="460">
+  <l:FormWindow.Styles>
+    <Style Selector="TextBlock.labHeading">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{DynamicResource Shell.TextSecondary}" />
+      <Setter Property="Margin" Value="0,12,0,4" />
+      <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style Selector="Button.icon">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Padding" Value="6" />
+    </Style>
+  </l:FormWindow.Styles>
+  <Grid Margin="14" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,300">
+    <!-- The day and the tier. -->
+    <DockPanel Grid.ColumnSpan="2" Margin="0,0,0,10">
+      <StackPanel x:Name="DayControls" DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Spacing="4">
+        <Button Classes="icon" Click="PreviousDay" ToolTip.Tip="{l:Loc 'Previous day'}"><icons:MaterialIcon Kind="ChevronLeft" Width="20" Height="20" /></Button>
+        <CalendarDatePicker x:Name="Day" Width="150" VerticalAlignment="Center" SelectedDateChanged="DayChanged" />
+        <Button Classes="icon" Click="NextDay" ToolTip.Tip="{l:Loc 'Next day'}"><icons:MaterialIcon Kind="ChevronRight" Width="20" Height="20" /></Button>
+        <Button x:Name="TodayButton" Margin="8,0,0,0" VerticalAlignment="Center" Click="TodayClicked" Content="{l:Loc 'Today'}" />
+      </StackPanel>
+      <TabControl x:Name="Tiers" SelectionChanged="TierChanged" VerticalAlignment="Center" Padding="0">
+        <TabItem Header="{l:Loc 'Normal'}" />
+        <TabItem Header="{l:Loc 'Cruel'}" />
+        <TabItem Header="{l:Loc 'Merciless'}" />
+        <TabItem Header="{l:Loc 'Eternal'}" />
+      </TabControl>
+    </DockPanel>
+
+    <!-- The map. -->
+    <Border Grid.Row="1" CornerRadius="8" BorderThickness="1" Background="{DynamicResource Shell.Panel}" BorderBrush="{DynamicResource Shell.Border}" Padding="4">
+      <Grid>
+        <!-- The wheel zooms at the pointer, a drag moves the map, a double-click or Fit fits it again. -->
+        <Border x:Name="MapHost" ClipToBounds="True" Background="Transparent"
+                PointerWheelChanged="MapWheel" PointerPressed="MapPress" PointerMoved="MapDrag" PointerReleased="MapRelease">
+          <Canvas x:Name="Map" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0,0" />
+        </Border>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+          <Button Classes="icon" Click="ZoomInClicked" ToolTip.Tip="{l:Loc 'Zoom in'}"><icons:MaterialIcon Kind="MagnifyPlusOutline" Width="18" Height="18" /></Button>
+          <Button Classes="icon" Click="ZoomOutClicked" ToolTip.Tip="{l:Loc 'Zoom out'}"><icons:MaterialIcon Kind="MagnifyMinusOutline" Width="18" Height="18" /></Button>
+          <Button Classes="icon" Click="FitClicked" ToolTip.Tip="{l:Loc 'Fit the map'}"><icons:MaterialIcon Kind="FitToScreenOutline" Width="18" Height="18" /></Button>
+        </StackPanel>
+        <ProgressBar x:Name="Busy" IsVisible="False" IsHitTestVisible="False" IsIndeterminate="True" Width="160" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock x:Name="Problem" IsVisible="False" MaxWidth="520" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   TextAlignment="Center" Foreground="{DynamicResource Shell.Error}" />
+        <Popup x:Name="Details" Placement="Pointer" IsLightDismissEnabled="True" PlacementTarget="{Binding #MapHost}" />
+      </Grid>
+    </Border>
+
+    <!-- What the day holds, as poelab.com's notes. -->
+    <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="12,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel>
+        <TextBlock x:Name="TierTitle" FontSize="15" FontWeight="SemiBold" />
+        <TextBlock x:Name="DayText" Classes="note" FontSize="12" Margin="0,2,0,0" />
+        <TextBlock x:Name="ResetText" Classes="note" FontSize="12" Margin="0,2,0,0" />
+        <StackPanel x:Name="Notes" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- The legend: what each mark means. -->
+    <WrapPanel x:Name="Legend" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,0,0" />
+  </Grid>
+</l:FormWindow>

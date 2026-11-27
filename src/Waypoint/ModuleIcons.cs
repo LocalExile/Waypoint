@@ -207,7 +207,7 @@ static class ModuleIcons
         "SOCIAL" => "accountmultipleoutline", "HIDEOUTEDITING" => "homeeditoutline", "PORTALS" => "portal",
         "QUESTOBJECTS" => "bookopenpagevariantoutline", "NESSADEVELOPMENTTABS" => "bugoutline",
         "PHRECIAASCENDANCIES" => "stairsup", "PLAYERBOTS" => "robotoutline", "RUTHLESS" => "skullcrossbonesoutline",
-        "SURVIVORSREWARDS" => "giftoutline", "SURVIVORSRUN" => "waves", "SURVIVORSSKILLS" => "magicstaff",
+        "SURVIVORS" => "waves",
         _ => "modules"
     })!;
     public static string Scope => OperatingSystem.IsWindows() ? Environment.CurrentDirectory.ToUpperInvariant() : Environment.CurrentDirectory;

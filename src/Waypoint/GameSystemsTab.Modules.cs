@@ -26,6 +26,8 @@ public sealed partial class GameSystemsTab
         if (_catalog is null) return;
         foreach (var module in _catalog.Systems) PublishIcon(module.Id, ModuleIcons.Resolve(_shared.Settings, module.Id));
     }
+    /// <summary>The Modules section's own: LocalExile's modules. A league's mod is in Mods, and in the leagues' lists.</summary>
+    IEnumerable<GameSystem> Modules => _catalog!.Systems.Where(m => !m.Mod);
     static void PublishIcon(string id, ModuleIcon icon)
     {
 #if WINDOWS
@@ -54,12 +56,12 @@ public sealed partial class GameSystemsTab
     GameSystem[] MatchingModules()
     {
         var words = (_moduleSearch.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return _catalog!.Systems.Where(m => words.All(w => (ModuleTitle(m) + " " + m.Id + " " + m.Path + " " + m.Description)
+        return Modules.Where(m => words.All(w => (ModuleTitle(m) + " " + m.Id + " " + m.Path + " " + m.Description)
             .Contains(w, StringComparison.CurrentCultureIgnoreCase))).ToArray();
     }
     void UpdateModuleCount(int shown)
     {
-        _moduleCount.Text = L.Text("{0} of {1} modules", shown, _catalog!.Systems.Count);
+        _moduleCount.Text = L.Text("{0} of {1} modules", shown, Modules.Count());
         SettingsEditor.Show(_moduleEmpty, shown == 0);
     }
     string _lastModuleSearch = "";

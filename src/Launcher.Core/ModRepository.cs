@@ -41,6 +41,8 @@ public sealed record ModListing(string Id, string Name, string Description, stri
     bool IsProject, string Path, string[] Depends, bool HasSettings, IReadOnlyList<string>? ClientVersions = null)
 {
     public ReleaseVersion? ParsedVersion => ReleaseVersion.Parse(Version);
+    /// <summary>The index's "leagues": "listed": a mod of the leagues that list it.</summary>
+    public bool Listed { get; init; }
 }
 
 /// <summary>Which LocalExile versions a mod says it works with: <c>compatibleClientVersions</c> in its mod.json (and the
@@ -114,7 +116,7 @@ public static class ModRepository
             result.Add(new(id, Text("name") is { Length: > 0 } name ? name : id, Text("description"), Text("author"), Text("version"),
                 Text("kind") is { Length: > 0 } kind ? kind : "feature", Text("type") == "project", path, depends,
                 mod.TryGetProperty("settings", out var s) && s.ValueKind == JsonValueKind.True,
-                ClientCompatibility.Read(mod.TryGetProperty(ClientCompatibility.Field, out var c) ? c : default)));
+                ClientCompatibility.Read(mod.TryGetProperty(ClientCompatibility.Field, out var c) ? c : default)) { Listed = Text("leagues") == "listed" });
         }
         return result;
     }

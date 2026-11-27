@@ -20,6 +20,34 @@ public class CrafterCatalogTests
         """;
 
     [Fact]
+    public void Client_translations_change_display_without_changing_the_crafting_catalog()
+    {
+        var catalog = CrafterCatalog.Parse(Lines);
+        var display = CrafterLanguage.Parse(catalog, """
+            {"type":"class","id":"Ring","name":"戒指"}
+            {"type":"base","id":"Metadata/Items/Rings/Ring1","name":"锻铁戒指"}
+            {"type":"mod","id":"IncreasedLife6","name":"丰腴的"}
+            {"type":"word","list":1,"key":4053401100,"text":"灾祸"}
+            {"type":"desc","stats":["base_maximum_life"],"variants":[{"when":["80|99"],"text":"{0:+d} 最大生命","handlers":[]}]}
+            {"type":"desc","stats":["mana_+%","unsupported_stat"],"variants":[{"when":["#","#"],"text":"{0}%","handlers":[]}]}
+            """.Split('\n'));
+
+        var ring = Assert.Single(catalog.Bases);
+        var pool = catalog.Pool(ring, "pool");
+        Assert.Equal("戒指", display.ClassName(ring.Class));
+        Assert.Equal("锻铁戒指", display.BaseName(ring));
+        Assert.Equal("丰腴的", display.ModName(pool[0]));
+        Assert.Equal("灾祸", display.WordText(Assert.Single(catalog.Words)));
+        Assert.Equal(["+85 最大生命"], display.Lines(pool[0], [85]));
+        Assert.Equal(["+105 to maximum Life"], display.Lines(pool[1], [105]));
+        Assert.Equal(catalog.Lines(pool[2]), display.Lines(pool[2]));
+        Assert.Equal("Iron Ring", ring.Name);
+        Assert.Equal("Robust", pool[0].Name);
+        Assert.Equal(["+85 to maximum Life"], catalog.Lines(pool[0], [85]));
+        Assert.Equal("Dire", Assert.Single(catalog.Words).Text);
+    }
+
+    [Fact]
     public void A_mod_reads_as_the_game_words_it_with_its_range_or_its_values()
     {
         var catalog = CrafterCatalog.Parse(Lines);

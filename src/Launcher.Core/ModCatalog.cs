@@ -22,6 +22,12 @@ public sealed record ModEntry(string Id, string Version, string Kind, string[] D
     public string SettingsFile => Folder.Length > 0 && File.Exists(Path.Combine(Folder, ModSettingsForm.DeclarationsFile)) ? Path.Combine(Folder, ModSettingsForm.DeclarationsFile) : "";
     /// <summary>Its own icon.png: beside its mod.json, or in its source project before it is built; "" when it has none.</summary>
     public string IconFile { get; init; } = "";
+    /// <summary>mod.json "leagues": "listed": it runs only for the leagues that list it (LocalExile's mod guide, "Leagues").</summary>
+    public bool Listed { get; init; }
+    /// <summary>The leagues it brings: the folders of its Leagues/ that hold a league.json.</summary>
+    public IReadOnlyList<string> Leagues { get; init; } = [];
+    /// <summary><see cref="ModCatalog.RestartToApply"/> of its folder.</summary>
+    public bool RestartToApply { get; init; }
     public string SearchText => $"{Id} {Name} {Author} {Description} {Version} {Kind} {Status} {Detail}";
     public string DisplayDetail => L.Describe(Detail);
     public string Summary => $"{Version} · {L.Text(Kind)} · " + (Status == "Disabled" ? L.Text("Disabled") : $"{L.Text(Enabled ? "Enabled" : "Disabled")} · {L.Text(Status)}");
@@ -68,7 +74,27 @@ public static class ModCatalog
         return hash;
     }
     sealed record Manifest(string Id, string Version, string Kind, string[] Depends, string Assembly, bool Enabled,
-        string Name = "", string Description = "", string Author = "", string[]? ClientVersions = null);
+        string Name = "", string Description = "", string Author = "", string[]? ClientVersions = null, bool Listed = false);
+    /// <summary>The Gateway's reason for a listed mod that no league lists, and the status Waypoint gives it: not a failure.</summary>
+    public const string NoLeagueReason = "no league lists it", Unused = "No league uses it";
+    /// <summary>Whether the servers read part of this mod only when they start: a mod of the leagues that list it, or one
+    /// that brings leagues (Leagues/) or world data (sql/).</summary>
+    public static bool RestartToApply(string folder)
+    {
+        try
+        {
+            string manifest = Path.Combine(folder, "mod.json");
+            return Directory.Exists(Path.Combine(folder, "Leagues")) || Directory.Exists(Path.Combine(folder, "sql"))
+                || (File.Exists(manifest) && Parse(Path.GetFileName(folder), manifest).Listed);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException) { return false; }
+    }
+    static string[] LeaguesIn(string folder)
+    {
+        string leagues = Path.Combine(folder, "Leagues");
+        return Directory.Exists(leagues) && Physical(leagues)
+            ? [.. Directory.EnumerateDirectories(leagues).Take(64).Where(d => File.Exists(Path.Combine(d, "league.json"))).Select(d => Path.GetFileName(d)!).Order(StringComparer.Ordinal)] : [];
+    }
     /// <summary>The assembly a manifest names (its id's .dll by default).</summary>
     internal static string AssemblyName(string folderId, string json) => ParseJson(folderId, json).Assembly;
     static Manifest Parse(string folderId, string path) => ParseJson(folderId, Read(path));
@@ -97,10 +123,13 @@ public static class ModCatalog
         if (enabled.ValueKind is not (JsonValueKind.Undefined or JsonValueKind.True or JsonValueKind.False)) throw new InvalidDataException("enabled must be true or false.");
         string assembly = Text("assembly", id + ".dll");
         if (Path.GetFileName(assembly) != assembly || assembly.IndexOfAny(['/', '\\', ':']) >= 0 || !assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Assembly must be a DLL in the mod folder.");
+        // As the Gateway reads it: any other value fails the mod there.
+        string leagues = Text("leagues", "all");
+        if (leagues is not ("all" or "listed")) throw new InvalidDataException("leagues must be all or listed.");
         // name, description, author and compatibleClientVersions are Waypoint's (LocalExile-Mods' AGENTS.md); the Gateway
         // ignores them.
         return new(id, Text("version", "0"), kind, dependencies, assembly, enabled.ValueKind != JsonValueKind.False,
-            Text("name", ""), Text("description", ""), Text("author", ""), ClientCompatibility.Read(Field(ClientCompatibility.Field)));
+            Text("name", ""), Text("description", ""), Text("author", ""), ClientCompatibility.Read(Field(ClientCompatibility.Field)), leagues == "listed");
     }
     /// <summary>The ids of the checkout's modules (<c>Modules/**/module.json</c>, as Game Systems reads them), which a mod may
     /// depend on beside other mods. None when they cannot be read.</summary>
@@ -146,7 +175,7 @@ public static class ModCatalog
                         if (!source.TryAdd(manifest.Id, Path.GetRelativePath(snapshot.Root, project))) throw new InvalidDataException("Multiple source projects use this ID.");
                         entries[manifest.Id] = new(manifest.Id, manifest.Version, manifest.Kind, manifest.Depends, manifest.Enabled,
                             "Not built", "Build this source mod before enabling it.", Path.Combine(environment.Folder, manifest.Id), source[manifest.Id], "",
-                            manifest.Name, manifest.Description, manifest.Author, ClientVersions: manifest.ClientVersions);
+                            manifest.Name, manifest.Description, manifest.Author, ClientVersions: manifest.ClientVersions) { Listed = manifest.Listed };
                     }
                     catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                     { entries[id] = new(id, "?", "?", [], false, "Invalid source", ex.Message, folder, "", ""); }
@@ -177,7 +206,8 @@ public static class ModCatalog
                         string.Join('\n', scripts.Select(f => Path.GetFileName(f) + "|" + Fingerprint(f)))))) : "";
                     entries[id] = new(id, manifest.Version, manifest.Kind, manifest.Depends, enabled, built ? "Not checked" : "Missing DLL",
                         built ? "Runtime status has not been confirmed." : "Build this mod or install its DLL.", folder, source.GetValueOrDefault(id, ""), hash,
-                        manifest.Name, manifest.Description, manifest.Author, script, manifest.ClientVersions);
+                        manifest.Name, manifest.Description, manifest.Author, script, manifest.ClientVersions)
+                    { Listed = manifest.Listed, Leagues = LeaguesIn(folder), RestartToApply = RestartToApply(folder) };
                 }
                 catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                 { entries[id] = new(id, "?", "?", [], false, "Invalid manifest", ex.Message, folder, source.GetValueOrDefault(id, ""), ""); }
@@ -252,7 +282,8 @@ public static class ModCatalog
         foreach (string line in report.Split('\n'))
         {
             var failed = Regex.Match(line.TrimEnd('\r'), @"\A([A-Za-z0-9][A-Za-z0-9_.-]{0,127}) - not loaded, (.+)\z");
-            if (failed.Success) { result[failed.Groups[1].Value] = (failed.Groups[2].Value == "disabled" ? "Disabled" : "Load failed", failed.Groups[2].Value); continue; }
+            if (failed.Success) { result[failed.Groups[1].Value] = (failed.Groups[2].Value == "disabled" ? "Disabled"
+                : failed.Groups[2].Value.StartsWith(NoLeagueReason, StringComparison.Ordinal) ? Unused : "Load failed", failed.Groups[2].Value); continue; }
             var loaded = Regex.Match(line.TrimEnd('\r'), @"\A([A-Za-z0-9][A-Za-z0-9_.-]{0,127}) (.+) - (feature|league|script), ([0-9]+) hook\(s\)\z");
             if (loaded.Success) result[loaded.Groups[1].Value] = ("Loaded (last checked)", loaded.Groups[4].Value + " hooks · " + loaded.Groups[2].Value);
         }

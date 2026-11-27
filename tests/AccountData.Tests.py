@@ -340,5 +340,161 @@ class SplitLayoutTests(unittest.TestCase):
             self.run_request({"Action": "List"})
 
 
+RELATIONAL_CHARACTERS_SCHEMA = UPDATES + '''
+    CREATE TABLE account_characters(id TEXT PRIMARY KEY,account_id TEXT NOT NULL,name TEXT NOT NULL UNIQUE COLLATE NOCASE,class INTEGER NOT NULL,level INTEGER NOT NULL,league TEXT NOT NULL,area_id TEXT NOT NULL,created_utc TEXT NOT NULL,last_played_utc TEXT NOT NULL,last_town TEXT,portrait INTEGER NOT NULL DEFAULT 0,portrait_frame INTEGER NOT NULL DEFAULT 0,hardcore_death_league TEXT,hardcore_death_utc TEXT,hardcore_death_permanent INTEGER) STRICT;
+    CREATE TABLE account_characters_json(id TEXT PRIMARY KEY,account_id TEXT NOT NULL,name TEXT NOT NULL UNIQUE COLLATE NOCASE,created_utc TEXT NOT NULL,character TEXT NOT NULL) STRICT;
+    CREATE TABLE account_friends(owner TEXT NOT NULL,friend TEXT NOT NULL,PRIMARY KEY(owner,friend),CHECK(owner<>friend)) STRICT;
+    CREATE TABLE characters(name TEXT PRIMARY KEY COLLATE NOCASE,save TEXT NOT NULL) STRICT;
+    CREATE TABLE deleted_characters(name TEXT NOT NULL,deleted_utc TEXT NOT NULL,save TEXT NOT NULL) STRICT;
+    CREATE TABLE meta(key TEXT PRIMARY KEY,value TEXT NOT NULL) STRICT;
+    CREATE TABLE stash_tabs(account TEXT NOT NULL COLLATE NOCASE,tab INTEGER NOT NULL,items TEXT NOT NULL,PRIMARY KEY(account,tab)) STRICT;
+    CREATE TABLE stashes(account TEXT PRIMARY KEY COLLATE NOCASE,save TEXT NOT NULL) STRICT;
+    CREATE TABLE character_saves(id INTEGER PRIMARY KEY,name TEXT NOT NULL COLLATE NOCASE,deleted_utc TEXT,has_inventories INTEGER NOT NULL DEFAULT 1,vitals_character TEXT,vitals_session TEXT,vitals_retired INTEGER,future_col TEXT) STRICT;
+    CREATE UNIQUE INDEX character_saves_name ON character_saves(name) WHERE deleted_utc IS NULL;
+    CREATE TABLE character_ascendancies(save INTEGER PRIMARY KEY REFERENCES character_saves(id),family TEXT NOT NULL,ascendancy TEXT NOT NULL,revision TEXT) STRICT;
+    CREATE TABLE character_module_data(save INTEGER NOT NULL REFERENCES character_saves(id),key TEXT NOT NULL,value TEXT NOT NULL,PRIMARY KEY(save,key)) STRICT;
+    CREATE TABLE stash_saves(id INTEGER PRIMARY KEY,account TEXT NOT NULL UNIQUE COLLATE NOCASE,last_tab INTEGER NOT NULL DEFAULT 0,next_item_id INTEGER NOT NULL DEFAULT 1,gold INTEGER NOT NULL DEFAULT 0) STRICT;
+    CREATE TABLE stash_tab_headers(stash INTEGER NOT NULL REFERENCES stash_saves(id),tab INTEGER NOT NULL,name TEXT NOT NULL,hidden INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(stash,tab)) STRICT;
+    CREATE TABLE items(id INTEGER PRIMARY KEY,character INTEGER REFERENCES character_saves(id),stash INTEGER REFERENCES stash_saves(id),inventory INTEGER,role TEXT NOT NULL,parent INTEGER REFERENCES items(id),ord INTEGER NOT NULL,type INTEGER NOT NULL,CHECK((character IS NULL)<>(stash IS NULL))) STRICT;
+    CREATE TABLE item_mods(item INTEGER NOT NULL REFERENCES items(id),ord INTEGER NOT NULL,mod TEXT NOT NULL,section INTEGER NOT NULL,stat_values TEXT NOT NULL,PRIMARY KEY(item,ord)) STRICT;
+    CREATE TABLE item_skin_transfers(target INTEGER PRIMARY KEY REFERENCES items(id),source TEXT NOT NULL) STRICT;'''
+
+
+class RelationalLayoutTests(unittest.TestCase):
+    """Relational characters.db with accounts in auth.db (2026_11_11_181109_relational_saves.sql)."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="waypoint-relational-")
+        self.root = Path(self.temp.name)
+        (self.root / "data").mkdir()
+        service = self.root / "src/GameServer.Core/Accounts/AccountService.cs"
+        service.parent.mkdir(parents=True)
+        service.write_text("Pbkdf2(pw, Convert.FromBase64String(salt), 50_000, HashAlgorithmName.SHA256, 32)\n"
+                           "SHA256.HashData(Encoding.Unicode.GetBytes(password))\nHash(Convert.ToHexString(digest), salt)", encoding="utf-8")
+        self.characters, self.auth = self.root / "data/characters.db", self.root / "data/auth.db"
+        self.account, self.other, self.char = (str(uuid.uuid4()) for _ in range(3))
+        with connect(self.auth) as db:
+            db.executescript(AUTH_SCHEMA)
+            for identity, name in ((self.account, "Alpha"), (self.other, "Beta")):
+                record = {"Id": identity, "Name": name, "PasswordHash": "private-verifier", "PasswordSalt": "private-salt", "CreatedUtc": "2026-01-01T00:00:00Z"}
+                db.execute("INSERT INTO accounts VALUES(?,?,?)", (identity, name, json.dumps(record)))
+        with connect(self.characters) as db:
+            db.executescript(RELATIONAL_CHARACTERS_SCHEMA +
+                             "INSERT INTO meta VALUES('accounts_imported','fixture'),('relational_saves','1');")
+            db.execute("INSERT INTO account_characters VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                       (self.char, self.account, "Hero", 3, 77, "Standard", "1_1_1",
+                        "2026-01-01T00:00:00Z", "2026-01-02T00:00:00Z", "1_1_town", 0, 2, None, None, None))
+            # Deleted save with the same name (different casing) and an older ascendancy must not shadow the active save.
+            old_save = db.execute("INSERT INTO character_saves(name,deleted_utc,has_inventories) VALUES(?,?,1)",
+                                  ("hero", "2025-12-31T00:00:00Z")).lastrowid
+            db.execute("INSERT INTO character_ascendancies VALUES(?,?,?,?)", (old_save, "Normal", "Witch1", "3.29.3c"))
+            save_id = db.execute("INSERT INTO character_saves(name,deleted_utc,has_inventories,vitals_character,vitals_session,vitals_retired,future_col) VALUES(?,NULL,1,?,?,0,?)",
+                                 ("Hero", self.char, str(uuid.uuid4()), "keep-me")).lastrowid
+            db.execute("INSERT INTO character_ascendancies VALUES(?,?,?,?)", (save_id, "Normal", "Witch3", "3.29.3c"))
+            db.execute("INSERT INTO character_module_data VALUES(?,?,?)", (save_id, "Core/Game", '{"x":1}'))
+            body_id = db.execute("INSERT INTO items(character,stash,inventory,role,parent,ord,type) VALUES(?,NULL,1,'placed',NULL,0,100)", (save_id,)).lastrowid
+            gem_id = db.execute("INSERT INTO items(character,stash,inventory,role,parent,ord,type) VALUES(?,NULL,1,'socketed',?,0,200)", (save_id, body_id)).lastrowid
+            db.execute("INSERT INTO item_mods VALUES(?,?,?,?,?)", (body_id, 0, "ModA", 0, "[1]"))
+            db.execute("INSERT INTO item_skin_transfers VALUES(?,?)", (body_id, '{"Type":999}'))
+            self.assertGreater(gem_id, body_id)
+            for acct_key in ("Alpha", "Alpha (Allflame)", "guild:Alpha", "Beta"):
+                sid = db.execute("INSERT INTO stash_saves(account,last_tab,next_item_id,gold) VALUES(?,0,2,50)", (acct_key,)).lastrowid
+                db.execute("INSERT INTO stash_tab_headers VALUES(?,0,'Main',0)", (sid,))
+                if acct_key == "Alpha":
+                    db.execute("INSERT INTO stash_tab_headers VALUES(?,1,'DeletedFolder',1)", (sid,))
+                    s_item = db.execute("INSERT INTO items(character,stash,inventory,role,parent,ord,type) VALUES(NULL,?,0,'placed',NULL,0,300)", (sid,)).lastrowid
+                    db.execute("INSERT INTO item_mods VALUES(?,?,?,?,?)", (s_item, 0, "StashMod", 0, "[7]"))
+            db.execute("INSERT INTO account_friends VALUES(?,?)", (self.account, self.other))
+        with connect(self.root / "data/client.db") as db:
+            db.execute("CREATE TABLE Ascendancy(_row INTEGER PRIMARY KEY, Id TEXT, Name TEXT, LeagueName TEXT)")
+            db.execute("INSERT INTO Ascendancy VALUES(0,'Witch1','Occultist','BogShaman'),(1,'Witch3','Elementalist','Harbinger')")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def run_request(self, request):
+        return data.run(self.characters, self.root, request, self.auth)
+
+    def test_relational_list_rename_duplicate_and_delete(self):
+        before = (self.characters.read_bytes(), self.auth.read_bytes())
+        view = self.run_request({"Action": "List"})
+        self.assertEqual(before, (self.characters.read_bytes(), self.auth.read_bytes()))
+        self.assertTrue(view["Writable"], view["Notice"])
+        self.assertTrue(view["CanRegister"])
+        serialized = json.dumps(view)
+        self.assertNotIn("private-verifier", serialized)
+        self.assertNotIn("private-salt", serialized)
+        alpha = next(a for a in view["Accounts"] if a["Id"] == self.account)
+        self.assertEqual(alpha["Characters"][0]["Ascendancy"], "Elementalist")
+        self.assertEqual(alpha["Characters"][0]["Level"], 77)
+        self.assertEqual(alpha["StashTabs"], 3)
+
+        # Duplicate with characters, nested socketed items, mods, skin transfers, and stash.
+        dup_view = self.run_request({
+            "Action": "Duplicate", "AccountId": self.account, "ExpectedRevision": alpha["Revision"],
+            "Name": "Copy", "Password": "new-password", "IncludeCharacters": True, "IncludeStash": True,
+            "CharacterNames": {self.char: "CopiedHero"},
+        })
+        copy = next(a for a in dup_view["Accounts"] if a["Name"] == "Copy")
+        self.assertEqual(copy["Characters"][0]["Ascendancy"], "Elementalist")
+        self.assertEqual(copy["StashTabs"], 3)
+        with connect(self.characters) as db:
+            row = db.execute("SELECT id, vitals_character, vitals_session, future_col FROM character_saves WHERE name='CopiedHero' AND deleted_utc IS NULL").fetchone()
+            self.assertIsNotNone(row)
+            self.assertIsNone(row[1])
+            self.assertIsNone(row[2])
+            self.assertEqual(row[3], "keep-me")
+            items = db.execute("SELECT id, role, parent FROM items WHERE character=? ORDER BY id", (row[0],)).fetchall()
+            self.assertEqual(len(items), 2)
+            self.assertEqual(items[1][2], items[0][0])
+            self.assertEqual(db.execute("SELECT count(*) FROM item_mods WHERE item=?", (items[0][0],)).fetchone()[0], 1)
+            self.assertEqual(db.execute("SELECT count(*) FROM item_skin_transfers WHERE target=?", (items[0][0],)).fetchone()[0], 1)
+
+        # Rename moves all owned stashes.
+        alpha = next(a for a in dup_view["Accounts"] if a["Id"] == self.account)
+        renamed_view = self.run_request({
+            "Action": "Rename", "AccountId": self.account, "ExpectedRevision": alpha["Revision"], "Name": "Gamma",
+        })
+        with connect(self.characters) as db:
+            stashes = {r[0] for r in db.execute("SELECT account FROM stash_saves")}
+            self.assertTrue({"Gamma", "Gamma (Allflame)", "guild:Gamma", "Copy", "Beta"} <= stashes)
+
+        # Delete archives character_saves via deleted_utc and removes account/stash/friends.
+        gamma = next(a for a in renamed_view["Accounts"] if a["Id"] == self.account)
+        self.run_request({"Action": "Delete", "AccountId": self.account, "ExpectedRevision": gamma["Revision"], "Name": "Gamma"})
+        with connect(self.characters) as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM account_characters WHERE account_id=?", (self.account,)).fetchone()[0], 0)
+            self.assertIsNotNone(db.execute("SELECT deleted_utc FROM character_saves WHERE name='Hero'").fetchone()[0])
+            self.assertEqual(db.execute("SELECT count(*) FROM stash_saves WHERE account LIKE 'Gamma%' OR account LIKE 'guild:Gamma%'").fetchone()[0], 0)
+            self.assertEqual(db.execute("SELECT count(*) FROM account_friends").fetchone()[0], 0)
+
+    def test_relational_missing_migration_or_unknown_table_is_read_only(self):
+        # Fresh relational DB created by GameServer.Host (accounts_imported set, no legacy JSON rows) stays writable
+        # before Gateway first runs SaveRows.Migrate.
+        with connect(self.characters) as db:
+            db.execute("DELETE FROM meta WHERE key='relational_saves'")
+        fresh = self.run_request({"Action": "List"})
+        self.assertTrue(fresh["Writable"])
+        self.assertTrue(fresh["CanRegister"])
+
+        # Pending migration (unmigrated legacy JSON row present without relational_saves marker) degrades to read-only
+        # and refuses writes without touching either database file.
+        with connect(self.characters) as db:
+            db.execute("INSERT INTO characters VALUES('LegacyHero','{}')")
+        ro = self.run_request({"Action": "List"})
+        self.assertFalse(ro["Writable"])
+        alpha = next(a for a in ro["Accounts"] if a["Id"] == self.account)
+        before = (self.characters.read_bytes(), self.auth.read_bytes())
+        with self.assertRaises(data.AccountError):
+            self.run_request({"Action": "Rename", "AccountId": self.account, "ExpectedRevision": alpha["Revision"], "Name": "Blocked"})
+        self.assertEqual(before, (self.characters.read_bytes(), self.auth.read_bytes()))
+
+        with connect(self.characters) as db:
+            db.execute("DELETE FROM characters")
+            db.execute("INSERT INTO meta VALUES('relational_saves','1')")
+            db.execute("CREATE TABLE future_unknown(id INTEGER PRIMARY KEY)")
+        self.assertFalse(self.run_request({"Action": "List"})["Writable"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

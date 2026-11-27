@@ -18,20 +18,41 @@ public sealed partial class GameSystems
             result[category + Path.GetRelativePath(root, file).Replace('\\', '/')] = Hash(file);
         }
         foreach (var file in Manifests(environment.Modules, "module.json")) Add("module/", environment.Modules, file);
-        foreach (var manifest in Manifests(environment.Leagues, "league.json"))
+        void AddLeagues(string root, string mod = "")
         {
-            var folder = Path.GetDirectoryName(manifest)!;
-            foreach (var name in new[] { "league.json", "modules.json", "settings.json", ".waypoint-league.json" })
-                if (File.Exists(Path.Combine(folder, name))) Add("league/", environment.Leagues, Path.Combine(folder, name));
-            string source = Path.Combine(folder, "Source");
-            if (Directory.Exists(source))
+            string category = "league/" + (mod.Length > 0 ? mod + ":" : "");
+            foreach (var manifest in Manifests(root, "league.json"))
             {
-                if (!ModCatalog.Physical(source)) throw new IOException(L.Text("Redirected module paths are not supported."));
-                // Only flat, physical source is eligible for creation; inventory every file, including unsupported ones.
-                foreach (string file in Directory.GetFiles(source)) Add("league/", environment.Leagues, file);
-                if (Directory.GetDirectories(source).Length > 0) result["nested/" + Path.GetFileName(folder)] = "unsupported";
+                var folder = Path.GetDirectoryName(manifest)!;
+                foreach (var name in new[] { "league.json", "modules.json", "settings.json", ".waypoint-league.json" })
+                    if (File.Exists(Path.Combine(folder, name))) Add(category, root, Path.Combine(folder, name));
+                string source = Path.Combine(folder, "Source");
+                if (Directory.Exists(source))
+                {
+                    if (!ModCatalog.Physical(source)) throw new IOException(L.Text("Redirected module paths are not supported."));
+                    // Only flat, physical source is eligible for creation; inventory every file, including unsupported ones.
+                    foreach (string file in Directory.GetFiles(source)) Add(category, root, file);
+                    if (Directory.GetDirectories(source).Length > 0) result["nested/" + (mod.Length > 0 ? mod + ":" : "") + Path.GetFileName(folder)] = "unsupported";
+                }
+                if (result.Count > 10000) throw new IOException(L.Text("Settings are too deeply nested or too large."));
             }
-            if (result.Count > 10000) throw new IOException(L.Text("Settings are too deeply nested or too large."));
+        }
+        AddLeagues(environment.Leagues);
+        // Every mod's manifest, the choices that turn mods on and off, and the leagues the mods bring: which mods are on, and
+        // what they are, follows from these. scripts/LeagueData.py takes the same inventory.
+        if (environment.Mods.Length > 0 && Directory.Exists(environment.Mods))
+        {
+            if (!ModCatalog.Physical(environment.Mods)) throw new IOException(L.Text("Redirected module paths are not supported."));
+            result["mods"] = Hash(Path.Combine(environment.Mods, "mod-state.txt"));
+            foreach (string folder in Directory.GetDirectories(environment.Mods).OrderBy(f => Path.GetFileName(f), StringComparer.Ordinal).Take(512))
+            {
+                string id = Path.GetFileName(folder), file = Path.Combine(folder, "mod.json");
+                if (!Readable(folder)) continue;
+                Add("mod/", environment.Mods, file);
+                // A redirected or too deep Leagues/ is not read (GameSystems skips it): not inventoried either.
+                try { AddLeagues(Path.Combine(folder, "Leagues"), id); }
+                catch (IOException) { foreach (string key in result.Select(p => p.Key).Where(k => k.StartsWith("league/" + id + ":", StringComparison.Ordinal) || k.StartsWith("nested/" + id + ":", StringComparison.Ordinal)).ToArray()) result.Remove(key); }
+            }
         }
         return result;
     }
@@ -138,8 +159,9 @@ public sealed partial class GameSystems
             throw new InvalidOperationException(ModeNote(ofMode));
         // A listed module that is not installed: LocalExile logs it and loads the league without it. One this league
         // already lists stays until its user unticks it; one that is new here is refused.
-        if (paths.Any(p => !Installed(p) && (forNewLeague || !league.Systems.Contains(p, StringComparer.OrdinalIgnoreCase))))
+        if (paths.Any(p => !Installed(p) && !_onMods.Contains(Id(p)) && (forNewLeague || !league.Systems.Contains(p, StringComparer.OrdinalIgnoreCase))))
             throw new InvalidOperationException(L.Text("A selected module is missing."));
+        if (Clash(paths) is { } clash) throw new InvalidOperationException(clash);
         var active = paths.Where(Installed).Select(p => Systems.Single(s => s.Path.Equals(p, StringComparison.OrdinalIgnoreCase))).ToArray();
         if (!active.Any(s => s.Id.Equals("Game", StringComparison.OrdinalIgnoreCase)))
             throw new InvalidOperationException(L.Text("The Game module is required for a playable league."));
@@ -149,15 +171,37 @@ public sealed partial class GameSystems
             if (done.Contains(module.Id)) return;
             if (!visiting.Add(module.Id)) throw new InvalidOperationException(L.Text("The selected modules contain a dependency cycle."));
             foreach (string id in module.Depends)
+            {
+                // A mod of every league that is on: LocalExile loads it in every league.
+                if (module.Mod && _onMods.Contains(id) && !Systems.Any(s => s.Id.Equals(id, StringComparison.OrdinalIgnoreCase))) continue;
                 Visit(active.FirstOrDefault(s => s.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
                     ?? throw new InvalidOperationException(L.Text("{0} needs {1}. Enable the required module first.", module.Name, id)));
+            }
             visiting.Remove(module.Id); done.Add(module.Id);
         }
         foreach (var module in active) Visit(module);
     }
+    /// <summary>Why these entries cannot make up one league's list, by what its modules and mods declare, as LocalExile's
+    /// ModFolders.Clash asks: nothing beside one it conflicts with, and beside one that names the only ones it allows
+    /// ("only"), nothing else but the game. Null when they can.</summary>
+    string? Clash(IEnumerable<string> paths)
+    {
+        string[] ids = [.. paths.Select(Id)];
+        string NameOf(string id) => Systems?.FirstOrDefault(s => s.Id.Equals(id, StringComparison.OrdinalIgnoreCase))?.Name ?? id;
+        foreach (string id in ids)
+        {
+            if (!_limits.TryGetValue(id, out var own)) continue;
+            if (own.Conflicts.FirstOrDefault(c => ids.Contains(c, StringComparer.OrdinalIgnoreCase)) is { } other)
+                return L.Text("{0} cannot run with {1}.", NameOf(id), NameOf(other));
+            if (own.Only is { } only && ids.FirstOrDefault(i => !i.Equals(id, StringComparison.OrdinalIgnoreCase)
+                && !i.Equals("Game", StringComparison.OrdinalIgnoreCase) && !only.Contains(i, StringComparer.OrdinalIgnoreCase)) is { } extra)
+                return L.Text("{0} allows only the modules and mods it names, not {1}.", NameOf(id), NameOf(extra));
+        }
+        return null;
+    }
     /// <summary>A module that no league LocalExile ships lists: off by default, and made to be listed by its user in the
-    /// league they want it in, which is how LocalExile's own guide turns PlayerBots on (its
-    /// <c>Agents/docs/dev/player-bots.md</c>: <c>{"Standard": {"add": ["PlayerBots"]}}</c> in <c>data/league-modules.json</c>).
+    /// league they want it in, which is how a league's mod is turned on (the playerbots mod's README:
+    /// <c>{"Standard": {"add": ["playerbots"]}}</c> in <c>data/league-modules.json</c>).
     /// A league made in Waypoint does not count as shipping it: its list is its user's. An add-on is never part of a
     /// league's own bundle (<see cref="BundleModules"/>).</summary>
     public bool AddOn(string path) => !Leagues.Any(l => !l.Custom && l.BaseSystems.Contains(path, StringComparer.OrdinalIgnoreCase));
@@ -172,9 +216,9 @@ public sealed partial class GameSystems
         return false;
     }
 
-    /// <summary>A module LocalExile ships only in isolated leagues: the Survivors modules, whose run starts by itself,
-    /// refuses ordinary exits and hands out rewards that its league keeps away from Standard. Such a module stays in
-    /// isolated leagues. Every other module is offered for every league.</summary>
+    /// <summary>A module or mod LocalExile ships only in isolated leagues: Survivors', whose run starts by itself, refuses
+    /// ordinary exits and hands out rewards that its league keeps away from Standard. Such a module stays in isolated
+    /// leagues. Every other module is offered for every league.</summary>
     public bool IsolatedModule(string path) =>
         Leagues.Where(l => !l.Custom && l.BaseSystems.Contains(path, StringComparer.OrdinalIgnoreCase)).ToArray() is { Length: > 0 } users && users.All(Isolated);
 
@@ -260,6 +304,9 @@ public sealed partial class GameSystems
             }
         }
         Visit(league);
+        // A mod's leagues are the mod's files, which an update of the mod replaces.
+        if (changes.Any(l => l.Mod.Length > 0) || league.Mod.Length > 0)
+            throw new InvalidOperationException(L.Text("A league that a mod brings can't be hidden or shown here: an update of the mod would undo it."));
         bool Offered(GameLeague item) => (changes.Contains(item) ? visible : item.Creatable) && !item.Ended && Rooted(item);
         if (!Systems.Any(s => s.Id.Equals("Game", StringComparison.OrdinalIgnoreCase)) || !Leagues.Any(l => Offered(l) && l.EntryOf.Length == 0
             && l.BaseSystems.Any(p => Id(p).Equals("Game", StringComparison.OrdinalIgnoreCase))))
@@ -287,7 +334,8 @@ public sealed partial class GameSystems
         if (!SafeLeagueName(name)) return L.Text("Use 3–48 English letters, numbers, spaces, underscores or hyphens, starting with a letter.");
         if (Leagues.Any(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || Path.GetFileName(l.Folder).Equals(name, StringComparison.OrdinalIgnoreCase))
             || Choices.Any(p => p.Key.Equals(name, StringComparison.OrdinalIgnoreCase)) || Directory.Exists(Path.Combine(Environment.Leagues, name))
-            || File.Exists(Path.Combine(Environment.Leagues, name))) return L.Text("That league name is already in use. Choose a new name.");
+            || File.Exists(Path.Combine(Environment.Leagues, name))
+            || Environment.Mods.Length > 0 && Directory.Exists(Path.Combine(Environment.Mods, name))) return L.Text("That league name is already in use. Choose a new name.");
         return null;
     }
 
@@ -304,7 +352,7 @@ public sealed partial class GameSystems
         if (string.IsNullOrWhiteSpace(description) || description.Length > 2000 || description.Any(c => char.IsControl(c) && c is not ('\r' or '\n' or '\t')))
             throw new InvalidOperationException(L.Text("Enter a description of 1–2000 characters."));
         string[] paths = selected.Select(Normal).ToArray(); ValidateComposition(template, paths, forNewLeague: true);
-        return new() { ["template"] = Path.GetFileName(template.Folder), ["name"] = name, ["description"] = description,
+        return new() { ["template"] = template.Name, ["name"] = name, ["description"] = description,
             ["modules"] = new JsonArray(paths.Select(p => (JsonNode)JsonValue.Create(p)).ToArray()), ["review"] = Review.DeepClone() };
     }
 }

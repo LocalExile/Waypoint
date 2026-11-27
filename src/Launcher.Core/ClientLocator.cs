@@ -403,7 +403,13 @@ public static class ClientLocator
             using var steam = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam");
             if (steam?.GetValue("SteamPath") is string steamPath && steamPath.Length > 0) named.Add(Path.Combine(steamPath, "steamapps", "common", "Path of Exile"));
         }
-        if (OperatingSystem.IsLinux()) named.AddRange(WinePrefixClients());
+        if (OperatingSystem.IsLinux())
+        {
+            string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            searched.Add(L.Text("Steam's libraries"));
+            named.AddRange(SteamClients(home));
+            named.AddRange(WinePrefixClients());
+        }
         foreach (var folder in new[] { Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.ProgramFiles })
         {
             named.Add(Path.Combine(Environment.GetFolderPath(folder), "Grinding Gear Games", "Path of Exile"));
@@ -444,6 +450,60 @@ public static class ClientLocator
     {
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         return new[] { Path.Combine(home, "Games"), home }.Where(Directory.Exists);
+    }
+
+    /// <summary>Where Steam for Linux keeps itself: the links it makes in ~/.steam, its own folder, and the Flatpak's. One
+    /// Steam is often reached by several of them (~/.steam/steam leads to ~/.local/share/Steam); <see cref="Find"/> counts a
+    /// folder once by where it really is.</summary>
+    public static IEnumerable<string> SteamRoots(string home) =>
+    [
+        Path.Combine(home, ".steam", "steam"),
+        Path.Combine(home, ".steam", "root"),
+        Path.Combine(home, ".local", "share", "Steam"),
+        Path.Combine(home, ".var", "app", "com.valvesoftware.Steam", ".local", "share", "Steam"),
+        Path.Combine(home, ".var", "app", "com.valvesoftware.Steam", "data", "Steam"),
+    ];
+
+    /// <summary>Path of Exile's app on Steam.</summary>
+    const string SteamApp = "238960";
+
+    /// <summary>The library folders a <c>libraryfolders.vdf</c> names: each <c>"path"</c> value, in its order, with Steam's
+    /// escaping undone (a Windows library is written <c>C:\\Games</c>). Nothing else in the file is read.</summary>
+    public static IReadOnlyList<string> SteamLibraryPaths(string vdf) =>
+        [.. Regex.Matches(vdf, @"(?m)^\s*""path""\s+""((?:[^""\\]|\\.)*)""").Select(m => Regex.Replace(m.Groups[1].Value, @"\\(.)", "$1"))
+            .Where(path => path.Length > 0).Distinct()];
+
+    /// <summary>The game's folder name in a library, from its <c>appmanifest_238960.acf</c>; null without one.</summary>
+    public static string? SteamInstallDir(string manifest) =>
+        Regex.Match(manifest, @"(?m)^\s*""installdir""\s+""([^""\\/]+)""") is { Success: true } dir && dir.Groups[1].Value is not ("." or "..") ? dir.Groups[1].Value : null;
+
+    /// <summary>Path of Exile in every Steam library of every Steam root under <paramref name="home"/>: each root's own
+    /// library, and the libraries its <c>libraryfolders.vdf</c> names, in the folder the library's manifest names (else
+    /// the usual one). A walk of the home folder reaches none of them within its depth.</summary>
+    public static IEnumerable<string> SteamClients(string home)
+    {
+        var libraries = new List<string>();
+        foreach (string root in SteamRoots(home))
+        {
+            if (!Directory.Exists(root)) continue;
+            libraries.Add(root);
+            foreach (string vdf in new[] { Path.Combine(root, "steamapps", "libraryfolders.vdf"), Path.Combine(root, "config", "libraryfolders.vdf") })
+            {
+                try { if (File.Exists(vdf)) libraries.AddRange(SteamLibraryPaths(File.ReadAllText(vdf))); }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+            }
+        }
+        foreach (string library in libraries.Distinct(StringComparer.Ordinal))
+        {
+            string steamapps = Path.Combine(library, "steamapps"), folder = "Path of Exile";
+            try
+            {
+                if (Path.Combine(steamapps, $"appmanifest_{SteamApp}.acf") is var manifest && File.Exists(manifest)
+                    && SteamInstallDir(File.ReadAllText(manifest)) is { } named) folder = named;
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+            yield return Path.Combine(steamapps, "common", folder);
+        }
     }
 
     /// <summary>The installer's usual folders in each Wine prefix, and the folder it recorded there: the prefix's user.reg and

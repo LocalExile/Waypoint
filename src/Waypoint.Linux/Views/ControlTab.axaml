@@ -51,8 +51,10 @@
                     ToolTip.Tip="{l:Loc 'The Gateway runs under dotnet watch, so saved code edits apply with the game still running; off passes -NoHotReload'}" />
           <CheckBox x:Name="NoBuild" Content="{l:Loc 'Skip build'}" ToolTip.Tip="-NoBuild" />
           <CheckBox x:Name="NoExtract" Content="{l:Loc 'Skip data check'}" ToolTip.Tip="-NoExtract" />
-          <!-- live.ps1 refuses -Walkmaps on Linux: Frida's recorder cannot run there. Off and out of sight, so the logic stays as on Windows. -->
-          <CheckBox x:Name="Walkmaps" Content="{l:Loc 'Walk maps'}" IsVisible="False" />
+          <!-- -Walkmaps, where the checkout's live.ps1 records under Proton (its scripts/walkmaps/proton.py, which builds a small
+               Frida Gum recorder with g++ and starts the client with it). Out of sight for a checkout without it. -->
+          <CheckBox x:Name="Walkmaps" Content="{l:Loc 'Walk maps'}" IsVisible="False"
+                    ToolTip.Tip="{l:Loc '-Walkmaps: capture each area\'s walk map under Proton. The game starts with the recorder, which LocalExile builds with g++ the first time.'}" />
         </WrapPanel>
       </DockPanel>
     </Border>

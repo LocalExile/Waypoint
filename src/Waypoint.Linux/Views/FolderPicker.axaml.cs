@@ -45,6 +45,9 @@ public partial class FolderPicker : UserControl
 
     /// <summary>"Set up a new copy…": the setup guide's source route.</summary>
     internal event Action? NewCopyRequested;
+    /// <summary>"Game client…": the clients of the folder in use (<see cref="ClientVersionsWindow"/>). Here for a release
+    /// and for a source copy, in Simple and in Advanced mode: one place, whatever shows beside the sidebar.</summary>
+    internal event Action? GameClientRequested;
 
     public FolderPicker() => InitializeComponent();
 
@@ -219,5 +222,11 @@ public partial class FolderPicker : UserControl
     {
         List.IsOpen = false;
         NewCopyRequested?.Invoke();
+    }
+
+    void GameClientClicked(object? sender, RoutedEventArgs e)
+    {
+        List.IsOpen = false;
+        GameClientRequested?.Invoke();
     }
 }

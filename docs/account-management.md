@@ -54,10 +54,12 @@ LocalExile main was verified at `89b7aa908213ac8eb9b5ac5aa7ae54c14189c3e9`. Refe
 `GameServer.Gateway/CharacterSaves.cs`, `AccountStash.cs`, `AscendancyCatalog.cs` and `AscendancyProgress.cs`.
 No LocalExile source changes, DLL references or game assets are added to the production launcher.
 
-Accounts and account-character records are JSON in SQLite rows. Progress is stored separately by character name.
-Personal/guild stashes use account/league keys and separate tab rows. Main ascendancy is a durable family/id/revision
-selection in progress; display names come from this checkout's extracted `data/tables/Ascendancy.json`, or its
-`data/client.db` from LocalExile's database split on, using Name or LeagueName. Missing display data shows the durable ascendancy ID; absence of a selection falls back to base class.
+Accounts are stored as JSON in SQLite rows (`auth.db` from the database split on). Character and stash progress are
+supported in both the earlier JSON-row tables (`characters`, `stashes`, `stash_tabs`) and the relational tables
+(`account_characters`, `character_saves`, `character_*`, `stash_saves`, `stash_tab_headers`, `items`, `item_mods`,
+`item_skin_transfers`). Main ascendancy is a durable family/id/revision selection in progress; display names come from
+this checkout's extracted `data/tables/Ascendancy.json`, or its `data/client.db` from LocalExile's database split on,
+using Name or LeagueName. Missing display data shows the durable ascendancy ID; absence of a selection falls back to base class.
 
 Listings use one read-only SQLite snapshot and expose no credential verifiers. Mutations run parameterized SQL in
 one immediate transaction, verify identities, recheck the selected account revision and check database integrity.

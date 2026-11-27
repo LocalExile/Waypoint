@@ -54,20 +54,31 @@ where they are. Neither old file is changed.
 ## Linux
 
 Linux has its own executable and interface (`src/Waypoint.Linux`, Avalonia) over the same engine, and the Windows app is
-built as before. It needs the .NET 10 SDK, [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own
-PoE **3.29.3c** or **3.29.3d** client, standalone or from Steam. A source checkout also needs PowerShell 7 (`dotnet tool install --global PowerShell`), Git,
-Python 3.9+ and Node.js.
+built as before. Every release has it as one file, `Waypoint-x86_64.AppImage`, beside `Waypoint.exe`:
+
+1. Download `Waypoint-x86_64.AppImage` from the latest release on this repository's **Releases** page.
+2. Make it executable (`chmod +x Waypoint-x86_64.AppImage`, or the file manager's Properties) and start it.
+
+It needs [umu-launcher](https://github.com/Open-Wine-Components/umu-launcher) and your own PoE **3.29.3c** or **3.29.3d**
+client, standalone or from Steam (Waypoint finds Steam's own libraries, the Flatpak's too), or one Waypoint downloads from
+Steam with your own account. A source checkout also needs the .NET 10 SDK, PowerShell 7
+(`dotnet tool install --global PowerShell`), Git, Python 3.9+ and Node.js. Like the exe, the AppImage looks for a newer release
+when it starts and replaces itself on **Update now**, checked against the release's SHA-256; its settings stay in
+`~/.local/share/Waypoint`. From source:
 
 ```bash
 dotnet run --project src/Waypoint.Linux
+tools/build-appimage.sh            # the AppImage, in out/linux/
 ```
 
 Game settings and the saved login are kept in `~/.local/share/LocalExile/wine-prefix`: every LocalExile of yours shares them, they
 stay when an install is deleted, and your normal Path of Exile does not use them.
 
 The ready-to-play route needs a release with a `-linux-x64` zip; LocalExile publishes one since v0.2.0-beta. For an older release
-without one, the setup guide sets up the source code instead. Not on Linux yet: walk maps, the client control bridge (the Console copies commands instead of sending
-them), the item crafter, the tray and the appearance editor.
+without one, the setup guide sets up the source code instead. Walk maps record under Proton where the checkout's `live.ps1` can
+(it builds its recorder with `g++`). Not on Linux yet: the client control bridge (the Console copies commands instead of sending
+them; it needs a Proton transport in LocalExile first), the Steam download's password sign-in (the QR code works), the text size
+and focus options of the appearance, and the single-instance guard.
 
 ## Simple and Advanced modes
 
@@ -87,8 +98,9 @@ number of source checkouts, and choosing one opens it: no file moves, and Waypoi
 
 **Modules** and **Leagues** can be edited on a release from v0.2.0-beta on and on a source checkout that exposes the
 supported settings and league-choice hooks: which modules a league uses, their settings, and new leagues. Any installed
-module can be ticked for any league when what it needs is on, Player Bots among them; turning off a league's own bundle
-(Ruthless in a Ruthless league) asks first, the Survivors modules stay in isolated leagues, and the rules of a game mode (Ruthless) go with that mode's leagues and with leagues made in Waypoint. A release hides and shows only the leagues made in Waypoint. The league card's name, description and mode links have a read-only preview.
+module, and any installed league's mod that is on (the `playerbots` mod among them), can be ticked for any league when
+what it needs is on; turning off a league's own bundle
+(Ruthless in a Ruthless league) asks first, Survivors stays in isolated leagues, what a module or mod declares it cannot share a league with (`conflicts`, `only`) is refused as LocalExile refuses it, and the rules of a game mode (Ruthless) go with that mode's leagues and with leagues made in Waypoint. A release hides and shows only the leagues made in Waypoint. The league card's name, description and mode links have a read-only preview.
 
 On a release install, **Settings → Developer → Developer Mode** adds a **Simple | Advanced** switch at the bottom of the sidebar: **Advanced** gives every section below, with
 full control over branches and pull requests. Someone coming from an earlier launcher starts there.
@@ -135,6 +147,6 @@ dotnet publish src/Waypoint -o .
 A build from source has no version and never offers updates. Everything else, from the sections to the code layout and
 how a release is made, is in [docs/launcher.md](docs/launcher.md); what comes next is in [docs/roadmap.md](docs/roadmap.md).
 
-Waypoint is under the [MIT license](LICENSE). What a released `Waypoint.exe` carries of others' work (DepotDownloader, GPL-2.0; OpenDyslexic, the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt)) is in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Waypoint is under the [MIT license](LICENSE). What a released `Waypoint.exe` or `Waypoint-x86_64.AppImage` carries of others' work (DepotDownloader, GPL-2.0; OpenDyslexic, the [SIL Open Font License](src/Waypoint/Fonts/OFL.txt)) is in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 This project is not affiliated with or endorsed by Grinding Gear Games.

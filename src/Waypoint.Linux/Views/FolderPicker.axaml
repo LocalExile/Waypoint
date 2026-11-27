@@ -136,6 +136,15 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
           <Border Height="1" Margin="6" Background="{DynamicResource Shell.Border}" />
+          <!-- The clients of the folder in use (ClientVersionsWindow): here in every mode, for a release and a source copy. -->
+          <Button Classes="folderRow" Click="GameClientClicked"
+                  ToolTip.Tip="{l:Loc 'The game clients of this LocalExile folder: which version it uses, and the way to another'}">
+            <StackPanel Orientation="Horizontal">
+              <icons:MaterialIcon Kind="GamepadVariantOutline" Width="18" Height="18" Margin="0,0,12,0" VerticalAlignment="Center"
+                                  Foreground="{DynamicResource Shell.TextSecondary}" />
+              <TextBlock Text="{l:Loc 'Game client…'}" FontSize="13" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
           <Button x:Name="AddFolder" Classes="folderRow" Click="AddClicked"
                   ToolTip.Tip="{l:Loc 'Choose a LocalExile folder that is already on this PC: a release, or a copy of its source. Waypoint opens it and keeps it in this list.'}">
             <StackPanel Orientation="Horizontal">
