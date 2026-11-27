@@ -368,7 +368,7 @@ public sealed partial class GameSystemsTab : UserControl
         AddModuleChoices(_detail, league, _catalog!.Environment.CanChoose && _catalog.Configurable(league));
         _primary = FooterButton(L.Text("Save module choices"), () => _ = SaveChoicesAsync(league), primary: true);
         var details = new StackPanel { Margin = new Thickness(12, 8, 0, 8) };
-        details.Children.Add(SettingsEditor.Note(league.Description));
+        details.Children.Add(SettingsEditor.Note(league.Mod.Length > 0 ? L.Text(league.Description) : league.Description));
         details.Children.Add(SettingsEditor.Note(L.Text("Modes are fixed for existing characters. Create a separate league to choose another defined mode.")));
         var customize = SettingsEditor.Button(L.Text("Customize as a new league"), () => StartCreate(league));
         bool reusable = !league.Custom && _catalog.Configurable(league) && GameSystems.EmptyTemplate(league.Folder);
@@ -382,7 +382,8 @@ public sealed partial class GameSystemsTab : UserControl
         _detail.Children.Add(new Expander { Header = L.Text("League details and compatibility"), Content = details, IsExpanded = false, Margin = new Thickness(0, 12, 0, 8) });
     }
     static string ModuleTitle(GameSystem module) => module.Name == module.Id
-        ? module.Id == "Game" ? L.Text("Core game rules") : Regex.Replace(module.Name, @"(?<=[a-z0-9])(?=[A-Z])", " ").Replace("Npc ", "NPC ") : module.Name;
+        ? module.Id == "Game" ? L.Text("Core game rules") : Regex.Replace(module.Name, @"(?<=[a-z0-9])(?=[A-Z])", " ").Replace("Npc ", "NPC ")
+        : module.Mod ? L.Text(module.Name) : module.Name;
     TextBox AddModuleChoices(StackPanel panel, GameLeague league, bool editable)
     {
         _checks.Clear();
@@ -432,7 +433,8 @@ public sealed partial class GameSystemsTab : UserControl
             else row = box;
             var holder = Card(row, 10, "Shell.Background"); holder.Margin = new Thickness(0, 0, 0, 6);
             Named(holder, name + (locked ? " · " + L.Text("Required") : ""));
-            string help = module.Description.Length > 0 ? module.Description : locked ? L.Text("Required by this league's gameplay bundle.") : !offered ? ofMode ? "" : whyNot : L.Text("Optional module for this mode.");
+            string description = module.Mod ? L.Text(module.Description) : module.Description;
+            string help = description.Length > 0 ? description : locked ? L.Text("Required by this league's gameplay bundle.") : !offered ? ofMode ? "" : whyNot : L.Text("Optional module for this mode.");
             if (!offered && ofMode) help += (help.Length > 0 ? "\n" : "") + _catalog.ModeNote(module.Path);
             if (rulesOnly && (offered || selected)) help += "\n" + L.Text("Here it gives the rules of a game mode only, without that mode's own skills, vendors and quest rewards.");
             if (module.Depends.Length > 0) help += "\n" + L.Text("Dependencies: {0}", string.Join(", ", module.Depends));
@@ -448,7 +450,7 @@ public sealed partial class GameSystemsTab : UserControl
             box.Click += (_, _) => ChoiceChanged();
             bool isUnavailable = !selected && !offered && !locked;
             (isUnavailable ? unavailable : panel).Children.Add(holder);
-            rows.Add((holder, name + " " + module.Id + " " + module.Description, isUnavailable));
+            rows.Add((holder, name + " " + module.Id + " " + module.Name + " " + module.Description + " " + description, isUnavailable));
         }
         foreach (string path in (_creating ? _draftModules : league.Systems.AsEnumerable()).Where(p => !_checks.ContainsKey(p)).ToArray())
         {

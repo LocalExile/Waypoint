@@ -31,9 +31,10 @@ sealed class App : Avalonia.Application
         _saved = Settings.ServerPath;
         // Waypoint's own log, from the first moment: the setup guide runs before there is a checkout.
         SessionLog.Open(SupportReport.LogFolder, $"Waypoint {Updates.Current} · {Environment.OSVersion} · .NET {Environment.Version}");
+        // Path validation prepares warnings for the window in the selected language.
+        L.Current.SetLanguage(Settings.Language);
         // The player's folders and tools, before anything reads a folder or starts a tool.
         Settings.ApplyPaths();
-        L.Current.SetLanguage(Settings.Language);
         Repo.UseLocalProfile = Settings.UseLocalProfile;
         string? root = Repo.Find(Program.Checkout ?? Settings.ServerPath, Environment.CurrentDirectory);
         if (root is not null) Open(root);

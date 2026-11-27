@@ -65,6 +65,11 @@ static class LocalizationChecks
                     $"{tag} setup guidance preserves action routing and the physical copy destination");
                 var mod = new ModEntry("hello", "1.0", "script", [], true, "Not checked", "", "", "", "");
                 check(mod.Status == "Not checked" && mod.Summary.Contains(Translated("Not checked")), $"{tag} mod summaries retain canonical runtime status");
+                var idols = mod with { Id = "idols", Name = "Idols", Description = "Legacy of Phrecia's Idols: items with map modifiers that affect every map you open while they lie in the Idol inventory." };
+                check(idols.Title == "Idols" && idols.Id == "idols" && idols.DisplayTitle == Translated(idols.Name)
+                    && idols.DisplayTitle != idols.Title && idols.DisplayDescription == Translated(idols.Description)
+                    && idols.DisplayDescription != idols.Description && L.Text("Keep the Atlas passive tree") != "Keep the Atlas passive tree",
+                    $"{tag}: a listed official mod has localized display text and settings while retaining its manifest identity");
             }
             L.Current.SetLanguage("ru");
             check(L.Text("Play") == "Играть" && L.Describe("Needs: Play") == "Требуется: Play" && SetupGuidance.Describe(new("Original client", false, "Ready"), @"C:\Russian check").DisplayName == "Исходный клиент",

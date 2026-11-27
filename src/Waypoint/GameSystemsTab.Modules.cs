@@ -80,7 +80,7 @@ public sealed partial class GameSystemsTab
         var identity = Type(L.Text("Gameplay module · {0}", module.Id), 12, false, "Shell.TextSecondary"); identity.Margin = new Thickness(0, 6, 0, 0); body.Children.Add(identity);
         if (module.Description.Length > 0)
         {
-            var description = Type(module.Description, 13, false, "Shell.TextSecondary");
+            var description = Type(module.Mod ? L.Text(module.Description) : module.Description, 13, false, "Shell.TextSecondary");
             description.Margin = new Thickness(0, 10, 0, 0); body.Children.Add(description);
         }
         hero.Children.Add(body); var heroCard = Card(hero, 18); heroCard.Margin = new Thickness(0, 0, 0, 12); _detail.Children.Add(heroCard);

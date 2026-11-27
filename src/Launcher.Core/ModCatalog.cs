@@ -18,6 +18,8 @@ public sealed record ModEntry(string Id, string Version, string Kind, string[] D
 {
     /// <summary>The manifest's name, or the id for a mod without one.</summary>
     public string Title => Name.Length > 0 ? Name : Id;
+    public string DisplayTitle => Name.Length > 0 ? L.Text(Name) : Id;
+    public string DisplayDescription => L.Text(Description);
     /// <summary>The declarations of its settings (settings.json beside its mod.json), when it has any.</summary>
     public string SettingsFile => Folder.Length > 0 && File.Exists(Path.Combine(Folder, ModSettingsForm.DeclarationsFile)) ? Path.Combine(Folder, ModSettingsForm.DeclarationsFile) : "";
     /// <summary>Its own icon.png: beside its mod.json, or in its source project before it is built; "" when it has none.</summary>

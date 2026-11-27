@@ -171,6 +171,9 @@
   <data name="Text_0407bcfea10a" xml:space="preserve">
     <value>后缀</value>
   </data>
+  <data name="Text_043a718774c5" xml:space="preserve">
+    <value>秒</value>
+  </data>
   <data name="Text_044006a3fc33" xml:space="preserve">
     <value>服务器或游戏正在运行。更新前会先将其停止：否则正在运行的 Gateway 会在更新进行到一半时重新构建。</value>
   </data>
@@ -354,6 +357,9 @@
   <data name="Text_0a019c8feee0" xml:space="preserve">
     <value>毫秒/秒</value>
   </data>
+  <data name="Text_0a1a6f7bd9a3" xml:space="preserve">
+    <value>状态文件更新间隔</value>
+  </data>
   <data name="Text_0a2cabf16dae" xml:space="preserve">
     <value>你当前的 LocalExile</value>
   </data>
@@ -413,6 +419,9 @@
   </data>
   <data name="Text_0baa876a211d" xml:space="preserve">
     <value>制作过程中，物品会显示在这里。</value>
+  </data>
+  <data name="Text_0bc850594aec" xml:space="preserve">
+    <value>一次留在城镇期间，机器人会去几个地点。</value>
   </data>
   <data name="Text_0bcd66e677f4" xml:space="preserve">
     <value>图层</value>
@@ -600,6 +609,9 @@
   <data name="Text_0f5a9c5ec33d" xml:space="preserve">
     <value>正在复制游戏客户端</value>
   </data>
+  <data name="Text_0f744b13f3e7" xml:space="preserve">
+    <value>附加会将觉醒宝石、特殊辅助宝石、地图、创始者地图和传奇地图放到进度标签页之后。替换会改用完整开发布局，包含自定义颜色的标签页。两种方式都跳过通常的进度限制。</value>
+  </data>
   <data name="Text_0f7ace096b27" xml:space="preserve">
     <value>可获得这些词缀的物品</value>
   </data>
@@ -665,6 +677,9 @@
   </data>
   <data name="Text_112d64cc9b85" xml:space="preserve">
     <value>正在获取…</value>
+  </data>
+  <data name="Text_11664b556d64" xml:space="preserve">
+    <value>重写 data/mods/playerbots/logs/status.txt 和 data/mods/playerbots/bots.json 的时间间隔。</value>
   </data>
   <data name="Text_1180f832c808" xml:space="preserve">
     <value>无法保存首选项：</value>
@@ -924,6 +939,9 @@
   <data name="Text_1842c8d229bc" xml:space="preserve">
     <value>Gateway 在上一次重载事件后重新开始监听。如果游戏回到了登录界面，请重新登录。</value>
   </data>
+  <data name="Text_18c4b2ee4ff8" xml:space="preserve">
+    <value>供外部 AI 客户端连接的本机 HTTP 端口。</value>
+  </data>
   <data name="Text_18c9175ef71b" xml:space="preserve">
     <value>用于反馈问题的脱敏报告：先预览，仅在你要求时才复制</value>
   </data>
@@ -1159,6 +1177,9 @@
   <data name="Text_1f562c8a9cec" xml:space="preserve">
     <value>{0} 不是 LocalExile 发行版。</value>
   </data>
+  <data name="Text_1f6fa6f69d18" xml:space="preserve">
+    <value>分钟</value>
+  </data>
   <data name="Text_1f88699e6094" xml:space="preserve">
     <value>上一张地图</value>
   </data>
@@ -1249,6 +1270,9 @@
   <data name="Text_21a0270b7f66" xml:space="preserve">
     <value>脚本模组</value>
   </data>
+  <data name="Text_21b61a52ed7f" xml:space="preserve">
+    <value>地图中怪物掉落神像的概率倍率。设为 0 时停止掉落。</value>
+  </data>
   <data name="Text_21b6a798321a" xml:space="preserve">
     <value>开发</value>
   </data>
@@ -1275,6 +1299,9 @@
   </data>
   <data name="Text_224f3200a70e" xml:space="preserve">
     <value>从 python.org 安装 Python 3.9 或更高版本，最好勾选“Add python.exe to PATH”，然后点击“再次检查”：Waypoint 会重新读取 PATH，并通过安装程序的注册表项找到未勾选该选项安装的 Python。Frida 是可选的，普通游戏不需要它。</value>
+  </data>
+  <data name="Text_22573158ddc3" xml:space="preserve">
+    <value>未达到数量上限时，每隔多久生成一个机器人。</value>
   </data>
   <data name="Text_225ea1a36f00" xml:space="preserve">
     <value>此账号在客户端中保存的凭据需要重新输入。</value>
@@ -2133,6 +2160,9 @@
   <data name="Text_36dd3350eceb" xml:space="preserve">
     <value>下载游戏版本</value>
   </data>
+  <data name="Text_36dd41f9beb4" xml:space="preserve">
+    <value>Gateway 启动后，生成首个机器人前等待的时间。</value>
+  </data>
   <data name="Text_36f3a6809445" xml:space="preserve">
     <value>查找模块</value>
   </data>
@@ -2201,6 +2231,9 @@
   </data>
   <data name="Text_38d54414f32e" xml:space="preserve">
     <value>标准区价格</value>
+  </data>
+  <data name="Text_38d5c2721f40" xml:space="preserve">
+    <value>所有城镇合计允许存在的机器人上限。</value>
   </data>
   <data name="Text_38d69f252932" xml:space="preserve">
     <value>正在停用源码已删除的模组</value>
@@ -2481,6 +2514,9 @@
   </data>
   <data name="Text_3fee95da5ab6" xml:space="preserve">
     <value>简易</value>
+  </data>
+  <data name="Text_3ff8531bd26e" xml:space="preserve">
+    <value>神像</value>
   </data>
   <data name="Text_400d65cb7299" xml:space="preserve">
     <value>停止并更新</value>
@@ -3142,6 +3178,9 @@
   <data name="Text_5199860e98ea" xml:space="preserve">
     <value>{0} 的新名称</value>
   </data>
+  <data name="Text_51a9418e522d" xml:space="preserve">
+    <value>抵挡怪群。技能会自动施放，每次提升本局等级都可选择一项强化。</value>
+  </data>
   <data name="Text_51b0451ee87b" xml:space="preserve">
     <value>关闭游戏</value>
   </data>
@@ -3432,6 +3471,9 @@
   <data name="Text_59afe47d9d37" xml:space="preserve">
     <value>奖励</value>
   </data>
+  <data name="Text_59d29f5e9d96" xml:space="preserve">
+    <value>弗雷西亚遗产的神像。放入神像栏后，其地图词缀会影响你开启的每张地图。</value>
+  </data>
   <data name="Text_59de121db1b8" xml:space="preserve">
     <value>安装包</value>
   </data>
@@ -3555,6 +3597,9 @@
   <data name="Text_5de68a8da4e2" xml:space="preserve">
     <value>未登录 Steam。</value>
   </data>
+  <data name="Text_5e1417906c41" xml:space="preserve">
+    <value>机器人角色所在的赛季。</value>
+  </data>
   <data name="Text_5e1858ba70e7" xml:space="preserve">
     <value>物品单项规则</value>
   </data>
@@ -3630,6 +3675,9 @@
   </data>
   <data name="Text_60174772db52" xml:space="preserve">
     <value>端口仍被占用，因此 Waypoint 没有继续。</value>
+  </data>
+  <data name="Text_604afcde1740" xml:space="preserve">
+    <value>关闭时采用弗雷西亚遗产的规则，由神像取代异界天赋树并隐藏天赋界面。开启时可同时使用神像和异界天赋树。</value>
   </data>
   <data name="Text_60540eaada37" xml:space="preserve">
     <value>LocalExile.exe：启动服务器，然后启动游戏</value>
@@ -4044,6 +4092,9 @@
   <data name="Text_6a3fe8876b56" xml:space="preserve">
     <value>构建</value>
   </data>
+  <data name="Text_6a413707d9a4" xml:space="preserve">
+    <value>奈莎的开发用商店标签页</value>
+  </data>
   <data name="Text_6a5bc51f5c88" xml:space="preserve">
     <value>选择你最容易阅读的字体。已内置 OpenDyslexic，无需安装。不支持的字符将使用 Windows 的字体回退。</value>
   </data>
@@ -4287,6 +4338,9 @@
   <data name="Text_71e98f7b1e7a" xml:space="preserve">
     <value>采集设置完成。</value>
   </data>
+  <data name="Text_71f9fc9ef34b" xml:space="preserve">
+    <value>弗雷西亚遗产的替代升华职业及弗雷西亚赛季。该赛季还需启用神像模组。</value>
+  </data>
   <data name="Text_71fd53f4a18f" xml:space="preserve">
     <value>遭遇</value>
   </data>
@@ -4334,6 +4388,9 @@
   </data>
   <data name="Text_730840dd1dd4" xml:space="preserve">
     <value>共用设置：更改会影响使用此模块的所有联盟。</value>
+  </data>
+  <data name="Text_734ad2daafa5" xml:space="preserve">
+    <value>保留异界天赋树</value>
   </data>
   <data name="Text_735373328df6" xml:space="preserve">
     <value>此账号没有可复制的角色。</value>
@@ -4860,6 +4917,9 @@
   <data name="Text_82a6e3f5471b" xml:space="preserve">
     <value>已保存的选项与实时状态</value>
   </data>
+  <data name="Text_82a9ea7be0f3" xml:space="preserve">
+    <value>复现 3.13 的庄园之心。有极低概率在地图的神圣庄园内遇到欧莎比，取代常规作物。</value>
+  </data>
   <data name="Text_82b8c45a6503" xml:space="preserve">
     <value>dev host 已停止</value>
   </data>
@@ -4898,6 +4958,9 @@
   </data>
   <data name="Text_83b12c2216ef" xml:space="preserve">
     <value>清除</value>
+  </data>
+  <data name="Text_83b8d976c3c9" xml:space="preserve">
+    <value>机器人数量上限</value>
   </data>
   <data name="Text_83bb589ce3ad" xml:space="preserve">
     <value>上次启动的 Gateway：</value>
@@ -4949,6 +5012,9 @@
   </data>
   <data name="Text_84c79505c114" xml:space="preserve">
     <value>正在切换源码</value>
+  </data>
+  <data name="Text_84c87b29ad7e" xml:space="preserve">
+    <value>任务耗时</value>
   </data>
   <data name="Text_84e758c53a09" xml:space="preserve">
     <value>4.  复制并准备客户端，然后构建 LocalExile</value>
@@ -5199,6 +5265,9 @@
   <data name="Text_8b99483221c4" xml:space="preserve">
     <value>永恒军团</value>
   </data>
+  <data name="Text_8b9d213abe27" xml:space="preserve">
+    <value>幸存者赛季。抵挡怪群，技能会自动施放，每次提升本局等级都可选择一项强化。</value>
+  </data>
   <data name="Text_8bc9335f3b83" xml:space="preserve">
     <value>恢复记录的模组选择…</value>
   </data>
@@ -5412,6 +5481,9 @@
   <data name="Text_91f18585d513" xml:space="preserve">
     <value>没有 Steam 手机应用时：下载工具会在自己的窗口中询问密码和 Steam 令牌验证码。Waypoint 两者都不会接触。</value>
   </data>
+  <data name="Text_91ff287c9730" xml:space="preserve">
+    <value>商店标签页布局</value>
+  </data>
   <data name="Text_9205e0dd7cb5" xml:space="preserve">
     <value>删除所选物品（Delete 键）；按住 Ctrl 或 Shift 可多选</value>
   </data>
@@ -5426,6 +5498,9 @@
   </data>
   <data name="Text_92646da937a1" xml:space="preserve">
     <value>开启“行走地图”时，随“开始游戏”或“启动服务器”一起启动</value>
+  </data>
+  <data name="Text_926e9f198627" xml:space="preserve">
+    <value>通过需认证的本机 MCP 接口，控制玩家带领队伍中的机器人。</value>
   </data>
   <data name="Text_9275216c6094" xml:space="preserve">
     <value>开始采集</value>
@@ -5529,6 +5604,9 @@
   </data>
   <data name="Text_94fac69c8653" xml:space="preserve">
     <value>让 LocalExile 使用独立的游戏设置</value>
+  </data>
+  <data name="Text_950f063238c3" xml:space="preserve">
+    <value>庄园之心</value>
   </data>
   <data name="Text_9530bfe0e8d8" xml:space="preserve">
     <value>洞穴</value>
@@ -5749,6 +5827,9 @@
   </data>
   <data name="Text_99cc5fa5fefe" xml:space="preserve">
     <value>本地服务</value>
+  </data>
+  <data name="Text_99d622297c2a" xml:space="preserve">
+    <value>外部控制有效期</value>
   </data>
   <data name="Text_99efec87ba2a" xml:space="preserve">
     <value>解决工作区冲突</value>
@@ -6198,6 +6279,9 @@
   <data name="Text_a511909161e1" xml:space="preserve">
     <value>布局</value>
   </data>
+  <data name="Text_a52389334d06" xml:space="preserve">
+    <value>庄园之心出现率</value>
+  </data>
   <data name="Text_a52a8ef55340" xml:space="preserve">
     <value>切换到 #{0}</value>
   </data>
@@ -6471,6 +6555,9 @@
   <data name="Text_ac15c0c9a3e0" xml:space="preserve">
     <value>显示前 1000 个打开的 PR。输入 PR 编号以获取其他 PR。</value>
   </data>
+  <data name="Text_ac287aa6c2e5" xml:space="preserve">
+    <value>城镇停留点数</value>
+  </data>
   <data name="Text_ac4f361600ac" xml:space="preserve">
     <value>Waypoint 无法读取 {0} 中副本的版本。</value>
   </data>
@@ -6522,6 +6609,9 @@
   <data name="Text_adb91b20d763" xml:space="preserve">
     <value>时间雕像</value>
   </data>
+  <data name="Text_adc68e774dc4" xml:space="preserve">
+    <value>外部 AI 控制（MCP）</value>
+  </data>
   <data name="Text_adc6944d0f20" xml:space="preserve">
     <value>已污染固定词缀</value>
   </data>
@@ -6533,6 +6623,9 @@
   </data>
   <data name="Text_ae2ff967432c" xml:space="preserve">
     <value>保留不会变化的旧版本</value>
+  </data>
+  <data name="Text_ae3371623b12" xml:space="preserve">
+    <value>每处停留时间</value>
   </data>
   <data name="Text_ae5ced38732e" xml:space="preserve">
     <value>PATH 中没有 Python。请从 python.org 安装 Python 3.9 或更高版本，并勾选“Add python.exe to PATH”。</value>
@@ -6626,6 +6719,9 @@
   </data>
   <data name="Text_b09919b9d100" xml:space="preserve">
     <value>账号已读取。</value>
+  </data>
+  <data name="Text_b0a081aba0db" xml:space="preserve">
+    <value>机器人在城镇每个地点停留的时间。</value>
   </data>
   <data name="Text_b0a3816e6bf3" xml:space="preserve">
     <value>无需安装其他东西。有新的发行版时，Waypoint 会通知你并为你安装。</value>
@@ -6885,11 +6981,17 @@
   <data name="Text_b7ef99f143b7" xml:space="preserve">
     <value>玩法模块 · {0}</value>
   </data>
+  <data name="Text_b7fe6ddcc919" xml:space="preserve">
+    <value>MCP 端口</value>
+  </data>
   <data name="Text_b808698f20e7" xml:space="preserve">
     <value>没有进行切换。</value>
   </data>
   <data name="Text_b81f380dbda0" xml:space="preserve">
     <value>正在使用的游戏客户端切换到另一个版本的过程尚未完成。请先完成这次切换。</value>
+  </data>
+  <data name="Text_b82b1d709f1a" xml:space="preserve">
+    <value>由服务器控制的角色会游玩剧情、进入城镇，也能加入队伍，让服务器更加热闹。</value>
   </data>
   <data name="Text_b82e832d8028" xml:space="preserve">
     <value>此文件夹的游戏客户端已不再是链接，因此无需复制。</value>
@@ -7059,6 +7161,9 @@
   <data name="Text_bbec126884b0" xml:space="preserve">
     <value>可出现的词缀</value>
   </data>
+  <data name="Text_bbf3f11cb5b4" xml:space="preserve">
+    <value>%</value>
+  </data>
   <data name="Text_bc01ae77f37c" xml:space="preserve">
     <value>完成安装</value>
   </data>
@@ -7139,6 +7244,9 @@
   </data>
   <data name="Text_be8d6dcfc5d9" xml:space="preserve">
     <value>打开“游戏客户端”</value>
+  </data>
+  <data name="Text_bea0d2e14dfa" xml:space="preserve">
+    <value>外部控制无操作达到此秒数后，机器人恢复常规 AI。</value>
   </data>
   <data name="Text_bed8374efd88" xml:space="preserve">
     <value>Gateway 正在运行，但没有监视进程。请停止服务器以更改启动模式。</value>
@@ -7800,6 +7908,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d1a286ac991d" xml:space="preserve">
     <value>游戏设置：Waypoint 无法判断还有什么在使用它们</value>
   </data>
+  <data name="Text_d1a73ea46396" xml:space="preserve">
+    <value>每个任务的死亡概率</value>
+  </data>
   <data name="Text_d1cbffcbd10b" xml:space="preserve">
     <value>发行版的 .sha256 文件中没有 SHA-256 值</value>
   </data>
@@ -7811,6 +7922,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d1d87274da84" xml:space="preserve">
     <value>关卡生成</value>
+  </data>
+  <data name="Text_d1f6ad72f141" xml:space="preserve">
+    <value>附加在进度标签页后</value>
   </data>
   <data name="Text_d20c20b042c6" xml:space="preserve">
     <value>PATH 中的 Python 是 {0}；需要 3.9 或更高版本。请从 python.org 安装，并勾选“Add python.exe to PATH”。</value>
@@ -7956,6 +8070,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_d6aae160070e" xml:space="preserve">
     <value>下次切换后使用全新存档开始</value>
   </data>
+  <data name="Text_d6ab9d08b52e" xml:space="preserve">
+    <value>弗雷西亚遗产。使用替代升华职业，并以神像取代异界天赋树。</value>
+  </data>
   <data name="Text_d6b74be161c2" xml:space="preserve">
     <value>此 Gateway 没有与“{0}”对应的基础类型。</value>
   </data>
@@ -7973,6 +8090,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_d7001bf5b45e" xml:space="preserve">
     <value>GC 堆</value>
+  </data>
+  <data name="Text_d70ce91b2381" xml:space="preserve">
+    <value>机器人生成间隔</value>
   </data>
   <data name="Text_d72e311c4dda" xml:space="preserve">
     <value>最小化</value>
@@ -8136,6 +8256,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_db4cea7c5a2c" xml:space="preserve">
     <value>流放之路，已为本地服务器修补</value>
   </data>
+  <data name="Text_db96ee29e4ed" xml:space="preserve">
+    <value>幸存者</value>
+  </data>
   <data name="Text_db9a4c7d4c19" xml:space="preserve">
     <value>CPU</value>
   </data>
@@ -8219,6 +8342,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_ddf65dfc3807" xml:space="preserve">
     <value>还没有备份。使用“立即备份”保存当前进度的副本。</value>
+  </data>
+  <data name="Text_de14787d0553" xml:space="preserve">
+    <value>地图的神圣庄园成为庄园之心的基础概率（百分比），随后应用 map_harvest_chance_for_oshabi_+%。3.13 将其描述为极其罕见，未公布具体数值。</value>
   </data>
   <data name="Text_de2a5f6b153d" xml:space="preserve">
     <value>创建第一个账号即可开始。角色需在游戏中创建。</value>
@@ -8488,6 +8614,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e460de11bb28" xml:space="preserve">
     <value>Waypoint Tools 已从源代码安装：它会在下次启动服务器时构建，或在“模组”中使用“构建模组”。然后用角色进入一个区域，再次发放物品。</value>
   </data>
+  <data name="Text_e4713c6fbacc" xml:space="preserve">
+    <value>弗雷西亚升华</value>
+  </data>
   <data name="Text_e487cafcf930" xml:space="preserve">
     <value>live.ps1 -Stop 和 dev host：游戏、行走地图记录器、服务器和账号服务</value>
   </data>
@@ -8632,6 +8761,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_e8acb805db1e" xml:space="preserve">
     <value>下载内容中没有 {0} 的文件；未安装任何内容</value>
   </data>
+  <data name="Text_e8af77073006" xml:space="preserve">
+    <value>替换进度标签页</value>
+  </data>
   <data name="Text_e8c6f5fd769e" xml:space="preserve">
     <value>正在将此安装的存档移至别处；不会删除任何内容。</value>
   </data>
@@ -8649,6 +8781,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_e9182bbf5cec" xml:space="preserve">
     <value>正在删除备份</value>
+  </data>
+  <data name="Text_e945c22b369d" xml:space="preserve">
+    <value>机器人离开视野后完成任务的耗时，在此范围内随机选取。</value>
   </data>
   <data name="Text_e96c43c358a6" xml:space="preserve">
     <value>普通模式</value>
@@ -8766,6 +8901,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_eb660ec5bb55" xml:space="preserve">
     <value>选择包含 GameServer.slnx 的 LocalExile 文件夹</value>
+  </data>
+  <data name="Text_eb8fbe66aae3" xml:space="preserve">
+    <value>机器人死亡后会重试任务。</value>
   </data>
   <data name="Text_eb9a7331b71c" xml:space="preserve">
     <value>机器人玩家</value>
@@ -9048,6 +9186,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_f28b9ca197d4" xml:space="preserve">
     <value>神殿</value>
   </data>
+  <data name="Text_f297de266ad9" xml:space="preserve">
+    <value>首个机器人的生成延迟</value>
+  </data>
   <data name="Text_f2b23cdca8d1" xml:space="preserve">
     <value>附魔</value>
   </data>
@@ -9177,6 +9318,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_f6388410aa5a" xml:space="preserve">
     <value> · 未检查工作区文件</value>
+  </data>
+  <data name="Text_f64606e28462" xml:space="preserve">
+    <value>神像掉率</value>
   </data>
   <data name="Text_f647fb4d1ce7" xml:space="preserve">
     <value>这是 {0} 客户端，而此 LocalExile 只能使用 {1}。请先更新 LocalExile，或选择 {1} 客户端。</value>
@@ -9402,6 +9546,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>再次检查</value>
+  </data>
+  <data name="Text_fb781dacfb3e" xml:space="preserve">
+    <value>在启用本模组的赛季中，奈莎出售觉醒宝石、特殊辅助宝石、地图、创始者地图和传奇地图。</value>
   </data>
   <data name="Text_fb9cf75606b4" xml:space="preserve">
     <value>已启用</value>

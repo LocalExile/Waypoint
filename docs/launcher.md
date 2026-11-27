@@ -1034,6 +1034,10 @@ Python packages. Linux explains that its game-control integrations are unavailab
 
 ### Mods
 
+Official mod names, summaries and setting labels follow Settings → Language in Browse, My Mods and mod details.
+Installed mods also use those display names in league controls and mod dialogs. A mod description or setting without an
+entry in Waypoint's language catalog is shown as supplied by the mod. The names of saved settings stay the same.
+
 Mods, Modules and Leagues share the same title hierarchy, themed cards, badges, icon frames, refresh position and settings
 footer. The info button beside each title explains their relationship: Mods installs add-ons for the checkout, Modules
 configures shared gameplay systems, and Leagues chooses the modules used by each player-facing flag and linked mode.
