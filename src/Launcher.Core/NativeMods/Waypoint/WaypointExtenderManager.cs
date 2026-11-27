@@ -266,9 +266,7 @@ public sealed class WaypointExtenderManager
                 hostFileCount += CopyDirectoryFiles(options.AddressLibraryDir, Path.Combine(hostStaging, AddressLibraryFolderName));
             }
 
-            if (Directory.Exists(destHostDir))
-                Directory.Delete(destHostDir, recursive: true);
-            Directory.Move(hostStaging, destHostDir);
+            SwapDirectoryAtomically(hostStaging, destHostDir);
         }
         finally
         {
@@ -393,6 +391,30 @@ public sealed class WaypointExtenderManager
         string tmp = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
         File.WriteAllText(tmp, JsonSerializer.Serialize(state, DualModManifest.SerializerOptions), new UTF8Encoding(false));
         File.Move(tmp, path, overwrite: true);
+    }
+
+    private static void SwapDirectoryAtomically(string stagingDir, string targetDir)
+    {
+        string? backupDir = null;
+        if (Directory.Exists(targetDir))
+        {
+            backupDir = targetDir + ".old-" + Guid.NewGuid().ToString("N");
+            Directory.Move(targetDir, backupDir);
+        }
+
+        try
+        {
+            Directory.Move(stagingDir, targetDir);
+        }
+        catch
+        {
+            if (backupDir is not null && Directory.Exists(backupDir) && !Directory.Exists(targetDir))
+                Directory.Move(backupDir, targetDir);
+            throw;
+        }
+
+        if (backupDir is not null && Directory.Exists(backupDir))
+            Directory.Delete(backupDir, recursive: true);
     }
 
     private static void CopyFileAtomically(string sourcePath, string destPath)

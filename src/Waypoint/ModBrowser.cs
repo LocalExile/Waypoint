@@ -458,14 +458,15 @@ sealed class ModBrowser(Shared shared)
 
     /// <summary>Turns an installed mod on or off: its line in the server's mod-state.txt, at once (no backup, no client).
     /// For dual-side NativeMods mods, also syncs client mod state and rebuilds <c>Mods/Client/.merged-cache/</c>.</summary>
-    public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), () =>
+    public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), async () =>
     {
         if (shared.Workspace.Latest is { EditConflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.EditConflicts));
         if (shared.Workspace.Latest?.ModEnvironment is not { Supported: true } environment) throw new InvalidOperationException(L.Text("This revision does not have a supported mod host."));
         ModCatalog.WriteChoice(environment.Folder, mod.Id, enabled);
         if (mod.HasNativeClient)
         {
-            var cache = NativeModsClientStore.OnModEnabledChanged(Environment.CurrentDirectory, mod.Id, enabled);
+            string root = Environment.CurrentDirectory;
+            var cache = await Task.Run(() => NativeModsClientStore.OnModEnabledChanged(root, mod.Id, enabled));
             if (cache is { Rebuilt: true })
                 shared.Logs.Write($"[nativemods] rebuilt .merged-cache ({cache.MergedTables.Count} tables, digest {cache.Digest}).", Severity.Info);
             else if (cache is { Removed: true })
@@ -474,7 +475,6 @@ sealed class ModBrowser(Shared shared)
                 shared.Logs.Write($"[nativemods] {cache.Diagnostic}", Severity.Warning);
         }
         NoteRestart(mod.RestartToApply);
-        return Task.CompletedTask;
     });
 
     /// <summary>Uninstalls a mod: the adapter's UninstallMod moves its folders to Mods/.replaced/, and updates NativeMods ledger/.merged-cache.</summary>
@@ -488,16 +488,16 @@ sealed class ModBrowser(Shared shared)
             var result = await Finish(job, await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(mod.Id), L.Text("Uninstalling…")));
             if (result?.Ok == true)
             {
-                await shared.RunExclusiveAsync(L.Text("Update NativeMods cache"), () =>
+                string root = Environment.CurrentDirectory;
+                await shared.RunExclusiveAsync(L.Text("Update NativeMods cache"), async () =>
                 {
-                    var cache = NativeModsClientStore.OnModUninstalled(Environment.CurrentDirectory, mod.Id);
+                    var cache = await Task.Run(() => NativeModsClientStore.OnModUninstalled(root, mod.Id));
                     if (cache is { Rebuilt: true })
                         shared.Logs.Write($"[nativemods] rebuilt .merged-cache after uninstall ({cache.MergedTables.Count} tables).", Severity.Info);
                     else if (cache is { Removed: true })
                         shared.Logs.Write("[nativemods] removed .merged-cache after uninstall.", Severity.Info);
                     else if (!string.IsNullOrWhiteSpace(cache?.Diagnostic))
                         shared.Logs.Write($"[nativemods] {cache.Diagnostic}", Severity.Warning);
-                    return Task.CompletedTask;
                 });
             }
             return Installed(result, mod.RestartToApply);
@@ -714,7 +714,7 @@ sealed class ModBrowser(Shared shared)
         }
 
         // Dual-side NativeMods package: validate .ui layouts, datPatches, closed tables, SHA-256, encoding, and cross-mod conflicts.
-        var audit = NativeModsClientStore.AuditPackage(staged.Folder, root, allowRawAccess: false, allowConflicts: false);
+        var audit = await Task.Run(() => NativeModsClientStore.AuditPackage(staged.Folder, root, allowRawAccess: false, allowConflicts: false));
         bool hasBlockingErrors = audit.Validation.Errors.Any();
         if (hasBlockingErrors || audit.Conflicts.Count > 0)
         {
@@ -735,7 +735,8 @@ sealed class ModBrowser(Shared shared)
         }
 
         // Split deployment: strip client payload into a clean server staging copy for ModBridge.ps1 (Mods/Binaries/<id>/).
-        string serverOnlyFolder = NativeModsClientStore.PrepareServerStaging(staged.Folder, staged.Id);
+        bool hadServerBefore = Directory.Exists(Path.Combine(root, "Mods", "Binaries", staged.Id));
+        string serverOnlyFolder = await Task.Run(() => NativeModsClientStore.PrepareServerStaging(staged.Folder, staged.Id));
         try
         {
             var serverResult = await QueuedAsync(job, "InstallMod", operationName,
@@ -745,24 +746,32 @@ sealed class ModBrowser(Shared shared)
 
             // Deploy client half into Mods/Client/<id>/ and rebuild Mods/Client/.merged-cache/ under the workspace lock.
             ClientModDeployResult? clientDeploy = null;
-            bool ran = await shared.RunExclusiveAsync(L.Text("Install NativeMods client payload"), () =>
+            string? failure = null;
+            try
             {
-                clientDeploy = NativeModsClientStore.DeployClientHalf(
-                    staged.Folder, root, enableOverride: null, allowRawAccess: audit.RawAccessRequested, allowConflicts: false);
-                if (clientDeploy.MergedCache is { Rebuilt: true } mc)
-                    shared.Logs.Write($"[nativemods] rebuilt .merged-cache ({mc.MergedTables.Count} tables, digest {mc.Digest}).", Severity.Info);
-                else if (!string.IsNullOrWhiteSpace(clientDeploy.MergedCache?.Diagnostic))
-                    shared.Logs.Write($"[nativemods] {clientDeploy.MergedCache.Diagnostic}", Severity.Warning);
-                return Task.CompletedTask;
-            });
+                bool ran = await shared.RunExclusiveAsync(L.Text("Install NativeMods client payload"), async () =>
+                {
+                    clientDeploy = await Task.Run(() => NativeModsClientStore.DeployClientHalf(
+                        staged.Folder, root, enableOverride: null, allowRawAccess: audit.RawAccessRequested, allowConflicts: false));
+                    if (clientDeploy.MergedCache is { Rebuilt: true } mc)
+                        shared.Logs.Write($"[nativemods] rebuilt .merged-cache ({mc.MergedTables.Count} tables, digest {mc.Digest}).", Severity.Info);
+                    else if (!string.IsNullOrWhiteSpace(clientDeploy.MergedCache?.Diagnostic))
+                        shared.Logs.Write($"[nativemods] {clientDeploy.MergedCache.Diagnostic}", Severity.Warning);
+                });
+                if (!ran) failure = L.Text("Something else is using LocalExile. Try again when it is done.");
+                else if (clientDeploy is not { Succeeded: true }) failure = clientDeploy?.Message ?? L.Text("Client mod installation was blocked by validation.");
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+            {
+                failure = ex.Message;
+            }
 
-            if (!ran || clientDeploy is not { Succeeded: true })
+            if (failure is not null)
             {
-                string reason = !ran
-                    ? L.Text("Something else is using LocalExile. Try again when it is done.")
-                    : clientDeploy!.Message;
-                shared.Logs.Write($"[nativemods] client deploy failed for {staged.Id}: {reason}", Severity.Error);
-                return await Finish(job, new BridgeResult(false, reason, serverResult.Snapshot, L.Text("Install NativeMods client payload")));
+                shared.Logs.Write($"[nativemods] client deploy failed for {staged.Id}: {failure}", Severity.Error);
+                if (!hadServerBefore)
+                    await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(staged.Id), L.Text("Uninstalling…"));
+                return await Finish(job, new BridgeResult(false, failure, serverResult.Snapshot, L.Text("Install NativeMods client payload")));
             }
 
             return Installed(await Finish(job, serverResult), restartToApply: true);

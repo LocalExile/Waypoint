@@ -49,6 +49,18 @@ public sealed record InstallOptions
     /// declare <c>nativeClient.datPatches</c> and a stock <c>.datc64</c> source is available (default <c>true</c>).
     /// </summary>
     public bool RebuildMergedCache { get; init; } = true;
+
+    /// <summary>
+    /// Whether to deploy server files into <c>Mods/Binaries/&lt;id&gt;/</c> (default <c>true</c>).
+    /// Set to <c>false</c> when the caller already deployed the server half via <c>ModBridge.ps1</c>.
+    /// </summary>
+    public bool DeployServerFiles { get; init; } = true;
+
+    /// <summary>
+    /// Whether to write <c>Mods/Binaries/mod-state.txt</c> (default <c>true</c>).
+    /// Set to <c>false</c> to preserve existing user enable/disable choices managed by Waypoint.
+    /// </summary>
+    public bool UpdateModState { get; init; } = true;
 }
 
 /// <summary>Result of rebuilding <c>Mods/Client/.merged-cache/</c> via <see cref="DatPatchMerger"/>.</summary>
@@ -445,39 +457,45 @@ public sealed class WaypointModInstaller
         if (clientTarget is not null)
             EnsureWithinDirectory(clientTarget, clientRoot);
 
-        // Preserve existing user settings.json values during an upgrade if present
-        string? preservedSettings = null;
-        string existingSettingsPath = Path.Combine(serverTarget, "settings.json");
-        if (audit.IsUpgrade && File.Exists(existingSettingsPath))
-            preservedSettings = File.ReadAllText(existingSettingsPath);
-
-        Directory.CreateDirectory(serverRoot);
         var deployedFiles = new List<DeployedFileRecord>();
 
-        // 1. Deploy server half cleanly into Mods/Binaries/<id>/
-        string serverStaging = Path.Combine(serverRoot, $".staging-{manifest.Id}-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(serverStaging);
-        try
+        // 1. Deploy server half cleanly into Mods/Binaries/<id>/ (skipped when ModBridge.ps1 already deployed it)
+        if (options.DeployServerFiles)
         {
-            DeployServerFiles(packageDir, manifest, serverStaging);
+            // Preserve existing user settings.json values during an upgrade if present
+            string? preservedSettings = null;
+            string existingSettingsPath = Path.Combine(serverTarget, "settings.json");
+            if (audit.IsUpgrade && File.Exists(existingSettingsPath))
+                preservedSettings = File.ReadAllText(existingSettingsPath);
 
-            // Keep existing settings.json on upgrade if package didn't ship a fresh one
-            if (preservedSettings is not null && !File.Exists(Path.Combine(serverStaging, "settings.json")))
-                File.WriteAllText(Path.Combine(serverStaging, "settings.json"), preservedSettings, new UTF8Encoding(false));
+            Directory.CreateDirectory(serverRoot);
+            string serverStaging = Path.Combine(serverRoot, $".staging-{manifest.Id}-{Guid.NewGuid():N}");
+            Directory.CreateDirectory(serverStaging);
+            try
+            {
+                DeployServerFiles(packageDir, manifest, serverStaging);
 
-            SwapDirectoryAtomically(serverStaging, serverTarget);
+                // Keep existing settings.json on upgrade if package didn't ship a fresh one
+                if (preservedSettings is not null && !File.Exists(Path.Combine(serverStaging, "settings.json")))
+                    File.WriteAllText(Path.Combine(serverStaging, "settings.json"), preservedSettings, new UTF8Encoding(false));
 
+                SwapDirectoryAtomically(serverStaging, serverTarget);
+            }
+            finally
+            {
+                if (Directory.Exists(serverStaging))
+                    try { Directory.Delete(serverStaging, recursive: true); } catch { }
+            }
+        }
+
+        if (Directory.Exists(serverTarget))
+        {
             foreach (string file in Directory.EnumerateFiles(serverTarget, "*", SearchOption.AllDirectories)
                 .OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
             {
                 string rel = DualModPackageValidator.NormalizeVirtualPath(Path.GetRelativePath(serverTarget, file));
                 deployedFiles.Add(new(rel, "server", DualModPackageValidator.ComputeFileSha256(file), new FileInfo(file).Length));
             }
-        }
-        finally
-        {
-            if (Directory.Exists(serverStaging))
-                try { Directory.Delete(serverStaging, recursive: true); } catch { }
         }
 
         // 2. Deploy client half cleanly into Mods/Client/<id>/ (never touching Client/ stock files)
@@ -513,9 +531,12 @@ public sealed class WaypointModInstaller
                 Directory.Delete(oldClientDir, recursive: true);
         }
 
-        // 3. Update Waypoint-compatible Mods/Binaries/mod-state.txt
-        bool enableState = options.EnableOnInstall ?? manifest.Enabled;
-        WriteModStateChoice(serverRoot, manifest.Id, enableState);
+        // 3. Update Waypoint-compatible Mods/Binaries/mod-state.txt (skipped when Waypoint manages choices)
+        if (options.UpdateModState)
+        {
+            bool enableState = options.EnableOnInstall ?? manifest.Enabled;
+            WriteModStateChoice(serverRoot, manifest.Id, enableState);
+        }
 
         // 4. Persist deployment ledger
         var ledger = ReadLedger(localExileRoot);

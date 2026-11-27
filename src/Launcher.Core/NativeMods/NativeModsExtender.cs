@@ -252,13 +252,6 @@ public static class NativeModsExtender
         string parkedProxy = GetParkedProxyPath(root);
         if (File.Exists(parkedProxy)) File.Delete(parkedProxy);
 
-        // Always keep a copy of version.dll available if shipped so switching modes later doesn't need a re-download.
-        if (!string.IsNullOrWhiteSpace(bundle.ProxyVersionDllPath) && File.Exists(bundle.ProxyVersionDllPath))
-        {
-            string hostDir = WaypointExtenderManager.GetManagedHostDir(root);
-            // Stashed inside host bundle via manager if flat; otherwise copy beside host after install.
-        }
-
         var result = await manager.InstallAsync(root, installOptions, stop);
         if (!result.Succeeded)
         {

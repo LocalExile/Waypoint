@@ -12,7 +12,7 @@ sealed record NativeModsLaunchPlan(bool Ok, IReadOnlyDictionary<string, string?>
 /// </summary>
 static class NativeModsLaunch
 {
-    public static async Task<NativeModsLaunchPlan> PrepareAsync(
+    public static Task<NativeModsLaunchPlan> PrepareAsync(
         string root,
         Settings settings,
         bool isReleaseInstall,
@@ -23,68 +23,71 @@ static class NativeModsLaunch
         bool isLinux = OperatingSystem.IsLinux();
         string? existingWineOverrides = isLinux ? Environment.GetEnvironmentVariable("WINEDLLOVERRIDES") : null;
 
-        if (!pref.Enabled)
+        return Task.Run(async () =>
         {
-            // Opt-out guarantee: ensure neither Client/version.dll nor .nmimp remains active on disk so stock runs stay 100% vanilla.
-            bool proxyPresent = File.Exists(WaypointExtenderManager.GetProxyDllPath(root));
-            string patchedExe = WaypointExtenderManager.GetPatchedExePath(root);
-            bool needsDeactivate = proxyPresent;
-            if (!needsDeactivate && File.Exists(patchedExe) && File.Exists(WaypointExtenderManager.GetNativeShimPath(root)))
+            if (!pref.Enabled)
             {
-                var health = await NativeModsExtender.GetHealthAsync(root, optedIn: false, isReleaseInstall, mode);
-                needsDeactivate = health.PeImportVerified;
+                // Opt-out guarantee: ensure neither Client/version.dll nor .nmimp remains active on disk so stock runs stay 100% vanilla.
+                bool proxyPresent = File.Exists(WaypointExtenderManager.GetProxyDllPath(root));
+                string patchedExe = WaypointExtenderManager.GetPatchedExePath(root);
+                bool needsDeactivate = proxyPresent;
+                if (!needsDeactivate && File.Exists(patchedExe) && File.Exists(WaypointExtenderManager.GetNativeShimPath(root)))
+                {
+                    var health = await NativeModsExtender.GetHealthAsync(root, optedIn: false, isReleaseInstall, mode);
+                    needsDeactivate = health.PeImportVerified;
+                }
+
+                if (needsDeactivate)
+                {
+                    var deactivated = await NativeModsExtender.SetEnabledAsync(root, enabled: false, mode, isReleaseInstall);
+                    if (!deactivated.Succeeded)
+                        return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), deactivated.Message);
+                    log?.Invoke("[nativemods] opted-out: deactivated extender entry point for vanilla launch.");
+                }
+
+                return new NativeModsLaunchPlan(true, NativeModsExtender.BuildLaunchEnvironment(root, optedIn: false, mode, isLinux, existingWineOverrides));
             }
 
-            if (needsDeactivate)
+            // Opt-in ON: verify extender installation, build compatibility, entry point, and .merged-cache freshness.
+            var status = await NativeModsExtender.GetHealthAsync(root, optedIn: true, isReleaseInstall, mode);
+            if (!status.IsInstalled)
+                return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), L.Text("NativeMods is enabled in Settings, but the extender is not installed. Install it in Settings or turn NativeMods off."));
+
+            if (status.ClientIsLink)
+                return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), L.Text("Cannot run NativeMods with a linked Client folder. Make a copy of the game client or turn NativeMods off in Settings."));
+
+            if (status.ClientBuild is not null && !status.BuildSupported)
+                return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), L.Text("Client build {0} is not supported by NativeMods (supported: 3.29.3c, 3.29.3d).", status.ClientBuild));
+
+            if (isReleaseInstall && mode == ExtenderInstallMode.ImportTable)
+                return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), L.Text("Import patch (.nmimp) mode is not supported on release installs because LocalExile.exe checks Game.patched.exe file size and resets it. Switch to Proxy (version.dll) mode in Settings."));
+
+            if (!status.RuntimeIntegrityOk || !status.NativeShimPresent)
+                return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), L.Text("NativeMods runtime files are incomplete. Reinstall or verify NativeMods in Settings."));
+
+            // Ensure the chosen entry point (version.dll or .nmimp) is active on disk before starting the client.
+            bool entryReady = mode == ExtenderInstallMode.ProxyVersionDll ? status.ProxyDllPresent : status.PeImportVerified;
+            if (!entryReady)
             {
-                var deactivated = await NativeModsExtender.SetEnabledAsync(root, enabled: false, mode, isReleaseInstall);
-                if (!deactivated.Succeeded)
-                    return new(false, new Dictionary<string, string?>(), deactivated.Message);
-                log?.Invoke("[nativemods] opted-out: deactivated extender entry point for vanilla launch.");
+                var activated = await NativeModsExtender.SetEnabledAsync(root, enabled: true, mode, isReleaseInstall);
+                if (!activated.Succeeded)
+                    return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(), activated.Message);
+                log?.Invoke($"[nativemods] activated {mode} entry point.");
             }
 
-            return new(true, NativeModsExtender.BuildLaunchEnvironment(root, optedIn: false, mode, isLinux, existingWineOverrides));
-        }
+            if (status.MergedCacheStale)
+            {
+                var rebuilt = NativeModsClientStore.RebuildMergedCacheForEnabledMods(root);
+                if (rebuilt.Rebuilt)
+                    log?.Invoke($"[nativemods] rebuilt Mods/Client/.merged-cache ({rebuilt.MergedTables.Count} tables, digest {rebuilt.Digest}).");
+                else if (!string.IsNullOrWhiteSpace(rebuilt.Diagnostic))
+                    log?.Invoke($"[nativemods] warning: {rebuilt.Diagnostic}");
+            }
 
-        // Opt-in ON: verify extender installation, build compatibility, entry point, and .merged-cache freshness.
-        var status = await NativeModsExtender.GetHealthAsync(root, optedIn: true, isReleaseInstall, mode);
-        if (!status.IsInstalled)
-            return new(false, new Dictionary<string, string?>(), L.Text("NativeMods is enabled in Settings, but the extender is not installed. Install it in Settings or turn NativeMods off."));
-
-        if (status.ClientIsLink)
-            return new(false, new Dictionary<string, string?>(), L.Text("Cannot run NativeMods with a linked Client folder. Make a copy of the game client or turn NativeMods off in Settings."));
-
-        if (status.ClientBuild is not null && !status.BuildSupported)
-            return new(false, new Dictionary<string, string?>(), L.Text("Client build {0} is not supported by NativeMods (supported: 3.29.3c, 3.29.3d).", status.ClientBuild));
-
-        if (isReleaseInstall && mode == ExtenderInstallMode.ImportTable)
-            return new(false, new Dictionary<string, string?>(), L.Text("Import patch (.nmimp) mode is not supported on release installs because LocalExile.exe checks Game.patched.exe file size and resets it. Switch to Proxy (version.dll) mode in Settings."));
-
-        if (!status.RuntimeIntegrityOk || !status.NativeShimPresent)
-            return new(false, new Dictionary<string, string?>(), L.Text("NativeMods runtime files are incomplete. Reinstall or verify NativeMods in Settings."));
-
-        // Ensure the chosen entry point (version.dll or .nmimp) is active on disk before starting the client.
-        bool entryReady = mode == ExtenderInstallMode.ProxyVersionDll ? status.ProxyDllPresent : status.PeImportVerified;
-        if (!entryReady)
-        {
-            var activated = await NativeModsExtender.SetEnabledAsync(root, enabled: true, mode, isReleaseInstall);
-            if (!activated.Succeeded)
-                return new(false, new Dictionary<string, string?>(), activated.Message);
-            log?.Invoke($"[nativemods] activated {mode} entry point.");
-        }
-
-        if (status.MergedCacheStale)
-        {
-            var rebuilt = NativeModsClientStore.RebuildMergedCacheForEnabledMods(root);
-            if (rebuilt.Rebuilt)
-                log?.Invoke($"[nativemods] rebuilt Mods/Client/.merged-cache ({rebuilt.MergedTables.Count} tables, digest {rebuilt.Digest}).");
-            else if (!string.IsNullOrWhiteSpace(rebuilt.Diagnostic))
-                log?.Invoke($"[nativemods] warning: {rebuilt.Diagnostic}");
-        }
-
-        var env = NativeModsExtender.BuildLaunchEnvironment(root, optedIn: true, mode, isLinux, existingWineOverrides);
-        log?.Invoke($"[nativemods] launching with extender v{status.ExtenderVersion ?? "?"} ({mode}).");
-        return new(true, env);
+            var env = NativeModsExtender.BuildLaunchEnvironment(root, optedIn: true, mode, isLinux, existingWineOverrides);
+            log?.Invoke($"[nativemods] launching with extender v{status.ExtenderVersion ?? "?"} ({mode}).");
+            return new NativeModsLaunchPlan(true, env);
+        });
     }
 
     /// <summary>Merges two optional environment override dictionaries (later entries win).</summary>
@@ -139,31 +142,35 @@ static class NativeModsLaunch
     {
         string root = Environment.CurrentDirectory;
         var pref = shared.Settings.NativeModsFor(root);
-        var mode = Repo.IsInstall ? ExtenderInstallMode.ProxyVersionDll : NativeModsExtender.ParseMode(pref.Mode);
+        bool isRelease = Repo.IsInstall;
+        var mode = isRelease ? ExtenderInstallMode.ProxyVersionDll : NativeModsExtender.ParseMode(pref.Mode);
         NativeModsOperationResult? outcome = null;
         bool ran = await shared.RunExclusiveAsync(L.Text("Install NativeMods"), async () =>
         {
-            progress(L.Text("Checking GitHub for the latest NativeMods release…"));
-            using var http = Updates.Client();
-            var release = await NativeModsReleases.LatestAsync(http);
-            if (release is null)
+            outcome = await Task.Run(async () =>
             {
-                var health = await NativeModsExtender.GetHealthAsync(root, pref.Enabled, Repo.IsInstall, mode);
-                outcome = new(false, L.Text("No NativeMods release was found on GitHub ({0}).", NativeModsReleases.Repository), health);
-                return;
-            }
-            progress(L.Text("Downloading NativeMods {0}…", release.Tag));
-            var staged = await NativeModsReleases.DownloadAndStageAsync(http, release, (done, total) =>
-            {
-                if (total > 0) progress(L.Text("Downloading NativeMods {0} ({1:P0})…", release.Tag, (double)done / total));
-            }, CancellationToken.None);
-            try
-            {
-                progress(L.Text("Installing NativeMods {0}…", staged.Version));
-                outcome = await NativeModsExtender.InstallAsync(root, staged, mode, pref.Enabled, Repo.IsInstall);
-                shared.Logs.Write($"[nativemods] {outcome.Message}", outcome.Succeeded ? Severity.Info : Severity.Warning);
-            }
-            finally { NativeModsReleases.Discard(staged); }
+                progress(L.Text("Checking GitHub for the latest NativeMods release…"));
+                using var http = Updates.Client();
+                var release = await NativeModsReleases.LatestAsync(http);
+                if (release is null)
+                {
+                    var health = await NativeModsExtender.GetHealthAsync(root, pref.Enabled, isRelease, mode);
+                    return new NativeModsOperationResult(false, L.Text("No NativeMods release was found on GitHub ({0}).", NativeModsReleases.Repository), health);
+                }
+                progress(L.Text("Downloading NativeMods {0}…", release.Tag));
+                var staged = await NativeModsReleases.DownloadAndStageAsync(http, release, (done, total) =>
+                {
+                    if (total > 0) progress(L.Text("Downloading NativeMods {0} ({1:P0})…", release.Tag, (double)done / total));
+                }, CancellationToken.None);
+                try
+                {
+                    progress(L.Text("Installing NativeMods {0}…", staged.Version));
+                    var installed = await NativeModsExtender.InstallAsync(root, staged, mode, pref.Enabled, isRelease);
+                    shared.Logs.Write($"[nativemods] {installed.Message}", installed.Succeeded ? Severity.Info : Severity.Warning);
+                    return installed;
+                }
+                finally { NativeModsReleases.Discard(staged); }
+            });
         });
         return ran ? outcome : null;
     }
@@ -173,19 +180,24 @@ static class NativeModsLaunch
     {
         string root = Environment.CurrentDirectory;
         var pref = shared.Settings.NativeModsFor(root);
-        var mode = Repo.IsInstall ? ExtenderInstallMode.ProxyVersionDll : NativeModsExtender.ParseMode(pref.Mode);
+        bool isRelease = Repo.IsInstall;
+        var mode = isRelease ? ExtenderInstallMode.ProxyVersionDll : NativeModsExtender.ParseMode(pref.Mode);
         NativeModsOperationResult? outcome = null;
         bool ran = await shared.RunExclusiveAsync(L.Text("Install NativeMods"), async () =>
         {
-            progress(L.Text("Validating NativeMods bundle…"));
-            var staged = isZip ? NativeModsReleases.StageLocalZip(path) : NativeModsReleases.StageLocalDirectory(path);
-            try
+            outcome = await Task.Run(async () =>
             {
-                progress(L.Text("Installing NativeMods {0}…", staged.Version));
-                outcome = await NativeModsExtender.InstallAsync(root, staged, mode, pref.Enabled, Repo.IsInstall);
-                shared.Logs.Write($"[nativemods] {outcome.Message}", outcome.Succeeded ? Severity.Info : Severity.Warning);
-            }
-            finally { NativeModsReleases.Discard(staged); }
+                progress(L.Text("Validating NativeMods bundle…"));
+                var staged = isZip ? NativeModsReleases.StageLocalZip(path) : NativeModsReleases.StageLocalDirectory(path);
+                try
+                {
+                    progress(L.Text("Installing NativeMods {0}…", staged.Version));
+                    var installed = await NativeModsExtender.InstallAsync(root, staged, mode, pref.Enabled, isRelease);
+                    shared.Logs.Write($"[nativemods] {installed.Message}", installed.Succeeded ? Severity.Info : Severity.Warning);
+                    return installed;
+                }
+                finally { NativeModsReleases.Discard(staged); }
+            });
         });
         return ran ? outcome : null;
     }
@@ -194,10 +206,11 @@ static class NativeModsLaunch
     public static async Task<NativeModsOperationResult?> ApplyPreferenceAsync(Shared shared, bool enabled, ExtenderInstallMode mode)
     {
         string root = Environment.CurrentDirectory;
+        bool isRelease = Repo.IsInstall;
         NativeModsOperationResult? outcome = null;
         bool ran = await shared.RunExclusiveAsync(L.Text("Update NativeMods"), async () =>
         {
-            var current = await NativeModsExtender.GetHealthAsync(root, enabled, Repo.IsInstall, mode);
+            var current = await Task.Run(() => NativeModsExtender.GetHealthAsync(root, enabled, isRelease, mode));
             if (!current.IsInstalled)
             {
                 // Save preference without failing when turning OFF or switching mode before install; refuse enabling until installed.
@@ -212,7 +225,7 @@ static class NativeModsLaunch
                 return;
             }
 
-            outcome = await NativeModsExtender.SetEnabledAsync(root, enabled, mode, Repo.IsInstall);
+            outcome = await Task.Run(() => NativeModsExtender.SetEnabledAsync(root, enabled, mode, isRelease));
             if (outcome.Succeeded)
             {
                 shared.Settings.SetNativeMods(new NativeModsPreference(enabled, mode.ToString()), root);
@@ -227,10 +240,11 @@ static class NativeModsLaunch
     public static async Task<NativeModsOperationResult?> UninstallAsync(Shared shared, bool removeClientMods)
     {
         string root = Environment.CurrentDirectory;
+        bool isRelease = Repo.IsInstall;
         NativeModsOperationResult? outcome = null;
         bool ran = await shared.RunExclusiveAsync(L.Text("Uninstall NativeMods"), async () =>
         {
-            outcome = await NativeModsExtender.UninstallAsync(root, removeClientMods, Repo.IsInstall);
+            outcome = await Task.Run(() => NativeModsExtender.UninstallAsync(root, removeClientMods, isRelease));
             if (outcome.Succeeded)
             {
                 var pref = shared.Settings.NativeModsFor(root);

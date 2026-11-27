@@ -164,20 +164,24 @@ public static class NativeModsClientStore
         CheckoutIgnores.Ensure(root);
         var installer = new WaypointModInstaller();
 
-        // Install client files + ledger via WaypointModInstaller; rebuild .merged-cache via our enabled-aware path below.
+        // Install client files + ledger only; ModBridge.ps1 owns Mods/Binaries/<id>/ and mod-state.txt.
         var audit = installer.Install(packageDir, root, new InstallOptions
         {
             AllowRawAccess = allowRawAccess,
             AllowConflicts = allowConflicts,
             EnableOnInstall = enableOverride,
             RebuildMergedCache = false,
+            DeployServerFiles = false,
+            UpdateModState = false,
         });
 
         if (!audit.Succeeded)
             return new(false, audit.FailureReason ?? L.Text("Client mod installation was blocked by validation."), audit, null);
 
         var choices = ModCatalog.ReadChoices(Path.Combine(root, "Mods", "Binaries"));
-        bool isEnabled = enableOverride ?? choices.GetValueOrDefault(audit.ModId, true);
+        bool defaultEnabled = WaypointModInstaller.ReadLedger(root).Mods
+            .FirstOrDefault(m => m.Id.Equals(audit.ModId, StringComparison.OrdinalIgnoreCase))?.Manifest.Enabled ?? true;
+        bool isEnabled = enableOverride ?? choices.GetValueOrDefault(audit.ModId, defaultEnabled);
         WriteClientModState(root, audit.ModId, isEnabled);
 
         MergedCacheOutcome? cache = null;

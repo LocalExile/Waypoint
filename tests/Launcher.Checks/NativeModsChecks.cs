@@ -265,20 +265,40 @@ static class NativeModsChecks
 
         // Split staging excludes client payload from server directory
         string serverOnly = NativeModsClientStore.PrepareServerStaging(pkgDir, "garden");
+        string serverTarget = Path.Combine(checkout, "Mods", "Binaries", "garden");
         try
         {
             check(File.Exists(Path.Combine(serverOnly, "garden.dll")) && !File.Exists(Path.Combine(serverOnly, "garden.Client.dll"))
                 && !Directory.Exists(Path.Combine(serverOnly, "client")),
                 "Split staging strips client assembly and payloadDir from server staging folder");
+
+            // Simulate ModBridge.ps1 deploying the server half + user having turned the mod off before an update.
+            Directory.CreateDirectory(serverTarget);
+            foreach (string file in Directory.EnumerateFiles(serverOnly, "*", SearchOption.AllDirectories))
+            {
+                string dest = Path.Combine(serverTarget, Path.GetRelativePath(serverOnly, file));
+                Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+                File.Copy(file, dest, overwrite: true);
+            }
+            File.WriteAllText(Path.Combine(serverTarget, "README.md"), "keep-me");
+            ModCatalog.WriteChoice(Path.Combine(checkout, "Mods", "Binaries"), "garden", enabled: false);
         }
         finally
         {
             Directory.Delete(Path.GetDirectoryName(serverOnly)!, recursive: true);
         }
 
-        // Deploy client half -> populates Mods/Client/garden/ + .merged-cache/content-row-map.json
-        var deployed = NativeModsClientStore.DeployClientHalf(pkgDir, checkout, enableOverride: true);
+        // Deploy client half while mod is disabled -> preserves Mods/Binaries/garden and mod-state.txt choice
+        var deployedOff = NativeModsClientStore.DeployClientHalf(pkgDir, checkout, enableOverride: null);
         string rowMapPath = Path.Combine(WaypointModInstaller.GetMergedCacheDirectory(checkout), "content-row-map.json");
+        var choicesAfterDeploy = ModCatalog.ReadChoices(Path.Combine(checkout, "Mods", "Binaries"));
+        check(deployedOff.Succeeded && File.Exists(Path.Combine(serverTarget, "README.md"))
+            && choicesAfterDeploy.TryGetValue("garden", out bool stayedOff) && !stayedOff && !File.Exists(rowMapPath),
+            "Deploying dual-side client half does not overwrite Mods/Binaries/<id>/ or clobber an existing disabled choice in mod-state.txt");
+
+        // Enable mod -> builds Mods/Client/.merged-cache/content-row-map.json
+        ModCatalog.WriteChoice(Path.Combine(checkout, "Mods", "Binaries"), "garden", enabled: true);
+        var deployed = NativeModsClientStore.DeployClientHalf(pkgDir, checkout, enableOverride: true);
         check(deployed.Succeeded && Directory.Exists(Path.Combine(checkout, "Mods", "Client", "garden"))
             && deployed.MergedCache is { Rebuilt: true, Digest.Length: > 0 } && File.Exists(rowMapPath),
             "Deploying dual-side client half writes Mods/Client/<id>/ and builds Mods/Client/.merged-cache/content-row-map.json");
