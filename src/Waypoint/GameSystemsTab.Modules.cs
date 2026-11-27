@@ -56,8 +56,11 @@ public sealed partial class GameSystemsTab
     GameSystem[] MatchingModules()
     {
         var words = (_moduleSearch.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return Modules.Where(m => words.All(w => (ModuleTitle(m) + " " + m.Id + " " + m.Path + " " + m.Description)
-            .Contains(w, StringComparison.CurrentCultureIgnoreCase))).ToArray();
+        return Modules.Where(module =>
+        {
+            string search = module.SearchText;
+            return words.All(word => search.Contains(word, StringComparison.CurrentCultureIgnoreCase));
+        }).ToArray();
     }
     void UpdateModuleCount(int shown)
     {
@@ -78,9 +81,10 @@ public sealed partial class GameSystemsTab
         iconAction.Margin = new Thickness(12, 0, 0, 0); DockPanel.SetDock(iconAction, Dock.Right); title.Children.Add(iconAction);
         title.Children.Add(Type(ModuleTitle(module), 25, true)); body.Children.Add(title);
         var identity = Type(L.Text("Gameplay module · {0}", module.Id), 12, false, "Shell.TextSecondary"); identity.Margin = new Thickness(0, 6, 0, 0); body.Children.Add(identity);
-        if (module.Description.Length > 0)
+        string descriptionText = module.DisplayDescription;
+        if (descriptionText.Length > 0)
         {
-            var description = Type(module.Mod ? L.Text(module.Description) : module.Description, 13, false, "Shell.TextSecondary");
+            var description = Type(descriptionText, 13, false, "Shell.TextSecondary");
             description.Margin = new Thickness(0, 10, 0, 0); body.Children.Add(description);
         }
         hero.Children.Add(body); var heroCard = Card(hero, 18); heroCard.Margin = new Thickness(0, 0, 0, 12); _detail.Children.Add(heroCard);

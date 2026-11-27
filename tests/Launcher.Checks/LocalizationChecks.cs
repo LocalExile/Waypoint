@@ -71,7 +71,22 @@ static class LocalizationChecks
                     && idols.DisplayDescription != idols.Description && L.Text("Keep the Atlas passive tree") != "Keep the Atlas passive tree",
                     $"{tag}: a listed official mod has localized display text and settings while retaining its manifest identity");
             }
+            L.Current.SetLanguage("zh-CN");
+            var exchange = new GameSystem("CurrencyExchange", "Core/NPC/CurrencyExchange", "CurrencyExchange", "", [], "");
+            check(exchange.DisplayTitle == "通货交易所" && exchange.DisplayDescription == "通货兑换与交易订单。"
+                && exchange.SearchText.Contains("通货兑换") && exchange.SearchText.Contains("Currency Exchange")
+                && exchange.SearchText.Contains(exchange.Path) && exchange.ToString() == "CurrencyExchange",
+                "module playback uses Simplified Chinese resources and search retains the original name and path");
+            var custom = exchange with { Name = "My local market", Description = "My custom description" };
+            check(custom.DisplayTitle == custom.Name && custom.DisplayDescription == custom.Description,
+                "custom module metadata falls back to the manifest if no translation exists");
+            check(L.Text("Legacy hideout source") == "旧藏身处来源角色"
+                && L.Text("Evolution local decline coefficient") == "进化圣坛区域衰减系数"
+                && L.Text("Boss life on player death") == "玩家死亡时首领回复生命",
+                "module setting labels use the Simplified Chinese satellite");
             L.Current.SetLanguage("ru");
+            check(exchange.DisplayTitle == "Обмен валюты" && exchange.DisplayDescription.Length > 0,
+                "module titles switch language without reloading the manifest");
             check(L.Text("Play") == "Играть" && L.Describe("Needs: Play") == "Требуется: Play" && SetupGuidance.Describe(new("Original client", false, "Ready"), @"C:\Russian check").DisplayName == "Исходный клиент",
                 "Russian text is the reviewed text");
             L.Current.SetLanguage("unsupported");

@@ -1206,7 +1206,8 @@ to see its dependencies, the leagues using it and its settings. **Manage in Leag
 settings are shared by every league using that module, rather than being separate per league.
 
 The module navigator uses the same selectable cards and icon defaults as the module rows in Leagues. **Find a module**
-searches its display name, ID, path and description; the count and empty state reflect the filter. Filtering preserves the
+searches the translated and original names and descriptions, plus the module ID and path. The packaged language resources
+cover the shipped modules and their settings. The count and empty state reflect the filter. Filtering preserves the
 current form while its module still matches, and asks before discarding an unsaved form if the filter would switch modules.
 The selected module has a clear heading and icon, a **Shared settings** card, **League usage**, and collapsible dependencies.
 Modules with settings show that card first. **Settings not exposed to Waypoint** means there is no declaration for the

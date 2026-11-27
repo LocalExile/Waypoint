@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
 #if WINDOWS
 using System.Windows;
 using System.Windows.Controls;
@@ -381,9 +380,7 @@ public sealed partial class GameSystemsTab : UserControl
         if (league.Mod.Length > 0) details.Children.Add(SettingsEditor.Note(L.Text("From the mod: {0}", league.Mod)));
         _detail.Children.Add(new Expander { Header = L.Text("League details and compatibility"), Content = details, IsExpanded = false, Margin = new Thickness(0, 12, 0, 8) });
     }
-    static string ModuleTitle(GameSystem module) => module.Name == module.Id
-        ? module.Id == "Game" ? L.Text("Core game rules") : Regex.Replace(module.Name, @"(?<=[a-z0-9])(?=[A-Z])", " ").Replace("Npc ", "NPC ")
-        : module.Mod ? L.Text(module.Name) : module.Name;
+    static string ModuleTitle(GameSystem module) => module.DisplayTitle;
     TextBox AddModuleChoices(StackPanel panel, GameLeague league, bool editable)
     {
         _checks.Clear();
@@ -433,8 +430,12 @@ public sealed partial class GameSystemsTab : UserControl
             else row = box;
             var holder = Card(row, 10, "Shell.Background"); holder.Margin = new Thickness(0, 0, 0, 6);
             Named(holder, name + (locked ? " · " + L.Text("Required") : ""));
-            string description = module.Mod ? L.Text(module.Description) : module.Description;
-            string help = description.Length > 0 ? description : locked ? L.Text("Required by this league's gameplay bundle.") : !offered ? ofMode ? "" : whyNot : L.Text("Optional module for this mode.");
+            string description = module.DisplayDescription;
+            string availability = locked ? L.Text("Required by this league's gameplay bundle.")
+                : !offered && !ofMode ? whyNot : "";
+            string help = description.Length == 0 ? availability
+                : availability.Length == 0 ? description : description + "\n" + availability;
+            if (help.Length == 0 && offered) help = L.Text("Optional module for this mode.");
             if (!offered && ofMode) help += (help.Length > 0 ? "\n" : "") + _catalog.ModeNote(module.Path);
             if (rulesOnly && (offered || selected)) help += "\n" + L.Text("Here it gives the rules of a game mode only, without that mode's own skills, vendors and quest rewards.");
             if (module.Depends.Length > 0) help += "\n" + L.Text("Dependencies: {0}", string.Join(", ", module.Depends));
@@ -450,7 +451,7 @@ public sealed partial class GameSystemsTab : UserControl
             box.Click += (_, _) => ChoiceChanged();
             bool isUnavailable = !selected && !offered && !locked;
             (isUnavailable ? unavailable : panel).Children.Add(holder);
-            rows.Add((holder, name + " " + module.Id + " " + module.Name + " " + module.Description + " " + description, isUnavailable));
+            rows.Add((holder, module.SearchText, isUnavailable));
         }
         foreach (string path in (_creating ? _draftModules : league.Systems.AsEnumerable()).Where(p => !_checks.ContainsKey(p)).ToArray())
         {

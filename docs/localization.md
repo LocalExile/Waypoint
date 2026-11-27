@@ -13,7 +13,8 @@ commands and raw diagnostic/log output keep their original text. Native Windows 
 Windows display language.
 
 The official mod catalog's titles, summaries and settings (including their descriptions, units and choices) use the same
-resources in Browse, My Mods and each mod's page. The saved setting names and choice values are the ones in the mod's schema.
+resources in Browse, My Mods and each mod's page. The same resources cover shipped module names, descriptions and
+settings in Modules and Leagues. The saved setting names and choice values are the ones in the manifest's schema.
 
 ## Implementation
 
