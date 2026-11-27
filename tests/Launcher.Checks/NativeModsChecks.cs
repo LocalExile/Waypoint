@@ -239,6 +239,11 @@ static class NativeModsChecks
         string stockDataDir = Path.Combine(clientDir, "Data");
         Directory.CreateDirectory(stockDataDir);
         Dat64SchemaRegistry schemaReg = Dat64SchemaRegistry.LoadDefault329();
+        check(Dat64SchemaRegistry.AppendableRegistryTables.Count == 22
+            && DualModPackageValidator.AppendableRegistryTables.Count == 22
+            && Dat64SchemaRegistry.AppendableRegistryTables.SetEquals(DualModPackageValidator.AppendableRegistryTables)
+            && Dat64SchemaRegistry.AppendableRegistryTables.All(t => schemaReg.TryGetTable(t, out _)),
+            "All 22 appendable NativeMods 1.2.0 tables match across validator and embedded Dat64SchemaRegistry");
         Dat64TableSchema csSchema = schemaReg.Tables["ClientStrings"];
         File.WriteAllBytes(Path.Combine(stockDataDir, "ClientStrings.datc64"), BuildSingleRowDatc64(csSchema));
 

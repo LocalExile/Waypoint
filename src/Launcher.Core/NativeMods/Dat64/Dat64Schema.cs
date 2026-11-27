@@ -208,7 +208,7 @@ public sealed class Dat64SchemaRegistry
     private const string EmbeddedSchemaResourceName = "LocalExile.Client.AssetPipeline.Schemas.poe-3.29-dat-schema.json";
 
     /// <summary>
-    /// The 18 live-verified appendable registry tables in Path of Exile 3.29.3c/3.29.3d
+    /// The 22 live-verified appendable registry tables in Path of Exile 3.29.3c/3.29.3d
     /// (mirrors <c>DualModPackageValidator.AppendableRegistryTables</c>).
     /// </summary>
     public static IReadOnlySet<string> AppendableRegistryTables { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -231,6 +231,10 @@ public sealed class Dat64SchemaRegistry
         "Mods",
         "ModType",
         "BuffDefinitions",
+        "MinimapIcons",
+        "BuffVisuals",
+        "NPCTalk",
+        "Words",
     };
 
     /// <summary>

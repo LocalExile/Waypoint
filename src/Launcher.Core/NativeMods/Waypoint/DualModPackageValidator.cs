@@ -38,7 +38,7 @@ public static class DualModPackageValidator
         "3.29.3d", "3.29.3c"
     };
 
-    /// <summary>Tables verified appendable in 10-verification.md §5 and live 3.29.3c/3.29.3d testing.</summary>
+    /// <summary>The 22 tables verified appendable in 10-verification.md §5 and live 3.29.3c/3.29.3d testing.</summary>
     public static readonly IReadOnlySet<string> AppendableRegistryTables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
         "BaseItemTypes",
@@ -58,7 +58,11 @@ public static class DualModPackageValidator
         "ClientStrings",
         "Mods",
         "ModType",
-        "BuffDefinitions"
+        "BuffDefinitions",
+        "MinimapIcons",
+        "BuffVisuals",
+        "NPCTalk",
+        "Words"
     };
 
     /// <summary>
@@ -570,7 +574,7 @@ public static class DualModPackageValidator
 
     /// <summary>
     /// Validates a standalone <c>.datpatch.json</c> payload (JSON syntax, schema table membership,
-    /// 18 verified <see cref="AppendableRegistryTables"/> for <c>append</c>, hard rejection of closed
+    /// 22 verified <see cref="AppendableRegistryTables"/> for <c>append</c>, hard rejection of closed
     /// <c>Stats</c>/<c>ItemClasses</c> tables for <c>append</c>, and valid <c>allocateDeadStat</c> slots).
     /// </summary>
     public static ValidationReport ValidateDatPatchJson(
