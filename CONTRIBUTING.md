@@ -25,6 +25,14 @@ python tests/Capture.Tests.py
 python tools/missing-translations.py
 ```
 
+A change to the Linux app (`src/Waypoint.Linux`, and every file of `src/Waypoint` it links) also builds there; CI builds the
+AppImage as well:
+
+```bash
+dotnet build Waypoint.Linux.slnx
+tools/build-appimage.sh
+```
+
 The scripts work on throwaway fixtures, never on a real checkout's saves. They do not replace looking at the running app:
 start it with `--repo <checkout>` (and `--allow-multiple` beside another copy), look at every changed section at the
 minimum window size, in light and dark, in every language, and in the blocked and ready states.

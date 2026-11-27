@@ -501,6 +501,9 @@
   <data name="Text_0cf0462b32ac" xml:space="preserve">
     <value>{0} is not empty. Choose an empty folder or a new one.</value>
   </data>
+  <data name="Text_0d0717954ac3" xml:space="preserve">
+    <value>Steam's libraries</value>
+  </data>
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>Fetches pull request #{0} again: its newest commits, also after a force-push</value>
   </data>
@@ -677,6 +680,9 @@
   </data>
   <data name="Text_10d911351fa4" xml:space="preserve">
     <value>Voyage</value>
+  </data>
+  <data name="Text_10dcdca58301" xml:space="preserve">
+    <value>Color (#RRGGBB)</value>
   </data>
   <data name="Text_10dee8798467" xml:space="preserve">
     <value>Building…</value>
@@ -1185,6 +1191,9 @@ Close the game and anything else using that folder, then try again.</value>
   </data>
   <data name="Text_1f562c8a9cec" xml:space="preserve">
     <value>{0} is not a LocalExile release.</value>
+  </data>
+  <data name="Text_1f56d71d6326" xml:space="preserve">
+    <value>-Walkmaps: capture each area's walk map under Proton. The game starts with the recorder, which LocalExile builds with g++ the first time.</value>
   </data>
   <data name="Text_1f88699e6094" xml:space="preserve">
     <value>Previous map</value>
@@ -1834,6 +1843,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_2deea4664d23">
     <value>Secondary text</value>
+  </data>
+  <data name="Text_2e0444630388" xml:space="preserve">
+    <value>Following the desktop: {0}</value>
   </data>
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>Extracting the game data</value>
@@ -4116,6 +4128,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_695421b8f03a" xml:space="preserve">
     <value>LocalExile gets its own in {0}, starting from a copy of your normal settings without your login, with Networking Mode set to Predictive. Your normal game's files are not changed.</value>
   </data>
+  <data name="Text_695c4698b105" xml:space="preserve">
+    <value>only the published AppImage updates itself; download it from the release page</value>
+  </data>
   <data name="Text_6979ababfdcb" xml:space="preserve">
     <value>LocalExile keeps its own graphics, keys and saved login in {0}, and starts with the network mode it needs. Your normal game's settings are only read, once, as a starting point.</value>
   </data>
@@ -4289,6 +4304,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>Eldritch implicits</value>
+  </data>
+  <data name="Text_6f1a81da4fbf" xml:space="preserve">
+    <value>The Steam download works on 64-bit Windows and Linux only.</value>
   </data>
   <data name="Text_6f1f1b23d3fd" xml:space="preserve">
     <value>Here it gives the rules of a game mode only, without that mode's own skills, vendors and quest rewards.</value>
@@ -5159,6 +5177,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_87675db83a32" xml:space="preserve">
     <value>Ingredients</value>
+  </data>
+  <data name="Text_8787fab8d301" xml:space="preserve">
+    <value>Only the published AppImage updates itself</value>
   </data>
   <data name="Text_8799981821ae" xml:space="preserve">
     <value>Name for Create, Copy or Rename:</value>
@@ -7922,6 +7943,9 @@ Client: {2}</value>
   </data>
   <data name="Text_cd4b01b8b2e8" xml:space="preserve">
     <value>Imported {0} with {1} modifiers. Save keeps it in the list.</value>
+  </data>
+  <data name="Text_cd55a9d95751" xml:space="preserve">
+    <value>{0} · {1}</value>
   </data>
   <data name="Text_cd6e8b455ec6" xml:space="preserve">
     <value>Client build unknown</value>

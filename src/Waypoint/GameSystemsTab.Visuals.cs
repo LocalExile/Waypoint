@@ -136,7 +136,13 @@ public sealed partial class GameSystemsTab
         focus.Setters.Add(new Setter(Control.BorderThicknessProperty, new DynamicResourceExtension("FocusThickness"))); style.Triggers.Add(focus);
         _list.ItemContainerStyle = style;
 #else
-        _list.ItemTemplate = new FuncDataTemplate<object>((item, _) => item is GameLeagueCard card ? FlagTileVisual(card) : ModuleTileVisual((GameSystem)item));
+        // A virtualized list recycles a row by clearing its content, which builds the template once more with null.
+        _list.ItemTemplate = new FuncDataTemplate<object>((item, _) => item switch
+        {
+            GameLeagueCard card => FlagTileVisual(card),
+            GameSystem module => ModuleTileVisual(module),
+            _ => null,
+        });
         var style = new Style(s => s.OfType<ListBoxItem>());
         style.Setters.Add(new Setter(TemplatedControl.PaddingProperty, new Thickness(12)));
         style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, 8)));

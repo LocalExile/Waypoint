@@ -14,7 +14,9 @@ sealed record Release(Version Version, string Tag, string Page, string Notes, st
 /// <c>-p:Version</c>); a build from source is 0.0.0 and never offers updates. The latest release comes from GitHub's
 /// public API for <see cref="Repository"/>, and an update replaces the running exe: a Windows exe that runs can be
 /// renamed, so it becomes <c>.old</c>, the downloaded one (checked against the release's SHA-256) takes its name, and
-/// the new launcher starts; the next start deletes the <c>.old</c>.
+/// the new launcher starts; the next start deletes the <c>.old</c>. On Linux the file is the AppImage
+/// (<see cref="LauncherFile"/>): the downloaded one, checked the same way, is renamed over it, which a running AppImage
+/// allows (its mounted image stays as it was until it exits), and the new one starts.
 /// </summary>
 static class Updates
 {
@@ -28,9 +30,20 @@ static class Updates
 
     public static bool IsReleaseBuild => Current > new Version(0, 0, 0);
 
+#if WINDOWS
     /// <summary>The running file when it is the published single-file exe (`dotnet run` runs a dll through dotnet).</summary>
     public static string? RunningExe =>
         Environment.ProcessPath is { } path && Path.GetFileName(path).Equals(ExeName, StringComparison.OrdinalIgnoreCase) ? path : null;
+
+    /// <summary>The release's file this system's Waypoint is.</summary>
+    const string AssetName = ExeName;
+#else
+    /// <summary>The running AppImage when this is the published one (`dotnet run` and a build from source are not).</summary>
+    public static string? RunningExe => LauncherFile.Running();
+
+    /// <summary>The release's file this system's Waypoint is.</summary>
+    const string AssetName = LauncherFile.AppImageName;
+#endif
 
     /// <summary>"v1.2.3", "1.2.3", "1.2.3-dev+abc": the numeric part, three components; null for anything else.</summary>
     internal static Version? Parse(string? text)
@@ -52,7 +65,7 @@ static class Updates
                 ? a.GetProperty("browser_download_url").GetString() : null
             : null;
         return new(version, tag, r.TryGetProperty("html_url", out var page) ? page.GetString() ?? "" : "",
-            r.TryGetProperty("body", out var body) ? body.GetString() ?? "" : "", Asset(ExeName), Asset(ExeName + ".sha256"));
+            r.TryGetProperty("body", out var body) ? body.GetString() ?? "" : "", Asset(AssetName), Asset(AssetName + ".sha256"));
     }
 
     /// <summary>The SHA-256 a ".sha256" file names: its first word, as `sha256sum` and the release workflow write it.</summary>
@@ -83,9 +96,13 @@ static class Updates
     /// <paramref name="beforeStart"/> (this copy's single-instance claim ends there). The caller then closes this one.</summary>
     public static async Task ApplyAsync(Release release, IProgress<string> progress, Action beforeStart)
     {
+#if WINDOWS
         string exe = RunningExe ?? throw new InvalidOperationException(L.Text("only the published Waypoint.exe updates itself; download it from the release page"));
+#else
+        string exe = RunningExe ?? throw new InvalidOperationException(L.Text("only the published AppImage updates itself; download it from the release page"));
+#endif
         if (release.ExeUrl is null || release.HashUrl is null)
-            throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, ExeName));
+            throw new InvalidOperationException(L.Text("release {0} has no {1} with its .sha256", release.Tag, AssetName));
         using var client = Client();
         progress.Report(L.Text("checking {0} …", release.Tag));
         string expected = HashOf(await GitHubDownload.GetStringAsync(client, release.HashUrl))
@@ -105,9 +122,17 @@ static class Updates
         if (actual != expected)
         {
             File.Delete(download);
-            throw new InvalidOperationException(L.Text("the downloaded {0} does not match its SHA-256; nothing was changed", ExeName));
+            throw new InvalidOperationException(L.Text("the downloaded {0} does not match its SHA-256; nothing was changed", AssetName));
         }
         progress.Report(L.Text("installing …"));
+#if !WINDOWS
+        // A running AppImage can be replaced by a rename: the image it runs from stays mounted until it exits. The new one is
+        // made runnable first, as the one it replaces was; until the rename the old one is untouched.
+        if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(download, File.GetUnixFileMode(exe) | UnixFileMode.UserRead | UnixFileMode.UserExecute);
+        File.Move(download, exe, overwrite: true);
+        beforeStart();
+        Process.Start(new ProcessStartInfo(exe) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(exe)! })?.Dispose();
+#else
         // A running exe can be renamed but not replaced in place. Should the new one not take its name, the old one
         // gets it back, so there is always a launcher to start.
         File.Move(exe, exe + ".old", overwrite: true);
@@ -119,13 +144,20 @@ static class Updates
         }
         beforeStart();
         Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, WorkingDirectory = Path.GetDirectoryName(exe)! })?.Dispose();
+#endif
     }
 
     /// <summary>The exe an update replaced, once the new one runs.</summary>
     public static void CleanUp()
     {
         if (RunningExe is not { } exe) return;
+#if WINDOWS
         try { File.Delete(exe + ".old"); }
+#else
+        // Nothing is set aside on Linux; a download an earlier update left unfinished is, once it is old enough that no
+        // other Waypoint can still be writing it.
+        try { if (File.Exists(exe + ".new") && DateTime.UtcNow - File.GetLastWriteTimeUtc(exe + ".new") > TimeSpan.FromHours(1)) File.Delete(exe + ".new"); }
+#endif
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
     }
 }

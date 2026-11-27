@@ -477,7 +477,7 @@ public partial class SetupWizard : Window
         CheckoutStatus.Text = L.Text("Looking for LocalExile on this PC…");
         try
         {
-            var roots = RepositoryDiscovery.DefaultRoots(AppContext.BaseDirectory, Environment.CurrentDirectory, _current ?? "");
+            var roots = RepositoryDiscovery.DefaultRoots(App.LaunchFolder, Environment.CurrentDirectory, _current ?? "");
             var result = await RepositoryLocator.FindAsync(roots, _closing.Token);
             foreach (var repository in result.Repositories)
                 if (!_checkouts.Any(c => c.Root.Equals(repository.Root, StringComparison.Ordinal))) _checkouts.Add(new(repository.Root, repository.Summary));
@@ -657,9 +657,17 @@ public partial class SetupWizard : Window
             ClientStatus.Text = usable > 0 ? L.Text("Found {0} on this PC. Choose the one to use.", usable)
                 : L.Text("No usable client was found. Searched {0}.", string.Join(", ", result.Searched));
             string warning = ClientList.SelectedItem is FoundClient chosen ? ClientWarning(chosen) : "";
+            // Without a client, Waypoint can download the game: said here, where the user is stuck, and only where it will
+            // hold. That is a LocalExile that lists a build Steam can deliver; one not installed yet will be the newest,
+            // which does. A release gets it from Finish setup on its Play page, a source copy from the Game client window.
+            bool download = usable == 0 && DepotTool.Supported && (UsingRelease
+                ? checkout is null || !LocalExileReleases.IsInstall(checkout) || await Task.Run(() => ClientVersions.FirstDownload(checkout) is not null)
+                : checkout is null || !RepositoryDiscovery.IsLocalExile(checkout) || await Task.Run(() => LocalExileBuilds.Of(checkout) is { } builds && builds.Any(b => b.FromSteam)));
             ClientNote.Text = usable == 0
                     ? L.Text("Choose your Path of Exile {0} folder: a standalone install (PathOfExile.exe and Content.ggpk) or a Steam install (PathOfExileSteam.exe and Bundles2).", NeededClient)
-                        + " " + L.Text("Waypoint cannot download the game for this LocalExile.")
+                        + " " + (download && UsingRelease ? L.Text("If you have no such folder, tick the box below. Finish setup on the Play page can then download the game from Steam.")
+                            : download ? L.Text("If you have no such folder, tick the box below. Then choose Game client in the folder list to download the game from Steam.")
+                            : L.Text("Waypoint cannot download the game for this LocalExile."))
                 : warning.Length > 0 ? warning
                 : result.Limited ? L.Text("The search stopped at its time limit; Browse if your client is not listed.") : "";
         }

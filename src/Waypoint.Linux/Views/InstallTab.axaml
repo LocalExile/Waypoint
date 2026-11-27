@@ -34,6 +34,10 @@
         </StackPanel>
       </Border>
       <TextBlock x:Name="VersionText" Classes="note" TextAlignment="Center" Margin="0,24,0,0" />
+      <!-- The Game client window (ClientVersionsWindow) opens from the sidebar's folder list. This link shows only when
+           LocalExile refused the folder's client in the last run. -->
+      <Button x:Name="ClientLink" Classes="quiet" Content="{l:Loc 'Game client…'}" FontSize="12.5" Margin="0,10,0,0" Click="ClientClicked" IsVisible="False"
+              ToolTip.Tip="{l:Loc 'The versions of the game this LocalExile holds: get one from Steam, keep several, switch between them'}" />
       <!-- The folder, the way to another and a new copy are the sidebar's (FolderPicker). -->
       <Button x:Name="RunSetupLink" Classes="quiet" FontSize="12.5" Margin="0,10,0,0"
               Content="{l:Loc 'Run setup guide…'}" Click="RunSetupClicked"

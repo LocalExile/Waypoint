@@ -1,21 +1,29 @@
 # Fetches the DepotDownloader release that Waypoint.exe carries (docs/launcher.md, "The game client from Steam"), once, at
 # build time, and holds it to the SHA-256 written here: a user's Waypoint never downloads it. The zip goes to
-# tools\bundled\, which git ignores; src\Waypoint\Waypoint.csproj embeds it when it is there. With -Source it also fetches
-# the source of that same release, which the release workflow attaches beside Waypoint.exe (DepotDownloader is GPL-2.0:
-# THIRD-PARTY-NOTICES.md).
+# tools\bundled\, which git ignores; src\Waypoint\Waypoint.csproj embeds it when it is there, and with -Linux
+# src/Waypoint.Linux/Waypoint.Linux.csproj embeds the Linux release, which the AppImage carries. With -Source it also
+# fetches the source of that same release, which the release workflow attaches beside Waypoint.exe and the AppImage
+# (DepotDownloader is GPL-2.0: THIRD-PARTY-NOTICES.md).
 #
-#   pwsh tools/Get-DepotDownloader.ps1            the program, for a build
-#   pwsh tools/Get-DepotDownloader.ps1 -Source    the program and its source, for a release
+#   pwsh tools/Get-DepotDownloader.ps1                   the Windows program, for a build
+#   pwsh tools/Get-DepotDownloader.ps1 -Linux            the Linux program, for the AppImage
+#   pwsh tools/Get-DepotDownloader.ps1 -Source           the program and its source, for a release
 #
-# A new version of the tool: change $version and both hashes here, and DepotTool's in src\Launcher.Core\SteamDownload.cs.
-param([switch]$Source)
+# A new version of the tool: change $version and the hashes here, and DepotTool's in src\Launcher.Core\SteamDownload.cs.
+param([switch]$Source, [switch]$Linux)
 $ErrorActionPreference = 'Stop'
 
 $version = '3.4.0'
 $tag = "DepotDownloader_$version"
 $files = @(
-    @{ Name = 'DepotDownloader-windows-x64.zip'; Url = "https://github.com/SteamRE/DepotDownloader/releases/download/$tag/DepotDownloader-windows-x64.zip"
-       Sha256 = '41c9e9f0df54b3ad02e67a11726756e5c73283bd7c2e1b04acfa5ae4c2ed3767' }
+    if ($Linux) {
+        @{ Name = 'DepotDownloader-linux-x64.zip'; Url = "https://github.com/SteamRE/DepotDownloader/releases/download/$tag/DepotDownloader-linux-x64.zip"
+           Sha256 = 'a999dec66b4850fc961bd50366696d23c2d0fad7b18790e6a5647b2f19097a53' }
+    }
+    else {
+        @{ Name = 'DepotDownloader-windows-x64.zip'; Url = "https://github.com/SteamRE/DepotDownloader/releases/download/$tag/DepotDownloader-windows-x64.zip"
+           Sha256 = '41c9e9f0df54b3ad02e67a11726756e5c73283bd7c2e1b04acfa5ae4c2ed3767' }
+    }
 )
 # GitHub makes a tag's source archive when it is asked for, and its bytes are not promised to stay the same: no hash.
 if ($Source) { $files += @{ Name = "DepotDownloader-$version-source.zip"; Url = "https://github.com/SteamRE/DepotDownloader/archive/refs/tags/$tag.zip"; Sha256 = $null } }

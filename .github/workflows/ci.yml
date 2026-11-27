@@ -1,5 +1,5 @@
 # Every push to main and every pull request: the solution builds without warnings, the tests and the adapter's checks pass,
-# and all interface text has a translation in every catalog.
+# all interface text has a translation in every catalog, and the Linux app builds into an AppImage that starts.
 name: CI
 
 on:
@@ -56,3 +56,35 @@ jobs:
           ./tests/ContentBridge.Tests.ps1
           python3 ./tests/LeagueData.Tests.py
           python3 ./tests/LeagueArt.Tests.py
+
+  # The Linux app (Waypoint.Linux.slnx) builds without warnings, and tools/build-appimage.sh packs it as the release would,
+  # with every downloaded tool held to its SHA-256. The AppImage then draws its window with no display (--render) on a
+  # throwaway folder that looks like a checkout, which is how it is checked to start. The AppImage is kept with the run, for
+  # trying a pull request on Linux; a release never takes it from here (release.yml builds its own from the tag).
+  linux-appimage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build
+        run: dotnet build Waypoint.Linux.slnx -c Release
+      - name: AppImage
+        run: tools/build-appimage.sh 0.0.0-dev out/linux
+      - name: It starts
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: '1'
+          WAYPOINT_HOME: ${{ runner.temp }}/waypoint-home
+        run: |
+          fixture="$RUNNER_TEMP/checkout"
+          mkdir -p "$fixture/scripts/dev" "$WAYPOINT_HOME"
+          touch "$fixture/GameServer.slnx" "$fixture/scripts/dev/live.ps1"
+          out/linux/Waypoint-x86_64.AppImage "$fixture" --render "$RUNNER_TEMP/window.png" "" 3
+          test -s "$RUNNER_TEMP/window.png"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Waypoint-x86_64.AppImage
+          path: |
+            out/linux/Waypoint-x86_64.AppImage
+            out/linux/Waypoint-x86_64.AppImage.sha256

@@ -1,6 +1,7 @@
-# A version tag (v1.2.3) publishes a release: the tests, then Waypoint.exe built with that version and its SHA-256, attached
-# to a GitHub release of the tag. Waypoint's update check reads the latest one (Updates.cs). GitHub runs this file as it was in
-# the tagged commit, so the check below guards tags on commits from its own on, never an older one.
+# A version tag (v1.2.3) publishes a release: the tests, then Waypoint.exe and the Linux Waypoint-x86_64.AppImage built with
+# that version, each with its SHA-256, attached to a GitHub release of the tag. Waypoint's update check reads the latest one
+# (Updates.cs). GitHub runs this file as it was in the tagged commit, so the check below guards tags on commits from its own
+# on, never an older one.
 name: Release
 
 on:
@@ -11,8 +12,12 @@ permissions:
   contents: write
 
 jobs:
-  release:
-    runs-on: windows-latest
+  # Check the tag before spending runner time building either artifact: it must be v<major>.<minor>.<patch>, on main,
+  # and above the latest published release.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      number: ${{ steps.version.outputs.number }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,9 +31,6 @@ jobs:
           git merge-base --is-ancestor HEAD origin/main
           $onMain = $LASTEXITCODE -eq 0
           ./tools/check-release-tag.ps1 -Tag '${{ github.ref_name }}' -Latest "$latest" -OnMain:$onMain
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
       - name: Version from the tag
         id: version
         shell: pwsh
@@ -36,6 +38,35 @@ jobs:
           $tag = '${{ github.ref_name }}'
           if ($tag -notmatch '^v(\d+\.\d+\.\d+)$') { throw "tag $tag is not v<major>.<minor>.<patch>" }
           "number=$($Matches[1])" >> $env:GITHUB_OUTPUT
+
+  # The AppImage, from the same tag (tools/build-appimage.sh: DepotDownloader's Linux release, appimagetool and its runtime,
+  # each held to its SHA-256). It publishes nothing itself: the release job below attaches it once its own checks pass.
+  appimage:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: AppImage
+        run: tools/build-appimage.sh '${{ needs.check.outputs.number }}' out/linux
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          path: |
+            out/linux/Waypoint-x86_64.AppImage
+            out/linux/Waypoint-x86_64.AppImage.sha256
+          if-no-files-found: error
+
+  release:
+    needs: [check, appimage]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
       - name: Test
         run: dotnet test Waypoint.slnx -c Release
       # Waypoint.exe carries DepotDownloader's release (the game client from Steam). The script holds it to its SHA-256,
@@ -46,14 +77,19 @@ jobs:
       - name: Publish
         shell: pwsh
         run: |
-          dotnet publish src/Waypoint -c Release -o out -p:Version=${{ steps.version.outputs.number }}
+          dotnet publish src/Waypoint -c Release -o out -p:Version=${{ needs.check.outputs.number }}
           $hash = (Get-FileHash out/Waypoint.exe -Algorithm SHA256).Hash.ToLowerInvariant()
           [IO.File]::WriteAllText("$PWD/out/Waypoint.exe.sha256", "$hash  Waypoint.exe`n")
+      - uses: actions/download-artifact@v4
+        with:
+          name: appimage
+          path: out
       - name: Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create '${{ github.ref_name }}' out/Waypoint.exe out/Waypoint.exe.sha256 tools/bundled/DepotDownloader-3.4.0-source.zip
-          --title 'Waypoint ${{ steps.version.outputs.number }}' --generate-notes --verify-tag
-          --notes 'Download **Waypoint.exe** below and run it; a Waypoint you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it. Waypoint.exe carries DepotDownloader (GPL-2.0, THIRD-PARTY-NOTICES.md): its source is DepotDownloader-3.4.0-source.zip below.'
+          gh release create '${{ github.ref_name }}' out/Waypoint.exe out/Waypoint.exe.sha256
+          out/Waypoint-x86_64.AppImage out/Waypoint-x86_64.AppImage.sha256 tools/bundled/DepotDownloader-3.4.0-source.zip
+          --title 'Waypoint ${{ needs.check.outputs.number }}' --generate-notes --verify-tag
+          --notes 'Download **Waypoint.exe** (Windows) or **Waypoint-x86_64.AppImage** (Linux: make it executable, then run it) below; a Waypoint you already have offers this version itself. The Source code archives are added by GitHub to every release and are not needed to run it. Waypoint.exe and the AppImage carry DepotDownloader (GPL-2.0, THIRD-PARTY-NOTICES.md): its source is DepotDownloader-3.4.0-source.zip below.'

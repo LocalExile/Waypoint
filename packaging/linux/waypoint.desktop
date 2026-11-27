@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Waypoint
+Comment=Workspace manager for LocalExile
+Exec=Waypoint %F
+Icon=waypoint
+Terminal=false
+Categories=Game;Utility;
+StartupWMClass=Waypoint

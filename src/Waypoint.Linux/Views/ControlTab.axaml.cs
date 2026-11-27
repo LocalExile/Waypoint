@@ -136,10 +136,17 @@ partial class ControlTab : UserControl
 
     Window? Owner => TopLevel.GetTopLevel(this) as Window;
 
+    /// <summary>The checkout's live.ps1 records walk maps on Linux: LocalExile's Proton transport (scripts/walkmaps/proton.py)
+    /// starts the client with a Frida Gum recorder preloaded, so Linux needs no Frida package and nothing to install here.
+    /// A checkout older than that refuses -Walkmaps on Linux.</summary>
+    static bool RecordsUnderProton => File.Exists(Path.Combine("scripts", "walkmaps", "proton.py"));
+
     public void Attach(Shared shared)
     {
         _shared = shared;
-        // Walk maps stays off here, whatever the settings say: live.ps1 refuses -Walkmaps on Linux.
+        // Walk maps where the checkout's live.ps1 records under Proton; otherwise off and out of sight, whatever the settings say.
+        Walkmaps.IsVisible = RecordsUnderProton;
+        Walkmaps.IsChecked = RecordsUnderProton && shared.Settings.Walkmaps;
         NoBuild.IsChecked = shared.Settings.NoBuild;
         NoExtract.IsChecked = shared.Settings.NoExtract;
         HotReload.IsChecked = shared.Settings.HotReload;
@@ -147,7 +154,7 @@ partial class ControlTab : UserControl
         ServerFolder.Text = Environment.CurrentDirectory;
         ToolTip.SetTip(ServerFolder, Environment.CurrentDirectory);
         ServiceList.ItemsSource = Repo.IsInstall ? _rows.Where(r => r.Service.Kind is ServiceKind.Server or ServiceKind.Client).ToList()
-            : _rows.Where(r => r.Service.Kind != ServiceKind.Recorder).ToList();
+            : _rows.Where(r => r.Service.Kind != ServiceKind.Recorder || RecordsUnderProton).ToList();
         if (Repo.IsInstall)
             foreach (var element in new Control[] { StopServersButton, RunOptions, CheckAgainButton, GameDataButton }) element.IsVisible = false;
         shared.Monitor.Sampled += samples => Dispatcher.UIThread.Post(() => ShowServices(samples));
@@ -206,13 +213,14 @@ partial class ControlTab : UserControl
     LiveRequest Request(LiveMode mode, string? server = null)
     {
         var s = _shared.Settings;
-        s.Walkmaps = Walkmaps.IsChecked == true;
+        // A checkout that cannot record keeps the choice made where one could.
+        if (RecordsUnderProton) s.Walkmaps = Walkmaps.IsChecked == true;
         s.NoBuild = NoBuild.IsChecked == true;
         s.NoExtract = NoExtract.IsChecked == true;
         bool serverHotReload = Repo.HasServerHotReload();
         if (serverHotReload) s.HotReload = HotReload.IsChecked == true;
         s.Save();
-        return new LiveRequest(mode, server, s.Walkmaps, s.NoBuild, s.NoExtract, NoHotReload: serverHotReload && !s.HotReload);
+        return new LiveRequest(mode, server, RecordsUnderProton && s.Walkmaps, s.NoBuild, s.NoExtract, NoHotReload: serverHotReload && !s.HotReload);
     }
 
     bool ClientRunning => _shared.Monitor.Latest.Any(s => s.Service == Service.Client && s.Running);
@@ -311,10 +319,23 @@ partial class ControlTab : UserControl
                     _serversAnswered = true;
                     return true;
                 }
-                Say(() => L.Text("Not started: the game client does not fit this LocalExile."));
+                if (!_moving) Say(() => L.Text("Not started: the game client does not fit this LocalExile."));
                 return false;
         }
     }
+
+    /// <summary>The Game client window's "Use another client…" on a source copy: the check and the move that come before a
+    /// Play (<see cref="ClientFitsNow"/>), with nothing started after them.</summary>
+    internal async Task MoveClientAsync()
+    {
+        if (Repo.IsInstall || _live || _checking) return;
+        _checking = _moving = true;
+        try { await ClientFitsNow(new LiveRequest(LiveMode.All), again: false); }
+        finally { _checking = _moving = false; }
+    }
+
+    /// <summary>The check runs for <see cref="MoveClientAsync"/>: nothing was about to start, so a no says nothing.</summary>
+    bool _moving;
 
     /// <summary>The setup guide, with <paramref name="client"/> chosen on its client page.</summary>
     void OpenGuideWith(string? client)

@@ -32,4 +32,15 @@ public class MapAreaSearchTests
         Assert.True(new Waypoint.MapAreaComparer(false).Compare(first, second) < 0);
         Assert.True(new Waypoint.MapAreaComparer(true).Compare(first, second) > 0);
     }
+
+    [Theory]
+    [InlineData("1_1_2", "1_1_10", -1)]
+    [InlineData("Act10", "Act2", 1)]
+    [InlineData("act_01", "ACT_1", 0)]
+    [InlineData("a00", "a0", 0)]
+    [InlineData("Map1", "Map1a", -1)]
+    public void NaturalSortComparesNumberRunsByValueWithoutCase(string left, string right, int sign)
+    {
+        Assert.Equal(sign, Math.Sign(Waypoint.MapAreaSearch.Natural(left, right)));
+    }
 }

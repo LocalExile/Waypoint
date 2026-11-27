@@ -501,6 +501,9 @@
   <data name="Text_0cf0462b32ac" xml:space="preserve">
     <value>{0} не пуста. Выберите пустую или новую папку.</value>
   </data>
+  <data name="Text_0d0717954ac3" xml:space="preserve">
+    <value>библиотеки Steam</value>
+  </data>
   <data name="Text_0d0d25a58963" xml:space="preserve">
     <value>Заново получает запрос на слияние #{0}: его новейшие коммиты, в том числе после force-push</value>
   </data>
@@ -677,6 +680,9 @@
   </data>
   <data name="Text_10d911351fa4" xml:space="preserve">
     <value>Путешествие</value>
+  </data>
+  <data name="Text_10dcdca58301" xml:space="preserve">
+    <value>Цвет (#RRGGBB)</value>
   </data>
   <data name="Text_10dee8798467" xml:space="preserve">
     <value>Сборка…</value>
@@ -1185,6 +1191,9 @@
   </data>
   <data name="Text_1f562c8a9cec" xml:space="preserve">
     <value>{0} не является релизом LocalExile.</value>
+  </data>
+  <data name="Text_1f56d71d6326" xml:space="preserve">
+    <value>-Walkmaps: записывать карту проходимости каждой области под Proton. Игра запускается с записывающим модулем, который LocalExile в первый раз собирает с помощью g++.</value>
   </data>
   <data name="Text_1f88699e6094" xml:space="preserve">
     <value>Предыдущая карта</value>
@@ -1834,6 +1843,9 @@
   </data>
   <data xml:space="preserve" name="Text_2deea4664d23">
     <value>Вспомогательный текст</value>
+  </data>
+  <data name="Text_2e0444630388" xml:space="preserve">
+    <value>Как на рабочем столе: {0}</value>
   </data>
   <data name="Text_2e07253d4cbb" xml:space="preserve">
     <value>Извлечение данных игры</value>
@@ -4116,6 +4128,9 @@
   <data name="Text_695421b8f03a" xml:space="preserve">
     <value>LocalExile получит собственные в {0}: это копия ваших обычных настроек без данных для входа, с режимом работы сети «Рассинхронизация». Файлы вашей обычной игры не изменятся.</value>
   </data>
+  <data name="Text_695c4698b105" xml:space="preserve">
+    <value>обновляется сам только опубликованный AppImage; скачайте его со страницы выпуска</value>
+  </data>
   <data name="Text_6979ababfdcb" xml:space="preserve">
     <value>LocalExile хранит свою графику, клавиши и сохранённый вход в {0} и сразу использует нужный режим работы сети. Настройки вашей обычной игры только читаются, один раз, как отправная точка.</value>
   </data>
@@ -4289,6 +4304,9 @@
   </data>
   <data name="Text_6f0d66ca5326" xml:space="preserve">
     <value>Жуткие собственные свойства</value>
+  </data>
+  <data name="Text_6f1a81da4fbf" xml:space="preserve">
+    <value>Загрузка из Steam работает только в 64-битных Windows и Linux.</value>
   </data>
   <data name="Text_6f1f1b23d3fd" xml:space="preserve">
     <value>Здесь он даёт только правила режима игры, без собственных умений, торговцев и наград за задания этого режима.</value>
@@ -5159,6 +5177,9 @@
   </data>
   <data name="Text_87675db83a32" xml:space="preserve">
     <value>Ингредиенты</value>
+  </data>
+  <data name="Text_8787fab8d301" xml:space="preserve">
+    <value>Сам обновляется только опубликованный AppImage</value>
   </data>
   <data name="Text_8799981821ae" xml:space="preserve">
     <value>Имя для «Создать», «Копировать» или «Переименовать»:</value>
@@ -7922,6 +7943,9 @@
   </data>
   <data name="Text_cd4b01b8b2e8" xml:space="preserve">
     <value>Импортирован {0}, свойств: {1}. «Сохранить» оставит его в списке.</value>
+  </data>
+  <data name="Text_cd55a9d95751" xml:space="preserve">
+    <value>{0} · {1}</value>
   </data>
   <data name="Text_cd6e8b455ec6" xml:space="preserve">
     <value>Неизвестная сборка клиента</value>
