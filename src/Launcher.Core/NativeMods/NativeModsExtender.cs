@@ -221,7 +221,10 @@ public static class NativeModsExtender
         }
 
         CheckoutIgnores.Ensure(root);
-        patcher ??= CreateDefaultPatcher(root);
+        // The bundle's address library, not the installed one: a fresh install has none yet and an update may ship a newer one.
+        patcher ??= bundle.AddressLibraryDir is { } addr && Directory.Exists(addr)
+            ? new ClientPatcherBridge(AddressLibraryCatalog.LoadFromDirectory(addr))
+            : CreateDefaultPatcher(root);
 
         // If switching from ImportTable to ProxyVersionDll, unpatch any existing .nmimp first.
         string patchedExe = WaypointExtenderManager.GetPatchedExePath(root);
@@ -424,6 +427,12 @@ public static class NativeModsExtender
         IPePatcherBridge? patcher = null,
         CancellationToken stop = default)
     {
+        if (ClientVersions.Layout(root) == ClientLayout.Link)
+        {
+            var health = await GetHealthAsync(root, optedIn: false, isReleaseInstall, null, patcher, stop);
+            return new(false, L.Text("Cannot modify NativeMods in a linked Client folder."), health);
+        }
+
         patcher ??= CreateDefaultPatcher(root);
         var manager = new WaypointExtenderManager(patcher);
 
