@@ -321,6 +321,10 @@ static class NativeModsChecks
         check(!NativeModsClientStore.IsMergedCacheCurrent(checkout),
             "Turning a datPatches mod off without a rebuild leaves the cache stale, so the next launch rebuilds it");
         ModCatalog.WriteChoice(Path.Combine(checkout, "Mods", "Binaries"), "garden", enabled: true);
+        string stockTable = Path.Combine(stockDataDir, "ClientStrings.datc64");
+        File.SetLastWriteTimeUtc(stockTable, File.GetLastWriteTimeUtc(stockTable).AddMinutes(1));
+        check(!NativeModsClientStore.IsMergedCacheCurrent(checkout),
+            "Replacing the stock tables under the same client makes the cache stale");
         bool rebuildThrew = false;
         try { NativeModsClientStore.RebuildMergedCacheForEnabledMods(checkout, new InMemoryDat64Source(new Dictionary<string, byte[]>())); }
         catch (Exception) { rebuildThrew = true; }

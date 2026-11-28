@@ -354,7 +354,15 @@ public static class NativeModsClientStore
     {
         var text = new StringBuilder();
         text.AppendLine(typeof(DatPatchMerger).Assembly.ManifestModule.ModuleVersionId.ToString());
-        text.AppendLine(ClientLocator.BuildOf(WaypointExtenderManager.GetClientDir(root)) ?? "");
+        string clientDir = WaypointExtenderManager.GetClientDir(root);
+        text.AppendLine(ClientLocator.BuildOf(clientDir) ?? "");
+        // The stock tables themselves, for a build the locator does not know or loose Data/ tables replaced under the same exe.
+        var index = new FileInfo(Path.Combine(clientDir, "Bundles2", "_.index.bin"));
+        if (index.Exists) text.AppendLine($"{index.Length}:{index.LastWriteTimeUtc.Ticks}");
+        string data = Path.Combine(clientDir, "Data");
+        if (Directory.Exists(data))
+            foreach (var table in new DirectoryInfo(data).EnumerateFiles("*.datc64").OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
+                text.AppendLine($"{table.Name}:{table.Length}:{table.LastWriteTimeUtc.Ticks}");
         foreach (var patch in patches) text.AppendLine(patch.ToJson());
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString())));
     }

@@ -469,10 +469,10 @@ sealed class ModBrowser(Shared shared)
             var cache = await Task.Run(() => NativeModsClientStore.OnModEnabledChanged(root, mod.Id, enabled));
             if (cache is { Rebuilt: true })
                 shared.Logs.Write($"[nativemods] rebuilt .merged-cache ({cache.MergedTables.Count} tables, digest {cache.Digest}).", Severity.Info);
-            else if (cache is { Removed: true })
-                shared.Logs.Write("[nativemods] cleared .merged-cache (no enabled datPatches mods).", Severity.Info);
             else if (!string.IsNullOrWhiteSpace(cache?.Diagnostic))
                 shared.Logs.Write($"[nativemods] {cache.Diagnostic}", Severity.Warning);
+            else if (cache is { Removed: true })
+                shared.Logs.Write("[nativemods] cleared .merged-cache (no enabled datPatches mods).", Severity.Info);
         }
         NoteRestart(mod.RestartToApply);
     });
@@ -494,10 +494,10 @@ sealed class ModBrowser(Shared shared)
                     var cache = await Task.Run(() => NativeModsClientStore.OnModUninstalled(root, mod.Id));
                     if (cache is { Rebuilt: true })
                         shared.Logs.Write($"[nativemods] rebuilt .merged-cache after uninstall ({cache.MergedTables.Count} tables).", Severity.Info);
-                    else if (cache is { Removed: true })
-                        shared.Logs.Write("[nativemods] removed .merged-cache after uninstall.", Severity.Info);
                     else if (!string.IsNullOrWhiteSpace(cache?.Diagnostic))
                         shared.Logs.Write($"[nativemods] {cache.Diagnostic}", Severity.Warning);
+                    else if (cache is { Removed: true })
+                        shared.Logs.Write("[nativemods] removed .merged-cache after uninstall.", Severity.Info);
                 });
             }
             return Installed(result, mod.RestartToApply);
@@ -721,22 +721,25 @@ sealed class ModBrowser(Shared shared)
         bool isDualSide = staged.Target == "Binaries" && NativeModsClientStore.HasNativeClientManifest(staged.Folder);
         if (!isDualSide)
         {
+            // Read before InstallMod: a successful install moves the staged folder away.
+            bool dropsClientHalf = File.Exists(Path.Combine(staged.Folder, "mod.json")) && !NativeModsClientStore.HasNativeClientManifest(staged.Folder);
             var plain = await Finish(job, await QueuedAsync(job, "InstallMod", operationName,
                 new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…")));
             // An update that dropped nativeClient: the earlier version's client half must not keep loading against the new server.
-            if (plain?.Ok == true && File.Exists(Path.Combine(staged.Folder, "mod.json"))
-                && !NativeModsClientStore.HasNativeClientManifest(staged.Folder) && NativeModsClientStore.HasClientHalf(root, staged.Id))
+            if (plain?.Ok == true && dropsClientHalf)
             {
-                restart = true;
                 try
                 {
+                    if (!NativeModsClientStore.HasClientHalf(root, staged.Id)) return Installed(plain, restart);
+                    restart = true;
                     await RunExclusiveWaitingAsync(L.Text("Update NativeMods cache"), async () =>
                     {
                         await Task.Run(() => NativeModsClientStore.RetireClientHalf(root, staged.Id));
                         shared.Logs.Write($"[nativemods] {staged.Id} no longer has a client half; moved Mods/Client/{staged.Id} to Mods/.replaced.", Severity.Info);
                     });
                 }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException
+                                               or System.Text.Json.JsonException)
                 {
                     shared.Logs.Write($"[nativemods] could not retire the client half of {staged.Id}: {ex.Message}", Severity.Error);
                 }
