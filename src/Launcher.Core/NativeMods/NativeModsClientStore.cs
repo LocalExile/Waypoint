@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using LocalExile.Client.AssetPipeline.Dat64;
@@ -231,23 +232,25 @@ public static class NativeModsClientStore
     public static MergedCacheOutcome RebuildMergedCacheForEnabledMods(string root, IDat64Source? explicitSource = null)
     {
         var ledger = WaypointModInstaller.ReadLedger(root);
-        var choices = ModCatalog.ReadChoices(Path.Combine(root, "Mods", "Binaries"));
-
-        var enabledRecords = ledger.Mods
-            .Where(m => choices.GetValueOrDefault(m.Id, m.Manifest.Enabled))
-            .OrderBy(m => m.Id, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        var patches = CollectDatPatches(root, enabledRecords);
+        var patches = CollectDatPatches(root, EnabledRecords(root, ledger));
         string mergedDir = WaypointModInstaller.GetMergedCacheDirectory(root);
 
-        if (patches.Count == 0)
+        // The client loads whatever .merged-cache holds, so a cache that does not match the enabled mods is removed.
+        MergedCacheOutcome Unbuilt(string? diagnostic)
         {
             bool existed = Directory.Exists(mergedDir);
             if (existed) Directory.Delete(mergedDir, recursive: true);
+            File.Delete(GetMergedCacheInputsPath(root));
             WriteLedger(root, new DeploymentLedger(ledger.SchemaVersion, DateTimeOffset.UtcNow, ledger.Mods, null, null));
-            return new(Rebuilt: false, Removed: existed, Digest: null, Diagnostic: null, IncludedMods: [], MergedTables: []);
+            return new(Rebuilt: false, Removed: existed, Digest: null, Diagnostic: diagnostic, IncludedMods: [], MergedTables: []);
         }
+
+        if (patches.Count == 0)
+            return Unbuilt(null);
+
+        string inputs = MergedCacheInputs(root, patches);
+        if (explicitSource is null && IsCurrent(root, inputs))
+            return new(Rebuilt: false, Removed: false, Digest: ledger.MergedCacheDigest, Diagnostic: null, IncludedMods: [], MergedTables: []);
 
         IDat64Source? ownedSource = null;
         IDat64Source? source = explicitSource;
@@ -262,23 +265,11 @@ public static class NativeModsClientStore
             }
             else if (kind == "StandaloneGgpk")
             {
-                return new(
-                    Rebuilt: false,
-                    Removed: false,
-                    Digest: ledger.MergedCacheDigest,
-                    Diagnostic: L.Text("Standalone Content.ggpk client detected: automatic .merged-cache rebuild requires Steam Bundles2/ or extracted Client/Data/*.datc64 tables."),
-                    IncludedMods: [],
-                    MergedTables: []);
+                return Unbuilt(L.Text("Standalone Content.ggpk client detected: automatic .merged-cache rebuild requires Steam Bundles2/ or extracted Client/Data/*.datc64 tables."));
             }
             else
             {
-                return new(
-                    Rebuilt: false,
-                    Removed: false,
-                    Digest: ledger.MergedCacheDigest,
-                    Diagnostic: L.Text("No stock Client/Bundles2 or Client/Data tables found to build Mods/Client/.merged-cache/."),
-                    IncludedMods: [],
-                    MergedTables: []);
+                return Unbuilt(L.Text("No stock Client/Bundles2 or Client/Data tables found to build Mods/Client/.merged-cache/."));
             }
         }
 
@@ -290,8 +281,18 @@ public static class NativeModsClientStore
             Directory.CreateDirectory(staging);
             try
             {
-                DatPatchMergeResult merged = DatPatchMerger.Merge(source, patches, outputDirectory: staging);
+                DatPatchMergeResult merged;
+                try
+                {
+                    merged = DatPatchMerger.Merge(source, patches, outputDirectory: staging);
+                }
+                catch
+                {
+                    try { Unbuilt(null); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+                    throw;
+                }
                 SwapDirectoryAtomically(staging, mergedDir);
+                File.WriteAllText(GetMergedCacheInputsPath(root), inputs, new UTF8Encoding(false));
                 WriteLedger(root, new DeploymentLedger(ledger.SchemaVersion, DateTimeOffset.UtcNow, ledger.Mods, merged.RowMap.Digest, DateTimeOffset.UtcNow));
                 return new(
                     Rebuilt: true,
@@ -312,6 +313,44 @@ public static class NativeModsClientStore
             if (ownedSource is IDisposable disposable)
                 disposable.Dispose();
         }
+    }
+
+    static string GetMergedCacheInputsPath(string root) => Path.Combine(WaypointModInstaller.GetClientModsRoot(root), ".merged-cache.inputs");
+
+    static List<InstalledDualModRecord> EnabledRecords(string root, DeploymentLedger ledger)
+    {
+        var choices = ModCatalog.ReadChoices(Path.Combine(root, "Mods", "Binaries"));
+        return ledger.Mods
+            .Where(m => choices.GetValueOrDefault(m.Id, m.Manifest.Enabled))
+            .OrderBy(m => m.Id, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    // What a cache is built from: the enabled patches, the stock client build and this merger. Any change makes it stale.
+    static string MergedCacheInputs(string root, List<DatPatchDocument> patches)
+    {
+        var text = new StringBuilder();
+        text.AppendLine(typeof(DatPatchMerger).Assembly.ManifestModule.ModuleVersionId.ToString());
+        text.AppendLine(ClientLocator.BuildOf(WaypointExtenderManager.GetClientDir(root)) ?? "");
+        foreach (var patch in patches) text.AppendLine(patch.ToJson());
+        return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString())));
+    }
+
+    static bool IsCurrent(string root, string inputs)
+    {
+        string path = GetMergedCacheInputsPath(root);
+        return File.Exists(Path.Combine(WaypointModInstaller.GetMergedCacheDirectory(root), "content-row-map.json"))
+            && File.Exists(path) && File.ReadAllText(path).Trim() == inputs;
+    }
+
+    /// <summary>Whether <c>Mods/Client/.merged-cache/</c> is exactly what the enabled mods build: none when no enabled mod has
+    /// datPatches, else one built from the same patches, client build and merger.</summary>
+    public static bool IsMergedCacheCurrent(string root)
+    {
+        var patches = CollectDatPatches(root, EnabledRecords(root, WaypointModInstaller.ReadLedger(root)));
+        return patches.Count == 0
+            ? !Directory.Exists(WaypointModInstaller.GetMergedCacheDirectory(root))
+            : IsCurrent(root, MergedCacheInputs(root, patches));
     }
 
     public static Dictionary<string, bool> ReadClientModStates(string root)

@@ -79,11 +79,22 @@ static class NativeModsLaunch
 
             if (status.MergedCacheStale)
             {
-                var rebuilt = NativeModsClientStore.RebuildMergedCacheForEnabledMods(root);
+                MergedCacheOutcome rebuilt;
+                try
+                {
+                    rebuilt = NativeModsClientStore.RebuildMergedCacheForEnabledMods(root);
+                }
+                catch (Exception e) when (e is InvalidOperationException or InvalidDataException or IOException
+                                              or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
+                {
+                    rebuilt = new(false, false, null, e.Message, [], []);
+                }
                 if (rebuilt.Rebuilt)
                     log?.Invoke($"[nativemods] rebuilt Mods/Client/.merged-cache ({rebuilt.MergedTables.Count} tables, digest {rebuilt.Digest}).");
-                else if (!string.IsNullOrWhiteSpace(rebuilt.Diagnostic))
-                    log?.Invoke($"[nativemods] warning: {rebuilt.Diagnostic}");
+                // The enabled mods' rows would be missing on the client while the server has them: refuse rather than desync.
+                if (!NativeModsClientStore.IsMergedCacheCurrent(root))
+                    return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(),
+                        L.Text("Could not build the client tables for the enabled mods: {0}", rebuilt.Diagnostic ?? "?"));
             }
 
             var env = NativeModsExtender.BuildLaunchEnvironment(root, optedIn: true, mode, isLinux, existingWineOverrides);

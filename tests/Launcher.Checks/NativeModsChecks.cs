@@ -315,6 +315,21 @@ static class NativeModsChecks
         check(reenabledCache is { Rebuilt: true } && File.Exists(rowMapPath),
             "Re-enabling a datPatches mod rebuilds Mods/Client/.merged-cache/");
 
+        // Launch rebuilds only a stale cache, so a cache that no longer matches the enabled mods must read as stale.
+        check(NativeModsClientStore.IsMergedCacheCurrent(checkout), "A cache just built for the enabled mods is current");
+        ModCatalog.WriteChoice(Path.Combine(checkout, "Mods", "Binaries"), "garden", enabled: false);
+        check(!NativeModsClientStore.IsMergedCacheCurrent(checkout),
+            "Turning a datPatches mod off without a rebuild leaves the cache stale, so the next launch rebuilds it");
+        ModCatalog.WriteChoice(Path.Combine(checkout, "Mods", "Binaries"), "garden", enabled: true);
+        bool rebuildThrew = false;
+        try { NativeModsClientStore.RebuildMergedCacheForEnabledMods(checkout, new InMemoryDat64Source(new Dictionary<string, byte[]>())); }
+        catch (Exception) { rebuildThrew = true; }
+        check(rebuildThrew && !File.Exists(rowMapPath) && !NativeModsClientStore.IsMergedCacheCurrent(checkout),
+            "A failed rebuild removes the old cache instead of leaving it for the client to load");
+        check(NativeModsClientStore.RebuildMergedCacheForEnabledMods(checkout) is { Rebuilt: true } && NativeModsClientStore.IsMergedCacheCurrent(checkout)
+            && NativeModsClientStore.RebuildMergedCacheForEnabledMods(checkout) is { Rebuilt: false, Diagnostic: null },
+            "The cache rebuilds after the failure, and an unchanged cache is not rebuilt again");
+
         // ModCatalog reads nativeClient metadata and RestartToApply
         var snap = new RuntimeSnapshot(checkout, "test", "", "", "", "", [], [], [],
             ModEnvironment: new(true, Path.Combine(checkout, "Mods", "Binaries"), true));

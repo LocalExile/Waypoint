@@ -142,8 +142,8 @@ public static class NativeModsExtender
         string mergedCacheDir = WaypointModInstaller.GetMergedCacheDirectory(root);
         bool mergedCachePresent = File.Exists(Path.Combine(mergedCacheDir, "content-row-map.json"));
         bool hasEnabledDatPatches = HasEnabledDatPatchMods(root);
-        bool mergedCacheStale = hasEnabledDatPatches && !mergedCachePresent;
-        if (mergedCacheStale && stockKind == "StandaloneGgpk")
+        bool mergedCacheStale = !NativeModsClientStore.IsMergedCacheCurrent(root);
+        if (hasEnabledDatPatches && !mergedCachePresent && stockKind == "StandaloneGgpk")
             diagnostics.Add(L.Text("Installed mods declare datPatches, but automatic .merged-cache building requires Steam Bundles2/ or extracted Client/Data/*.datc64 tables."));
 
         bool healthy = status.IsInstalled

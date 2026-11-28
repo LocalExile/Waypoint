@@ -4905,6 +4905,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7f06ea4f0831" xml:space="preserve">
     <value>League</value>
   </data>
+  <data name="Text_7f0a4cd96b13" xml:space="preserve">
+    <value>Could not build the client tables for the enabled mods: {0}</value>
+  </data>
   <data name="Text_7f1aa82e323e" xml:space="preserve">
     <value>dotnet build GameServer.slnx, with the servers stopped</value>
   </data>

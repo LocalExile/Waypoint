@@ -1661,7 +1661,9 @@ When a monitored server or the client stops, Waypoint checks the current workspa
   tables (rejecting closed 3.29 `Stats`/`ItemClasses` appends), checks cross-mod conflicts, and prompts for explicit
   confirmation whenever `rawAccess` or stock path `replaces` are requested. Server files install into `Mods/Binaries/<id>/`,
   client payloads into `Mods/Client/<id>/` (excluded from git via `.git/info/exclude`), and `Mods/Client/.merged-cache/` +
-  `content-row-map.json` rebuild deterministically on install, enable/disable and uninstall.
+  `content-row-map.json` rebuild deterministically on install, enable/disable and uninstall. A cache that no longer matches the
+  enabled mods, the client build or Waypoint is rebuilt before an opted-in launch; a failed rebuild removes it, and the launch
+  stops with the reason rather than start the client without the mods' tables.
 - **Launch environment:** When opted in, Waypoint passes `NATIVEMODS_HOST_DIR`, `NATIVEMODS_ADDRESSES_DIR`,
   `NATIVEMODS_MODS_DIR`, `NATIVEMODS_LOG_PATH` (converted to `Z:\...` on Linux/Proton) and `WINEDLLOVERRIDES=version=n,b`
   (in proxy mode) to `live.ps1` and `LocalExile.exe --json`. When opted out, those variables are stripped.

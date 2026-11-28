@@ -395,5 +395,7 @@ the game client is running, and refuse linked `Client` folders.
   through `ModBridge.ps1 InstallMod` into `Mods/Binaries/<id>/`; client payloads deploy atomically into `Mods/Client/<id>/`
   with `.nativemods-ledger.json` and `.client-mod-state.json`; `Mods/Client/.merged-cache/` + `content-row-map.json` rebuild
   atomically from enabled `datPatches` mods on install, enable/disable and uninstall (requiring Steam `Bundles2/` or extracted
-  `Client/Data/*.datc64`; standalone `Content.ggpk` surfaces a non-fatal diagnostic). `ModBridge.ps1 UninstallMod` moves any
+  `Client/Data/*.datc64`). `Mods/Client/.merged-cache.inputs` records what the cache was built from (the enabled patches, the
+  client build, the merger); a cache that does not match is stale, a failed rebuild removes it, and an opted-in launch whose
+  enabled `datPatches` mods cannot be built (for example on a standalone `Content.ggpk`) stops with the reason. `ModBridge.ps1 UninstallMod` moves any
   `Mods/Client/<id>/` directory into `Mods/.replaced/<stamp>/Client/<id>` alongside the server folder.
