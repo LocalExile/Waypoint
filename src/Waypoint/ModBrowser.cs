@@ -489,7 +489,7 @@ sealed class ModBrowser(Shared shared)
             if (result?.Ok == true)
             {
                 string root = Environment.CurrentDirectory;
-                await shared.RunExclusiveAsync(L.Text("Update NativeMods cache"), async () =>
+                await RunExclusiveWaitingAsync(L.Text("Update NativeMods cache"), async () =>
                 {
                     var cache = await Task.Run(() => NativeModsClientStore.OnModUninstalled(root, mod.Id));
                     if (cache is { Rebuilt: true })
@@ -611,6 +611,18 @@ sealed class ModBrowser(Shared shared)
     }
 
     /// <summary>Only a busy workspace is retried. Cancellation and failures complete the job and release the queue.</summary>
+    // The client half follows a queued server step, so the queue's next operation may still hold the lock: wait like the bridge does.
+    async Task<bool> RunExclusiveWaitingAsync(string name, Func<Task> work)
+    {
+        var deadline = DateTime.UtcNow.AddMinutes(30);
+        while (!await shared.RunExclusiveAsync(name, work))
+        {
+            if (DateTime.UtcNow > deadline) return false;
+            await Task.Delay(500);
+        }
+        return true;
+    }
+
     internal static async Task<BridgeResult?> WaitForWorkspaceAsync(Func<Task<BridgeResult?>> run, Action<bool> waiting,
         Func<Task>? pause = null)
     {
@@ -749,7 +761,7 @@ sealed class ModBrowser(Shared shared)
             string? failure = null;
             try
             {
-                bool ran = await shared.RunExclusiveAsync(L.Text("Install NativeMods client payload"), async () =>
+                bool ran = await RunExclusiveWaitingAsync(L.Text("Install NativeMods client payload"), async () =>
                 {
                     clientDeploy = await Task.Run(() => NativeModsClientStore.DeployClientHalf(
                         staged.Folder, root, enableOverride: null, allowRawAccess: audit.RawAccessRequested, allowConflicts: false));
