@@ -721,8 +721,27 @@ sealed class ModBrowser(Shared shared)
         bool isDualSide = staged.Target == "Binaries" && NativeModsClientStore.HasNativeClientManifest(staged.Folder);
         if (!isDualSide)
         {
-            return Installed(await Finish(job, await QueuedAsync(job, "InstallMod", operationName,
-                new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))), restart);
+            var plain = await Finish(job, await QueuedAsync(job, "InstallMod", operationName,
+                new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…")));
+            // An update that dropped nativeClient: the earlier version's client half must not keep loading against the new server.
+            if (plain?.Ok == true && File.Exists(Path.Combine(staged.Folder, "mod.json"))
+                && !NativeModsClientStore.HasNativeClientManifest(staged.Folder) && NativeModsClientStore.HasClientHalf(root, staged.Id))
+            {
+                restart = true;
+                try
+                {
+                    await RunExclusiveWaitingAsync(L.Text("Update NativeMods cache"), async () =>
+                    {
+                        await Task.Run(() => NativeModsClientStore.RetireClientHalf(root, staged.Id));
+                        shared.Logs.Write($"[nativemods] {staged.Id} no longer has a client half; moved Mods/Client/{staged.Id} to Mods/.replaced.", Severity.Info);
+                    });
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+                {
+                    shared.Logs.Write($"[nativemods] could not retire the client half of {staged.Id}: {ex.Message}", Severity.Error);
+                }
+            }
+            return Installed(plain, restart);
         }
 
         // Dual-side NativeMods package: validate .ui layouts, datPatches, closed tables, SHA-256, encoding, and cross-mod conflicts.

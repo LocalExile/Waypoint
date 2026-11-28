@@ -349,6 +349,19 @@ static class NativeModsChecks
         check(ggpkDeploy.Succeeded && ggpkDeploy.MergedCache is { Rebuilt: false } && ggpkDeploy.MergedCache.Diagnostic is { Length: > 0 },
             "Standalone Content.ggpk client reports an actionable diagnostic for .merged-cache instead of crashing");
 
+        // An update whose mod.json dropped nativeClient retires the earlier client half instead of leaving it to load.
+        check(NativeModsClientStore.HasClientHalf(checkout, "garden") && !NativeModsClientStore.HasClientHalf(checkout, "..")
+            && !NativeModsClientStore.HasClientHalf(checkout, "never-installed"),
+            "HasClientHalf sees an installed client half and nothing for an unknown or invalid id");
+        NativeModsClientStore.RetireClientHalf(checkout, "garden");
+        string replacedRoot = Path.Combine(checkout, "Mods", ".replaced");
+        check(!Directory.Exists(Path.Combine(checkout, "Mods", "Client", "garden"))
+            && WaypointModInstaller.ReadLedger(checkout).Mods.Count == 0
+            && !NativeModsClientStore.ReadClientModStates(checkout).ContainsKey("garden")
+            && Directory.Exists(replacedRoot)
+            && Directory.EnumerateDirectories(replacedRoot).Any(d => Directory.Exists(Path.Combine(d, "Client", "garden"))),
+            "Retiring a client half moves Mods/Client/<id> to Mods/.replaced and drops its ledger record and client state");
+
         // A new MtxTypeGameSpecific row takes HASH32 from its MtxTypes row (true of every stock row in 3.29.3c and 3.29.3d),
         // both for a row appended in the same patch and for a stock row of an untouched MtxTypes.
         Dat64TableSchema mtxSchema = schemaReg.Tables["MtxTypes"], gsSchema = schemaReg.Tables["MtxTypeGameSpecific"];

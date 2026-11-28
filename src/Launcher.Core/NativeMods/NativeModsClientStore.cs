@@ -225,6 +225,29 @@ public static class NativeModsClientStore
         return RebuildMergedCacheForEnabledMods(root, dat64Source);
     }
 
+    /// <summary>Whether a mod has a client half installed: a <c>Mods/Client/&lt;id&gt;/</c> folder or a ledger record.</summary>
+    public static bool HasClientHalf(string root, string modId) =>
+        modId is not ("" or "." or "..") && modId.IndexOfAny(['/', '\\', ':']) < 0
+        && (Directory.Exists(Path.Combine(WaypointModInstaller.GetClientModsRoot(root), modId))
+            || WaypointModInstaller.ReadLedger(root).Mods.Any(m => m.Id.Equals(modId, StringComparison.OrdinalIgnoreCase)));
+
+    /// <summary>After an install whose <c>mod.json</c> declares no <c>nativeClient</c>: moves an earlier version's
+    /// <c>Mods/Client/&lt;id&gt;/</c> into <c>Mods/.replaced/</c> (as ModBridge does on uninstall) and drops its ledger record,
+    /// client state and merged-cache rows, so its client half stops loading. Null when the mod had no client half.</summary>
+    public static MergedCacheOutcome? RetireClientHalf(string root, string modId)
+    {
+        if (!HasClientHalf(root, modId)) return null;
+        string clientDir = Path.Combine(WaypointModInstaller.GetClientModsRoot(root), modId);
+        if (Directory.Exists(clientDir))
+        {
+            string stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N")[..8];
+            string aside = Path.Combine(root, "Mods", ".replaced", stamp, "Client", modId);
+            Directory.CreateDirectory(Path.GetDirectoryName(aside)!);
+            Directory.Move(clientDir, aside);
+        }
+        return OnModUninstalled(root, modId);
+    }
+
     /// <summary>
     /// Rebuilds <c>Mods/Client/.merged-cache/</c> + <c>content-row-map.json</c> deterministically from all currently
     /// <b>enabled</b> installed mods that declare <c>nativeClient.datPatches</c>.
