@@ -50,7 +50,7 @@ public sealed partial class GameSystemsTab
             _globalModsChoices!.Text = ModsText.GlobalChoices(state?.ModEnvironment, entries);
             detail = ModsText.GlobalChoices(state?.ModEnvironment, entries, compact: false);
             if (state?.ModEnvironment is { Supported: true, Enabled: true })
-                foreach (var entry in entries.Where(e => e.Enabled)) detail += "\n" + entry.Title + " · " + ModsText.RuntimeStatus(state, entry.Id);
+                foreach (var entry in entries.Where(e => e.Enabled)) detail += "\n" + entry.DisplayTitle + " · " + ModsText.RuntimeStatus(state, entry.Id);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException or InvalidOperationException or ArgumentException)
         {

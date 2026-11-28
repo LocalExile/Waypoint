@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace Launcher.Core;
 
@@ -14,7 +15,53 @@ public sealed record ContentEnvironment(string Modules, string Leagues, string C
 public sealed record GameSystem(string Id, string Path, string Name, string Description, string[] Depends, string Folder, bool Mod = false)
 {
     public string SettingsFile => System.IO.Path.Combine(Folder, "settings.json");
+    string TitleSource => Name != Id ? Name : Id == "Game" && !Mod ? "Core game rules"
+        : Regex.Replace(Name, @"(?<=[a-z0-9])(?=[A-Z])", " ").Replace("Npc ", "NPC ");
+    string DescriptionSource => Description.Length > 0 || Mod ? Description : ShippedDescriptions.GetValueOrDefault(Id, "");
+    public string DisplayTitle => L.Text(TitleSource);
+    public string DisplayDescription => L.Text(DescriptionSource);
+    public string SearchText => string.Join(' ', DisplayTitle, TitleSource, Id, Path, DisplayDescription, DescriptionSource);
     public override string ToString() => Name;
+
+    // Shipped manifests may omit a description. An explicit description from the selected checkout takes precedence.
+    static readonly Dictionary<string, string> ShippedDescriptions = new(StringComparer.Ordinal)
+    {
+        ["Abyss"] = "Abyss cracks, encounters and rewards.",
+        ["Anarchy"] = "Rogue Exile encounters.",
+        ["Atlas"] = "Atlas progression, map device and Atlas passive tree.",
+        ["Bench"] = "Crafting bench recipes and item crafting.",
+        ["Bestiary"] = "Beast capture, the Menagerie and beastcrafting.",
+        ["Betrayal"] = "Immortal Syndicate encounters and progression.",
+        ["Blight"] = "Blight encounters, defence towers and oils.",
+        ["Breach"] = "Breach encounters and rewards.",
+        ["Chat"] = "In-game messaging and chat channels.",
+        ["Commands"] = "In-game commands and their responses.",
+        ["Cosmetics"] = "Character and item cosmetics.",
+        ["CurrencyExchange"] = "Currency exchange and trade orders.",
+        ["Deepwater"] = "Deepwater charts, voyages and sunken rewards.",
+        ["Delirium"] = "Delirium encounters and rewards.",
+        ["Delve"] = "The Azurite Mine and Delve progression.",
+        ["Expedition"] = "Expedition excavations and rewards.",
+        ["Game"] = "Core rules for areas, combat, items and characters.",
+        ["Harvest"] = "The Sacred Grove, Harvest encounters and crafts.",
+        ["Heist"] = "Heist contracts, blueprints and rogues.",
+        ["HeistCache"] = "Smuggler’s Caches and their loot.",
+        ["HideoutEditing"] = "Hideout layout editing and decorations.",
+        ["Incursion"] = "Incursions and the Temple of Atzoatl.",
+        ["Legion"] = "Legion monoliths, encounters and rewards.",
+        ["Mercenary"] = "Mercenary encounters and recruitment.",
+        ["NpcDialogue"] = "NPC dialogue and interaction menus.",
+        ["Pantheon"] = "Pantheon powers and upgrades.",
+        ["Portals"] = "Player portals and their destinations.",
+        ["QuestObjects"] = "Interactive objects used in quests.",
+        ["Ritual"] = "Ritual altars, encounters and rewards.",
+        ["Ruthless"] = "Rules and shared settings for Ruthless mode.",
+        ["Shrines"] = "Shrine encounters and their buffs.",
+        ["Social"] = "Player social features, including parties and friends.",
+        ["Tattoos"] = "Passive skill tattoos and their application.",
+        ["UniqueBelts"] = "Special effects of unique belts.",
+        ["Vendors"] = "Vendor shops, sale rewards and recipes.",
+    };
 }
 public sealed record GameLeague(string Name, string Folder, string[] BaseSystems, string[] Systems, string Description, bool Creatable, bool Ended,
     bool Hardcore = false, bool Ssf = false, string Form = "", string Parent = "", string EntryOf = "", string EntryKind = "",

@@ -195,7 +195,7 @@ static class ModSorting
 /// <summary>A row of My Mods: an installed mod, and what a repository offers of it (for Update and its latest version).</summary>
 sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
 {
-    public string Title => Entry.Name.Length > 0 ? L.Text(Entry.Name) : Offer?.Title ?? Entry.Id;
+    public string Title => Entry.Name.Length > 0 ? Entry.DisplayTitle : Offer?.Title ?? Entry.Id;
     public string Initial => ModsText.Initial(Title);
     public ModIconKind Icon => ModsText.Icon(Entry.Id);
     /// <summary>The installed mod's own icon.png, else its repository's.</summary>
@@ -203,7 +203,7 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public ModIconImage? IconImage => ModsText.IconImage(IconFile);
     /// <summary>Without an icon.png of its own, a mod shows its symbol.</summary>
     public bool ShowSymbol => IconImage is null;
-    public string Description => Entry.Description.Length > 0 ? L.Text(Entry.Description) : Offer?.Description ?? "";
+    public string Description => Entry.Description.Length > 0 ? Entry.DisplayDescription : Offer?.Description ?? "";
     public bool HasDescription => Description.Length > 0;
     public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
     /// <summary>The LocalExile versions its installed mod.json declares, else what its repository's listing does.</summary>
@@ -693,7 +693,7 @@ static class ModsText
         if (!environment.Enabled) return L.Text("Mods are off for this checkout");
         var enabled = entries.Where(e => e.Enabled).OrderBy(e => e.Title, StringComparer.CurrentCultureIgnoreCase).ToArray();
         if (enabled.Length == 0) return L.Text("No mods enabled");
-        string names = string.Join(", ", (compact ? enabled.Take(3) : enabled).Select(e => e.Title));
+        string names = string.Join(", ", (compact ? enabled.Take(3) : enabled).Select(e => e.DisplayTitle));
         if (compact && enabled.Length > 3) names += L.Text(" + {0} more", enabled.Length - 3);
         return L.Text("Saved enabled: {0}", names);
     }
@@ -826,7 +826,7 @@ static class ModsText
 
     /// <summary>The question before an uninstall.</summary>
     public static string UninstallQuestion(ModEntry mod) =>
-        L.Text("Are you sure you want to uninstall {0}? Its files move to Mods/.replaced/, where you can get them back; its settings stay.", mod.Title);
+        L.Text("Are you sure you want to uninstall {0}? Its files move to Mods/.replaced/, where you can get them back; its settings stay.", mod.DisplayTitle);
 
     /// <summary>The letter on a mod's tile.</summary>
     public static string Initial(string title) => title.FirstOrDefault(char.IsLetterOrDigit) is var c and not default(char) ? char.ToUpperInvariant(c).ToString() : "?";
@@ -853,7 +853,7 @@ static class ModsText
 
     public static string Details(ModEntry mod) =>
         L.Text("{0}\n{1} · {2}\nDependencies: {3}\n{4}\n{5}",
-            mod.Description.Length > 0 ? mod.Description : mod.Id,
+            mod.Description.Length > 0 ? mod.DisplayDescription : mod.Id,
             mod.Author.Length > 0 ? L.Text("by {0}", mod.Author) : mod.Id, mod.Summary,
             mod.Depends.Length == 0 ? L.Text("none") : string.Join(", ", mod.Depends), mod.DisplayDetail,
             mod.Project.Length > 0 ? L.Text("Source: ") + mod.Project : mod.IsScript ? L.Text("Script mod") : L.Text("Binary-only mod"));

@@ -244,11 +244,11 @@ partial class ModsTab : UserControl
         {
             if (entry.Fingerprint.Length == 0) throw new InvalidOperationException(L.Text("Build or install this mod first; its binary manifest is missing."));
             if (!await _browser.SetEnabledAsync(entry, enabled))
-                Dialog.Tell(Owner, DialogKind.Warning, entry.Title, L.Text("A workspace operation is in progress."));
+                Dialog.Tell(Owner, DialogKind.Warning, entry.DisplayTitle, L.Text("A workspace operation is in progress."));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
         {
-            Dialog.Tell(Owner, DialogKind.Warning, entry.Title, ex.Message);
+            Dialog.Tell(Owner, DialogKind.Warning, entry.DisplayTitle, ex.Message);
         }
         Render();
     }
@@ -304,14 +304,14 @@ partial class ModsTab : UserControl
     {
         if (!CanUse) return;
         if (new InstalledRow(entry, _offers.GetValueOrDefault(entry.Id)).Incompatible
-            && !Dialog.Ask(Owner, DialogKind.Warning, entry.Title, ModBrowser.IncompatibleQuestion(), L.Text("Build"), L.Text("Cancel"))) return;
+            && !Dialog.Ask(Owner, DialogKind.Warning, entry.DisplayTitle, ModBrowser.IncompatibleQuestion(), L.Text("Build"), L.Text("Cancel"))) return;
         try
         {
             if (await _browser.BuildAsync(entry) is { Ok: false }) ShowLog(true);
         }
         catch (InvalidOperationException ex)
         {
-            Dialog.Tell(Owner, DialogKind.Warning, entry.Title, ex.Message);
+            Dialog.Tell(Owner, DialogKind.Warning, entry.DisplayTitle, ex.Message);
         }
     }
 
@@ -365,7 +365,7 @@ partial class ModsTab : UserControl
     async Task UninstallAsync(ModEntry entry)
     {
         if (!CanUse) return;
-        if (!Dialog.Ask(Owner, DialogKind.Warning, L.Text("Uninstall {0}", entry.Title), ModsText.UninstallQuestion(entry), L.Text("Uninstall"), L.Text("Cancel"))) return;
+        if (!Dialog.Ask(Owner, DialogKind.Warning, L.Text("Uninstall {0}", entry.DisplayTitle), ModsText.UninstallQuestion(entry), L.Text("Uninstall"), L.Text("Cancel"))) return;
         var result = await _browser.UninstallAsync(entry);
         if (result is { Ok: false }) ShowLog(true);
         if (result?.Ok == true && _pageEntry?.Id == entry.Id && _pageItem is null) ClosePage(this, new RoutedEventArgs());
@@ -573,7 +573,7 @@ partial class ModsTab : UserControl
         PageTitle.Text = title;
         string author = entry?.Author is { Length: > 0 } a ? a : item?.Author ?? "";
         PageByline.Text = author.Length > 0 ? L.Text("by {0}", author) : "";
-        PageDescription.Text = L.Text(entry?.Description is { Length: > 0 } d ? d : item?.Description ?? string.Empty);
+        PageDescription.Text = entry is null ? item!.Description : new InstalledRow(entry, item).Description;
         PageTags.ItemsSource = ModsText.Tags(item, entry);
         PageStats.Text = ModsText.Stats(item, entry);
         PageEnabled.IsVisible = entry is not null;

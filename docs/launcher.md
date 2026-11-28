@@ -1090,6 +1090,10 @@ install for them.
 
 ### Mods
 
+Official mod names, summaries and setting labels follow Settings → Language in Browse, My Mods and mod details.
+Installed mods also use those display names in league controls and mod dialogs. A mod description or setting without an
+entry in Waypoint's language catalog is shown as supplied by the mod. The names of saved settings stay the same.
+
 Mods, Modules and Leagues share the same title hierarchy, themed cards, badges, icon frames, refresh position and settings
 footer. The info button beside each title explains their relationship: Mods installs add-ons for the checkout, Modules
 configures shared gameplay systems, and Leagues chooses the modules used by each player-facing flag and linked mode.
@@ -1202,7 +1206,8 @@ to see its dependencies, the leagues using it and its settings. **Manage in Leag
 settings are shared by every league using that module, rather than being separate per league.
 
 The module navigator uses the same selectable cards and icon defaults as the module rows in Leagues. **Find a module**
-searches its display name, ID, path and description; the count and empty state reflect the filter. Filtering preserves the
+searches the translated and original names and descriptions, plus the module ID and path. The packaged language resources
+cover the shipped modules and their settings. The count and empty state reflect the filter. Filtering preserves the
 current form while its module still matches, and asks before discarding an unsaved form if the filter would switch modules.
 The selected module has a clear heading and icon, a **Shared settings** card, **League usage**, and collapsible dependencies.
 Modules with settings show that card first. **Settings not exposed to Waypoint** means there is no declaration for the
@@ -1506,7 +1511,8 @@ Advanced mode), the **Diagnostic report** button on an operation's failure dialo
 
 ### Tools: the item crafter
 
-The interface follows the selected language. With the [local Chinese item catalog](localization.md#importing-simplified-chinese-item-data),
+The interface follows the selected language. Simplified Chinese includes built-in translations for item classes, selected
+bases and common modifier descriptions. With the [local Chinese item catalog](localization.md#importing-simplified-chinese-item-data),
 Simplified Chinese also displays and searches the client's item names, modifiers, and item previews. The item the Gateway
 receives uses the same IDs and values in any language.
 

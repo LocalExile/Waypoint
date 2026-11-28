@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources/crafter.*.jsonl" LogicalName="Localization/%(Filename)%(Extension)" WithCulture="false" />
     <!-- DepotDownloader's official release, unchanged, for the game client from Steam (DepotTool.Bundled). It is not in the
          repository: tools\Get-DepotDownloader.ps1 fetches it and checks its hash, and the release workflow runs that
          before it publishes. A build made without it works too, and fetches the same release when it is first needed. -->

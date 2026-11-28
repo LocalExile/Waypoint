@@ -48,6 +48,42 @@ public class CrafterCatalogTests
     }
 
     [Fact]
+    public void The_bundled_item_catalog_works_without_import_and_fills_gaps_in_local_translations()
+    {
+        var catalog = CrafterCatalog.Parse(Lines);
+        var ring = Assert.Single(catalog.Bases);
+        var life = catalog.Mods["IncreasedLife6"];
+        var mana = catalog.Mods["ReducedMana1"];
+        string folder = Directory.CreateTempSubdirectory("waypoint-crafter-language-").FullName;
+        try
+        {
+            var bundled = CrafterLanguage.Load(catalog, "zh-CN", folder);
+            Assert.Equal("戒指", bundled.ClassName(ring.Class));
+            Assert.Equal("锻铁戒指", bundled.BaseName(ring));
+            Assert.Equal(["最大生命 +85"], bundled.Lines(life, [85]));
+            Assert.Equal(catalog.Lines(mana), bundled.Lines(mana));
+
+            string local = Path.Combine(folder, "localization");
+            Directory.CreateDirectory(local);
+            string file = Path.Combine(local, "crafter.zh-CN.jsonl");
+            File.WriteAllText(file, """{"type":"class","id":"Ring","name":"本地戒指"}""");
+            var imported = CrafterLanguage.Load(catalog, "zh-CN", folder);
+            Assert.Equal("本地戒指", imported.ClassName(ring.Class));
+            Assert.Equal(["最大生命 +85"], imported.Lines(life, [85]));
+
+            File.AppendAllText(file, "\n{");
+            var invalid = CrafterLanguage.Load(catalog, "zh-CN", folder);
+            Assert.Equal("戒指", invalid.ClassName(ring.Class));
+            Assert.Equal(["最大生命 +85"], invalid.Lines(life, [85]));
+
+            var english = CrafterLanguage.Load(catalog, "en", folder);
+            Assert.Equal("Rings", english.ClassName(ring.Class));
+            Assert.Equal(catalog.Lines(life), english.Lines(life));
+        }
+        finally { Directory.Delete(folder, true); }
+    }
+
+    [Fact]
     public void A_mod_reads_as_the_game_words_it_with_its_range_or_its_values()
     {
         var catalog = CrafterCatalog.Parse(Lines);
