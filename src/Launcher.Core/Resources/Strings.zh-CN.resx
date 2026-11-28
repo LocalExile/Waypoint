@@ -8397,6 +8397,9 @@ Gateway 最近报告的事件。打开 Gateway 输出查看详情。</value>
   <data name="Text_db03e3055c5a" xml:space="preserve">
     <value>工作区页面</value>
   </data>
+  <data name="Text_db122dc40c94" xml:space="preserve">
+    <value>读取此客户端的数据表需要 Node.js，但未找到。请安装 Node.js 或在设置中选择它。</value>
+  </data>
   <data name="Text_db13497649fa" xml:space="preserve">
     <value>正在为此源码副本创建专用 Python 环境。</value>
   </data>

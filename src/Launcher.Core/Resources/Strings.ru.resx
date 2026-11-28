@@ -8397,6 +8397,9 @@
   <data xml:space="preserve" name="Text_db03e3055c5a">
     <value>Страницы рабочей папки</value>
   </data>
+  <data name="Text_db122dc40c94" xml:space="preserve">
+    <value>Для чтения таблиц этого клиента нужен Node.js, но он не найден. Установите Node.js или укажите его в настройках.</value>
+  </data>
   <data name="Text_db13497649fa" xml:space="preserve">
     <value>Создание отдельного Python-окружения для этой копии.</value>
   </data>

@@ -1,6 +1,8 @@
 using System.Buffers.Binary;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using Launcher.Core;
 using OozSharp;
 using OozSharp.Exceptions;
 
@@ -212,8 +214,9 @@ public sealed class Bundles2Reader : IDisposable
                 {
                     return _kraken.Decompress(compressed, uncompressedSize).ToArray();
                 }
-                catch (DecoderException) when (!string.IsNullOrEmpty(oozWorkerScript))
+                catch (DecoderException)
                 {
+                    // OozSharp has no Selkie/Leviathan (3.29 Steam bundles): the worker takes over, or says what is missing.
                     _preferWorker = true;
                 }
             }
@@ -262,7 +265,7 @@ public sealed class Bundles2Reader : IDisposable
 
             var psi = new ProcessStartInfo
             {
-                FileName = "node",
+                FileName = NodeFor(oozWorkerScript),
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = false,
@@ -271,9 +274,26 @@ public sealed class Bundles2Reader : IDisposable
             };
             psi.ArgumentList.Add(oozWorkerScript);
 
-            _nodeProcess = Process.Start(psi) ?? throw new InvalidOperationException("Failed to start node ooz_worker.");
+            try
+            {
+                _nodeProcess = Process.Start(psi) ?? throw new InvalidOperationException("Failed to start node ooz_worker.");
+            }
+            catch (Win32Exception)
+            {
+                throw new InvalidOperationException(
+                    L.Text("Node.js is needed to read this client's tables and was not found. Install Node.js or choose it in Settings."));
+            }
             _toWorker = _nodeProcess.StandardInput.BaseStream;
             _fromWorker = _nodeProcess.StandardOutput.BaseStream;
+        }
+
+        /// <summary>The release's own Node (<c>Tools/node</c> beside <c>Tools/ooz</c>, which LocalExile.exe puts first on PATH),
+        /// else the one on PATH, where Waypoint already puts the player's chosen Node first.</summary>
+        internal static string NodeFor(string oozWorkerScript)
+        {
+            string? tools = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetFullPath(oozWorkerScript)));
+            string bundled = tools is null ? "" : Path.Combine(tools, "node", OperatingSystem.IsWindows() ? "node.exe" : "node");
+            return File.Exists(bundled) ? bundled : "node";
         }
 
         private static void ReadExactly(Stream stream, Span<byte> buffer)
