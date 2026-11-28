@@ -18,6 +18,10 @@ sealed class Shared : IDisposable
     public bool IsLiveRunning => Volatile.Read(ref _running) == 1;
     /// <summary>What holds the checkout while <see cref="IsLiveRunning"/>: "live.ps1", "git" or an operation's name.</summary>
     public string BusyWith { get; private set; } = "live.ps1";
+
+    /// <summary>The last client launch's NativeMods warning (the mods' game data could not be built), shown on Mods until a
+    /// launch goes without one.</summary>
+    public string? NativeModsWarning { get; set; }
     bool _leaving;
     /// <summary>Waypoint is stopping what runs before it leaves this folder for another
     /// (<see cref="Editions.ReadyToLeaveAsync"/>), until it starts again there or the change is given up. Meanwhile the
@@ -69,8 +73,22 @@ sealed class Shared : IDisposable
         {
             Logs.Write($"> {request.Describe()}", Severity.Info);
             void Line(string line) { Logs.Write(line); output(line); }
+            IReadOnlyDictionary<string, string?>? extraEnv = null;
+            if (request.LaunchesClient)
+            {
+                var plan = await NativeModsLaunch.PrepareAsync(Environment.CurrentDirectory, Settings, Repo.IsInstall, Line);
+                if (!plan.Ok)
+                {
+                    Logs.Write($"NativeMods preflight failed: {plan.Error}", Severity.Error);
+                    if (!string.IsNullOrWhiteSpace(plan.Error)) output(plan.Error);
+                    return -1;
+                }
+                extraEnv = plan.Environment;
+                NoteNativeModsWarning(plan.Warning);
+                if (plan.Warning is { } warning) output(warning);
+            }
             var clock = System.Diagnostics.Stopwatch.StartNew();
-            int code = await Scripts.RunAsync(request, Line);
+            int code = await Scripts.RunAsync(request, Line, extraEnv);
             Logs.Write($"live.ps1 exited with {code} after {SessionLog.Seconds(clock.Elapsed)}", code == 0 ? Severity.Info : Severity.Error);
             return code;
         }
@@ -107,6 +125,13 @@ sealed class Shared : IDisposable
             LiveRunning?.Invoke(false);
         }
         return true;
+    }
+
+    /// <summary>Keeps a launch's NativeMods warning for the Mods section and logs it as a warning.</summary>
+    public void NoteNativeModsWarning(string? warning)
+    {
+        NativeModsWarning = warning;
+        if (warning is not null) Logs.Write(warning, Severity.Warning);
     }
 
     /// <summary>Ends the dev host the launcher started for the accounts tab (it is not one of live.ps1's servers).</summary>

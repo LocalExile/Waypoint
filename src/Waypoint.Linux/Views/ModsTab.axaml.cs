@@ -104,7 +104,7 @@ partial class ModsTab : UserControl
             notice = L.Text("Could not inspect mods: ") + ex.Message;
         }
         if (state is not null && supported && !state.ModEnvironment!.Enabled) notice = L.Text("Mods off in launch profile (Game_MODS=0)");
-        notice = string.Join("\n", new[] { ModsText.MayNotLoadNotice(), notice, ModsText.ChoicesNotice(state), _browser.RestartNotice(state) }.Where(s => s.Length > 0));
+        notice = string.Join("\n", new[] { ModsText.MayNotLoadNotice(), notice, ModsText.NativeModsNotice(_entries, _browser.NativeModsEnabled, _browser.NativeModsWarning), ModsText.ChoicesNotice(state), _browser.RestartNotice(state) }.Where(s => s.Length > 0));
         if (Repo.LegacyReleaseMods) notice = L.Text("This release does not declare compatibility with downloadable mods. Use a current source checkout to install or update mods.");
         Notice.Text = notice;
         Notice.IsVisible = notice.Length > 0;
@@ -131,7 +131,8 @@ partial class ModsTab : UserControl
     {
         string text = (Search.Text ?? "").Trim();
         var failures = GatewayMods.LoadErrors(State);
-        var rows = ModSorting.Sort(_entries.Select(e => new InstalledRow(e, _offers.GetValueOrDefault(e.Id)) { Job = _browser.Job(e.Id), LoadError = failures.GetValueOrDefault(e.Id, "") })
+        bool nativeDisabled = !_browser.NativeModsEnabled;
+        var rows = ModSorting.Sort(_entries.Select(e => new InstalledRow(e, _offers.GetValueOrDefault(e.Id)) { Job = _browser.Job(e.Id), LoadError = failures.GetValueOrDefault(e.Id, ""), NativeModsDisabled = nativeDisabled })
             .Where(r => r.SearchText.Contains(text, StringComparison.OrdinalIgnoreCase)), _sort, _descending).ToList();
         ShowHeadings();
         int updates = _entries.Count(e => _offers.GetValueOrDefault(e.Id)?.Offer == ModOffer.Update);
@@ -353,7 +354,7 @@ partial class ModsTab : UserControl
         if (item.Incompatible && !Dialog.Ask(Owner, DialogKind.Warning, item.Title, ModBrowser.IncompatibleQuestion(), L.Text("Install"), L.Text("Cancel"))) return;
         try
         {
-            if (await _browser.InstallAsync(item) is { Ok: false }) ShowLog(true);
+            if (await _browser.InstallAsync(item, ConfirmNativeAudit) is { Ok: false, Cancelled: false }) ShowLog(true);
         }
         catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException
             or System.Text.Json.JsonException or TaskCanceledException)
@@ -376,12 +377,18 @@ partial class ModsTab : UserControl
         if (Owner is not { } owner || Ui.PickFolder(owner, L.Text("Choose a mod folder (with its mod.json)")) is not { } folder) return;
         try
         {
-            if (await _browser.InstallFolderAsync(folder) is { Ok: false }) ShowLog(true);
+            if (await _browser.InstallFolderAsync(folder, ConfirmNativeAudit) is { Ok: false, Cancelled: false }) ShowLog(true);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or System.Text.Json.JsonException)
         {
             Dialog.Tell(owner, DialogKind.Warning, L.Text("Mod not installed"), ex.Message);
         }
+    }
+
+    bool ConfirmNativeAudit(LocalExile.Client.Waypoint.InstallAuditReport audit)
+    {
+        var (title, message, details) = ModsText.AuditPrompt(audit, _browser.NativeModsEnabled);
+        return Dialog.Ask(Owner, DialogKind.Warning, title, message, L.Text("Install"), L.Text("Cancel"), details: details, cancelByDefault: audit.RawAccessRequested);
     }
 
     // ---- The ⋮ menu's tools ----

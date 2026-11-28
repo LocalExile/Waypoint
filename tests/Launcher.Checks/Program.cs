@@ -79,6 +79,7 @@ try
     if (OperatingSystem.IsWindows()) await InstanceChecks.RunAsync(Check);
     if (args is ["--instance-checks"]) { Console.WriteLine($"{passed} instance checks passed."); return 0; }
     ModChecks.Run(fixture, Check);
+    await NativeModsChecks.RunAsync(fixture, Check);
     LocalizationChecks.Run(Check);
     await SetupChecks.RunAsync(fixture, Check);
     string settingsPath = Path.Combine(fixture, "settings.json");

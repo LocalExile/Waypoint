@@ -343,7 +343,8 @@ public static class LocalExileTool
 {
     /// <param name="input">The new account's password: written to standard input, and never on a command line or in a log.</param>
     /// <param name="output">Every line that is no event (a crash's message).</param>
-    public static async Task<LocalExileResult> RunAsync(string folder, IEnumerable<string> arguments, Action<LocalExileEvent> events, Action<string>? output = null, string? input = null, CancellationToken stop = default)
+    /// <param name="environment">Optional environment overrides passed to the release launcher (e.g. NativeMods opt-in variables).</param>
+    public static async Task<LocalExileResult> RunAsync(string folder, IEnumerable<string> arguments, Action<LocalExileEvent> events, Action<string>? output = null, string? input = null, CancellationToken stop = default, IReadOnlyDictionary<string, string?>? environment = null)
     {
         string? error = null, needed = null, suggestion = null;
         bool unknownSchema = false;
@@ -364,7 +365,7 @@ public static class LocalExileTool
         }
         try
         {
-            int code = await ToolProcess.RunAsync(Path.Combine(folder, LocalExileReleases.Launcher), [.. arguments, "--json"], folder, Line, refuse.Token, input, utf8: true);
+            int code = await ToolProcess.RunAsync(Path.Combine(folder, LocalExileReleases.Launcher), [.. arguments, "--json"], folder, Line, refuse.Token, input, utf8: true, environment: environment);
             return new(code, error, needed, suggestion);
         }
         catch (OperationCanceledException) when (unknownSchema)

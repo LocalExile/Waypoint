@@ -98,8 +98,12 @@ try {
     Operation 'InstallMod'
     Check ((Test-Path -LiteralPath (At 'Mods/Binaries/beta/beta.dll')) -and (Test-Path -LiteralPath (At 'Mods/Binaries/gamma/gamma.dll')) -and $script:backups -eq $before + 1) 'batch install installs both mods with one backup'
     $script:ModIds = ''; $script:ModStageds = ''; $script:ModTargets = ''
+    New-Item -ItemType Directory -Force (At 'Mods/Client/alpha') | Out-Null
+    Set-Content -LiteralPath (At 'Mods/Client/alpha/alpha.Client.dll') 'client fixture'
     Operation 'UninstallMod' 'alpha'
     Check (-not (Test-Path -LiteralPath (At 'Mods/Binaries/alpha'))) 'uninstall removes the active folder'
+    Check (-not (Test-Path -LiteralPath (At 'Mods/Client/alpha'))) 'uninstall moves any NativeMods client folder aside'
+    Check (@(Get-ChildItem -LiteralPath (At 'Mods/.replaced') -Recurse -Filter 'alpha.Client.dll').Count -eq 1) 'uninstalled NativeMods client payload remains recoverable in Mods/.replaced'
     Check ((Test-Path -LiteralPath (At 'data/mods/alpha.json')) -and [IO.File]::ReadAllText((At 'data/mods/alpha.json')).Contains('ownerValue')) 'uninstall retains the player settings'
     Check ([IO.File]::ReadAllText((At 'Mods/Binaries/mod-state.txt')).Trim() -eq 'beta on') 'uninstall removes only its own choice'
     Check (@(Get-ChildItem -LiteralPath (At 'Mods/.replaced') -Recurse -Filter alpha.dll | Where-Object { [IO.File]::ReadAllText($_.FullName) -eq 'inert fixture 2' }).Count -eq 1) 'uninstalled binary remains recoverable'

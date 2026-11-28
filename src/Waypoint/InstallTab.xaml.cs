@@ -342,12 +342,43 @@ public partial class InstallTab : UserControl
         string? failure = null;
         try
         {
+            IReadOnlyDictionary<string, string?>? launchEnv = null;
+            if (withClient)
+            {
+                NativeModsLaunchPlan? plan = null;
+                bool prepared = await _shared.RunExclusiveAsync(L.Text("NativeMods"), async () =>
+                {
+                    plan = await NativeModsLaunch.PrepareAsync(Folder, _shared.Settings, isReleaseInstall: true, line =>
+                    {
+                        _shared.Logs.Write(line);
+                        Dispatcher.BeginInvoke(() => Write(line));
+                    });
+                });
+                if (!prepared || plan is not { Ok: true })
+                {
+                    failure = !prepared
+                        ? L.Text("Something else is using LocalExile. Try again when it is done.")
+                        : plan?.Error ?? L.Text("NativeMods preflight check failed.");
+                    _shared.Logs.Write($"NativeMods preflight failed: {failure}", Severity.Error);
+                    _working = false;
+                    _clock.Stop();
+                    _stage = null;
+                    _current = _total = null;
+                    _headline = null;
+                    Finished(null, failure);
+                    Show();
+                    return null;
+                }
+                launchEnv = plan.Environment;
+                _shared.NoteNativeModsWarning(plan.Warning);
+                if (plan.Warning is { } warning) Write(warning);
+            }
             // Queued: the events come from the tool's threads.
             var run = LocalExileTool.RunAsync(Folder, arguments, item => Dispatcher.BeginInvoke(() => Event(item, ready)), line => Dispatcher.BeginInvoke(() =>
             {
                 _shared.Logs.Write($"LocalExile: {line}");
                 Write(line);
-            }));
+            }), environment: launchEnv);
             await _shared.RunExclusiveAsync("LocalExile.exe", () => Task.WhenAny(ready.Task, run));
             result = await run;
         }

@@ -16,6 +16,9 @@ sealed record LiveRequest(LiveMode Mode, string? Server = null, bool Walkmaps = 
     /// <summary>A restart of Auth or Patch leaves the running Gateway as it is.</summary>
     public bool StartsGateway => Mode is LiveMode.All or LiveMode.Servers || this is { Mode: LiveMode.Restart, Server: "Gateway" };
 
+    /// <summary>Whether this run starts the game client.</summary>
+    public bool LaunchesClient => Mode is LiveMode.All or LiveMode.Client;
+
     /// <summary>What the run changes in the environment it inherits. The network mode is the game's own setting: the Gateway
     /// serves whichever the client picks (LocalExile #684), so a run sets nothing for it.</summary>
     public IReadOnlyDictionary<string, string?>? Variables() =>
@@ -101,7 +104,7 @@ static class Scripts
         return process.ExitCode;
     }
 
-    public static async Task<int> RunAsync(LiveRequest request, Action<string> output)
+    public static async Task<int> RunAsync(LiveRequest request, Action<string> output, IReadOnlyDictionary<string, string?>? extraEnvironment = null)
     {
         string checkout = Environment.CurrentDirectory;
         string? hncFailure = null;
@@ -113,7 +116,8 @@ static class Scripts
             if (ClientExtractionFailure.IsBuildRefusal(line)) Interlocked.Exchange(ref refused, 1);
             output(line);
         }
-        int code = await RunAsync(Repo.LiveEntry, request.Arguments(Repo.HasServerHotReload()), Line, request.Variables());
+        var environment = NativeModsLaunch.MergeEnvironment(request.Variables(), extraEnvironment);
+        int code = await RunAsync(Repo.LiveEntry, request.Arguments(Repo.HasServerHotReload()), Line, environment);
         if (code != 0 && hncFailure is { } failure) output(ClientExtractionFailure.Describe(checkout, failure));
         // LocalExile's refusal ends in a stack trace: the last line says it in plain words.
         if (code != 0 && refused != 0) output(ClientExtractionFailure.Refused);

@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Launcher.Core.NativeMods;
 
 namespace Launcher.Core;
 
@@ -28,7 +29,12 @@ public sealed record ModEntry(string Id, string Version, string Kind, string[] D
     public IReadOnlyList<string> Leagues { get; init; } = [];
     /// <summary><see cref="ModCatalog.RestartToApply"/> of its folder.</summary>
     public bool RestartToApply { get; init; }
-    public string SearchText => $"{Id} {Name} {Author} {Description} {Version} {Kind} {Status} {Detail}";
+    /// <summary>Optional NativeMods client payload metadata declared in <c>mod.json</c> (<c>nativeClient</c>).</summary>
+    public NativeClientSummary? NativeClient { get; init; }
+    public bool HasNativeClient => NativeClient is not null;
+    /// <summary>True when <c>Mods/Client/&lt;id&gt;/</c> exists on disk for a dual-side mod.</summary>
+    public bool ClientPayloadInstalled { get; init; }
+    public string SearchText => $"{Id} {Name} {Author} {Description} {Version} {Kind} {Status} {Detail}" + (HasNativeClient ? " nativemods client" : "");
     public string DisplayDetail => L.Describe(Detail);
     public string Summary => $"{Version} · {L.Text(Kind)} · " + (Status == "Disabled" ? L.Text("Disabled") : $"{L.Text(Enabled ? "Enabled" : "Disabled")} · {L.Text(Status)}");
 }
@@ -74,18 +80,21 @@ public static class ModCatalog
         return hash;
     }
     sealed record Manifest(string Id, string Version, string Kind, string[] Depends, string Assembly, bool Enabled,
-        string Name = "", string Description = "", string Author = "", string[]? ClientVersions = null, bool Listed = false);
+        string Name = "", string Description = "", string Author = "", string[]? ClientVersions = null, bool Listed = false,
+        NativeClientSummary? NativeClient = null);
     /// <summary>The Gateway's reason for a listed mod that no league lists, and the status Waypoint gives it: not a failure.</summary>
     public const string NoLeagueReason = "no league lists it", Unused = "No league uses it";
-    /// <summary>Whether the servers read part of this mod only when they start: a mod of the leagues that list it, or one
-    /// that brings leagues (Leagues/) or world data (sql/).</summary>
+    /// <summary>Whether the servers or client read part of this mod only when they start: a mod of the leagues that list it,
+    /// one that brings leagues (Leagues/) or world data (sql/), or a NativeMods dual-side mod.</summary>
     public static bool RestartToApply(string folder)
     {
         try
         {
             string manifest = Path.Combine(folder, "mod.json");
-            return Directory.Exists(Path.Combine(folder, "Leagues")) || Directory.Exists(Path.Combine(folder, "sql"))
-                || (File.Exists(manifest) && Parse(Path.GetFileName(folder), manifest).Listed);
+            if (Directory.Exists(Path.Combine(folder, "Leagues")) || Directory.Exists(Path.Combine(folder, "sql"))) return true;
+            if (!File.Exists(manifest)) return false;
+            var parsed = Parse(Path.GetFileName(folder), manifest);
+            return parsed.Listed || parsed.NativeClient is not null;
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException) { return false; }
     }
@@ -126,10 +135,10 @@ public static class ModCatalog
         // As the Gateway reads it: any other value fails the mod there.
         string leagues = Text("leagues", "all");
         if (leagues is not ("all" or "listed")) throw new InvalidDataException("leagues must be all or listed.");
-        // name, description, author and compatibleClientVersions are Waypoint's (LocalExile-Mods' AGENTS.md); the Gateway
-        // ignores them.
+        // name, description, author, compatibleClientVersions and nativeClient are Waypoint's / NativeMods'; the Gateway ignores them.
         return new(id, Text("version", "0"), kind, dependencies, assembly, enabled.ValueKind != JsonValueKind.False,
-            Text("name", ""), Text("description", ""), Text("author", ""), ClientCompatibility.Read(Field(ClientCompatibility.Field)), leagues == "listed");
+            Text("name", ""), Text("description", ""), Text("author", ""), ClientCompatibility.Read(Field(ClientCompatibility.Field)), leagues == "listed",
+            NativeModsClientStore.TryReadSummary(Field("nativeClient")));
     }
     /// <summary>The ids of the checkout's modules (<c>Modules/**/module.json</c>, as Game Systems reads them), which a mod may
     /// depend on beside other mods. None when they cannot be read.</summary>
@@ -175,7 +184,12 @@ public static class ModCatalog
                         if (!source.TryAdd(manifest.Id, Path.GetRelativePath(snapshot.Root, project))) throw new InvalidDataException("Multiple source projects use this ID.");
                         entries[manifest.Id] = new(manifest.Id, manifest.Version, manifest.Kind, manifest.Depends, manifest.Enabled,
                             "Not built", "Build this source mod before enabling it.", Path.Combine(environment.Folder, manifest.Id), source[manifest.Id], "",
-                            manifest.Name, manifest.Description, manifest.Author, ClientVersions: manifest.ClientVersions) { Listed = manifest.Listed };
+                            manifest.Name, manifest.Description, manifest.Author, ClientVersions: manifest.ClientVersions)
+                        {
+                            Listed = manifest.Listed,
+                            NativeClient = manifest.NativeClient,
+                            ClientPayloadInstalled = manifest.NativeClient is not null && Directory.Exists(Path.Combine(snapshot.Root, "Mods", "Client", manifest.Id)),
+                        };
                     }
                     catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                     { entries[id] = new(id, "?", "?", [], false, "Invalid source", ex.Message, folder, "", ""); }
@@ -207,7 +221,13 @@ public static class ModCatalog
                     entries[id] = new(id, manifest.Version, manifest.Kind, manifest.Depends, enabled, built ? "Not checked" : "Missing DLL",
                         built ? "Runtime status has not been confirmed." : "Build this mod or install its DLL.", folder, source.GetValueOrDefault(id, ""), hash,
                         manifest.Name, manifest.Description, manifest.Author, script, manifest.ClientVersions)
-                    { Listed = manifest.Listed, Leagues = LeaguesIn(folder), RestartToApply = RestartToApply(folder) };
+                    {
+                        Listed = manifest.Listed,
+                        Leagues = LeaguesIn(folder),
+                        RestartToApply = RestartToApply(folder),
+                        NativeClient = manifest.NativeClient,
+                        ClientPayloadInstalled = manifest.NativeClient is not null && Directory.Exists(Path.Combine(snapshot.Root, "Mods", "Client", id)),
+                    };
                 }
                 catch (Exception ex) when (ex is IOException or InvalidDataException or JsonException or InvalidOperationException or ArgumentException)
                 { entries[id] = new(id, "?", "?", [], false, "Invalid manifest", ex.Message, folder, source.GetValueOrDefault(id, ""), ""); }

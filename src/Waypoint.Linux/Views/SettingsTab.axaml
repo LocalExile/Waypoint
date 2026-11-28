@@ -95,6 +95,27 @@
           <StackPanel x:Name="GameSettingsRow" />
         </StackPanel>
       </Border>
+      <!-- Opt-in NativeMods client script extender (OFF by default). -->
+      <Border x:Name="NativeModsCard" Classes="card">
+        <StackPanel Spacing="6">
+          <TextBlock x:Name="NativeModsHeading" Classes="heading" />
+          <CheckBox x:Name="NativeModsEnabled" IsCheckedChanged="NativeModsPreferenceChanged" />
+          <TextBlock x:Name="NativeModsNote" Classes="note" TextWrapping="Wrap" />
+          <WrapPanel ItemSpacing="18" LineSpacing="4">
+            <RadioButton x:Name="NativeModsProxyMode" GroupName="NativeModsMode" IsCheckedChanged="NativeModsPreferenceChanged" />
+            <RadioButton x:Name="NativeModsImportMode" GroupName="NativeModsMode" IsCheckedChanged="NativeModsPreferenceChanged" />
+          </WrapPanel>
+          <TextBlock x:Name="NativeModsStatus" FontWeight="SemiBold" TextWrapping="Wrap" />
+          <TextBlock x:Name="NativeModsDetails" Classes="note" TextWrapping="Wrap" IsVisible="False" />
+          <WrapPanel ItemSpacing="6" LineSpacing="6">
+            <Button x:Name="NativeModsGitHubButton" Click="InstallNativeModsGitHub" />
+            <Button x:Name="NativeModsZipButton" Click="ImportNativeModsZip" />
+            <Button x:Name="NativeModsFolderButton" Click="ImportNativeModsFolder" />
+            <Button x:Name="NativeModsVerifyButton" Click="VerifyNativeMods" />
+            <Button x:Name="NativeModsUninstallButton" Click="UninstallNativeMods" />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
       <!-- Where Waypoint keeps its files and which programs it uses (PathChoices): rows made in code, as on Windows. Shown with
            Developer Mode, and whenever something there is chosen or cannot be used. -->
       <Border x:Name="PathsCard" Classes="card">

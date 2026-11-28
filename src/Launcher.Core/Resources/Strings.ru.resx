@@ -99,6 +99,9 @@
   <data xml:space="preserve" name="Text_02262050828b">
     <value>Заменяются только сохранения этой установки; исходники, клиент и ключи не меняются.</value>
   </data>
+  <data name="Text_022ac3a4efa5" xml:space="preserve">
+    <value>NativeMods включён в режиме прокси, но Client/version.dll не активен.</value>
+  </data>
   <data name="Text_024dc204d7ba" xml:space="preserve">
     <value>Область</value>
   </data>
@@ -201,6 +204,9 @@
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>этой сборки из исходников</value>
   </data>
+  <data name="Text_0574c9597cf8" xml:space="preserve">
+    <value>Выбранный пакет NativeMods не содержит version.dll, необходимый для режима прокси.</value>
+  </data>
   <data xml:space="preserve" name="Text_057c2971fa56">
     <value>Не удалось прочитать локальные ветки. Проверьте выбранный репозиторий Git. </value>
   </data>
@@ -218,6 +224,9 @@
   </data>
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Фокус клавиатуры</value>
+  </data>
+  <data name="Text_05f86a5b51cc" xml:space="preserve">
+    <value>Не установлен (отключён по умолчанию) · {0}</value>
   </data>
   <data name="Text_0601b77efc9d" xml:space="preserve">
     <value>Не удалось связаться с запущенным Waypoint. Закройте его обычным способом и попробуйте снова. Обе копии должны запускаться с одинаковым уровнем прав Windows.</value>
@@ -261,6 +270,9 @@
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: не целое число</value>
   </data>
+  <data name="Text_070443b8a624" xml:space="preserve">
+    <value>Патчи .dat</value>
+  </data>
   <data name="Text_070d63bf412e" xml:space="preserve">
     <value>Уже открыта другая сборка Waypoint. Закройте её окно обычным способом, прежде чем открывать эту сборку. Выполняемые операции и службы не были остановлены.</value>
   </data>
@@ -281,6 +293,9 @@
   </data>
   <data xml:space="preserve" name="Text_07c99f3f9c05">
     <value>Ошибка компиляции</value>
+  </data>
+  <data name="Text_07cf85522374" xml:space="preserve">
+    <value>Сборка клиента {0} не поддерживается NativeMods (поддерживаются: 3.29.3c, 3.29.3d).</value>
   </data>
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>Использовать клиент игры вашего текущего LocalExile, поэтому лишнее место не потребуется.</value>
@@ -414,6 +429,9 @@
   <data name="Text_0baa876a211d" xml:space="preserve">
     <value>Здесь будет виден предмет, пока вы его собираете.</value>
   </data>
+  <data name="Text_0bc28157dc37" xml:space="preserve">
+    <value>NativeMods</value>
+  </data>
   <data name="Text_0bcd66e677f4" xml:space="preserve">
     <value>Слои</value>
   </data>
@@ -437,6 +455,9 @@
   </data>
   <data xml:space="preserve" name="Text_0c26cc1e71ab">
     <value>Отслеживание работает; ожидается дочерний процесс Gateway. Если ожидание затянулось, откройте вывод Gateway.</value>
+  </data>
+  <data name="Text_0c27aab64dad" xml:space="preserve">
+    <value>Отсутствует файл управляемой среды выполнения: Client/nativemods-host/{0}.</value>
   </data>
   <data name="Text_0c2d719569e0" xml:space="preserve">
     <value>Собрать и установить</value>
@@ -590,6 +611,9 @@
   </data>
   <data name="Text_0f17c1790f9b" xml:space="preserve">
     <value>Игра или службы ещё работают. Waypoint останется открытым. Принудительное завершение не выполнялось.</value>
+  </data>
+  <data name="Text_0f238ae77600" xml:space="preserve">
+    <value>Отключено по умолчанию. Загружает клиентские оверлеи и плагины NativeMods для PoE 3.29.3c/3.29.3d без изменения оригинального Game.exe и игровых архивов.</value>
   </data>
   <data name="Text_0f2a0b21016e" xml:space="preserve">
     <value>{0} не установлен</value>
@@ -1090,6 +1114,9 @@
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>настройки игры отдельные ({0})</value>
   </data>
+  <data name="Text_1cbce48d29aa" xml:space="preserve">
+    <value>NativeMods сейчас отключён в настройках. Вы можете установить мод сейчас и включить NativeMods в настройках позже.</value>
+  </data>
   <data name="Text_1cbd771e134f" xml:space="preserve">
     <value>Эта папка — «Новейшая»: новейшие изменения LocalExile из исходного кода. Перейдите на релиз, чтобы остаться в простом режиме, или включите расширенный режим, чтобы играть в этой копии и выбирать ветки и запросы на слияние.</value>
   </data>
@@ -1267,6 +1294,9 @@
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile собран. Когда появится игровой клиент, добавьте его с помощью этого мастера: Подготовка → Запустить мастер настройки.</value>
   </data>
+  <data name="Text_21ddea0a8a93" xml:space="preserve">
+    <value>Разрешить RawAccess для {0}?</value>
+  </data>
   <data name="Text_21ea97893c68" xml:space="preserve">
     <value>В Gateway этого чекаута пока нет конструктора предметов: обновите LocalExile, затем начните игру или запустите серверы, чтобы собрать его.</value>
   </data>
@@ -1344,6 +1374,9 @@
   </data>
   <data name="Text_237ce534dbd1" xml:space="preserve">
     <value>Недопустимая или повторяющаяся лига.</value>
+  </data>
+  <data name="Text_239be899f024" xml:space="preserve">
+    <value>Патч импорта (.nmimp)</value>
   </data>
   <data name="Text_23a7fbf942ec" xml:space="preserve">
     <value>Обновление не сработало, поэтому у вас осталась прежняя версия.</value>
@@ -1519,6 +1552,9 @@
   <data name="Text_2743551363a4" xml:space="preserve">
     <value>Группы монстров</value>
   </data>
+  <data name="Text_2743e9f31032" xml:space="preserve">
+    <value>Релиз {0} не содержит zip-архив win-x64.</value>
+  </data>
   <data xml:space="preserve" name="Text_275dbda9dedb">
     <value>Закат</value>
   </data>
@@ -1594,6 +1630,9 @@
   </data>
   <data name="Text_291d2a97565f" xml:space="preserve">
     <value>Редкий</value>
+  </data>
+  <data name="Text_29246aacda23" xml:space="preserve">
+    <value>NativeMods включён ({0}).</value>
   </data>
   <data name="Text_292979c1afe7" xml:space="preserve">
     <value>Waypoint сделает копию этого клиента для используемой папки: {0:0.#} ГБ.</value>
@@ -1684,6 +1723,9 @@
   </data>
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Восстановить выбор модов</value>
+  </data>
+  <data name="Text_2ae29d348107" xml:space="preserve">
+    <value>Удалить и архивировать клиентские моды</value>
   </data>
   <data name="Text_2ae8aced0bae" xml:space="preserve">
     <value>Ориентиры</value>
@@ -1780,6 +1822,9 @@
   </data>
   <data name="Text_2d895f09eb26" xml:space="preserve">
     <value>Нет выпуска: устанавливается исходный код</value>
+  </data>
+  <data name="Text_2daf6f600120" xml:space="preserve">
+    <value>Удаление NativeMods</value>
   </data>
   <data xml:space="preserve" name="Text_2dafe4f58ab0">
     <value> · есть изменения файлов</value>
@@ -1939,6 +1984,9 @@
   </data>
   <data name="Text_314b16a3d271" xml:space="preserve">
     <value>Сообщ. клиента</value>
+  </data>
+  <data name="Text_315af7add787" xml:space="preserve">
+    <value>NativeMods отключён. Игра запустится без расширителя.</value>
   </data>
   <data xml:space="preserve" name="Text_316e8e8cbc2d">
     <value>Выберите копию, чтобы увидеть её ревизию и историю модов.</value>
@@ -2334,11 +2382,17 @@
   <data name="Text_3b7ffa42c6e0" xml:space="preserve">
     <value>Также применяется к пункту «Выйти из Waypoint» в меню трея.</value>
   </data>
+  <data name="Text_3b81418e4f26" xml:space="preserve">
+    <value>Сначала установите расширитель NativeMods перед его включением.</value>
+  </data>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>Соберите любой предмет: база, редкость, свойства со значениями, гнёзда и влияния. Сохраните, чтобы вернуться к нему, и выдайте персонажу в игре.</value>
   </data>
   <data name="Text_3baed9f4ed86" xml:space="preserve">
     <value>Исказители</value>
+  </data>
+  <data name="Text_3bb0e864a933" xml:space="preserve">
+    <value>Невозможно изменить NativeMods в связанной папке Client.</value>
   </data>
   <data name="Text_3bc85df158e7" xml:space="preserve">
     <value> и ещё {0}</value>
@@ -2448,6 +2502,9 @@
   </data>
   <data name="Text_3e56f666f5c7" xml:space="preserve">
     <value>Папка игры изменилась во время копирования, поэтому копия не использована.</value>
+  </data>
+  <data name="Text_3e84d6ada160" xml:space="preserve">
+    <value>Не установлен · {0}</value>
   </data>
   <data name="Text_3e8cf9c948a6" xml:space="preserve">
     <value>Ничего не изменилось. Нажмите «Играть», чтобы попробовать снова.</value>
@@ -2655,6 +2712,9 @@
   </data>
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>Загрузка не удалась (код git {0}). Проверьте подключение и повторите попытку.</value>
+  </data>
+  <data name="Text_455bc2044506" xml:space="preserve">
+    <value>Включить клиентский расширитель NativeMods (по желанию)</value>
   </data>
   <data name="Text_457f300c3c08" xml:space="preserve">
     <value>При убийстве монстров с заданным шансом выпадает дополнительная валюта.</value>
@@ -3061,6 +3121,9 @@
   <data name="Text_4ec6dbda5bb3" xml:space="preserve">
     <value>LocalExile обновлён.</value>
   </data>
+  <data name="Text_4ed167c6db1b" xml:space="preserve">
+    <value>Обнаружен автономный клиент Content.ggpk: автоматическая пересборка .merged-cache требует Steam Bundles2/ или распакованных таблиц Client/Data/*.datc64.</value>
+  </data>
   <data name="Text_4ed2e771f1b1" xml:space="preserve">
     <value>Запуск записи областей</value>
   </data>
@@ -3084,6 +3147,9 @@
   </data>
   <data xml:space="preserve" name="Text_4f4bcbb48773">
     <value>ТЕКУЩИЕ ИСХОДНИКИ</value>
+  </data>
+  <data name="Text_4f9e568c5d0e" xml:space="preserve">
+    <value>Требуется клиентский расширитель NativeMods. Включите его в настройках.</value>
   </data>
   <data name="Text_4feda881a8e2" xml:space="preserve">
     <value>мост остановился: {0}</value>
@@ -3147,6 +3213,9 @@
   </data>
   <data name="Text_515ed25002b7" xml:space="preserve">
     <value>Перейти на Path of Exile {0}?</value>
+  </data>
+  <data name="Text_516a56472b5d" xml:space="preserve">
+    <value>Установка клиентского мода заблокирована проверкой.</value>
   </data>
   <data name="Text_5174093cf95b" xml:space="preserve">
     <value>Оставить старую версию: она не будет обновляться.</value>
@@ -3249,6 +3318,9 @@
   </data>
   <data xml:space="preserve" name="Text_54377045445b">
     <value>Сборка инструментов подготовки</value>
+  </data>
+  <data name="Text_543cdb0127f4" xml:space="preserve">
+    <value>Установка NativeMods</value>
   </data>
   <data name="Text_544b891ecca8" xml:space="preserve">
     <value>Эту папку нельзя использовать</value>
@@ -3373,6 +3445,9 @@
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>Ничего не меняется. Если этот клиент использует настройки вашей обычной игры, выберите в игре «Режим работы сети» → «Рассинхронизация» (Networking Mode → Predictive) сами.</value>
   </data>
+  <data name="Text_574197840671" xml:space="preserve">
+    <value>Не удалось снять патч с Game.patched.exe перед активацией режима прокси: {0}</value>
+  </data>
   <data name="Text_5774139d115b" xml:space="preserve">
     <value>Лейтенанты</value>
   </data>
@@ -3384,6 +3459,9 @@
   </data>
   <data name="Text_57fd7a0cf33f" xml:space="preserve">
     <value>Выбран</value>
+  </data>
+  <data name="Text_5816cb604280" xml:space="preserve">
+    <value>Требуется NativeMods</value>
   </data>
   <data name="Text_581dec3ed74b" xml:space="preserve">
     <value>ПОСЛЕДНИЙ КОММИТ</value>
@@ -3404,6 +3482,9 @@
     <value>Удалить только резервную копию от {0:g}?
 
 Текущие сохранения не изменятся. Эту копию больше нельзя будет восстановить.</value>
+  </data>
+  <data name="Text_588025366d03" xml:space="preserve">
+    <value>Активен v{0} ({1}) · {2} · клиентских модов: {3}</value>
   </data>
   <data xml:space="preserve" name="Text_589877b1a7f3">
     <value>Последняя проверка в игре: </value>
@@ -3468,6 +3549,9 @@
   <data name="Text_5a2a9ccda1eb" xml:space="preserve">
     <value>Не удалось выбрать старую версию (git завершился с кодом {0}).</value>
   </data>
+  <data name="Text_5a2f4e27bf22" xml:space="preserve">
+    <value>Архив NativeMods содержит небезопасный путь: {0}.</value>
+  </data>
   <data name="Text_5a56864947f6" xml:space="preserve">
     <value>Ни одна лига</value>
   </data>
@@ -3519,6 +3603,9 @@
   <data name="Text_5c1a1026eda3" xml:space="preserve">
     <value>Всё на месте. Нажмите «Играть» в Waypoint, чтобы запустить серверы и игру. У LocalExile собственные настройки игры, поэтому у вашей обычной Path of Exile остаются свои.</value>
   </data>
+  <data name="Text_5c326651cfc4" xml:space="preserve">
+    <value>Настройки NativeMods сохранены.</value>
+  </data>
   <data xml:space="preserve" name="Text_5c412a262086">
     <value>Игра</value>
   </data>
@@ -3552,6 +3639,9 @@
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Учётные записи, персонажи и прогресс этой установки. Сохранения и выбор модов восстанавливаются отдельно.</value>
   </data>
+  <data name="Text_5cce07b9819d" xml:space="preserve">
+    <value>Не найдены исходные таблицы Client/Bundles2 или Client/Data для сборки Mods/Client/.merged-cache/.</value>
+  </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>После --repo укажите одну папку.</value>
   </data>
@@ -3584,6 +3674,9 @@
   </data>
   <data name="Text_5efc124c61fa" xml:space="preserve">
     <value>Пьедесталы</value>
+  </data>
+  <data name="Text_5f0830a4ed6c" xml:space="preserve">
+    <value>Релизные установки проверяют размер Game.patched.exe при запуске и перезаписывают патчи импорта .nmimp. Для релизных установок используйте режим Прокси (version.dll).</value>
   </data>
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>В этом репозитории нет модов.</value>
@@ -3960,6 +4053,9 @@
   <data name="Text_676796f86246" xml:space="preserve">
     <value>Недостаточно места: клиенту нужно ещё {0:0.#} ГБ на этом диске, а свободно {1:0.#} ГБ.</value>
   </data>
+  <data name="Text_677ef2f865ee" xml:space="preserve">
+    <value>Клиент {0}</value>
+  </data>
   <data name="Text_6795da662608" xml:space="preserve">
     <value>Вернуть ваши настройки игры</value>
   </data>
@@ -4007,6 +4103,9 @@
   </data>
   <data xml:space="preserve" name="Text_688ed737c588">
     <value>Запуск служб</value>
+  </data>
+  <data name="Text_689dda5ad7d3" xml:space="preserve">
+    <value>В релизе {0} отсутствует SHA-256 для {1}; ничего не установлено.</value>
   </data>
   <data xml:space="preserve" name="Text_68a30385dbf5">
     <value>Для любой схемы доступны светлая, тёмная и системная темы.</value>
@@ -4245,6 +4344,9 @@
   <data xml:space="preserve" name="Text_7034e1d32ac5">
     <value>Создать учётную запись LocalExile</value>
   </data>
+  <data name="Text_703d7ca16cde" xml:space="preserve">
+    <value>Проверка Game.patched.exe не пройдена: {0}</value>
+  </data>
   <data name="Text_7041902da299" xml:space="preserve">
     <value>Настроить запись</value>
   </data>
@@ -4362,6 +4464,9 @@
   <data name="Text_736ecab62973" xml:space="preserve">
     <value>Золотой ключ</value>
   </data>
+  <data name="Text_737e5bdfa710" xml:space="preserve">
+    <value>Установленные моды содержат datPatches, но автоматическая сборка .merged-cache требует Steam Bundles2/ или распакованных таблиц Client/Data/*.datc64.</value>
+  </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>Пока работает служба входа, Gateway или служба аккаунтов LocalExile, доступен только просмотр. Остановите службы, закройте игру и обновите данные. Ничего не изменено.</value>
   </data>
@@ -4419,8 +4524,14 @@
   <data name="Text_750af77aa42e" xml:space="preserve">
     <value>Используется</value>
   </data>
+  <data name="Text_7528568ac56b" xml:space="preserve">
+    <value>Не удалось собрать игровые данные включённых модов, поэтому в игре они могут отсутствовать или работать неправильно: {0}</value>
+  </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>Всё</value>
+  </data>
+  <data name="Text_7564fc0c0253" xml:space="preserve">
+    <value>Импорт папки dist…</value>
   </data>
   <data name="Text_758f487fe8e9" xml:space="preserve">
     <value>Инвентарь</value>
@@ -4505,6 +4616,9 @@
   </data>
   <data name="Text_77a53d9641e6" xml:space="preserve">
     <value>Убрать из списка</value>
+  </data>
+  <data name="Text_77c0896ef9ee" xml:space="preserve">
+    <value>Прямой доступ</value>
   </data>
   <data name="Text_77dc2a655f8e" xml:space="preserve">
     <value>Цветок</value>
@@ -4620,6 +4734,9 @@
   <data name="Text_7ad35008821d" xml:space="preserve">
     <value>Добавить имеющуюся папку…</value>
   </data>
+  <data name="Text_7ad6ac9abffb" xml:space="preserve">
+    <value>Waypoint не может прочитать файл {0}.</value>
+  </data>
   <data xml:space="preserve" name="Text_7af959bccf93">
     <value>Скачать SDK</value>
   </data>
@@ -4667,6 +4784,9 @@
   </data>
   <data name="Text_7bacc99e13ee" xml:space="preserve">
     <value>Найден только клиент {0}, поэтому эта копия перейдёт на последний LocalExile для него.</value>
+  </data>
+  <data name="Text_7bc04f6ccf5c" xml:space="preserve">
+    <value>Проверка пакета NativeMods…</value>
   </data>
   <data name="Text_7bc17e5802cf" xml:space="preserve">
     <value>Этой папки нет на месте: возможно, её переместили или переименовали, либо её диск не подключён. Ничего не изменено.</value>
@@ -4718,6 +4838,9 @@
   </data>
   <data name="Text_7d0a4fb5a543" xml:space="preserve">
     <value>Связан с {0}</value>
+  </data>
+  <data name="Text_7d20ef9b50c7" xml:space="preserve">
+    <value>Загрузка NativeMods {0} ({1:P0})…</value>
   </data>
   <data name="Text_7d2f06d53231" xml:space="preserve">
     <value>Проверить требования и обновить настройку, включая подготовку клиента. Сначала закройте игру и остановите серверы.</value>
@@ -4827,6 +4950,9 @@
   <data xml:space="preserve" name="Text_808fc010f815">
     <value>{0}: {1} при копировании</value>
   </data>
+  <data name="Text_80932a87ef60" xml:space="preserve">
+    <value>Папка Client в этом каталоге является ссылкой на другую папку; для NativeMods требуется локальная копия Client.</value>
+  </data>
   <data name="Text_809765cacb05" xml:space="preserve">
     <value>Этой лиге нужен этот мод. LocalExile не загружает лигу, пока мод не установлен или выключен. Снимите флажок, чтобы убрать его из списка.</value>
   </data>
@@ -4851,6 +4977,9 @@
   <data name="Text_81571a390103" xml:space="preserve">
     <value>Вход и выход</value>
   </data>
+  <data name="Text_81594954af1a" xml:space="preserve">
+    <value>Отсутствует Client/version.dll. Переустановите расширитель NativeMods.</value>
+  </data>
   <data name="Text_815c157dc783" xml:space="preserve">
     <value>Копирование в этот LocalExile; всё, что здесь уже есть, откладывается.</value>
   </data>
@@ -4868,6 +4997,9 @@
   </data>
   <data name="Text_821acaae8b95" xml:space="preserve">
     <value>Обновить на месте: дополнительное место не нужно, но {0} будет удалена с этого ПК.</value>
+  </data>
+  <data name="Text_821d57b85c7a" xml:space="preserve">
+    <value>В пакете NativeMods отсутствует {0}.</value>
   </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>В цепочке родителей этой лиги есть пропуск или цикл. Восстановите её определение перед редактированием.</value>
@@ -5001,6 +5133,9 @@
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>Удалить сохранённый предмет</value>
   </data>
+  <data name="Text_85b724593964" xml:space="preserve">
+    <value>Это удалит LocalExile.ClientHost.dll, version.dll и Client/nativemods-host/, а также восстановит Game.patched.exe, если применялся патч импорта. Оригинальный Game.exe не затрагивается.</value>
+  </data>
   <data name="Text_86166dd1d685" xml:space="preserve">
     <value>Перенести моих персонажей…</value>
   </data>
@@ -5013,8 +5148,14 @@
   <data name="Text_8624ca0fcb3c" xml:space="preserve">
     <value>Кисть</value>
   </data>
+  <data name="Text_8647a57480fa" xml:space="preserve">
+    <value>Невозможно установить NativeMods в связанную папку Client. Сначала сделайте копию клиента игры.</value>
+  </data>
   <data name="Text_865fa5f68659" xml:space="preserve">
     <value>Настройки не предоставлены для Waypoint</value>
+  </data>
+  <data name="Text_86979c6115c9" xml:space="preserve">
+    <value>Удалить расширитель NativeMods?</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>Сохранённых предметов пока нет. Соберите предмет и нажмите «Сохранить».</value>
@@ -5051,6 +5192,9 @@
   </data>
   <data xml:space="preserve" name="Text_87bb59ba2f92">
     <value>Рабочая папка</value>
+  </data>
+  <data name="Text_87dcccf60678" xml:space="preserve">
+    <value>Этот мод запрашивает прямой доступ к памяти/хукам (RawAccess): {0}</value>
   </data>
   <data name="Text_87df6810fe11" xml:space="preserve">
     <value>Общее время, делённое на число вызовов за период</value>
@@ -5151,6 +5295,9 @@
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>Дважды щёлкните команду, чтобы подставить её в строку.</value>
   </data>
+  <data name="Text_8a0ae6445e3d" xml:space="preserve">
+    <value>Установлен v{0} (требуется внимание) · {1}</value>
+  </data>
   <data name="Text_8a12ed1c823b" xml:space="preserve">
     <value>Эта копия — не клиент из Steam, поэтому Steam не может её завершить.</value>
   </data>
@@ -5247,6 +5394,9 @@
   <data name="Text_8c9e70a32535" xml:space="preserve">
     <value>Открыть карту лабиринта</value>
   </data>
+  <data name="Text_8d035d711720" xml:space="preserve">
+    <value>Клиентские файлы NativeMods для {0} развёрнуты.</value>
+  </data>
   <data name="Text_8d099abe78af" xml:space="preserve">
     <value>При закрытии окна</value>
   </data>
@@ -5277,8 +5427,14 @@
   <data name="Text_8d616d350961" xml:space="preserve">
     <value>15 мин</value>
   </data>
+  <data name="Text_8d675c5b178f" xml:space="preserve">
+    <value>NativeMods включён в настройках, но расширитель не установлен. Установите его в настройках или отключите NativeMods.</value>
+  </data>
   <data name="Text_8d968910c8ff" xml:space="preserve">
     <value>Загрузка из Steam. {0}</value>
+  </data>
+  <data name="Text_8d97f135f47e" xml:space="preserve">
+    <value>Установлен расширитель NativeMods {0} ({1}).</value>
   </data>
   <data name="Text_8d99a834e478" xml:space="preserve">
     <value>До завершения изменений игра и все службы LocalExile должны оставаться остановленными.</value>
@@ -5301,6 +5457,9 @@
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>пок. 2</value>
   </data>
+  <data name="Text_8e020bd1ba01" xml:space="preserve">
+    <value>Распакованный пакет NativeMods превышает ограничение размера в 512 МБ.</value>
+  </data>
   <data name="Text_8e18a81993ce" xml:space="preserve">
     <value>клиент не запущен</value>
   </data>
@@ -5312,6 +5471,9 @@
   </data>
   <data xml:space="preserve" name="Text_8e3cda3b4f8b">
     <value>Локальный HEAD недоступен</value>
+  </data>
+  <data name="Text_8e40b9dad0af" xml:space="preserve">
+    <value>Выберите папку NativeMods dist/win-x64</value>
   </data>
   <data name="Text_8e5407e6fdc9" xml:space="preserve">
     <value>Переименовать профиль</value>
@@ -5618,6 +5780,9 @@
   <data name="Text_96696ebb5f8d" xml:space="preserve">
     <value>Что копировать</value>
   </data>
+  <data name="Text_966a990b0178" xml:space="preserve">
+    <value>Архив NativeMods содержит более {0} файлов.</value>
+  </data>
   <data name="Text_966e3d979990" xml:space="preserve">
     <value>Используйте 3–48 латинских букв, цифр, пробелов, подчёркиваний или дефисов. Начните с буквы.</value>
   </data>
@@ -5777,6 +5942,9 @@
   <data name="Text_9a05eeed8b20" xml:space="preserve">
     <value>«Выдать предмет» работает через мод Waypoint Tools, а ни одна запущенная игра его не загрузила. Нажмите «Играть», включите мод в разделе «Моды», если он выключен, войдите в локацию персонажем и выдайте предмет снова.</value>
   </data>
+  <data name="Text_9a1bb325a41c" xml:space="preserve">
+    <value>Невозможно запустить NativeMods со связанной папкой Client. Сделайте копию клиента игры или отключите NativeMods в настройках.</value>
+  </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>Удалено сохранённых предметов: {0}</value>
   </data>
@@ -5823,8 +5991,14 @@
   <data name="Text_9b1120c28631" xml:space="preserve">
     <value>Папка журналов</value>
   </data>
+  <data name="Text_9b252a463c86" xml:space="preserve">
+    <value>{0} всё ещё выполняется. Дождитесь завершения.</value>
+  </data>
   <data name="Text_9b41ba20b8a3" xml:space="preserve">
     <value>Не загружен</value>
+  </data>
+  <data name="Text_9b5894c9b425" xml:space="preserve">
+    <value>Установка NativeMods {0}…</value>
   </data>
   <data xml:space="preserve" name="Text_9b6f051b7ea9">
     <value>Использовать локальную оболочку запуска репозитория, если она есть</value>
@@ -5927,6 +6101,9 @@
   </data>
   <data name="Text_9d4fdb63fa4f" xml:space="preserve">
     <value>Искать новый выпуск Waypoint при каждом запуске (только в релизных сборках)</value>
+  </data>
+  <data name="Text_9d53cfcd6786" xml:space="preserve">
+    <value>Архив NativeMods превышает ограничение размера в 256 МБ.</value>
   </data>
   <data name="Text_9d64ce84e2c3" xml:space="preserve">
     <value>Убрать {0}?</value>
@@ -6087,6 +6264,9 @@
   <data name="Text_a266fe9c4d1d" xml:space="preserve">
     <value>ПАМЯТЬ</value>
   </data>
+  <data name="Text_a291bca1429a" xml:space="preserve">
+    <value>Включённые моды ({0}) содержат клиентские модули NativeMods, но NativeMods сейчас отключён в настройках.</value>
+  </data>
   <data xml:space="preserve" name="Text_a2b0e1cca90c">
     <value>Перезагрузить включённый мод и зависимые от него моды.</value>
   </data>
@@ -6129,6 +6309,9 @@
   <data name="Text_a388bd2d373c" xml:space="preserve">
     <value>Незакоммиченные изменения</value>
   </data>
+  <data name="Text_a390769fcc7b" xml:space="preserve">
+    <value>Обратимо патчит таблицу импорта Client/Game.patched.exe (только для сборок из исходного кода).</value>
+  </data>
   <data name="Text_a390f2eec6ba" xml:space="preserve">
     <value>{0} теперь полная и сохранена в этой папке.</value>
   </data>
@@ -6140,6 +6323,9 @@
   </data>
   <data name="Text_a3ac0b8d4d94" xml:space="preserve">
     <value>1.  Загружает LocalExile в выбранную папку или находит уже имеющуюся копию</value>
+  </data>
+  <data name="Text_a3ae04c50419" xml:space="preserve">
+    <value>Файлы среды выполнения NativeMods неполные. Переустановите или проверьте NativeMods в настройках.</value>
   </data>
   <data name="Text_a3b50c476732" xml:space="preserve">
     <value>Состояние</value>
@@ -6225,6 +6411,9 @@
   <data name="Text_a540e34f130b" xml:space="preserve">
     <value>Область: {0} ({1})</value>
   </data>
+  <data name="Text_a547e176cef7" xml:space="preserve">
+    <value>Хэш SHA-256 для {0} не совпадает; ничего не установлено.</value>
+  </data>
   <data name="Text_a549da446e61" xml:space="preserve">
     <value>Создать лигу</value>
   </data>
@@ -6278,6 +6467,9 @@
   </data>
   <data name="Text_a656107e99c7" xml:space="preserve">
     <value>Статистика</value>
+  </data>
+  <data name="Text_a65627b726a7" xml:space="preserve">
+    <value>NativeMods включён в режиме патча импорта, но Game.patched.exe не пропатчен с .nmimp.</value>
   </data>
   <data name="Text_a65a4357e343" xml:space="preserve">
     <value>После изменения рабочей папки обновите аккаунты.</value>
@@ -6356,6 +6548,9 @@
   </data>
   <data xml:space="preserve" name="Text_a80983dbe5df">
     <value>Нужны запущенный Gateway, включённый собранный мод и клиент в игровой области (Python + Frida).</value>
+  </data>
+  <data name="Text_a811f76565cd" xml:space="preserve">
+    <value>Закройте Path of Exile перед изменением расширителя NativeMods.</value>
   </data>
   <data name="Text_a81c1cd77e8e" xml:space="preserve">
     <value>Эта папка использует игровой клиент другой папки LocalExile: что меняется там, меняется и здесь.</value>
@@ -6473,6 +6668,9 @@
   </data>
   <data name="Text_abb39b8adf1f" xml:space="preserve">
     <value>Отчёт диагностики</value>
+  </data>
+  <data name="Text_abd5f06f5144" xml:space="preserve">
+    <value>Установить / обновить с GitHub</value>
   </data>
   <data name="Text_abe6ba498754" xml:space="preserve">
     <value>3.  Найдёт ваш игровой клиент или позволит указать его вручную</value>
@@ -6594,6 +6792,9 @@
   <data name="Text_af0303342a01" xml:space="preserve">
     <value>Открыть страницу</value>
   </data>
+  <data name="Text_af077f654c73" xml:space="preserve">
+    <value>Waypoint не может прочитать папку {0}.</value>
+  </data>
   <data name="Text_af20391b2b63" xml:space="preserve">
     <value>Игра запущена: «Играть» закроет её и запустит снова; серверы продолжат работать.</value>
   </data>
@@ -6617,6 +6818,9 @@
   </data>
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>Союз</value>
+  </data>
+  <data name="Text_b006f64653aa" xml:space="preserve">
+    <value>Импорт локального zip…</value>
   </data>
   <data name="Text_b0091e7175aa" xml:space="preserve">
     <value>Множитель комиссии золотом за заявку.</value>
@@ -6867,6 +7071,9 @@
   <data xml:space="preserve" name="Text_b6b099ac3763">
     <value>Цветовое восприятие</value>
   </data>
+  <data name="Text_b6b72a90ff22" xml:space="preserve">
+    <value>Архив NativeMods не содержит файлов.</value>
+  </data>
   <data name="Text_b6cd626295f1" xml:space="preserve">
     <value>Предмет: {0}</value>
   </data>
@@ -6881,6 +7088,9 @@
   </data>
   <data name="Text_b764cdc0eab7" xml:space="preserve">
     <value>Неизвестно</value>
+  </data>
+  <data name="Text_b76ada2a3c0c" xml:space="preserve">
+    <value>Проверка последнего релиза NativeMods на GitHub…</value>
   </data>
   <data name="Text_b77636c1849a" xml:space="preserve">
     <value>Собрать LocalExile</value>
@@ -6897,11 +7107,17 @@
   <data xml:space="preserve" name="Text_b7ba5c1d1a1a">
     <value>▶  Играть</value>
   </data>
+  <data name="Text_b7c39b73e0aa" xml:space="preserve">
+    <value>NativeMods (клиентский расширитель)</value>
+  </data>
   <data xml:space="preserve" name="Text_b7cd0acd1470">
     <value>Сохранять контрастность текста</value>
   </data>
   <data xml:space="preserve" name="Text_b7d1e0571f80">
     <value>Не удалось проверить рабочую папку. Устраните проблему в настройках и обновите состояние.</value>
+  </data>
+  <data name="Text_b7dd58f44241" xml:space="preserve">
+    <value>Обновление NativeMods</value>
   </data>
   <data name="Text_b7ef99f143b7" xml:space="preserve">
     <value>Игровой модуль · {0}</value>
@@ -7023,11 +7239,17 @@
   <data name="Text_baaf468928e9" xml:space="preserve">
     <value>Проверить порты серверов</value>
   </data>
+  <data name="Text_baafd15a862d" xml:space="preserve">
+    <value>Установить мод NativeMods {0}?</value>
+  </data>
   <data name="Text_bac82328e0cd" xml:space="preserve">
     <value>Это сочетание модулей не определено для данной лиги и режима. Неизвестные сочетания заблокированы.</value>
   </data>
   <data name="Text_bad2b893e5a4" xml:space="preserve">
     <value>Сезон</value>
+  </data>
+  <data name="Text_bad5657579d9" xml:space="preserve">
+    <value>Не удалось применить патч .nmimp к Game.patched.exe: {0}</value>
   </data>
   <data name="Text_bae1e8710ff4" xml:space="preserve">
     <value>Оставьте обязательный игровой набор включённым. Его модули не объявлены независимо отключаемыми.</value>
@@ -7043,6 +7265,9 @@
   </data>
   <data name="Text_bb213b706609" xml:space="preserve">
     <value>Сейчас ни одна лига не использует этот модуль.</value>
+  </data>
+  <data name="Text_bb3193b6ee6e" xml:space="preserve">
+    <value>Загрузка NativeMods {0}…</value>
   </data>
   <data name="Text_bb5e603fa102" xml:space="preserve">
     <value>Далее выберите модули и проверьте свою лигу.</value>
@@ -7272,6 +7497,9 @@
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Требует внимания</value>
   </data>
+  <data name="Text_c1ee908756b7" xml:space="preserve">
+    <value>Не удалось восстановить Game.patched.exe при отключении NativeMods: {0}</value>
+  </data>
   <data name="Text_c201813d895d" xml:space="preserve">
     <value>Используются: ваши обычные настройки Path of Exile ({0}). Выберите или создайте папку, чтобы у LocalExile были свои.</value>
   </data>
@@ -7368,6 +7596,9 @@
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>Запомнить для следующего раза</value>
   </data>
+  <data name="Text_c5240cc93783" xml:space="preserve">
+    <value>Предварительная проверка NativeMods не пройдена.</value>
+  </data>
   <data name="Text_c533559f1887" xml:space="preserve">
     <value>{0} допускает только названные в нём модули и моды, а {1} среди них нет.</value>
   </data>
@@ -7422,6 +7653,9 @@
   <data name="Text_c6d5a902b1fb" xml:space="preserve">
     <value>Убрать репозиторий</value>
   </data>
+  <data name="Text_c6df5e815a88" xml:space="preserve">
+    <value>Выберите архив релиза NativeMods (.zip)</value>
+  </data>
   <data name="Text_c6edad1de780" xml:space="preserve">
     <value>Не удалось свернуть в трей: </value>
   </data>
@@ -7434,6 +7668,9 @@
   </data>
   <data name="Text_c70b1b11d134" xml:space="preserve">
     <value>Ремесленные (верстак)</value>
+  </data>
+  <data name="Text_c71204b67565" xml:space="preserve">
+    <value>Отсутствует Client/Game.patched.exe. Сначала подготовьте клиент игры.</value>
   </data>
   <data name="Text_c71631b07e40" xml:space="preserve">
     <value>Обновить на месте</value>
@@ -7498,6 +7735,9 @@
   <data name="Text_c83931177471" xml:space="preserve">
     <value>Это не предмет: скопируйте его через Ctrl+C в Path of Building или в игре.</value>
   </data>
+  <data name="Text_c852137f5878" xml:space="preserve">
+    <value>Релиз NativeMods не найден на GitHub ({0}).</value>
+  </data>
   <data name="Text_c86ca7b723e9" xml:space="preserve">
     <value>Мод, который работает во всех лигах. Снимите флажок, чтобы убрать его из списка.</value>
   </data>
@@ -7527,6 +7767,9 @@
   </data>
   <data name="Text_c8d3fc567bbc" xml:space="preserve">
     <value>Защита</value>
+  </data>
+  <data name="Text_c8d67f255915" xml:space="preserve">
+    <value>Удалить только расширитель</value>
   </data>
   <data name="Text_c8d6b52dde33" xml:space="preserve">
     <value>T{0} · уровень {1}</value>
@@ -7707,6 +7950,9 @@
   <data name="Text_cd55a9d95751" xml:space="preserve">
     <value>{0} · {1}</value>
   </data>
+  <data name="Text_cd6e8b455ec6" xml:space="preserve">
+    <value>Неизвестная сборка клиента</value>
+  </data>
   <data name="Text_cd77503a4522" xml:space="preserve">
     <value>Команда скопирована, но в ней {0} символов, а чат игры принимает {1}. Используйте «Выдать предмет».</value>
   </data>
@@ -7748,6 +7994,9 @@
   </data>
   <data name="Text_cf051d46df67" xml:space="preserve">
     <value>игровые данные ещё не извлечены (шаг 7)</value>
+  </data>
+  <data name="Text_cf3b204a9fd5" xml:space="preserve">
+    <value>Отсутствует файл библиотеки адресов в Client/nativemods-host/addresses/.</value>
   </data>
   <data xml:space="preserve" name="Text_cf47dcf7cadf">
     <value>Что поддерживается</value>
@@ -7890,6 +8139,9 @@
   <data name="Text_d40afb35e5e4" xml:space="preserve">
     <value>Входит в собственный набор этой лиги. Перед отключением будет запрошено подтверждение.</value>
   </data>
+  <data name="Text_d40fa4bb924b" xml:space="preserve">
+    <value>Не удалось снять патч с Game.patched.exe перед переключением в режим прокси: {0}</value>
+  </data>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>Выбранные режимы: {0}</value>
   </data>
@@ -7956,6 +8208,9 @@
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>нет таймингов: {0}</value>
   </data>
+  <data name="Text_d5f5e6f16bf5" xml:space="preserve">
+    <value>Этот мод запрашивает RawAccess и требует явного подтверждения.</value>
+  </data>
   <data name="Text_d60a318dd8a0" xml:space="preserve">
     <value>Обмен</value>
   </data>
@@ -7973,6 +8228,9 @@
   </data>
   <data xml:space="preserve" name="Text_d68761cc1eb2">
     <value>Размер текста</value>
+  </data>
+  <data name="Text_d69500c2c95e" xml:space="preserve">
+    <value>Обновление кэша NativeMods</value>
   </data>
   <data name="Text_d6961e5e450e" xml:space="preserve">
     <value>Всё установлено.</value>
@@ -8061,6 +8319,9 @@
   <data name="Text_d848702976bf" xml:space="preserve">
     <value>Оставить текущий LocalExile как есть. У каждой копии свой прогресс.</value>
   </data>
+  <data name="Text_d848a5144b5a" xml:space="preserve">
+    <value>Установка клиентского модуля NativeMods</value>
+  </data>
   <data name="Text_d869e1c9fe5a" xml:space="preserve">
     <value>Выход отменён. Закройте игру перед остановкой служб.</value>
   </data>
@@ -8135,6 +8396,9 @@
   </data>
   <data xml:space="preserve" name="Text_db03e3055c5a">
     <value>Страницы рабочей папки</value>
+  </data>
+  <data name="Text_db122dc40c94" xml:space="preserve">
+    <value>Для чтения таблиц этого клиента нужен Node.js, но он не найден. Установите Node.js или укажите его в настройках.</value>
   </data>
   <data name="Text_db13497649fa" xml:space="preserve">
     <value>Создание отдельного Python-окружения для этой копии.</value>
@@ -8325,6 +8589,9 @@
   <data name="Text_e020e3c67bd0" xml:space="preserve">
     <value>Релиз</value>
   </data>
+  <data name="Text_e0235d76ddbf" xml:space="preserve">
+    <value>Прокси (version.dll)</value>
+  </data>
   <data name="Text_e0283282bcfd" xml:space="preserve">
     <value>Введите описание длиной от 1 до 2000 символов.</value>
   </data>
@@ -8464,6 +8731,9 @@
   <data xml:space="preserve" name="Text_e30ce05d3185">
     <value>Дополнительные цвета интерфейса</value>
   </data>
+  <data name="Text_e32dc1087901" xml:space="preserve">
+    <value>Содержит клиентский модуль NativeMods. Включите NativeMods в настройках для всех клиентских функций.</value>
+  </data>
   <data name="Text_e33cc52f3308" xml:space="preserve">
     <value>Опыт за убийство</value>
   </data>
@@ -8575,6 +8845,9 @@
   <data name="Text_e64a3e6ff925" xml:space="preserve">
     <value>Запись планировки областей</value>
   </data>
+  <data name="Text_e64aad043581" xml:space="preserve">
+    <value>Загружаемый файл NativeMods превышает ограничение размера в 256 МБ.</value>
+  </data>
   <data name="Text_e66094b9faf9" xml:space="preserve">
     <value>У вас ещё нет релиза</value>
   </data>
@@ -8685,6 +8958,9 @@
   </data>
   <data name="Text_e984e8f6d556" xml:space="preserve">
     <value>У этой лиги свои персонажи и тайник. Ничего не будет перенесено в Standard.</value>
+  </data>
+  <data name="Text_e9942a60b429" xml:space="preserve">
+    <value>Режим патча импорта (.nmimp) не поддерживается в релизных установках, так как LocalExile.exe проверяет размер Game.patched.exe и сбрасывает его. Используйте режим Прокси (version.dll).</value>
   </data>
   <data name="Text_e9988a42ca34" xml:space="preserve">
     <value>Waypoint не удалось найти свой исполняемый файл.</value>
@@ -8890,6 +9166,9 @@
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Отслеживание работает, но дочерний процесс Gateway не запущен. Проверьте ошибки сборки в выводе Gateway.</value>
   </data>
+  <data name="Text_eea2745e2867" xml:space="preserve">
+    <value>Проверить</value>
+  </data>
   <data xml:space="preserve" name="Text_eeaf3fc78d1a">
     <value>Перед изменением этих параметров дождитесь завершения операции.</value>
   </data>
@@ -9084,6 +9363,9 @@
   <data name="Text_f2d1dab08310" xml:space="preserve">
     <value>NPC</value>
   </data>
+  <data name="Text_f2efb785f377" xml:space="preserve">
+    <value>Этот мод переопределяет {0} исходных путей игры через оверлей.</value>
+  </data>
   <data name="Text_f2faba4b22de" xml:space="preserve">
     <value>Моды, модули и лиги</value>
   </data>
@@ -9101,6 +9383,9 @@
   </data>
   <data name="Text_f34ba9fc922c" xml:space="preserve">
     <value>Случайное имя</value>
+  </data>
+  <data name="Text_f359f6903ef7" xml:space="preserve">
+    <value>Режим патча импорта (.nmimp) не поддерживается в релизных установках, так как LocalExile.exe проверяет размер Game.patched.exe и сбрасывает его. Переключитесь на режим Прокси (version.dll).</value>
   </data>
   <data name="Text_f38938ee1db3" xml:space="preserve">
     <value>Изменения действуют во всех лигах, использующих этот модуль.</value>
@@ -9138,6 +9423,9 @@
   </data>
   <data xml:space="preserve" name="Text_f4bfa9a07c59">
     <value>Будет установлена зафиксированная зависимость Node в Tools/ooz командой npm ci. Глобальная установка не выполняется. Сначала установите Node.js.</value>
+  </data>
+  <data name="Text_f4cad1a9af76" xml:space="preserve">
+    <value>Режим патча импорта (.nmimp) не поддерживается в релизных установках, так как LocalExile.exe проверяет размер Game.patched.exe и сбрасывает его. Переключитесь на режим Прокси (version.dll) в настройках.</value>
   </data>
   <data xml:space="preserve" name="Text_f4ccae29e1bb">
     <value>Работает</value>
@@ -9237,6 +9525,9 @@
   </data>
   <data name="Text_f73bbf129e06" xml:space="preserve">
     <value>Игра, моды и аккаунты. Waypoint сам обновляет LocalExile.</value>
+  </data>
+  <data name="Text_f74d052b89ff" xml:space="preserve">
+    <value>В пакете NativeMods отсутствует обязательный файл среды выполнения {0}.</value>
   </data>
   <data name="Text_f75fb17e58b6" xml:space="preserve">
     <value>Выберите папку мода (с его mod.json)</value>
@@ -9424,6 +9715,9 @@
   <data name="Text_fb62fe2ae6b2" xml:space="preserve">
     <value>{0}: {1}</value>
   </data>
+  <data name="Text_fb6975e1d958" xml:space="preserve">
+    <value>Установлен v{0} (отключён) · {1}</value>
+  </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>Проверить снова</value>
   </data>
@@ -9456,6 +9750,9 @@
   </data>
   <data name="Text_fc5e4f92ee14" xml:space="preserve">
     <value>Для разработчиков: использовать саму эту папку вместо копии. LocalExile изменяет в ней файлы, и обновление Path of Exile в этой папке может сломать этот LocalExile.</value>
+  </data>
+  <data name="Text_fc81f966d0f6" xml:space="preserve">
+    <value>Расширитель NativeMods полностью удалён.</value>
   </data>
   <data xml:space="preserve" name="Text_fca91d59bc5a">
     <value>Для начала выберите репозиторий.</value>

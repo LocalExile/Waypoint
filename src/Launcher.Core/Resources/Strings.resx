@@ -99,6 +99,9 @@
   <data xml:space="preserve" name="Text_02262050828b">
     <value>Replacing only this installation's saves; source, client and keys are unchanged.</value>
   </data>
+  <data name="Text_022ac3a4efa5" xml:space="preserve">
+    <value>NativeMods is enabled in Proxy mode, but Client/version.dll is not active.</value>
+  </data>
   <data name="Text_024dc204d7ba" xml:space="preserve">
     <value>Area</value>
   </data>
@@ -201,6 +204,9 @@
   <data name="Text_0543defbc095" xml:space="preserve">
     <value>this build from source</value>
   </data>
+  <data name="Text_0574c9597cf8" xml:space="preserve">
+    <value>The selected NativeMods bundle does not include version.dll required for Proxy mode.</value>
+  </data>
   <data xml:space="preserve" name="Text_057c2971fa56">
     <value>Could not read local branches. Check the selected Git checkout. </value>
   </data>
@@ -218,6 +224,9 @@
   </data>
   <data xml:space="preserve" name="Text_05d3ec58206c">
     <value>Keyboard focus</value>
+  </data>
+  <data name="Text_05f86a5b51cc" xml:space="preserve">
+    <value>Not installed (off by default) · {0}</value>
   </data>
   <data name="Text_0601b77efc9d" xml:space="preserve">
     <value>The running Waypoint could not be contacted. Close it normally and try again. Use the same Windows permission level for both copies.</value>
@@ -261,6 +270,9 @@
   <data name="Text_06fd5b0dcece" xml:space="preserve">
     <value>{0}: not a whole number</value>
   </data>
+  <data name="Text_070443b8a624" xml:space="preserve">
+    <value>Dat patches</value>
+  </data>
   <data name="Text_070d63bf412e" xml:space="preserve">
     <value>Another Waypoint build is already open. Close that window normally before opening this build. Existing operations and services have not been stopped.</value>
   </data>
@@ -281,6 +293,9 @@
   </data>
   <data xml:space="preserve" name="Text_07c99f3f9c05">
     <value>Compile failed</value>
+  </data>
+  <data name="Text_07cf85522374" xml:space="preserve">
+    <value>Client build {0} is not supported by NativeMods (supported: 3.29.3c, 3.29.3d).</value>
   </data>
   <data name="Text_07dae607b4dc" xml:space="preserve">
     <value>Use the game client of your current LocalExile, so it takes no extra space.</value>
@@ -414,6 +429,9 @@
   <data name="Text_0baa876a211d" xml:space="preserve">
     <value>The item shows here as you make it.</value>
   </data>
+  <data name="Text_0bc28157dc37" xml:space="preserve">
+    <value>NativeMods</value>
+  </data>
   <data name="Text_0bcd66e677f4" xml:space="preserve">
     <value>Layers</value>
   </data>
@@ -437,6 +455,9 @@
   </data>
   <data xml:space="preserve" name="Text_0c26cc1e71ab">
     <value>Watcher is alive; waiting for its Gateway child. Open Gateway output if this persists.</value>
+  </data>
+  <data name="Text_0c27aab64dad" xml:space="preserve">
+    <value>Missing managed runtime file: Client/nativemods-host/{0}.</value>
   </data>
   <data name="Text_0c2d719569e0" xml:space="preserve">
     <value>Build and install</value>
@@ -590,6 +611,9 @@
   </data>
   <data name="Text_0f17c1790f9b" xml:space="preserve">
     <value>The game or services are still running. Waypoint will stay open. No force termination was attempted.</value>
+  </data>
+  <data name="Text_0f238ae77600" xml:space="preserve">
+    <value>Off by default. Loads client-side NativeMods overlays and plugins for PoE 3.29.3c/3.29.3d without modifying stock Game.exe or game archives.</value>
   </data>
   <data name="Text_0f2a0b21016e" xml:space="preserve">
     <value>{0} not installed</value>
@@ -1090,6 +1114,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_1cb3a13595dc" xml:space="preserve">
     <value>game settings are separate ({0})</value>
   </data>
+  <data name="Text_1cbce48d29aa" xml:space="preserve">
+    <value>NativeMods is currently off in Settings. You can still install the mod now and enable NativeMods in Settings later.</value>
+  </data>
   <data name="Text_1cbd771e134f" xml:space="preserve">
     <value>This folder is Latest: LocalExile's newest changes, from its source. Switch to the release to keep Simple mode, or use Advanced mode to play this copy and pick branches and pull requests.</value>
   </data>
@@ -1267,6 +1294,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_21d641e62ada" xml:space="preserve">
     <value>LocalExile is built. Add your game client with this guide when you have it: Setup → Run setup guide.</value>
   </data>
+  <data name="Text_21ddea0a8a93" xml:space="preserve">
+    <value>Approve RawAccess for {0}?</value>
+  </data>
   <data name="Text_21ea97893c68" xml:space="preserve">
     <value>This checkout's Gateway has no item crafter yet: update LocalExile, then play or start the servers once to build it.</value>
   </data>
@@ -1344,6 +1374,9 @@ Close the game and anything else using that folder, then try again.</value>
   </data>
   <data name="Text_237ce534dbd1" xml:space="preserve">
     <value>Invalid or duplicate league.</value>
+  </data>
+  <data name="Text_239be899f024" xml:space="preserve">
+    <value>Import patch (.nmimp)</value>
   </data>
   <data name="Text_23a7fbf942ec" xml:space="preserve">
     <value>That update didn't work, so you're on the version you had.</value>
@@ -1519,6 +1552,9 @@ Close the game and anything else using that folder, then try again.</value>
   <data name="Text_2743551363a4" xml:space="preserve">
     <value>Monster packs</value>
   </data>
+  <data name="Text_2743e9f31032" xml:space="preserve">
+    <value>Release {0} does not contain a win-x64 zip archive.</value>
+  </data>
   <data xml:space="preserve" name="Text_275dbda9dedb">
     <value>Sunset</value>
   </data>
@@ -1594,6 +1630,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_291d2a97565f" xml:space="preserve">
     <value>Rare</value>
+  </data>
+  <data name="Text_29246aacda23" xml:space="preserve">
+    <value>NativeMods enabled ({0}).</value>
   </data>
   <data name="Text_292979c1afe7" xml:space="preserve">
     <value>Waypoint makes a copy of this client for the folder in use: {0:0.#} GB.</value>
@@ -1684,6 +1723,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data xml:space="preserve" name="Text_2ad580eaee79">
     <value>Restore mod choices</value>
+  </data>
+  <data name="Text_2ae29d348107" xml:space="preserve">
+    <value>Uninstall and archive client mods</value>
   </data>
   <data name="Text_2ae8aced0bae" xml:space="preserve">
     <value>Landmarks</value>
@@ -1780,6 +1822,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_2d895f09eb26" xml:space="preserve">
     <value>No release: installs the source</value>
+  </data>
+  <data name="Text_2daf6f600120" xml:space="preserve">
+    <value>Uninstall NativeMods</value>
   </data>
   <data xml:space="preserve" name="Text_2dafe4f58ab0">
     <value> · tracked files modified</value>
@@ -1939,6 +1984,9 @@ Change location above to choose somewhere else.</value>
   </data>
   <data name="Text_314b16a3d271" xml:space="preserve">
     <value>Client messages</value>
+  </data>
+  <data name="Text_315af7add787" xml:space="preserve">
+    <value>NativeMods disabled. The game will launch without the extender.</value>
   </data>
   <data xml:space="preserve" name="Text_316e8e8cbc2d">
     <value>Choose a backup to inspect its source and mod history.</value>
@@ -2334,11 +2382,17 @@ This checkout has modified tracked files.</value>
   <data name="Text_3b7ffa42c6e0" xml:space="preserve">
     <value>Also applies to Exit Waypoint from the tray menu.</value>
   </data>
+  <data name="Text_3b81418e4f26" xml:space="preserve">
+    <value>Install the NativeMods extender first before enabling it.</value>
+  </data>
   <data name="Text_3b891891e321" xml:space="preserve">
     <value>Make any item: a base, its rarity, modifiers with their values, sockets and influences. Save it to come back to it, and give it to the character in game.</value>
   </data>
   <data name="Text_3baed9f4ed86" xml:space="preserve">
     <value>Charge disruptors</value>
+  </data>
+  <data name="Text_3bb0e864a933" xml:space="preserve">
+    <value>Cannot modify NativeMods in a linked Client folder.</value>
   </data>
   <data name="Text_3bc85df158e7" xml:space="preserve">
     <value> + {0} more</value>
@@ -2448,6 +2502,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_3e56f666f5c7" xml:space="preserve">
     <value>The game folder changed while it was copied, so the copy was not used.</value>
+  </data>
+  <data name="Text_3e84d6ada160" xml:space="preserve">
+    <value>Not installed · {0}</value>
   </data>
   <data name="Text_3e8cf9c948a6" xml:space="preserve">
     <value>Nothing was changed. Press Play to try again.</value>
@@ -2655,6 +2712,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_4556e8f76b8d" xml:space="preserve">
     <value>The download failed (git exit {0}). Check your connection and try again.</value>
+  </data>
+  <data name="Text_455bc2044506" xml:space="preserve">
+    <value>Enable NativeMods client extender (opt-in)</value>
   </data>
   <data name="Text_457f300c3c08" xml:space="preserve">
     <value>Adds configurable bonus rolls for specific currencies on monster kills.</value>
@@ -3061,6 +3121,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_4ec6dbda5bb3" xml:space="preserve">
     <value>LocalExile was updated.</value>
   </data>
+  <data name="Text_4ed167c6db1b" xml:space="preserve">
+    <value>Standalone Content.ggpk client detected: automatic .merged-cache rebuild requires Steam Bundles2/ or extracted Client/Data/*.datc64 tables.</value>
+  </data>
   <data name="Text_4ed2e771f1b1" xml:space="preserve">
     <value>Starting area capture</value>
   </data>
@@ -3084,6 +3147,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_4f4bcbb48773">
     <value>CURRENT SOURCE</value>
+  </data>
+  <data name="Text_4f9e568c5d0e" xml:space="preserve">
+    <value>Requires the NativeMods client extender. Enable it in Settings.</value>
   </data>
   <data name="Text_4feda881a8e2" xml:space="preserve">
     <value>the bridge stopped: {0}</value>
@@ -3147,6 +3213,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_515ed25002b7" xml:space="preserve">
     <value>Move to Path of Exile {0}?</value>
+  </data>
+  <data name="Text_516a56472b5d" xml:space="preserve">
+    <value>Client mod installation was blocked by validation.</value>
   </data>
   <data name="Text_5174093cf95b" xml:space="preserve">
     <value>Keep the older version; it won't update.</value>
@@ -3249,6 +3318,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data xml:space="preserve" name="Text_54377045445b">
     <value>Building preparation tools</value>
+  </data>
+  <data name="Text_543cdb0127f4" xml:space="preserve">
+    <value>Install NativeMods</value>
   </data>
   <data name="Text_544b891ecca8" xml:space="preserve">
     <value>That folder can't be used</value>
@@ -3373,6 +3445,9 @@ This checkout has modified tracked files.</value>
   <data name="Text_573bf7ff7f9e" xml:space="preserve">
     <value>Nothing changes. If this client shares its settings with your normal game, you set Networking Mode to Predictive in the game yourself.</value>
   </data>
+  <data name="Text_574197840671" xml:space="preserve">
+    <value>Could not unpatch Game.patched.exe before activating Proxy mode: {0}</value>
+  </data>
   <data name="Text_5774139d115b" xml:space="preserve">
     <value>Lieutenants</value>
   </data>
@@ -3384,6 +3459,9 @@ This checkout has modified tracked files.</value>
   </data>
   <data name="Text_57fd7a0cf33f" xml:space="preserve">
     <value>Selected</value>
+  </data>
+  <data name="Text_5816cb604280" xml:space="preserve">
+    <value>Requires NativeMods</value>
   </data>
   <data name="Text_581dec3ed74b" xml:space="preserve">
     <value>LAST COMMIT</value>
@@ -3404,6 +3482,9 @@ This checkout has modified tracked files.</value>
     <value>Delete only the backup from {0:g}?
 
 Current saves are unchanged. This backup will no longer be available to restore.</value>
+  </data>
+  <data name="Text_588025366d03" xml:space="preserve">
+    <value>Active v{0} ({1}) · {2} · {3} client mod(s)</value>
   </data>
   <data xml:space="preserve" name="Text_589877b1a7f3">
     <value>Runtime last checked: </value>
@@ -3468,6 +3549,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data name="Text_5a2a9ccda1eb" xml:space="preserve">
     <value>The older version could not be chosen (git exit {0}).</value>
   </data>
+  <data name="Text_5a2f4e27bf22" xml:space="preserve">
+    <value>The NativeMods archive holds an unsafe path, {0}.</value>
+  </data>
   <data name="Text_5a56864947f6" xml:space="preserve">
     <value>No leagues</value>
   </data>
@@ -3519,6 +3603,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data name="Text_5c1a1026eda3" xml:space="preserve">
     <value>Everything is in place. Press Play in Waypoint to start the servers and the game. LocalExile has its own game settings, so your normal Path of Exile keeps its own.</value>
   </data>
+  <data name="Text_5c326651cfc4" xml:space="preserve">
+    <value>NativeMods preference saved.</value>
+  </data>
   <data xml:space="preserve" name="Text_5c412a262086">
     <value>Game</value>
   </data>
@@ -3552,6 +3639,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   <data xml:space="preserve" name="Text_5cc72d6218d1">
     <value>Accounts, characters and saved progress for this checkout. Save restore and mod choices are separate actions.</value>
   </data>
+  <data name="Text_5cce07b9819d" xml:space="preserve">
+    <value>No stock Client/Bundles2 or Client/Data tables found to build Mods/Client/.merged-cache/.</value>
+  </data>
   <data name="Text_5d1765a3435c" xml:space="preserve">
     <value>Supply one folder after --repo.</value>
   </data>
@@ -3584,6 +3674,9 @@ Current saves are unchanged. This backup will no longer be available to restore.
   </data>
   <data name="Text_5efc124c61fa" xml:space="preserve">
     <value>Pedestals</value>
+  </data>
+  <data name="Text_5f0830a4ed6c" xml:space="preserve">
+    <value>Release installs check Game.patched.exe file size on launch and overwrite .nmimp import patches. Use Proxy (version.dll) mode for release installs.</value>
   </data>
   <data name="Text_5f08e07b3e2b" xml:space="preserve">
     <value>This repository lists no mods.</value>
@@ -3960,6 +4053,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_676796f86246" xml:space="preserve">
     <value>Not enough free space: the client needs {0:0.#} GB more on this drive, and {1:0.#} GB is free.</value>
   </data>
+  <data name="Text_677ef2f865ee" xml:space="preserve">
+    <value>Client {0}</value>
+  </data>
   <data name="Text_6795da662608" xml:space="preserve">
     <value>Bring back your game settings</value>
   </data>
@@ -4007,6 +4103,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_688ed737c588">
     <value>Starting services</value>
+  </data>
+  <data name="Text_689dda5ad7d3" xml:space="preserve">
+    <value>Release {0} has no SHA-256 for {1}; nothing was installed.</value>
   </data>
   <data xml:space="preserve" name="Text_68a30385dbf5">
     <value>Every color scheme supports Light, Dark and System.</value>
@@ -4245,6 +4344,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_7034e1d32ac5">
     <value>Create a LocalExile account</value>
   </data>
+  <data name="Text_703d7ca16cde" xml:space="preserve">
+    <value>Game.patched.exe check failed: {0}</value>
+  </data>
   <data name="Text_7041902da299" xml:space="preserve">
     <value>Set up capture</value>
   </data>
@@ -4362,6 +4464,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_736ecab62973" xml:space="preserve">
     <value>Gold key</value>
   </data>
+  <data name="Text_737e5bdfa710" xml:space="preserve">
+    <value>Installed mods declare datPatches, but automatic .merged-cache building requires Steam Bundles2/ or extracted Client/Data/*.datc64 tables.</value>
+  </data>
   <data name="Text_738060ca8527" xml:space="preserve">
     <value>Account changes are read-only while any LocalExile login, Gateway or account-service process is running. Stop those services and close the game, then refresh. Nothing was changed.</value>
   </data>
@@ -4419,8 +4524,14 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_750af77aa42e" xml:space="preserve">
     <value>In use</value>
   </data>
+  <data name="Text_7528568ac56b" xml:space="preserve">
+    <value>The enabled mods' game data could not be built, so they may be missing or wrong in the game: {0}</value>
+  </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>Everything</value>
+  </data>
+  <data name="Text_7564fc0c0253" xml:space="preserve">
+    <value>Import dist folder…</value>
   </data>
   <data name="Text_758f487fe8e9" xml:space="preserve">
     <value>Inventory</value>
@@ -4505,6 +4616,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_77a53d9641e6" xml:space="preserve">
     <value>Take it off the list</value>
+  </data>
+  <data name="Text_77c0896ef9ee" xml:space="preserve">
+    <value>Raw access</value>
   </data>
   <data name="Text_77dc2a655f8e" xml:space="preserve">
     <value>Flower</value>
@@ -4620,6 +4734,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_7ad35008821d" xml:space="preserve">
     <value>Add a folder you already have…</value>
   </data>
+  <data name="Text_7ad6ac9abffb" xml:space="preserve">
+    <value>{0} is not a file Waypoint can read.</value>
+  </data>
   <data xml:space="preserve" name="Text_7af959bccf93">
     <value>Get SDK</value>
   </data>
@@ -4667,6 +4784,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7bacc99e13ee" xml:space="preserve">
     <value>Only a {0} client was found, so this copy moves to the last LocalExile made for it.</value>
+  </data>
+  <data name="Text_7bc04f6ccf5c" xml:space="preserve">
+    <value>Validating NativeMods bundle…</value>
   </data>
   <data name="Text_7bc17e5802cf" xml:space="preserve">
     <value>This folder is not there: it may have been moved or renamed, or its drive is not connected. Nothing has been changed.</value>
@@ -4718,6 +4838,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7d0a4fb5a543" xml:space="preserve">
     <value>Linked to {0}</value>
+  </data>
+  <data name="Text_7d20ef9b50c7" xml:space="preserve">
+    <value>Downloading NativeMods {0} ({1:P0})…</value>
   </data>
   <data name="Text_7d2f06d53231" xml:space="preserve">
     <value>Recheck requirements and refresh this setup, including client preparation. Close the game and stop servers first.</value>
@@ -4827,6 +4950,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data xml:space="preserve" name="Text_808fc010f815">
     <value>{0}: {1} at backup</value>
   </data>
+  <data name="Text_80932a87ef60" xml:space="preserve">
+    <value>This folder's Client is a link to another folder; NativeMods requires a local copy of Client.</value>
+  </data>
   <data name="Text_809765cacb05" xml:space="preserve">
     <value>This league needs this mod. LocalExile does not load the league while the mod is not installed or is turned off. Untick it to take it off the list.</value>
   </data>
@@ -4851,6 +4977,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_81571a390103" xml:space="preserve">
     <value>Entrance and exit</value>
   </data>
+  <data name="Text_81594954af1a" xml:space="preserve">
+    <value>Client/version.dll is missing. Reinstall the NativeMods extender.</value>
+  </data>
   <data name="Text_815c157dc783" xml:space="preserve">
     <value>Copying them into this LocalExile; anything already here is set aside.</value>
   </data>
@@ -4868,6 +4997,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_821acaae8b95" xml:space="preserve">
     <value>Update in place: it needs no extra space, but {0} is removed from this PC.</value>
+  </data>
+  <data name="Text_821d57b85c7a" xml:space="preserve">
+    <value>The NativeMods bundle is missing {0}.</value>
   </data>
   <data name="Text_827f97b449fa" xml:space="preserve">
     <value>This league has a missing or cyclic parent chain. Restore its definition before editing.</value>
@@ -5001,6 +5133,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_85a70742a28e" xml:space="preserve">
     <value>Delete saved item</value>
   </data>
+  <data name="Text_85b724593964" xml:space="preserve">
+    <value>This removes LocalExile.ClientHost.dll, version.dll, and Client/nativemods-host/, and restores Game.patched.exe if import-patched. Stock Game.exe is never touched.</value>
+  </data>
   <data name="Text_86166dd1d685" xml:space="preserve">
     <value>Bring my characters…</value>
   </data>
@@ -5013,8 +5148,14 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8624ca0fcb3c" xml:space="preserve">
     <value>Brush</value>
   </data>
+  <data name="Text_8647a57480fa" xml:space="preserve">
+    <value>Cannot install NativeMods into a linked Client folder. Make a copy of the game client first.</value>
+  </data>
   <data name="Text_865fa5f68659" xml:space="preserve">
     <value>Settings not exposed to Waypoint</value>
+  </data>
+  <data name="Text_86979c6115c9" xml:space="preserve">
+    <value>Uninstall NativeMods extender?</value>
   </data>
   <data name="Text_86a8e432b7e3" xml:space="preserve">
     <value>No saved items yet. Make one and press Save.</value>
@@ -5051,6 +5192,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_87bb59ba2f92">
     <value>Workspace</value>
+  </data>
+  <data name="Text_87dcccf60678" xml:space="preserve">
+    <value>This mod requests direct memory/hook access (RawAccess): {0}</value>
   </data>
   <data name="Text_87df6810fe11" xml:space="preserve">
     <value>Total time divided by the calls in the window</value>
@@ -5151,6 +5295,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8a05d3c65b24" xml:space="preserve">
     <value>Double-click a command to put it in the line.</value>
   </data>
+  <data name="Text_8a0ae6445e3d" xml:space="preserve">
+    <value>Installed v{0} (attention needed) · {1}</value>
+  </data>
   <data name="Text_8a12ed1c823b" xml:space="preserve">
     <value>That copy is not a client from Steam, so Steam cannot finish it.</value>
   </data>
@@ -5247,6 +5394,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8c9e70a32535" xml:space="preserve">
     <value>Open lab layout</value>
   </data>
+  <data name="Text_8d035d711720" xml:space="preserve">
+    <value>Deployed NativeMods client payload for {0}.</value>
+  </data>
   <data name="Text_8d099abe78af" xml:space="preserve">
     <value>When I close the window</value>
   </data>
@@ -5277,8 +5427,14 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8d616d350961" xml:space="preserve">
     <value>15 min</value>
   </data>
+  <data name="Text_8d675c5b178f" xml:space="preserve">
+    <value>NativeMods is enabled in Settings, but the extender is not installed. Install it in Settings or turn NativeMods off.</value>
+  </data>
   <data name="Text_8d968910c8ff" xml:space="preserve">
     <value>Downloading from Steam. {0}</value>
+  </data>
+  <data name="Text_8d97f135f47e" xml:space="preserve">
+    <value>Installed NativeMods extender {0} ({1}).</value>
   </data>
   <data name="Text_8d99a834e478" xml:space="preserve">
     <value>Changes require the game and all LocalExile services to stay stopped until the operation finishes.</value>
@@ -5301,6 +5457,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_8de4d4dac04c" xml:space="preserve">
     <value>gen 2</value>
   </data>
+  <data name="Text_8e020bd1ba01" xml:space="preserve">
+    <value>The extracted NativeMods bundle exceeds the 512 MB size limit.</value>
+  </data>
   <data name="Text_8e18a81993ce" xml:space="preserve">
     <value>client not running</value>
   </data>
@@ -5312,6 +5471,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data xml:space="preserve" name="Text_8e3cda3b4f8b">
     <value>Local HEAD unavailable</value>
+  </data>
+  <data name="Text_8e40b9dad0af" xml:space="preserve">
+    <value>Choose a NativeMods dist/win-x64 folder</value>
   </data>
   <data name="Text_8e5407e6fdc9" xml:space="preserve">
     <value>Rename a profile</value>
@@ -5618,6 +5780,9 @@ Dependencies: {3}
   <data name="Text_96696ebb5f8d" xml:space="preserve">
     <value>What to copy</value>
   </data>
+  <data name="Text_966a990b0178" xml:space="preserve">
+    <value>The NativeMods archive contains more than {0} files.</value>
+  </data>
   <data name="Text_966e3d979990" xml:space="preserve">
     <value>Use 3–48 English letters, numbers, spaces, underscores or hyphens, starting with a letter.</value>
   </data>
@@ -5777,6 +5942,9 @@ Dependencies: {3}
   <data name="Text_9a05eeed8b20" xml:space="preserve">
     <value>Give item uses the Waypoint Tools mod, and no running game has it loaded. Play, turn it on in Mods if it is off, enter an area with a character, then give the item again.</value>
   </data>
+  <data name="Text_9a1bb325a41c" xml:space="preserve">
+    <value>Cannot run NativeMods with a linked Client folder. Make a copy of the game client or turn NativeMods off in Settings.</value>
+  </data>
   <data name="Text_9a2ad8cb272e" xml:space="preserve">
     <value>Deleted {0} saved items</value>
   </data>
@@ -5823,8 +5991,14 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_9b1120c28631" xml:space="preserve">
     <value>Logs folder</value>
   </data>
+  <data name="Text_9b252a463c86" xml:space="preserve">
+    <value>{0} is still running. Wait for it to finish first.</value>
+  </data>
   <data name="Text_9b41ba20b8a3" xml:space="preserve">
     <value>Not loaded</value>
+  </data>
+  <data name="Text_9b5894c9b425" xml:space="preserve">
+    <value>Installing NativeMods {0}…</value>
   </data>
   <data xml:space="preserve" name="Text_9b6f051b7ea9">
     <value>Use this checkout’s local runtime wrapper when present</value>
@@ -5927,6 +6101,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_9d4fdb63fa4f" xml:space="preserve">
     <value>Look for a newer Waypoint release whenever it starts (release builds)</value>
+  </data>
+  <data name="Text_9d53cfcd6786" xml:space="preserve">
+    <value>The NativeMods archive exceeds the 256 MB size limit.</value>
   </data>
   <data name="Text_9d64ce84e2c3" xml:space="preserve">
     <value>Remove {0}?</value>
@@ -6087,6 +6264,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a266fe9c4d1d" xml:space="preserve">
     <value>MEMORY</value>
   </data>
+  <data name="Text_a291bca1429a" xml:space="preserve">
+    <value>{0} enabled mod(s) include NativeMods client payloads, but NativeMods is currently off in Settings.</value>
+  </data>
   <data xml:space="preserve" name="Text_a2b0e1cca90c">
     <value>Reload this enabled mod and its dependents.</value>
   </data>
@@ -6129,6 +6309,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a388bd2d373c" xml:space="preserve">
     <value>Uncommitted changes</value>
   </data>
+  <data name="Text_a390769fcc7b" xml:space="preserve">
+    <value>Patches Client/Game.patched.exe import table reversibly (source checkouts only).</value>
+  </data>
   <data name="Text_a390f2eec6ba" xml:space="preserve">
     <value>{0} is whole now, and kept in this folder.</value>
   </data>
@@ -6140,6 +6323,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a3ac0b8d4d94" xml:space="preserve">
     <value>1.  Gets LocalExile to a folder you choose, or finds the copy you have</value>
+  </data>
+  <data name="Text_a3ae04c50419" xml:space="preserve">
+    <value>NativeMods runtime files are incomplete. Reinstall or verify NativeMods in Settings.</value>
   </data>
   <data name="Text_a3b50c476732" xml:space="preserve">
     <value>State</value>
@@ -6225,6 +6411,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_a540e34f130b" xml:space="preserve">
     <value>Area: {0} ({1})</value>
   </data>
+  <data name="Text_a547e176cef7" xml:space="preserve">
+    <value>{0} does not match its SHA-256; nothing was installed.</value>
+  </data>
   <data name="Text_a549da446e61" xml:space="preserve">
     <value>Create league</value>
   </data>
@@ -6278,6 +6467,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_a656107e99c7" xml:space="preserve">
     <value>Statistics</value>
+  </data>
+  <data name="Text_a65627b726a7" xml:space="preserve">
+    <value>NativeMods is enabled in Import patch mode, but Game.patched.exe is not patched with .nmimp.</value>
   </data>
   <data name="Text_a65a4357e343" xml:space="preserve">
     <value>Reload accounts after changing the workspace.</value>
@@ -6356,6 +6548,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data xml:space="preserve" name="Text_a80983dbe5df">
     <value>Needs Gateway running, an enabled built mod, and a client in a playable area (Python + Frida).</value>
+  </data>
+  <data name="Text_a811f76565cd" xml:space="preserve">
+    <value>Close Path of Exile before changing the NativeMods extender.</value>
   </data>
   <data name="Text_a81c1cd77e8e" xml:space="preserve">
     <value>This folder shares the game client of another LocalExile folder: what changes there changes here.</value>
@@ -6473,6 +6668,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_abb39b8adf1f" xml:space="preserve">
     <value>Diagnostic report</value>
+  </data>
+  <data name="Text_abd5f06f5144" xml:space="preserve">
+    <value>Install / Update from GitHub</value>
   </data>
   <data name="Text_abe6ba498754" xml:space="preserve">
     <value>3.  Finds your game client, or lets you point to it</value>
@@ -6594,6 +6792,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_af0303342a01" xml:space="preserve">
     <value>Open page</value>
   </data>
+  <data name="Text_af077f654c73" xml:space="preserve">
+    <value>{0} is not a folder Waypoint can read.</value>
+  </data>
   <data name="Text_af20391b2b63" xml:space="preserve">
     <value>The game is running: Play closes it and starts it again; the servers keep running.</value>
   </data>
@@ -6617,6 +6818,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_afe3c1947d3b" xml:space="preserve">
     <value>Alliance</value>
+  </data>
+  <data name="Text_b006f64653aa" xml:space="preserve">
+    <value>Import local zip…</value>
   </data>
   <data name="Text_b0091e7175aa" xml:space="preserve">
     <value>Multiplies the gold an order pays.</value>
@@ -6867,6 +7071,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_b6b099ac3763">
     <value>Color vision</value>
   </data>
+  <data name="Text_b6b72a90ff22" xml:space="preserve">
+    <value>The NativeMods archive contains no files.</value>
+  </data>
   <data name="Text_b6cd626295f1" xml:space="preserve">
     <value>{0} Item</value>
   </data>
@@ -6881,6 +7088,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_b764cdc0eab7" xml:space="preserve">
     <value>Unknown</value>
+  </data>
+  <data name="Text_b76ada2a3c0c" xml:space="preserve">
+    <value>Checking GitHub for the latest NativeMods release…</value>
   </data>
   <data name="Text_b77636c1849a" xml:space="preserve">
     <value>Build LocalExile</value>
@@ -6897,11 +7107,17 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_b7ba5c1d1a1a">
     <value>▶  Play</value>
   </data>
+  <data name="Text_b7c39b73e0aa" xml:space="preserve">
+    <value>NativeMods (Client Extender)</value>
+  </data>
   <data xml:space="preserve" name="Text_b7cd0acd1470">
     <value>Protect text contrast</value>
   </data>
   <data xml:space="preserve" name="Text_b7d1e0571f80">
     <value>Workspace inspection failed. Resolve the problem in Settings, then refresh.</value>
+  </data>
+  <data name="Text_b7dd58f44241" xml:space="preserve">
+    <value>Update NativeMods</value>
   </data>
   <data name="Text_b7ef99f143b7" xml:space="preserve">
     <value>Gameplay module · {0}</value>
@@ -7023,11 +7239,17 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_baaf468928e9" xml:space="preserve">
     <value>Check the server ports</value>
   </data>
+  <data name="Text_baafd15a862d" xml:space="preserve">
+    <value>Install NativeMods mod {0}?</value>
+  </data>
   <data name="Text_bac82328e0cd" xml:space="preserve">
     <value>This module combination is not defined for this league and mode. Unknown combinations are blocked.</value>
   </data>
   <data name="Text_bad2b893e5a4" xml:space="preserve">
     <value>Season</value>
+  </data>
+  <data name="Text_bad5657579d9" xml:space="preserve">
+    <value>Failed to apply .nmimp patch to Game.patched.exe: {0}</value>
   </data>
   <data name="Text_bae1e8710ff4" xml:space="preserve">
     <value>Keep the required gameplay bundle enabled. Its modules are not declared independently optional.</value>
@@ -7043,6 +7265,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   </data>
   <data name="Text_bb213b706609" xml:space="preserve">
     <value>No leagues currently use this module.</value>
+  </data>
+  <data name="Text_bb3193b6ee6e" xml:space="preserve">
+    <value>Downloading NativeMods {0}…</value>
   </data>
   <data name="Text_bb5e603fa102" xml:space="preserve">
     <value>Next, choose modules and review your league.</value>
@@ -7272,6 +7497,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data xml:space="preserve" name="Text_c1ebc7817870">
     <value>Needs attention</value>
   </data>
+  <data name="Text_c1ee908756b7" xml:space="preserve">
+    <value>Could not restore Game.patched.exe while disabling NativeMods: {0}</value>
+  </data>
   <data name="Text_c201813d895d" xml:space="preserve">
     <value>In use: your normal Path of Exile settings ({0}). Choose or create a folder to give LocalExile its own.</value>
   </data>
@@ -7368,6 +7596,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c5132d954d7b" xml:space="preserve">
     <value>Remember this for next time</value>
   </data>
+  <data name="Text_c5240cc93783" xml:space="preserve">
+    <value>NativeMods preflight check failed.</value>
+  </data>
   <data name="Text_c533559f1887" xml:space="preserve">
     <value>{0} allows only the modules and mods it names, not {1}.</value>
   </data>
@@ -7422,6 +7653,9 @@ Owned servers will stop. Automatic backup is {2}. Source, client and login keys 
   <data name="Text_c6d5a902b1fb" xml:space="preserve">
     <value>Remove repository</value>
   </data>
+  <data name="Text_c6df5e815a88" xml:space="preserve">
+    <value>Choose a NativeMods release archive (.zip)</value>
+  </data>
   <data name="Text_c6edad1de780" xml:space="preserve">
     <value>Could not minimize to tray: </value>
   </data>
@@ -7434,6 +7668,9 @@ Last reported Gateway event. Open Gateway output for details.</value>
   </data>
   <data name="Text_c70b1b11d134" xml:space="preserve">
     <value>Crafted (bench)</value>
+  </data>
+  <data name="Text_c71204b67565" xml:space="preserve">
+    <value>Client/Game.patched.exe is missing. Prepare the game client first.</value>
   </data>
   <data name="Text_c71631b07e40" xml:space="preserve">
     <value>Update in place</value>
@@ -7498,6 +7735,9 @@ Last reported Gateway event. Open Gateway output for details.</value>
   <data name="Text_c83931177471" xml:space="preserve">
     <value>This is not an item: copy one with Ctrl+C in Path of Building or in the game.</value>
   </data>
+  <data name="Text_c852137f5878" xml:space="preserve">
+    <value>No NativeMods release was found on GitHub ({0}).</value>
+  </data>
   <data name="Text_c86ca7b723e9" xml:space="preserve">
     <value>A mod that runs in every league. Untick it to take it off the list.</value>
   </data>
@@ -7527,6 +7767,9 @@ Last reported Gateway event. Open Gateway output for details.</value>
   </data>
   <data name="Text_c8d3fc567bbc" xml:space="preserve">
     <value>Guard</value>
+  </data>
+  <data name="Text_c8d67f255915" xml:space="preserve">
+    <value>Uninstall extender only</value>
   </data>
   <data name="Text_c8d6b52dde33" xml:space="preserve">
     <value>T{0} · level {1}</value>
@@ -7707,6 +7950,9 @@ Client: {2}</value>
   <data name="Text_cd55a9d95751" xml:space="preserve">
     <value>{0} · {1}</value>
   </data>
+  <data name="Text_cd6e8b455ec6" xml:space="preserve">
+    <value>Client build unknown</value>
+  </data>
   <data name="Text_cd77503a4522" xml:space="preserve">
     <value>The command is on the clipboard, but it is {0} characters and the game's chat box takes {1}. Use Give item instead.</value>
   </data>
@@ -7748,6 +7994,9 @@ Client: {2}</value>
   </data>
   <data name="Text_cf051d46df67" xml:space="preserve">
     <value>game data not extracted yet (step 7)</value>
+  </data>
+  <data name="Text_cf3b204a9fd5" xml:space="preserve">
+    <value>Missing address library file in Client/nativemods-host/addresses/.</value>
   </data>
   <data xml:space="preserve" name="Text_cf47dcf7cadf">
     <value>What this version manages</value>
@@ -7890,6 +8139,9 @@ Client: {2}</value>
   <data name="Text_d40afb35e5e4" xml:space="preserve">
     <value>Part of this league's own bundle. Turning it off asks first.</value>
   </data>
+  <data name="Text_d40fa4bb924b" xml:space="preserve">
+    <value>Failed to unpatch Game.patched.exe before switching to Proxy mode: {0}</value>
+  </data>
   <data name="Text_d43f97686636" xml:space="preserve">
     <value>Selected modes: {0}</value>
   </data>
@@ -7956,6 +8208,9 @@ Client: {2}</value>
   <data name="Text_d5e4a3eb71f6" xml:space="preserve">
     <value>no timings: {0}</value>
   </data>
+  <data name="Text_d5f5e6f16bf5" xml:space="preserve">
+    <value>This mod requests RawAccess and requires explicit confirmation.</value>
+  </data>
   <data name="Text_d60a318dd8a0" xml:space="preserve">
     <value>Exchange</value>
   </data>
@@ -7973,6 +8228,9 @@ Client: {2}</value>
   </data>
   <data xml:space="preserve" name="Text_d68761cc1eb2">
     <value>Text size</value>
+  </data>
+  <data name="Text_d69500c2c95e" xml:space="preserve">
+    <value>Update NativeMods cache</value>
   </data>
   <data name="Text_d6961e5e450e" xml:space="preserve">
     <value>Everything is installed.</value>
@@ -8061,6 +8319,9 @@ Client: {2}</value>
   <data name="Text_d848702976bf" xml:space="preserve">
     <value>Leave your current LocalExile as it is. Each copy keeps its own progress.</value>
   </data>
+  <data name="Text_d848a5144b5a" xml:space="preserve">
+    <value>Install NativeMods client payload</value>
+  </data>
   <data name="Text_d869e1c9fe5a" xml:space="preserve">
     <value>Exit cancelled. Close the game before stopping services.</value>
   </data>
@@ -8135,6 +8396,9 @@ Dependencies: {2}
   </data>
   <data xml:space="preserve" name="Text_db03e3055c5a">
     <value>Workspace pages</value>
+  </data>
+  <data name="Text_db122dc40c94" xml:space="preserve">
+    <value>Node.js is needed to read this client's tables and was not found. Install Node.js or choose it in Settings.</value>
   </data>
   <data name="Text_db13497649fa" xml:space="preserve">
     <value>Creating a private Python environment for this checkout.</value>
@@ -8325,6 +8589,9 @@ Dependencies: {2}
   <data name="Text_e020e3c67bd0" xml:space="preserve">
     <value>Release</value>
   </data>
+  <data name="Text_e0235d76ddbf" xml:space="preserve">
+    <value>Proxy (version.dll)</value>
+  </data>
   <data name="Text_e0283282bcfd" xml:space="preserve">
     <value>Enter a description of 1–2000 characters.</value>
   </data>
@@ -8464,6 +8731,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_e30ce05d3185">
     <value>More interface colors</value>
   </data>
+  <data name="Text_e32dc1087901" xml:space="preserve">
+    <value>Includes a NativeMods client payload. Enable NativeMods in Settings for full client features.</value>
+  </data>
   <data name="Text_e33cc52f3308" xml:space="preserve">
     <value>Kill experience</value>
   </data>
@@ -8575,6 +8845,9 @@ Dependencies: {2}
   <data name="Text_e64a3e6ff925" xml:space="preserve">
     <value>Area layout capture</value>
   </data>
+  <data name="Text_e64aad043581" xml:space="preserve">
+    <value>The NativeMods download exceeds the 256 MB size limit.</value>
+  </data>
   <data name="Text_e66094b9faf9" xml:space="preserve">
     <value>You don't have a release yet</value>
   </data>
@@ -8685,6 +8958,9 @@ Dependencies: {2}
   </data>
   <data name="Text_e984e8f6d556" xml:space="preserve">
     <value>This league has its own characters and stash. Nothing will migrate into Standard.</value>
+  </data>
+  <data name="Text_e9942a60b429" xml:space="preserve">
+    <value>Import patch (.nmimp) mode is not supported on release installs because LocalExile.exe checks Game.patched.exe file size and resets it. Use Proxy (version.dll) mode instead.</value>
   </data>
   <data name="Text_e9988a42ca34" xml:space="preserve">
     <value>Waypoint could not find its own executable.</value>
@@ -8890,6 +9166,9 @@ Dependencies: {2}
   <data xml:space="preserve" name="Text_ee9b6f783cc6">
     <value>Watcher is alive but Gateway has no running child. Open Gateway output to inspect the build errors.</value>
   </data>
+  <data name="Text_eea2745e2867" xml:space="preserve">
+    <value>Verify</value>
+  </data>
   <data xml:space="preserve" name="Text_eeaf3fc78d1a">
     <value>Wait for the current operation before changing these options.</value>
   </data>
@@ -9084,6 +9363,9 @@ The client must be a version this LocalExile runs. Or choose Game client in the 
   <data name="Text_f2d1dab08310" xml:space="preserve">
     <value>NPC</value>
   </data>
+  <data name="Text_f2efb785f377" xml:space="preserve">
+    <value>This mod overrides {0} stock game path(s) via overlay.</value>
+  </data>
   <data name="Text_f2faba4b22de" xml:space="preserve">
     <value>Mods, Modules and Leagues</value>
   </data>
@@ -9101,6 +9383,9 @@ The client must be a version this LocalExile runs. Or choose Game client in the 
   </data>
   <data name="Text_f34ba9fc922c" xml:space="preserve">
     <value>Random name</value>
+  </data>
+  <data name="Text_f359f6903ef7" xml:space="preserve">
+    <value>Import patch (.nmimp) mode is not supported on release installs because LocalExile.exe checks Game.patched.exe file size and resets it. Switch to Proxy (version.dll) mode.</value>
   </data>
   <data name="Text_f38938ee1db3" xml:space="preserve">
     <value>Changes affect every league using this module.</value>
@@ -9138,6 +9423,9 @@ Mods at backup: </value>
   </data>
   <data xml:space="preserve" name="Text_f4bfa9a07c59">
     <value>This installs the checkout's locked Node dependency in Tools/ooz using npm ci. It does not install software globally. Node.js must be installed first.</value>
+  </data>
+  <data name="Text_f4cad1a9af76" xml:space="preserve">
+    <value>Import patch (.nmimp) mode is not supported on release installs because LocalExile.exe checks Game.patched.exe file size and resets it. Switch to Proxy (version.dll) mode in Settings.</value>
   </data>
   <data xml:space="preserve" name="Text_f4ccae29e1bb">
     <value>Running</value>
@@ -9237,6 +9525,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_f73bbf129e06" xml:space="preserve">
     <value>Play, mods and accounts. Waypoint keeps LocalExile up to date.</value>
+  </data>
+  <data name="Text_f74d052b89ff" xml:space="preserve">
+    <value>The NativeMods bundle is missing required runtime file {0}.</value>
   </data>
   <data name="Text_f75fb17e58b6" xml:space="preserve">
     <value>Choose a mod folder (with its mod.json)</value>
@@ -9424,6 +9715,9 @@ Mods at backup: </value>
   <data name="Text_fb62fe2ae6b2" xml:space="preserve">
     <value>{0}: {1}</value>
   </data>
+  <data name="Text_fb6975e1d958" xml:space="preserve">
+    <value>Installed v{0} (disabled) · {1}</value>
+  </data>
   <data name="Text_fb7099ad8e81" xml:space="preserve">
     <value>Check again</value>
   </data>
@@ -9456,6 +9750,9 @@ Mods at backup: </value>
   </data>
   <data name="Text_fc5e4f92ee14" xml:space="preserve">
     <value>For developers: use this folder itself instead of a copy. LocalExile changes files there, and a Path of Exile update in that folder can break this LocalExile.</value>
+  </data>
+  <data name="Text_fc81f966d0f6" xml:space="preserve">
+    <value>NativeMods extender uninstalled cleanly.</value>
   </data>
   <data xml:space="preserve" name="Text_fca91d59bc5a">
     <value>Choose your checkout to get started.</value>

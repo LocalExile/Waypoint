@@ -1,5 +1,7 @@
 using System.Net.Http;
 using System.Text.Json.Nodes;
+using Launcher.Core.NativeMods;
+using LocalExile.Client.Waypoint;
 #if WINDOWS
 using ModIconKind = MaterialDesignThemes.Wpf.PackIconKind;
 using ModIconImage = System.Windows.Media.ImageSource;
@@ -62,7 +64,7 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     public bool ShowSymbol => IconImage is null;
     public string Description => L.Text(Listing.Description);
     public bool HasDescription => Description.Length > 0;
-    public string Metadata => Author;
+    public string Metadata => string.Join(" · ", new[] { Author, NativeModsBadgeText }.Where(s => s.Length > 0));
     /// <summary>The LocalExile versions it declares; the list shows these, not the mod's own version.</summary>
     public IReadOnlyList<string> ClientVersions => Listing.ClientVersions ?? [];
     public string ClientText => ModsText.ClientText(ClientVersions);
@@ -81,6 +83,17 @@ sealed record BrowseItem(ModSource Source, ModListing Listing, ModRelease? Relea
     /// <summary>Under the name: what an install takes (a release, scripts, or a build) .</summary>
     public string Subtitle => Release is not null ? Release.ZipName : Listing.IsProject ? L.Text("Source project") : L.Text("Scripts");
     public string TypeText => Listing.IsProject ? L.Text("Project") : L.Text("Scripts");
+    public NativeClientSummary? NativeClient => Listing.NativeClient ?? Installed?.NativeClient;
+    public bool HasNativeClient => NativeClient is not null;
+    public bool RequiresNativeMods => NativeClient?.Required == true;
+    public bool NativeModsDisabled { get; init; }
+    public bool ShowNativeModsWarning => HasNativeClient && NativeModsDisabled;
+    public string NativeModsBadgeText => !HasNativeClient ? "" : RequiresNativeMods ? L.Text("Requires NativeMods") : L.Text("NativeMods");
+    public string? NativeModsWarningTip => ShowNativeModsWarning
+        ? (RequiresNativeMods
+            ? L.Text("Requires the NativeMods client extender. Enable it in Settings.")
+            : L.Text("Includes a NativeMods client payload. Enable NativeMods in Settings for full client features."))
+        : null;
 }
 
 /// <summary>A row of a mod page's Versions: one release, installable when it is not the installed version.</summary>
@@ -205,7 +218,18 @@ sealed record InstalledRow(ModEntry Entry, BrowseItem? Offer)
     public bool ShowSymbol => IconImage is null;
     public string Description => Entry.Description.Length > 0 ? L.Text(Entry.Description) : Offer?.Description ?? "";
     public bool HasDescription => Description.Length > 0;
-    public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "" }.Where(s => s.Length > 0));
+    public string Metadata => string.Join(" · ", new[] { Author, Entry.IsScript ? L.Text("Script mod") : "", NativeModsBadgeText }.Where(s => s.Length > 0));
+    public NativeClientSummary? NativeClient => Entry.NativeClient ?? Offer?.NativeClient;
+    public bool HasNativeClient => NativeClient is not null;
+    public bool RequiresNativeMods => NativeClient?.Required == true;
+    public bool NativeModsDisabled { get; init; }
+    public bool ShowNativeModsWarning => HasNativeClient && NativeModsDisabled;
+    public string NativeModsBadgeText => !HasNativeClient ? "" : RequiresNativeMods ? L.Text("Requires NativeMods") : L.Text("NativeMods");
+    public string? NativeModsWarningTip => ShowNativeModsWarning
+        ? (RequiresNativeMods
+            ? L.Text("Requires the NativeMods client extender. Enable it in Settings.")
+            : L.Text("Includes a NativeMods client payload. Enable NativeMods in Settings for full client features."))
+        : null;
     /// <summary>The LocalExile versions its installed mod.json declares, else what its repository's listing does.</summary>
     public IReadOnlyList<string> ClientVersions => Entry.ClientVersions is { Count: > 0 } own ? own : Offer?.ClientVersions ?? [];
     public string ClientText => ModsText.ClientText(ClientVersions);
@@ -386,12 +410,20 @@ sealed class ModBrowser(Shared shared)
         if (changed > 0) IconsChanged?.Invoke();
     }
 
+    /// <summary>Whether NativeMods is opted-in for the current folder.</summary>
+    public bool NativeModsEnabled => shared.Settings.NativeModsFor().Enabled;
+
+    /// <summary>The last launch's warning that the enabled mods' game data could not be built; null when there was none.</summary>
+    public string? NativeModsWarning => shared.NativeModsWarning;
+
     /// <summary>The rows of a repository read before, matched to the installed mods by id.</summary>
     public IReadOnlyList<BrowseItem> Items(ModSource source, IReadOnlyList<ModEntry> installed)
     {
         if (View(source) is not { } view) return [];
         var byId = installed.ToDictionary(e => e.Id, StringComparer.Ordinal);
-        return view.Mods.Select(m => new BrowseItem(source, m, view.Releases.GetValueOrDefault(m.Id), byId.GetValueOrDefault(m.Id)) { Job = Job(m.Id) })
+        bool disabled = !NativeModsEnabled;
+        return view.Mods.Select(m => new BrowseItem(source, m, view.Releases.GetValueOrDefault(m.Id), byId.GetValueOrDefault(m.Id))
+            { Job = Job(m.Id), NativeModsDisabled = disabled })
             .OrderBy(i => i.Title, StringComparer.CurrentCultureIgnoreCase).ToList();
     }
 
@@ -427,23 +459,52 @@ sealed class ModBrowser(Shared shared)
         return "";
     }
 
-    /// <summary>Turns an installed mod on or off: its line in the server's mod-state.txt, at once (no backup, no client).</summary>
-    public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), () =>
+    /// <summary>Turns an installed mod on or off: its line in the server's mod-state.txt, at once (no backup, no client).
+    /// For dual-side NativeMods mods, also syncs client mod state and rebuilds <c>Mods/Client/.merged-cache/</c>.</summary>
+    public Task<bool> SetEnabledAsync(ModEntry mod, bool enabled) => shared.RunExclusiveAsync(L.Text("Save mod choice"), async () =>
     {
         if (shared.Workspace.Latest is { EditConflicts.Length: > 0 } state) throw new InvalidOperationException(string.Join("\n", state.EditConflicts));
         if (shared.Workspace.Latest?.ModEnvironment is not { Supported: true } environment) throw new InvalidOperationException(L.Text("This revision does not have a supported mod host."));
         ModCatalog.WriteChoice(environment.Folder, mod.Id, enabled);
+        if (mod.HasNativeClient)
+        {
+            string root = Environment.CurrentDirectory;
+            var cache = await Task.Run(() => NativeModsClientStore.OnModEnabledChanged(root, mod.Id, enabled));
+            if (cache is { Rebuilt: true })
+                shared.Logs.Write($"[nativemods] rebuilt .merged-cache ({cache.MergedTables.Count} tables, digest {cache.Digest}).", Severity.Info);
+            else if (!string.IsNullOrWhiteSpace(cache?.Diagnostic))
+                shared.Logs.Write($"[nativemods] {cache.Diagnostic}", Severity.Warning);
+            else if (cache is { Removed: true })
+                shared.Logs.Write("[nativemods] cleared .merged-cache (no enabled datPatches mods).", Severity.Info);
+        }
         NoteRestart(mod.RestartToApply);
-        return Task.CompletedTask;
     });
 
-    /// <summary>Uninstalls a mod: the adapter's UninstallMod moves its folders to Mods/.replaced/.</summary>
+    /// <summary>Uninstalls a mod: the adapter's UninstallMod moves its folders to Mods/.replaced/, and updates NativeMods ledger/.merged-cache.</summary>
     public async Task<BridgeResult?> UninstallAsync(ModEntry mod)
     {
         RequireModernMods();
         var job = Begin(mod.Id, L.Text("Uninstalling…"));
         if (job is null) return null;
-        try { return Installed(await Finish(job, await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(mod.Id), L.Text("Uninstalling…"))), mod.RestartToApply); }
+        try
+        {
+            var result = await Finish(job, await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(mod.Id), L.Text("Uninstalling…")));
+            if (result?.Ok == true)
+            {
+                string root = Environment.CurrentDirectory;
+                await RunExclusiveWaitingAsync(L.Text("Update NativeMods cache"), async () =>
+                {
+                    var cache = await Task.Run(() => NativeModsClientStore.OnModUninstalled(root, mod.Id));
+                    if (cache is { Rebuilt: true })
+                        shared.Logs.Write($"[nativemods] rebuilt .merged-cache after uninstall ({cache.MergedTables.Count} tables).", Severity.Info);
+                    else if (!string.IsNullOrWhiteSpace(cache?.Diagnostic))
+                        shared.Logs.Write($"[nativemods] {cache.Diagnostic}", Severity.Warning);
+                    else if (cache is { Removed: true })
+                        shared.Logs.Write("[nativemods] removed .merged-cache after uninstall.", Severity.Info);
+                });
+            }
+            return Installed(result, mod.RestartToApply);
+        }
         catch { End(job); throw; }
     }
 
@@ -553,6 +614,18 @@ sealed class ModBrowser(Shared shared)
     }
 
     /// <summary>Only a busy workspace is retried. Cancellation and failures complete the job and release the queue.</summary>
+    // The client half follows a queued server step, so the queue's next operation may still hold the lock: wait like the bridge does.
+    async Task<bool> RunExclusiveWaitingAsync(string name, Func<Task> work)
+    {
+        var deadline = DateTime.UtcNow.AddMinutes(30);
+        while (!await shared.RunExclusiveAsync(name, work))
+        {
+            if (DateTime.UtcNow > deadline) return false;
+            await Task.Delay(500);
+        }
+        return true;
+    }
+
     internal static async Task<BridgeResult?> WaitForWorkspaceAsync(Func<Task<BridgeResult?>> run, Action<bool> waiting,
         Func<Task>? pause = null)
     {
@@ -605,8 +678,9 @@ sealed class ModBrowser(Shared shared)
         L.Text("{0} has no release, so Waypoint installs its source project. Press Build in My Mods to compile it; building needs the .NET 10 SDK and this checkout's build tools. Continue?", item.Title);
 
     /// <summary>Downloads and installs (or updates) one mod, its progress on its button; the result of the adapter's
-    /// InstallMod, or null when it did not run (one already runs for this mod).</summary>
-    public async Task<BridgeResult?> InstallAsync(BrowseItem item, CancellationToken stop = default)
+    /// InstallMod, or null when it did not run (one already runs for this mod). Dual-side mods with <c>nativeClient</c>
+    /// are audited before install, split-deployed into <c>Mods/Binaries/</c> + <c>Mods/Client/</c>, and rebuild <c>.merged-cache/</c>.</summary>
+    public async Task<BridgeResult?> InstallAsync(BrowseItem item, Func<InstallAuditReport, bool>? confirmAudit = null, CancellationToken stop = default)
     {
         RequireModernMods();
         var job = Begin(item.Listing.Id, L.Text("Downloading…"));
@@ -620,10 +694,7 @@ sealed class ModBrowser(Shared shared)
                 : await ModRepository.DownloadSourceAsync(_http, item.Source, item.Listing, Progress, stop);
             try
             {
-                // Read before the adapter runs: it removes the staged folder once it is installed.
-                bool restart = ModCatalog.RestartToApply(staged.Folder);
-                return Installed(await Finish(job, await QueuedAsync(job, "InstallMod", item.Offer == ModOffer.Update ? L.Text("Update mod") : L.Text("Install mod"),
-                    new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))), restart);
+                return await InstallStagedAsync(job, staged, item.Offer == ModOffer.Update ? L.Text("Update mod") : L.Text("Install mod"), confirmAudit);
             }
             finally { ModRepository.Discard(staged); }
         }
@@ -631,7 +702,7 @@ sealed class ModBrowser(Shared shared)
     }
 
     /// <summary>Installs a mod folder from the player's disk: a project's source is installed, not built.</summary>
-    public async Task<BridgeResult?> InstallFolderAsync(string folder)
+    public async Task<BridgeResult?> InstallFolderAsync(string folder, Func<InstallAuditReport, bool>? confirmAudit = null)
     {
         RequireModernMods();
         var staged = ModRepository.StageFolder(folder);
@@ -640,11 +711,115 @@ sealed class ModBrowser(Shared shared)
             if (staged.Target == "Source" && CannotInstallSource() is { } reason) throw new InvalidOperationException(reason);
             var job = Begin(staged.Id, L.Text("Installing…"));
             if (job is null) return null;
-            bool restart = ModCatalog.RestartToApply(staged.Folder);
-            try { return Installed(await Finish(job, await QueuedAsync(job, "InstallMod", L.Text("Install mod"), new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…"))), restart); }
+            try { return await InstallStagedAsync(job, staged, L.Text("Install mod"), confirmAudit); }
             catch { End(job); throw; }
         }
         finally { ModRepository.Discard(staged); }
+    }
+
+    async Task<BridgeResult?> InstallStagedAsync(ModJob job, StagedMod staged, string operationName, Func<InstallAuditReport, bool>? confirmAudit)
+    {
+        string root = Environment.CurrentDirectory;
+        bool restart = ModCatalog.RestartToApply(staged.Folder);
+        bool isDualSide = staged.Target == "Binaries" && NativeModsClientStore.HasNativeClientManifest(staged.Folder);
+        if (!isDualSide)
+        {
+            // Read before InstallMod: a successful install moves the staged folder away.
+            bool dropsClientHalf = File.Exists(Path.Combine(staged.Folder, "mod.json")) && !NativeModsClientStore.HasNativeClientManifest(staged.Folder);
+            var plain = await Finish(job, await QueuedAsync(job, "InstallMod", operationName,
+                new(staged.Id, Staged: staged.Folder, Target: staged.Target), L.Text("Installing…")));
+            // An update that dropped nativeClient: the earlier version's client half must not keep loading against the new server.
+            if (plain?.Ok == true && dropsClientHalf)
+            {
+                try
+                {
+                    if (!NativeModsClientStore.HasClientHalf(root, staged.Id)) return Installed(plain, restart);
+                    restart = true;
+                    await RunExclusiveWaitingAsync(L.Text("Update NativeMods cache"), async () =>
+                    {
+                        await Task.Run(() => NativeModsClientStore.RetireClientHalf(root, staged.Id));
+                        shared.Logs.Write($"[nativemods] {staged.Id} no longer has a client half; moved Mods/Client/{staged.Id} to Mods/.replaced.", Severity.Info);
+                    });
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException
+                                               or System.Text.Json.JsonException)
+                {
+                    shared.Logs.Write($"[nativemods] could not retire the client half of {staged.Id}: {ex.Message}", Severity.Error);
+                }
+            }
+            return Installed(plain, restart);
+        }
+
+        // Dual-side NativeMods package: validate .ui layouts, datPatches, closed tables, SHA-256, encoding, and cross-mod conflicts.
+        var audit = await Task.Run(() => NativeModsClientStore.AuditPackage(staged.Folder, root, allowRawAccess: false, allowConflicts: false));
+        bool hasBlockingErrors = audit.Validation.Errors.Any();
+        if (hasBlockingErrors || audit.Conflicts.Count > 0)
+        {
+            End(job);
+            throw new InvalidDataException(audit.ToHumanReadableSummary());
+        }
+
+        bool needsConfirmation = audit.RawAccessRequested || audit.ReplacedStockPaths.Count > 0 || !NativeModsEnabled;
+        if (needsConfirmation && confirmAudit is not null && !confirmAudit(audit))
+        {
+            End(job);
+            return new BridgeResult(false, L.Text("Operation cancelled."), null, Cancelled: true);
+        }
+        if (audit.RawAccessRequested && confirmAudit is null)
+        {
+            End(job);
+            throw new InvalidDataException(L.Text("This mod requests RawAccess and requires explicit confirmation."));
+        }
+
+        // Split deployment: strip client payload into a clean server staging copy for ModBridge.ps1 (Mods/Binaries/<id>/).
+        bool hadServerBefore = Directory.Exists(Path.Combine(root, "Mods", "Binaries", staged.Id));
+        string serverOnlyFolder = await Task.Run(() => NativeModsClientStore.PrepareServerStaging(staged.Folder, staged.Id));
+        try
+        {
+            var serverResult = await QueuedAsync(job, "InstallMod", operationName,
+                new(staged.Id, Staged: serverOnlyFolder, Target: "Binaries"), L.Text("Installing…"));
+            if (serverResult is not { Ok: true })
+                return await Finish(job, serverResult);
+
+            // Deploy client half into Mods/Client/<id>/ and rebuild Mods/Client/.merged-cache/ under the workspace lock.
+            ClientModDeployResult? clientDeploy = null;
+            string? failure = null;
+            try
+            {
+                bool ran = await RunExclusiveWaitingAsync(L.Text("Install NativeMods client payload"), async () =>
+                {
+                    clientDeploy = await Task.Run(() => NativeModsClientStore.DeployClientHalf(
+                        staged.Folder, root, enableOverride: null, allowRawAccess: audit.RawAccessRequested, allowConflicts: false));
+                    if (clientDeploy.MergedCache is { Rebuilt: true } mc)
+                        shared.Logs.Write($"[nativemods] rebuilt .merged-cache ({mc.MergedTables.Count} tables, digest {mc.Digest}).", Severity.Info);
+                    else if (!string.IsNullOrWhiteSpace(clientDeploy.MergedCache?.Diagnostic))
+                        shared.Logs.Write($"[nativemods] {clientDeploy.MergedCache.Diagnostic}", Severity.Warning);
+                });
+                if (!ran) failure = L.Text("Something else is using LocalExile. Try again when it is done.");
+                else if (clientDeploy is not { Succeeded: true }) failure = clientDeploy?.Message ?? L.Text("Client mod installation was blocked by validation.");
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException)
+            {
+                failure = ex.Message;
+            }
+
+            if (failure is not null)
+            {
+                shared.Logs.Write($"[nativemods] client deploy failed for {staged.Id}: {failure}", Severity.Error);
+                if (!hadServerBefore)
+                    await QueuedAsync(job, "UninstallMod", L.Text("Uninstall mod"), new(staged.Id), L.Text("Uninstalling…"));
+                return await Finish(job, new BridgeResult(false, failure, serverResult.Snapshot, L.Text("Install NativeMods client payload")));
+            }
+
+            return Installed(await Finish(job, serverResult), restartToApply: true);
+        }
+        finally
+        {
+            string? work = Path.GetDirectoryName(serverOnlyFolder);
+            if (work is not null)
+                try { if (Directory.Exists(work)) Directory.Delete(work, recursive: true); }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+        }
     }
 
     /// <summary>Writes a mod's settings: the values file is checked into Waypoint's folder, and the adapter's SaveModSettings
@@ -801,6 +976,12 @@ static class ModsText
         if (item?.Listing.HasSettings == true || installed?.SettingsFile.Length > 0) tags.Add(L.Text("Settings"));
         if (installed?.Listed ?? item?.Listing.Listed == true) tags.Add(L.Text("League content"));
         foreach (string league in installed?.Leagues ?? []) tags.Add(L.Text("Adds league {0}", league));
+        if ((installed?.NativeClient ?? item?.NativeClient) is { } nc)
+        {
+            tags.Add(nc.Required ? L.Text("Requires NativeMods") : L.Text("NativeMods"));
+            if (nc.RawAccess) tags.Add(L.Text("Raw access"));
+            if (nc.DatPatchCount > 0) tags.Add(L.Text("Dat patches"));
+        }
         return tags;
     }
 
@@ -917,6 +1098,29 @@ static class ModsText
 
     public static string AddRefused(ModSource? source) => source is null
         ? L.Text("That is not a GitHub repository: use github.com/owner/name or owner/name.") : L.Text("{0} is already in the list.", source.Key);
+
+    /// <summary>The Mods section's warning when installed mods declare <c>nativeClient</c> while NativeMods is turned off in Settings.</summary>
+    public static string NativeModsNotice(IReadOnlyList<ModEntry> entries, bool nativeModsEnabled, string? launchWarning = null)
+    {
+        if (nativeModsEnabled) return launchWarning ?? "";
+        int count = entries.Count(e => e.Enabled && e.HasNativeClient);
+        if (count == 0) return "";
+        return L.Text("{0} enabled mod(s) include NativeMods client payloads, but NativeMods is currently off in Settings.", count);
+    }
+
+    /// <summary>Builds the human-readable confirmation prompt when installing a NativeMods dual-side mod that requests RawAccess, replaces stock paths, or when NativeMods is off.</summary>
+    public static (string Title, string Message, string Details) AuditPrompt(InstallAuditReport audit, bool nativeModsEnabled)
+    {
+        var reasons = new List<string>();
+        if (audit.RawAccessRequested)
+            reasons.Add(L.Text("This mod requests direct memory/hook access (RawAccess): {0}", audit.RawAccessJustification ?? ""));
+        if (audit.ReplacedStockPaths.Count > 0)
+            reasons.Add(L.Text("This mod overrides {0} stock game path(s) via overlay.", audit.ReplacedStockPaths.Count));
+        if (!nativeModsEnabled)
+            reasons.Add(L.Text("NativeMods is currently off in Settings. You can still install the mod now and enable NativeMods in Settings later."));
+        string title = audit.RawAccessRequested ? L.Text("Approve RawAccess for {0}?", audit.ModName) : L.Text("Install NativeMods mod {0}?", audit.ModName);
+        return (title, string.Join("\n\n", reasons), audit.ToHumanReadableSummary());
+    }
 
     public static string Untrusted(BrowseItem item) =>
         L.Text("{0} comes from {1}, not from the official mods. A mod runs with the Gateway's rights on your PC: install it only from a repository you trust.", item.Title, item.Source.Key);

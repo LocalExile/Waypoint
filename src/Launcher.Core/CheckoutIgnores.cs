@@ -10,7 +10,7 @@ namespace Launcher.Core;
 /// </summary>
 public static class CheckoutIgnores
 {
-    public static IReadOnlyList<string> Patterns { get; } = ["/" + ClientVersions.KeptFolder + "/", "/.waypoint-*"];
+    public static IReadOnlyList<string> Patterns { get; } = ["/" + ClientVersions.KeptFolder + "/", "/.waypoint-*", "/Mods/Client/"];
 
     const string Heading = "# Waypoint: game clients it keeps beside Client, and the folders it works in";
 

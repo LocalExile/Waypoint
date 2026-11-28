@@ -88,6 +88,32 @@
                 <StackPanel x:Name="GameSettingsRow" />
             </GroupBox>
 
+            <!-- Opt-in NativeMods client script extender (OFF by default). -->
+            <GroupBox x:Name="NativeModsGroup" Header="{l:Loc 'NativeMods (Client Extender)'}">
+                <StackPanel>
+                    <CheckBox x:Name="NativeModsEnabled" Content="{l:Loc 'Enable NativeMods client extender (opt-in)'}"
+                              Checked="NativeModsPreferenceChanged" Unchecked="NativeModsPreferenceChanged" />
+                    <TextBlock Text="{l:Loc 'Off by default. Loads client-side NativeMods overlays and plugins for PoE 3.29.3c/3.29.3d without modifying stock Game.exe or game archives.'}"
+                               Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,2,0,8" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <RadioButton x:Name="NativeModsProxyMode" GroupName="NativeModsMode" Content="{l:Loc 'Proxy (version.dll)'}"
+                                     Margin="0,0,18,0" Checked="NativeModsPreferenceChanged" />
+                        <RadioButton x:Name="NativeModsImportMode" GroupName="NativeModsMode" Content="{l:Loc 'Import patch (.nmimp)'}"
+                                     Checked="NativeModsPreferenceChanged"
+                                     ToolTip="{l:Loc 'Patches Client/Game.patched.exe import table reversibly (source checkouts only).'}" />
+                    </StackPanel>
+                    <TextBlock x:Name="NativeModsStatus" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,2,0,2" />
+                    <TextBlock x:Name="NativeModsDetails" Style="{StaticResource Shell.Secondary}" TextWrapping="Wrap" Margin="0,0,0,8" Visibility="Collapsed" />
+                    <WrapPanel Margin="0,2,0,-6">
+                        <Button x:Name="NativeModsGitHubButton" Content="{l:Loc 'Install / Update from GitHub'}" Click="InstallNativeModsGitHub" />
+                        <Button x:Name="NativeModsZipButton" Content="{l:Loc 'Import local zip…'}" Click="ImportNativeModsZip" />
+                        <Button x:Name="NativeModsFolderButton" Content="{l:Loc 'Import dist folder…'}" Click="ImportNativeModsFolder" />
+                        <Button x:Name="NativeModsVerifyButton" Content="{l:Loc 'Verify'}" Click="VerifyNativeMods" />
+                        <Button x:Name="NativeModsUninstallButton" Content="{l:Loc 'Uninstall'}" Click="UninstallNativeMods" />
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+
             <!-- Where Waypoint keeps its files and which programs it uses (PathChoices): rows made in code. Shown with Developer
                  Mode, and whenever something there is chosen or cannot be used (SettingsTab.ShowPaths). -->
             <GroupBox x:Name="PathsGroup" Header="{l:Loc 'Folders and tools'}">

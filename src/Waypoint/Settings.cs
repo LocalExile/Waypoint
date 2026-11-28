@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Launcher.Core.NativeMods;
 
 namespace Waypoint;
 
@@ -117,6 +118,34 @@ sealed class Settings
     public List<string> History { get; set; } = [];
     /// <summary>Mod repositories the player added to Browse ("owner/name" or "owner/name/tree/branch"), beside the official one.</summary>
     public List<string> ModRepositories { get; set; } = [];
+    /// <summary>Opt-in NativeMods client extender preferences, scoped by LocalExile folder (OFF by default).</summary>
+    public Dictionary<string, NativeModsPreference> NativeMods { get; set; } = [];
+
+    /// <summary>Returns the opt-in NativeMods preference for <paramref name="folder"/> (current checkout by default); always OFF until opted in.</summary>
+    public NativeModsPreference NativeModsFor(string? folder = null)
+    {
+        string key = NormalizeFolderKey(folder ?? Environment.CurrentDirectory);
+        var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        foreach (var (saved, pref) in NativeMods)
+            if (string.Equals(NormalizeFolderKey(saved), key, comparison)) return pref;
+        return new NativeModsPreference();
+    }
+
+    /// <summary>Stores the NativeMods preference for <paramref name="folder"/> (current checkout by default).</summary>
+    public void SetNativeMods(NativeModsPreference preference, string? folder = null)
+    {
+        string key = NormalizeFolderKey(folder ?? Environment.CurrentDirectory);
+        var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        foreach (string saved in NativeMods.Keys.ToArray())
+            if (string.Equals(NormalizeFolderKey(saved), key, comparison) && saved != key) NativeMods.Remove(saved);
+        NativeMods[key] = preference;
+    }
+
+    static string NormalizeFolderKey(string path)
+    {
+        try { return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path)); }
+        catch (Exception e) when (e is ArgumentException or IOException or NotSupportedException) { return path; }
+    }
 
     public const int HistoryMax = 200;
 
