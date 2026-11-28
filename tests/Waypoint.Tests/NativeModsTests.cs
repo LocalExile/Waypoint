@@ -102,6 +102,20 @@ public class NativeModsTests : IDisposable
         Assert.NotNull(onPlan.Error);
     }
 
+    [Fact]
+    public async Task Opted_out_launch_leaves_a_version_dll_NativeMods_did_not_install()
+    {
+        string client = Path.Combine(_root, "Client");
+        Directory.CreateDirectory(client);
+        string dll = Path.Combine(client, "version.dll");
+        File.WriteAllText(dll, "another tool");
+
+        var plan = await NativeModsLaunch.PrepareAsync(_root, new Settings(), isReleaseInstall: false);
+
+        Assert.True(plan.Ok);
+        Assert.Equal("another tool", File.ReadAllText(dll));
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_root)) Directory.Delete(_root, recursive: true);

@@ -28,10 +28,12 @@ static class NativeModsLaunch
             if (!pref.Enabled)
             {
                 // Opt-out guarantee: ensure neither Client/version.dll nor .nmimp remains active on disk so stock runs stay 100% vanilla.
-                bool proxyPresent = File.Exists(WaypointExtenderManager.GetProxyDllPath(root));
+                // Only touch what NativeMods recorded installing here: a version.dll of another tool, or a linked client, is left alone.
+                bool ours = WaypointExtenderManager.ReadState(root) is not null && ClientVersions.Layout(root) != ClientLayout.Link;
+                bool proxyPresent = ours && File.Exists(WaypointExtenderManager.GetProxyDllPath(root));
                 string patchedExe = WaypointExtenderManager.GetPatchedExePath(root);
                 bool needsDeactivate = proxyPresent;
-                if (!needsDeactivate && File.Exists(patchedExe) && File.Exists(WaypointExtenderManager.GetNativeShimPath(root)))
+                if (ours && !needsDeactivate && File.Exists(patchedExe) && File.Exists(WaypointExtenderManager.GetNativeShimPath(root)))
                 {
                     var health = await NativeModsExtender.GetHealthAsync(root, optedIn: false, isReleaseInstall, mode);
                     needsDeactivate = health.PeImportVerified;
