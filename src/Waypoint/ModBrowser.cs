@@ -413,6 +413,9 @@ sealed class ModBrowser(Shared shared)
     /// <summary>Whether NativeMods is opted-in for the current folder.</summary>
     public bool NativeModsEnabled => shared.Settings.NativeModsFor().Enabled;
 
+    /// <summary>The last launch's warning that the enabled mods' game data could not be built; null when there was none.</summary>
+    public string? NativeModsWarning => shared.NativeModsWarning;
+
     /// <summary>The rows of a repository read before, matched to the installed mods by id.</summary>
     public IReadOnlyList<BrowseItem> Items(ModSource source, IReadOnlyList<ModEntry> installed)
     {
@@ -1097,9 +1100,9 @@ static class ModsText
         ? L.Text("That is not a GitHub repository: use github.com/owner/name or owner/name.") : L.Text("{0} is already in the list.", source.Key);
 
     /// <summary>The Mods section's warning when installed mods declare <c>nativeClient</c> while NativeMods is turned off in Settings.</summary>
-    public static string NativeModsNotice(IReadOnlyList<ModEntry> entries, bool nativeModsEnabled)
+    public static string NativeModsNotice(IReadOnlyList<ModEntry> entries, bool nativeModsEnabled, string? launchWarning = null)
     {
-        if (nativeModsEnabled) return "";
+        if (nativeModsEnabled) return launchWarning ?? "";
         int count = entries.Count(e => e.Enabled && e.HasNativeClient);
         if (count == 0) return "";
         return L.Text("{0} enabled mod(s) include NativeMods client payloads, but NativeMods is currently off in Settings.", count);

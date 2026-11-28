@@ -61,6 +61,7 @@ public class NativeModsTests : IDisposable
 
         Assert.NotEmpty(ModsText.NativeModsNotice([entry], nativeModsEnabled: false));
         Assert.Empty(ModsText.NativeModsNotice([entry], nativeModsEnabled: true));
+        Assert.Equal("tables could not be built", ModsText.NativeModsNotice([entry], nativeModsEnabled: true, launchWarning: "tables could not be built"));
     }
 
     [Fact]

@@ -4,7 +4,8 @@ using LocalExile.Client.Waypoint;
 namespace Waypoint;
 
 /// <summary>Result of pre-launch NativeMods validation and environment preparation.</summary>
-sealed record NativeModsLaunchPlan(bool Ok, IReadOnlyDictionary<string, string?> Environment, string? Error = null);
+/// <remarks><paramref name="Warning"/>: the launch goes ahead, but the player should see why the mods may not work.</remarks>
+sealed record NativeModsLaunchPlan(bool Ok, IReadOnlyDictionary<string, string?> Environment, string? Error = null, string? Warning = null);
 
 /// <summary>
 /// Coordinates NativeMods pre-launch checks and environment variable injection for both source checkouts
@@ -77,6 +78,7 @@ static class NativeModsLaunch
                 log?.Invoke($"[nativemods] activated {mode} entry point.");
             }
 
+            string? warning = null;
             if (status.MergedCacheStale)
             {
                 MergedCacheOutcome rebuilt;
@@ -91,15 +93,14 @@ static class NativeModsLaunch
                 }
                 if (rebuilt.Rebuilt)
                     log?.Invoke($"[nativemods] rebuilt Mods/Client/.merged-cache ({rebuilt.MergedTables.Count} tables, digest {rebuilt.Digest}).");
-                // The enabled mods' rows would be missing on the client while the server has them: refuse rather than desync.
+                // The client starts with stock tables (a mismatched cache was removed), so the mods' rows are missing: say so, launch anyway.
                 if (!NativeModsClientStore.IsMergedCacheCurrent(root))
-                    return new NativeModsLaunchPlan(false, new Dictionary<string, string?>(),
-                        L.Text("Could not build the client tables for the enabled mods: {0}", rebuilt.Diagnostic ?? "?"));
+                    warning = L.Text("The enabled mods' game data could not be built, so they may be missing or wrong in the game: {0}", rebuilt.Diagnostic ?? "?");
             }
 
             var env = NativeModsExtender.BuildLaunchEnvironment(root, optedIn: true, mode, isLinux, existingWineOverrides);
             log?.Invoke($"[nativemods] launching with extender v{status.ExtenderVersion ?? "?"} ({mode}).");
-            return new NativeModsLaunchPlan(true, env);
+            return new NativeModsLaunchPlan(true, env, Warning: warning);
         });
     }
 

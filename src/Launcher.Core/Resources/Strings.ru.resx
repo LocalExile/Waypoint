@@ -4524,6 +4524,9 @@
   <data name="Text_750af77aa42e" xml:space="preserve">
     <value>Используется</value>
   </data>
+  <data name="Text_7528568ac56b" xml:space="preserve">
+    <value>Не удалось собрать игровые данные включённых модов, поэтому в игре они могут отсутствовать или работать неправильно: {0}</value>
+  </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>Всё</value>
   </data>
@@ -4904,9 +4907,6 @@
   </data>
   <data name="Text_7f06ea4f0831" xml:space="preserve">
     <value>Лига</value>
-  </data>
-  <data name="Text_7f0a4cd96b13" xml:space="preserve">
-    <value>Не удалось собрать клиентские таблицы для включённых модов: {0}</value>
   </data>
   <data name="Text_7f1aa82e323e" xml:space="preserve">
     <value>dotnet build GameServer.slnx при остановленных серверах</value>

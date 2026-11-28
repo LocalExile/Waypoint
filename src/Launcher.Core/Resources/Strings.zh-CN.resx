@@ -4524,6 +4524,9 @@
   <data name="Text_750af77aa42e" xml:space="preserve">
     <value>使用中</value>
   </data>
+  <data name="Text_7528568ac56b" xml:space="preserve">
+    <value>无法生成已启用模组的游戏数据，因此它们在游戏中可能缺失或显示错误：{0}</value>
+  </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>全部</value>
   </data>
@@ -4904,9 +4907,6 @@
   </data>
   <data name="Text_7f06ea4f0831" xml:space="preserve">
     <value>联盟</value>
-  </data>
-  <data name="Text_7f0a4cd96b13" xml:space="preserve">
-    <value>无法为已启用的模组生成客户端数据表：{0}</value>
   </data>
   <data name="Text_7f1aa82e323e" xml:space="preserve">
     <value>停止服务器后执行 dotnet build GameServer.slnx</value>

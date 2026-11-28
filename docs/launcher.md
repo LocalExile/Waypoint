@@ -1662,8 +1662,9 @@ When a monitored server or the client stops, Waypoint checks the current workspa
   confirmation whenever `rawAccess` or stock path `replaces` are requested. Server files install into `Mods/Binaries/<id>/`,
   client payloads into `Mods/Client/<id>/` (excluded from git via `.git/info/exclude`), and `Mods/Client/.merged-cache/` +
   `content-row-map.json` rebuild deterministically on install, enable/disable and uninstall. A cache that no longer matches the
-  enabled mods, the client build or Waypoint is rebuilt before an opted-in launch; a failed rebuild removes it, and the launch
-  stops with the reason rather than start the client without the mods' tables. An update whose `mod.json` no longer declares
+  enabled mods, the client build or Waypoint is rebuilt before an opted-in launch; a failed rebuild removes it, so the client
+  starts with the stock tables. The launch still goes ahead, with a warning in its output and on the Mods section that the
+  mods' game data could not be built and why. An update whose `mod.json` no longer declares
   `nativeClient` moves the earlier `Mods/Client/<id>/` to `Mods/.replaced/` and drops it from the ledger and the cache.
 - **Launch environment:** When opted in, Waypoint passes `NATIVEMODS_HOST_DIR`, `NATIVEMODS_ADDRESSES_DIR`,
   `NATIVEMODS_MODS_DIR`, `NATIVEMODS_LOG_PATH` (converted to `Z:\...` on Linux/Proton) and `WINEDLLOVERRIDES=version=n,b`

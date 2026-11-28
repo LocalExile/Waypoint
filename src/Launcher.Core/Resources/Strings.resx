@@ -4524,6 +4524,9 @@ Switching to it builds and runs that code on this computer with your rights, liv
   <data name="Text_750af77aa42e" xml:space="preserve">
     <value>In use</value>
   </data>
+  <data name="Text_7528568ac56b" xml:space="preserve">
+    <value>The enabled mods' game data could not be built, so they may be missing or wrong in the game: {0}</value>
+  </data>
   <data name="Text_75304cf77db0" xml:space="preserve">
     <value>Everything</value>
   </data>
@@ -4904,9 +4907,6 @@ Switching to it builds and runs that code on this computer with your rights, liv
   </data>
   <data name="Text_7f06ea4f0831" xml:space="preserve">
     <value>League</value>
-  </data>
-  <data name="Text_7f0a4cd96b13" xml:space="preserve">
-    <value>Could not build the client tables for the enabled mods: {0}</value>
   </data>
   <data name="Text_7f1aa82e323e" xml:space="preserve">
     <value>dotnet build GameServer.slnx, with the servers stopped</value>

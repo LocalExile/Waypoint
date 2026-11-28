@@ -548,6 +548,8 @@ partial class InstallTab : UserControl
                     return null;
                 }
                 launchEnv = plan.Environment;
+                _shared.NoteNativeModsWarning(plan.Warning);
+                if (plan.Warning is { } warning) Write(warning);
             }
             // Queued: the events come from the tool's threads.
             var run = LocalExileTool.RunAsync(Folder, arguments, item => Dispatcher.UIThread.Post(() => Event(item, ready)), line => Dispatcher.UIThread.Post(() =>
