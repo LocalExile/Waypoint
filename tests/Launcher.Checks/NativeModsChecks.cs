@@ -333,6 +333,31 @@ static class NativeModsChecks
         var ggpkDeploy = NativeModsClientStore.DeployClientHalf(pkgDir, checkout, enableOverride: true);
         check(ggpkDeploy.Succeeded && ggpkDeploy.MergedCache is { Rebuilt: false } && ggpkDeploy.MergedCache.Diagnostic is { Length: > 0 },
             "Standalone Content.ggpk client reports an actionable diagnostic for .merged-cache instead of crashing");
+
+        // A new MtxTypeGameSpecific row takes HASH32 from its MtxTypes row (true of every stock row in 3.29.3c and 3.29.3d),
+        // both for a row appended in the same patch and for a stock row of an untouched MtxTypes.
+        Dat64TableSchema mtxSchema = schemaReg.Tables["MtxTypes"], gsSchema = schemaReg.Tables["MtxTypeGameSpecific"];
+        byte[] stockMtx = BuildSingleRowDatc64(mtxSchema);
+        BinaryPrimitives.WriteUInt32LittleEndian(stockMtx.AsSpan(4 + mtxSchema.Hash32Column!.Offset), 0x1234ABCDu);
+        byte[] stockGs = BuildSingleRowDatc64(gsSchema);
+        stockGs.AsSpan(4, 16).Fill(0xFE); // stock row points at no MtxTypes row
+        var mtxSource = new InMemoryDat64Source(new Dictionary<string, byte[]> { ["MtxTypes"] = stockMtx, ["MtxTypeGameSpecific"] = stockGs });
+        uint AppendedGsHash(string json)
+        {
+            var merged = DatPatchMerger.Merge(mtxSource, [DatPatchDocument.Parse(json)], schemaReg);
+            var gs = Dat64Table.Parse(merged.MergedTables.Single(t => t.Key.Contains("MtxTypeGameSpecific", StringComparison.OrdinalIgnoreCase)).Value);
+            return gs.ReadUInt32(gs.RowCount - 1, gsSchema.Hash32Column!.Offset);
+        }
+        check(AppendedGsHash("""
+            { "modId": "fx", "tables": {
+              "MtxTypes": { "append": [{ "key": "fx", "fields": { "Id": "Metadata/Items/Test/Fx", "__col18": "TestFx" } }] },
+              "MtxTypeGameSpecific": { "append": [{ "key": "fxgs", "fields": { "Type": "$ref:MtxTypes:fx" } }] } } }
+            """) == PoeHashing.Hash32("Metadata/Items/Test/Fx"),
+            "An appended MtxTypeGameSpecific row gets the HASH32 of the MtxTypes row appended beside it");
+        check(AppendedGsHash("""
+            { "modId": "gs", "tables": { "MtxTypeGameSpecific": { "append": [{ "key": "gs", "fields": { "Type": 0 } }] } } }
+            """) == 0x1234ABCDu,
+            "An appended MtxTypeGameSpecific row gets the HASH32 of the stock MtxTypes row it points at");
     }
 
     private static byte[] BuildSingleRowDatc64(Dat64TableSchema schema)

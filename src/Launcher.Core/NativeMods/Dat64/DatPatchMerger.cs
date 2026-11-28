@@ -489,7 +489,10 @@ public static class DatPatchMerger
         }
 
         // 7. Pass 2c — Apply append entries in exact reserved order, deep-copying variable slices & auto-allocating hashes.
-        foreach (var (mod, state, entry, reservedRowIndex) in stagedAppends)
+        // MtxTypes first: an appended MtxTypeGameSpecific row copies HASH32 from its MtxTypes row, which must exist by then.
+        // OrderBy is stable, so each table still appends in its reserved order.
+        foreach (var (mod, state, entry, reservedRowIndex) in stagedAppends
+                     .OrderBy(a => a.State.Schema.Name.Equals("MtxTypes", StringComparison.OrdinalIgnoreCase) ? 0 : 1))
         {
             byte[] rowBytes;
             if (entry.CloneFromRow.HasValue || !string.IsNullOrWhiteSpace(entry.CloneFromId))
@@ -530,7 +533,7 @@ public static class DatPatchMerger
                 }
                 else
                 {
-                    hash32 = ComputeAutoHash32(state, rowBytes, entry.Key, tableStates);
+                    hash32 = ComputeAutoHash32(state, rowBytes, entry.Key, tableStates, registry, source, auxReadTables);
                     Dat64TablePatcher.WriteUInt32(rowBytes, h32Col.Offset, hash32);
                 }
 
@@ -1457,7 +1460,10 @@ public static class DatPatchMerger
         TableMergeState state,
         ReadOnlySpan<byte> rowBytes,
         string entryKey,
-        Dictionary<string, TableMergeState> loadedStates)
+        Dictionary<string, TableMergeState> loadedStates,
+        Dat64SchemaRegistry registry,
+        IDat64Source source,
+        Dictionary<string, Dat64Table> auxReadTables)
     {
         if (state.Schema.PrimaryIdColumn is { } idCol)
         {
@@ -1469,16 +1475,27 @@ public static class DatPatchMerger
             }
         }
 
-        // Special case: MtxTypeGameSpecific inherits HASH32 from its referenced MtxTypes row when available.
+        // MtxTypeGameSpecific.HASH32 is its MtxTypes row's HASH32 (every stock row in 3.29.3c and 3.29.3d), whether that row
+        // is one a mod touched or a stock row of an untouched table.
         if (state.Schema.Name.Equals("MtxTypeGameSpecific", StringComparison.OrdinalIgnoreCase) &&
-            loadedStates.TryGetValue("MtxTypes", out TableMergeState? mtxState) &&
-            mtxState.Schema.Hash32Column is { } mtxH32Col)
+            registry.GetRequiredTable("MtxTypes").Hash32Column is { } mtxH32Col)
         {
             ulong mtxRow = System.Buffers.Binary.BinaryPrimitives.ReadUInt64LittleEndian(rowBytes.Slice(0, 8));
-            if (mtxRow != Dat64Table.NullForeignRow && mtxRow < (ulong)mtxState.Patcher.RowCount)
+            if (mtxRow != Dat64Table.NullForeignRow)
             {
-                byte[] mtxBytes = mtxState.Patcher.CloneRow((int)mtxRow);
-                return System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(mtxBytes.AsSpan(mtxH32Col.Offset, 4));
+                if (loadedStates.TryGetValue("MtxTypes", out TableMergeState? mtxState))
+                {
+                    if (mtxRow < (ulong)mtxState.Patcher.RowCount)
+                    {
+                        byte[] mtxBytes = mtxState.Patcher.CloneRow((int)mtxRow);
+                        return System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(mtxBytes.AsSpan(mtxH32Col.Offset, 4));
+                    }
+                }
+                else if (TryGetReadOnlyStockTable("MtxTypes", source, loadedStates, auxReadTables) is { } stockMtx &&
+                         mtxRow < (ulong)stockMtx.RowCount)
+                {
+                    return stockMtx.ReadUInt32((int)mtxRow, mtxH32Col.Offset);
+                }
             }
         }
 
